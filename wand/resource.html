@@ -1,0 +1,156 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>wand.resource — Global resource management &mdash; Wand 0.1.0</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Wand 0.1.0" href="../index.html" />
+    <link rel="up" title="wand — Simple MagickWand API binding for Python" href="../wand.html" />
+    <link rel="next" title="wand.api — Low-level interfaces" href="api.html" />
+    <link rel="prev" title="wand.image — Image objects" href="image.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="api.html" title="wand.api — Low-level interfaces"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="image.html" title="wand.image — Image objects"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Wand 0.1.0</a> &raquo;</li>
+          <li><a href="../wand.html" accesskey="U"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <span class="target" id="module-wand.resource"></span><div class="section" id="wand-resource-global-resource-management">
+<h1><a class="reference internal" href="#module-wand.resource" title="wand.resource"><tt class="xref py py-mod docutils literal"><span class="pre">wand.resource</span></tt></a> &#8212; Global resource management<a class="headerlink" href="#wand-resource-global-resource-management" title="Permalink to this headline">¶</a></h1>
+<p>There is the global resource to manage in MagickWand API. This module
+implements automatic global resource management through reference counting.</p>
+<dl class="function">
+<dt id="wand.resource.genesis">
+<tt class="descclassname">wand.resource.</tt><tt class="descname">genesis</tt><big>(</big><big>)</big><a class="headerlink" href="#wand.resource.genesis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instantiates the MagickWand API.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Don&#8217;t call this function directly. Use <a class="reference internal" href="#wand.resource.increment_refcount" title="wand.resource.increment_refcount"><tt class="xref py py-func docutils literal"><span class="pre">increment_refcount()</span></tt></a> and
+<a class="reference internal" href="#wand.resource.decrement_refcount" title="wand.resource.decrement_refcount"><tt class="xref py py-func docutils literal"><span class="pre">decrement_refcount()</span></tt></a> functions instead.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="wand.resource.terminus">
+<tt class="descclassname">wand.resource.</tt><tt class="descname">terminus</tt><big>(</big><big>)</big><a class="headerlink" href="#wand.resource.terminus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cleans up the MagickWand API.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Don&#8217;t call this function directly. Use <a class="reference internal" href="#wand.resource.increment_refcount" title="wand.resource.increment_refcount"><tt class="xref py py-func docutils literal"><span class="pre">increment_refcount()</span></tt></a> and
+<a class="reference internal" href="#wand.resource.decrement_refcount" title="wand.resource.decrement_refcount"><tt class="xref py py-func docutils literal"><span class="pre">decrement_refcount()</span></tt></a> functions instead.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="wand.resource.increment_refcount">
+<tt class="descclassname">wand.resource.</tt><tt class="descname">increment_refcount</tt><big>(</big><big>)</big><a class="headerlink" href="#wand.resource.increment_refcount" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increments the <tt class="xref py py-data docutils literal"><span class="pre">reference_count</span></tt> and instantiates the MagickWand
+API if it is the first use.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wand.resource.decrement_refcount">
+<tt class="descclassname">wand.resource.</tt><tt class="descname">decrement_refcount</tt><big>(</big><big>)</big><a class="headerlink" href="#wand.resource.decrement_refcount" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decrements the <tt class="xref py py-data docutils literal"><span class="pre">reference_count</span></tt> and cleans up the MagickWand
+API if it will be no more used.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="image.html"
+                        title="previous chapter"><tt class="docutils literal docutils literal docutils literal"><span class="pre">wand.image</span></tt> &#8212; Image objects</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="api.html"
+                        title="next chapter"><tt class="docutils literal docutils literal"><span class="pre">wand.api</span></tt> &#8212; Low-level interfaces</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/wand/resource.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="api.html" title="wand.api — Low-level interfaces"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="image.html" title="wand.image — Image objects"
+             >previous</a> |</li>
+        <li><a href="../index.html">Wand 0.1.0</a> &raquo;</li>
+          <li><a href="../wand.html" ><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Hong Minhee, StyleShare.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
+    </div>
+  </body>
+</html>
