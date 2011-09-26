@@ -17,5 +17,6 @@ def load_library():
     return ctypes.CDLL(ctypes.util.find_library('MagickWand'))
 
 
+#: (:class:`ctypes.CDLL`) The MagickWand library.
 library = load_library()
 

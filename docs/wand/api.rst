@@ -1,0 +1,4 @@
+
+.. automodule:: wand.api
+   :members:
+
