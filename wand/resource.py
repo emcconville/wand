@@ -5,6 +5,7 @@ There is the global resource to manage in MagickWand API. This module
 implements automatic global resource management through reference counting.
 
 """
+import logging
 from .api import library
 
 
@@ -58,6 +59,8 @@ def increment_refcount():
     else:
         genesis()
         reference_count = 1
+    logger = logging.getLogger(__name__ + '.increment_refcount')
+    logger.debug(str(reference_count))
 
 
 def decrement_refcount():
@@ -69,6 +72,8 @@ def decrement_refcount():
     if not reference_count:
         raise RuntimeError('wand.resource.reference_count is already zero')
     reference_count -= 1
+    logger = logging.getLogger(__name__ + '.decrement_refcount')
+    logger.debug(str(reference_count))
     if not reference_count:
         terminus()
 

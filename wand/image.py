@@ -14,23 +14,65 @@ from .api import library
 from .resource import increment_refcount, decrement_refcount
 
 
-__all__ = 'Image',
+__all__ = 'Image', 'ClosedImageError'
 
 
 class Image(object):
     """An image object.
 
-    :param filename: opens an image of the filename
+    :param image: makes an exact copy of the ``image``
+    :type image: :class:`Image`
+    :param filename: opens an image of the ``filename``
     :type filename: :class:`basestring`
 
     """
 
-    __slots__ = 'wand',
+    __slots__ = '_wand',
 
-    def __init__(self, filename):
+    def __init__(self, image=None, filename=None):
+        args = image, filename
+        if all(a is None for a in args):
+            raise TypeError('missing arguments')
+        elif any(a is not None and b is not None
+                 for i, a in enumerate(args)
+                 for b in args[:i] + args[i + 1:]):
+            raise TypeError('parameters are exclusive each other; use only '
+                            'one at once')
         increment_refcount()
-        self.wand = library.NewMagickWand()
-        library.MagickReadImage(self.wand, filename)
+        try:
+            if image is not None:
+                if not isinstance(image, Image):
+                    raise TypeError('image must be a wand.image.Image '
+                                    'instance, not ' + repr(image))
+                self.wand = library.CloneMagickWand(image.wand)
+            else:
+                self.wand = library.NewMagickWand()
+                library.MagickReadImage(self.wand, filename)
+        except:
+            decrement_refcount()
+            raise
+
+    @property
+    def wand(self):
+        """Internal pointer to the MagickWand instance. It may raise
+        :exc:`ClosedImageError` when the instance has destroyed already.
+
+        """
+        if self._wand is None:
+            raise ClosedImageError(repr(self) + ' is closed already')
+        return self._wand
+
+    @wand.setter
+    def wand(self, wand):
+        if library.IsMagickWand(wand):
+            self._wand = wand
+        else:
+            raise TypeError(repr(wand) + ' is not a MagickWand instance')
+
+    @wand.deleter
+    def wand(self):
+        library.DestroyMagickWand(self.wand)
+        self._wand = None
 
     def __enter__(self):
         return self
@@ -47,7 +89,22 @@ class Image(object):
         call it.
 
         """
+        del self.wand
         decrement_refcount()
+
+    def clone(self):
+        """Clones the image. It is equivalent to call :class:`Image` with
+        ``image`` parameter. ::
+
+            with img.clone() as cloned:
+                # manipulate the cloned image
+                pass
+
+        :returns: the cloned new image
+        :rtype: :class:`Image`
+
+        """
+        return type(self)(image=self)
 
     @property
     def width(self):
@@ -63,4 +120,11 @@ class Image(object):
     def size(self):
         """(:class:`tuple`) The pair of (:attr:`width`, :attr:`height`)."""
         return self.width, self.height
+
+
+class ClosedImageError(ReferenceError, AttributeError):
+    """An error that rises when some code tries access to an already closed
+    image.
+
+    """
 
