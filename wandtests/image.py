@@ -60,6 +60,16 @@ def save():
 
 
 @tests.test
+def make_blob():
+    """Makes a blob string."""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        with Image(blob=img.make_blob('png')) as img2:
+            assert img2.size == (402, 599)
+        with raises(TypeError):
+            img.make_blob(123)
+
+
+@tests.test
 def size():
     """Gets the image size."""
     with Image(filename=asset('mona-lisa.jpg')) as img:

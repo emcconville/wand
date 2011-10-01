@@ -224,6 +224,29 @@ class Image(object):
             raise TypeError('filename must be a string, not ' + repr(filename))
         library.MagickWriteImage(self.wand, filename)
 
+    def make_blob(self, format):
+        """Makes the binary string of the image.
+
+        :param format: the image format to write e.g. ``'png'``, ``'jpeg'``
+        :type format: :class:`basestring`
+        :returns: a blob (bytes) string
+        :rtype: :class:`str`
+        :raises: :exc:`ValueError` when ``format`` is invalid
+
+        """
+        if not isinstance(format, basestring):
+            raise TypeError("format must be a string like 'png' or 'jpeg', "
+                            'not ' + repr(format))
+        r = library.MagickSetImageFormat(self.wand, str(format).strip().upper())
+        if not r:
+            raise ValueError('{0!r} is an invalid format'.format(format))
+        library.MagickResetIterator(self.wand)
+        length = ctypes.c_size_t()
+        blob_p = library.MagickGetImageBlob(self.wand, ctypes.byref(length))
+        blob = ctypes.string_at(blob_p, length.value)
+        library.MagickRelinquishMemory(library.MagickIdentifyImage(self.wand))
+        return blob
+
 
 class ClosedImageError(ReferenceError, AttributeError):
     """An error that rises when some code tries access to an already closed
