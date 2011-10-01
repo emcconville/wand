@@ -1,4 +1,16 @@
 {% extends '!layout.html' %}
+{% block extrahead %}
+  {{ super() }}
+  <style type="text/css">
+  .document .body #wand.section h1 {
+    background-repeat: no-repeat;
+    padding-left: 75px;
+    padding-top: 10px;
+    height: 75px;
+    background-image: url({{ pathto('_static/wand_25.png', 1) }});
+  }
+  </style>
+{% endblock %}
 {% block footer %}
   {{- super() -}}
   <a href="https://github.com/styleshare/wand"><img
