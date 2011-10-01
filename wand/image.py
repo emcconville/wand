@@ -10,11 +10,41 @@ error happened)::
         print 'height =', i.height
 
 """
+import numbers
+import ctypes
 from .api import library
 from .resource import increment_refcount, decrement_refcount
 
 
-__all__ = 'Image', 'ClosedImageError'
+__all__ = 'FILTER_TYPES', 'Image', 'ClosedImageError'
+
+
+#: (:class:`tuple`) The list of filter types.
+#:
+#: - ``'undefined'``
+#: - ``'point'``
+#: - ``'box'``
+#: - ``'triangle'``
+#: - ``'hermite'``
+#: - ``'hanning'``
+#: - ``'hamming'``
+#: - ``'blackman'``
+#: - ``'gaussian'``
+#: - ``'quadratic'``
+#: - ``'cubic'``
+#: - ``'catrom'``
+#: - ``'mitchell'``
+#: - ``'lanczos'``
+#: - ``'bessel'``
+#: - ``'sinc'``
+#:
+#: .. seealso::
+#:
+#:    `ImageMagick Resize Filters
+#:    <http://www.dylanbeattie.net/magick/filters/result.html>`_
+FILTER_TYPES = ('undefined', 'point', 'box', 'triangle', 'hermite', 'hanning',
+                'hamming', 'blackman', 'gaussian', 'quadratic', 'cubic',
+                'catrom', 'mitchell', 'lanczos', 'bessel', 'sinc')
 
 
 class Image(object):
@@ -120,6 +150,55 @@ class Image(object):
     def size(self):
         """(:class:`tuple`) The pair of (:attr:`width`, :attr:`height`)."""
         return self.width, self.height
+
+    def resize(self, width=None, height=None, filter='triangle', blur=1):
+        """Resizes the image.
+
+        :param width: the width in the scaled image. default is the original
+                      width
+        :type width: :class:`numbers.Integral`
+        :param height: the height in the scaled image. default is the original
+                       height
+        :type height: :class:`numbers.Integral`
+        :param filter: a filter type to use for resizing. choose one in
+                       :const:`FILTER_TYPES`. default is ``'triangle'``
+        :type filter: :class:`basestring`, :class:`numbers.Integral`
+        :param blur: the blur factor where > 1 is blurry, < 1 is sharp
+        :type blur: :class:`numbers.Rational`
+
+        """
+        if width is None:
+            width = self.width
+        if height is None:
+            height = self.height
+        if not isinstance(width, numbers.Integral):
+            raise TypeError('width must be a natural number, not ' +
+                            repr(width))
+        elif not isinstance(height, numbers.Integral):
+            raise TypeError('height must be a natural number, not ' +
+                            repr(height))
+        elif width < 1:
+            raise ValueError('width must be a natural number, not ' +
+                             repr(width))
+        elif height < 1:
+            raise ValueError('height must be a natural number, not ' +
+                             repr(height))
+        elif not isinstance(blur, numbers.Rational):
+            raise TypeError('blur must be numbers.Rational, not ' + repr(blur))
+        elif not isinstance(filter, (basestring, numbers.Integral)):
+            raise TypeError('filter must be one string defined in wand.image.'
+                            'FILTER_TYPES or an integer, not ' + repr(filter))
+        if isinstance(filter, basestring):
+            try:
+                filter = FILTER_TYPES.index(filter)
+            except IndexError:
+                raise ValueError(repr(filter) + ' is an invalid filter type; '
+                                 'choose on in ' + repr(FILTET_TYPES))
+        elif (isinstance(filter, numbers.Integral) and
+              not (0 <= filter < len(FILTER_TYPES))):
+            raise ValueError(repr(filter) + ' is an invalid filter type')
+        blur = ctypes.c_double(float(blur))
+        library.MagickResizeImage(self.wand, width, height, filter, blur)
 
     def save(self, filename):
         """Saves the image into the ``filename``.

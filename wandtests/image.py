@@ -56,3 +56,39 @@ def size():
         assert img.width == 402
         assert img.height == 599
 
+
+@tests.test
+def resize():
+    """Resizes the image."""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        with img.clone() as a:
+            assert a.size == (402, 599)
+            a.resize(100, 100)
+            assert a.size == (100, 100)
+        with img.clone() as b:
+            assert b.size == (402, 599)
+            b.resize(height=100)
+            assert b.size == (402, 100)
+        with img.clone() as c:
+            assert c.size == (402, 599)
+            c.resize(width=100)
+            assert c.size == (100, 599)
+
+
+@tests.test
+def resize_errors():
+    """Resizing errors."""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        with raises(TypeError):
+            img.resize(width='100')
+        with raises(TypeError):
+            img.resize(height='100')
+        with raises(ValueError):
+            img.resize(width=0)
+        with raises(ValueError):
+            img.resize(height=0)
+        with raises(ValueError):
+            img.resize(width=-5)
+        with raises(ValueError):
+            img.resize(height=-5)
+
