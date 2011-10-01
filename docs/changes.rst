@@ -4,7 +4,7 @@ Wand Changelog
 Version 0.1.1
 -------------
 
-To be released.
+Released on October 4, 2011. Still alpha version.
 
 - Now it handles errors and warnings properly and in natural way of Python.
 - Added :meth:`Image.make_blob() <wand.image.Image.make_blob>` method.
