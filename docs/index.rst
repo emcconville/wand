@@ -59,6 +59,8 @@ find it at `GitHub repository`_. Check out now:
 If you find a bug, please notify to `our issue tracker`_. Pull requests
 are always welcome!
 
+Check out :doc:`changes` also.
+
 .. _StyleShare: https://stylesha.re/
 .. _Hong Minhee: http://dahlia.kr/
 .. _GitHub repository: https://github.com/styleshare/wand

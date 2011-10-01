@@ -97,7 +97,7 @@ for domain, description, bases, codes in DOMAIN_MAP:
         name = domain + suffix
         locals()[name] = TYPE_MAP[code] = type(name, (base,) + bases, {
             '__doc__': description,
-            'code': code
+            'wand_error_code': code
         })
 del name, base, suffix
 
