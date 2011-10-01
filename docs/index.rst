@@ -63,7 +63,7 @@ Check out :doc:`changes` also.
 
 .. _StyleShare: https://stylesha.re/
 .. _Hong Minhee: http://dahlia.kr/
-.. _GitHub repository: https://github.com/styleshare/wand
+.. _GitHub repository: https://github.com/StyleShare/wand
 .. _our issue tracker: https://github.com/StyleShare/wand/issues
 
 
