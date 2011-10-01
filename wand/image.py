@@ -13,6 +13,10 @@ error happened)::
 import numbers
 import collections
 import ctypes
+import os
+import sys
+import warnings
+from . import exceptions
 from .api import library
 from .resource import increment_refcount, decrement_refcount
 
@@ -94,6 +98,7 @@ class Image(object):
         except:
             decrement_refcount()
             raise
+        self.raise_exception()
 
     @property
     def wand(self):
@@ -116,6 +121,30 @@ class Image(object):
     def wand(self):
         library.DestroyMagickWand(self.wand)
         self._wand = None
+
+    def get_exception(self):
+        """Gets a current exception instance.
+
+        :returns: a current exception. it can be ``None`` as well if any
+                  errors aren't occurred
+        :rtype: :class:`wand.exceptions.WandException`
+
+        """
+        severity = ctypes.c_int()
+        desc = library.MagickGetException(self.wand, ctypes.byref(severity))
+        if severity.value == 0:
+            return
+        library.MagickClearException(self.wand)
+        exc_cls = exceptions.TYPE_MAP[severity.value]
+        return exc_cls(ctypes.string_at(desc))
+
+    def raise_exception(self, stacklevel=1):
+        """Raises an exception or warning if it has occurred."""
+        e = self.get_exception()
+        if isinstance(e, Warning):
+            warnings.warn(e, stacklevel=stacklevel + 1)
+        elif isinstance(e, Exception):
+            raise e
 
     def __enter__(self):
         return self
@@ -222,7 +251,9 @@ class Image(object):
         """
         if not isinstance(filename, basestring):
             raise TypeError('filename must be a string, not ' + repr(filename))
-        library.MagickWriteImage(self.wand, filename)
+        r = library.MagickWriteImage(self.wand, filename)
+        if not r:
+            raise self.get_exception()
 
     def make_blob(self, format):
         """Makes the binary string of the image.

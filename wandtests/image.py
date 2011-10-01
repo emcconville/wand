@@ -18,6 +18,8 @@ def new_from_filename():
         assert img.width == 402
     with raises(ClosedImageError):
         img.wand
+    with raises(IOError):
+        Image(filename=asset('not-exists.jpg'))
 
 
 @tests.test
@@ -52,7 +54,9 @@ def save():
     """Saves an image."""
     savefile = os.path.join(tempfile.mkdtemp(), 'savetest.jpg')
     with Image(filename=asset('mona-lisa.jpg')) as orig:
-        orig.save(savefile)
+        orig.save(filename=savefile)
+        with raises(IOError):
+            orig.save(filename=os.path.join(savefile, 'invalid.jpg'))
     assert os.path.isfile(savefile)
     with Image(filename=savefile) as saved:
         assert saved.size == (402, 599)

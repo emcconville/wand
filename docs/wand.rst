@@ -7,6 +7,7 @@
 
       wand/image
       wand/resource
+      wand/exceptions
       wand/api
       wand/version
 
