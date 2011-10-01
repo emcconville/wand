@@ -44,7 +44,7 @@
           <a href="../wand.html" title="wand — Simple MagickWand API binding for Python"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Wand 0.1.0</a> &raquo;</li>
-          <li><a href="../wand.html" accesskey="U"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a> &raquo;</li> 
+          <li><a href="../wand.html" accesskey="U"><tt class="docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -65,16 +65,42 @@ error happened):</p>
 </div>
 <dl class="class">
 <dt id="wand.image.Image">
-<em class="property">class </em><tt class="descclassname">wand.image.</tt><tt class="descname">Image</tt><big>(</big><em>filename</em><big>)</big><a class="headerlink" href="#wand.image.Image" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">wand.image.</tt><tt class="descname">Image</tt><big>(</big><em>image=None</em>, <em>filename=None</em><big>)</big><a class="headerlink" href="#wand.image.Image" title="Permalink to this definition">¶</a></dt>
 <dd><p>An image object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<tt class="xref py py-class docutils literal"><span class="pre">basestring</span></tt>) &#8211; opens an image of the filename</td>
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>image</strong> (<a class="reference internal" href="#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a>) &#8211; makes an exact copy of the <tt class="docutils literal"><span class="pre">image</span></tt></li>
+<li><strong>filename</strong> (<tt class="xref py py-class docutils literal"><span class="pre">basestring</span></tt>) &#8211; opens an image of the <tt class="docutils literal"><span class="pre">filename</span></tt></li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
+<dl class="method">
+<dt id="wand.image.Image.clone">
+<tt class="descname">clone</tt><big>(</big><big>)</big><a class="headerlink" href="#wand.image.Image.clone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clones the image. It is equivalent to call <a class="reference internal" href="#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a> with
+<tt class="docutils literal"><span class="pre">image</span></tt> parameter.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">with</span> <span class="n">img</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span> <span class="k">as</span> <span class="n">cloned</span><span class="p">:</span>
+    <span class="c"># manipulate the cloned image</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">the cloned new image</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="wand.image.Image.close">
 <tt class="descname">close</tt><big>(</big><big>)</big><a class="headerlink" href="#wand.image.Image.close" title="Permalink to this definition">¶</a></dt>
@@ -96,11 +122,25 @@ call it.</p>
 </dd></dl>
 
 <dl class="attribute">
+<dt id="wand.image.Image.wand">
+<tt class="descname">wand</tt><a class="headerlink" href="#wand.image.Image.wand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal pointer to the MagickWand instance. It may raise
+<a class="reference internal" href="#wand.image.ClosedImageError" title="wand.image.ClosedImageError"><tt class="xref py py-exc docutils literal"><span class="pre">ClosedImageError</span></tt></a> when the instance has destroyed already.</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="wand.image.Image.width">
 <tt class="descname">width</tt><a class="headerlink" href="#wand.image.Image.width" title="Permalink to this definition">¶</a></dt>
 <dd><p>(<a class="reference external" href="http://docs.python.org/library/numbers.html#numbers.Integral" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">numbers.Integral</span></tt></a>) The width of this image.</p>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="exception">
+<dt id="wand.image.ClosedImageError">
+<em class="property">exception </em><tt class="descclassname">wand.image.</tt><tt class="descname">ClosedImageError</tt><a class="headerlink" href="#wand.image.ClosedImageError" title="Permalink to this definition">¶</a></dt>
+<dd><p>An error that rises when some code tries access to an already closed
+image.</p>
 </dd></dl>
 
 </div>
@@ -113,10 +153,10 @@ call it.</p>
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
   <p class="topless"><a href="../wand.html"
-                        title="previous chapter"><tt class="docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a></p>
+                        title="previous chapter"><tt class="docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="resource.html"
-                        title="next chapter"><tt class="docutils literal docutils literal"><span class="pre">wand.resource</span></tt> &#8212; Global resource management</a></p>
+                        title="next chapter"><tt class="docutils literal"><span class="pre">wand.resource</span></tt> &#8212; Global resource management</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/wand/image.txt"
@@ -155,7 +195,7 @@ call it.</p>
           <a href="../wand.html" title="wand — Simple MagickWand API binding for Python"
              >previous</a> |</li>
         <li><a href="../index.html">Wand 0.1.0</a> &raquo;</li>
-          <li><a href="../wand.html" ><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a> &raquo;</li> 
+          <li><a href="../wand.html" ><tt class="docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
