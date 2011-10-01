@@ -1,6 +1,6 @@
 import os.path
 import tempfile
-from attest import  Tests, raises
+from attest import assert_hook, Tests, raises
 from wand.image import Image, ClosedImageError
 
 
@@ -15,6 +15,17 @@ def asset(filename):
 def new_from_filename():
     """Opens an image through its filename."""
     with Image(filename=asset('mona-lisa.jpg')) as img:
+        assert img.width == 402
+    with raises(ClosedImageError):
+        img.wand
+
+
+@tests.test
+def new_from_blob():
+    """Opens an image from blob."""
+    with open(asset('mona-lisa.jpg')) as f:
+        blob = f.read()
+    with Image(blob=blob) as img:
         assert img.width == 402
     with raises(ClosedImageError):
         img.wand

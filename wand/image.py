@@ -11,6 +11,7 @@ error happened)::
 
 """
 import numbers
+import collections
 import ctypes
 from .api import library
 from .resource import increment_refcount, decrement_refcount
@@ -59,8 +60,8 @@ class Image(object):
 
     __slots__ = '_wand',
 
-    def __init__(self, image=None, filename=None):
-        args = image, filename
+    def __init__(self, image=None, blob=None, filename=None):
+        args = image, blob, filename
         if all(a is None for a in args):
             raise TypeError('missing arguments')
         elif any(a is not None and b is not None
@@ -77,7 +78,19 @@ class Image(object):
                 self.wand = library.CloneMagickWand(image.wand)
             else:
                 self.wand = library.NewMagickWand()
-                library.MagickReadImage(self.wand, filename)
+                if blob is not None:
+                    if not isinstance(blob, collections.Iterable):
+                        raise TypeError('blob must be iterable, not ' +
+                                        repr(blob))
+                    if not isinstance(blob, basestring):
+                        blob = ''.join(blob)
+                    elif not isinstance(blob, str):
+                        blob = str(blob)
+                    library.MagickReadImageBlob(self.wand, blob, len(blob))
+                elif filename is not None:
+                    library.MagickReadImage(self.wand, filename)
+                else:
+                    raise TypeError('invalid argument(s)')
         except:
             decrement_refcount()
             raise
