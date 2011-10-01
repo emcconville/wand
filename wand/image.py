@@ -121,6 +121,17 @@ class Image(object):
         """(:class:`tuple`) The pair of (:attr:`width`, :attr:`height`)."""
         return self.width, self.height
 
+    def save(self, filename):
+        """Saves the image into the ``filename``.
+
+        :param filename: a filename to write to
+        :type filename: :class:`basename`
+
+        """
+        if not isinstance(filename, basestring):
+            raise TypeError('filename must be a string, not ' + repr(filename))
+        library.MagickWriteImage(self.wand, filename)
+
 
 class ClosedImageError(ReferenceError, AttributeError):
     """An error that rises when some code tries access to an already closed

@@ -1,5 +1,6 @@
 import os.path
-from attest import assert_hook, Tests, raises
+import tempfile
+from attest import  Tests, raises
 from wand.image import Image, ClosedImageError
 
 
@@ -33,6 +34,18 @@ def clone():
                 cloned.wand
     with raises(ClosedImageError):
         img.wand
+
+
+@tests.test
+def save():
+    """Saves an image."""
+    savefile = os.path.join(tempfile.mkdtemp(), 'savetest.jpg')
+    with Image(filename=asset('mona-lisa.jpg')) as orig:
+        orig.save(savefile)
+    assert os.path.isfile(savefile)
+    with Image(filename=savefile) as saved:
+        assert saved.size == (402, 599)
+    os.remove(savefile)
 
 
 @tests.test
