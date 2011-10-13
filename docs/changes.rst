@@ -1,6 +1,14 @@
 Wand Changelog
 ==============
 
+Version 0.1.2
+-------------
+
+To be released. Still alpha version.
+
+- :class:`~wand.image.Image` implements slicing.
+- Cropping :class:`~wand.image.Image` using its slicing operator.
+
 Version 0.1.1
 -------------
 

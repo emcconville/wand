@@ -83,6 +83,49 @@ def size():
 
 
 @tests.test
+def slice_clone():
+    """Clones using slicing."""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        with img[:,:] as cloned:
+            assert img.size == cloned.size
+
+
+@tests.test
+def slice_invalid_types():
+    """Slicing with invalid types should throw exceptions."""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        with raises(ValueError):
+            img[()]
+        with raises(ValueError):
+            img[:, :, :]
+        with raises(ValueError):
+            img[::2, :]
+        with raises(ValueError):
+            img[1:1, :]
+        with raises(ValueError):
+            img[:, 2:2]
+        with raises(TypeError):
+            img[100.0:, 100.0]
+        with raises(TypeError):
+            img['100':, '100']
+        with raises(IndexError):
+            img[500:, 900]
+
+
+@tests.test
+def slice_crop():
+    """Crops using slicing."""
+    with Image(filename=asset('croptest.png')) as img:
+        with img[100:200, 100:200] as cropped:
+            assert cropped.size == (100, 100)
+            # TODO: it must test its pixels as well.
+        with img[150:, :150] as cropped:
+            assert cropped.size == (150, 150)
+        with img[-200:-100, -200:-100] as cropped:
+            assert cropped.size == (100, 100)
+
+
+@tests.test
 def resize():
     """Resizes the image."""
     with Image(filename=asset('mona-lisa.jpg')) as img:
