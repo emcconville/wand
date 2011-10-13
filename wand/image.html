@@ -6,13 +6,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>wand.image — Image objects &mdash; Wand 0.1.1</title>
+    <title>wand.image — Image objects &mdash; Wand 0.1.2</title>
     <link rel="stylesheet" href="../_static/werkzeug.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.1',
+        VERSION:     '0.1.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -21,7 +21,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Wand 0.1.1" href="../index.html" />
+    <link rel="top" title="Wand 0.1.2" href="../index.html" />
     <link rel="up" title="wand — Simple MagickWand API binding for Python" href="../wand.html" />
     <link rel="next" title="wand.resource — Global resource management" href="resource.html" />
     <link rel="prev" title="wand — Simple MagickWand API binding for Python" href="../wand.html" />
@@ -54,7 +54,7 @@
           <a href="../wand.html" title="wand — Simple MagickWand API binding for Python"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Wand</a> &raquo;</li>
-          <li><a href="../wand.html" accesskey="U"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a> &raquo;</li> 
+          <li><a href="../wand.html" accesskey="U"><tt class="docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -116,6 +116,38 @@ error happened):</p>
 </tr>
 </tbody>
 </table>
+<dl class="describe">
+<dt>
+<tt class="descname">[left:right, top:bottom]</tt></dt>
+<dd><p>Crops the image by its <tt class="docutils literal"><span class="pre">left</span></tt>, <tt class="docutils literal"><span class="pre">right</span></tt>, <tt class="docutils literal"><span class="pre">top</span></tt> and <tt class="docutils literal"><span class="pre">bottom</span></tt>,
+and then returns the cropped one.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">with</span> <span class="n">img</span><span class="p">[</span><span class="mi">100</span><span class="p">:</span><span class="mi">200</span><span class="p">,</span> <span class="mi">150</span><span class="p">:</span><span class="mi">300</span><span class="p">]</span> <span class="k">as</span> <span class="n">cropped</span><span class="p">:</span>
+    <span class="c"># manipulated the cropped image</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+<p>Like other subscriptable objects, default is 0 or its width/height:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">img</span><span class="p">[:,</span> <span class="p">:]</span>        <span class="c">#--&gt; just clone</span>
+<span class="n">img</span><span class="p">[:</span><span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">:]</span>  <span class="c">#--&gt; equivalent to img[0:100, 200:img.height]</span>
+</pre></div>
+</div>
+<p>Negative integers count from the end (width/height):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">img</span><span class="p">[</span><span class="o">-</span><span class="mi">70</span><span class="p">:</span><span class="o">-</span><span class="mi">50</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">10</span><span class="p">]</span>
+<span class="c">#--&gt; equivalent to img[width-70:width-50, height-20:height-10]</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Returns :</th><td class="field-body">the cropped image</td>
+</tr>
+<tr class="field"><th class="field-name">Rtype :</th><td class="field-body"><a class="reference internal" href="#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="wand.image.Image.clone">
 <tt class="descname">clone</tt><big>(</big><big>)</big><a class="headerlink" href="#wand.image.Image.clone" title="Permalink to this definition">¶</a></dt>
