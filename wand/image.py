@@ -20,6 +20,7 @@ from . import exceptions
 from .api import library
 from .resource import (increment_refcount, decrement_refcount, Resource,
                        DestroyedResourceError)
+from .color import Color
 
 
 __all__ = 'FILTER_TYPES', 'Image', 'ClosedImageError'
@@ -175,6 +176,9 @@ class Image(Resource):
     def __len__(self):
         return self.height
 
+    def __iter__(self):
+        return Iterator(image=self)
+
     def __getitem__(self, idx):
         if isinstance(idx, collections.Iterable):
             idx = tuple(idx)
@@ -323,6 +327,55 @@ class Image(Resource):
         blob = ctypes.string_at(blob_p, length.value)
         library.MagickRelinquishMemory(library.MagickIdentifyImage(self.wand))
         return blob
+
+
+class Iterator(Resource, collections.Iterator):
+
+    c_is_resource = library.IsPixelIterator
+    c_destroy_resource = library.DestroyPixelIterator
+    c_get_exception = library.PixelGetIteratorException
+    c_clear_exception = library.PixelClearIteratorException
+
+    def __init__(self, image=None, iterator=None):
+        if image is not None and iterator is not None:
+            raise TypeError('it takes only one argument at a time')
+        with self.allocate():
+            if image is not None:
+                if not isinstance(image, Image):
+                    raise TypeError('expected a wand.image.Image instance, '
+                                    'not ' + repr(image))
+                self.resource = library.NewPixelIterator(image.wand)
+                self.height = image.height
+            else:
+                if not isinstance(iterator, Iterator):
+                    raise TypeError('expected a wand.image.Iterator instance, '
+                                    'not ' + repr(iterator))
+                self.resource = library.ClonePixelIterator(iterator.resource)
+                self.height = iterator.height
+        self.raise_exception()
+        self.cursor = 0
+
+    def __iter__(self):
+        return self
+
+    def next(self, x=None):
+        if self.cursor >= self.height:
+            self.destroy()
+            raise StopIteration()
+        self.cursor += 1
+        width = ctypes.c_size_t()
+        f = library.PixelGetNextIteratorRow
+        f.restype = ctypes.POINTER(ctypes.c_void_p)
+        pixels = f(self.resource, ctypes.byref(width))
+        get_color = library.PixelGetColorAsString
+        get_color.restype = ctypes.c_char_p
+        if x is None:
+            pixels = [Color(get_color(pixels[x])) for x in xrange(width.value)]
+            return pixels
+        return Color(get_color(pixels[x]))
+
+    def clone(self):
+        return type(self)(iterator=self)
 
 
 class ClosedImageError(DestroyedResourceError):

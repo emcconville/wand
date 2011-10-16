@@ -2,6 +2,7 @@ import os.path
 import tempfile
 from attest import assert_hook, Tests, raises
 from wand.image import Image, ClosedImageError
+from wand.color import Color
 
 
 tests = Tests()
@@ -84,6 +85,30 @@ def size():
 
 
 @tests.test
+def iterate():
+    """Uses iterator."""
+    with Color('#000') as black:
+        with Color('transparent') as transparent:
+            with Image(filename=asset('croptest.png')) as img:
+                for i, row in enumerate(img):
+                    assert len(row) == 300
+                    if i % 3:
+                        continue # avoid slowness
+                    if 100 <= i < 200:
+                        for x, color in enumerate(row):
+                            if x % 3:
+                                continue # avoid slowness
+                            if 100 <= x < 200:
+                                assert color == black
+                            else:
+                                assert color == transparent
+                    else:
+                        for color in row:
+                            assert color == transparent
+                assert i == 299
+
+
+@tests.test
 def slice_clone():
     """Clones using slicing."""
     with Image(filename=asset('mona-lisa.jpg')) as img:
@@ -116,14 +141,17 @@ def slice_invalid_types():
 @tests.test
 def slice_crop():
     """Crops using slicing."""
-    with Image(filename=asset('croptest.png')) as img:
-        with img[100:200, 100:200] as cropped:
-            assert cropped.size == (100, 100)
-            # TODO: it must test its pixels as well.
-        with img[150:, :150] as cropped:
-            assert cropped.size == (150, 150)
-        with img[-200:-100, -200:-100] as cropped:
-            assert cropped.size == (100, 100)
+    with Color('#000') as black:
+        with Image(filename=asset('croptest.png')) as img:
+            with img[100:200, 100:200] as cropped:
+                assert cropped.size == (100, 100)
+                for row in cropped:
+                    for col in row:
+                        assert col == black
+            with img[150:, :150] as cropped:
+                assert cropped.size == (150, 150)
+            with img[-200:-100, -200:-100] as cropped:
+                assert cropped.size == (100, 100)
 
 
 @tests.test
