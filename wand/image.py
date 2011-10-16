@@ -194,6 +194,22 @@ class Image(Resource):
                 elif not x_slice and y_slice:
                     x = slice(x, x + 1)
                 elif not (x_slice or y_slice):
+                    if not (isinstance(x, numbers.Integral) and
+                            isinstance(y, numbers.Integral)):
+                        raise TypeError('x and y must be integral, not ' +
+                                        repr((x, y)))
+                    if x < 0:
+                        x += self.width
+                    if y < 0:
+                        y += self.height
+                    if x >= self.width:
+                        raise IndexError('x must be less than width')
+                    elif y >= self.height:
+                        raise IndexError('y must be less than height')
+                    elif x < 0:
+                        raise IndexError('x cannot be less than 0')
+                    elif y < 0:
+                        raise IndexError('y cannot be less than 0')
                     with iter(self) as iterator:
                         iterator.seek(y)
                         return iterator.next(x)
@@ -383,7 +399,7 @@ class Iterator(Resource, collections.Iterator):
         if not isinstance(y, numbers.Integral):
             raise TypeError('expected an integer, but got ' + repr(y))
         elif y < 0:
-            raise ValueError('cannot be less than 0')
+            raise ValueError('cannot be less than 0, but got ' + repr(y))
         elif y > self.height:
             raise ValueError('canot be greater than height')
         self.cursor = y

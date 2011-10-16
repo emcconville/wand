@@ -136,6 +136,15 @@ def slice_invalid_types():
             img['100':, '100']
         with raises(IndexError):
             img[500:, 900]
+        with raises(TypeError):
+            img['1', 0]
+        with raises(TypeError):
+            img[1, '0']
+    with Image(filename=asset('croptest.png')) as img:
+        with raises(IndexError):
+            img[300, 300]
+        with raises(IndexError):
+            img[-301, -301]
 
 
 @tests.test
@@ -146,6 +155,8 @@ def index_pixel():
         assert img[99, 99] == Color('transparent')
         assert img[100, 100] == Color('black')
         assert img[150, 150] == Color('black')
+        assert img[-200, -200] == Color('black')
+        assert img[-201, -201] == Color('transparent')
 
 
 @tests.test
