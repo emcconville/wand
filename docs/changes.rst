@@ -6,6 +6,7 @@ Version 0.1.2
 
 To be released. Still alpha version.
 
+- :class:`~wand.image.Image` implements iterable interface.
 - Added `wand.color` module.
 - Added the abstract base class of all Wand resource objects:
   :class:`wand.resource.Resource`.
