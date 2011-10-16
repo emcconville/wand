@@ -199,7 +199,7 @@ class Resource(object):
 
         """
         severity = ctypes.c_int()
-        desc = self.c_get_exception(self.wand, ctypes.byref(severity))
+        desc = self.c_get_exception(self.resource, ctypes.byref(severity))
         if severity.value == 0:
             return
         self.c_clear_exception(self.wand)
@@ -221,7 +221,10 @@ class Resource(object):
         self.destroy()
 
     def __del__(self):
-        self.destroy()
+        try:
+            self.destroy()
+        except DestroyedResourceError:
+            pass
 
 
 class DestroyedResourceError(ReferenceError, AttributeError):
