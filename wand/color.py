@@ -5,9 +5,45 @@
 from .api import library
 from .resource import Resource
 
+__all__ = 'Color',
+
 
 class Color(Resource):
-    """Color."""
+    """Color value.
+
+    Unlike any other objects in Wand, its resource management can be
+    implicit when it used outside of :keyword:`with` block. In these case,
+    its resource are allocated for every operation which requires a resource
+    and destroyed immediately. Of course it is inefficient when the
+    operations are much, so to avoid it, you should use color objects
+    inside of :keyword:`with` block explicitly e.g.::
+
+        red_count = 0
+        with Color('#f00') as red:
+            with Image(filename='image.png') as img:
+                for row in img:
+                    for col in row:
+                        if col == red:
+                            red_count += 1
+
+    :param string: a color namel string e.g. ``'rgb(255, 255, 255)'``,
+                   ``'#fff'``, ``'white'``. see `ImageMagick Color Names`_
+                   doc also
+    :type string: :class:`basestring`
+
+    .. seealso::
+
+       `ImageMagick Color Names`_
+          The color can then be given as a color name (there is a limited
+          but large set of these; see below) or it can be given as a set
+          of numbers (in decimal or hexadecimal), each corresponding to
+          a channel in an RGB or RGBA color model. HSL, HSLA, HSB, HSBA,
+          CMYK, or CMYKA color models may also be specified. These topics
+          are briefly described in the sections below.
+
+    .. _ImageMagick Color Names: http://www.imagemagick.org/script/color.php
+
+    """
 
     c_is_resource = library.IsPixelWand
     c_destroy_resource = library.DestroyPixelWand

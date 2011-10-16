@@ -23,7 +23,7 @@ from .resource import (increment_refcount, decrement_refcount, Resource,
 from .color import Color
 
 
-__all__ = 'FILTER_TYPES', 'Image', 'ClosedImageError'
+__all__ = 'FILTER_TYPES', 'Image', 'Iterator', 'ClosedImageError'
 
 
 #: (:class:`tuple`) The list of filter types.
@@ -330,6 +330,26 @@ class Image(Resource):
 
 
 class Iterator(Resource, collections.Iterator):
+    """Row iterator for :class:`Image`. It shouldn't be instantiated
+    directly; instead, it can be acquired through :class:`Image` instance::
+
+        assert isinstance(image, wand.image.Image)
+        iterator = iter(image)
+
+    It doesn't iterate every pixel, but rows. For example::
+
+        for row in image:
+            for col in row:
+                assert isinstance(col, wand.color.Color)
+                print col
+
+    Every row is a :class:`collections.Sequence` which consists of
+    one or more :class:`wand.color.Color` values.
+
+    :param image: the image to get an iterator
+    :type image: :class:`Image`
+
+    """
 
     c_is_resource = library.IsPixelIterator
     c_destroy_resource = library.DestroyPixelIterator
@@ -375,6 +395,7 @@ class Iterator(Resource, collections.Iterator):
         return Color(get_color(pixels[x]))
 
     def clone(self):
+        """Clones the same iterator."""
         return type(self)(iterator=self)
 
 
