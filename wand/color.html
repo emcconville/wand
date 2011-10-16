@@ -1,0 +1,124 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>wand.color — Colors &mdash; Wand 0.1.2</title>
+    <link rel="stylesheet" href="../_static/werkzeug.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Wand 0.1.2" href="../index.html" />
+    <link rel="up" title="wand — Simple MagickWand API binding for Python" href="../wand.html" />
+    <link rel="next" title="wand.resource — Global resource management" href="resource.html" />
+    <link rel="prev" title="wand.image — Image objects" href="image.html" />
+   
+  <style type="text/css">
+  .document .body #wand.section h1 {
+    background-repeat: no-repeat;
+    padding-left: 75px;
+    padding-top: 10px;
+    height: 75px;
+    background-image: url(../_static/wand_25.png);
+  }
+  </style>
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="resource.html" title="wand.resource — Global resource management"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="image.html" title="wand.image — Image objects"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Wand</a> &raquo;</li>
+          <li><a href="../wand.html" accesskey="U"><tt class="docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body">
+            
+  <span class="target" id="module-wand.color"></span><div class="section" id="wand-color-colors">
+<h1><a class="reference internal" href="#module-wand.color" title="wand.color"><tt class="xref py py-mod docutils literal"><span class="pre">wand.color</span></tt></a> &#8212; Colors<a class="headerlink" href="#wand-color-colors" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="wand.color.Color">
+<em class="property">class </em><tt class="descclassname">wand.color.</tt><tt class="descname">Color</tt><big>(</big><em>string</em><big>)</big><a class="headerlink" href="#wand.color.Color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Color value.</p>
+<p>Unlike any other objects in Wand, its resource management can be
+implicit when it used outside of <tt class="xref std std-keyword docutils literal"><span class="pre">with</span></tt> block. In these case,
+its resource are allocated for every operation which requires a resource
+and destroyed immediately. Of course it is inefficient when the
+operations are much, so to avoid it, you should use color objects
+inside of <tt class="xref std std-keyword docutils literal"><span class="pre">with</span></tt> block explicitly e.g.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">red_count</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">with</span> <span class="n">Color</span><span class="p">(</span><span class="s">&#39;#f00&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">red</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s">&#39;image.png&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">img</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">img</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">col</span> <span class="o">==</span> <span class="n">red</span><span class="p">:</span>
+                    <span class="n">red_count</span> <span class="o">+=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>string</strong> (<tt class="xref py py-class docutils literal"><span class="pre">basestring</span></tt>) &#8211; a color namel string e.g. <tt class="docutils literal"><span class="pre">'rgb(255,</span> <span class="pre">255,</span> <span class="pre">255)'</span></tt>,
+<tt class="docutils literal"><span class="pre">'#fff'</span></tt>, <tt class="docutils literal"><span class="pre">'white'</span></tt>. see <a class="reference external" href="http://www.imagemagick.org/script/color.php">ImageMagick Color Names</a>
+doc also</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://www.imagemagick.org/script/color.php">ImageMagick Color Names</a></dt>
+<dd>The color can then be given as a color name (there is a limited
+but large set of these; see below) or it can be given as a set
+of numbers (in decimal or hexadecimal), each corresponding to
+a channel in an RGB or RGBA color model. HSL, HSLA, HSB, HSBA,
+CMYK, or CMYKA color models may also be specified. These topics
+are briefly described in the sections below.</dd>
+</dl>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2011, Hong Minhee, StyleShare.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+    </div><a href="https://github.com/StyleShare/wand"><img
+  style="position: fixed; top: 0; right: 0; border: 0;"
+  src="../_static/github.png" alt="Fork me on GitHub"></a>
+  </body>
+</html>
