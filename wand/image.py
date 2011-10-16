@@ -18,7 +18,8 @@ import sys
 import warnings
 from . import exceptions
 from .api import library
-from .resource import increment_refcount, decrement_refcount
+from .resource import (increment_refcount, decrement_refcount, Resource,
+                       DestroyedResourceError)
 
 
 __all__ = 'FILTER_TYPES', 'Image', 'ClosedImageError'
@@ -52,7 +53,7 @@ FILTER_TYPES = ('undefined', 'point', 'box', 'triangle', 'hermite', 'hanning',
                 'catrom', 'mitchell', 'lanczos', 'bessel', 'sinc')
 
 
-class Image(object):
+class Image(Resource):
     """An image object.
 
     :param image: makes an exact copy of the ``image``
@@ -84,6 +85,11 @@ class Image(object):
 
     """
 
+    c_is_resource = library.IsMagickWand
+    c_destroy_resource = library.DestroyMagickWand
+    c_get_exception = library.MagickGetException
+    c_clear_exception = library.MagickClearException
+
     __slots__ = '_wand',
 
     def __init__(self, image=None, blob=None, filename=None):
@@ -95,8 +101,7 @@ class Image(object):
                  for b in args[:i] + args[i + 1:]):
             raise TypeError('parameters are exclusive each other; use only '
                             'one at once')
-        increment_refcount()
-        try:
+        with self.allocate():
             if image is not None:
                 if not isinstance(image, Image):
                     raise TypeError('image must be a wand.image.Image '
@@ -117,9 +122,6 @@ class Image(object):
                     library.MagickReadImage(self.wand, filename)
                 else:
                     raise TypeError('invalid argument(s)')
-        except:
-            decrement_refcount()
-            raise
         self.raise_exception()
 
     @property
@@ -128,63 +130,33 @@ class Image(object):
         :exc:`ClosedImageError` when the instance has destroyed already.
 
         """
-        if self._wand is None:
+        try:
+            return self.resource
+        except DestroyedResourceError:
             raise ClosedImageError(repr(self) + ' is closed already')
-        return self._wand
 
     @wand.setter
     def wand(self, wand):
-        if library.IsMagickWand(wand):
-            self._wand = wand
-        else:
+        try:
+            self.resource = wand
+        except TypeError:
             raise TypeError(repr(wand) + ' is not a MagickWand instance')
 
     @wand.deleter
     def wand(self):
-        library.DestroyMagickWand(self.wand)
-        self._wand = None
-
-    def get_exception(self):
-        """Gets a current exception instance.
-
-        :returns: a current exception. it can be ``None`` as well if any
-                  errors aren't occurred
-        :rtype: :class:`wand.exceptions.WandException`
-
-        """
-        severity = ctypes.c_int()
-        desc = library.MagickGetException(self.wand, ctypes.byref(severity))
-        if severity.value == 0:
-            return
-        library.MagickClearException(self.wand)
-        exc_cls = exceptions.TYPE_MAP[severity.value]
-        return exc_cls(ctypes.string_at(desc))
-
-    def raise_exception(self, stacklevel=1):
-        """Raises an exception or warning if it has occurred."""
-        e = self.get_exception()
-        if isinstance(e, Warning):
-            warnings.warn(e, stacklevel=stacklevel + 1)
-        elif isinstance(e, Exception):
-            raise e
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, type, value, traceback):
-        self.close()
-
-    def __del__(self):
-        self.close()
+        del self.resource
 
     def close(self):
         """Closes the image explicitly. If you use the image object in
         :keyword:`with` statement, it was called implicitly so don't have to
         call it.
 
+        .. note::
+
+           It has the same functionality of :attr:`destroy()` method.
+
         """
-        del self.wand
-        decrement_refcount()
+        self.destroy()
 
     def clone(self):
         """Clones the image. It is equivalent to call :class:`Image` with
@@ -350,7 +322,7 @@ class Image(object):
         return blob
 
 
-class ClosedImageError(ReferenceError, AttributeError):
+class ClosedImageError(DestroyedResourceError):
     """An error that rises when some code tries access to an already closed
     image.
 
