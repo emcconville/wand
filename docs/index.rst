@@ -40,9 +40,12 @@ Requirements
 ------------
 
 - Python 2.6 or higher
+
   - CPython 2.6 or higher
   - PyPy 1.5 or higher
+
 - MagickWand library
+
   - ``libmagickwand-dev`` for APT on Debian/Ubuntu
   - ``imagemagick`` for MacPorts/Homebrew on Mac
   - ``ImageMagick-devel`` for Yum on CentOS

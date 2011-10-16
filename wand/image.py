@@ -194,8 +194,9 @@ class Image(Resource):
                 elif not x_slice and y_slice:
                     x = slice(x, x + 1)
                 elif not (x_slice or y_slice):
-                    raise NotImplementedError('pixel getter is not '
-                                              'implemented yet')
+                    with iter(self) as iterator:
+                        iterator.seek(y)
+                        return iterator.next(x)
                 if not (x.step is None and y.step is None):
                     raise ValueError('slicing with step is unsupported')
                 elif (x.start is None and x.stop is None and
@@ -377,6 +378,17 @@ class Iterator(Resource, collections.Iterator):
 
     def __iter__(self):
         return self
+
+    def seek(self, y):
+        if not isinstance(y, numbers.Integral):
+            raise TypeError('expected an integer, but got ' + repr(y))
+        elif y < 0:
+            raise ValueError('cannot be less than 0')
+        elif y > self.height:
+            raise ValueError('canot be greater than height')
+        self.cursor = y
+        if not library.PixelSetIteratorRow(self.resource, y):
+            self.raise_exception()
 
     def next(self, x=None):
         if self.cursor >= self.height:

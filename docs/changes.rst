@@ -1,10 +1,17 @@
 Wand Changelog
 ==============
 
-Version 0.1.2
+Version 0.1.3
 -------------
 
 To be released. Still alpha version.
+
+- Implemented pixel getter for :class:`~wand.image.Image`.
+
+Version 0.1.2
+-------------
+
+Released on October 16, 2011. Still alpha version.
 
 - :class:`~wand.image.Image` implements iterable interface.
 - Added `wand.color` module.

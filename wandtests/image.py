@@ -139,6 +139,16 @@ def slice_invalid_types():
 
 
 @tests.test
+def index_pixel():
+    """Gets a pixel."""
+    with Image(filename=asset('croptest.png')) as img:
+        assert img[0, 0] == Color('transparent')
+        assert img[99, 99] == Color('transparent')
+        assert img[100, 100] == Color('black')
+        assert img[150, 150] == Color('black')
+
+
+@tests.test
 def slice_crop():
     """Crops using slicing."""
     with Color('#000') as black:
