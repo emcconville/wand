@@ -207,6 +207,8 @@ def slice_crop():
                 assert cropped.size == (150, 150)
             with img[-200:-100, -200:-100] as cropped:
                 assert cropped.size == (100, 100)
+            with img[100:200] as cropped:
+                assert cropped.size == (300, 100)
 
 
 @tests.test

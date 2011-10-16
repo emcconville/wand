@@ -243,7 +243,7 @@ class Image(Resource):
                 self.raise_exception()
                 return cloned
             else:
-                raise NotImplementedError('1d indexing is not implemented yet')
+                return self[idx[0]]
         elif isinstance(idx, numbers.Integral):
             if idx < 0:
                 idx += self.height
@@ -256,6 +256,8 @@ class Image(Resource):
             with iter(self) as iterator:
                 iterator.seek(idx)
                 return iterator.next()
+        elif isinstance(idx, slice):
+            return self[:, idx]
         raise TypeError('unsupported index type: ' + repr(idx))
 
     @property
