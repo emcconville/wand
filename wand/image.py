@@ -172,6 +172,9 @@ class Image(Resource):
         """
         return type(self)(image=self)
 
+    def __len__(self):
+        return self.height
+
     def __getitem__(self, idx):
         if isinstance(idx, collections.Iterable):
             idx = tuple(idx)

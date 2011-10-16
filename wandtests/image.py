@@ -80,6 +80,7 @@ def size():
         assert img.size == (402, 599)
         assert img.width == 402
         assert img.height == 599
+        assert len(img) == 599
 
 
 @tests.test
