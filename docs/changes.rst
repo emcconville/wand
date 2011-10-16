@@ -6,6 +6,8 @@ Version 0.1.2
 
 To be released. Still alpha version.
 
+- Added the abstract base class of all Wand resource objects:
+  :class:`wand.resource.Resource`.
 - :class:`~wand.image.Image` implements slicing.
 - Cropping :class:`~wand.image.Image` using its slicing operator.
 
