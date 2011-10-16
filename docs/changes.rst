@@ -6,7 +6,8 @@ Version 0.1.3
 
 To be released. Still alpha version.
 
-- Implemented pixel getter for :class:`~wand.image.Image`.
+- Pixel getter for :class:`~wand.image.Image`.
+- Row getter for :class:`~wand.image.Image`.
 
 Version 0.1.2
 -------------

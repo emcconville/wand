@@ -1,4 +1,5 @@
 import os.path
+import contextlib
 import tempfile
 from attest import assert_hook, Tests, raises
 from wand.image import Image, ClosedImageError
@@ -120,6 +121,10 @@ def slice_clone():
 def slice_invalid_types():
     """Slicing with invalid types should throw exceptions."""
     with Image(filename=asset('mona-lisa.jpg')) as img:
+        with raises(TypeError):
+            img['12']
+        with raises(TypeError):
+            img[1.23]
         with raises(ValueError):
             img[()]
         with raises(ValueError):
@@ -157,6 +162,35 @@ def index_pixel():
         assert img[150, 150] == Color('black')
         assert img[-200, -200] == Color('black')
         assert img[-201, -201] == Color('transparent')
+
+
+@tests.test
+def index_row():
+    """Gets a row."""
+    with Color('transparent') as transparent:
+        with Color('black') as black:
+            with Image(filename=asset('croptest.png')) as img:
+                for c in img[0]:
+                    assert c == transparent
+                for c in img[99]:
+                    assert c == transparent
+                for i, c in enumerate(img[100]):
+                    if 100 <= i < 200:
+                        assert c == black
+                    else:
+                        assert c == transparent
+                for i, c in enumerate(img[150]):
+                    if 100 <= i < 200:
+                        assert c == black
+                    else:
+                        assert c == transparent
+                for i, c in enumerate(img[-200]):
+                    if 100 <= i < 200:
+                        assert c == black
+                    else:
+                        assert c == transparent
+                for c in img[-201]:
+                    assert c == transparent
 
 
 @tests.test

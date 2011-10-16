@@ -180,7 +180,8 @@ class Image(Resource):
         return Iterator(image=self)
 
     def __getitem__(self, idx):
-        if isinstance(idx, collections.Iterable):
+        if (not isinstance(idx, basestring) and
+            isinstance(idx, collections.Iterable)):
             idx = tuple(idx)
             d = len(idx)
             if not (1 <= d <= 2):
@@ -243,7 +244,19 @@ class Image(Resource):
                 return cloned
             else:
                 raise NotImplementedError('1d indexing is not implemented yet')
-        raise NotImplementedError('row getter is not implemented yet')
+        elif isinstance(idx, numbers.Integral):
+            if idx < 0:
+                idx += self.height
+            elif idx >= self.height:
+                raise IndexError('index must be less than height, but got ' +
+                                 repr(idx))
+            elif idx < 0:
+                raise IndexError('index cannot be less than zero, but got ' +
+                                 repr(idx))
+            with iter(self) as iterator:
+                iterator.seek(idx)
+                return iterator.next()
+        raise TypeError('unsupported index type: ' + repr(idx))
 
     @property
     def width(self):
@@ -403,8 +416,11 @@ class Iterator(Resource, collections.Iterator):
         elif y > self.height:
             raise ValueError('canot be greater than height')
         self.cursor = y
-        if not library.PixelSetIteratorRow(self.resource, y):
-            self.raise_exception()
+        if y == 0:
+            library.PixelSetFirstIteratorRow(self.resource)
+        else:
+            if not library.PixelSetIteratorRow(self.resource, y - 1):
+                self.raise_exception()
 
     def next(self, x=None):
         if self.cursor >= self.height:
