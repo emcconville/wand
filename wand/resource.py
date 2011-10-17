@@ -12,8 +12,8 @@ from . import exceptions
 from .api import library
 
 
-__all__ = ('is_instantiated', 'genesis', 'terminus', 'increment_refcount',
-           'decrement_refcount', 'Resource', 'DetroyedResourceError')
+__all__ = ('genesis', 'terminus', 'increment_refcount', 'decrement_refcount',
+           'Resource', 'DestroyedResourceError')
 
 
 def genesis():

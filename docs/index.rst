@@ -50,6 +50,17 @@ Requirements
   - ``imagemagick`` for MacPorts/Homebrew on Mac
   - ``ImageMagick-devel`` for Yum on CentOS
 
+
+User's guide
+------------
+
+.. toctree::
+   :maxdepth: 2
+
+   guide/resource
+   changes
+
+
 References
 ----------
 
