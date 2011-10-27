@@ -4,10 +4,13 @@ Wand Changelog
 Version 0.1.3
 -------------
 
-To be released. Still alpha version.
+Released on October 27, 2011. Slightly mature alpha version.
 
 - Pixel getter for :class:`~wand.image.Image`.
 - Row getter for :class:`~wand.image.Image`.
+- Mac compatibility.
+- Windows compatibility.
+- 64-bit processor compatibility.
 
 Version 0.1.2
 -------------
