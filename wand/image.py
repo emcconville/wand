@@ -87,11 +87,7 @@ class Image(Resource):
 
     """
 
-    if platform.system() == 'Windows':
-        # FIXME: Ad-hoc solution for Windows
-        c_is_resource = bool
-    else:
-        c_is_resource = library.IsMagickWand
+    c_is_resource = library.IsMagickWand
     c_destroy_resource = library.DestroyMagickWand
     c_get_exception = library.MagickGetException
     c_clear_exception = library.MagickClearException
@@ -340,7 +336,7 @@ class Image(Resource):
             raise TypeError('filename must be a string, not ' + repr(filename))
         r = library.MagickWriteImage(self.wand, filename)
         if not r:
-            raise self.get_exception()
+            self.raise_exception()
 
     def make_blob(self, format):
         """Makes the binary string of the image.
@@ -361,9 +357,11 @@ class Image(Resource):
         library.MagickResetIterator(self.wand)
         length = ctypes.c_size_t()
         blob_p = library.MagickGetImageBlob(self.wand, ctypes.byref(length))
-        blob = ctypes.string_at(blob_p, length.value)
-        library.MagickRelinquishMemory(library.MagickIdentifyImage(self.wand))
-        return blob
+        if blob_p and length.value:
+            blob = ctypes.string_at(blob_p, length.value)
+            library.MagickRelinquishMemory(blob_p)
+            return blob
+        self.raise_exception()
 
 
 class Iterator(Resource, collections.Iterator):
@@ -435,11 +433,9 @@ class Iterator(Resource, collections.Iterator):
             raise StopIteration()
         self.cursor += 1
         width = ctypes.c_size_t()
-        f = library.PixelGetNextIteratorRow
-        f.restype = ctypes.POINTER(ctypes.c_void_p)
-        pixels = f(self.resource, ctypes.byref(width))
+        pixels = library.PixelGetNextIteratorRow(self.resource,
+                                                 ctypes.byref(width))
         get_color = library.PixelGetColorAsString
-        get_color.restype = ctypes.c_char_p
         if x is None:
             r_pixels = [None] * width.value
             for x in xrange(width.value):
