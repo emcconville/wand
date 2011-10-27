@@ -27,7 +27,7 @@ def new_from_filename():
 @tests.test
 def new_from_blob():
     """Opens an image from blob."""
-    with open(asset('mona-lisa.jpg')) as f:
+    with open(asset('mona-lisa.jpg'), 'rb') as f:
         blob = f.read()
     with Image(blob=blob) as img:
         assert img.width == 402

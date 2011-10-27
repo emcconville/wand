@@ -16,6 +16,7 @@ import ctypes
 import os
 import sys
 import warnings
+import platform
 from . import exceptions
 from .api import library
 from .resource import (increment_refcount, decrement_refcount, Resource,
@@ -86,7 +87,11 @@ class Image(Resource):
 
     """
 
-    c_is_resource = library.IsMagickWand
+    if platform.system() == 'Windows':
+        # FIXME: Ad-hoc solution for Windows
+        c_is_resource = bool
+    else:
+        c_is_resource = library.IsMagickWand
     c_destroy_resource = library.DestroyMagickWand
     c_get_exception = library.MagickGetException
     c_clear_exception = library.MagickClearException
@@ -436,8 +441,12 @@ class Iterator(Resource, collections.Iterator):
         get_color = library.PixelGetColorAsString
         get_color.restype = ctypes.c_char_p
         if x is None:
-            pixels = [Color(get_color(pixels[x])) for x in xrange(width.value)]
-            return pixels
+            r_pixels = [None] * width.value
+            for x in xrange(width.value):
+                pc = pixels[x]
+                c = get_color(pc)
+                r_pixels[x] = Color(c)
+            return r_pixels
         return Color(get_color(pixels[x]))
 
     def clone(self):
