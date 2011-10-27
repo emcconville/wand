@@ -1,0 +1,116 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Resource management &mdash; Wand 0.1.3</title>
+    <link rel="stylesheet" href="../_static/werkzeug.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Wand 0.1.3" href="../index.html" />
+    <link rel="next" title="Wand Changelog" href="../changes.html" />
+    <link rel="prev" title="Wand" href="../index.html" />
+   
+  <style type="text/css">
+  .document .body #wand.section h1 {
+    background-repeat: no-repeat;
+    padding-left: 75px;
+    padding-top: 10px;
+    height: 75px;
+    background-image: url(../_static/wand_25.png);
+  }
+  </style>
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../changes.html" title="Wand Changelog"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Wand"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Wand</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body">
+            
+  <div class="section" id="resource-management">
+<h1>Resource management<a class="headerlink" href="#resource-management" title="Permalink to this headline">¶</a></h1>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="../wand/resource.html#module-wand.resource" title="wand.resource"><tt class="xref py py-mod docutils literal"><span class="pre">wand.resource</span></tt></a> &#8212; Global resource management</dt>
+<dd>There is the global resource to manage in MagickWand API.
+This module implements automatic global resource management through
+reference counting.</dd>
+</dl>
+</div>
+<p>Objects Wand provides are resources to be managed. It has to be closed
+(destroyed) after using like file or database connection. You can deal
+with it using <tt class="xref std std-keyword docutils literal"><span class="pre">with</span></tt> very easily and explicitly:</p>
+<div class="highlight-python"><pre>with Image(filename='') as img:
+    # deal with img...</pre>
+</div>
+<p>Or you can call its <a class="reference internal" href="../wand/resource.html#wand.resource.Resource.destroy" title="wand.resource.Resource.destroy"><tt class="xref py py-meth docutils literal"><span class="pre">destroy()</span></tt></a> (or
+<a class="reference internal" href="../wand/image.html#wand.image.Image.close" title="wand.image.Image.close"><tt class="xref py py-meth docutils literal"><span class="pre">close()</span></tt></a> if it is an <a class="reference internal" href="../wand/image.html#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a>
+instance) method manually:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">try</span><span class="p">:</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+    <span class="c"># deal with img...</span>
+<span class="k">finally</span><span class="p">:</span>
+    <span class="n">img</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>It also implements the destructor that invokes
+<a class="reference internal" href="../wand/resource.html#wand.resource.Resource.destroy" title="wand.resource.Resource.destroy"><tt class="xref py py-meth docutils literal"><span class="pre">destroy()</span></tt></a>, and if your program runs on
+CPython (which does reference counting instead of ordinary garbage
+collection) most of resources are automatically deallocated.</p>
+<p class="last">However it&#8217;s just depending on CPython&#8217;s implementation detail of
+memory management, so it&#8217;s not a good idea. If your program
+runs on PyPy (which implements garbage collector) for example,
+invocation time of destructors is not determined, so the program
+would be broken.</p>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2011, Hong Minhee, StyleShare.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+    </div><a href="https://github.com/StyleShare/wand"><img
+  style="position: fixed; top: 0; right: 0; border: 0;"
+  src="../_static/github.png" alt="Fork me on GitHub"></a>
+  </body>
+</html>
