@@ -1,6 +1,11 @@
 Wand Changelog
 ==============
 
+Version 0.1.4
+-------------
+
+Released on October 27, 2011. Hotfix of the malformed Python package.
+
 Version 0.1.3
 -------------
 
