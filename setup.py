@@ -45,6 +45,7 @@ class upload_doc(distutils.cmd.Command):
 
 setup(name='Wand',
       packages=['wand'],
+      data_files=[('', ['README.rst'])],
       version=VERSION_INFO,
       description='Ctypes-based simple MagickWand API binding for Python',
       long_description=readme(),
