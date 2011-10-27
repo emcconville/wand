@@ -38,7 +38,6 @@ def load_library():
 #: (:class:`ctypes.CDLL`) The MagickWand library.
 library = load_library()
 
-library.NewMagickWand.argtypes = []
 library.NewMagickWand.restype = ctypes.c_void_p
 
 library.DestroyMagickWand.argtypes = [ctypes.c_void_p]
@@ -48,31 +47,25 @@ library.CloneMagickWand.argtypes = [ctypes.c_void_p]
 library.CloneMagickWand.restype = ctypes.c_void_p
 
 library.IsMagickWand.argtypes = [ctypes.c_void_p]
-library.IsMagickWand.restype = ctypes.c_bool
 
 library.MagickGetException.argtypes = [ctypes.c_void_p,
                                        ctypes.POINTER(ctypes.c_int)]
 library.MagickGetException.restype = ctypes.c_char_p
 
 library.MagickClearException.argtypes = [ctypes.c_void_p]
-library.MagickClearException.restype = ctypes.c_bool
 
 library.MagickReadImageBlob.argtypes = [ctypes.c_void_p, ctypes.c_void_p,
                                         ctypes.c_size_t]
-library.MagickReadImageBlob.restype = ctypes.c_bool
 
 library.MagickReadImage.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
-library.MagickReadImage.restype = ctypes.c_bool
 
 library.MagickSetImageFormat.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
-library.MagickSetImageFormat.restype = ctypes.c_bool
 
 library.MagickGetImageBlob.argtypes = [ctypes.c_void_p,
                                        ctypes.POINTER(ctypes.c_size_t)]
 library.MagickGetImageBlob.restype = ctypes.POINTER(ctypes.c_ubyte)
 
 library.MagickWriteImage.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
-library.MagickWriteImage.restype = ctypes.c_bool
 
 library.MagickGetImageWidth.argtypes = [ctypes.c_void_p]
 library.MagickGetImageWidth.restype = ctypes.c_size_t
@@ -83,12 +76,10 @@ library.MagickGetImageHeight.restype = ctypes.c_size_t
 library.MagickCropImage.argtypes = [ctypes.c_void_p, ctypes.c_size_t,
                                     ctypes.c_size_t, ctypes.c_ssize_t,
                                     ctypes.c_ssize_t]
-library.MagickCropImage.restype = ctypes.c_bool
 
 library.MagickResizeImage.argtypes = [ctypes.c_void_p, ctypes.c_size_t,
                                       ctypes.c_size_t, ctypes.c_int,
                                       ctypes.c_double]
-library.MagickResizeImage.restype = ctypes.c_bool
 
 library.MagickResetIterator.argtypes = [ctypes.c_void_p]
 
@@ -108,46 +99,38 @@ library.ClonePixelIterator.argtypes = [ctypes.c_void_p]
 library.ClonePixelIterator.restype = ctypes.c_void_p
 
 library.IsPixelIterator.argtypes = [ctypes.c_void_p]
-library.IsPixelIterator.restype = ctypes.c_bool
 
 library.PixelGetIteratorException.argtypes = [ctypes.c_void_p,
                                               ctypes.POINTER(ctypes.c_int)]
 library.PixelGetIteratorException.restype = ctypes.c_char_p
 
 library.PixelClearIteratorException.argtypes = [ctypes.c_void_p]
-library.PixelClearIteratorException.restype = ctypes.c_bool
 
 library.PixelSetFirstIteratorRow.argtypes = [ctypes.c_void_p]
 
 library.PixelSetIteratorRow.argtypes = [ctypes.c_void_p, ctypes.c_ssize_t]
-library.PixelSetIteratorRow.restype = ctypes.c_bool
 
 library.PixelGetNextIteratorRow.argtypes = [ctypes.c_void_p,
                                             ctypes.POINTER(ctypes.c_size_t)]
 library.PixelGetNextIteratorRow.restype = ctypes.POINTER(ctypes.c_void_p)
 
-library.NewPixelWand.argtypes = []
 library.NewPixelWand.restype = ctypes.c_void_p
 
 library.DestroyPixelWand.argtypes = [ctypes.c_void_p]
 library.DestroyPixelWand.restype = ctypes.c_void_p
 
 library.IsPixelWand.argtypes = [ctypes.c_void_p]
-library.IsPixelWand.restype = ctypes.c_bool
 
 library.PixelGetException.argtypes = [ctypes.c_void_p,
                                       ctypes.POINTER(ctypes.c_int)]
 library.PixelGetException.restype = ctypes.c_char_p
 
 library.PixelClearException.argtypes = [ctypes.c_void_p]
-library.PixelClearException.restype = ctypes.c_bool
 
 library.IsPixelWandSimilar.argtypes = [ctypes.c_void_p, ctypes.c_void_p,
                                        ctypes.c_double]
-library.IsPixelWandSimilar.restype = ctypes.c_bool
 
 library.PixelSetColor.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
-library.PixelSetColor.restype = ctypes.c_bool
 
 library.PixelGetColorAsString.argtypes = [ctypes.c_void_p]
 library.PixelGetColorAsString.restype = ctypes.c_char_p
