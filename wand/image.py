@@ -417,13 +417,9 @@ class Image(Resource):
 
         """
         if format is not None:
-            if not isinstance(format, basestring):
-                raise TypeError("format must be a string like 'png' or 'jpeg'"
-                                ', not ' + repr(format))
-            r = library.MagickSetImageFormat(self.wand,
-                                             str(format).strip().upper())
-            if not r:
-                raise ValueError('{0!r} is an invalid format'.format(format))
+            with self.clone() as cloned:
+                cloned.format = format
+                return cloned.make_blob()
         library.MagickResetIterator(self.wand)
         length = ctypes.c_size_t()
         blob_p = library.MagickGetImageBlob(self.wand, ctypes.byref(length))

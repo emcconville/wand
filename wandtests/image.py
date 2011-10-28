@@ -128,6 +128,8 @@ def make_blob():
     with Image(filename=asset('mona-lisa.jpg')) as img:
         with Image(blob=img.make_blob('png')) as img2:
             assert img2.size == (402, 599)
+            assert img2.format == 'PNG'
+        assert img.format == 'JPEG'
         with raises(TypeError):
             img.make_blob(123)
 

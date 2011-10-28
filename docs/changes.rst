@@ -6,6 +6,8 @@ Version 0.1.6
 
 To be released. Still alpha version.
 
+ - Removed a side effect of :class:`Image.make_blob()
+   <wand.image.Image.make_blob>` method that changes the image format silently.
  - Added :attr:`Image.format <wand.image.Image.format>` property.
 
 Version 0.1.5
