@@ -10,6 +10,7 @@ To be released. Still alpha version.
    <wand.image.Image.make_blob>` method that changes the image format silently.
  - Added :attr:`Image.format <wand.image.Image.format>` property.
  - Added :meth:`Image.convert() <wand.image.Image.convert>` method.
+ - Fixed a bug about Python 2.6 compatibility.
 
 Version 0.1.5
 -------------

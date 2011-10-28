@@ -35,6 +35,15 @@ def load_library():
     return ctypes.CDLL(libpath)
 
 
+if not hasattr(ctypes, 'c_ssize_t'):
+    if ctypes.sizeof(ctypes.c_uint) == ctypes.sizeof(ctypes.c_void_p):
+        ctypes.c_ssize_t = ctypes.c_int
+    elif ctypes.sizeof(ctypes.c_ulong) == ctypes.sizeof(ctypes.c_void_p):
+        ctypes.c_ssize_t = ctypes.c_long
+    elif ctypes.sizeof(ctypes.c_ulonglong) == ctypes.sizeof(ctypes.c_void_p):
+        ctypes.c_ssize_t = ctypes.c_longlong
+
+
 #: (:class:`ctypes.CDLL`) The MagickWand library.
 library = load_library()
 
