@@ -6,13 +6,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>wand.image — Image objects &mdash; Wand 0.1.4</title>
+    <title>wand.image — Image objects &mdash; Wand 0.1.5</title>
     <link rel="stylesheet" href="../_static/werkzeug.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.4',
+        VERSION:     '0.1.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -21,7 +21,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Wand 0.1.4" href="../index.html" />
+    <link rel="top" title="Wand 0.1.5" href="../index.html" />
     <link rel="up" title="wand — Simple MagickWand API binding for Python" href="../wand.html" />
     <link rel="next" title="wand.color — Colors" href="color.html" />
     <link rel="prev" title="wand — Simple MagickWand API binding for Python" href="../wand.html" />
@@ -102,7 +102,7 @@ error happened):</p>
 
 <dl class="class">
 <dt id="wand.image.Image">
-<em class="property">class </em><tt class="descclassname">wand.image.</tt><tt class="descname">Image</tt><big>(</big><em>image=None</em>, <em>blob=None</em>, <em>filename=None</em><big>)</big><a class="headerlink" href="#wand.image.Image" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">wand.image.</tt><tt class="descname">Image</tt><big>(</big><em>image=None</em>, <em>blob=None</em>, <em>file=None</em>, <em>filename=None</em><big>)</big><a class="headerlink" href="#wand.image.Image" title="Permalink to this definition">¶</a></dt>
 <dd><p>An image object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -110,7 +110,9 @@ error happened):</p>
 <tbody valign="top">
 <tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>image</strong> (<a class="reference internal" href="#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a>) &#8211; makes an exact copy of the <tt class="docutils literal"><span class="pre">image</span></tt></li>
-<li><strong>filename</strong> (<tt class="xref py py-class docutils literal"><span class="pre">basestring</span></tt>) &#8211; opens an image of the <tt class="docutils literal"><span class="pre">filename</span></tt></li>
+<li><strong>blob</strong> (<tt class="xref py py-class docutils literal"><span class="pre">str</span></tt>) &#8211; opens an image of the <tt class="docutils literal"><span class="pre">blob</span></tt> byte array</li>
+<li><strong>file</strong> (<em>file object</em>) &#8211; opens an image of the <tt class="docutils literal"><span class="pre">file</span></tt> object</li>
+<li><strong>filename</strong> (<tt class="xref py py-class docutils literal"><span class="pre">basestring</span></tt>) &#8211; opens an image of the <tt class="docutils literal"><span class="pre">filename</span></tt> string</li>
 </ul>
 </td>
 </tr>
@@ -190,13 +192,14 @@ call it.</p>
 
 <dl class="method">
 <dt id="wand.image.Image.make_blob">
-<tt class="descname">make_blob</tt><big>(</big><em>format</em><big>)</big><a class="headerlink" href="#wand.image.Image.make_blob" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">make_blob</tt><big>(</big><em>format=None</em><big>)</big><a class="headerlink" href="#wand.image.Image.make_blob" title="Permalink to this definition">¶</a></dt>
 <dd><p>Makes the binary string of the image.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>format</strong> (<tt class="xref py py-class docutils literal"><span class="pre">basestring</span></tt>) &#8211; the image format to write e.g. <tt class="docutils literal"><span class="pre">'png'</span></tt>, <tt class="docutils literal"><span class="pre">'jpeg'</span></tt></td>
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>format</strong> (<tt class="xref py py-class docutils literal"><span class="pre">basestring</span></tt>) &#8211; the image format to write e.g. <tt class="docutils literal"><span class="pre">'png'</span></tt>, <tt class="docutils literal"><span class="pre">'jpeg'</span></tt>.
+it is omittable</td>
 </tr>
 <tr class="field"><th class="field-name">Returns:</th><td class="field-body">a blob (bytes) string</td>
 </tr>
@@ -233,13 +236,18 @@ height</li>
 
 <dl class="method">
 <dt id="wand.image.Image.save">
-<tt class="descname">save</tt><big>(</big><em>filename</em><big>)</big><a class="headerlink" href="#wand.image.Image.save" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves the image into the <tt class="docutils literal"><span class="pre">filename</span></tt>.</p>
+<tt class="descname">save</tt><big>(</big><em>file=None</em>, <em>filename=None</em><big>)</big><a class="headerlink" href="#wand.image.Image.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the image into the <tt class="docutils literal"><span class="pre">file</span></tt> or <tt class="docutils literal"><span class="pre">filename</span></tt>. It takes
+only one argument at a time.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<tt class="xref py py-class docutils literal"><span class="pre">basename</span></tt>) &#8211; a filename to write to</td>
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>file</strong> (<em>file object</em>) &#8211; a file object to write to</li>
+<li><strong>filename</strong> (<tt class="xref py py-class docutils literal"><span class="pre">basename</span></tt>) &#8211; a filename string to write to</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
