@@ -122,6 +122,10 @@ class Image(Resource):
                         fd = libc.fdopen(file.fileno(), file.mode)
                         library.MagickReadImageFile(self.wand, fd)
                         read = True
+                    elif not callable(getattr(file, 'read', None)):
+                        raise TypeError('file must be a readable file object'
+                                        ', but the given object does not '
+                                        'have read() method')
                     else:
                         blob = file.read()
                         file = None

@@ -29,6 +29,8 @@ def new_from_file():
     strio.close()
     with raises(ClosedImageError):
         img.wand
+    with raises(TypeError):
+        Image(file='not file object')
 
 
 @tests.test
