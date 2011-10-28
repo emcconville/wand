@@ -322,6 +322,24 @@ class Image(Resource):
         if not r:
             raise ValueError(repr(fmt) + ' is unsupported format')
 
+    def convert(self, format):
+        """Converts the image format with the original image maintained.
+        It returns a converted image instance which is new. ::
+
+            with img.convert('png') as converted:
+                converted.save(filename='converted.png')
+
+        :param format: image format to convert to
+        :type format: :class:`basestring`
+        :returns: a converted image
+        :rtype: :class:`Image`
+        :raises: :exc:`ValueError` when the given ``format`` is unsupported
+
+        """
+        cloned = self.clone()
+        cloned.format = format
+        return cloned
+
     def resize(self, width=None, height=None, filter='triangle', blur=1):
         """Resizes the image.
 
@@ -417,9 +435,8 @@ class Image(Resource):
 
         """
         if format is not None:
-            with self.clone() as cloned:
-                cloned.format = format
-                return cloned.make_blob()
+            with self.convert(format) as converted:
+                return converted.make_blob()
         library.MagickResetIterator(self.wand)
         length = ctypes.c_size_t()
         blob_p = library.MagickGetImageBlob(self.wand, ctypes.byref(length))

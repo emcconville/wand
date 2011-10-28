@@ -9,6 +9,7 @@ To be released. Still alpha version.
  - Removed a side effect of :class:`Image.make_blob()
    <wand.image.Image.make_blob>` method that changes the image format silently.
  - Added :attr:`Image.format <wand.image.Image.format>` property.
+ - Added :meth:`Image.convert() <wand.image.Image.convert>` method.
 
 Version 0.1.5
 -------------

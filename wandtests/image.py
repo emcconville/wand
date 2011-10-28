@@ -163,11 +163,28 @@ def set_format():
         img.save(file=strio)
         strio.seek(0)
         with Image(file=strio) as png:
-            assert img.format == 'PNG'
+            assert png.format == 'PNG'
         with raises(ValueError):
             img.format = 'HONG'
         with raises(TypeError):
             img.format = 123
+
+
+@tests.test
+def convert():
+    """Converts the image format."""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        with img.convert('png') as converted:
+            assert converted.format == 'PNG'
+            strio = StringIO.StringIO()
+            converted.save(file=strio)
+            strio.seek(0)
+            with Image(file=strio) as png:
+                assert png.format == 'PNG'
+        with raises(ValueError):
+            img.convert('HONG')
+        with raises(TypeError):
+            img.convert(123)
 
 
 @tests.test
