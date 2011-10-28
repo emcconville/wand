@@ -61,6 +61,9 @@ library.MagickReadImage.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
 
 library.MagickReadImageFile.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 
+library.MagickGetImageFormat.argtypes = [ctypes.c_void_p]
+library.MagickGetImageFormat.restype = ctypes.c_char_p
+
 library.MagickSetImageFormat.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
 
 library.MagickGetImageBlob.argtypes = [ctypes.c_void_p,

@@ -296,6 +296,29 @@ class Image(Resource):
         """(:class:`tuple`) The pair of (:attr:`width`, :attr:`height`)."""
         return self.width, self.height
 
+    @property
+    def format(self):
+        """(:class:`basestring`) The image format.
+
+        If you want to convert the image format, just reset this property::
+
+            assert isinstance(img, wand.image.Image)
+            img.format = 'png'
+
+        It may raise :exc:`ValueError` when the format is unsupported.
+
+        """
+        fmt = library.MagickGetImageFormat(self.wand)
+        if fmt:
+            return fmt
+        self.raise_exception()
+
+    @format.setter
+    def format(self, fmt):
+        r = library.MagickSetImageFormat(self.wand, fmt.strip().upper())
+        if not r:
+            raise ValueError(repr(fmt) + ' is unsupported format')
+
     def resize(self, width=None, height=None, filter='triangle', blur=1):
         """Resizes the image.
 

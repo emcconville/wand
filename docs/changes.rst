@@ -1,6 +1,13 @@
 Wand Changelog
 ==============
 
+Version 0.1.6
+-------------
+
+To be released. Still alpha version.
+
+ - Added :attr:`Image.format <wand.image.Image.format>` property.
+
 Version 0.1.5
 -------------
 

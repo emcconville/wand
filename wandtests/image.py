@@ -1,7 +1,10 @@
 import os.path
 import contextlib
 import tempfile
-import StringIO
+try:
+    import cStringIO as StringIO
+except ImportError:
+    import StringIO
 from attest import assert_hook, Tests, raises
 from wand.image import Image, ClosedImageError
 from wand.color import Color
@@ -137,6 +140,30 @@ def size():
         assert img.width == 402
         assert img.height == 599
         assert len(img) == 599
+
+
+@tests.test
+def get_format():
+    """Gets the image format."""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        assert img.format == 'JPEG'
+    with Image(filename=asset('croptest.png')) as img:
+        assert img.format == 'PNG'
+
+
+@tests.test
+def set_format():
+    """Sets the image format."""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        img.format = 'png'
+        assert img.format == 'PNG'
+        strio = StringIO.StringIO()
+        img.save(file=strio)
+        strio.seek(0)
+        with Image(file=strio) as png:
+            assert img.format == 'PNG'
+        with raises(ValueError):
+            img.format = 'HONG'
 
 
 @tests.test
