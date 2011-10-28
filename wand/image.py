@@ -315,6 +315,9 @@ class Image(Resource):
 
     @format.setter
     def format(self, fmt):
+        if not isinstance(fmt, basestring):
+            raise TypeError("format must be a string like 'png' or 'jpeg'"
+                            ', not ' + repr(fmt))
         r = library.MagickSetImageFormat(self.wand, fmt.strip().upper())
         if not r:
             raise ValueError(repr(fmt) + ' is unsupported format')

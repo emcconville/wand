@@ -164,6 +164,8 @@ def set_format():
             assert img.format == 'PNG'
         with raises(ValueError):
             img.format = 'HONG'
+        with raises(TypeError):
+            img.format = 123
 
 
 @tests.test
