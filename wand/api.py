@@ -69,6 +69,8 @@ library.MagickGetImageBlob.restype = ctypes.POINTER(ctypes.c_ubyte)
 
 library.MagickWriteImage.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
 
+library.MagickWriteImageFile.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
+
 library.MagickGetImageWidth.argtypes = [ctypes.c_void_p]
 library.MagickGetImageWidth.restype = ctypes.c_size_t
 

@@ -8,6 +8,10 @@ To be released. Slightly mature alpha version.
 
  - Now :class:`~wand.image.Image` can read Python file objects by ``file``
    keyword argument.
+ - Now :class:`Image.save() <wand.image.Image.save>` method can write into
+   Python file objects by ``file`` keyword argument.
+ - :class:`Image.make_blob() <wand.image.Image.make_blob>`'s ``format``
+   argument becomes omittable.
 
 Version 0.1.4
 -------------

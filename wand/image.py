@@ -341,35 +341,59 @@ class Image(Resource):
         blur = ctypes.c_double(float(blur))
         library.MagickResizeImage(self.wand, width, height, filter, blur)
 
-    def save(self, filename):
-        """Saves the image into the ``filename``.
+    def save(self, file=None, filename=None):
+        """Saves the image into the ``file`` or ``filename``. It takes
+        only one argument at a time.
 
-        :param filename: a filename to write to
+        :param file: a file object to write to
+        :type file: file object
+        :param filename: a filename string to write to
         :type filename: :class:`basename`
 
         """
-        if not isinstance(filename, basestring):
-            raise TypeError('filename must be a string, not ' + repr(filename))
-        r = library.MagickWriteImage(self.wand, filename)
-        if not r:
-            self.raise_exception()
+        if file is None and filename is None:
+            raise TypeError('expected an argument')
+        elif file is not None and filename is not None:
+            raise TypeError('expected only one argument; but two passed')
+        elif file is not None:
+            if isinstance(file, types.FileType):
+                fd = libc.fdopen(file.fileno(), file.mode)
+                r = library.MagickWriteImageFile(self.wand, fd)
+                if not r:
+                    self.raise_exception()
+            else:
+                if not callable(getattr(file, 'write', None)):
+                    raise TypeError('file must be a writable file object, '
+                                    'but it does not have write() method: ' +
+                                    repr(file))
+                file.write(self.make_blob())
+        else:
+            if not isinstance(filename, basestring):
+                raise TypeError('filename must be a string, not ' +
+                                repr(filename))
+            r = library.MagickWriteImage(self.wand, filename)
+            if not r:
+                self.raise_exception()
 
-    def make_blob(self, format):
+    def make_blob(self, format=None):
         """Makes the binary string of the image.
 
-        :param format: the image format to write e.g. ``'png'``, ``'jpeg'``
+        :param format: the image format to write e.g. ``'png'``, ``'jpeg'``.
+                       it is omittable
         :type format: :class:`basestring`
         :returns: a blob (bytes) string
         :rtype: :class:`str`
         :raises: :exc:`ValueError` when ``format`` is invalid
 
         """
-        if not isinstance(format, basestring):
-            raise TypeError("format must be a string like 'png' or 'jpeg', "
-                            'not ' + repr(format))
-        r = library.MagickSetImageFormat(self.wand, str(format).strip().upper())
-        if not r:
-            raise ValueError('{0!r} is an invalid format'.format(format))
+        if format is not None:
+            if not isinstance(format, basestring):
+                raise TypeError("format must be a string like 'png' or 'jpeg'"
+                                ', not ' + repr(format))
+            r = library.MagickSetImageFormat(self.wand,
+                                             str(format).strip().upper())
+            if not r:
+                raise ValueError('{0!r} is an invalid format'.format(format))
         library.MagickResetIterator(self.wand)
         length = ctypes.c_size_t()
         blob_p = library.MagickGetImageBlob(self.wand, ctypes.byref(length))

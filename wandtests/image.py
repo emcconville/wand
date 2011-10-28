@@ -26,6 +26,7 @@ def new_from_file():
         strio = StringIO.StringIO(f.read())
     with Image(file=strio) as img:
         assert img.width == 402
+    strio.close()
     with raises(ClosedImageError):
         img.wand
 
@@ -69,17 +70,51 @@ def clone():
 
 
 @tests.test
-def save():
-    """Saves an image."""
+def save_to_filename():
+    """Saves an image to the filename."""
     savefile = os.path.join(tempfile.mkdtemp(), 'savetest.jpg')
     with Image(filename=asset('mona-lisa.jpg')) as orig:
         orig.save(filename=savefile)
         with raises(IOError):
             orig.save(filename=os.path.join(savefile, 'invalid.jpg'))
+        with raises(TypeError):
+            orig.save(filename=1234)
     assert os.path.isfile(savefile)
     with Image(filename=savefile) as saved:
         assert saved.size == (402, 599)
     os.remove(savefile)
+
+
+@tests.test
+def save_to_file():
+    """Saves an image to the Python file object."""
+    buffer = StringIO.StringIO()
+    with tempfile.TemporaryFile() as savefile:
+        with Image(filename=asset('mona-lisa.jpg')) as orig:
+            orig.save(file=savefile)
+            orig.save(file=buffer)
+            with raises(TypeError):
+                orig.save(file='filename')
+            with raises(TypeError):
+                orig.save(file=1234)
+        savefile.seek(0)
+        with Image(file=savefile) as saved:
+            assert saved.size == (402, 599)
+        buffer.seek(0)
+        with Image(file=buffer) as saved:
+            assert saved.size == (402, 599)
+    buffer.close()
+
+
+@tests.test
+def save_error():
+    filename = os.path.join(tempfile.mkdtemp(), 'savetest.jpg')
+    fileobj = StringIO.StringIO()
+    with Image(filename=asset('mona-lisa.jpg')) as orig:
+        with raises(TypeError):
+            orig.save()
+        with raises(TypeError):
+            orig.save(filename=filename, file=fileobj)
 
 
 @tests.test
