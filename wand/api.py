@@ -150,7 +150,7 @@ if platform.system() == 'Windows':
 elif platform.system() == 'Darwin':
     libc = ctypes.cdll.LoadLibrary('libc.dylib')
 else:
-    libc = ctypes.cdll.LoadLibrary('libc.so')
+    libc = ctypes.cdll.LoadLibrary('libc.so.6')
 
 libc.fdopen.argtypes = [ctypes.c_int, ctypes.c_char_p]
 libc.fdopen.restype = ctypes.c_void_p
