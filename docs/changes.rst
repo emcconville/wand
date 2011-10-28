@@ -6,23 +6,23 @@ Version 0.1.6
 
 To be released. Still alpha version.
 
- - Removed a side effect of :class:`Image.make_blob()
-   <wand.image.Image.make_blob>` method that changes the image format silently.
- - Added :attr:`Image.format <wand.image.Image.format>` property.
- - Added :meth:`Image.convert() <wand.image.Image.convert>` method.
- - Fixed a bug about Python 2.6 compatibility.
+- Removed a side effect of :class:`Image.make_blob()
+  <wand.image.Image.make_blob>` method that changes the image format silently.
+- Added :attr:`Image.format <wand.image.Image.format>` property.
+- Added :meth:`Image.convert() <wand.image.Image.convert>` method.
+- Fixed a bug about Python 2.6 compatibility.
 
 Version 0.1.5
 -------------
 
 Released on October 28, 2011. Slightly mature alpha version.
 
- - Now :class:`~wand.image.Image` can read Python file objects by ``file``
-   keyword argument.
- - Now :class:`Image.save() <wand.image.Image.save>` method can write into
-   Python file objects by ``file`` keyword argument.
- - :class:`Image.make_blob() <wand.image.Image.make_blob>`'s ``format``
-   argument becomes omittable.
+- Now :class:`~wand.image.Image` can read Python file objects by ``file``
+  keyword argument.
+- Now :class:`Image.save() <wand.image.Image.save>` method can write into
+  Python file objects by ``file`` keyword argument.
+- :class:`Image.make_blob() <wand.image.Image.make_blob>`'s ``format``
+  argument becomes omittable.
 
 Version 0.1.4
 -------------
