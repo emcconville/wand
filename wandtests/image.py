@@ -1,6 +1,7 @@
 import os.path
 import contextlib
 import tempfile
+import StringIO
 from attest import assert_hook, Tests, raises
 from wand.image import Image, ClosedImageError
 from wand.color import Color
@@ -11,6 +12,22 @@ tests = Tests()
 
 def asset(filename):
     return os.path.join(os.path.dirname(__file__), 'assets', filename)
+
+
+@tests.test
+def new_from_file():
+    """Opens an image from the file object."""
+    with open(asset('mona-lisa.jpg'), 'rb') as f:
+        with Image(file=f) as img:
+            assert img.width == 402
+    with raises(ClosedImageError):
+        img.wand
+    with open(asset('mona-lisa.jpg'), 'rb') as f:
+        strio = StringIO.StringIO(f.read())
+    with Image(file=strio) as img:
+        assert img.width == 402
+    with raises(ClosedImageError):
+        img.wand
 
 
 @tests.test

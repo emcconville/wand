@@ -10,6 +10,7 @@ error happened)::
         print 'height =', i.height
 
 """
+import types
 import numbers
 import collections
 import ctypes
@@ -18,7 +19,7 @@ import sys
 import warnings
 import platform
 from . import exceptions
-from .api import library
+from .api import library, libc
 from .resource import (increment_refcount, decrement_refcount, Resource,
                        DestroyedResourceError)
 from .color import Color
@@ -60,7 +61,11 @@ class Image(Resource):
 
     :param image: makes an exact copy of the ``image``
     :type image: :class:`Image`
-    :param filename: opens an image of the ``filename``
+    :param blob: opens an image of the ``blob`` byte array
+    :type blob: :class:`str`
+    :param file: opens an image of the ``file`` object
+    :type file: file object
+    :param filename: opens an image of the ``filename`` string
     :type filename: :class:`basestring`
 
     .. describe:: [left:right, top:bottom]
@@ -94,8 +99,8 @@ class Image(Resource):
 
     __slots__ = '_wand',
 
-    def __init__(self, image=None, blob=None, filename=None):
-        args = image, blob, filename
+    def __init__(self, image=None, blob=None, file=None, filename=None):
+        args = image, blob, file, filename
         if all(a is None for a in args):
             raise TypeError('missing arguments')
         elif any(a is not None and b is not None
@@ -111,6 +116,15 @@ class Image(Resource):
                 self.wand = library.CloneMagickWand(image.wand)
             else:
                 self.wand = library.NewMagickWand()
+                read = False
+                if file is not None:
+                    if isinstance(file, types.FileType):
+                        fd = libc.fdopen(file.fileno(), file.mode)
+                        library.MagickReadImageFile(self.wand, fd)
+                        read = True
+                    else:
+                        blob = file.read()
+                        file = None
                 if blob is not None:
                     if not isinstance(blob, collections.Iterable):
                         raise TypeError('blob must be iterable, not ' +
@@ -120,9 +134,11 @@ class Image(Resource):
                     elif not isinstance(blob, str):
                         blob = str(blob)
                     library.MagickReadImageBlob(self.wand, blob, len(blob))
+                    read = True
                 elif filename is not None:
                     library.MagickReadImage(self.wand, filename)
-                else:
+                    read = True
+                if not read:
                     raise TypeError('invalid argument(s)')
         self.raise_exception()
 

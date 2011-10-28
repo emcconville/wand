@@ -59,6 +59,8 @@ library.MagickReadImageBlob.argtypes = [ctypes.c_void_p, ctypes.c_void_p,
 
 library.MagickReadImage.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
 
+library.MagickReadImageFile.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
+
 library.MagickSetImageFormat.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
 
 library.MagickGetImageBlob.argtypes = [ctypes.c_void_p,
@@ -137,3 +139,17 @@ library.PixelGetColorAsString.restype = ctypes.c_char_p
 
 library.PixelGetAlpha.argtypes = [ctypes.c_void_p]
 library.PixelGetAlpha.restype = ctypes.c_double
+
+#: (:class:`ctypes.CDLL`) The C standard library.
+libc = None
+
+if platform.system() == 'Windows':
+    libc = ctypes.cdll.msvcrt
+elif platform.system() == 'Darwin':
+    libc = ctypes.cdll.LoadLibrary('libc.dylib')
+else:
+    libc = ctypes.cdll.LoadLibrary('libc.so')
+
+libc.fdopen.argtypes = [ctypes.c_int, ctypes.c_char_p]
+libc.fdopen.restype = ctypes.c_void_p
+

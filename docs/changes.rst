@@ -1,6 +1,14 @@
 Wand Changelog
 ==============
 
+Version 0.1.5
+-------------
+
+To be released. Slightly mature alpha version.
+
+ - Now :class:`~wand.image.Image` can read Python file objects by ``file``
+   keyword argument.
+
 Version 0.1.4
 -------------
 
