@@ -43,6 +43,19 @@ class Color(Resource):
 
     .. _ImageMagick Color Names: http://www.imagemagick.org/script/color.php
 
+    .. attribute:: string
+
+       (:class:`basestring`) The string representation of the color.
+
+    .. describe:: == (other)
+
+       Equality operator.
+
+       :param other: a color another one
+       :type color: :class:`Color`
+       :returns: ``True`` only if two images equal.
+       :rtype: :class:`bool`
+
     """
 
     c_is_resource = library.IsPixelWand
@@ -72,16 +85,33 @@ class Color(Resource):
         if not self.allocated:
             Resource.__exit__(self, type, value, traceback)
 
+    @staticmethod
+    def c_equals(a, b):
+        """Raw level version of equality test function for two pixels.
+
+        :param a: a pointer to PixelWand to compare
+        :type a: :class:`ctypes.c_void_p`
+        :param b: a pointer to PixelWand to compare
+        :type b: :class:`ctypes.c_void_p`
+        :returns: ``True`` only if two pixels equal
+        :rtype: :class:`bool`
+
+        .. note::
+
+           It's only for internal use. Don't use it directly.
+           Use ``==`` operator of :class:`Color` instead.
+
+        """
+        alpha = library.PixelGetAlpha
+        return bool(library.IsPixelWandSimilar(a, b, 0) and
+                    alpha(a) == alpha(b))
+
     def __eq__(self, other):
         if not isinstance(other, Color):
             return False
         with self as this:
             with other:
-                a = this.resource
-                b = other.resource
-                alpha = library.PixelGetAlpha
-                return bool(library.IsPixelWandSimilar(a, b, 0) and
-                            alpha(a) == alpha(b))
+                return self.c_equals(this.resource, other.resource)
 
     def __ne__(self, other):
         return not (self == other)

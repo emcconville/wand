@@ -44,6 +44,20 @@ if not hasattr(ctypes, 'c_ssize_t'):
         ctypes.c_ssize_t = ctypes.c_longlong
 
 
+class MagickPixelPacket(ctypes.Structure):
+
+    _fields_ = [('storage_class', ctypes.c_int),
+                ('colorspace', ctypes.c_int),
+                ('matte', ctypes.c_int),
+                ('fuzz', ctypes.c_double),
+                ('depth', ctypes.c_size_t),
+                ('red', ctypes.c_double),
+                ('green', ctypes.c_double),
+                ('blue', ctypes.c_double),
+                ('opacity', ctypes.c_double),
+                ('index', ctypes.c_double)]
+
+
 #: (:class:`ctypes.CDLL`) The MagickWand library.
 library = load_library()
 
@@ -145,6 +159,9 @@ library.PixelClearException.argtypes = [ctypes.c_void_p]
 
 library.IsPixelWandSimilar.argtypes = [ctypes.c_void_p, ctypes.c_void_p,
                                        ctypes.c_double]
+
+library.PixelGetMagickColor.argtypes = [ctypes.c_void_p,
+                                        ctypes.POINTER(MagickPixelPacket)]
 
 library.PixelSetColor.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
 
