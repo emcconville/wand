@@ -14,7 +14,7 @@ Wand is a :mod:`ctypes`-based simple `MagickWand API`_ binding for Python. ::
                     i.sepia_tone()
                 i.save('mona-lisa-{0}.png'.format(i))
 
-You can install it from PyPI (and it requires MagickWand library):
+You can install it from PyPI_ (and it requires MagickWand library):
 
 .. sourcecode:: bash
 
@@ -22,6 +22,7 @@ You can install it from PyPI (and it requires MagickWand library):
    $ easy_install Wand
 
 .. _MagickWand API: http://www.imagemagick.org/script/magick-wand.php
+.. _PyPI: http://pypi.python.org/pypi/Wand
 
 
 Why just another binding?
