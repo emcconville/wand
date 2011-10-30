@@ -11,6 +11,8 @@ To be released. Still alpha version.
 - Added :attr:`Image.format <wand.image.Image.format>` property.
 - Added :meth:`Image.convert() <wand.image.Image.convert>` method.
 - Fixed a bug about Python 2.6 compatibility.
+- Use the internal representation of :c:type:`PixelWand` instead of
+  the string representaion for :class:`~wand.color.Color` type.
 
 Version 0.1.5
 -------------

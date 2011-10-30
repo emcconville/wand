@@ -160,8 +160,9 @@ library.PixelClearException.argtypes = [ctypes.c_void_p]
 library.IsPixelWandSimilar.argtypes = [ctypes.c_void_p, ctypes.c_void_p,
                                        ctypes.c_double]
 
-library.PixelGetMagickColor.argtypes = [ctypes.c_void_p,
-                                        ctypes.POINTER(MagickPixelPacket)]
+library.PixelGetMagickColor.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
+
+library.PixelSetMagickColor.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 
 library.PixelSetColor.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
 

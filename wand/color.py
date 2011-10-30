@@ -2,7 +2,8 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 """
-from .api import library
+import ctypes
+from .api import library, MagickPixelPacket
 from .resource import Resource
 
 __all__ = 'Color',
@@ -43,10 +44,6 @@ class Color(Resource):
 
     .. _ImageMagick Color Names: http://www.imagemagick.org/script/color.php
 
-    .. attribute:: string
-
-       (:class:`basestring`) The string representation of the color.
-
     .. describe:: == (other)
 
        Equality operator.
@@ -63,20 +60,30 @@ class Color(Resource):
     c_get_exception = library.PixelGetException
     c_clear_exception = library.PixelClearException
 
-    __slots__ = 'string', 'c_resource', 'allocated'
+    __slots__ = 'raw', 'c_resource', 'allocated'
 
-    def __init__(self, string):
-        self.string = string
+    def __init__(self, string=None, raw=None):
+        if (string is None and raw is None or
+            string is not None and raw is not None):
+            raise TypeError('expected one argument')
+        elif raw is None:
+            pixel = library.NewPixelWand()
+            library.PixelSetColor(pixel, string)
+            raw = ctypes.create_string_buffer(
+                ctypes.sizeof(MagickPixelPacket)
+            )
+            library.PixelGetMagickColor(pixel, raw)
+        self.raw = raw
         self.allocated = 0
 
     def __getinitargs__(self):
-        return self.string,
+        return self.string, None
 
     def __enter__(self):
         if not self.allocated:
             with self.allocate():
                 self.resource = library.NewPixelWand()
-                library.PixelSetColor(self.resource, self.string)
+                library.PixelSetMagickColor(self.resource, self.raw)
         self.allocated += 1
         return Resource.__enter__(self)
 
@@ -84,6 +91,12 @@ class Color(Resource):
         self.allocated -= 1
         if not self.allocated:
             Resource.__exit__(self, type, value, traceback)
+
+    @property
+    def string(self):
+        """(:class:`basestring`) The string representation of the color."""
+        with self as this:
+            return library.PixelGetColorAsString(self.resource)
 
     @staticmethod
     def c_equals(a, b):

@@ -19,7 +19,7 @@ import sys
 import warnings
 import platform
 from . import exceptions
-from .api import library, libc
+from .api import library, libc, MagickPixelPacket
 from .resource import (increment_refcount, decrement_refcount, Resource,
                        DestroyedResourceError)
 from .color import Color
@@ -518,15 +518,19 @@ class Iterator(Resource, collections.Iterator):
         width = ctypes.c_size_t()
         pixels = library.PixelGetNextIteratorRow(self.resource,
                                                  ctypes.byref(width))
-        get_color = library.PixelGetColorAsString
+        get_color = library.PixelGetMagickColor
+        struct_size = ctypes.sizeof(MagickPixelPacket)
         if x is None:
             r_pixels = [None] * width.value
             for x in xrange(width.value):
                 pc = pixels[x]
-                c = get_color(pc)
-                r_pixels[x] = Color(c)
+                packet_buffer = ctypes.create_string_buffer(struct_size)
+                get_color(pc, packet_buffer)
+                r_pixels[x] = Color(raw=packet_buffer)
             return r_pixels
-        return Color(get_color(pixels[x]))
+        packet_buffer = ctypes.create_string_buffer(struct_size)
+        get_color(pixels[x], packet_buffer)
+        return Color(raw=packet_buffer)
 
     def clone(self):
         """Clones the same iterator."""
