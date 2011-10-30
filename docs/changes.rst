@@ -4,7 +4,7 @@ Wand Changelog
 Version 0.1.6
 -------------
 
-To be released. Still alpha version.
+Released on October 31, 2011. Still alpha version.
 
 - Removed a side effect of :class:`Image.make_blob()
   <wand.image.Image.make_blob>` method that changes the image format silently.
