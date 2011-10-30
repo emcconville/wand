@@ -6,13 +6,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>wand.image — Image objects &mdash; Wand 0.1.5</title>
+    <title>wand.image — Image objects &mdash; Wand 0.1.6</title>
     <link rel="stylesheet" href="../_static/werkzeug.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.5',
+        VERSION:     '0.1.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -21,7 +21,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Wand 0.1.5" href="../index.html" />
+    <link rel="top" title="Wand 0.1.6" href="../index.html" />
     <link rel="up" title="wand — Simple MagickWand API binding for Python" href="../wand.html" />
     <link rel="next" title="wand.color — Colors" href="color.html" />
     <link rel="prev" title="wand — Simple MagickWand API binding for Python" href="../wand.html" />
@@ -182,6 +182,43 @@ call it.</p>
 <p class="first admonition-title">Note</p>
 <p class="last">It has the same functionality of <tt class="xref py py-attr docutils literal"><span class="pre">destroy()</span></tt> method.</p>
 </div>
+</dd></dl>
+
+<dl class="method">
+<dt id="wand.image.Image.convert">
+<tt class="descname">convert</tt><big>(</big><em>format</em><big>)</big><a class="headerlink" href="#wand.image.Image.convert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts the image format with the original image maintained.
+It returns a converted image instance which is new.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">with</span> <span class="n">img</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s">&#39;png&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">converted</span><span class="p">:</span>
+    <span class="n">converted</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s">&#39;converted.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>format</strong> (<tt class="xref py py-class docutils literal"><span class="pre">basestring</span></tt>) &#8211; image format to convert to</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">a converted image</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a></td>
+</tr>
+<tr class="field"><th class="field-name">Raises :</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> when the given <tt class="docutils literal"><span class="pre">format</span></tt> is unsupported</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="wand.image.Image.format">
+<tt class="descname">format</tt><a class="headerlink" href="#wand.image.Image.format" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">basestring</span></tt>) The image format.</p>
+<p>If you want to convert the image format, just reset this property:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">wand</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">Image</span><span class="p">)</span>
+<span class="n">img</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="s">&#39;png&#39;</span>
+</pre></div>
+</div>
+<p>It may raise <tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> when the format is unsupported.</p>
 </dd></dl>
 
 <dl class="attribute">
