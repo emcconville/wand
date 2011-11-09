@@ -322,6 +322,17 @@ class Image(Resource):
         if not r:
             raise ValueError(repr(fmt) + ' is unsupported format')
 
+    @property
+    def mimetype(self):
+        """(:class:`basestring`) The MIME type of the image
+        e.g. ``'image/jpeg'``, ``'image/png'``.
+
+        """
+        rp = library.MagickToMime(self.format)
+        mimetype = ctypes.string_at(rp)
+        libc.free(rp)
+        return mimetype
+
     def convert(self, format):
         """Converts the image format with the original image maintained.
         It returns a converted image instance which is new. ::

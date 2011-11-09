@@ -1,6 +1,13 @@
 Wand Changelog
 ==============
 
+Version 0.1.7
+-------------
+
+To be released. Still alpha version.
+
+ - Added :attr:`Image.mimetype <wand.image.Image.mimetype>` property.
+
 Version 0.1.6
 -------------
 

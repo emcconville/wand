@@ -171,6 +171,15 @@ def set_format():
 
 
 @tests.test
+def get_mimetype():
+    """Gets mimetypes of the image."""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        assert img.mimetype == 'image/jpeg'
+    with Image(filename=asset('croptest.png')) as img:
+        assert img.mimetype == 'image/png'
+
+
+@tests.test
 def convert():
     """Converts the image format."""
     with Image(filename=asset('mona-lisa.jpg')) as img:
