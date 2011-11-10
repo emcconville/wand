@@ -4,7 +4,7 @@ Wand Changelog
 Version 0.1.7
 -------------
 
-To be released. Still alpha version.
+Released on November 10, 2011. Still alpha version.
 
  - Added :attr:`Image.mimetype <wand.image.Image.mimetype>` property.
  - Added :meth:`Image.crop() <wand.image.Image.crop>` method for in-place
