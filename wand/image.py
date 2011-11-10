@@ -240,28 +240,8 @@ class Image(Resource):
                 elif (x.start is None and x.stop is None and
                       y.start is None and y.stop is None):
                     return self.clone()
-                def abs_(n, m, null=None):
-                    if n is None:
-                        return m if null is None else null
-                    elif not isinstance(n, numbers.Integral):
-                        raise TypeError('expected integer, not ' + repr(n))
-                    elif n > m:
-                        raise IndexError(repr(n) + ' > ' + repr(m))
-                    return m + n if n < 0 else n
-                x_start = abs_(x.start, self.width, 0)
-                x_stop = abs_(x.stop, self.width)
-                y_start = abs_(y.start, self.height, 0)
-                y_stop = abs_(y.stop, self.height)
-                width = x_stop - x_start
-                height = y_stop - y_start
-                if width < 1:
-                    raise ValueError('image width cannot be zero')
-                elif height < 1:
-                    raise ValueError('image width cannot be zero')
                 cloned = self.clone()
-                library.MagickCropImage(cloned.wand, width, height,
-                                        x_start, y_start)
-                self.raise_exception()
+                cloned.crop(x.start, y.start, x.stop, y.stop)
                 return cloned
             else:
                 return self[idx[0]]
@@ -350,6 +330,90 @@ class Image(Resource):
         cloned = self.clone()
         cloned.format = format
         return cloned
+
+    def crop(self, left=0, top=0, right=None, bottom=None,
+             width=None, height=None):
+        """Crops the image in-place.
+
+        .. sourcecode:: text
+
+           +--------------------------------------------------+
+           |              ^                         ^         |
+           |              |                         |         |
+           |             top                        |         |
+           |              |                         |         |
+           |              v                         |         |
+           | <-- left --> +-------------------+  bottom       |
+           |              |             ^     |     |         |
+           |              | <-- width --|---> |     |         |
+           |              |           height  |     |         |
+           |              |             |     |     |         |
+           |              |             v     |     |         |
+           |              +-------------------+     v         |
+           | <--------------- right ---------->               |
+           +--------------------------------------------------+
+
+        :param left: x-offset of the cropped image. default is 0
+        :type left: :class:`numbers.Integral`
+        :param top: y-offset of the cropped image. default is 0
+        :type top: :class:`numbers.Integral`
+        :param right: second x-offset of the cropped image.
+                      default is the :attr:`width` of the image.
+                      this parameter and ``width`` parameter are exclusive
+                      each other
+        :type right: :class:`numbers.Integral`
+        :param bottom: second y-offset of the cropped image.
+                       default is the :attr:`height` of the image.
+                       this parameter and ``height`` parameter are exclusive
+                       each other
+        :type bottom: :class:`numbers.Integral`
+        :param width: the :attr:`width` of the cropped image.
+                      default is the :attr:`width` of the image.
+                      this parameter and ``right`` parameter are exclusive
+                      each other
+        :type width: :class:`numbers.Integral`
+        :param height: the :attr:`height` of the cropped image.
+                       default is the :attr:`height` of the image.
+                       this parameter and ``bottom`` parameter are exclusive
+                       each other
+        :type height: :class:`numbers.Integral`
+
+        .. note::
+
+           If you want to crop the image but not in-place, use slicing
+           operator.
+
+        """
+        if not (right is None or width is None):
+            raise TypeError('parameters right and width are exclusive each '
+                            'other; use one at a time')
+        elif not (bottom is None or height is None):
+            raise TypeError('parameters bottom and height are exclusive each '
+                            'other; use one at a time')
+        def abs_(n, m, null=None):
+            if n is None:
+                return m if null is None else null
+            elif not isinstance(n, numbers.Integral):
+                raise TypeError('expected integer, not ' + repr(n))
+            elif n > m:
+                raise IndexError(repr(n) + ' > ' + repr(m))
+            return m + n if n < 0 else n
+        left = abs_(left, self.width, 0)
+        top = abs_(top, self.height, 0)
+        if width is None:
+            right = abs_(right, self.width)
+            width = right - left
+        if height is None:
+            bottom = abs_(bottom, self.height)
+            height = bottom - top
+        if width < 1:
+            raise ValueError('image width cannot be zero')
+        elif height < 1:
+            raise ValueError('image width cannot be zero')
+        elif left == top == 0 and width == self.width and height == self.height:
+            return
+        library.MagickCropImage(self.wand, width, height, left, top)
+        self.raise_exception()
 
     def resize(self, width=None, height=None, filter='triangle', blur=1):
         """Resizes the image.

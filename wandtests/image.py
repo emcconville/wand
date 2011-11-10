@@ -307,19 +307,64 @@ def index_row():
 @tests.test
 def slice_crop():
     """Crops using slicing."""
-    with Color('#000') as black:
-        with Image(filename=asset('croptest.png')) as img:
-            with img[100:200, 100:200] as cropped:
-                assert cropped.size == (100, 100)
+    with Image(filename=asset('croptest.png')) as img:
+        with img[100:200, 100:200] as cropped:
+            assert cropped.size == (100, 100)
+            with Color('#000') as black:
                 for row in cropped:
                     for col in row:
                         assert col == black
-            with img[150:, :150] as cropped:
-                assert cropped.size == (150, 150)
-            with img[-200:-100, -200:-100] as cropped:
-                assert cropped.size == (100, 100)
-            with img[100:200] as cropped:
-                assert cropped.size == (300, 100)
+        with img[150:, :150] as cropped:
+            assert cropped.size == (150, 150)
+        with img[-200:-100, -200:-100] as cropped:
+            assert cropped.size == (100, 100)
+        with img[100:200] as cropped:
+            assert cropped.size == (300, 100)
+        assert img.size == (300, 300)
+
+
+@tests.test
+def crop():
+    """Crops in-place."""
+    with Image(filename=asset('croptest.png')) as img:
+        with img.clone() as cropped:
+            assert cropped.size == img.size
+            cropped.crop(100, 100, 200, 200)
+            assert cropped.size == (100, 100)
+            with Color('#000') as black:
+                for row in cropped:
+                    for col in row:
+                        assert col == black
+        with img.clone() as cropped:
+            assert cropped.size == img.size
+            cropped.crop(100, 100, width=100, height=100)
+            assert cropped.size == (100, 100)
+        with img.clone() as cropped:
+            assert cropped.size == img.size
+            cropped.crop(left=150, bottom=150)
+            assert cropped.size == (150, 150)
+        with img.clone() as cropped:
+            assert cropped.size == img.size
+            cropped.crop(left=150, height=150)
+            assert cropped.size == (150, 150)
+        with img.clone() as cropped:
+            assert cropped.size == img.size
+            cropped.crop(-200, -200, -100, -100) 
+            assert cropped.size == (100, 100)
+        with img.clone() as cropped:
+            assert cropped.size == img.size
+            cropped.crop(top=100, bottom=200)
+            assert cropped.size == (300, 100)
+
+
+@tests.test
+def crop_error():
+    """Crop errors."""
+    with Image(filename=asset('croptest.png')) as img:
+        with raises(TypeError):
+            img.crop(right=1, width=2)
+        with raises(TypeError):
+            img.crop(bottom=1, height=2)
 
 
 @tests.test
