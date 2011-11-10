@@ -241,7 +241,10 @@ class Image(Resource):
                       y.start is None and y.stop is None):
                     return self.clone()
                 cloned = self.clone()
-                cloned.crop(x.start, y.start, x.stop, y.stop)
+                try:
+                    cloned.crop(x.start, y.start, x.stop, y.stop)
+                except ValueError as e:
+                    raise IndexError(str(e))
                 return cloned
             else:
                 return self[idx[0]]
@@ -396,7 +399,7 @@ class Image(Resource):
             elif not isinstance(n, numbers.Integral):
                 raise TypeError('expected integer, not ' + repr(n))
             elif n > m:
-                raise IndexError(repr(n) + ' > ' + repr(m))
+                raise ValueError(repr(n) + ' > ' + repr(m))
             return m + n if n < 0 else n
         left = abs_(left, self.width, 0)
         top = abs_(top, self.height, 0)

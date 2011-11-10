@@ -1,6 +1,13 @@
 Wand Changelog
 ==============
 
+Version 0.1.8
+-------------
+
+ - Made :meth:`Image.crop() <wand.image.Image.crop>` to raise proper
+   :exc:`ValueError` instead of :exc:`IndexError` for invalid width/height
+   arguments.
+
 Version 0.1.7
 -------------
 

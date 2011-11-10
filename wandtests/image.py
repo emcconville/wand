@@ -242,9 +242,9 @@ def slice_invalid_types():
             img[:, :, :]
         with raises(ValueError):
             img[::2, :]
-        with raises(ValueError):
+        with raises(IndexError):
             img[1:1, :]
-        with raises(ValueError):
+        with raises(IndexError):
             img[:, 2:2]
         with raises(TypeError):
             img[100.0:, 100.0]
@@ -321,6 +321,10 @@ def slice_crop():
         with img[100:200] as cropped:
             assert cropped.size == (300, 100)
         assert img.size == (300, 300)
+        with raises(IndexError):
+            img[:500, :500]
+        with raises(IndexError):
+            img[290:310, 290:310]
 
 
 @tests.test
@@ -355,6 +359,12 @@ def crop():
             assert cropped.size == img.size
             cropped.crop(top=100, bottom=200)
             assert cropped.size == (300, 100)
+        with raises(ValueError):
+            img.crop(0, 0, 500, 500)
+        with raises(ValueError):
+            img.crop(290, 290, 50, 50)
+        with raises(ValueError):
+            img.crop(290, 290, width=0, height=0)
 
 
 @tests.test
