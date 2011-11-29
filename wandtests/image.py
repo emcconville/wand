@@ -418,29 +418,29 @@ def rotate():
     with Image(filename=asset('rotatetest.gif')) as img:
         assert 150 == img.width
         assert 100 == img.height
+        with img.clone() as cloned:
+            cloned.rotate(360)
+            assert img.size == cloned.size
+            with Color('black') as black:
+                assert black == cloned[0, 50] == cloned[74, 50]
+                assert black == cloned[0, 99] == cloned[74, 99]
+            with Color('white') as white:
+                assert white == cloned[75, 50] == cloned[75, 99]
+        with img.clone() as cloned:
+            cloned.rotate(90)
+            assert 100 == cloned.width
+            assert 150 == cloned.height
+            with Color('black') as black:
+                with Color('white') as white:
+                    for y, row in enumerate(cloned):
+                        for x, col in enumerate(row):
+                            if y < 75 and x < 50:
+                                assert col == black
+                            else:
+                                assert col == white
         with Color('red') as bg:
             with img.clone() as cloned:
-                cloned.rotate(bg, 360)
-                assert img.size == cloned.size
-                with Color('black') as black:
-                    assert black == cloned[0, 50] == cloned[74, 50]
-                    assert black == cloned[0, 99] == cloned[74, 99]
-                with Color('white') as white:
-                    assert white == cloned[75, 50] == cloned[75, 99]
-            with img.clone() as cloned:
-                cloned.rotate(bg, 90)
-                assert 100 == cloned.width
-                assert 150 == cloned.height
-                with Color('black') as black:
-                    with Color('white') as white:
-                        for y, row in enumerate(cloned):
-                            for x, col in enumerate(row):
-                                if y < 75 and x < 50:
-                                    assert col == black
-                                else:
-                                    assert col == white
-            with img.clone() as cloned:
-                cloned.rotate(bg, 45)
+                cloned.rotate(45, bg)
                 assert 177 == cloned.width == cloned.height
                 assert bg == cloned[0, 0] == cloned[0, -1]
                 assert bg == cloned[-1, 0] == cloned[-1, -1]
