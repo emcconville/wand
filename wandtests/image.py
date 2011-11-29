@@ -411,3 +411,40 @@ def resize_errors():
         with raises(ValueError):
             img.resize(height=-5)
 
+
+@tests.test
+def rotate():
+    """Rotates an image."""
+    with Image(filename=asset('rotatetest.gif')) as img:
+        assert 150 == img.width
+        assert 100 == img.height
+        with Color('red') as bg:
+            with img.clone() as cloned:
+                cloned.rotate(bg, 360)
+                assert img.size == cloned.size
+                with Color('black') as black:
+                    assert black == cloned[0, 50] == cloned[74, 50]
+                    assert black == cloned[0, 99] == cloned[74, 99]
+                with Color('white') as white:
+                    assert white == cloned[75, 50] == cloned[75, 99]
+            with img.clone() as cloned:
+                cloned.rotate(bg, 90)
+                assert 100 == cloned.width
+                assert 150 == cloned.height
+                with Color('black') as black:
+                    with Color('white') as white:
+                        for y, row in enumerate(cloned):
+                            for x, col in enumerate(row):
+                                if y < 75 and x < 50:
+                                    assert col == black
+                                else:
+                                    assert col == white
+            with img.clone() as cloned:
+                cloned.rotate(bg, 45)
+                assert 177 == cloned.width == cloned.height
+                assert bg == cloned[0, 0] == cloned[0, -1]
+                assert bg == cloned[-1, 0] == cloned[-1, -1]
+                with Color('black') as black:
+                    assert black == cloned[2, 70] == cloned[35, 37]
+                    assert black == cloned[85, 88] == cloned[52, 120]
+

@@ -461,6 +461,29 @@ class Image(Resource):
         blur = ctypes.c_double(float(blur))
         library.MagickResizeImage(self.wand, width, height, filter, blur)
 
+    def rotate(self, background, degree):
+        """Rotates the image. It takes a ``background`` color for ``degree``
+        that isn't a multiple of 45.
+
+        :param background: a background color
+        :type background: :class:`wand.color.Color`
+        :param degree: a degree to rotate. multiples of 360 affect nothing
+        :type degree: :class:`numbers.Rational`
+
+        """
+        if not isinstance(background, Color):
+            raise TypeError('background must be a wand.color.Color instance, '
+                            'not ' + repr(background))
+        elif not isinstance(degree, numbers.Rational):
+            raise TypeError('degree must be a numbers.Rational value, not ' +
+                            repr(degree))
+        with background:
+            result = library.MagickRotateImage(self.wand,
+                                               background.resource,
+                                               degree)
+        if not result:
+            self.raise_exception()
+
     def save(self, file=None, filename=None):
         """Saves the image into the ``file`` or ``filename``. It takes
         only one argument at a time.

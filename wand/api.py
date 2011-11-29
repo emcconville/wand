@@ -116,6 +116,9 @@ library.MagickResizeImage.argtypes = [ctypes.c_void_p, ctypes.c_size_t,
                                       ctypes.c_size_t, ctypes.c_int,
                                       ctypes.c_double]
 
+library.MagickRotateImage.argtypes = [ctypes.c_void_p, ctypes.c_void_p,
+                                      ctypes.c_double]
+
 library.MagickResetIterator.argtypes = [ctypes.c_void_p]
 
 library.MagickIdentifyImage.argtypes = [ctypes.c_void_p]

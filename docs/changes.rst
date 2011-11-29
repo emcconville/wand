@@ -4,6 +4,8 @@ Wand Changelog
 Version 0.1.8
 -------------
 
+ - Added :meth:`Image.rotate() <wand.image.Image.rotate>` method for in-place
+   rotation.
  - Made :meth:`Image.crop() <wand.image.Image.crop>` to raise proper
    :exc:`ValueError` instead of :exc:`IndexError` for invalid width/height
    arguments.
