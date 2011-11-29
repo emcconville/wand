@@ -8,6 +8,8 @@ import platform
 import ctypes
 import ctypes.util
 
+__all__ = 'load_library', 'MagickPixelPacket', 'library', 'libc'
+
 
 def load_library():
     """Loads the MagickWand library.
