@@ -6,3 +6,4 @@ dist
 *.egg
 *.egg-info
 .*.swp
+.DS_Store
