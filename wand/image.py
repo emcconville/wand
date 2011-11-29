@@ -454,7 +454,7 @@ class Image(Resource):
                 filter = FILTER_TYPES.index(filter)
             except IndexError:
                 raise ValueError(repr(filter) + ' is an invalid filter type; '
-                                 'choose on in ' + repr(FILTET_TYPES))
+                                 'choose on in ' + repr(FILTER_TYPES))
         elif (isinstance(filter, numbers.Integral) and
               not (0 <= filter < len(FILTER_TYPES))):
             raise ValueError(repr(filter) + ' is an invalid filter type')
