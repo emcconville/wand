@@ -14,14 +14,8 @@ import types
 import numbers
 import collections
 import ctypes
-import os
-import sys
-import warnings
-import platform
-from . import exceptions
 from .api import library, libc, MagickPixelPacket
-from .resource import (increment_refcount, decrement_refcount, Resource,
-                       DestroyedResourceError)
+from .resource import Resource, DestroyedResourceError
 from .color import Color
 
 

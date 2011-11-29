@@ -1,5 +1,4 @@
 import os.path
-import contextlib
 import tempfile
 try:
     import cStringIO as StringIO
