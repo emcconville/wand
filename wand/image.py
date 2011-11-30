@@ -466,7 +466,7 @@ class Image(Resource):
         that isn't a multiple of 45.
 
         :param degree: a degree to rotate. multiples of 360 affect nothing
-        :type degree: :class:`numbers.Rational`
+        :type degree: :class:`numbers.Real`
         :param background: an optional background color.
                            default is transparent
         :type background: :class:`wand.color.Color`
@@ -477,8 +477,8 @@ class Image(Resource):
         elif not isinstance(background, Color):
             raise TypeError('background must be a wand.color.Color instance, '
                             'not ' + repr(background))
-        if not isinstance(degree, numbers.Rational):
-            raise TypeError('degree must be a numbers.Rational value, not ' +
+        if not isinstance(degree, numbers.Real):
+            raise TypeError('degree must be a numbers.Real value, not ' +
                             repr(degree))
         with background:
             result = library.MagickRotateImage(self.wand,
