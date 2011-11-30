@@ -56,8 +56,9 @@ User's guide
 ------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
+   guide/open
    guide/resource
    changes
 
