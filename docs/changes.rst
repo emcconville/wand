@@ -4,25 +4,25 @@ Wand Changelog
 Version 0.1.8
 -------------
 
- - Added :meth:`Image.rotate() <wand.image.Image.rotate>` method for in-place
-   rotation.
- - Made :meth:`Image.crop() <wand.image.Image.crop>` to raise proper
-   :exc:`ValueError` instead of :exc:`IndexError` for invalid width/height
-   arguments.
- - Changed the type of :meth:`Image.resize() <wand.image.Image.resize()>`
-   method's ``blur`` parameter from :class:`collections.Rational` to
-   :class:`collections.Real`.
- - Fixed a bug of raising :exc:`~exceptions.ValueError` when invalid ``filter``
-   has passed to :meth:`Image.resize() <wand.image.Image.resize>` method.
+- Added :meth:`Image.rotate() <wand.image.Image.rotate>` method for in-place
+  rotation.
+- Made :meth:`Image.crop() <wand.image.Image.crop>` to raise proper
+  :exc:`ValueError` instead of :exc:`IndexError` for invalid width/height
+  arguments.
+- Changed the type of :meth:`Image.resize() <wand.image.Image.resize()>`
+  method's ``blur`` parameter from :class:`collections.Rational` to
+  :class:`collections.Real`.
+- Fixed a bug of raising :exc:`~exceptions.ValueError` when invalid ``filter``
+  has passed to :meth:`Image.resize() <wand.image.Image.resize>` method.
 
 Version 0.1.7
 -------------
 
 Released on November 10, 2011. Still alpha version.
 
- - Added :attr:`Image.mimetype <wand.image.Image.mimetype>` property.
- - Added :meth:`Image.crop() <wand.image.Image.crop>` method for in-place
-   crop.
+- Added :attr:`Image.mimetype <wand.image.Image.mimetype>` property.
+- Added :meth:`Image.crop() <wand.image.Image.crop>` method for in-place
+  crop.
 
 Version 0.1.6
 -------------
