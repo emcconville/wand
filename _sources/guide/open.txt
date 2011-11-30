@@ -3,11 +3,11 @@ Opening images
 
 There are several ways to open images:
 
- - :ref:`To open an image file <open-image-file>`
- - :ref:`To read a input stream (file-like object) that provides an image binary
-   <read-input-stream>`
- - :ref:`To read a binary string that contains image <read-blob>`
- - :ref:`To copy an existing image object <clone-image>`
+- :ref:`To open an image file <open-image-file>`
+- :ref:`To read a input stream (file-like object) that provides an image binary
+  <read-input-stream>`
+- :ref:`To read a binary string that contains image <read-blob>`
+- :ref:`To copy an existing image object <clone-image>`
 
 All of these operations are provided by the constructor of
 :class:`~wand.image.Image` class.
