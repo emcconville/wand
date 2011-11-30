@@ -6,13 +6,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Wand &mdash; Wand 0.1.7</title>
+    <title>Wand &mdash; Wand 0.1.8</title>
     <link rel="stylesheet" href="_static/werkzeug.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.1.7',
+        VERSION:     '0.1.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -21,8 +21,8 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="Wand 0.1.7" href="#" />
-    <link rel="next" title="Resource management" href="guide/resource.html" />
+    <link rel="top" title="Wand 0.1.8" href="#" />
+    <link rel="next" title="Opening images" href="guide/open.html" />
    
   <style type="text/css">
   .document .body #wand.section h1 {
@@ -46,7 +46,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="guide/resource.html" title="Resource management"
+          <a href="guide/open.html" title="Opening images"
              accesskey="N">next</a> |</li>
         <li><a href="#">Wand</a> &raquo;</li> 
       </ul>
@@ -65,7 +65,7 @@
     <span class="k">print</span> <span class="n">img</span><span class="o">.</span><span class="n">size</span>
     <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span>
         <span class="k">with</span> <span class="n">img</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span> <span class="k">as</span> <span class="n">i</span><span class="p">:</span>
-            <span class="n">i</span><span class="o">.</span><span class="n">rotate_right</span><span class="p">()</span>
+            <span class="n">i</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="mi">90</span> <span class="o">*</span> <span class="n">r</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">r</span> <span class="o">%</span> <span class="mi">2</span><span class="p">:</span>
                 <span class="n">i</span><span class="o">.</span><span class="n">sepia_tone</span><span class="p">()</span>
             <span class="n">i</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s">&#39;mona-lisa-{0}.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
@@ -107,18 +107,9 @@ are lacking something we need:</p>
 <h2>User&#8217;s guide<a class="headerlink" href="#user-s-guide" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="guide/open.html">Opening images</a></li>
 <li class="toctree-l1"><a class="reference internal" href="guide/resource.html">Resource management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changes.html">Wand Changelog</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-7">Version 0.1.7</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-6">Version 0.1.6</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-5">Version 0.1.5</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-4">Version 0.1.4</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-3">Version 0.1.3</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-2">Version 0.1.2</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-1">Version 0.1.1</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-0">Version 0.1.0</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Wand Changelog</a></li>
 </ul>
 </div>
 </div>

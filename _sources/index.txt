@@ -9,7 +9,7 @@ Wand is a :mod:`ctypes`-based simple `MagickWand API`_ binding for Python. ::
         print img.size
         for r in 1, 2, 3:
             with img.clone() as i:
-                i.rotate_right()
+                i.rotate(90 * r)
                 if r % 2:
                     i.sepia_tone()
                 i.save('mona-lisa-{0}.png'.format(i))
@@ -56,8 +56,9 @@ User's guide
 ------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
+   guide/open
    guide/resource
    changes
 
