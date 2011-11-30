@@ -9,6 +9,9 @@ Version 0.1.8
  - Made :meth:`Image.crop() <wand.image.Image.crop>` to raise proper
    :exc:`ValueError` instead of :exc:`IndexError` for invalid width/height
    arguments.
+ - Changed the type of :meth:`Image.resize() <wand.image.Image.resize()>`
+   method's ``blur`` parameter from :class:`collections.Rational` to
+   :class:`collections.Real`.
  - Fixed a bug of raising :exc:`~exceptions.ValueError` when invalid ``filter``
    has passed to :meth:`Image.resize() <wand.image.Image.resize>` method.
 

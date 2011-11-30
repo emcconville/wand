@@ -425,7 +425,7 @@ class Image(Resource):
                        :const:`FILTER_TYPES`. default is ``'triangle'``
         :type filter: :class:`basestring`, :class:`numbers.Integral`
         :param blur: the blur factor where > 1 is blurry, < 1 is sharp
-        :type blur: :class:`numbers.Rational`
+        :type blur: :class:`numbers.Real`
 
         """
         if width is None:
@@ -444,8 +444,8 @@ class Image(Resource):
         elif height < 1:
             raise ValueError('height must be a natural number, not ' +
                              repr(height))
-        elif not isinstance(blur, numbers.Rational):
-            raise TypeError('blur must be numbers.Rational, not ' + repr(blur))
+        elif not isinstance(blur, numbers.Real):
+            raise TypeError('blur must be numbers.Real , not ' + repr(blur))
         elif not isinstance(filter, (basestring, numbers.Integral)):
             raise TypeError('filter must be one string defined in wand.image.'
                             'FILTER_TYPES or an integer, not ' + repr(filter))
