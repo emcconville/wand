@@ -4,6 +4,10 @@ Wand Changelog
 Version 0.1.8
 -------------
 
+Released on December 2, 2011. Still alpha version.
+
+- Wrote some guide documentations: :doc:`guide/open`, :doc:`guide/write` and
+  :doc:`guide/resizecrop`.
 - Added :meth:`Image.rotate() <wand.image.Image.rotate>` method for in-place
   rotation.
 - Made :meth:`Image.crop() <wand.image.Image.crop>` to raise proper
