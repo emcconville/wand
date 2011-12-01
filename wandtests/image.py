@@ -448,3 +448,38 @@ def rotate():
                     assert black == cloned[2, 70] == cloned[35, 37]
                     assert black == cloned[85, 88] == cloned[52, 120]
 
+
+@tests.test
+def signature():
+    """Gets the image signature."""
+    sig = '763774301b62cf9ea033b661f5136fbda7e8de96254aec3dd0dff63c05413a1e'
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        assert img.signature == sig
+        img.format = 'png'
+        assert img.signature == sig
+
+
+@tests.test
+def equal():
+    """Equals (``==``) and not equals (``!=``) operators."""
+    with Image(filename=asset('mona-lisa.jpg')) as a:
+        with Image(filename=asset('mona-lisa.jpg')) as a2:
+            assert a == a2
+            assert not (a != a2)
+        with Image(filename=asset('sasha.jpg')) as b:
+            assert a != b
+            assert not (a == b)
+        with a.convert('png') as a3:
+            assert a == a3
+            assert not (a != a3)
+
+
+@tests.test
+def object_hash():
+    """Gets :func:`hash()` of the image."""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        a = hash(img)
+        img.format = 'png'
+        b = hash(img)
+        assert a == b
+

@@ -1,6 +1,15 @@
 Wand Changelog
 ==============
 
+Version 0.1.9
+-------------
+
+To be released. Still alpha version.
+
+- Added ``==`` operator for :class:`~wand.image.Image` type.
+- Added :func:`hash()` support of :class:`~wand.image.Image` type.
+- Added :attr:`Image.signature <wand.image.Image.signature>` property.
+
 Version 0.1.8
 -------------
 

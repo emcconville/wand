@@ -94,6 +94,9 @@ library.MagickSetImageFormat.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
 library.MagickToMime.argtypes = [ctypes.c_char_p]
 library.MagickToMime.restype = ctypes.POINTER(ctypes.c_char)
 
+library.MagickGetImageSignature.argtypes = [ctypes.c_void_p]
+library.MagickGetImageSignature.restype = ctypes.c_char_p
+
 library.MagickGetImageBlob.argtypes = [ctypes.c_void_p,
                                        ctypes.POINTER(ctypes.c_size_t)]
 library.MagickGetImageBlob.restype = ctypes.POINTER(ctypes.c_ubyte)

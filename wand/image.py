@@ -262,6 +262,17 @@ class Image(Resource):
             return self[:, idx]
         raise TypeError('unsupported index type: ' + repr(idx))
 
+    def __eq__(self, other):
+        if isinstance(other, type(self)):
+            return self.signature == other.signature
+        return False
+
+    def __ne__(self, other):
+        return not (self == other)
+
+    def __hash__(self):
+        return hash(self.signature)
+
     @property
     def width(self):
         """(:class:`numbers.Integral`) The width of this image."""
@@ -322,6 +333,14 @@ class Image(Resource):
         mimetype = ctypes.string_at(rp)
         libc.free(rp)
         return mimetype
+
+    @property
+    def signature(self):
+        """(:class:`str`) The SHA-256 message digest for the image pixel
+        stream.
+
+        """
+        return library.MagickGetImageSignature(self.wand)
 
     def convert(self, format):
         """Converts the image format with the original image maintained.
