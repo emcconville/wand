@@ -284,6 +284,15 @@ class Image(Resource):
 
         It may raise :exc:`ValueError` when the format is unsupported.
 
+        .. seealso::
+
+           `ImageMagick Image Formats`__
+              ImageMagick uses an ASCII string known as *magick* (e.g. ``GIF``)
+              to identify file formats, algorithms acting as formats,
+              built-in patterns, and embedded profile types.
+
+           __ http://www.imagemagick.org/script/formats.php
+
         """
         fmt = library.MagickGetImageFormat(self.wand)
         if fmt:

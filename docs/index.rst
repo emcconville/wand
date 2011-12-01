@@ -59,6 +59,7 @@ User's guide
    :maxdepth: 1
 
    guide/open
+   guide/write
    guide/resource
    changes
 
