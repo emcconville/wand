@@ -60,6 +60,7 @@ User's guide
 
    guide/open
    guide/write
+   guide/resizecrop
    guide/resource
    changes
 

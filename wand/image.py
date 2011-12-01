@@ -43,8 +43,12 @@ __all__ = 'FILTER_TYPES', 'Image', 'Iterator', 'ClosedImageError'
 #:
 #: .. seealso::
 #:
-#:    `ImageMagick Resize Filters
-#:    <http://www.dylanbeattie.net/magick/filters/result.html>`_
+#:    `ImageMagick Resize Filters`__
+#:       Demonstrates the results of resampling three images using the various
+#:       resize filters and blur settings available in ImageMagick,
+#:       and the file size of the resulting thumbnail images.
+#:
+#:    __ http://www.dylanbeattie.net/magick/filters/result.html
 FILTER_TYPES = ('undefined', 'point', 'box', 'triangle', 'hermite', 'hanning',
                 'hamming', 'blackman', 'gaussian', 'quadratic', 'cubic',
                 'catrom', 'mitchell', 'lanczos', 'bessel', 'sinc')
@@ -433,7 +437,8 @@ class Image(Resource):
         :param filter: a filter type to use for resizing. choose one in
                        :const:`FILTER_TYPES`. default is ``'triangle'``
         :type filter: :class:`basestring`, :class:`numbers.Integral`
-        :param blur: the blur factor where > 1 is blurry, < 1 is sharp
+        :param blur: the blur factor where > 1 is blurry, < 1 is sharp.
+                     default is 1
         :type blur: :class:`numbers.Real`
 
         """
