@@ -1,5 +1,5 @@
 Resizing and cropping
----------------------
+=====================
 
 Creating thumbnails (by resizing images) and cropping are most frequent works 
 about images. This guide explains ways to deal sizes of images.

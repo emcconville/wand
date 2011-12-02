@@ -56,7 +56,7 @@ User's guide
 ------------
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    guide/open
    guide/write
