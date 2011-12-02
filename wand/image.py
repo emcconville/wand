@@ -342,6 +342,32 @@ class Image(Resource):
         """
         return library.MagickGetImageSignature(self.wand)
 
+    @property
+    def background_color(self):
+        """(:class:`wand.color.Color`) The image background color.
+        It can also be set to change the background color.
+
+        """
+        pixel = library.NewPixelWand()
+        result = library.MagickGetImageBackgroundColor(self.wand, pixel)
+        if result:
+            size = ctypes.sizeof(MagickPixelPacket)
+            buffer = ctypes.create_string_buffer(size)
+            library.PixelGetMagickColor(pixel, buffer)
+            return Color(raw=buffer)
+        self.raise_exception()
+
+    @background_color.setter
+    def background_color(self, color):
+        if not isinstance(color, Color):
+            raise TypeError('color must be a wand.color.Color object, not ' +
+                            repr(color))
+        with color:
+            result = library.MagickSetImageBackgroundColor(self.wand,
+                                                           color.resource)
+            if not result:
+                self.raise_exception()
+
     def convert(self, format):
         """Converts the image format with the original image maintained.
         It returns a converted image instance which is new. ::

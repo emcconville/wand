@@ -483,3 +483,19 @@ def object_hash():
         b = hash(img)
         assert a == b
 
+
+@tests.test
+def get_background_color():
+    """Gets the background color."""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        assert Color('white') == img.background_color
+
+
+@tests.test
+def set_background_color():
+    """Sets the background color."""
+    with Image(filename=asset('croptest.png')) as img:
+        with Color('transparent') as color:
+            img.background_color = color
+            assert img.background_color == color
+
