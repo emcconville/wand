@@ -1,4 +1,4 @@
-Opening images
+Reading images
 ==============
 
 There are several ways to open images:
