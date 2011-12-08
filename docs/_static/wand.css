@@ -1,0 +1,16 @@
+
+@import url(http://fonts.googleapis.com/css?family=Sunshiney);
+@import url(flasky.css);
+
+.indexwrapper .sphinxsidebar .logo { display: none; }
+
+.indexwrapper div.body #wand.section h1 {
+  background-image: url(wand_25.png);
+  background-repeat: no-repeat;
+  padding-left: 75px;
+  padding-top: 10px;
+  height: 75px;
+}
+
+div.body h1, div.body h2, div.body h3, div.body h4, div.body h5, div.body h6
+  { font-family: 'Sunshiney', 'Garamond', 'Georgia', serif; }

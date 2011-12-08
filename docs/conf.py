@@ -93,15 +93,17 @@ pygments_style = 'trac'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'werkzeug'
+html_theme = 'flask'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-html_theme_options = {'nosidebar': True}
+html_theme_options = {'index_logo': '', 'index_logo_height': ''}
 
 # Add any paths that contain custom themes here, relative to this directory.
 html_theme_path = ['_themes']
+
+html_style = 'wand.css'
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -112,7 +114,7 @@ html_short_title = project
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-#html_logo = None
+html_logo = '_static/wand_120.png'
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
@@ -220,3 +222,21 @@ man_pages = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'http://docs.python.org/': None}
+
+
+
+# fall back if theme is not there
+try:
+    __import__('flask_theme_support')
+except ImportError, e:
+    print '-' * 74
+    print 'Warning: Flask themes unavailable. Building with default theme'
+    print 'If you want the Flask themes, run this command and build again:'
+    print
+    print ' git submodule update --init'
+    print '-' * 74
+
+    pygments_style = 'tango'
+    html_theme = 'default'
+    html_theme_options = {}
+
