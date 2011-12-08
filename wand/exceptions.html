@@ -2,17 +2,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>wand.exceptions — Errors and warnings &mdash; Wand 0.1.8</title>
-    <link rel="stylesheet" href="../_static/werkzeug.css" type="text/css" />
+    <title>wand.exceptions — Errors and warnings &mdash; Wand 0.1.9</title>
+    
+    <link rel="stylesheet" href="../_static/wand.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.8',
+        VERSION:     '0.1.9',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -21,23 +24,19 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Wand 0.1.8" href="../index.html" />
+    <link rel="top" title="Wand 0.1.9" href="../index.html" />
     <link rel="up" title="wand — Simple MagickWand API binding for Python" href="../wand.html" />
     <link rel="next" title="wand.api — Low-level interfaces" href="api.html" />
     <link rel="prev" title="wand.resource — Global resource management" href="resource.html" />
    
-  <style type="text/css">
-  .document .body #wand.section h1 {
-    background-repeat: no-repeat;
-    padding-left: 75px;
-    padding-top: 10px;
-    height: 75px;
-    background-image: url(../_static/wand_25.png);
-  }
-  </style>
+  
+  <link media="only screen and (max-device-width: 480px)" href="../_static/small_flask.css" type= "text/css" rel="stylesheet" />
 
   </head>
   <body>
+  
+  
+
     <div class="related">
       <h3>Navigation</h3>
       <ul>
@@ -60,6 +59,7 @@
 
     <div class="document">
       <div class="documentwrapper">
+        <div class="bodywrapper">
           <div class="body">
             
   <span class="target" id="module-wand.exceptions"></span><div class="section" id="wand-exceptions-errors-and-warnings">
@@ -94,7 +94,7 @@ natural way to catch errors.</p>
 
 <dl class="data">
 <dt id="wand.exceptions.CODE_MAP">
-<tt class="descclassname">wand.exceptions.</tt><tt class="descname">CODE_MAP</tt><a class="headerlink" href="#wand.exceptions.CODE_MAP" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">wand.exceptions.</tt><tt class="descname">CODE_MAP</tt><em class="property"> = [(&lt;class 'wand.exceptions.WandWarning'&gt;, 'Warning'), (&lt;class 'wand.exceptions.WandError'&gt;, 'Error'), (&lt;class 'wand.exceptions.WandFatalError'&gt;, 'FatalError')]</em><a class="headerlink" href="#wand.exceptions.CODE_MAP" title="Permalink to this definition">¶</a></dt>
 <dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">list</span></tt>) The list of (base_class, suffix) pairs (for each code).
 It would be zipped with <a class="reference internal" href="#wand.exceptions.DOMAIN_MAP" title="wand.exceptions.DOMAIN_MAP"><tt class="xref py py-const docutils literal"><span class="pre">DOMAIN_MAP</span></tt></a> pairs&#8217; last element.</p>
 </dd></dl>
@@ -185,7 +185,7 @@ It would be zipped with <a class="reference internal" href="#wand.exceptions.DOM
 
 <dl class="data">
 <dt id="wand.exceptions.DOMAIN_MAP">
-<tt class="descclassname">wand.exceptions.</tt><tt class="descname">DOMAIN_MAP</tt><a class="headerlink" href="#wand.exceptions.DOMAIN_MAP" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">wand.exceptions.</tt><tt class="descname">DOMAIN_MAP</tt><em class="property"> = [('ResourceLimit', 'A program resource is exhausted e.g. not enough memory.', (&lt;type 'exceptions.MemoryError'&gt;,), [300, 400, 700]), ('Type', 'A font is unavailable; a substitution may have occurred.', (), [305, 405, 705]), ('Option', 'A command-line option was malformed.', (), [310, 410, 710]), ('Delegate', 'An ImageMagick delegate failed to complete.', (), [315, 415, 715]), ('MissingDelegate', 'The image type can not be read or written because the appropriate; delegate is missing.', (&lt;type 'exceptions.ImportError'&gt;,), [320, 420, 720]), ('CorruptImage', 'The image file may be corrupt.', (&lt;type 'exceptions.ValueError'&gt;,), [325, 425, 725]), ('FileOpen', 'The image file could not be opened for reading or writing.', (&lt;type 'exceptions.IOError'&gt;,), [330, 430, 730]), ('Blob', 'A binary large object could not be allocated, read, or written.', (&lt;type 'exceptions.IOError'&gt;,), [335, 435, 735]), ('Stream', 'There was a problem reading or writing from a stream.', (&lt;type 'exceptions.IOError'&gt;,), [340, 440, 740]), ('Cache', 'Pixels could not be read or written to the pixel cache.', (), [345, 445, 745]), ('Coder', 'There was a problem with an image coder.', (), [350, 450, 750]), ('Module', 'There was a problem with an image module.', (), [355, 455, 755]), ('Draw', 'A drawing operation failed.', (), [360, 460, 760]), ('Image', 'The operation could not complete due to an incompatible image.', (), [365, 465, 765]), ('Wand', 'There was a problem specific to the MagickWand API.', (), [370, 470, 770]), ('Random', 'There is a problem generating a true or pseudo-random number.', (), [375, 475, 775]), ('XServer', 'An X resource is unavailable.', (), [380, 480, 780]), ('Monitor', 'There was a problem activating the progress monitor.', (), [385, 485, 785]), ('Registry', 'There was a problem getting or setting the registry.', (), [390, 490, 790]), ('Configure', 'There was a problem getting a configuration file.', (), [395, 495, 795]), ('Policy', 'A policy denies access to a delegate, coder, filter, path, or resource.', (), [399, 499, 799])]</em><a class="headerlink" href="#wand.exceptions.DOMAIN_MAP" title="Permalink to this definition">¶</a></dt>
 <dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">list</span></tt>) A list of error/warning domains, these descriptions and
 codes. The form of elements is like: (domain name, description, codes).</p>
 </dd></dl>
@@ -465,7 +465,7 @@ codes. The form of elements is like: (domain name, description, codes).</p>
 
 <dl class="data">
 <dt id="wand.exceptions.TYPE_MAP">
-<tt class="descclassname">wand.exceptions.</tt><tt class="descname">TYPE_MAP</tt><a class="headerlink" href="#wand.exceptions.TYPE_MAP" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">wand.exceptions.</tt><tt class="descname">TYPE_MAP</tt><em class="property"> = {385: &lt;class 'wand.exceptions.MonitorWarning'&gt;, 770: &lt;class 'wand.exceptions.WandFatalError'&gt;, 390: &lt;class 'wand.exceptions.RegistryWarning'&gt;, 775: &lt;class 'wand.exceptions.RandomFatalError'&gt;, 395: &lt;class 'wand.exceptions.ConfigureWarning'&gt;, 780: &lt;class 'wand.exceptions.XServerFatalError'&gt;, 399: &lt;class 'wand.exceptions.PolicyWarning'&gt;, 400: &lt;class 'wand.exceptions.ResourceLimitError'&gt;, 785: &lt;class 'wand.exceptions.MonitorFatalError'&gt;, 405: &lt;class 'wand.exceptions.TypeError'&gt;, 790: &lt;class 'wand.exceptions.RegistryFatalError'&gt;, 410: &lt;class 'wand.exceptions.OptionError'&gt;, 795: &lt;class 'wand.exceptions.ConfigureFatalError'&gt;, 415: &lt;class 'wand.exceptions.DelegateError'&gt;, 420: &lt;class 'wand.exceptions.MissingDelegateError'&gt;, 499: &lt;class 'wand.exceptions.PolicyError'&gt;, 425: &lt;class 'wand.exceptions.CorruptImageError'&gt;, 300: &lt;class 'wand.exceptions.ResourceLimitWarning'&gt;, 430: &lt;class 'wand.exceptions.FileOpenError'&gt;, 305: &lt;class 'wand.exceptions.TypeWarning'&gt;, 435: &lt;class 'wand.exceptions.BlobError'&gt;, 310: &lt;class 'wand.exceptions.OptionWarning'&gt;, 440: &lt;class 'wand.exceptions.StreamError'&gt;, 315: &lt;class 'wand.exceptions.DelegateWarning'&gt;, 700: &lt;class 'wand.exceptions.ResourceLimitFatalError'&gt;, 445: &lt;class 'wand.exceptions.CacheError'&gt;, 320: &lt;class 'wand.exceptions.MissingDelegateWarning'&gt;, 705: &lt;class 'wand.exceptions.TypeFatalError'&gt;, 450: &lt;class 'wand.exceptions.CoderError'&gt;, 325: &lt;class 'wand.exceptions.CorruptImageWarning'&gt;, 710: &lt;class 'wand.exceptions.OptionFatalError'&gt;, 455: &lt;class 'wand.exceptions.ModuleError'&gt;, 330: &lt;class 'wand.exceptions.FileOpenWarning'&gt;, 715: &lt;class 'wand.exceptions.DelegateFatalError'&gt;, 460: &lt;class 'wand.exceptions.DrawError'&gt;, 335: &lt;class 'wand.exceptions.BlobWarning'&gt;, 720: &lt;class 'wand.exceptions.MissingDelegateFatalError'&gt;, 465: &lt;class 'wand.exceptions.ImageError'&gt;, 340: &lt;class 'wand.exceptions.StreamWarning'&gt;, 725: &lt;class 'wand.exceptions.CorruptImageFatalError'&gt;, 470: &lt;class 'wand.exceptions.WandError'&gt;, 345: &lt;class 'wand.exceptions.CacheWarning'&gt;, 730: &lt;class 'wand.exceptions.FileOpenFatalError'&gt;, 475: &lt;class 'wand.exceptions.RandomError'&gt;, 799: &lt;class 'wand.exceptions.PolicyFatalError'&gt;, 350: &lt;class 'wand.exceptions.CoderWarning'&gt;, 735: &lt;class 'wand.exceptions.BlobFatalError'&gt;, 480: &lt;class 'wand.exceptions.XServerError'&gt;, 355: &lt;class 'wand.exceptions.ModuleWarning'&gt;, 740: &lt;class 'wand.exceptions.StreamFatalError'&gt;, 485: &lt;class 'wand.exceptions.MonitorError'&gt;, 360: &lt;class 'wand.exceptions.DrawWarning'&gt;, 745: &lt;class 'wand.exceptions.CacheFatalError'&gt;, 490: &lt;class 'wand.exceptions.RegistryError'&gt;, 365: &lt;class 'wand.exceptions.ImageWarning'&gt;, 750: &lt;class 'wand.exceptions.CoderFatalError'&gt;, 495: &lt;class 'wand.exceptions.ConfigureError'&gt;, 370: &lt;class 'wand.exceptions.WandWarning'&gt;, 755: &lt;class 'wand.exceptions.ModuleFatalError'&gt;, 375: &lt;class 'wand.exceptions.RandomWarning'&gt;, 760: &lt;class 'wand.exceptions.DrawFatalError'&gt;, 380: &lt;class 'wand.exceptions.XServerWarning'&gt;, 765: &lt;class 'wand.exceptions.ImageFatalError'&gt;}</em><a class="headerlink" href="#wand.exceptions.TYPE_MAP" title="Permalink to this definition">¶</a></dt>
 <dd><p>(<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">dict</span></tt></a>) The dictionary of (code, exc_type).</p>
 </dd></dl>
 
@@ -543,14 +543,47 @@ codes. The form of elements is like: (domain name, description, codes).</p>
 
 
           </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/wand_120.png" alt="Logo"/>
+            </a></p><h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../wand.html"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a><ul>
+      <li>Previous: <a href="resource.html" title="previous chapter"><tt class="docutils literal docutils literal"><span class="pre">wand.resource</span></tt> &#8212; Global resource management</a></li>
+      <li>Next: <a href="api.html" title="next chapter"><tt class="docutils literal docutils literal"><span class="pre">wand.api</span></tt> &#8212; Low-level interfaces</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/wand/exceptions.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="footer">
-      &copy; Copyright 2011, Hong Minhee, StyleShare.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
-    </div><a href="https://github.com/StyleShare/wand"><img
-  style="position: fixed; top: 0; right: 0; border: 0;"
-  src="../_static/github.png" alt="Fork me on GitHub"></a>
+  <div class="footer">
+    &copy; Copyright 2011, Hong Minhee, StyleShare.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  
   </body>
 </html>

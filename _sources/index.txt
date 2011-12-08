@@ -56,9 +56,9 @@ User's guide
 ------------
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
-   guide/open
+   guide/read
    guide/write
    guide/resizecrop
    guide/resource

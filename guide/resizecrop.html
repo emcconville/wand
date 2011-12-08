@@ -2,17 +2,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Resizing and cropping &mdash; Wand 0.1.8</title>
-    <link rel="stylesheet" href="../_static/werkzeug.css" type="text/css" />
+    <title>Resizing and cropping &mdash; Wand 0.1.9</title>
+    
+    <link rel="stylesheet" href="../_static/wand.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.8',
+        VERSION:     '0.1.9',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -21,22 +24,18 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Wand 0.1.8" href="../index.html" />
+    <link rel="top" title="Wand 0.1.9" href="../index.html" />
     <link rel="next" title="Resource management" href="resource.html" />
     <link rel="prev" title="Writing images" href="write.html" />
    
-  <style type="text/css">
-  .document .body #wand.section h1 {
-    background-repeat: no-repeat;
-    padding-left: 75px;
-    padding-top: 10px;
-    height: 75px;
-    background-image: url(../_static/wand_25.png);
-  }
-  </style>
+  
+  <link media="only screen and (max-device-width: 480px)" href="../_static/small_flask.css" type= "text/css" rel="stylesheet" />
 
   </head>
   <body>
+  
+  
+
     <div class="related">
       <h3>Navigation</h3>
       <ul>
@@ -58,12 +57,13 @@
 
     <div class="document">
       <div class="documentwrapper">
+        <div class="bodywrapper">
           <div class="body">
             
   <div class="section" id="resizing-and-cropping">
 <h1>Resizing and cropping<a class="headerlink" href="#resizing-and-cropping" title="Permalink to this headline">¶</a></h1>
 <p>Creating thumbnails (by resizing images) and cropping are most frequent works
-about images. This guide explains ways to deal sizes of images.</p>
+about images. This guide explains ways to deal with sizes of images.</p>
 <p>Above all, to get the current size of the image check
 <a class="reference internal" href="../wand/image.html#wand.image.Image.width" title="wand.image.Image.width"><tt class="xref py py-attr docutils literal"><span class="pre">width</span></tt></a> and <a class="reference internal" href="../wand/image.html#wand.image.Image.height" title="wand.image.Image.height"><tt class="xref py py-attr docutils literal"><span class="pre">height</span></tt></a>
 properties:</p>
@@ -88,9 +88,8 @@ property also.</p>
 <p class="first admonition-title">Note</p>
 <p class="last">These three properties are all readonly.</p>
 </div>
-</div>
 <div class="section" id="resize-images">
-<h1>Resize images<a class="headerlink" href="#resize-images" title="Permalink to this headline">¶</a></h1>
+<h2>Resize images<a class="headerlink" href="#resize-images" title="Permalink to this headline">¶</a></h2>
 <p>It scales an image into a desired size even if the desired size is larger
 than the original size. ImageMagick provides so many algorithms for resizing.
 The constant <a class="reference internal" href="../wand/image.html#wand.image.FILTER_TYPES" title="wand.image.FILTER_TYPES"><tt class="xref py py-const docutils literal"><span class="pre">FILTER_TYPES</span></tt></a> contains names of filtering
@@ -117,7 +116,7 @@ resizes itself in-place.</p>
 </div>
 </div>
 <div class="section" id="crop-images">
-<h1>Crop images<a class="headerlink" href="#crop-images" title="Permalink to this headline">¶</a></h1>
+<h2>Crop images<a class="headerlink" href="#crop-images" title="Permalink to this headline">¶</a></h2>
 <p>To extract a sub-rectangle from an image,
 use the <a class="reference internal" href="../wand/image.html#wand.image.Image.crop" title="wand.image.Image.crop"><tt class="xref py py-meth docutils literal"><span class="pre">crop()</span></tt></a> method. It crops the image in-place.
 Its parameters are <tt class="docutils literal"><span class="pre">left</span></tt>, <tt class="docutils literal"><span class="pre">top</span></tt>, <tt class="docutils literal"><span class="pre">right</span></tt>, <tt class="docutils literal"><span class="pre">bottom</span></tt> in order.</p>
@@ -150,17 +149,58 @@ an image by <tt class="docutils literal"><span class="pre">[left:right,</span> <
 </pre></div>
 </div>
 </div>
+</div>
 
 
           </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/wand_120.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Resizing and cropping</a><ul>
+<li><a class="reference internal" href="#resize-images">Resize images</a></li>
+<li><a class="reference internal" href="#crop-images">Crop images</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="write.html" title="previous chapter">Writing images</a></li>
+      <li>Next: <a href="resource.html" title="next chapter">Resource management</a></li>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/guide/resizecrop.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="footer">
-      &copy; Copyright 2011, Hong Minhee, StyleShare.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
-    </div><a href="https://github.com/StyleShare/wand"><img
-  style="position: fixed; top: 0; right: 0; border: 0;"
-  src="../_static/github.png" alt="Fork me on GitHub"></a>
+  <div class="footer">
+    &copy; Copyright 2011, Hong Minhee, StyleShare.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  
   </body>
 </html>

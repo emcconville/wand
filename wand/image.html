@@ -2,17 +2,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>wand.image — Image objects &mdash; Wand 0.1.8</title>
-    <link rel="stylesheet" href="../_static/werkzeug.css" type="text/css" />
+    <title>wand.image — Image objects &mdash; Wand 0.1.9</title>
+    
+    <link rel="stylesheet" href="../_static/wand.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.8',
+        VERSION:     '0.1.9',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -21,23 +24,19 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Wand 0.1.8" href="../index.html" />
+    <link rel="top" title="Wand 0.1.9" href="../index.html" />
     <link rel="up" title="wand — Simple MagickWand API binding for Python" href="../wand.html" />
     <link rel="next" title="wand.color — Colors" href="color.html" />
     <link rel="prev" title="wand — Simple MagickWand API binding for Python" href="../wand.html" />
    
-  <style type="text/css">
-  .document .body #wand.section h1 {
-    background-repeat: no-repeat;
-    padding-left: 75px;
-    padding-top: 10px;
-    height: 75px;
-    background-image: url(../_static/wand_25.png);
-  }
-  </style>
+  
+  <link media="only screen and (max-device-width: 480px)" href="../_static/small_flask.css" type= "text/css" rel="stylesheet" />
 
   </head>
   <body>
+  
+  
+
     <div class="related">
       <h3>Navigation</h3>
       <ul>
@@ -54,12 +53,13 @@
           <a href="../wand.html" title="wand — Simple MagickWand API binding for Python"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Wand</a> &raquo;</li>
-          <li><a href="../wand.html" accesskey="U"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a> &raquo;</li> 
+          <li><a href="../wand.html" accesskey="U"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
+        <div class="bodywrapper">
           <div class="body">
             
   <span class="target" id="module-wand.image"></span><div class="section" id="wand-image-image-objects">
@@ -74,7 +74,7 @@ error happened):</p>
 </div>
 <dl class="data">
 <dt id="wand.image.FILTER_TYPES">
-<tt class="descclassname">wand.image.</tt><tt class="descname">FILTER_TYPES</tt><a class="headerlink" href="#wand.image.FILTER_TYPES" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">wand.image.</tt><tt class="descname">FILTER_TYPES</tt><em class="property"> = ('undefined', 'point', 'box', 'triangle', 'hermite', 'hanning', 'hamming', 'blackman', 'gaussian', 'quadratic', 'cubic', 'catrom', 'mitchell', 'lanczos', 'bessel', 'sinc')</em><a class="headerlink" href="#wand.image.FILTER_TYPES" title="Permalink to this definition">¶</a></dt>
 <dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">tuple</span></tt>) The list of filter types.</p>
 <ul class="simple">
 <li><tt class="docutils literal"><span class="pre">'undefined'</span></tt></li>
@@ -113,7 +113,7 @@ and the file size of the resulting thumbnail images.</dd>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>image</strong> (<a class="reference internal" href="#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a>) &#8211; makes an exact copy of the <tt class="docutils literal"><span class="pre">image</span></tt></li>
 <li><strong>blob</strong> (<tt class="xref py py-class docutils literal"><span class="pre">str</span></tt>) &#8211; opens an image of the <tt class="docutils literal"><span class="pre">blob</span></tt> byte array</li>
 <li><strong>file</strong> (<em>file object</em>) &#8211; opens an image of the <tt class="docutils literal"><span class="pre">file</span></tt> object</li>
@@ -147,12 +147,19 @@ and then returns the cropped one.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body">the cropped image</td>
+<tr class="field-odd field"><th class="field-name">Returns :</th><td class="field-body">the cropped image</td>
 </tr>
-<tr class="field"><th class="field-name">Rtype :</th><td class="field-body"><a class="reference internal" href="#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a></td>
+<tr class="field-even field"><th class="field-name">Rtype :</th><td class="field-body"><a class="reference internal" href="#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a></td>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="wand.image.Image.background_color">
+<tt class="descname">background_color</tt><a class="headerlink" href="#wand.image.Image.background_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<a class="reference internal" href="color.html#wand.color.Color" title="wand.color.Color"><tt class="xref py py-class docutils literal"><span class="pre">wand.color.Color</span></tt></a>) The image background color.
+It can also be set to change the background color.</p>
 </dd></dl>
 
 <dl class="method">
@@ -169,9 +176,9 @@ and then returns the cropped one.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">the cloned new image</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the cloned new image</td>
 </tr>
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a></td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a></td>
 </tr>
 </tbody>
 </table>
@@ -202,13 +209,13 @@ It returns a converted image instance which is new.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>format</strong> (<tt class="xref py py-class docutils literal"><span class="pre">basestring</span></tt>) &#8211; image format to convert to</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>format</strong> (<tt class="xref py py-class docutils literal"><span class="pre">basestring</span></tt>) &#8211; image format to convert to</td>
 </tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">a converted image</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a converted image</td>
 </tr>
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a></td>
 </tr>
-<tr class="field"><th class="field-name">Raises :</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> when the given <tt class="docutils literal"><span class="pre">format</span></tt> is unsupported</td>
+<tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> when the given <tt class="docutils literal"><span class="pre">format</span></tt> is unsupported</td>
 </tr>
 </tbody>
 </table>
@@ -239,7 +246,7 @@ It returns a converted image instance which is new.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>left</strong> (<a class="reference external" href="http://docs.python.org/library/numbers.html#numbers.Integral" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">numbers.Integral</span></tt></a>) &#8211; x-offset of the cropped image. default is 0</li>
 <li><strong>top</strong> (<a class="reference external" href="http://docs.python.org/library/numbers.html#numbers.Integral" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">numbers.Integral</span></tt></a>) &#8211; y-offset of the cropped image. default is 0</li>
 <li><strong>right</strong> (<a class="reference external" href="http://docs.python.org/library/numbers.html#numbers.Integral" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">numbers.Integral</span></tt></a>) &#8211; second x-offset of the cropped image.
@@ -305,14 +312,14 @@ built-in patterns, and embedded profile types.</dd>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>format</strong> (<tt class="xref py py-class docutils literal"><span class="pre">basestring</span></tt>) &#8211; the image format to write e.g. <tt class="docutils literal"><span class="pre">'png'</span></tt>, <tt class="docutils literal"><span class="pre">'jpeg'</span></tt>.
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>format</strong> (<tt class="xref py py-class docutils literal"><span class="pre">basestring</span></tt>) &#8211; the image format to write e.g. <tt class="docutils literal"><span class="pre">'png'</span></tt>, <tt class="docutils literal"><span class="pre">'jpeg'</span></tt>.
 it is omittable</td>
 </tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">a blob (bytes) string</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a blob (bytes) string</td>
 </tr>
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">str</span></tt></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">str</span></tt></td>
 </tr>
-<tr class="field"><th class="field-name">Raises :</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> when <tt class="docutils literal"><span class="pre">format</span></tt> is invalid</td>
+<tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> when <tt class="docutils literal"><span class="pre">format</span></tt> is invalid</td>
 </tr>
 </tbody>
 </table>
@@ -333,7 +340,7 @@ e.g. <tt class="docutils literal"><span class="pre">'image/jpeg'</span></tt>, <t
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>width</strong> (<a class="reference external" href="http://docs.python.org/library/numbers.html#numbers.Integral" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">numbers.Integral</span></tt></a>) &#8211; the width in the scaled image. default is the original
 width</li>
 <li><strong>height</strong> (<a class="reference external" href="http://docs.python.org/library/numbers.html#numbers.Integral" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">numbers.Integral</span></tt></a>) &#8211; the height in the scaled image. default is the original
@@ -358,7 +365,7 @@ that isn&#8217;t a multiple of 45.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>degree</strong> (<a class="reference external" href="http://docs.python.org/library/numbers.html#numbers.Real" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">numbers.Real</span></tt></a>) &#8211; a degree to rotate. multiples of 360 affect nothing</li>
 <li><strong>background</strong> (<a class="reference internal" href="color.html#wand.color.Color" title="wand.color.Color"><tt class="xref py py-class docutils literal"><span class="pre">wand.color.Color</span></tt></a>) &#8211; an optional background color.
 default is transparent</li>
@@ -378,7 +385,7 @@ only one argument at a time.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>file</strong> (<em>file object</em>) &#8211; a file object to write to</li>
 <li><strong>filename</strong> (<tt class="xref py py-class docutils literal"><span class="pre">basename</span></tt>) &#8211; a filename string to write to</li>
 </ul>
@@ -386,6 +393,13 @@ only one argument at a time.</p>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="wand.image.Image.signature">
+<tt class="descname">signature</tt><a class="headerlink" href="#wand.image.Image.signature" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">str</span></tt>) The SHA-256 message digest for the image pixel
+stream.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -431,7 +445,7 @@ one or more <a class="reference internal" href="color.html#wand.color.Color" tit
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>image</strong> (<a class="reference internal" href="#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a>) &#8211; the image to get an iterator</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>image</strong> (<a class="reference internal" href="#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a>) &#8211; the image to get an iterator</td>
 </tr>
 </tbody>
 </table>
@@ -454,14 +468,47 @@ image.</p>
 
 
           </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/wand_120.png" alt="Logo"/>
+            </a></p><h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../wand.html"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a><ul>
+      <li>Previous: <a href="../wand.html" title="previous chapter"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a></li>
+      <li>Next: <a href="color.html" title="next chapter"><tt class="docutils literal docutils literal"><span class="pre">wand.color</span></tt> &#8212; Colors</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/wand/image.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="footer">
-      &copy; Copyright 2011, Hong Minhee, StyleShare.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
-    </div><a href="https://github.com/StyleShare/wand"><img
-  style="position: fixed; top: 0; right: 0; border: 0;"
-  src="../_static/github.png" alt="Fork me on GitHub"></a>
+  <div class="footer">
+    &copy; Copyright 2011, Hong Minhee, StyleShare.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  
   </body>
 </html>

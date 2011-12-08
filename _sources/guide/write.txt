@@ -63,7 +63,9 @@ Save to stream
 --------------
 
 You can write an image into a output stream (file-like object which implements
-:meth:`~file.write()` method) as well.
+:meth:`~file.write()` method) as well. The parameter ``file`` takes a such
+object (it also is the first positional parameter of
+:meth:`~wand.image.Image.save()` method).
 
 For example, the following code converts :file:`pikachu.png` image into
 JPEG, gzips it, and then saves it to :file:`pikachu.jpg.gz`::

@@ -2,17 +2,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>wand.resource — Global resource management &mdash; Wand 0.1.8</title>
-    <link rel="stylesheet" href="../_static/werkzeug.css" type="text/css" />
+    <title>wand.resource — Global resource management &mdash; Wand 0.1.9</title>
+    
+    <link rel="stylesheet" href="../_static/wand.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.8',
+        VERSION:     '0.1.9',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -21,23 +24,19 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Wand 0.1.8" href="../index.html" />
+    <link rel="top" title="Wand 0.1.9" href="../index.html" />
     <link rel="up" title="wand — Simple MagickWand API binding for Python" href="../wand.html" />
     <link rel="next" title="wand.exceptions — Errors and warnings" href="exceptions.html" />
     <link rel="prev" title="wand.color — Colors" href="color.html" />
    
-  <style type="text/css">
-  .document .body #wand.section h1 {
-    background-repeat: no-repeat;
-    padding-left: 75px;
-    padding-top: 10px;
-    height: 75px;
-    background-image: url(../_static/wand_25.png);
-  }
-  </style>
+  
+  <link media="only screen and (max-device-width: 480px)" href="../_static/small_flask.css" type= "text/css" rel="stylesheet" />
 
   </head>
   <body>
+  
+  
+
     <div class="related">
       <h3>Navigation</h3>
       <ul>
@@ -60,6 +59,7 @@
 
     <div class="document">
       <div class="documentwrapper">
+        <div class="bodywrapper">
           <div class="body">
             
   <span class="target" id="module-wand.resource"></span><div class="section" id="wand-resource-global-resource-management">
@@ -139,7 +139,7 @@ inside of this context. For example:</p>
 
 <dl class="attribute">
 <dt id="wand.resource.Resource.c_clear_exception">
-<tt class="descname">c_clear_exception</tt><a class="headerlink" href="#wand.resource.Resource.c_clear_exception" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">c_clear_exception</tt><em class="property"> = NotImplemented</em><a class="headerlink" href="#wand.resource.Resource.c_clear_exception" title="Permalink to this definition">¶</a></dt>
 <dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">ctypes.CFUNCTYPE</span></tt>) The <a class="reference external" href="http://docs.python.org/library/ctypes.html#module-ctypes" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">ctypes</span></tt></a> function that clears
 an exception of the <a class="reference internal" href="#wand.resource.Resource.resource" title="wand.resource.Resource.resource"><tt class="xref py py-attr docutils literal"><span class="pre">resource</span></tt></a>.</p>
 <div class="admonition note">
@@ -151,7 +151,7 @@ in the subclass.</p>
 
 <dl class="attribute">
 <dt id="wand.resource.Resource.c_destroy_resource">
-<tt class="descname">c_destroy_resource</tt><a class="headerlink" href="#wand.resource.Resource.c_destroy_resource" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">c_destroy_resource</tt><em class="property"> = NotImplemented</em><a class="headerlink" href="#wand.resource.Resource.c_destroy_resource" title="Permalink to this definition">¶</a></dt>
 <dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">ctypes.CFUNCTYPE</span></tt>) The <a class="reference external" href="http://docs.python.org/library/ctypes.html#module-ctypes" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">ctypes</span></tt></a> function that destroys
 the <a class="reference internal" href="#wand.resource.Resource.resource" title="wand.resource.Resource.resource"><tt class="xref py py-attr docutils literal"><span class="pre">resource</span></tt></a>.</p>
 <div class="admonition note">
@@ -163,7 +163,7 @@ in the subclass.</p>
 
 <dl class="attribute">
 <dt id="wand.resource.Resource.c_get_exception">
-<tt class="descname">c_get_exception</tt><a class="headerlink" href="#wand.resource.Resource.c_get_exception" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">c_get_exception</tt><em class="property"> = NotImplemented</em><a class="headerlink" href="#wand.resource.Resource.c_get_exception" title="Permalink to this definition">¶</a></dt>
 <dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">ctypes.CFUNCTYPE</span></tt>) The <a class="reference external" href="http://docs.python.org/library/ctypes.html#module-ctypes" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">ctypes</span></tt></a> function that gets
 an exception from the <a class="reference internal" href="#wand.resource.Resource.resource" title="wand.resource.Resource.resource"><tt class="xref py py-attr docutils literal"><span class="pre">resource</span></tt></a>.</p>
 <div class="admonition note">
@@ -175,7 +175,7 @@ in the subclass.</p>
 
 <dl class="attribute">
 <dt id="wand.resource.Resource.c_is_resource">
-<tt class="descname">c_is_resource</tt><a class="headerlink" href="#wand.resource.Resource.c_is_resource" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">c_is_resource</tt><em class="property"> = NotImplemented</em><a class="headerlink" href="#wand.resource.Resource.c_is_resource" title="Permalink to this definition">¶</a></dt>
 <dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">ctypes.CFUNCTYPE</span></tt>) The <a class="reference external" href="http://docs.python.org/library/ctypes.html#module-ctypes" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">ctypes</span></tt></a> predicate function
 that returns whether the given pointer (that contains a resource data
 usuaully) is a valid resource.</p>
@@ -202,10 +202,10 @@ call it.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">a current exception. it can be <tt class="xref docutils literal"><span class="pre">None</span></tt> as well if any
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a current exception. it can be <tt class="docutils literal"><span class="pre">None</span></tt> as well if any
 errors aren&#8217;t occurred</td>
 </tr>
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="exceptions.html#wand.exceptions.WandException" title="wand.exceptions.WandException"><tt class="xref py py-class docutils literal"><span class="pre">wand.exceptions.WandException</span></tt></a></td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="exceptions.html#wand.exceptions.WandException" title="wand.exceptions.WandException"><tt class="xref py py-class docutils literal"><span class="pre">wand.exceptions.WandException</span></tt></a></td>
 </tr>
 </tbody>
 </table>
@@ -237,14 +237,47 @@ destroyed resource.</p>
 
 
           </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/wand_120.png" alt="Logo"/>
+            </a></p><h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../wand.html"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a><ul>
+      <li>Previous: <a href="color.html" title="previous chapter"><tt class="docutils literal docutils literal docutils literal"><span class="pre">wand.color</span></tt> &#8212; Colors</a></li>
+      <li>Next: <a href="exceptions.html" title="next chapter"><tt class="docutils literal docutils literal docutils literal"><span class="pre">wand.exceptions</span></tt> &#8212; Errors and warnings</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/wand/resource.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="footer">
-      &copy; Copyright 2011, Hong Minhee, StyleShare.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
-    </div><a href="https://github.com/StyleShare/wand"><img
-  style="position: fixed; top: 0; right: 0; border: 0;"
-  src="../_static/github.png" alt="Fork me on GitHub"></a>
+  <div class="footer">
+    &copy; Copyright 2011, Hong Minhee, StyleShare.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  
   </body>
 </html>

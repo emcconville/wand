@@ -2,17 +2,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Wand &mdash; Wand 0.1.8</title>
-    <link rel="stylesheet" href="_static/werkzeug.css" type="text/css" />
+    <title>Wand &mdash; Wand 0.1.9</title>
+    
+    <link rel="stylesheet" href="_static/wand.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.1.8',
+        VERSION:     '0.1.9',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -21,21 +24,19 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="Wand 0.1.8" href="#" />
-    <link rel="next" title="Opening images" href="guide/open.html" />
+    <link rel="top" title="Wand 0.1.9" href="#" />
+    <link rel="next" title="Reading images" href="guide/read.html" />
    
-  <style type="text/css">
-  .document .body #wand.section h1 {
-    background-repeat: no-repeat;
-    padding-left: 75px;
-    padding-top: 10px;
-    height: 75px;
-    background-image: url(_static/wand_25.png);
-  }
-  </style>
+  
+  <link media="only screen and (max-device-width: 480px)" href="_static/small_flask.css" type= "text/css" rel="stylesheet" />
 
   </head>
   <body>
+  
+  
+  <div class=indexwrapper>
+  
+
     <div class="related">
       <h3>Navigation</h3>
       <ul>
@@ -46,7 +47,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="guide/open.html" title="Opening images"
+          <a href="guide/read.html" title="Reading images"
              accesskey="N">next</a> |</li>
         <li><a href="#">Wand</a> &raquo;</li> 
       </ul>
@@ -54,6 +55,7 @@
 
     <div class="document">
       <div class="documentwrapper">
+        <div class="bodywrapper">
           <div class="body">
             
   <div class="section" id="wand">
@@ -107,13 +109,39 @@ are lacking something we need:</p>
 <h2>User&#8217;s guide<a class="headerlink" href="#user-s-guide" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="guide/open.html">Opening images</a></li>
-<li class="toctree-l1"><a class="reference internal" href="guide/write.html">Writing images</a></li>
-<li class="toctree-l1"><a class="reference internal" href="guide/resizecrop.html">Resizing and cropping</a></li>
-<li class="toctree-l1"><a class="reference internal" href="guide/resizecrop.html#resize-images">Resize images</a></li>
-<li class="toctree-l1"><a class="reference internal" href="guide/resizecrop.html#crop-images">Crop images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide/read.html">Reading images</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="guide/read.html#open-an-image-file">Open an image file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide/read.html#read-a-input-stream">Read a input stream</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide/read.html#read-a-blob">Read a blob</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide/read.html#clone-an-image">Clone an image</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="guide/write.html">Writing images</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="guide/write.html#convert-images-to-jpeg">Convert images to JPEG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide/write.html#save-to-file">Save to file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide/write.html#save-to-stream">Save to stream</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide/write.html#get-binary-string">Get binary string</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="guide/resizecrop.html">Resizing and cropping</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="guide/resizecrop.html#resize-images">Resize images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide/resizecrop.html#crop-images">Crop images</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="guide/resource.html">Resource management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changes.html">Wand Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Wand Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-9">Version 0.1.9</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-8">Version 0.1.8</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-7">Version 0.1.7</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-6">Version 0.1.6</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-5">Version 0.1.5</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-4">Version 0.1.4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-3">Version 0.1.3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-2">Version 0.1.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-1">Version 0.1.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-0">Version 0.1.0</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -157,14 +185,63 @@ are always welcome!</p>
 
 
           </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="#">
+              <img class="logo" src="_static/wand_120.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Wand</a><ul>
+<li><a class="reference internal" href="#why-just-another-binding">Why just another binding?</a></li>
+<li><a class="reference internal" href="#requirements">Requirements</a></li>
+<li><a class="reference internal" href="#user-s-guide">User&#8217;s guide</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#references">References</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#open-source">Open source</a></li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="guide/read.html" title="next chapter">Reading images</a></li>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="footer">
-      &copy; Copyright 2011, Hong Minhee, StyleShare.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
-    </div><a href="https://github.com/StyleShare/wand"><img
-  style="position: fixed; top: 0; right: 0; border: 0;"
-  src="_static/github.png" alt="Fork me on GitHub"></a>
+  <div class="footer">
+    &copy; Copyright 2011, Hong Minhee, StyleShare.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  
+  </div>
+  
   </body>
 </html>
