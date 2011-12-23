@@ -78,8 +78,8 @@ Open source
 -----------
 
 Wand is an open source software to be used for StyleShare_ and written by
-`Hong Minhee`_. The source code is distributed under MIT license and you can
-find it at `GitHub repository`_. Check out now:
+`Hong Minhee`_. The source code is distributed under `MIT license`_ and
+you can find it at `GitHub repository`_. Check out now:
 
 .. sourcecode:: bash
 
@@ -92,6 +92,7 @@ Check out :doc:`changes` also.
 
 .. _StyleShare: https://stylesha.re/
 .. _Hong Minhee: http://dahlia.kr/
+.. _MIT license: http://styleshare.mit-license.org/
 .. _GitHub repository: https://github.com/StyleShare/wand
 .. _our issue tracker: https://github.com/StyleShare/wand/issues
 
