@@ -4,15 +4,16 @@ Wand
 Wand is a :mod:`ctypes`-based simple `MagickWand API`_ binding for Python. ::
 
     from wand.image import Image
+    from wand.display import display
 
     with Image(filename='mona-lisa.png') as img:
         print img.size
         for r in 1, 2, 3:
             with img.clone() as i:
+                i.resize(int(i.width * r * 0.25), int(i.height * r * 0.25))
                 i.rotate(90 * r)
-                if r % 2:
-                    i.sepia_tone()
                 i.save('mona-lisa-{0}.png'.format(i))
+                display(i)
 
 You can install it from PyPI_ (and it requires MagickWand library):
 

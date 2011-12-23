@@ -11,7 +11,9 @@ To be released. Still alpha version.
 - Added ``==`` operator for :class:`~wand.image.Image` type.
 - Added :func:`hash()` support of :class:`~wand.image.Image` type.
 - Added :attr:`Image.signature <wand.image.Image.signature>` property.
+- Added :mod:`wand.display` module.
 - Changed the theme of Sphinx documentation.
+- Changed the start example of the documentation.
 
 Version 0.1.8
 -------------
