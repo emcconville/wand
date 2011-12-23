@@ -4,7 +4,7 @@ Wand Changelog
 Version 0.1.9
 -------------
 
-To be released. Still alpha version.
+Released on December 23, 2011. Still alpha version.
 
 - Added :attr:`Image.background_color <wand.image.Image.background_color>`
   property.
