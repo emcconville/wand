@@ -7,7 +7,7 @@ except ImportError:
 import distutils.cmd
 import tempfile
 import shutil
-from wand.version import VERSION_INFO
+from wand.version import VERSION
 
 
 def readme():
@@ -46,7 +46,7 @@ class upload_doc(distutils.cmd.Command):
 setup(name='Wand',
       packages=['wand'],
       data_files=[('', ['README.rst'])],
-      version=VERSION_INFO,
+      version=VERSION,
       description='Ctypes-based simple MagickWand API binding for Python',
       long_description=readme(),
       license='MIT License',
