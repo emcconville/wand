@@ -4,15 +4,16 @@ Wand
 Wand is a :mod:`ctypes`-based simple `MagickWand API`_ binding for Python. ::
 
     from wand.image import Image
+    from wand.display import display
 
     with Image(filename='mona-lisa.png') as img:
         print img.size
         for r in 1, 2, 3:
             with img.clone() as i:
+                i.resize(int(i.width * r * 0.25), int(i.height * r * 0.25))
                 i.rotate(90 * r)
-                if r % 2:
-                    i.sepia_tone()
                 i.save('mona-lisa-{0}.png'.format(i))
+                display(i)
 
 You can install it from PyPI_ (and it requires MagickWand library):
 
@@ -78,8 +79,8 @@ Open source
 -----------
 
 Wand is an open source software to be used for StyleShare_ and written by
-`Hong Minhee`_. The source code is distributed under MIT license and you can
-find it at `GitHub repository`_. Check out now:
+`Hong Minhee`_. The source code is distributed under `MIT license`_ and
+you can find it at `GitHub repository`_. Check out now:
 
 .. sourcecode:: bash
 
@@ -92,6 +93,7 @@ Check out :doc:`changes` also.
 
 .. _StyleShare: https://stylesha.re/
 .. _Hong Minhee: http://dahlia.kr/
+.. _MIT license: http://styleshare.mit-license.org/
 .. _GitHub repository: https://github.com/StyleShare/wand
 .. _our issue tracker: https://github.com/StyleShare/wand/issues
 
