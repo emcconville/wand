@@ -116,7 +116,8 @@ class Image(Resource):
                 self.wand = library.NewMagickWand()
                 read = False
                 if file is not None:
-                    if isinstance(file, types.FileType):
+                    if (isinstance(file, types.FileType) and
+                        hasattr(libc, 'fdopen')):
                         fd = libc.fdopen(file.fileno(), file.mode)
                         library.MagickReadImageFile(self.wand, fd)
                         read = True
@@ -561,7 +562,7 @@ class Image(Resource):
         elif file is not None and filename is not None:
             raise TypeError('expected only one argument; but two passed')
         elif file is not None:
-            if isinstance(file, types.FileType):
+            if isinstance(file, types.FileType) and hasattr(libc, 'fdopen'):
                 fd = libc.fdopen(file.fileno(), file.mode)
                 r = library.MagickWriteImageFile(self.wand, fd)
                 if not r:

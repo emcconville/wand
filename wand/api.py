@@ -193,14 +193,14 @@ library.PixelGetAlpha.restype = ctypes.c_double
 libc = None
 
 if platform.system() == 'Windows':
-    libc = ctypes.cdll.msvcrt
-elif platform.system() == 'Darwin':
-    libc = ctypes.cdll.LoadLibrary('libc.dylib')
+    libc = ctypes.CDLL(ctypes.util.find_msvcrt())
 else:
-    libc = ctypes.cdll.LoadLibrary('libc.so.6')
+    if platform.system() == 'Darwin':
+        libc = ctypes.cdll.LoadLibrary('libc.dylib')
+    else:
+        libc = ctypes.cdll.LoadLibrary('libc.so.6')
+    libc.fdopen.argtypes = [ctypes.c_int, ctypes.c_char_p]
+    libc.fdopen.restype = ctypes.c_void_p
 
 libc.free.argtypes = [ctypes.c_void_p]
-
-libc.fdopen.argtypes = [ctypes.c_int, ctypes.c_char_p]
-libc.fdopen.restype = ctypes.c_void_p
 
