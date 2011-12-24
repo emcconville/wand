@@ -19,12 +19,12 @@ def load_library():
 
     """
     libpath = None
+    system = platform.system()
     try:
         magick_home = os.environ['MAGICK_HOME']
     except KeyError:
         pass
     else:
-        system = platform.system()
         if system == 'Windows':
             libpath = 'CORE_RL_wand_.dll',
         elif system == 'Darwin':
@@ -33,7 +33,10 @@ def load_library():
             libpath = 'lib', 'libMagickWand.so',
         libpath = os.path.join(magick_home, *libpath)
     if libpath is None:
-        libpath = ctypes.util.find_library('MagickWand')
+        if system == 'Windows':
+            libpath = ctypes.util.find_library('CORE_RL_wand_')
+        else:
+            libpath = ctypes.util.find_library('MagickWand')
     return ctypes.CDLL(libpath)
 
 
@@ -91,8 +94,8 @@ library.MagickGetImageFormat.restype = ctypes.c_char_p
 
 library.MagickSetImageFormat.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
 
-library.MagickToMime.argtypes = [ctypes.c_char_p]
-library.MagickToMime.restype = ctypes.POINTER(ctypes.c_char)
+#library.MagickToMime.argtypes = [ctypes.c_char_p]
+#library.MagickToMime.restype = ctypes.POINTER(ctypes.c_char)
 
 library.MagickGetImageSignature.argtypes = [ctypes.c_void_p]
 library.MagickGetImageSignature.restype = ctypes.c_char_p
