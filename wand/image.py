@@ -14,7 +14,8 @@ import types
 import numbers
 import collections
 import ctypes
-from .api import library, libc, MagickPixelPacket
+import platform
+from .api import library, libmagick, libc, MagickPixelPacket
 from .resource import Resource, DestroyedResourceError
 from .color import Color
 
@@ -330,9 +331,16 @@ class Image(Resource):
         e.g. ``'image/jpeg'``, ``'image/png'``.
 
         """
-        rp = library.MagickToMime(self.format)
+        rp = libmagick.MagickToMime(self.format)
+        if not rp:
+            self.raise_exception()
         mimetype = ctypes.string_at(rp)
-        libc.free(rp)
+        if platform.system() != 'Windows':
+            # FIXME: On Windows, the above free() makes access violation
+            #        reading error.  This conditional free() is of course
+            #        *not* the right solution, but I currently can't
+            #        understand why.
+            libc.free(rp)
         return mimetype
 
     @property

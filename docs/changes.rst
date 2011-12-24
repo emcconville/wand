@@ -1,11 +1,21 @@
 Wand Changelog
 ==============
 
+Version 0.1.10
+--------------
+
+To be released.  Still alpha version.
+
+- So many Windows compatibility issues are fixed.
+
+
 Version 0.1.9
 -------------
 
 Released on December 23, 2011. Still alpha version.
 
+- Now :const:`wand.version.VERSION_INFO` becomes :class:`tuple` and
+  :const:`wand.version.VERSION` becomes a string.
 - Added :attr:`Image.background_color <wand.image.Image.background_color>`
   property.
 - Added ``==`` operator for :class:`~wand.image.Image` type.

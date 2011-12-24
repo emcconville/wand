@@ -14,8 +14,7 @@ __all__ = 'load_library', 'MagickPixelPacket', 'library', 'libc'
 def load_library():
     """Loads the MagickWand library.
 
-    :returns: the MagickWand library
-    :rtype: :class:`ctypes.CDLL`
+    :returns: the MagickWand library and the ImageMagick library
 
     """
     libpath = None
@@ -37,7 +36,17 @@ def load_library():
             libpath = ctypes.util.find_library('CORE_RL_wand_')
         else:
             libpath = ctypes.util.find_library('MagickWand')
-    return ctypes.CDLL(libpath)
+    libwand = ctypes.CDLL(libpath)
+    if system == 'Windows':
+        libmagick_filename = 'CORE_RL_magick_'
+        if magick_home:
+            libmagick_path = os.path.join(magick_home,
+                                          libmagick_filename + '.dll')
+        else:
+            libmagick_path = ctypes.find_library(libmagick_filename)
+        libmagick = ctypes.CDLL(libmagick_path)
+        return libwand, libmagick
+    return libwand, libwand
 
 
 if not hasattr(ctypes, 'c_ssize_t'):
@@ -63,8 +72,14 @@ class MagickPixelPacket(ctypes.Structure):
                 ('index', ctypes.c_double)]
 
 
+libraries = load_library()
+
 #: (:class:`ctypes.CDLL`) The MagickWand library.
-library = load_library()
+library = libraries[0]
+
+#: (:class:`ctypes.CDLL`) The ImageMagick library.  It is the same with
+#: :data:`library` on platforms other than Windows.
+libmagick = libraries[1]
 
 library.NewMagickWand.restype = ctypes.c_void_p
 
@@ -94,8 +109,8 @@ library.MagickGetImageFormat.restype = ctypes.c_char_p
 
 library.MagickSetImageFormat.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
 
-#library.MagickToMime.argtypes = [ctypes.c_char_p]
-#library.MagickToMime.restype = ctypes.POINTER(ctypes.c_char)
+libmagick.MagickToMime.argtypes = [ctypes.c_char_p]
+libmagick.MagickToMime.restype = ctypes.POINTER(ctypes.c_char)
 
 library.MagickGetImageSignature.argtypes = [ctypes.c_void_p]
 library.MagickGetImageSignature.restype = ctypes.c_char_p
