@@ -5,7 +5,11 @@ The :func:`display()` functions shows you the image.  It is useful for
 debugging.
 
 If you are in Mac, the image will be opened by your default image application
-(:file:`Preview.app` usually).
+(:program:`Preview.app` usually).
+
+If you are in Windows, the image will be opened by :program:`imdisplay.exe`,
+or your default image application (:program:`Windows Photo Viewer` usually)
+if :program:`imdisplay.exe` is unavailable.
 
 You can use it from CLI also.  Execute :mod:`wand.display` module through
 :option:`python -m` option:
@@ -22,7 +26,7 @@ import tempfile
 import ctypes
 from .image import Image
 from .api import library
-from .exceptions import BlobError
+from .exceptions import BlobError, DelegateError
 
 __all__ = 'display',
 
@@ -41,11 +45,18 @@ def display(image, server_name=':0'):
         raise TypeError('image must be a wand.image.Image instance, not ' +
                         repr(image))
     system = platform.system()
-    if system == 'Darwin':
+    if system == 'Windows':
+        try:
+            image.save(filename='win:.')
+        except DelegateError:
+            pass
+        else:
+            return
+    if system in ('Windows', 'Darwin'):
         ext = '.' + image.format.lower()
         path = tempfile.mktemp(suffix=ext)
         image.save(filename=path)
-        os.system('open ' + path)
+        os.system(('start ' if system == 'Windows' else 'open ') + path)
     else:
         library.MagickDisplayImage.argtypes = [ctypes.c_void_p,
                                                ctypes.c_char_p]
