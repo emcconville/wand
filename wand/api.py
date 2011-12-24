@@ -28,9 +28,9 @@ def load_library():
         if system == 'Windows':
             libpath = 'CORE_RL_wand_.dll',
         elif system == 'Darwin':
-            libpath = 'lib', 'libMagickWand.dylib'
+            libpath = 'lib', 'libMagickWand.dylib',
         else:
-            libpath = 'lib', 'libMagickWand.so'
+            libpath = 'lib', 'libMagickWand.so',
         libpath = os.path.join(magick_home, *libpath)
     if libpath is None:
         libpath = ctypes.util.find_library('MagickWand')
