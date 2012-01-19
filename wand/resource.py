@@ -92,8 +92,8 @@ class Resource(object):
 
     It doesn't implement constructor by itself, so subclasses should
     implement it. Every constructor should assign the pointer of its
-    resource data into :attr:`resource` attribute **inside of :keyword`with`
-    :meth:`allocate()` context.** For example::
+    resource data into :attr:`resource` attribute inside of :keyword:`with`
+    :meth:`allocate()` context.  For example::
 
         class Pizza(Resource):
             '''My pizza yummy.'''
