@@ -531,7 +531,7 @@ class Image(Resource):
 
     def rotate(self, degree, background=None):
         """Rotates the image. It takes a ``background`` color for ``degree``
-        that isn't a multiple of 45.
+        that isn't a multiple of 90.
 
         :param degree: a degree to rotate. multiples of 360 affect nothing
         :type degree: :class:`numbers.Real`
