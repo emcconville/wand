@@ -1,9 +1,13 @@
 docs/_build
+bin
 build
 dist
+include
+lib
 .tox
 *.pyc
 *.egg
 *.egg-info
 .*.swp
 .DS_Store
+
