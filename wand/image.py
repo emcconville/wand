@@ -20,7 +20,7 @@ from .resource import Resource, DestroyedResourceError
 from .color import Color
 
 
-__all__ = 'FILTER_TYPES', 'Image', 'Iterator', 'ClosedImageError'
+__all__ = 'FILTER_TYPES', 'METRIC_TYPES', 'Image', 'Iterator', 'ClosedImageError'
 
 
 #: (:class:`tuple`) The list of filter types.
@@ -53,6 +53,14 @@ __all__ = 'FILTER_TYPES', 'Image', 'Iterator', 'ClosedImageError'
 FILTER_TYPES = ('undefined', 'point', 'box', 'triangle', 'hermite', 'hanning',
                 'hamming', 'blackman', 'gaussian', 'quadratic', 'cubic',
                 'catrom', 'mitchell', 'lanczos', 'bessel', 'sinc')
+
+
+# TODO sp: Documentation.
+METRIC_TYPES = ('undefined', 'absolute_error', 'mean_absolute_error', 
+                'mean_error_per_pixel', 'mean_squared_error', 
+                'peak_absolute_error', 'peak_signal_to_noise_ratio',
+                'root_mean_squared_error', 
+                'normalized_cross_correlation_error', 'fuzz_error')
 
 
 class Image(Resource):
@@ -611,6 +619,19 @@ class Image(Resource):
             library.MagickRelinquishMemory(blob_p)
             return blob
         self.raise_exception()
+
+    def compare(self, reference, metric):
+        """Compares images.
+        """
+        # TODO sp: Documentation.
+        c_distortion = ctypes.c_double()
+        c_metric = ctypes.c_int(METRIC_TYPES.index(metric))
+        compare_wand = library.MagickCompareImages(
+            self.wand, reference.wand, c_metric, ctypes.byref(c_distortion))
+        cloned = self.clone()
+        cloned.wand = compare_wand
+        return cloned, c_distortion.value
+
 
 
 class Iterator(Resource, collections.Iterator):
