@@ -130,13 +130,9 @@ class Image(Resource):
                         blob = file.read()
                         file = None
                 if blob is not None:
-                    if not isinstance(blob, collections.Iterable):
-                        raise TypeError('blob must be iterable, not ' +
-                                        repr(blob))
-                    if not isinstance(blob, basestring):
-                        blob = ''.join(blob)
-                    elif not isinstance(blob, str):
-                        blob = str(blob)
+                    if not isinstance(blob, bytes):
+                        raise TypeError('blob must be bytes, not ' +
+                                        repr(type(blob)))
                     library.MagickReadImageBlob(self.wand, blob, len(blob))
                     read = True
                 elif filename is not None:
