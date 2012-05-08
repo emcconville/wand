@@ -12,7 +12,7 @@ Wand is a :mod:`ctypes`-based simple `MagickWand API`_ binding for Python. ::
             with img.clone() as i:
                 i.resize(int(i.width * r * 0.25), int(i.height * r * 0.25))
                 i.rotate(90 * r)
-                i.save('mona-lisa-{0}.png'.format(i))
+                i.save(filename='mona-lisa-{0}.png'.format(r))
                 display(i)
 
 You can install it from PyPI_ (and it requires MagickWand library):
