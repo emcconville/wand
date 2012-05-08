@@ -1,11 +1,27 @@
 Wand Changelog
 ==============
 
+Version 0.1.10
+--------------
+
+Released on May 8, 2012.  Still alpha version.
+
+- So many Windows compatibility issues are fixed. [:issue:`14` by John Simon]
+- Fixed a bug that raises :exc:`AttributeError` when it's trying to warn.
+  [:issue:`16` by Tim Dettrick]
+- Now it throws :exc:`ImportError` instead of :exc:`AttributeError` when
+  the shared library fails to load. [:issue:`17` by Kieran Spear]
+- Fixed the example usage on index page of the documentation.
+  [:issue:`18` by Jeremy Axmacher]
+
+
 Version 0.1.9
 -------------
 
 Released on December 23, 2011. Still alpha version.
 
+- Now :const:`wand.version.VERSION_INFO` becomes :class:`tuple` and
+  :const:`wand.version.VERSION` becomes a string.
 - Added :attr:`Image.background_color <wand.image.Image.background_color>`
   property.
 - Added ``==`` operator for :class:`~wand.image.Image` type.

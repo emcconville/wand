@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Wand &mdash; Wand 0.1.9</title>
+    <title>Wand &mdash; Wand 0.1.10</title>
     
     <link rel="stylesheet" href="_static/wand.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.1.9',
+        VERSION:     '0.1.10',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="Wand 0.1.9" href="#" />
+    <link rel="top" title="Wand 0.1.10" href="#" />
     <link rel="next" title="Reading images" href="guide/read.html" />
    
   
@@ -60,7 +60,7 @@
             
   <div class="section" id="wand">
 <h1>Wand<a class="headerlink" href="#wand" title="Permalink to this headline">¶</a></h1>
-<p>Wand is a <a class="reference external" href="http://docs.python.org/library/ctypes.html#module-ctypes" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">ctypes</span></tt></a>-based simple <a class="reference external" href="http://www.imagemagick.org/script/magick-wand.php">MagickWand API</a> binding for Python.</p>
+<p>Wand is a <a class="reference external" href="http://docs.python.org/library/ctypes.html#ctypes" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">ctypes</span></tt></a>-based simple <a class="reference external" href="http://www.imagemagick.org/script/magick-wand.php">MagickWand API</a> binding for Python.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">wand.image</span> <span class="kn">import</span> <span class="n">Image</span>
 <span class="kn">from</span> <span class="nn">wand.display</span> <span class="kn">import</span> <span class="n">display</span>
 
@@ -70,7 +70,7 @@
         <span class="k">with</span> <span class="n">img</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span> <span class="k">as</span> <span class="n">i</span><span class="p">:</span>
             <span class="n">i</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">width</span> <span class="o">*</span> <span class="n">r</span> <span class="o">*</span> <span class="mf">0.25</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">height</span> <span class="o">*</span> <span class="n">r</span> <span class="o">*</span> <span class="mf">0.25</span><span class="p">))</span>
             <span class="n">i</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="mi">90</span> <span class="o">*</span> <span class="n">r</span><span class="p">)</span>
-            <span class="n">i</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s">&#39;mona-lisa-{0}.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+            <span class="n">i</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s">&#39;mona-lisa-{0}.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
             <span class="n">display</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -86,7 +86,7 @@ are lacking something we need:</p>
 <ul class="simple">
 <li>Pythonic and modern interfaces</li>
 <li>Good documentation</li>
-<li>Binding through <a class="reference external" href="http://docs.python.org/library/ctypes.html#module-ctypes" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">ctypes</span></tt></a> (not C API) &#8212; we are ready to go PyPy!</li>
+<li>Binding through <a class="reference external" href="http://docs.python.org/library/ctypes.html#ctypes" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">ctypes</span></tt></a> (not C API) &#8212; we are ready to go PyPy!</li>
 <li>Installation using <strong class="program">pip</strong> or <strong class="program">easy_install</strong></li>
 </ul>
 </div>
@@ -131,6 +131,7 @@ are lacking something we need:</p>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="guide/resource.html">Resource management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changes.html">Wand Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-10">Version 0.1.10</a></li>
 <li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-9">Version 0.1.9</a></li>
 <li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-8">Version 0.1.8</a></li>
 <li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-7">Version 0.1.7</a></li>
@@ -168,7 +169,7 @@ are lacking something we need:</p>
 <p>Wand is an open source software to be used for <a class="reference external" href="https://stylesha.re/">StyleShare</a> and written by
 <a class="reference external" href="http://dahlia.kr/">Hong Minhee</a>. The source code is distributed under <a class="reference external" href="http://styleshare.mit-license.org/">MIT license</a> and
 you can find it at <a class="reference external" href="https://github.com/StyleShare/wand">GitHub repository</a>. Check out now:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>git clone https://github.com/StyleShare/wand
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>git clone git://github.com/StyleShare/wand.git
 </pre></div>
 </div>
 <p>If you find a bug, please notify to <a class="reference external" href="https://github.com/StyleShare/wand/issues">our issue tracker</a>. Pull requests

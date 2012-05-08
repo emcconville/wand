@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>wand.api — Low-level interfaces &mdash; Wand 0.1.9</title>
+    <title>wand.api — Low-level interfaces &mdash; Wand 0.1.10</title>
     
     <link rel="stylesheet" href="../_static/wand.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.9',
+        VERSION:     '0.1.10',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Wand 0.1.9" href="../index.html" />
+    <link rel="top" title="Wand 0.1.10" href="../index.html" />
     <link rel="up" title="wand — Simple MagickWand API binding for Python" href="../wand.html" />
     <link rel="next" title="wand.display — Displaying images" href="display.html" />
     <link rel="prev" title="wand.exceptions — Errors and warnings" href="exceptions.html" />
@@ -72,9 +72,7 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the MagickWand library</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.python.org/library/ctypes.html#ctypes.CDLL" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">ctypes.CDLL</span></tt></a></td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the MagickWand library and the ImageMagick library</td>
 </tr>
 </tbody>
 </table>
@@ -82,13 +80,13 @@
 
 <dl class="data">
 <dt id="wand.api.library">
-<tt class="descclassname">wand.api.</tt><tt class="descname">library</tt><em class="property"> = &lt;CDLL '/usr/local/lib/libMagickWand.dylib', handle 7fc75c8ce320 at 10aa548d0&gt;</em><a class="headerlink" href="#wand.api.library" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">wand.api.</tt><tt class="descname">library</tt><em class="property"> = &lt;CDLL 'libMagickWand.so.4', handle 3257570 at 3024f10&gt;</em><a class="headerlink" href="#wand.api.library" title="Permalink to this definition">¶</a></dt>
 <dd><p>(<a class="reference external" href="http://docs.python.org/library/ctypes.html#ctypes.CDLL" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">ctypes.CDLL</span></tt></a>) The MagickWand library.</p>
 </dd></dl>
 
 <dl class="data">
 <dt id="wand.api.libc">
-<tt class="descclassname">wand.api.</tt><tt class="descname">libc</tt><em class="property"> = &lt;CDLL 'libc.dylib', handle 7fff6900a218 at 10aa54510&gt;</em><a class="headerlink" href="#wand.api.libc" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">wand.api.</tt><tt class="descname">libc</tt><em class="property"> = &lt;CDLL 'libc.so.6', handle 7fb54a99e9b0 at 2f71c90&gt;</em><a class="headerlink" href="#wand.api.libc" title="Permalink to this definition">¶</a></dt>
 <dd><p>(<a class="reference external" href="http://docs.python.org/library/ctypes.html#ctypes.CDLL" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">ctypes.CDLL</span></tt></a>) The C standard library.</p>
 </dd></dl>
 

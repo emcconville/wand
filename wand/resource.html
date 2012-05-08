@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>wand.resource — Global resource management &mdash; Wand 0.1.9</title>
+    <title>wand.resource — Global resource management &mdash; Wand 0.1.10</title>
     
     <link rel="stylesheet" href="../_static/wand.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.9',
+        VERSION:     '0.1.10',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Wand 0.1.9" href="../index.html" />
+    <link rel="top" title="Wand 0.1.10" href="../index.html" />
     <link rel="up" title="wand — Simple MagickWand API binding for Python" href="../wand.html" />
     <link rel="next" title="wand.exceptions — Errors and warnings" href="exceptions.html" />
     <link rel="prev" title="wand.color — Colors" href="color.html" />
@@ -107,7 +107,7 @@ API if it will be no more used.</p>
 <em class="property">class </em><tt class="descclassname">wand.resource.</tt><tt class="descname">Resource</tt><a class="headerlink" href="#wand.resource.Resource" title="Permalink to this definition">¶</a></dt>
 <dd><p>Abstract base class for MagickWand object that requires resource
 management. Its all subclasses manage the resource semiautomatically
-and support <tt class="xref std std-keyword docutils literal"><span class="pre">with</span></tt> statement as well:</p>
+and support <a class="reference external" href="http://docs.python.org/reference/compound_stmts.html#with" title="(in Python v2.7)"><tt class="xref std std-keyword docutils literal"><span class="pre">with</span></tt></a> statement as well:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">with</span> <span class="n">Resource</span><span class="p">()</span> <span class="k">as</span> <span class="n">resource</span><span class="p">:</span>
     <span class="c"># use the resource...</span>
     <span class="k">pass</span>
@@ -115,8 +115,8 @@ and support <tt class="xref std std-keyword docutils literal"><span class="pre">
 </div>
 <p>It doesn&#8217;t implement constructor by itself, so subclasses should
 implement it. Every constructor should assign the pointer of its
-resource data into <a class="reference internal" href="#wand.resource.Resource.resource" title="wand.resource.Resource.resource"><tt class="xref py py-attr docutils literal"><span class="pre">resource</span></tt></a> attribute <strong>inside of :keyword`with`
-:meth:`allocate()` context.</strong> For example:</p>
+resource data into <a class="reference internal" href="#wand.resource.Resource.resource" title="wand.resource.Resource.resource"><tt class="xref py py-attr docutils literal"><span class="pre">resource</span></tt></a> attribute inside of <a class="reference external" href="http://docs.python.org/reference/compound_stmts.html#with" title="(in Python v2.7)"><tt class="xref std std-keyword docutils literal"><span class="pre">with</span></tt></a>
+<a class="reference internal" href="#wand.resource.Resource.allocate" title="wand.resource.Resource.allocate"><tt class="xref py py-meth docutils literal"><span class="pre">allocate()</span></tt></a> context.  For example:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Pizza</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;My pizza yummy.&#39;&#39;&#39;</span>
 
@@ -140,7 +140,7 @@ inside of this context. For example:</p>
 <dl class="attribute">
 <dt id="wand.resource.Resource.c_clear_exception">
 <tt class="descname">c_clear_exception</tt><em class="property"> = NotImplemented</em><a class="headerlink" href="#wand.resource.Resource.c_clear_exception" title="Permalink to this definition">¶</a></dt>
-<dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">ctypes.CFUNCTYPE</span></tt>) The <a class="reference external" href="http://docs.python.org/library/ctypes.html#module-ctypes" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">ctypes</span></tt></a> function that clears
+<dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">ctypes.CFUNCTYPE</span></tt>) The <a class="reference external" href="http://docs.python.org/library/ctypes.html#ctypes" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">ctypes</span></tt></a> function that clears
 an exception of the <a class="reference internal" href="#wand.resource.Resource.resource" title="wand.resource.Resource.resource"><tt class="xref py py-attr docutils literal"><span class="pre">resource</span></tt></a>.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -152,7 +152,7 @@ in the subclass.</p>
 <dl class="attribute">
 <dt id="wand.resource.Resource.c_destroy_resource">
 <tt class="descname">c_destroy_resource</tt><em class="property"> = NotImplemented</em><a class="headerlink" href="#wand.resource.Resource.c_destroy_resource" title="Permalink to this definition">¶</a></dt>
-<dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">ctypes.CFUNCTYPE</span></tt>) The <a class="reference external" href="http://docs.python.org/library/ctypes.html#module-ctypes" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">ctypes</span></tt></a> function that destroys
+<dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">ctypes.CFUNCTYPE</span></tt>) The <a class="reference external" href="http://docs.python.org/library/ctypes.html#ctypes" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">ctypes</span></tt></a> function that destroys
 the <a class="reference internal" href="#wand.resource.Resource.resource" title="wand.resource.Resource.resource"><tt class="xref py py-attr docutils literal"><span class="pre">resource</span></tt></a>.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -164,7 +164,7 @@ in the subclass.</p>
 <dl class="attribute">
 <dt id="wand.resource.Resource.c_get_exception">
 <tt class="descname">c_get_exception</tt><em class="property"> = NotImplemented</em><a class="headerlink" href="#wand.resource.Resource.c_get_exception" title="Permalink to this definition">¶</a></dt>
-<dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">ctypes.CFUNCTYPE</span></tt>) The <a class="reference external" href="http://docs.python.org/library/ctypes.html#module-ctypes" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">ctypes</span></tt></a> function that gets
+<dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">ctypes.CFUNCTYPE</span></tt>) The <a class="reference external" href="http://docs.python.org/library/ctypes.html#ctypes" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">ctypes</span></tt></a> function that gets
 an exception from the <a class="reference internal" href="#wand.resource.Resource.resource" title="wand.resource.Resource.resource"><tt class="xref py py-attr docutils literal"><span class="pre">resource</span></tt></a>.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -176,7 +176,7 @@ in the subclass.</p>
 <dl class="attribute">
 <dt id="wand.resource.Resource.c_is_resource">
 <tt class="descname">c_is_resource</tt><em class="property"> = NotImplemented</em><a class="headerlink" href="#wand.resource.Resource.c_is_resource" title="Permalink to this definition">¶</a></dt>
-<dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">ctypes.CFUNCTYPE</span></tt>) The <a class="reference external" href="http://docs.python.org/library/ctypes.html#module-ctypes" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">ctypes</span></tt></a> predicate function
+<dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">ctypes.CFUNCTYPE</span></tt>) The <a class="reference external" href="http://docs.python.org/library/ctypes.html#ctypes" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">ctypes</span></tt></a> predicate function
 that returns whether the given pointer (that contains a resource data
 usuaully) is a valid resource.</p>
 <div class="admonition note">
@@ -190,7 +190,7 @@ in the subclass.</p>
 <dt id="wand.resource.Resource.destroy">
 <tt class="descname">destroy</tt><big>(</big><big>)</big><a class="headerlink" href="#wand.resource.Resource.destroy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Cleans up the resource explicitly. If you use the resource in
-<tt class="xref std std-keyword docutils literal"><span class="pre">with</span></tt> statement, it was called implicitly so have not to
+<a class="reference external" href="http://docs.python.org/reference/compound_stmts.html#with" title="(in Python v2.7)"><tt class="xref std std-keyword docutils literal"><span class="pre">with</span></tt></a> statement, it was called implicitly so have not to
 call it.</p>
 </dd></dl>
 

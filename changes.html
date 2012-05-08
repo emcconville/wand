@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Wand Changelog &mdash; Wand 0.1.9</title>
+    <title>Wand Changelog &mdash; Wand 0.1.10</title>
     
     <link rel="stylesheet" href="_static/wand.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.1.9',
+        VERSION:     '0.1.10',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="Wand 0.1.9" href="index.html" />
+    <link rel="top" title="Wand 0.1.10" href="index.html" />
     <link rel="next" title="wand — Simple MagickWand API binding for Python" href="wand.html" />
     <link rel="prev" title="Resource management" href="guide/resource.html" />
    
@@ -62,10 +62,25 @@
             
   <div class="section" id="wand-changelog">
 <h1>Wand Changelog<a class="headerlink" href="#wand-changelog" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="version-0-1-10">
+<h2>Version 0.1.10<a class="headerlink" href="#version-0-1-10" title="Permalink to this headline">¶</a></h2>
+<p>Released on May 8, 2012.  Still alpha version.</p>
+<ul class="simple">
+<li>So many Windows compatibility issues are fixed. [<a class="reference external" href="https://github.com/StyleShare/wand/issues/14">#14</a> by John Simon]</li>
+<li>Fixed a bug that raises <tt class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></tt> when it&#8217;s trying to warn.
+[<a class="reference external" href="https://github.com/StyleShare/wand/issues/16">#16</a> by Tim Dettrick]</li>
+<li>Now it throws <tt class="xref py py-exc docutils literal"><span class="pre">ImportError</span></tt> instead of <tt class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></tt> when
+the shared library fails to load. [<a class="reference external" href="https://github.com/StyleShare/wand/issues/17">#17</a> by Kieran Spear]</li>
+<li>Fixed the example usage on index page of the documentation.
+[<a class="reference external" href="https://github.com/StyleShare/wand/issues/18">#18</a> by Jeremy Axmacher]</li>
+</ul>
+</div>
 <div class="section" id="version-0-1-9">
 <h2>Version 0.1.9<a class="headerlink" href="#version-0-1-9" title="Permalink to this headline">¶</a></h2>
 <p>Released on December 23, 2011. Still alpha version.</p>
 <ul class="simple">
+<li>Now <a class="reference internal" href="wand/version.html#wand.version.VERSION_INFO" title="wand.version.VERSION_INFO"><tt class="xref py py-const docutils literal"><span class="pre">wand.version.VERSION_INFO</span></tt></a> becomes <tt class="xref py py-class docutils literal"><span class="pre">tuple</span></tt> and
+<a class="reference internal" href="wand/version.html#wand.version.VERSION" title="wand.version.VERSION"><tt class="xref py py-const docutils literal"><span class="pre">wand.version.VERSION</span></tt></a> becomes a string.</li>
 <li>Added <a class="reference internal" href="wand/image.html#wand.image.Image.background_color" title="wand.image.Image.background_color"><tt class="xref py py-attr docutils literal"><span class="pre">Image.background_color</span></tt></a>
 property.</li>
 <li>Added <tt class="docutils literal"><span class="pre">==</span></tt> operator for <a class="reference internal" href="wand/image.html#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a> type.</li>
@@ -186,6 +201,7 @@ argument becomes omittable.</li>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Wand Changelog</a><ul>
+<li><a class="reference internal" href="#version-0-1-10">Version 0.1.10</a></li>
 <li><a class="reference internal" href="#version-0-1-9">Version 0.1.9</a></li>
 <li><a class="reference internal" href="#version-0-1-8">Version 0.1.8</a></li>
 <li><a class="reference internal" href="#version-0-1-7">Version 0.1.7</a></li>

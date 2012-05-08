@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>wand.display — Displaying images &mdash; Wand 0.1.9</title>
+    <title>wand.display — Displaying images &mdash; Wand 0.1.10</title>
     
     <link rel="stylesheet" href="../_static/wand.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.9',
+        VERSION:     '0.1.10',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Wand 0.1.9" href="../index.html" />
+    <link rel="top" title="Wand 0.1.10" href="../index.html" />
     <link rel="up" title="wand — Simple MagickWand API binding for Python" href="../wand.html" />
     <link rel="next" title="wand.version — Version data" href="version.html" />
     <link rel="prev" title="wand.api — Low-level interfaces" href="api.html" />
@@ -67,7 +67,10 @@
 <p>The <a class="reference internal" href="#wand.display.display" title="wand.display.display"><tt class="xref py py-func docutils literal"><span class="pre">display()</span></tt></a> functions shows you the image.  It is useful for
 debugging.</p>
 <p>If you are in Mac, the image will be opened by your default image application
-(<tt class="file docutils literal"><span class="pre">Preview.app</span></tt> usually).</p>
+(<strong class="program">Preview.app</strong> usually).</p>
+<p>If you are in Windows, the image will be opened by <strong class="program">imdisplay.exe</strong>,
+or your default image application (<strong class="program">Windows Photo Viewer</strong> usually)
+if <strong class="program">imdisplay.exe</strong> is unavailable.</p>
 <p>You can use it from CLI also.  Execute <a class="reference internal" href="#module-wand.display" title="wand.display"><tt class="xref py py-mod docutils literal"><span class="pre">wand.display</span></tt></a> module through
 <em class="xref std std-option">python -m</em> option:</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> python -m wand.display wandtests/assets/mona-lisa.jpg

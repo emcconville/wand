@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>wand.image — Image objects &mdash; Wand 0.1.9</title>
+    <title>wand.image — Image objects &mdash; Wand 0.1.10</title>
     
     <link rel="stylesheet" href="../_static/wand.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.9',
+        VERSION:     '0.1.10',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Wand 0.1.9" href="../index.html" />
+    <link rel="top" title="Wand 0.1.10" href="../index.html" />
     <link rel="up" title="wand — Simple MagickWand API binding for Python" href="../wand.html" />
     <link rel="next" title="wand.color — Colors" href="color.html" />
     <link rel="prev" title="wand — Simple MagickWand API binding for Python" href="../wand.html" />
@@ -64,7 +64,7 @@
             
   <span class="target" id="module-wand.image"></span><div class="section" id="wand-image-image-objects">
 <h1><a class="reference internal" href="#module-wand.image" title="wand.image"><tt class="xref py py-mod docutils literal"><span class="pre">wand.image</span></tt></a> &#8212; Image objects<a class="headerlink" href="#wand-image-image-objects" title="Permalink to this headline">¶</a></h1>
-<p>Opens and manipulates images. Image objects can be used in <tt class="xref std std-keyword docutils literal"><span class="pre">with</span></tt>
+<p>Opens and manipulates images. Image objects can be used in <a class="reference external" href="http://docs.python.org/reference/compound_stmts.html#with" title="(in Python v2.7)"><tt class="xref std std-keyword docutils literal"><span class="pre">with</span></tt></a>
 statement, and these resources will be automatically managed (even if any
 error happened):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">with</span> <span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s">&#39;pikachu.png&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">i</span><span class="p">:</span>
@@ -188,7 +188,7 @@ It can also be set to change the background color.</p>
 <dt id="wand.image.Image.close">
 <tt class="descname">close</tt><big>(</big><big>)</big><a class="headerlink" href="#wand.image.Image.close" title="Permalink to this definition">¶</a></dt>
 <dd><p>Closes the image explicitly. If you use the image object in
-<tt class="xref std std-keyword docutils literal"><span class="pre">with</span></tt> statement, it was called implicitly so don&#8217;t have to
+<a class="reference external" href="http://docs.python.org/reference/compound_stmts.html#with" title="(in Python v2.7)"><tt class="xref std std-keyword docutils literal"><span class="pre">with</span></tt></a> statement, it was called implicitly so don&#8217;t have to
 call it.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -360,7 +360,7 @@ default is 1</li>
 <dt id="wand.image.Image.rotate">
 <tt class="descname">rotate</tt><big>(</big><em>degree</em>, <em>background=None</em><big>)</big><a class="headerlink" href="#wand.image.Image.rotate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rotates the image. It takes a <tt class="docutils literal"><span class="pre">background</span></tt> color for <tt class="docutils literal"><span class="pre">degree</span></tt>
-that isn&#8217;t a multiple of 45.</p>
+that isn&#8217;t a multiple of 90.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
