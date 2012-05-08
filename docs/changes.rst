@@ -9,6 +9,8 @@ To be released.  Still alpha version.
 - So many Windows compatibility issues are fixed. [:issue:`14` by John Simon]
 - Fixed a bug that raises :exc:`AttributeError` when it's trying to warn.
   [:issue:`16` by Tim Dettrick]
+- Now it throws :exc:`ImportError` instead of :exc:`AttributeError` when
+  the shared library fails to load. [:issue:`17` by Kieran Spear]
 - Fixed the example usage on index page of the documentation.
   [:issue:`18` by Jeremy Axmacher]
 
