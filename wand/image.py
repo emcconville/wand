@@ -16,6 +16,7 @@ import collections
 import ctypes
 import platform
 from .api import library, libmagick, libc, MagickPixelPacket
+from .pycompat import b, u
 from .resource import Resource, DestroyedResourceError
 from .color import Color
 
@@ -130,13 +131,9 @@ class Image(Resource):
                         blob = file.read()
                         file = None
                 if blob is not None:
-                    if not isinstance(blob, collections.Iterable):
-                        raise TypeError('blob must be iterable, not ' +
-                                        repr(blob))
-                    if not isinstance(blob, basestring):
-                        blob = ''.join(blob)
-                    elif not isinstance(blob, str):
-                        blob = str(blob)
+                    if not isinstance(blob, bytes):
+                        raise TypeError('blob must be bytes, not ' +
+                                        repr(type(blob)))
                     library.MagickReadImageBlob(self.wand, blob, len(blob))
                     read = True
                 elif filename is not None:
@@ -313,7 +310,7 @@ class Image(Resource):
         """
         fmt = library.MagickGetImageFormat(self.wand)
         if fmt:
-            return fmt
+            return u(fmt)
         self.raise_exception()
 
     @format.setter
@@ -321,7 +318,7 @@ class Image(Resource):
         if not isinstance(fmt, basestring):
             raise TypeError("format must be a string like 'png' or 'jpeg'"
                             ', not ' + repr(fmt))
-        r = library.MagickSetImageFormat(self.wand, fmt.strip().upper())
+        r = library.MagickSetImageFormat(self.wand, b(fmt.strip().upper()))
         if not r:
             raise ValueError(repr(fmt) + ' is unsupported format')
 
