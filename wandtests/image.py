@@ -499,3 +499,12 @@ def set_background_color():
             img.background_color = color
             assert img.background_color == color
 
+@tests.test
+def watermark():
+    """Adds  watermark to an image."""
+    with Image(filename=asset('beach.jpg')) as img:
+        with img.clone() as cloned:
+            with Image(filename=asset('watermark.png')) as wm:
+                img.watermark(wm, 0.3)
+                with Image(filename=asset('marked.png')) as marked:
+                    assert img == marked
