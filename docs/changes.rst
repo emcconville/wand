@@ -4,7 +4,7 @@ Wand Changelog
 Version 0.1.10
 --------------
 
-To be released.  Still alpha version.
+Released on May 8, 2012.  Still alpha version.
 
 - So many Windows compatibility issues are fixed. [:issue:`14` by John Simon]
 - Fixed a bug that raises :exc:`AttributeError` when it's trying to warn.
