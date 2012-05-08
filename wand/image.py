@@ -54,6 +54,188 @@ FILTER_TYPES = ('undefined', 'point', 'box', 'triangle', 'hermite', 'hanning',
                 'hamming', 'blackman', 'gaussian', 'quadratic', 'cubic',
                 'catrom', 'mitchell', 'lanczos', 'bessel', 'sinc')
 
+#: (:class:`tuple`) The list of composition operators
+#:
+#: - ``'undefined'``
+#: - ``'no'``
+#: - ``'add'``
+#: - ``'atop'``
+#: - ``'blend'``
+#: - ``'bumpmap'``
+#: - ``'change_mask'``
+#: - ``'clear'``
+#: - ``'color_burn'``
+#: - ``'color_dodge'``
+#: - ``'colorize'``
+#: - ``'copy_black'``
+#: - ``'copy_blue'``
+#: - ``'copy'``
+#: - ``'copy_cyan'``
+#: - ``'copy_green'``
+#: - ``'copy_magenta'``
+#: - ``'copy_opacity'``
+#: - ``'copy_red'``
+#: - ``'copy_yellow'``
+#: - ``'darken'``
+#: - ``'dst_atop'``
+#: - ``'dst'``
+#: - ``'dst_in'``
+#: - ``'dst_out'``
+#: - ``'dst_over'``
+#: - ``'difference'``
+#: - ``'displace'``
+#: - ``'dissolve'``
+#: - ``'exclusion'``
+#: - ``'hard_light'``
+#: - ``'hue'``
+#: - ``'in'``
+#: - ``'lighten'``
+#: - ``'linear_light'``
+#: - ``'luminize'``
+#: - ``'minus'``
+#: - ``'modulate'``
+#: - ``'multiply'``
+#: - ``'out'``
+#: - ``'over'``
+#: - ``'overlay'``
+#: - ``'plus'``
+#: - ``'replace'``
+#: - ``'saturate'``
+#: - ``'screen'``
+#: - ``'soft_light'``
+#: - ``'src_atop'``
+#: - ``'src'``
+#: - ``'src_in'``
+#: - ``'src_out'``
+#: - ``'src_over'``
+#: - ``'subtract'``
+#: - ``'threshold'``
+#: - ``'xor'``
+#: - ``'divide'``
+#:
+#: .. seealso::
+#:
+#:    `ImageMagick Composition Operators`__
+#:       Demonstrates the results of applying the various composition
+#:       composition operators.
+#:
+#:    __ http://www.rubblewebs.co.uk/imagemagick/operators/compose.php
+COMPOSITE_OPS = ('undefined', 'no', 'add', 'atop', 'blend', 'bumpmap',
+                 'change_mask', 'clear', 'color_burn', 'color_dodge',
+                 'colorize', 'copy_black', 'copy_blue', 'copy', 'copy_cyan',
+                 'copy_green', 'copy_magenta', 'copy_opacity', 'copy_red',
+                 'copy_yellow', 'darken', 'dst_atop', 'dst', 'dst_in',
+                 'dst_out', 'dst_over', 'difference', 'displace',
+                 'dissolve', 'exclusion', 'hard_light', 'hue', 'in',
+                 'lighten', 'linear_light', 'luminize', 'minus', 'modulate',
+                 'multiply', 'out', 'over', 'overlay', 'plus', 'replace',
+                 'saturate', 'screen', 'soft_light', 'src_atop', 'src',
+                 'src_in', 'src_out', 'src_over', 'subtract', 'threshold',
+                 'xor', 'divide',) 
+
+#: (:class:`dict`) The dictionary of channel types.
+#:
+#: - ``'undefined'``
+#: - ``'red'``
+#: - ``'gray'``
+#: - ``'cyan'``
+#: - ``'green'``
+#: - ``'magenta'``
+#: - ``'blue'``
+#: - ``'yellow'``
+#: - ``'black'``
+#: - ``'alpha'``
+#: - ``'opacity'``
+#: - ``'index'``
+#: - ``'mask'``
+#: - ``'meta'``
+#:
+#: .. seealso::
+#:
+#:    `ImageMagick Color Channels`__
+#:       Lists the various channel types with descriptions of each
+#:
+#:    __ http://www.imagemagick.org/Magick++/Enumerations.html#ChannelType
+CHANNELS = dict(undefined=0, red=1, gray=1, cyan=1, green=2, magenta=2,
+                blue=4, yellow=4, black=8, alpha=16, opacity=16, index=32,
+                mask=64, meta=128) 
+
+#: (:class:`tuple`) The list of evaluation operators
+#:
+#: - ``'undefined'``
+#: - ``'add'``
+#: - ``'and'``
+#: - ``'divide'``
+#: - ``'leftshift'``
+#: - ``'max'``
+#: - ``'min'``
+#: - ``'multiply'``
+#: - ``'or'``
+#: - ``'rightshift'``
+#: - ``'set'``
+#: - ``'subtract'``
+#: - ``'xor'``
+#: - ``'pow'``
+#: - ``'log'``
+#: - ``'threshold'``
+#: - ``'thresholdblack'``
+#: - ``'thresholdwhite'``
+#: - ``'gaussiannoise'``
+#: - ``'impulsenoise'``
+#: - ``'laplaciannoise'``
+#: - ``'multiplicativenoise'``
+#: - ``'poissonnoise'``
+#: - ``'uniformnoise'``
+#: - ``'cosine'``
+#: - ``'sine'``
+#: - ``'addmodulus'``
+#: - ``'mean'``
+#: - ``'abs'``
+#: - ``'exponential'``
+#: - ``'median'``
+#: - ``'sum'``
+#:
+#: .. seealso::
+#:
+#:    `ImageMagick Image Evaluation Operators`__
+#:       Describes the MagickEvaluateImageChannel method and lists the
+#:       various evaluations operators
+#:
+#:    __ http://www.magickwand.org/MagickEvaluateImage.html
+EVALUATE_OPS = ('undefined', 'add', 'and', 'divide', 'leftshift', 'max',
+                'min', 'multiply', 'or', 'rightshift', 'set', 'subtract',
+                'xor', 'pow', 'log', 'threshold', 'thresholdblack',
+                'thresholdwhite', 'gaussiannoise', 'impulsenoise',
+                'laplaciannoise', 'multiplicativenoise', 'poissonnoise',
+                'uniformnoise', 'cosine', 'sine', 'addmodulus', 'mean',
+                'abs', 'exponential', 'median', 'sum',)
+
+#: (:class:`tuple`) The list of image types
+#:
+#: - ``'undefined'``
+#: - ``'bilevel'``
+#: - ``'grayscale'``
+#: - ``'grayscalematte'``
+#: - ``'palette'``
+#: - ``'palettematte'``
+#: - ``'truecolor'``
+#: - ``'truecolormatte'``
+#: - ``'colorseparation'``
+#: - ``'colorseparationmatte'``
+#: - ``'optimize'``
+#: - ``'palettebilevelmatte'``
+#:
+#: .. seealso::
+#:
+#:    `ImageMagick Image Types`__
+#:       Describes the MagickSetImageType method which can be used
+#:       to set the type of an image
+#:
+#:    __ http://www.imagemagick.org/api/magick-image.php#MagickSetImageType
+IMAGE_TYPES = ('undefined', 'bilevel', 'grayscale', 'grayscalematte',
+               'palette', 'palettematte', 'truecolor', 'truecolormatte',
+               'colorseparation', 'colorseparationmatte', 'optimize',
+               'palettebilevelmatte',)
 
 class Image(Resource):
     """An image object.
@@ -366,6 +548,16 @@ class Image(Resource):
             return Color(raw=buffer)
         self.raise_exception()
 
+    @property
+    def quantum_range(self):
+        """(:class:`int`) The maxumim value of a color channel that is
+        supported by the imagemgick library.
+
+        """
+        result = ctypes.c_size_t()
+        library.MagickGetQuantumRange(ctypes.byref(result))
+        return result.value
+
     @background_color.setter
     def background_color(self, color):
         if not isinstance(color, Color):
@@ -554,6 +746,73 @@ class Image(Resource):
                                                degree)
         if not result:
             self.raise_exception()
+
+    def transparentize(self, transparency):
+        """Makes the image transparent by subtracting some percentage of
+        the black color channel.  The ``transparency`` parameter specifies the
+        percentage.
+
+        :param transparency: the percentage fade that should be performed on the
+                             image, from 0.0 to 1.0
+        :type transparency: :class:`numbers.Real`
+
+        """
+        if transparency:
+            t = ctypes.c_double(float(self.quantum_range * float(transparency)))
+            if t.value > self.quantum_range or t.value < 0:
+                raise ValueError('transparency must be a numbers.Real value ' +
+                                 'between 0.0 and 1.0')
+            # Set the wand to image zero, incase there are multiple images in it
+            library.MagickSetIteratorIndex(self.wand, 0)
+            # Change the pixel representation of the image
+            # to RGB with an alpha channel
+            library.MagickSetImageType(self.wand,
+                                       IMAGE_TYPES.index('truecolormatte'))
+            # Perform the black channel subtraction
+            library.MagickEvaluateImageChannel(self.wand,
+                                               CHANNELS.get('black', 8),
+                                               EVALUATE_OPS.index('subtract'),
+                                               t)
+            self.raise_exception()
+        
+    def composite(self, image, left, top):
+        """Places the supplied ``image`` over the current image, with the top
+        left corner of ``image`` at coordinates ``left``, ``top`` of the
+        current image.  The dimensions of the current image are not changed.
+
+        :param image: the image placed over the current image
+        :type image: :class:`wand.image.Image`
+        :param left: the x-coordinate where `image` will be placed
+        :type left: :class:`numbers.Integral`
+        :param top: the y-coordinate where `image` will be placed
+        :type top: :class:`numbers.Integral`
+
+        """
+        library.MagickCompositeImage(self.wand, image.wand,
+                                     COMPOSITE_OPS.index('over'), left, top)
+        self.raise_exception()
+
+    def watermark(self, image, transparency=0.0, left=0, top=0):
+        """Transparentized the supplied ``image`` and places it over the
+        current image, with the top left corner of ``image`` at coordinates
+        ``left``, ``top`` of the current image.  The dimensions of the
+        current image are not changed.
+
+        :param image: the image placed over the current image
+        :type image: :class:`wand.image.Image`
+        :param transparency: the percentage fade that should be performed on
+                             the image, from 0.0 to 1.0
+        :type transparency: :class:`numbers.Real`
+        :param left: the x-coordinate where `image` will be placed
+        :type left: :class:`numbers.Integral`
+        :param top: the y-coordinate where `image` will be placed
+        :type top: :class:`numbers.Integral`
+
+        """
+        with image.clone() as watermark_image:
+            watermark_image.transparentize(transparency)
+            self.composite(watermark_image, left, top)
+        self.raise_exception()
 
     def save(self, file=None, filename=None):
         """Saves the image into the ``file`` or ``filename``. It takes
