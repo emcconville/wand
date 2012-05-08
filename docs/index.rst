@@ -84,7 +84,7 @@ you can find it at `GitHub repository`_. Check out now:
 
 .. sourcecode:: bash
 
-   $ git clone https://github.com/StyleShare/wand
+   $ git clone git://github.com/StyleShare/wand.git
 
 If you find a bug, please notify to `our issue tracker`_. Pull requests
 are always welcome!

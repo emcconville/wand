@@ -12,7 +12,7 @@ You can install the package from PyPI_ by using ``pip`` or
 Or would you like to enjoy with bleeding edge?  Check out the head
 revision of the source code from the `GitHub repository`__::
 
-    $ git clone git@github.com:StyleShare/wand.git
+    $ git clone git://github.com/StyleShare/wand.git
     $ cd wand/
     $ python setup.py install
 
