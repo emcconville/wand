@@ -8,6 +8,7 @@ implements automatic global resource management through reference counting.
 import logging
 import contextlib
 import ctypes
+import warnings
 from . import exceptions
 from .api import library
 
@@ -20,7 +21,7 @@ def genesis():
     """Instantiates the MagickWand API.
 
     .. warning::
-    
+
        Don't call this function directly. Use :func:`increment_refcount()` and
        :func:`decrement_refcount()` functions instead.
 
@@ -32,7 +33,7 @@ def terminus():
     """Cleans up the MagickWand API.
 
     .. warning::
-    
+
        Don't call this function directly. Use :func:`increment_refcount()` and
        :func:`decrement_refcount()` functions instead.
 
