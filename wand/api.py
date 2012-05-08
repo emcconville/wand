@@ -210,7 +210,7 @@ try:
     library.PixelGetAlpha.argtypes = [ctypes.c_void_p]
     library.PixelGetAlpha.restype = ctypes.c_double
 except AttributeError:
-    raise ImportError("MagickWand shared library not found or incompatible")
+    raise ImportError('MagickWand shared library not found or incompatible')
 
 #: (:class:`ctypes.CDLL`) The C standard library.
 libc = None
