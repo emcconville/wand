@@ -6,7 +6,11 @@ Version 0.1.10
 
 To be released.  Still alpha version.
 
-- So many Windows compatibility issues are fixed.
+- So many Windows compatibility issues are fixed. [:issue:`14` by John Simon]
+- Fixed a bug that raises :exc:`AttributeError` when it's trying to warn.
+  [:issue:`16` by Tim Dettrick]
+- Fixed the example usage on index page of the documentation.
+  [:issue:`18` by Jeremy Axmacher]
 
 
 Version 0.1.9
