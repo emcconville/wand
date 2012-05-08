@@ -156,6 +156,12 @@ library.MagickIdentifyImage.restype = ctypes.c_char_p
 library.MagickRelinquishMemory.argtypes = [ctypes.c_void_p]
 library.MagickRelinquishMemory.restype = ctypes.c_void_p
 
+library.MagickCompareImages.argtypes = [ctypes.c_void_p, ctypes.c_void_p,
+                                       ctypes.c_int, 
+                                       ctypes.POINTER(ctypes.c_double)]
+library.MagickCompareImages.restype = ctypes.c_void_p
+
+
 library.NewPixelIterator.argtypes = [ctypes.c_void_p]
 library.NewPixelIterator.restype = ctypes.c_void_p
 
