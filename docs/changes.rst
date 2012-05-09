@@ -1,6 +1,21 @@
 Wand Changelog
 ==============
 
+Version 0.2.0
+-------------
+
+To be released.  Alpha version.
+
+- Added :meth:`Image.transparentize() <wand.image.Image.transparentize>` method.
+  [:issue:`19` by Jeremy Axmacher]
+- Added :meth:`Image.composite() <wand.image.Image.compoatie>` method.
+  [:issue:`19` by Jeremy Axmacher]
+- Added :meth:`Image.watermark() <wand.image.Image.watermark>` method.
+  [:issue:`19` by Jeremy Axmacher]
+- Added :attr:`Image.quantum_range <wand.image.Image.quantum_range>` property.
+  [:issue:`19` by Jeremy Axmacher]
+
+
 Version 0.1.10
 --------------
 
