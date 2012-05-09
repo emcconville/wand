@@ -209,6 +209,22 @@ try:
 
     library.PixelGetAlpha.argtypes = [ctypes.c_void_p]
     library.PixelGetAlpha.restype = ctypes.c_double
+
+    library.MagickGetQuantumRange.argtypes = [ctypes.POINTER(ctypes.c_size_t)]
+
+    library.MagickSetIteratorIndex.argtypes = [ctypes.c_void_p,
+                                               ctypes.c_ssize_t]
+
+    library.MagickSetImageType.argtypes = [ctypes.c_void_p, ctypes.c_int]
+
+    library.MagickEvaluateImageChannel.argtypes = [ctypes.c_void_p,
+                                                   ctypes.c_int,
+                                                   ctypes.c_int,
+                                                   ctypes.c_double]
+
+    library.MagickCompositeImage.argtypes = [ctypes.c_void_p, ctypes.c_void_p,
+                                             ctypes.c_int, ctypes.c_ssize_t,
+                                             ctypes.c_ssize_t]  
 except AttributeError:
     raise ImportError('MagickWand shared library not found or incompatible')
 
