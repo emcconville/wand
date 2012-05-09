@@ -14,6 +14,8 @@ To be released.  Alpha version.
   [:issue:`19` by Jeremy Axmacher]
 - Added :attr:`Image.quantum_range <wand.image.Image.quantum_range>` property.
   [:issue:`19` by Jeremy Axmacher]
+- Now the current version can be found from the command line interface:
+  ``python -m wand.version``.
 
 
 Version 0.1.10
