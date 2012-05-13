@@ -671,6 +671,9 @@ class Image(Resource):
         library.MagickCropImage(self.wand, width, height, left, top)
         self.raise_exception()
 
+    def reset_coords(self):
+        library.MagickResetImagePage(self.wand)
+
     def resize(self, width=None, height=None, filter='triangle', blur=1):
         """Resizes the image.
 
