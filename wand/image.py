@@ -680,6 +680,7 @@ class Image(Resource):
     def reset_coords(self):
         """Reset the coordinate frame of the image so to the upper-left corner
         is (0, 0) again (crop and rotate operations change it).
+
         """
         library.MagickResetImagePage(self.wand)
 

@@ -512,7 +512,9 @@ def watermark():
 @tests.test
 def reset_coords():
     """Reset the coordinate frame so to the upper-left corner of
-    the image is (0, 0) again."""
+    the image is (0, 0) again.
+
+    """
     with Image(filename=asset('sasha.jpg')) as img:
             img.rotate(45, reset_coords=True)
             img.crop(0, 0, 170, 170)
