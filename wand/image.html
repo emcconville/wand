@@ -53,7 +53,7 @@
           <a href="../wand.html" title="wand — Simple MagickWand API binding for Python"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Wand</a> &raquo;</li>
-          <li><a href="../wand.html" accesskey="U"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a> &raquo;</li> 
+          <li><a href="../wand.html" accesskey="U"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -244,7 +244,7 @@ It returns a converted image instance which is new.</p>
 
 <dl class="method">
 <dt id="wand.image.Image.crop">
-<tt class="descname">crop</tt><big>(</big><em>left=0</em>, <em>top=0</em>, <em>right=None</em>, <em>bottom=None</em>, <em>width=None</em>, <em>height=None</em><big>)</big><a class="headerlink" href="#wand.image.Image.crop" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">crop</tt><big>(</big><em>left=0</em>, <em>top=0</em>, <em>right=None</em>, <em>bottom=None</em>, <em>width=None</em>, <em>height=None</em>, <em>reset_coords=True</em><big>)</big><a class="headerlink" href="#wand.image.Image.crop" title="Permalink to this definition">¶</a></dt>
 <dd><p>Crops the image in-place.</p>
 <div class="highlight-text"><div class="highlight"><pre>+--------------------------------------------------+
 |              ^                         ^         |
@@ -286,6 +286,9 @@ each other</li>
 default is the <a class="reference internal" href="#wand.image.Image.height" title="wand.image.Image.height"><tt class="xref py py-attr docutils literal"><span class="pre">height</span></tt></a> of the image.
 this parameter and <tt class="docutils literal"><span class="pre">bottom</span></tt> parameter are exclusive
 each other</li>
+<li><strong>reset_coords</strong> (<tt class="xref py py-class docutils literal"><span class="pre">bool</span></tt>) &#8211; optional flag. If set, after the rotation, the
+coordinate frame will be relocated to the upper-left corner of
+the new image. By default is <cite>True</cite>.</li>
 </ul>
 </td>
 </tr>
@@ -361,6 +364,13 @@ supported by the imagemgick library.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="wand.image.Image.reset_coords">
+<tt class="descname">reset_coords</tt><big>(</big><big>)</big><a class="headerlink" href="#wand.image.Image.reset_coords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the coordinate frame of the image so to the upper-left corner
+is (0, 0) again (crop and rotate operations change it).</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="wand.image.Image.resize">
 <tt class="descname">resize</tt><big>(</big><em>width=None</em>, <em>height=None</em>, <em>filter='triangle'</em>, <em>blur=1</em><big>)</big><a class="headerlink" href="#wand.image.Image.resize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Resizes the image.</p>
@@ -386,7 +396,7 @@ default is 1</li>
 
 <dl class="method">
 <dt id="wand.image.Image.rotate">
-<tt class="descname">rotate</tt><big>(</big><em>degree</em>, <em>background=None</em><big>)</big><a class="headerlink" href="#wand.image.Image.rotate" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">rotate</tt><big>(</big><em>degree</em>, <em>background=None</em>, <em>reset_coords=True</em><big>)</big><a class="headerlink" href="#wand.image.Image.rotate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rotates the image. It takes a <tt class="docutils literal"><span class="pre">background</span></tt> color for <tt class="docutils literal"><span class="pre">degree</span></tt>
 that isn&#8217;t a multiple of 90.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -397,6 +407,9 @@ that isn&#8217;t a multiple of 90.</p>
 <li><strong>degree</strong> (<a class="reference external" href="http://docs.python.org/library/numbers.html#numbers.Real" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">numbers.Real</span></tt></a>) &#8211; a degree to rotate. multiples of 360 affect nothing</li>
 <li><strong>background</strong> (<a class="reference internal" href="color.html#wand.color.Color" title="wand.color.Color"><tt class="xref py py-class docutils literal"><span class="pre">wand.color.Color</span></tt></a>) &#8211; an optional background color.
 default is transparent</li>
+<li><strong>reset_coords</strong> (<tt class="xref py py-class docutils literal"><span class="pre">bool</span></tt>) &#8211; optional flag. If set, after the rotation, the
+coordinate frame will be relocated to the upper-left corner of
+the new image. By default is <cite>True</cite>.</li>
 </ul>
 </td>
 </tr>
@@ -546,9 +559,9 @@ image.</p>
             </a></p><h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../wand.html"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a><ul>
-      <li>Previous: <a href="../wand.html" title="previous chapter"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a></li>
-      <li>Next: <a href="color.html" title="next chapter"><tt class="docutils literal docutils literal"><span class="pre">wand.color</span></tt> &#8212; Colors</a></li>
+  <li><a href="../wand.html"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a><ul>
+      <li>Previous: <a href="../wand.html" title="previous chapter"><tt class="docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a></li>
+      <li>Next: <a href="color.html" title="next chapter"><tt class="docutils literal"><span class="pre">wand.color</span></tt> &#8212; Colors</a></li>
   </ul></li>
   </ul></li>
 </ul>
