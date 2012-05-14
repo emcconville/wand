@@ -441,7 +441,7 @@ def rotate():
         with Color('red') as bg:
             with img.clone() as cloned:
                 cloned.rotate(45, bg)
-                assert 178 == cloned.width == cloned.height
+                assert 177 == cloned.width == cloned.height
                 assert bg == cloned[0, 0] == cloned[0, -1]
                 assert bg == cloned[-1, 0] == cloned[-1, -1]
                 with Color('black') as black:
@@ -503,11 +503,12 @@ def set_background_color():
 def watermark():
     """Adds  watermark to an image."""
     with Image(filename=asset('beach.jpg')) as img:
-        with img.clone() as cloned:
-            with Image(filename=asset('watermark.png')) as wm:
-                img.watermark(wm, 0.3)
-                with Image(filename=asset('marked.png')) as marked:
-                    assert img == marked
+        with Image(filename=asset('watermark.png')) as wm:
+            img.watermark(wm, 0.3)
+            with Image(filename=asset('marked.png')) as marked:
+                msg = 'img = {0!r}, marked = {1!r}'.format(
+                    img.signature, marked.signature)
+                assert img == marked, msg
 
 @tests.test
 def reset_coords():
@@ -519,6 +520,8 @@ def reset_coords():
             img.rotate(45, reset_coords=True)
             img.crop(0, 0, 170, 170)
             with Image(filename=asset('resettest.png')) as control:
-                assert img == control
+                msg = 'img = {0!r}, control = {1!r}'.format(
+                    img.signature, control.signature)
+                assert img == control, msg
 
 
