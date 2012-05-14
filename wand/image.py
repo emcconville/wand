@@ -636,7 +636,7 @@ class Image(Resource):
         :param reset_coords: optional flag. If set, after the rotation, the
             coordinate frame will be relocated to the upper-left corner of
             the new image. By default is `True`.
-        :type reset_coords: :class:`Boolean`
+        :type reset_coords: :class:`bool`
 
         .. note::
 
@@ -678,6 +678,9 @@ class Image(Resource):
             self.reset_coords()
 
     def reset_coords(self):
+        """Reset the coordinate frame of the image so to the upper-left corner
+        is (0, 0) again (crop and resize operations change it).
+        """
         library.MagickResetImagePage(self.wand)
 
     def resize(self, width=None, height=None, filter='triangle', blur=1):
@@ -742,7 +745,7 @@ class Image(Resource):
         :param reset_coords: optional flag. If set, after the rotation, the
             coordinate frame will be relocated to the upper-left corner of
             the new image. By default is `True`.
-        :type reset_coords: :class:`Boolean`
+        :type reset_coords: :class:`bool`
 
         """
         if background is None:
