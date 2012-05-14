@@ -441,7 +441,7 @@ def rotate():
         with Color('red') as bg:
             with img.clone() as cloned:
                 cloned.rotate(45, bg)
-                assert 177 == cloned.width == cloned.height
+                assert 178 == cloned.width == cloned.height
                 assert bg == cloned[0, 0] == cloned[0, -1]
                 assert bg == cloned[-1, 0] == cloned[-1, -1]
                 with Color('black') as black:
@@ -508,3 +508,15 @@ def watermark():
                 img.watermark(wm, 0.3)
                 with Image(filename=asset('marked.png')) as marked:
                     assert img == marked
+
+@tests.test
+def reset_coords():
+    """Reset the coordinate frame so to the upper-left corner of
+    the image is (0, 0) again."""
+    with Image(filename=asset('sasha.jpg')) as img:
+            img.rotate(45, reset_coords=True)
+            img.crop(0, 0, 170, 170)
+            with Image(filename=asset('resettest.png')) as control:
+                assert img == control
+
+
