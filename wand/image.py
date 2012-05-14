@@ -588,7 +588,7 @@ class Image(Resource):
         return cloned
 
     def crop(self, left=0, top=0, right=None, bottom=None,
-             width=None, height=None):
+             width=None, height=None, reset_coords=True):
         """Crops the image in-place.
 
         .. sourcecode:: text
@@ -633,6 +633,10 @@ class Image(Resource):
                        this parameter and ``bottom`` parameter are exclusive
                        each other
         :type height: :class:`numbers.Integral`
+        :param reset_coords: optional flag. If set, after the rotation, the
+            coordinate frame will be relocated to the upper-left corner of
+            the new image. By default is `True`.
+        :type reset_coords: :class:`Boolean`
 
         .. note::
 
@@ -670,6 +674,8 @@ class Image(Resource):
             return
         library.MagickCropImage(self.wand, width, height, left, top)
         self.raise_exception()
+        if reset_coords:
+            self.reset_coords()
 
     def reset_coords(self):
         library.MagickResetImagePage(self.wand)
@@ -724,7 +730,7 @@ class Image(Resource):
         blur = ctypes.c_double(float(blur))
         library.MagickResizeImage(self.wand, width, height, filter, blur)
 
-    def rotate(self, degree, background=None):
+    def rotate(self, degree, background=None, reset_coords=True):
         """Rotates the image. It takes a ``background`` color for ``degree``
         that isn't a multiple of 90.
 
@@ -733,6 +739,10 @@ class Image(Resource):
         :param background: an optional background color.
                            default is transparent
         :type background: :class:`wand.color.Color`
+        :param reset_coords: optional flag. If set, after the rotation, the
+            coordinate frame will be relocated to the upper-left corner of
+            the new image. By default is `True`.
+        :type reset_coords: :class:`Boolean`
 
         """
         if background is None:
@@ -749,6 +759,8 @@ class Image(Resource):
                                                degree)
         if not result:
             self.raise_exception()
+        if reset_coords:
+            self.reset_coords()
 
     def transparentize(self, transparency):
         """Makes the image transparent by subtracting some percentage of
