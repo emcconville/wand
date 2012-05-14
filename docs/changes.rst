@@ -14,6 +14,9 @@ To be released.  Alpha version.
   [:issue:`19` by Jeremy Axmacher]
 - Added :attr:`Image.quantum_range <wand.image.Image.quantum_range>` property.
   [:issue:`19` by Jeremy Axmacher]
+- Added :meth:`Image.reset_coords() <wand.image.Image.reset_coords>` method
+  and ``reset_coords`` option to :meth:`Image.rotate()
+  <wand.image.Image.rotate>` method. [:issue:`20` by Juan Pablo Scaletti]
 - Now the current version can be found from the command line interface:
   ``python -m wand.version``.
 
