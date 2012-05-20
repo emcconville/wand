@@ -32,7 +32,7 @@ class upload_doc(distutils.cmd.Command):
         build = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                              'build', 'sphinx', 'html')
         os.chdir(path)
-        os.system('git clone git@github.com:StyleShare/wand.git .')
+        os.system('git clone git@github.com:dahlia/wand.git .')
         os.system('git checkout gh-pages')
         os.system('git rm -r .')
         os.system('touch .nojekyll')
@@ -51,10 +51,10 @@ setup(name='Wand',
       long_description=readme(),
       license='MIT License',
       author='Hong Minhee',
-      author_email='dahlia' '@' 'stylesha.re',
-      maintainer='StyleShare',
-      maintainer_email='dev' '@' 'stylesha.re',
-      url='http://styleshare.github.com/wand/',
+      author_email='minhee@dahlia.kr',
+      maintainer='Hong Minhee',
+      maintainer_email='minhee@dahlia.kr',
+      url='http://dahlia.github.com/wand/',
       tests_require=['Attest'],
       test_loader='attest:auto_reporter.test_loader',
       test_suite='wandtests.tests',

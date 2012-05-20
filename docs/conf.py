@@ -44,7 +44,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Wand'
-copyright = u'2011, Hong Minhee, StyleShare'
+copyright = u'2011, Hong Minhee'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -184,7 +184,7 @@ htmlhelp_basename = 'Wanddoc'
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'Wand.tex', u'Wand Documentation',
-   u'Hong Minhee, StyleShare', 'manual'),
+   u'Hong Minhee', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -217,14 +217,14 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'wand', u'Wand Documentation',
-     [u'Hong Minhee, StyleShare'], 1)
+     [u'Hong Minhee'], 1)
 ]
 
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'http://docs.python.org/': None}
 
-extlinks = {'issue': ('https://github.com/StyleShare/wand/issues/%s', '#')}
+extlinks = {'issue': ('https://github.com/dahlia/wand/issues/%s', '#')}
 
 
 

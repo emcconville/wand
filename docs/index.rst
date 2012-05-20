@@ -78,24 +78,24 @@ References
 Open source
 -----------
 
-Wand is an open source software to be used for StyleShare_ and written by
-`Hong Minhee`_. The source code is distributed under `MIT license`_ and
-you can find it at `GitHub repository`_. Check out now:
+Wand is an open source software to be written by `Hong Minhee`_ (initially
+written for StyleShare_).  The source code is distributed under `MIT license`_
+and you can find it at `GitHub repository`_. Check out now:
 
 .. sourcecode:: bash
 
-   $ git clone git://github.com/StyleShare/wand.git
+   $ git clone git://github.com/dahlia/wand.git
 
 If you find a bug, please notify to `our issue tracker`_. Pull requests
 are always welcome!
 
 Check out :doc:`changes` also.
 
-.. _StyleShare: https://stylesha.re/
 .. _Hong Minhee: http://dahlia.kr/
-.. _MIT license: http://styleshare.mit-license.org/
-.. _GitHub repository: https://github.com/StyleShare/wand
-.. _our issue tracker: https://github.com/StyleShare/wand/issues
+.. _StyleShare: https://stylesha.re/
+.. _MIT license: http://minhee.mit-license.org/
+.. _GitHub repository: https://github.com/dahlia/wand
+.. _our issue tracker: https://github.com/dahlia/wand/issues
 
 
 Indices and tables

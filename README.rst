@@ -12,11 +12,11 @@ You can install the package from PyPI_ by using ``pip`` or
 Or would you like to enjoy with bleeding edge?  Check out the head
 revision of the source code from the `GitHub repository`__::
 
-    $ git clone git://github.com/StyleShare/wand.git
+    $ git clone git://github.com/dahlia/wand.git
     $ cd wand/
     $ python setup.py install
 
-.. _Wand: http://styleshare.github.com/wand/
+.. _Wand: http://dahlia.github.com/wand/
 .. _MagickWand API: http://www.imagemagick.org/script/magick-wand.php
 .. _PyPI: http://pypi.python.org/pypi/Wand
-__ https://github.com/StyleShare/wand
+__ https://github.com/dahlia/wand
