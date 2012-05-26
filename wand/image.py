@@ -508,6 +508,26 @@ class Image(Resource):
             raise ValueError(repr(fmt) + ' is unsupported format')
 
     @property
+    def compression_quality(self):
+        """(:class:`numbers.Integral`) Compression quality of this image."""
+        return library.MagickGetImageCompressionQuality(self.wand)
+    
+    @compression_quality.setter
+    def compression_quality(self, quality):
+        """Set compression quality for the image.
+            
+            :param quality: new compression quality setting
+            :type quality: :class:`numbers.Integral`
+        """
+        if not isinstance(quality, numbers.Integral):
+            raise TypeError('compression quality must be a natural '
+                            'number, not ' + repr(quality))
+        r = library.MagickSetImageCompressionQuality(self.wand, quality)
+        if not r:
+            raise ValueError('Unable to set compression quality to ' +
+                             repr(quality))
+    
+    @property
     def mimetype(self):
         """(:class:`basestring`) The MIME type of the image
         e.g. ``'image/jpeg'``, ``'image/png'``.
@@ -889,6 +909,12 @@ class Image(Resource):
             library.MagickRelinquishMemory(blob_p)
             return blob
         self.raise_exception()
+
+    def strip(self):
+        """Strips an image of all profiles and comments."""
+        result = library.MagickStripImage(self.wand)
+        if not result:
+            self.raise_exception()
 
 
 class Iterator(Resource, collections.Iterator):

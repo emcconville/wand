@@ -227,6 +227,14 @@ try:
     library.MagickCompositeImage.argtypes = [ctypes.c_void_p, ctypes.c_void_p,
                                              ctypes.c_int, ctypes.c_ssize_t,
                                              ctypes.c_ssize_t]  
+    
+    library.MagickGetImageCompressionQuality.argtypes = [ctypes.c_void_p]
+    library.MagickGetImageCompressionQuality.restype = ctypes.c_ssize_t
+    
+    library.MagickSetImageCompressionQuality.argtypes = [ctypes.c_void_p,
+                                                         ctypes.c_ssize_t]
+
+    library.MagickStripImage.argtypes =  [ctypes.c_void_p]
 except AttributeError:
     raise ImportError('MagickWand shared library not found or incompatible')
 
