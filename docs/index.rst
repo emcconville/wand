@@ -79,8 +79,9 @@ Open source
 -----------
 
 Wand is an open source software to be written by `Hong Minhee`_ (initially
-written for StyleShare_).  The source code is distributed under `MIT license`_
-and you can find it at `GitHub repository`_. Check out now:
+written for StyleShare_).  See also the complete list of contributors_ as well.
+The source code is distributed under `MIT license`_ and you can find it at
+`GitHub repository`_. Check out now:
 
 .. sourcecode:: bash
 
@@ -93,6 +94,7 @@ Check out :doc:`changes` also.
 
 .. _Hong Minhee: http://dahlia.kr/
 .. _StyleShare: https://stylesha.re/
+.. _contributors: https://github.com/dahlia/wand/graphs/contributors
 .. _MIT license: http://minhee.mit-license.org/
 .. _GitHub repository: https://github.com/dahlia/wand
 .. _our issue tracker: https://github.com/dahlia/wand/issues
