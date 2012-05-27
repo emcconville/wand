@@ -217,6 +217,12 @@ current image.  The dimensions of the current image are not changed.</p>
 </table>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="wand.image.Image.compression_quality">
+<tt class="descname">compression_quality</tt><a class="headerlink" href="#wand.image.Image.compression_quality" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<a class="reference external" href="http://docs.python.org/library/numbers.html#numbers.Integral" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">numbers.Integral</span></tt></a>) Compression quality of this image.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="wand.image.Image.convert">
 <tt class="descname">convert</tt><big>(</big><em>format</em><big>)</big><a class="headerlink" href="#wand.image.Image.convert" title="Permalink to this definition">¶</a></dt>
@@ -450,6 +456,12 @@ stream.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="wand.image.Image.strip">
+<tt class="descname">strip</tt><big>(</big><big>)</big><a class="headerlink" href="#wand.image.Image.strip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Strips an image of all profiles and comments.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="wand.image.Image.transparentize">
 <tt class="descname">transparentize</tt><big>(</big><em>transparency</em><big>)</big><a class="headerlink" href="#wand.image.Image.transparentize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Makes the image transparent by subtracting some percentage of
@@ -541,7 +553,7 @@ one or more <a class="reference internal" href="color.html#wand.color.Color" tit
 
 <dl class="exception">
 <dt id="wand.image.ClosedImageError">
-<em class="property">exception </em><tt class="descclassname">wand.image.</tt><tt class="descname">ClosedImageError</tt><a class="headerlink" href="#wand.image.ClosedImageError" title="Permalink to this definition">¶</a></dt>
+<em class="property">exception </em><tt class="descclassname">wand.image.</tt><tt class="descname">ClosedImageError</tt><big>(</big><em>*args</em><big>)</big><a class="headerlink" href="#wand.image.ClosedImageError" title="Permalink to this definition">¶</a></dt>
 <dd><p>An error that rises when some code tries access to an already closed
 image.</p>
 </dd></dl>
