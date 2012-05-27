@@ -170,6 +170,42 @@ def set_format():
 
 
 @tests.test
+def get_compression():
+    """Gets the image compression quality."""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        assert img.compression_quality == 80
+
+
+@tests.test
+def set_compression():
+    """Sets the image compression quality."""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        img.compression_quality = 50
+        assert img.compression_quality == 50
+        strio = StringIO.StringIO()
+        img.save(file=strio)
+        strio.seek(0)
+        with Image(file=strio) as jpg:
+            assert jpg.compression_quality == 50
+        with raises(TypeError):
+            img.compression_quality = 'high'
+
+
+@tests.test
+def strip():
+    """Strips the image of all profiles and comments."""
+    with Image(filename=asset('beach.jpg')) as img:
+        strio = StringIO.StringIO()
+        img.save(file=strio)
+        len_unstripped = strio.tell()
+        strio.truncate(0)
+        img.strip()
+        img.save(file=strio)
+        len_stripped = strio.tell()
+        assert len_unstripped > len_stripped
+
+
+@tests.test
 def get_mimetype():
     """Gets mimetypes of the image."""
     with Image(filename=asset('mona-lisa.jpg')) as img:
