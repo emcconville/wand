@@ -192,6 +192,20 @@ def set_compression():
 
 
 @tests.test
+def strip():
+    """Strips the image of all profiles and comments."""
+    with Image(filename=asset('beach.jpg')) as img:
+        strio = StringIO.StringIO()
+        img.save(file=strio)
+        len_unstripped = strio.tell()
+        strio.truncate(0)
+        img.strip()
+        img.save(file=strio)
+        len_stripped = strio.tell()
+        assert len_unstripped > len_stripped
+
+
+@tests.test
 def get_mimetype():
     """Gets mimetypes of the image."""
     with Image(filename=asset('mona-lisa.jpg')) as img:
