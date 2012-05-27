@@ -10,14 +10,15 @@ error happened)::
         print 'height =', i.height
 
 """
-import types
-import numbers
 import collections
 import ctypes
+import numbers
 import platform
-from .api import library, libmagick, libc, MagickPixelPacket
-from .resource import Resource, DestroyedResourceError
+import types
+
+from .api import MagickPixelPacket, libc, libmagick, library
 from .color import Color
+from .resource import DestroyedResourceError, Resource
 
 
 __all__ = 'FILTER_TYPES', 'Image', 'Iterator', 'ClosedImageError'

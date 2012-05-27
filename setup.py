@@ -5,8 +5,9 @@ try:
 except ImportError:
     from distutils.core import setup
 import distutils.cmd
-import tempfile
 import shutil
+import tempfile
+
 from wand.version import VERSION
 
 

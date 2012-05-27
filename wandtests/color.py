@@ -1,4 +1,5 @@
-from attest import assert_hook, Tests, raises
+from attest import Tests, assert_hook, raises
+
 from wand.color import Color
 
 

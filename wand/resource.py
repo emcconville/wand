@@ -5,12 +5,13 @@ There is the global resource to manage in MagickWand API. This module
 implements automatic global resource management through reference counting.
 
 """
-import logging
 import contextlib
 import ctypes
+import logging
 import warnings
-from . import exceptions
+
 from .api import library
+from . import exceptions
 
 
 __all__ = ('genesis', 'terminus', 'increment_refcount', 'decrement_refcount',
