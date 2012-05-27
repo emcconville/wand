@@ -1,3 +1,5 @@
+.. image:: http://dahlia.github.com/wand/_static/wand_120.png
+
 Wand_
 ~~~~~
 
