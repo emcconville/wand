@@ -17,6 +17,10 @@ To be released.  Alpha version.
 - Added :meth:`Image.reset_coords() <wand.image.Image.reset_coords>` method
   and ``reset_coords`` option to :meth:`Image.rotate()
   <wand.image.Image.rotate>` method. [:issue:`20` by Juan Pablo Scaletti]
+- Added :meth:`Image.strip() <wand.image.Image.strip>` method.
+  [:issue:`23` by Dmitry Vukolov]
+- Added :attr:`Image.compression_quality <wand.image.Image.compression_quality>`
+  property.  [:issue:`23` by Dmitry Vukolov]
 - Now the current version can be found from the command line interface:
   ``python -m wand.version``.
 
