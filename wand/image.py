@@ -516,8 +516,9 @@ class Image(Resource):
     def compression_quality(self, quality):
         """Set compression quality for the image.
             
-            :param quality: new compression quality setting
-            :type quality: :class:`numbers.Integral`
+        :param quality: new compression quality setting
+        :type quality: :class:`numbers.Integral`
+
         """
         if not isinstance(quality, numbers.Integral):
             raise TypeError('compression quality must be a natural '
