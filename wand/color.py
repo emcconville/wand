@@ -3,7 +3,8 @@
 
 """
 import ctypes
-from .api import library, MagickPixelPacket
+
+from .api import MagickPixelPacket, library
 from .resource import Resource
 
 __all__ = 'Color',

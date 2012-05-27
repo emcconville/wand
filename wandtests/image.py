@@ -4,8 +4,10 @@ try:
     import cStringIO as StringIO
 except ImportError:
     import StringIO
-from attest import assert_hook, Tests, raises
-from wand.image import Image, ClosedImageError
+
+from attest import Tests, assert_hook, raises
+
+from wand.image import ClosedImageError, Image
 from wand.color import Color
 
 

@@ -2,11 +2,11 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 """
+import ctypes
+import ctypes.util
 import os
 import os.path
 import platform
-import ctypes
-import ctypes.util
 
 __all__ = 'load_library', 'MagickPixelPacket', 'library', 'libc'
 
