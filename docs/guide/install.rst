@@ -4,16 +4,71 @@ Installation
 Wand itself can be installed from PyPI_ using :program:`easy_install` or
 :program:`pip`:
 
-.. sourcecode:: bash
+.. sourcecode:: console
 
    $ easy_install Wand  # or
    $ pip install Wand
 
-Wand is a Python binding of ImageMagick_, so you have to install it as well.
+Wand is a Python binding of ImageMagick_, so you have to install it as well:
+
+- :ref:`Debian/Ubuntu <install-imagemagick-debian>`
+- :ref:`Fedora/CentOS <install-imagemagick-redhat>`
+- :ref:`Mac <install-imagemagick-mac>`
+- :ref:`Windows <install-imagemagick-windows>`
 
 .. _PyPI: http://pypi.python.org/pypi/Wand
 .. _ImageMagick: http://www.imagemagick.org/
 
+
+.. _install-imagemagick-debian:
+
+Install ImageMagick on Debian/Ubuntu
+------------------------------------
+
+If you're using Linux distributions based on Debian like Ubuntu, it can be
+easily installed using APT:
+
+.. sourcecode:: console
+
+   $ sudo apt-get install libmagickwand-dev
+
+
+.. _install-imagemagick-redhat:
+
+Install ImageMagick on Fedora/CentOS
+------------------------------------
+
+If you're using Linux distributions based on Redhat like Fedora or CentOS,
+it can be installed using Yum:
+
+.. sourcecode:: console
+
+   $ yum update
+   $ yum install ImageMagick-devel
+
+
+.. _install-imagemagick-mac:
+
+Install ImageMagick on Mac
+--------------------------
+
+You need one of Homebrew_ or MacPorts_ to install ImageMagick.
+
+Homebrew
+   .. sourcecode:: console
+
+      $ brew install imagemagick
+
+MacPorts
+   .. sourcecode:: console
+
+      $ sudo port install imagemagick
+
+.. _Homebrew: http://mxcl.github.com/homebrew/
+.. _MacPorts: http://www.macports.org/
+
+
+.. _install-imagemagick-windows:
 
 Install ImageMagick on Windows
 ------------------------------
