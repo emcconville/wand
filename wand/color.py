@@ -1,6 +1,8 @@
 """:mod:`wand.color` --- Colors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+.. versionadded:: 0.1.2
+
 """
 import ctypes
 

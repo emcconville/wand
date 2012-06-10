@@ -1,6 +1,10 @@
 """:mod:`wand.api` --- Low-level interfaces
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+.. versionchanged:: 0.1.10
+   Changed to throw :exc:`~exceptions.ImportError` instead of
+   :exc:`~exceptions.AttributeError` when the shared library fails to load.
+
 """
 import ctypes
 import ctypes.util

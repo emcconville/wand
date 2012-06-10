@@ -9,6 +9,8 @@ natural way to catch errors.
 
    `ImageMagick Exceptions <http://www.imagemagick.org/script/exception.php>`_
 
+.. versionadded:: 0.1.1
+
 """
 import itertools
 

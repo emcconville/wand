@@ -18,6 +18,8 @@ You can use it from CLI also.  Execute :mod:`wand.display` module through
 
    $ python -m wand.display wandtests/assets/mona-lisa.jpg
 
+.. versionadded:: 0.1.9
+
 """
 import ctypes
 import os

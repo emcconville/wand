@@ -250,6 +250,12 @@ class Image(Resource):
     :param filename: opens an image of the ``filename`` string
     :type filename: :class:`basestring`
 
+    .. versionadded:: 0.1.5
+       The ``file`` parameter.
+
+    .. versionadded:: 0.1.1
+       The ``blob`` parameter.
+
     .. describe:: [left:right, top:bottom]
 
        Crops the image by its ``left``, ``right``, ``top`` and ``bottom``,
@@ -271,6 +277,8 @@ class Image(Resource):
 
        :returns: the cropped image
        :rtype: :class:`Image`
+
+       .. versionadded:: 0.1.2
 
     """
 
@@ -493,6 +501,8 @@ class Image(Resource):
 
            __ http://www.imagemagick.org/script/formats.php
 
+        .. versionadded:: 0.1.6
+
         """
         fmt = library.MagickGetImageFormat(self.wand)
         if fmt:
@@ -510,7 +520,11 @@ class Image(Resource):
 
     @property
     def compression_quality(self):
-        """(:class:`numbers.Integral`) Compression quality of this image."""
+        """(:class:`numbers.Integral`) Compression quality of this image.
+
+        .. versionadded:: 0.2.0
+
+        """
         return library.MagickGetImageCompressionQuality(self.wand)
     
     @compression_quality.setter
@@ -534,6 +548,8 @@ class Image(Resource):
         """(:class:`basestring`) The MIME type of the image
         e.g. ``'image/jpeg'``, ``'image/png'``.
 
+        .. versionadded:: 0.1.7
+
         """
         rp = libmagick.MagickToMime(self.format)
         if not rp:
@@ -552,6 +568,8 @@ class Image(Resource):
         """(:class:`str`) The SHA-256 message digest for the image pixel
         stream.
 
+        .. versionadded:: 0.1.9
+
         """
         return library.MagickGetImageSignature(self.wand)
 
@@ -559,6 +577,8 @@ class Image(Resource):
     def background_color(self):
         """(:class:`wand.color.Color`) The image background color.
         It can also be set to change the background color.
+
+        .. versionadded:: 0.1.9
 
         """
         pixel = library.NewPixelWand()
@@ -574,6 +594,8 @@ class Image(Resource):
     def quantum_range(self):
         """(:class:`int`) The maxumim value of a color channel that is
         supported by the imagemgick library.
+
+        .. versionadded:: 0.2.0
 
         """
         result = ctypes.c_size_t()
@@ -603,6 +625,8 @@ class Image(Resource):
         :returns: a converted image
         :rtype: :class:`Image`
         :raises: :exc:`ValueError` when the given ``format`` is unsupported
+
+        .. versionadded:: 0.1.6
 
         """
         cloned = self.clone()
@@ -655,15 +679,25 @@ class Image(Resource):
                        this parameter and ``bottom`` parameter are exclusive
                        each other
         :type height: :class:`numbers.Integral`
-        :param reset_coords: optional flag. If set, after the rotation, the
-            coordinate frame will be relocated to the upper-left corner of
-            the new image. By default is `True`.
+        :param reset_coords:
+           optional flag. If set, after the rotation, the coordinate frame
+           will be relocated to the upper-left corner of the new image.
+           By default is `True`.
         :type reset_coords: :class:`bool`
+        :raises exceptions.ValueError:
+           when one or more arguments are invalid
 
         .. note::
 
            If you want to crop the image but not in-place, use slicing
            operator.
+
+        .. versionchanged:: 0.1.8
+           Made to raise :exc:`~exceptions.ValueError` instead of
+           :exc:`~exceptions.IndexError` for invalid ``width``/``height``
+           arguments.
+
+        .. versionadded:: 0.1.7
 
         """
         if not (right is None or width is None):
@@ -703,6 +737,8 @@ class Image(Resource):
         """Reset the coordinate frame of the image so to the upper-left corner
         is (0, 0) again (crop and rotate operations change it).
 
+        .. versionadded:: 0.2.0
+
         """
         library.MagickResetImagePage(self.wand)
 
@@ -721,6 +757,12 @@ class Image(Resource):
         :param blur: the blur factor where > 1 is blurry, < 1 is sharp.
                      default is 1
         :type blur: :class:`numbers.Real`
+
+        .. versionchanged:: 0.1.8
+           The ``blur`` parameter changed to take :class:`numbers.Real`
+           instead of :class:`numbers.Rational`.
+
+        .. versionadded:: 0.1.1
 
         """
         if width is None:
@@ -770,6 +812,11 @@ class Image(Resource):
             the new image. By default is `True`.
         :type reset_coords: :class:`bool`
 
+        .. versionadded:: 0.2.0
+           The ``reset_coords`` parameter.
+
+        .. versionadded:: 0.1.8
+
         """
         if background is None:
             background = Color('transparent')
@@ -796,6 +843,8 @@ class Image(Resource):
         :param transparency: the percentage fade that should be performed on the
                              image, from 0.0 to 1.0
         :type transparency: :class:`numbers.Real`
+
+        .. versionadded:: 0.2.0
 
         """
         if transparency:
@@ -828,6 +877,8 @@ class Image(Resource):
         :param top: the y-coordinate where `image` will be placed
         :type top: :class:`numbers.Integral`
 
+        .. versionadded:: 0.2.0
+
         """
         library.MagickCompositeImage(self.wand, image.wand,
                                      COMPOSITE_OPS.index('over'), left, top)
@@ -849,6 +900,8 @@ class Image(Resource):
         :param top: the y-coordinate where `image` will be placed
         :type top: :class:`numbers.Integral`
 
+        .. versionadded:: 0.2.0
+
         """
         with image.clone() as watermark_image:
             watermark_image.transparentize(transparency)
@@ -863,6 +916,11 @@ class Image(Resource):
         :type file: file object
         :param filename: a filename string to write to
         :type filename: :class:`basename`
+
+        .. versionadded:: 0.1.5
+           The ``file`` parameter.
+
+        .. versionadded:: 0.1.1
 
         """
         if file is None and filename is None:
@@ -899,6 +957,15 @@ class Image(Resource):
         :rtype: :class:`str`
         :raises: :exc:`ValueError` when ``format`` is invalid
 
+        .. versionchanged:: 0.1.6
+           Removed a side effect that changes the image :attr:`format`
+           silently.
+
+        .. versionadded:: 0.1.5
+           The ``format`` parameter became optional.
+
+        .. versionadded:: 0.1.1
+
         """
         if format is not None:
             with self.convert(format) as converted:
@@ -913,7 +980,11 @@ class Image(Resource):
         self.raise_exception()
 
     def strip(self):
-        """Strips an image of all profiles and comments."""
+        """Strips an image of all profiles and comments.
+
+        .. versionadded:: 0.2.0
+
+        """
         result = library.MagickStripImage(self.wand)
         if not result:
             self.raise_exception()
@@ -938,6 +1009,8 @@ class Iterator(Resource, collections.Iterator):
 
     :param image: the image to get an iterator
     :type image: :class:`Image`
+
+    .. versionadded:: 0.1.3
 
     """
 
@@ -1005,7 +1078,11 @@ class Iterator(Resource, collections.Iterator):
         return Color(raw=packet_buffer)
 
     def clone(self):
-        """Clones the same iterator."""
+        """Clones the same iterator.
+
+        .. versionadded:: 0.1.1
+
+        """
         return type(self)(iterator=self)
 
 

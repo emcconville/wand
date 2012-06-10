@@ -104,6 +104,8 @@ class Resource(object):
                 with self.allocate():
                     self.resource = library.NewPizza()
 
+    .. versionadded:: 0.1.2
+
     """
 
     #: (:class:`ctypes.CFUNCTYPE`) The :mod:`ctypes` predicate function
