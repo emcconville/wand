@@ -3,6 +3,7 @@ build
 dist
 .tox
 *.pyc
+*$py.class
 *.egg
 *.egg-info
 .*.swp
