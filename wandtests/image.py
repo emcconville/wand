@@ -5,7 +5,7 @@ try:
 except ImportError:
     import StringIO
 
-from attest import Tests, assert_hook, raises
+from attest import Tests, raises
 
 from wand.image import ClosedImageError, Image
 from wand.color import Color
