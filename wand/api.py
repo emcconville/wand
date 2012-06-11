@@ -245,8 +245,9 @@ try:
                                                          ctypes.c_ssize_t]
 
     library.MagickStripImage.argtypes =  [ctypes.c_void_p]
-except AttributeError:
-    raise ImportError('MagickWand shared library not found or incompatible')
+except AttributeError as _e:
+    raise ImportError('MagickWand shared library not found or incompatible: '
+                      '[{0}: {1}]'.format(type(_e).__name__, str(_e)))
 
 #: (:class:`ctypes.CDLL`) The C standard library.
 libc = None
