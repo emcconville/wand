@@ -7,7 +7,10 @@
 
 """
 import ctypes
-import ctypes.util
+try:
+    import ctypes.util
+except ImportError:
+    pass
 import os
 import os.path
 import platform
@@ -23,7 +26,6 @@ def load_library():
     """
     libpath = None
     system = platform.system()
-
     magick_home = os.environ.get('MAGICK_HOME')
     if magick_home:
         if system == 'Windows':
@@ -33,13 +35,15 @@ def load_library():
         else:
             libpath = 'lib', 'libMagickWand.so',
         libpath = os.path.join(magick_home, *libpath)
-    else:
+    elif hasattr(ctypes, 'util'):
         if system == 'Windows':
             libpath = ctypes.util.find_library('CORE_RL_wand_')
         else:
             libpath = ctypes.util.find_library('MagickWand')
+    else:
+        raise ImportError('cannot find MagickWand library; explicitly set '
+                          'MAGICK_HOME environment variable')
     libwand = ctypes.CDLL(libpath)
-
     if system == 'Windows':
         # On Windows, the API is split between two libs. On other platforms,
         # it's all contained in one.
@@ -47,11 +51,13 @@ def load_library():
         if magick_home:
             libmagick_path = os.path.join(magick_home,
                                           libmagick_filename + '.dll')
-        else:
+        elif hasattr(ctypes, 'util'):
             libmagick_path = ctypes.util.find_library(libmagick_filename)
+        else:
+            raise ImportError('cannot find MagickWand library; explicitly set '
+                              'MAGICK_HOME environment variable')
         libmagick = ctypes.CDLL(libmagick_path)
         return libwand, libmagick
-
     return libwand, libwand
 
 
