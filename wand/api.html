@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>wand.api — Low-level interfaces &mdash; Wand 0.1.10</title>
+    <title>wand.api — Low-level interfaces &mdash; Wand 0.2.0</title>
     
     <link rel="stylesheet" href="../_static/wand.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.10',
+        VERSION:     '0.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Wand 0.1.10" href="../index.html" />
+    <link rel="top" title="Wand 0.2.0" href="../index.html" />
     <link rel="up" title="wand — Simple MagickWand API binding for Python" href="../wand.html" />
     <link rel="next" title="wand.display — Displaying images" href="display.html" />
     <link rel="prev" title="wand.exceptions — Errors and warnings" href="exceptions.html" />
@@ -64,6 +64,9 @@
             
   <span class="target" id="module-wand.api"></span><div class="section" id="wand-api-low-level-interfaces">
 <h1><a class="reference internal" href="#module-wand.api" title="wand.api"><tt class="xref py py-mod docutils literal"><span class="pre">wand.api</span></tt></a> &#8212; Low-level interfaces<a class="headerlink" href="#wand-api-low-level-interfaces" title="Permalink to this headline">¶</a></h1>
+<p class="versionchanged">
+<span class="versionmodified">Changed in version 0.1.10: </span>Changed to throw <a class="reference external" href="http://docs.python.org/library/exceptions.html#exceptions.ImportError" title="(in Python v2.7)"><tt class="xref py py-exc docutils literal"><span class="pre">ImportError</span></tt></a> instead of
+<a class="reference external" href="http://docs.python.org/library/exceptions.html#exceptions.AttributeError" title="(in Python v2.7)"><tt class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></tt></a> when the shared library fails to load.</p>
 <dl class="function">
 <dt id="wand.api.load_library">
 <tt class="descclassname">wand.api.</tt><tt class="descname">load_library</tt><big>(</big><big>)</big><a class="headerlink" href="#wand.api.load_library" title="Permalink to this definition">¶</a></dt>
@@ -80,13 +83,13 @@
 
 <dl class="data">
 <dt id="wand.api.library">
-<tt class="descclassname">wand.api.</tt><tt class="descname">library</tt><em class="property"> = &lt;CDLL 'libMagickWand.so.4', handle &lt;_ffi.CDLL object at 0x0000000007e0f748&gt; at 7da2b48&gt;</em><a class="headerlink" href="#wand.api.library" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">wand.api.</tt><tt class="descname">library</tt><em class="property"> = &lt;CDLL 'libMagickWand.so.4', handle 24fdb40 at 24a3d10&gt;</em><a class="headerlink" href="#wand.api.library" title="Permalink to this definition">¶</a></dt>
 <dd><p>(<a class="reference external" href="http://docs.python.org/library/ctypes.html#ctypes.CDLL" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">ctypes.CDLL</span></tt></a>) The MagickWand library.</p>
 </dd></dl>
 
 <dl class="data">
 <dt id="wand.api.libc">
-<tt class="descclassname">wand.api.</tt><tt class="descname">libc</tt><em class="property"> = &lt;CDLL 'libc.so.6', handle &lt;_ffi.CDLL object at 0x0000000007e0ec98&gt; at 7da22c0&gt;</em><a class="headerlink" href="#wand.api.libc" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">wand.api.</tt><tt class="descname">libc</tt><em class="property"> = &lt;CDLL 'libc.so.6', handle 7f7f4e6f79b0 at 24c4550&gt;</em><a class="headerlink" href="#wand.api.libc" title="Permalink to this definition">¶</a></dt>
 <dd><p>(<a class="reference external" href="http://docs.python.org/library/ctypes.html#ctypes.CDLL" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">ctypes.CDLL</span></tt></a>) The C standard library.</p>
 </dd></dl>
 
@@ -98,9 +101,13 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  
+    
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/wand_120.png" alt="Logo"/>
-            </a></p><h3>Related Topics</h3>
+            </a></p>
+  
+<h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../wand.html"><tt class="docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a><ul>

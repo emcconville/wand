@@ -4,11 +4,11 @@ Wand Changelog
 Version 0.2.0
 -------------
 
-To be released.  Alpha version.
+Released on June 20, 2012.  Alpha version.
 
 - Added :meth:`Image.transparentize() <wand.image.Image.transparentize>` method.
   [:issue:`19` by Jeremy Axmacher]
-- Added :meth:`Image.composite() <wand.image.Image.compoatie>` method.
+- Added :meth:`Image.composite() <wand.image.Image.composite>` method.
   [:issue:`19` by Jeremy Axmacher]
 - Added :meth:`Image.watermark() <wand.image.Image.watermark>` method.
   [:issue:`19` by Jeremy Axmacher]
@@ -31,10 +31,11 @@ Version 0.1.10
 Released on May 8, 2012.  Still alpha version.
 
 - So many Windows compatibility issues are fixed. [:issue:`14` by John Simon]
-- Fixed a bug that raises :exc:`AttributeError` when it's trying to warn.
-  [:issue:`16` by Tim Dettrick]
-- Now it throws :exc:`ImportError` instead of :exc:`AttributeError` when
-  the shared library fails to load. [:issue:`17` by Kieran Spear]
+- Fixed a bug that raises :exc:`~exceptions.AttributeError` when it's trying
+  to warn.  [:issue:`16` by Tim Dettrick]
+- Now it throws :exc:`~exceptions.ImportError` instead of
+  :exc:`~exceptions.AttributeError` when the shared library fails
+  to load.  [:issue:`17` by Kieran Spear]
 - Fixed the example usage on index page of the documentation.
   [:issue:`18` by Jeremy Axmacher]
 
@@ -68,8 +69,8 @@ Released on December 2, 2011. Still alpha version.
   :exc:`ValueError` instead of :exc:`IndexError` for invalid width/height
   arguments.
 - Changed the type of :meth:`Image.resize() <wand.image.Image.resize()>`
-  method's ``blur`` parameter from :class:`collections.Rational` to
-  :class:`collections.Real`.
+  method's ``blur`` parameter from :class:`numbers.Rational` to
+  :class:`numbers.Real`.
 - Fixed a bug of raising :exc:`~exceptions.ValueError` when invalid ``filter``
   has passed to :meth:`Image.resize() <wand.image.Image.resize>` method.
 
@@ -129,7 +130,7 @@ Version 0.1.2
 Released on October 16, 2011. Still alpha version.
 
 - :class:`~wand.image.Image` implements iterable interface.
-- Added `wand.color` module.
+- Added :mod:`wand.color` module.
 - Added the abstract base class of all Wand resource objects:
   :class:`wand.resource.Resource`.
 - :class:`~wand.image.Image` implements slicing.

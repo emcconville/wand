@@ -2,7 +2,7 @@
 @import url(http://fonts.googleapis.com/css?family=Sunshiney);
 @import url(flasky.css);
 
-.indexwrapper .sphinxsidebar .logo { display: none; }
+.indexwrapper .sphinxsidebar .github-line { visibility: hidden; }
 
 .indexwrapper div.body #wand.section h1 {
   background-image: url(wand_25.png);

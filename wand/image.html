@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>wand.image — Image objects &mdash; Wand 0.1.10</title>
+    <title>wand.image — Image objects &mdash; Wand 0.2.0</title>
     
     <link rel="stylesheet" href="../_static/wand.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.10',
+        VERSION:     '0.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Wand 0.1.10" href="../index.html" />
+    <link rel="top" title="Wand 0.2.0" href="../index.html" />
     <link rel="up" title="wand — Simple MagickWand API binding for Python" href="../wand.html" />
     <link rel="next" title="wand.color — Colors" href="color.html" />
     <link rel="prev" title="wand — Simple MagickWand API binding for Python" href="../wand.html" />
@@ -123,6 +123,10 @@ and the file size of the resulting thumbnail images.</dd>
 </tr>
 </tbody>
 </table>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.1.5: </span>The <tt class="docutils literal"><span class="pre">file</span></tt> parameter.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.1.1: </span>The <tt class="docutils literal"><span class="pre">blob</span></tt> parameter.</p>
 <dl class="describe">
 <dt>
 <tt class="descname">[left:right, top:bottom]</tt></dt>
@@ -153,6 +157,8 @@ and then returns the cropped one.</p>
 </tr>
 </tbody>
 </table>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.1.2.</span></p>
 </dd></dl>
 
 <dl class="attribute">
@@ -160,6 +166,8 @@ and then returns the cropped one.</p>
 <tt class="descname">background_color</tt><a class="headerlink" href="#wand.image.Image.background_color" title="Permalink to this definition">¶</a></dt>
 <dd><p>(<a class="reference internal" href="color.html#wand.color.Color" title="wand.color.Color"><tt class="xref py py-class docutils literal"><span class="pre">wand.color.Color</span></tt></a>) The image background color.
 It can also be set to change the background color.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.1.9.</span></p>
 </dd></dl>
 
 <dl class="method">
@@ -215,12 +223,16 @@ current image.  The dimensions of the current image are not changed.</p>
 </tr>
 </tbody>
 </table>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.2.0.</span></p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="wand.image.Image.compression_quality">
 <tt class="descname">compression_quality</tt><a class="headerlink" href="#wand.image.Image.compression_quality" title="Permalink to this definition">¶</a></dt>
 <dd><p>(<a class="reference external" href="http://docs.python.org/library/numbers.html#numbers.Integral" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">numbers.Integral</span></tt></a>) Compression quality of this image.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.2.0.</span></p>
 </dd></dl>
 
 <dl class="method">
@@ -246,6 +258,8 @@ It returns a converted image instance which is new.</p>
 </tr>
 </tbody>
 </table>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.1.6.</span></p>
 </dd></dl>
 
 <dl class="method">
@@ -273,7 +287,7 @@ It returns a converted image instance which is new.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>left</strong> (<a class="reference external" href="http://docs.python.org/library/numbers.html#numbers.Integral" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">numbers.Integral</span></tt></a>) &#8211; x-offset of the cropped image. default is 0</li>
 <li><strong>top</strong> (<a class="reference external" href="http://docs.python.org/library/numbers.html#numbers.Integral" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">numbers.Integral</span></tt></a>) &#8211; y-offset of the cropped image. default is 0</li>
 <li><strong>right</strong> (<a class="reference external" href="http://docs.python.org/library/numbers.html#numbers.Integral" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">numbers.Integral</span></tt></a>) &#8211; second x-offset of the cropped image.
@@ -292,10 +306,14 @@ each other</li>
 default is the <a class="reference internal" href="#wand.image.Image.height" title="wand.image.Image.height"><tt class="xref py py-attr docutils literal"><span class="pre">height</span></tt></a> of the image.
 this parameter and <tt class="docutils literal"><span class="pre">bottom</span></tt> parameter are exclusive
 each other</li>
-<li><strong>reset_coords</strong> (<tt class="xref py py-class docutils literal"><span class="pre">bool</span></tt>) &#8211; optional flag. If set, after the rotation, the
-coordinate frame will be relocated to the upper-left corner of
-the new image. By default is <cite>True</cite>.</li>
+<li><strong>reset_coords</strong> (<tt class="xref py py-class docutils literal"><span class="pre">bool</span></tt>) &#8211; optional flag. If set, after the rotation, the coordinate frame
+will be relocated to the upper-left corner of the new image.
+By default is <cite>True</cite>.</li>
 </ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Raises <a class="reference external" href="http://docs.python.org/library/exceptions.html#exceptions.ValueError" title="(in Python v2.7)">exceptions.ValueError</a>:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first last">when one or more arguments are invalid</p>
 </td>
 </tr>
 </tbody>
@@ -305,6 +323,12 @@ the new image. By default is <cite>True</cite>.</li>
 <p class="last">If you want to crop the image but not in-place, use slicing
 operator.</p>
 </div>
+<p class="versionchanged">
+<span class="versionmodified">Changed in version 0.1.8: </span>Made to raise <a class="reference external" href="http://docs.python.org/library/exceptions.html#exceptions.ValueError" title="(in Python v2.7)"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt></a> instead of
+<a class="reference external" href="http://docs.python.org/library/exceptions.html#exceptions.IndexError" title="(in Python v2.7)"><tt class="xref py py-exc docutils literal"><span class="pre">IndexError</span></tt></a> for invalid <tt class="docutils literal"><span class="pre">width</span></tt>/<tt class="docutils literal"><span class="pre">height</span></tt>
+arguments.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.1.7.</span></p>
 </dd></dl>
 
 <dl class="attribute">
@@ -326,6 +350,8 @@ to identify file formats, algorithms acting as formats,
 built-in patterns, and embedded profile types.</dd>
 </dl>
 </div>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.1.6.</span></p>
 </dd></dl>
 
 <dl class="attribute">
@@ -353,6 +379,13 @@ it is omittable</td>
 </tr>
 </tbody>
 </table>
+<p class="versionchanged">
+<span class="versionmodified">Changed in version 0.1.6: </span>Removed a side effect that changes the image <a class="reference internal" href="#wand.image.Image.format" title="wand.image.Image.format"><tt class="xref py py-attr docutils literal"><span class="pre">format</span></tt></a>
+silently.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.1.5: </span>The <tt class="docutils literal"><span class="pre">format</span></tt> parameter became optional.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.1.1.</span></p>
 </dd></dl>
 
 <dl class="attribute">
@@ -360,6 +393,8 @@ it is omittable</td>
 <tt class="descname">mimetype</tt><a class="headerlink" href="#wand.image.Image.mimetype" title="Permalink to this definition">¶</a></dt>
 <dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">basestring</span></tt>) The MIME type of the image
 e.g. <tt class="docutils literal"><span class="pre">'image/jpeg'</span></tt>, <tt class="docutils literal"><span class="pre">'image/png'</span></tt>.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.1.7.</span></p>
 </dd></dl>
 
 <dl class="attribute">
@@ -367,6 +402,8 @@ e.g. <tt class="docutils literal"><span class="pre">'image/jpeg'</span></tt>, <t
 <tt class="descname">quantum_range</tt><a class="headerlink" href="#wand.image.Image.quantum_range" title="Permalink to this definition">¶</a></dt>
 <dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">int</span></tt>) The maxumim value of a color channel that is
 supported by the imagemgick library.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.2.0.</span></p>
 </dd></dl>
 
 <dl class="method">
@@ -374,6 +411,8 @@ supported by the imagemgick library.</p>
 <tt class="descname">reset_coords</tt><big>(</big><big>)</big><a class="headerlink" href="#wand.image.Image.reset_coords" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reset the coordinate frame of the image so to the upper-left corner
 is (0, 0) again (crop and rotate operations change it).</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.2.0.</span></p>
 </dd></dl>
 
 <dl class="method">
@@ -398,6 +437,11 @@ default is 1</li>
 </tr>
 </tbody>
 </table>
+<p class="versionchanged">
+<span class="versionmodified">Changed in version 0.1.8: </span>The <tt class="docutils literal"><span class="pre">blur</span></tt> parameter changed to take <a class="reference external" href="http://docs.python.org/library/numbers.html#numbers.Real" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">numbers.Real</span></tt></a>
+instead of <a class="reference external" href="http://docs.python.org/library/numbers.html#numbers.Rational" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">numbers.Rational</span></tt></a>.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.1.1.</span></p>
 </dd></dl>
 
 <dl class="method">
@@ -421,6 +465,10 @@ the new image. By default is <cite>True</cite>.</li>
 </tr>
 </tbody>
 </table>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.2.0: </span>The <tt class="docutils literal"><span class="pre">reset_coords</span></tt> parameter.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.1.8.</span></p>
 </dd></dl>
 
 <dl class="method">
@@ -440,6 +488,10 @@ only one argument at a time.</p>
 </tr>
 </tbody>
 </table>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.1.5: </span>The <tt class="docutils literal"><span class="pre">file</span></tt> parameter.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.1.1.</span></p>
 </dd></dl>
 
 <dl class="attribute">
@@ -447,6 +499,8 @@ only one argument at a time.</p>
 <tt class="descname">signature</tt><a class="headerlink" href="#wand.image.Image.signature" title="Permalink to this definition">¶</a></dt>
 <dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">str</span></tt>) The SHA-256 message digest for the image pixel
 stream.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.1.9.</span></p>
 </dd></dl>
 
 <dl class="attribute">
@@ -459,6 +513,8 @@ stream.</p>
 <dt id="wand.image.Image.strip">
 <tt class="descname">strip</tt><big>(</big><big>)</big><a class="headerlink" href="#wand.image.Image.strip" title="Permalink to this definition">¶</a></dt>
 <dd><p>Strips an image of all profiles and comments.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.2.0.</span></p>
 </dd></dl>
 
 <dl class="method">
@@ -476,6 +532,8 @@ image, from 0.0 to 1.0</td>
 </tr>
 </tbody>
 </table>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.2.0.</span></p>
 </dd></dl>
 
 <dl class="attribute">
@@ -507,6 +565,8 @@ the image, from 0.0 to 1.0</li>
 </tr>
 </tbody>
 </table>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.2.0.</span></p>
 </dd></dl>
 
 <dl class="attribute">
@@ -543,17 +603,21 @@ one or more <a class="reference internal" href="color.html#wand.color.Color" tit
 </tr>
 </tbody>
 </table>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.1.3.</span></p>
 <dl class="method">
 <dt id="wand.image.Iterator.clone">
 <tt class="descname">clone</tt><big>(</big><big>)</big><a class="headerlink" href="#wand.image.Iterator.clone" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clones the same iterator.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.1.1.</span></p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="exception">
 <dt id="wand.image.ClosedImageError">
-<em class="property">exception </em><tt class="descclassname">wand.image.</tt><tt class="descname">ClosedImageError</tt><big>(</big><em>*args</em><big>)</big><a class="headerlink" href="#wand.image.ClosedImageError" title="Permalink to this definition">¶</a></dt>
+<em class="property">exception </em><tt class="descclassname">wand.image.</tt><tt class="descname">ClosedImageError</tt><a class="headerlink" href="#wand.image.ClosedImageError" title="Permalink to this definition">¶</a></dt>
 <dd><p>An error that rises when some code tries access to an already closed
 image.</p>
 </dd></dl>
@@ -566,9 +630,13 @@ image.</p>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  
+    
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/wand_120.png" alt="Logo"/>
-            </a></p><h3>Related Topics</h3>
+            </a></p>
+  
+<h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../wand.html"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a><ul>
