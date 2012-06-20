@@ -19,7 +19,7 @@ __all__ = 'VERSION', 'VERSION_INFO'
 #:
 #: .. versionchanged:: 0.1.9
 #:    Becomes :class:`tuple`.  (It was string before.)
-VERSION_INFO = (0, 1, 10)
+VERSION_INFO = (0, 2, 0)
 
 #: (:class:`basestring`) The version string e.g. ``'0.1.2'``.
 #:

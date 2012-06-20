@@ -4,7 +4,7 @@ Wand Changelog
 Version 0.2.0
 -------------
 
-To be released.  Alpha version.
+Released on June 20, 2012.  Alpha version.
 
 - Added :meth:`Image.transparentize() <wand.image.Image.transparentize>` method.
   [:issue:`19` by Jeremy Axmacher]
