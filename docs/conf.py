@@ -224,7 +224,10 @@ man_pages = [
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'http://docs.python.org/': None}
 
-extlinks = {'issue': ('https://github.com/dahlia/wand/issues/%s', '#')}
+extlinks = {
+    'issue': ('https://github.com/dahlia/wand/issues/%s', '#'),
+    'branch': ('https://github.com/dahlia/wand/compare/master...%s', '')
+}
 
 
 
