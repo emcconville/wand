@@ -1,0 +1,225 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>wand.color — Colors &mdash; Wand 0.2.1</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.2.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Wand 0.2.1" href="../index.html" />
+    <link rel="up" title="wand — Simple MagickWand API binding for Python" href="../wand.html" />
+    <link rel="next" title="wand.resource — Global resource management" href="resource.html" />
+    <link rel="prev" title="wand.image — Image objects" href="image.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="resource.html" title="wand.resource — Global resource management"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="image.html" title="wand.image — Image objects"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Wand</a> &raquo;</li>
+          <li><a href="../wand.html" accesskey="U"><tt class="docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <span class="target" id="module-wand.color"></span><div class="section" id="wand-color-colors">
+<h1><a class="reference internal" href="#module-wand.color" title="wand.color"><tt class="xref py py-mod docutils literal"><span class="pre">wand.color</span></tt></a> &#8212; Colors<a class="headerlink" href="#wand-color-colors" title="Permalink to this headline">¶</a></h1>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.1.2.</span></p>
+<dl class="class">
+<dt id="wand.color.Color">
+<em class="property">class </em><tt class="descclassname">wand.color.</tt><tt class="descname">Color</tt><big>(</big><em>string=None</em>, <em>raw=None</em><big>)</big><a class="headerlink" href="#wand.color.Color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Color value.</p>
+<p>Unlike any other objects in Wand, its resource management can be
+implicit when it used outside of <a class="reference external" href="http://docs.python.org/reference/compound_stmts.html#with" title="(in Python v2.7)"><tt class="xref std std-keyword docutils literal"><span class="pre">with</span></tt></a> block. In these case,
+its resource are allocated for every operation which requires a resource
+and destroyed immediately. Of course it is inefficient when the
+operations are much, so to avoid it, you should use color objects
+inside of <a class="reference external" href="http://docs.python.org/reference/compound_stmts.html#with" title="(in Python v2.7)"><tt class="xref std std-keyword docutils literal"><span class="pre">with</span></tt></a> block explicitly e.g.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">red_count</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">with</span> <span class="n">Color</span><span class="p">(</span><span class="s">&#39;#f00&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">red</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s">&#39;image.png&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">img</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">img</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">col</span> <span class="o">==</span> <span class="n">red</span><span class="p">:</span>
+                    <span class="n">red_count</span> <span class="o">+=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>string</strong> (<tt class="xref py py-class docutils literal"><span class="pre">basestring</span></tt>) &#8211; a color namel string e.g. <tt class="docutils literal"><span class="pre">'rgb(255,</span> <span class="pre">255,</span> <span class="pre">255)'</span></tt>,
+<tt class="docutils literal"><span class="pre">'#fff'</span></tt>, <tt class="docutils literal"><span class="pre">'white'</span></tt>. see <a class="reference external" href="http://www.imagemagick.org/script/color.php">ImageMagick Color Names</a>
+doc also</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://www.imagemagick.org/script/color.php">ImageMagick Color Names</a></dt>
+<dd>The color can then be given as a color name (there is a limited
+but large set of these; see below) or it can be given as a set
+of numbers (in decimal or hexadecimal), each corresponding to
+a channel in an RGB or RGBA color model. HSL, HSLA, HSB, HSBA,
+CMYK, or CMYKA color models may also be specified. These topics
+are briefly described in the sections below.</dd>
+</dl>
+</div>
+<dl class="describe">
+<dt>
+<tt class="descname">== (other)</tt></dt>
+<dd><p>Equality operator.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Param other:</th><td class="field-body">a color another one</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Type color:</th><td class="field-body"><a class="reference internal" href="#wand.color.Color" title="wand.color.Color"><tt class="xref py py-class docutils literal"><span class="pre">Color</span></tt></a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns :</th><td class="field-body"><tt class="docutils literal"><span class="pre">True</span></tt> only if two images equal.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Rtype :</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">bool</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="wand.color.Color.c_equals">
+<em class="property">static </em><tt class="descname">c_equals</tt><big>(</big><em>a</em>, <em>b</em><big>)</big><a class="headerlink" href="#wand.color.Color.c_equals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raw level version of equality test function for two pixels.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> (<a class="reference external" href="http://docs.python.org/library/ctypes.html#ctypes.c_void_p" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">ctypes.c_void_p</span></tt></a>) &#8211; a pointer to PixelWand to compare</li>
+<li><strong>b</strong> (<a class="reference external" href="http://docs.python.org/library/ctypes.html#ctypes.c_void_p" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">ctypes.c_void_p</span></tt></a>) &#8211; a pointer to PixelWand to compare</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><tt class="docutils literal"><span class="pre">True</span></tt> only if two pixels equal</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><tt class="xref py py-class docutils literal"><span class="pre">bool</span></tt></p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">It&#8217;s only for internal use. Don&#8217;t use it directly.
+Use <tt class="docutils literal"><span class="pre">==</span></tt> operator of <a class="reference internal" href="#wand.color.Color" title="wand.color.Color"><tt class="xref py py-class docutils literal"><span class="pre">Color</span></tt></a> instead.</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="wand.color.Color.string">
+<tt class="descname">string</tt><a class="headerlink" href="#wand.color.Color.string" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">basestring</span></tt>) The string representation of the color.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  
+    
+  
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="image.html"
+                        title="previous chapter"><tt class="docutils literal docutils literal"><span class="pre">wand.image</span></tt> &#8212; Image objects</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="resource.html"
+                        title="next chapter"><tt class="docutils literal"><span class="pre">wand.resource</span></tt> &#8212; Global resource management</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/wand/color.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="resource.html" title="wand.resource — Global resource management"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="image.html" title="wand.image — Image objects"
+             >previous</a> |</li>
+        <li><a href="../index.html">Wand</a> &raquo;</li>
+          <li><a href="../wand.html" ><tt class="docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Hong Minhee.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
