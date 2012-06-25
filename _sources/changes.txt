@@ -47,6 +47,7 @@ Version 0.1.10
 Released on May 8, 2012.  Still alpha version.
 
 - So many Windows compatibility issues are fixed. [:issue:`14` by John Simon]
+- Added :data:`wand.api.libmagick`.
 - Fixed a bug that raises :exc:`~exceptions.AttributeError` when it's trying
   to warn.  [:issue:`16` by Tim Dettrick]
 - Now it throws :exc:`~exceptions.ImportError` instead of
