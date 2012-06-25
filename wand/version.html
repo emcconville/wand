@@ -49,7 +49,7 @@
           <a href="display.html" title="wand.display — Displaying images"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Wand</a> &raquo;</li>
-          <li><a href="../wand.html" accesskey="U"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a> &raquo;</li> 
+          <li><a href="../wand.html" accesskey="U"><tt class="docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -81,6 +81,38 @@
 <dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">tuple</span></tt>) The version tuple e.g. <tt class="docutils literal"><span class="pre">(0,</span> <span class="pre">1,</span> <span class="pre">2)</span></tt>.</p>
 <p class="versionchanged">
 <span class="versionmodified">Changed in version 0.1.9: </span>Becomes <tt class="xref py py-class docutils literal"><span class="pre">tuple</span></tt>.  (It was string before.)</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="wand.version.MAGICK_VERSION">
+<tt class="descclassname">wand.version.</tt><tt class="descname">MAGICK_VERSION</tt><em class="property"> = 'ImageMagick 6.6.9-7 2012-04-30 Q16 http://www.imagemagick.org'</em><a class="headerlink" href="#wand.version.MAGICK_VERSION" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">basestring</span></tt>) The version string of the linked ImageMagick
+library.  The exactly same string to the result of
+<tt class="xref c c-func docutils literal"><span class="pre">GetMagickVersion()</span></tt> function.</p>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="s">&#39;ImageMagick 6.7.7-6 2012-06-03 Q16 http://www.imagemagick.org&#39;</span>
+</pre></div>
+</div>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.2.1.</span></p>
+</dd></dl>
+
+<dl class="data">
+<dt id="wand.version.MAGICK_VERSION_INFO">
+<tt class="descclassname">wand.version.</tt><tt class="descname">MAGICK_VERSION_INFO</tt><em class="property"> = (6, 6, 9, 7)</em><a class="headerlink" href="#wand.version.MAGICK_VERSION_INFO" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">tuple</span></tt>) The version tuple e.g. <tt class="docutils literal"><span class="pre">(6,</span> <span class="pre">7,</span> <span class="pre">7,</span> <span class="pre">6)</span></tt> of
+<a class="reference internal" href="#wand.version.MAGICK_VERSION" title="wand.version.MAGICK_VERSION"><tt class="xref py py-const docutils literal"><span class="pre">MAGICK_VERSION</span></tt></a>.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.2.1.</span></p>
+</dd></dl>
+
+<dl class="data">
+<dt id="wand.version.MAGICK_VERSION_NUMBER">
+<tt class="descclassname">wand.version.</tt><tt class="descname">MAGICK_VERSION_NUMBER</tt><em class="property"> = 1641L</em><a class="headerlink" href="#wand.version.MAGICK_VERSION_NUMBER" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<a class="reference external" href="http://docs.python.org/library/numbers.html#numbers.Integral" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">numbers.Integral</span></tt></a>) The version number of the linked
+ImageMagick library.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.2.1.</span></p>
 </dd></dl>
 
 <dl class="data">
@@ -120,8 +152,8 @@ function.</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../wand.html"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a><ul>
-      <li>Previous: <a href="display.html" title="previous chapter"><tt class="docutils literal docutils literal docutils literal"><span class="pre">wand.display</span></tt> &#8212; Displaying images</a></li>
+  <li><a href="../wand.html"><tt class="docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a><ul>
+      <li>Previous: <a href="display.html" title="previous chapter"><tt class="docutils literal"><span class="pre">wand.display</span></tt> &#8212; Displaying images</a></li>
   </ul></li>
   </ul></li>
 </ul>
