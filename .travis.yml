@@ -5,7 +5,7 @@ python:
 - pypy
 before_install:
 - sudo apt-get update
-- sudo apt-get install libmagickwand-dev
+- sudo apt-get install imagemagick libmagickwand-dev
 install:
 - pip install Attest
 script:
