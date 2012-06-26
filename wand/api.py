@@ -12,7 +12,7 @@ import os
 import os.path
 import platform
 
-__all__ = 'load_library', 'MagickPixelPacket', 'library', 'libc'
+__all__ = 'load_library', 'MagickPixelPacket', 'library', 'libmagick', 'libc'
 
 
 def load_library():
