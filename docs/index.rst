@@ -94,6 +94,10 @@ are always welcome!
 
 Check out :doc:`changes` also.
 
+.. image:: https://secure.travis-ci.org/dahlia/wand.png?branch=master
+   :alt: Build Status
+   :target: http://travis-ci.org/dahlia/wand
+
 .. _Hong Minhee: http://dahlia.kr/
 .. _StyleShare: https://stylesha.re/
 .. _contributors: https://github.com/dahlia/wand/graphs/contributors
