@@ -8,4 +8,8 @@ install:
 script:
 - python -mattest.run wandtests.tests
 notifications:
-  irc: "irc.ozinger.org#hongminhee"
+  irc:
+    channels:
+    - "irc.ozinger.org#hongminhee"
+    on_success: change
+    on_failure: always
