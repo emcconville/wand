@@ -1,4 +1,0 @@
-
-.. automodule:: wand.color
-   :members:
-
