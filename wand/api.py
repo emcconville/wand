@@ -85,6 +85,8 @@ library = libraries[0]
 
 #: (:class:`ctypes.CDLL`) The ImageMagick library.  It is the same with
 #: :data:`library` on platforms other than Windows.
+#:
+#: .. versionadded:: 0.1.10
 libmagick = libraries[1]
 
 try:
