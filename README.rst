@@ -18,6 +18,10 @@ revision of the source code from the `GitHub repository`__::
     $ cd wand/
     $ python setup.py install
 
+.. image:: https://secure.travis-ci.org/dahlia/wand.png?branch=master
+   :alt: Build Status
+   :target: http://travis-ci.org/dahlia/wand
+
 .. _Wand: http://dahlia.github.com/wand/
 .. _MagickWand API: http://www.imagemagick.org/script/magick-wand.php
 .. _PyPI: http://pypi.python.org/pypi/Wand
