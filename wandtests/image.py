@@ -479,7 +479,7 @@ def rotate():
         with Color('red') as bg:
             with img.clone() as cloned:
                 cloned.rotate(45, bg)
-                assert 177 == cloned.width == cloned.height
+                assert 176 <= cloned.width == cloned.height <= 177
                 assert bg == cloned[0, 0] == cloned[0, -1]
                 assert bg == cloned[-1, 0] == cloned[-1, -1]
                 with Color('black') as black:
