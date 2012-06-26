@@ -1,6 +1,22 @@
 Wand Changelog
 ==============
 
+Version 0.2.1
+-------------
+
+To be released.  Alpha version.
+
+- Added version data of the linked ImageMagick library into :mod:`wand.version`
+  module:
+
+  - :const:`~wand.version.MAGICK_VERSION` (:c:func:`GetMagickVersion`)
+  - :const:`~wand.version.MAGICK_VERSION_INFO` (:c:func:`GetMagickVersion`)
+  - :const:`~wand.version.MAGICK_VERSION_NUMBER` (:c:func:`GetMagickVersion`)
+  - :const:`~wand.version.MAGICK_RELEASE_DATE` (:c:func:`GetMagickReleaseDate`)
+  - :const:`~wand.version.MAGICK_RELEASE_DATE_STRING`
+    (:c:func:`GetMagickReleaseDate`)
+
+
 Version 0.2.0
 -------------
 

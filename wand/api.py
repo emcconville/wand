@@ -239,6 +239,12 @@ try:
                                                          ctypes.c_ssize_t]
 
     library.MagickStripImage.argtypes =  [ctypes.c_void_p]
+
+    libmagick.GetMagickVersion.argtypes = [ctypes.POINTER(ctypes.c_size_t)]
+    libmagick.GetMagickVersion.restype = ctypes.c_char_p
+
+    libmagick.GetMagickReleaseDate.argtypes = []
+    libmagick.GetMagickReleaseDate.restype = ctypes.c_char_p
 except AttributeError:
     raise ImportError('MagickWand shared library not found or incompatible')
 
