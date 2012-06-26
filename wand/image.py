@@ -382,6 +382,8 @@ class Image(Resource):
         :returns: the cloned new image
         :rtype: :class:`Image`
 
+        .. versionadded:: 0.1.1
+
         """
         return type(self)(image=self)
 
@@ -1079,8 +1081,6 @@ class Iterator(Resource, collections.Iterator):
 
     def clone(self):
         """Clones the same iterator.
-
-        .. versionadded:: 0.1.1
 
         """
         return type(self)(iterator=self)
