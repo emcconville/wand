@@ -22,8 +22,9 @@ except ImportError:
     libmagick = None
 
 
-__all__ = ('VERSION', 'VERSION_INFO', 'MAGICK_RELEASE_DATE',
-           'MAGICK_RELEASE_DATE_STRING')
+__all__ = ('VERSION', 'VERSION_INFO', 'MAGICK_VERSION',
+           'MAGICK_VERSION_INFO', 'MAGICK_VERSION_NUMBER',
+           'MAGICK_RELEASE_DATE', 'MAGICK_RELEASE_DATE_STRING')
 
 #: (:class:`tuple`) The version tuple e.g. ``(0, 1, 2)``.
 #:
@@ -79,7 +80,10 @@ if libmagick:
     MAGICK_RELEASE_DATE = datetime.date(
         *map(int, MAGICK_RELEASE_DATE_STRING.split('-')))
 
+    del c_magick_version, _match
+
 __doc__ = __doc__.replace('0.1.2', VERSION)
+del libmagick
 
 
 if __name__ == '__main__':
