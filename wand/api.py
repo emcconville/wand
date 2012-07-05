@@ -232,15 +232,17 @@ try:
 
     library.MagickCompositeImage.argtypes = [ctypes.c_void_p, ctypes.c_void_p,
                                              ctypes.c_int, ctypes.c_ssize_t,
-                                             ctypes.c_ssize_t]  
-    
+                                             ctypes.c_ssize_t]
+
     library.MagickGetImageCompressionQuality.argtypes = [ctypes.c_void_p]
     library.MagickGetImageCompressionQuality.restype = ctypes.c_ssize_t
-    
+
     library.MagickSetImageCompressionQuality.argtypes = [ctypes.c_void_p,
                                                          ctypes.c_ssize_t]
 
-    library.MagickStripImage.argtypes =  [ctypes.c_void_p]
+    library.MagickStripImage.argtypes = [ctypes.c_void_p]
+
+    library.MagickTrimImage.argtypes = [ctypes.c_void_p]
 
     libmagick.GetMagickVersion.argtypes = [ctypes.POINTER(ctypes.c_size_t)]
     libmagick.GetMagickVersion.restype = ctypes.c_char_p
