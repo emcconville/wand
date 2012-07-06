@@ -132,7 +132,7 @@ COMPOSITE_OPS = ('undefined', 'no', 'add', 'atop', 'blend', 'bumpmap',
                  'multiply', 'out', 'over', 'overlay', 'plus', 'replace',
                  'saturate', 'screen', 'soft_light', 'src_atop', 'src',
                  'src_in', 'src_out', 'src_over', 'subtract', 'threshold',
-                 'xor', 'divide',) 
+                 'xor', 'divide',)
 
 #: (:class:`dict`) The dictionary of channel types.
 #:
@@ -159,7 +159,7 @@ COMPOSITE_OPS = ('undefined', 'no', 'add', 'atop', 'blend', 'bumpmap',
 #:    __ http://www.imagemagick.org/Magick++/Enumerations.html#ChannelType
 CHANNELS = dict(undefined=0, red=1, gray=1, cyan=1, green=2, magenta=2,
                 blue=4, yellow=4, black=8, alpha=16, opacity=16, index=32,
-                mask=64, meta=128) 
+                mask=64, meta=128)
 
 #: (:class:`tuple`) The list of evaluation operators
 #:
@@ -528,11 +528,11 @@ class Image(Resource):
 
         """
         return library.MagickGetImageCompressionQuality(self.wand)
-    
+
     @compression_quality.setter
     def compression_quality(self, quality):
         """Set compression quality for the image.
-            
+
         :param quality: new compression quality setting
         :type quality: :class:`numbers.Integral`
 
@@ -544,7 +544,7 @@ class Image(Resource):
         if not r:
             raise ValueError('Unable to set compression quality to ' +
                              repr(quality))
-    
+
     @property
     def mimetype(self):
         """(:class:`basestring`) The MIME type of the image
@@ -866,7 +866,7 @@ class Image(Resource):
                                                EVALUATE_OPS.index('subtract'),
                                                t)
             self.raise_exception()
-        
+
     def composite(self, image, left, top):
         """Places the supplied ``image`` over the current image, with the top
         left corner of ``image`` at coordinates ``left``, ``top`` of the
@@ -991,6 +991,15 @@ class Image(Resource):
         if not result:
             self.raise_exception()
 
+    def trim(self):
+        """Remove solid border from image. Uses top left pixel as a guide.
+
+        .. versionadded:: 0.2.1
+
+        """
+        result = library.MagickTrimImage(self.wand)
+        if not result:
+            self.raise_exception()
 
 class Iterator(Resource, collections.Iterator):
     """Row iterator for :class:`Image`. It shouldn't be instantiated

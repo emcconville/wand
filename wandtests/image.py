@@ -208,6 +208,17 @@ def strip():
 
 
 @tests.test
+def trim():
+    """Remove transparent area around image."""
+    with Image(filename=asset('trimtest.png')) as img:
+        oldx, oldy = img.size
+        print img.trim()
+        newx, newy = img.size
+        assert newx < oldx
+        assert newy < oldy
+
+
+@tests.test
 def get_mimetype():
     """Gets mimetypes of the image."""
     with Image(filename=asset('mona-lisa.jpg')) as img:
@@ -390,7 +401,7 @@ def crop():
             assert cropped.size == (150, 150)
         with img.clone() as cropped:
             assert cropped.size == img.size
-            cropped.crop(-200, -200, -100, -100) 
+            cropped.crop(-200, -200, -100, -100)
             assert cropped.size == (100, 100)
         with img.clone() as cropped:
             assert cropped.size == img.size
