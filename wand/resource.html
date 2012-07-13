@@ -1,0 +1,289 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>wand.resource — Global resource management &mdash; Wand 0.2.1</title>
+    
+    <link rel="stylesheet" href="../_static/wand.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.2.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Wand 0.2.1" href="../index.html" />
+    <link rel="up" title="wand — Simple MagickWand API binding for Python" href="../wand.html" />
+    <link rel="next" title="wand.exceptions — Errors and warnings" href="exceptions.html" />
+    <link rel="prev" title="wand.color — Colors" href="color.html" />
+   
+  
+  <link media="only screen and (max-device-width: 480px)" href="../_static/small_flask.css" type= "text/css" rel="stylesheet" />
+
+  </head>
+  <body>
+  
+  
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="exceptions.html" title="wand.exceptions — Errors and warnings"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="color.html" title="wand.color — Colors"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Wand</a> &raquo;</li>
+          <li><a href="../wand.html" accesskey="U"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <span class="target" id="module-wand.resource"></span><div class="section" id="wand-resource-global-resource-management">
+<h1><a class="reference internal" href="#module-wand.resource" title="wand.resource"><tt class="xref py py-mod docutils literal"><span class="pre">wand.resource</span></tt></a> &#8212; Global resource management<a class="headerlink" href="#wand-resource-global-resource-management" title="Permalink to this headline">¶</a></h1>
+<p>There is the global resource to manage in MagickWand API. This module
+implements automatic global resource management through reference counting.</p>
+<dl class="function">
+<dt id="wand.resource.genesis">
+<tt class="descclassname">wand.resource.</tt><tt class="descname">genesis</tt><big>(</big><big>)</big><a class="headerlink" href="#wand.resource.genesis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instantiates the MagickWand API.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Don&#8217;t call this function directly. Use <a class="reference internal" href="#wand.resource.increment_refcount" title="wand.resource.increment_refcount"><tt class="xref py py-func docutils literal"><span class="pre">increment_refcount()</span></tt></a> and
+<a class="reference internal" href="#wand.resource.decrement_refcount" title="wand.resource.decrement_refcount"><tt class="xref py py-func docutils literal"><span class="pre">decrement_refcount()</span></tt></a> functions instead.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="wand.resource.terminus">
+<tt class="descclassname">wand.resource.</tt><tt class="descname">terminus</tt><big>(</big><big>)</big><a class="headerlink" href="#wand.resource.terminus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cleans up the MagickWand API.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Don&#8217;t call this function directly. Use <a class="reference internal" href="#wand.resource.increment_refcount" title="wand.resource.increment_refcount"><tt class="xref py py-func docutils literal"><span class="pre">increment_refcount()</span></tt></a> and
+<a class="reference internal" href="#wand.resource.decrement_refcount" title="wand.resource.decrement_refcount"><tt class="xref py py-func docutils literal"><span class="pre">decrement_refcount()</span></tt></a> functions instead.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="wand.resource.increment_refcount">
+<tt class="descclassname">wand.resource.</tt><tt class="descname">increment_refcount</tt><big>(</big><big>)</big><a class="headerlink" href="#wand.resource.increment_refcount" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increments the <tt class="xref py py-data docutils literal"><span class="pre">reference_count</span></tt> and instantiates the MagickWand
+API if it is the first use.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wand.resource.decrement_refcount">
+<tt class="descclassname">wand.resource.</tt><tt class="descname">decrement_refcount</tt><big>(</big><big>)</big><a class="headerlink" href="#wand.resource.decrement_refcount" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decrements the <tt class="xref py py-data docutils literal"><span class="pre">reference_count</span></tt> and cleans up the MagickWand
+API if it will be no more used.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="wand.resource.Resource">
+<em class="property">class </em><tt class="descclassname">wand.resource.</tt><tt class="descname">Resource</tt><a class="headerlink" href="#wand.resource.Resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract base class for MagickWand object that requires resource
+management. Its all subclasses manage the resource semiautomatically
+and support <a class="reference external" href="http://docs.python.org/reference/compound_stmts.html#with" title="(in Python v2.7)"><tt class="xref std std-keyword docutils literal"><span class="pre">with</span></tt></a> statement as well:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">with</span> <span class="n">Resource</span><span class="p">()</span> <span class="k">as</span> <span class="n">resource</span><span class="p">:</span>
+    <span class="c"># use the resource...</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+<p>It doesn&#8217;t implement constructor by itself, so subclasses should
+implement it. Every constructor should assign the pointer of its
+resource data into <a class="reference internal" href="#wand.resource.Resource.resource" title="wand.resource.Resource.resource"><tt class="xref py py-attr docutils literal"><span class="pre">resource</span></tt></a> attribute inside of <a class="reference external" href="http://docs.python.org/reference/compound_stmts.html#with" title="(in Python v2.7)"><tt class="xref std std-keyword docutils literal"><span class="pre">with</span></tt></a>
+<a class="reference internal" href="#wand.resource.Resource.allocate" title="wand.resource.Resource.allocate"><tt class="xref py py-meth docutils literal"><span class="pre">allocate()</span></tt></a> context.  For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Pizza</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;My pizza yummy.&#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">allocate</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resource</span> <span class="o">=</span> <span class="n">library</span><span class="o">.</span><span class="n">NewPizza</span><span class="p">()</span>
+</pre></div>
+</div>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.1.2.</span></p>
+<dl class="method">
+<dt id="wand.resource.Resource.allocate">
+<tt class="descname">allocate</tt><big>(</big><em>*args</em>, <em>**kwds</em><big>)</big><a class="headerlink" href="#wand.resource.Resource.allocate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allocates the memory for the resource explicitly. Its subclasses
+should assign the created resource into <a class="reference internal" href="#wand.resource.Resource.resource" title="wand.resource.Resource.resource"><tt class="xref py py-attr docutils literal"><span class="pre">resource</span></tt></a> attribute
+inside of this context. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">with</span> <span class="n">resource</span><span class="o">.</span><span class="n">allocate</span><span class="p">():</span>
+    <span class="n">resource</span><span class="o">.</span><span class="n">resource</span> <span class="o">=</span> <span class="n">library</span><span class="o">.</span><span class="n">NewResource</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="wand.resource.Resource.c_clear_exception">
+<tt class="descname">c_clear_exception</tt><em class="property"> = NotImplemented</em><a class="headerlink" href="#wand.resource.Resource.c_clear_exception" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">ctypes.CFUNCTYPE</span></tt>) The <a class="reference external" href="http://docs.python.org/library/ctypes.html#ctypes" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">ctypes</span></tt></a> function that clears
+an exception of the <a class="reference internal" href="#wand.resource.Resource.resource" title="wand.resource.Resource.resource"><tt class="xref py py-attr docutils literal"><span class="pre">resource</span></tt></a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">It is an abstract attribute that has to be implemented
+in the subclass.</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="wand.resource.Resource.c_destroy_resource">
+<tt class="descname">c_destroy_resource</tt><em class="property"> = NotImplemented</em><a class="headerlink" href="#wand.resource.Resource.c_destroy_resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">ctypes.CFUNCTYPE</span></tt>) The <a class="reference external" href="http://docs.python.org/library/ctypes.html#ctypes" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">ctypes</span></tt></a> function that destroys
+the <a class="reference internal" href="#wand.resource.Resource.resource" title="wand.resource.Resource.resource"><tt class="xref py py-attr docutils literal"><span class="pre">resource</span></tt></a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">It is an abstract attribute that has to be implemented
+in the subclass.</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="wand.resource.Resource.c_get_exception">
+<tt class="descname">c_get_exception</tt><em class="property"> = NotImplemented</em><a class="headerlink" href="#wand.resource.Resource.c_get_exception" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">ctypes.CFUNCTYPE</span></tt>) The <a class="reference external" href="http://docs.python.org/library/ctypes.html#ctypes" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">ctypes</span></tt></a> function that gets
+an exception from the <a class="reference internal" href="#wand.resource.Resource.resource" title="wand.resource.Resource.resource"><tt class="xref py py-attr docutils literal"><span class="pre">resource</span></tt></a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">It is an abstract attribute that has to be implemented
+in the subclass.</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="wand.resource.Resource.c_is_resource">
+<tt class="descname">c_is_resource</tt><em class="property"> = NotImplemented</em><a class="headerlink" href="#wand.resource.Resource.c_is_resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">ctypes.CFUNCTYPE</span></tt>) The <a class="reference external" href="http://docs.python.org/library/ctypes.html#ctypes" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">ctypes</span></tt></a> predicate function
+that returns whether the given pointer (that contains a resource data
+usuaully) is a valid resource.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">It is an abstract attribute that has to be implemented
+in the subclass.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="wand.resource.Resource.destroy">
+<tt class="descname">destroy</tt><big>(</big><big>)</big><a class="headerlink" href="#wand.resource.Resource.destroy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cleans up the resource explicitly. If you use the resource in
+<a class="reference external" href="http://docs.python.org/reference/compound_stmts.html#with" title="(in Python v2.7)"><tt class="xref std std-keyword docutils literal"><span class="pre">with</span></tt></a> statement, it was called implicitly so have not to
+call it.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wand.resource.Resource.get_exception">
+<tt class="descname">get_exception</tt><big>(</big><big>)</big><a class="headerlink" href="#wand.resource.Resource.get_exception" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a current exception instance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a current exception. it can be <tt class="docutils literal"><span class="pre">None</span></tt> as well if any
+errors aren&#8217;t occurred</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="exceptions.html#wand.exceptions.WandException" title="wand.exceptions.WandException"><tt class="xref py py-class docutils literal"><span class="pre">wand.exceptions.WandException</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="wand.resource.Resource.raise_exception">
+<tt class="descname">raise_exception</tt><big>(</big><em>stacklevel=1</em><big>)</big><a class="headerlink" href="#wand.resource.Resource.raise_exception" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raises an exception or warning if it has occurred.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="wand.resource.Resource.resource">
+<tt class="descname">resource</tt><a class="headerlink" href="#wand.resource.Resource.resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal pointer to the resource instance. It may raise
+<a class="reference internal" href="#wand.resource.DestroyedResourceError" title="wand.resource.DestroyedResourceError"><tt class="xref py py-exc docutils literal"><span class="pre">DestroyedResourceError</span></tt></a> when the resource has destroyed already.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="wand.resource.DestroyedResourceError">
+<em class="property">exception </em><tt class="descclassname">wand.resource.</tt><tt class="descname">DestroyedResourceError</tt><a class="headerlink" href="#wand.resource.DestroyedResourceError" title="Permalink to this definition">¶</a></dt>
+<dd><p>An error that rises when some code tries access to an already
+destroyed resource.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  
+    
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/wand_120.png" alt="Logo"/>
+            </a></p>
+  
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../wand.html"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a><ul>
+      <li>Previous: <a href="color.html" title="previous chapter"><tt class="docutils literal docutils literal docutils literal"><span class="pre">wand.color</span></tt> &#8212; Colors</a></li>
+      <li>Next: <a href="exceptions.html" title="next chapter"><tt class="docutils literal docutils literal docutils literal"><span class="pre">wand.exceptions</span></tt> &#8212; Errors and warnings</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/wand/resource.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2011, Hong Minhee.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  
+  </body>
+</html>

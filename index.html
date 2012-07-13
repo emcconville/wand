@@ -1,0 +1,271 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Wand &mdash; Wand 0.2.1</title>
+    
+    <link rel="stylesheet" href="_static/wand.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.2.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Wand 0.2.1" href="#" />
+    <link rel="next" title="Installation" href="guide/install.html" />
+   
+  
+  <link media="only screen and (max-device-width: 480px)" href="_static/small_flask.css" type= "text/css" rel="stylesheet" />
+
+  </head>
+  <body>
+  
+  
+  <div class=indexwrapper>
+  
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="guide/install.html" title="Installation"
+             accesskey="N">next</a> |</li>
+        <li><a href="#">Wand</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="wand">
+<h1>Wand<a class="headerlink" href="#wand" title="Permalink to this headline">¶</a></h1>
+<p>Wand is a <a class="reference external" href="http://docs.python.org/library/ctypes.html#ctypes" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">ctypes</span></tt></a>-based simple <a class="reference external" href="http://www.imagemagick.org/script/magick-wand.php">MagickWand API</a> binding for Python.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">wand.image</span> <span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span> <span class="nn">wand.display</span> <span class="kn">import</span> <span class="n">display</span>
+
+<span class="k">with</span> <span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s">&#39;mona-lisa.png&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">img</span><span class="p">:</span>
+    <span class="k">print</span> <span class="n">img</span><span class="o">.</span><span class="n">size</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">img</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span> <span class="k">as</span> <span class="n">i</span><span class="p">:</span>
+            <span class="n">i</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">width</span> <span class="o">*</span> <span class="n">r</span> <span class="o">*</span> <span class="mf">0.25</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">height</span> <span class="o">*</span> <span class="n">r</span> <span class="o">*</span> <span class="mf">0.25</span><span class="p">))</span>
+            <span class="n">i</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="mi">90</span> <span class="o">*</span> <span class="n">r</span><span class="p">)</span>
+            <span class="n">i</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s">&#39;mona-lisa-{0}.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
+            <span class="n">display</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can install it from <a class="reference external" href="http://pypi.python.org/pypi/Wand">PyPI</a> (and it requires MagickWand library):</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>apt-get install libmagickwand-dev
+<span class="nv">$ </span>easy_install Wand
+</pre></div>
+</div>
+<div class="section" id="why-just-another-binding">
+<h2>Why just another binding?<a class="headerlink" href="#why-just-another-binding" title="Permalink to this headline">¶</a></h2>
+<p>There are already many MagickWand API bindings for Python, however they
+are lacking something we need:</p>
+<ul class="simple">
+<li>Pythonic and modern interfaces</li>
+<li>Good documentation</li>
+<li>Binding through <a class="reference external" href="http://docs.python.org/library/ctypes.html#ctypes" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">ctypes</span></tt></a> (not C API) &#8212; we are ready to go PyPy!</li>
+<li>Installation using <strong class="program">pip</strong> or <strong class="program">easy_install</strong></li>
+</ul>
+</div>
+<div class="section" id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Python 2.6 or higher<ul>
+<li>CPython 2.6 or higher</li>
+<li>PyPy 1.5 or higher</li>
+</ul>
+</li>
+<li>MagickWand library<ul>
+<li><tt class="docutils literal"><span class="pre">libmagickwand-dev</span></tt> for APT on Debian/Ubuntu</li>
+<li><tt class="docutils literal"><span class="pre">imagemagick</span></tt> for MacPorts/Homebrew on Mac</li>
+<li><tt class="docutils literal"><span class="pre">ImageMagick-devel</span></tt> for Yum on CentOS</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="user-s-guide">
+<h2>User&#8217;s guide<a class="headerlink" href="#user-s-guide" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="guide/install.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="guide/install.html#install-imagemagick-on-debian-ubuntu">Install ImageMagick on Debian/Ubuntu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide/install.html#install-imagemagick-on-fedora-centos">Install ImageMagick on Fedora/CentOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide/install.html#install-imagemagick-on-mac">Install ImageMagick on Mac</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide/install.html#install-imagemagick-on-windows">Install ImageMagick on Windows</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="guide/read.html">Reading images</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="guide/read.html#open-an-image-file">Open an image file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide/read.html#read-a-input-stream">Read a input stream</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide/read.html#read-a-blob">Read a blob</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide/read.html#clone-an-image">Clone an image</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="guide/write.html">Writing images</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="guide/write.html#convert-images-to-jpeg">Convert images to JPEG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide/write.html#save-to-file">Save to file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide/write.html#save-to-stream">Save to stream</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide/write.html#get-binary-string">Get binary string</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="guide/resizecrop.html">Resizing and cropping</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="guide/resizecrop.html#resize-images">Resize images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide/resizecrop.html#crop-images">Crop images</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="guide/resource.html">Resource management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html">Roadmap</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="roadmap.html#version-0-3">Version 0.3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="roadmap.html#very-future-versions">Very future versions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Wand Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-2-1">Version 0.2.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-2-0">Version 0.2.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-10">Version 0.1.10</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-9">Version 0.1.9</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-8">Version 0.1.8</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-7">Version 0.1.7</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-6">Version 0.1.6</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-5">Version 0.1.5</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-4">Version 0.1.4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-3">Version 0.1.3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-2">Version 0.1.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-1">Version 0.1.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes.html#version-0-1-0">Version 0.1.0</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="wand.html"><tt class="docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="wand/image.html"><tt class="docutils literal"><span class="pre">wand.image</span></tt> &#8212; Image objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wand/color.html"><tt class="docutils literal"><span class="pre">wand.color</span></tt> &#8212; Colors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wand/resource.html"><tt class="docutils literal"><span class="pre">wand.resource</span></tt> &#8212; Global resource management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wand/exceptions.html"><tt class="docutils literal"><span class="pre">wand.exceptions</span></tt> &#8212; Errors and warnings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wand/api.html"><tt class="docutils literal"><span class="pre">wand.api</span></tt> &#8212; Low-level interfaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wand/display.html"><tt class="docutils literal"><span class="pre">wand.display</span></tt> &#8212; Displaying images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wand/version.html"><tt class="docutils literal"><span class="pre">wand.version</span></tt> &#8212; Version data</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="open-source">
+<h2>Open source<a class="headerlink" href="#open-source" title="Permalink to this headline">¶</a></h2>
+<p>Wand is an open source software to be written by <a class="reference external" href="http://dahlia.kr/">Hong Minhee</a> (initially
+written for <a class="reference external" href="https://stylesha.re/">StyleShare</a>).  See also the complete list of <a class="reference external" href="https://github.com/dahlia/wand/graphs/contributors">contributors</a> as well.
+The source code is distributed under <a class="reference external" href="http://minhee.mit-license.org/">MIT license</a> and you can find it at
+<a class="reference external" href="https://github.com/dahlia/wand">GitHub repository</a>. Check out now:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>git clone git://github.com/dahlia/wand.git
+</pre></div>
+</div>
+<p>If you find a bug, please notify to <a class="reference external" href="https://github.com/dahlia/wand/issues">our issue tracker</a>. Pull requests
+are always welcome!</p>
+<p>Check out <a class="reference internal" href="changes.html"><em>Wand Changelog</em></a> also.</p>
+<a class="reference external image-reference" href="http://travis-ci.org/dahlia/wand"><img alt="Build Status" src="https://secure.travis-ci.org/dahlia/wand.png?branch=master" /></a>
+</div>
+<div class="section" id="indices-and-tables">
+<h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><em>Index</em></a></li>
+<li><a class="reference internal" href="py-modindex.html"><em>Module Index</em></a></li>
+<li><a class="reference internal" href="search.html"><em>Search Page</em></a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  
+    <iframe
+      src="http://markdotto.github.com/github-buttons/github-btn.html?user=dahlia&repo=wand&type=watch&count=true&size=large"
+      allowtransparency="true" frameborder="0" scrolling="0"
+      width="170px" height="30px"></iframe>
+    <hr class="github-line" />
+  
+
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Wand</a><ul>
+<li><a class="reference internal" href="#why-just-another-binding">Why just another binding?</a></li>
+<li><a class="reference internal" href="#requirements">Requirements</a></li>
+<li><a class="reference internal" href="#user-s-guide">User&#8217;s guide</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#references">References</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#open-source">Open source</a></li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="guide/install.html" title="next chapter">Installation</a></li>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2011, Hong Minhee.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  
+  </div>
+  
+  </body>
+</html>
