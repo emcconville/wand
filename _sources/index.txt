@@ -80,8 +80,8 @@ References
 Open source
 -----------
 
-Wand is an open source software to be written by `Hong Minhee`_ (initially
-written for StyleShare_).  See also the complete list of contributors_ as well.
+Wand is an open source software written by `Hong Minhee`_ (initially written
+for StyleShare_).  See also the complete list of contributors_ as well.
 The source code is distributed under `MIT license`_ and you can find it at
 `GitHub repository`_. Check out now:
 
