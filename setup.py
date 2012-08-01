@@ -44,24 +44,25 @@ class upload_doc(distutils.cmd.Command):
         shutil.rmtree(path)
 
 
-setup(name='Wand',
-      packages=['wand'],
-      data_files=[('', ['README.rst'])],
-      version=VERSION,
-      description='Ctypes-based simple MagickWand API binding for Python',
-      long_description=readme(),
-      license='MIT License',
-      author='Hong Minhee',
-      author_email='minhee@dahlia.kr',
-      maintainer='Hong Minhee',
-      maintainer_email='minhee@dahlia.kr',
-      url='http://dahlia.github.com/wand/',
-      tests_require=['Attest'],
-      test_loader='attest:auto_reporter.test_loader',
-      test_suite='wandtests.tests',
-      extras_require={'doc': ['Sphinx >=1.0']},
-      setup_requires=['github-distutils >= 0.1.0'],
-      classifiers=[
+setup(
+    name='Wand',
+    packages=['wand'],
+    data_files=[('', ['README.rst'])],
+    version=VERSION,
+    description='Ctypes-based simple MagickWand API binding for Python',
+    long_description=readme(),
+    license='MIT License',
+    author='Hong Minhee',
+    author_email='minhee@dahlia.kr',
+    maintainer='Hong Minhee',
+    maintainer_email='minhee@dahlia.kr',
+    url='http://dahlia.github.com/wand/',
+    tests_require=['Attest'],
+    test_loader='attest:auto_reporter.test_loader',
+    test_suite='wandtests.tests',
+    extras_require={'doc': ['Sphinx >=1.0']},
+    setup_requires=['github-distutils >= 0.1.0'],
+    classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
@@ -70,5 +71,5 @@ setup(name='Wand',
         'Programming Language :: Python :: 2.7',
         'Topic :: Multimedia :: Graphics'
       ],
-      cmdclass={'upload_doc': upload_doc})
-
+    cmdclass={'upload_doc': upload_doc}
+)
