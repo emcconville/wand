@@ -1,6 +1,8 @@
+ImageMagick-*
 docs/_build
 build
 dist
+wand/lib
 .tox
 *.pyc
 *.egg

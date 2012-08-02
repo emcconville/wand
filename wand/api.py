@@ -24,16 +24,15 @@ def load_library():
     libpath = None
     system = platform.system()
 
-    magick_home = os.environ.get('MAGICK_HOME')
-    if magick_home:
-        if system == 'Windows':
-            libpath = 'CORE_RL_wand_.dll',
-        elif system == 'Darwin':
-            libpath = 'lib', 'libMagickWand.dylib',
-        else:
-            libpath = 'lib', 'libMagickWand.so',
-        libpath = os.path.join(magick_home, *libpath)
+    magick_home = os.environ.get('MAGICK_HOME', os.path.dirname(__file__))
+    if system == 'Windows':
+        libpath = 'CORE_RL_wand_.dll',
+    elif system == 'Darwin':
+        libpath = 'lib', 'libMagickWand.dylib',
     else:
+        libpath = 'lib', 'libMagickWand.so',
+    libpath = os.path.join(magick_home, *libpath)
+    if not os.path.isfile(libpath):
         if system == 'Windows':
             libpath = ctypes.util.find_library('CORE_RL_wand_')
         else:
@@ -249,8 +248,9 @@ try:
 
     libmagick.GetMagickReleaseDate.argtypes = []
     libmagick.GetMagickReleaseDate.restype = ctypes.c_char_p
-except AttributeError:
-    raise ImportError('MagickWand shared library not found or incompatible')
+except AttributeError as e:
+    raise ImportError('MagickWand shared library not found or incompatible; '
+                      + str(e))
 
 #: (:class:`ctypes.CDLL`) The C standard library.
 libc = None
