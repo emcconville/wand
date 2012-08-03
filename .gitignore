@@ -3,6 +3,8 @@ docs/_build
 build
 dist
 wand/lib
+wand/*.dll
+wand/modules
 .tox
 *.pyc
 *.egg

@@ -5,6 +5,7 @@ except ImportError:
 import distutils.cmd
 import os
 import os.path
+import platform
 import shutil
 import subprocess
 import tarfile
@@ -36,6 +37,43 @@ class bundle_imagemagick(distutils.cmd.Command):
     def finalize_options(self):
         pass
 
+    def download_extract(self):
+        log = distutils.log
+        log.info('Downloading ImageMagick source tarball...')
+        log.info(self.url)
+        response = urllib2.urlopen(self.url)
+        tmp = tempfile.TemporaryFile()
+        shutil.copyfileobj(response, tmp)
+        response.close()
+        tmp.seek(0)
+        log.info('Extracting ImageMagick source tarball...')
+        tar = tarfile.open(fileobj=tmp)
+        dirname = tar.getnames()[0]
+        tar.extractall()
+        return dirname
+
+    def get_library_dir(self, source_dir):
+        return os.path.join(source_dir, 'lib')
+
+    def build_library(self, source_dir):
+        log = distutils.log
+        log.info('Getting configured ImageMagick...')
+        subprocess.call([
+            './configure', '--prefix=' + os.path.abspath(source_dir),
+            '--disable-installed', '--without-magick-plus-plus'
+        ], cwd=source_dir)
+        log.info('Building ImageMagick...')
+        subprocess.call(['make', 'install'], cwd=source_dir)
+
+    def get_bundle_dir(self):
+        return os.path.join('wand', 'lib')
+
+    def is_library_filename(self, filename):
+        return filename.endswith(('.so', '.dylib'))
+
+    def get_package_data_name(self, filename):
+        return os.path.join('lib', filename)
+
     def main(self):
         log = distutils.log
         for name in os.listdir('.'):
@@ -44,41 +82,31 @@ class bundle_imagemagick(distutils.cmd.Command):
                 log.info('ImageMagick source seems to already exist')
                 break
         else:
-            log.info('Downloading ImageMagick source tarball...')
-            log.info(self.url)
-            response = urllib2.urlopen(self.url)
-            tmp = tempfile.TemporaryFile()
-            self.copy(response, tmp)
-            response.close()
-            tmp.seek(0)
-            log.info('Extracting ImageMagick source tarball...')
-            tar = tarfile.open(fileobj=tmp)
-            dirname = tar.getnames()[0]
-            tar.extractall()
-        libdir = os.path.join(dirname, 'lib')
+            dirname = self.download_extract()
+        libdir = self.get_library_dir(dirname)
         if os.path.isdir(libdir):
             log.info('ImageMagick seems already built')
         else:
-            log.info('Getting configured ImageMagick...')
-            subprocess.call([
-                './configure', '--prefix=' + os.path.abspath(dirname),
-                '--disable-installed', '--without-magick-plus-plus'
-            ], cwd=dirname)
-            log.info('Building ImageMagick...')
-            subprocess.call(['make', 'install'], cwd=dirname)
-        dstdir = os.path.join('wand', 'lib')
+            self.build_library(dirname)
+        dstdir = self.get_bundle_dir()
         if not os.path.isdir(dstdir):
             os.mkdir(dstdir)
+        package_data = self.distribution.package_data
         data = []
         for libname in os.listdir(libdir):
-            if not libname.endswith(('.so', '.dylib')):
+            if not self.is_library_filename(libname):
                 continue
-            with open(os.path.join(libdir, libname), 'rb') as src:
-                dstname = os.path.join('lib', libname)
-                with open(os.path.join('wand', dstname), 'wb') as dst:
-                    self.copy(src, dst)
-                data.append(dstname)
-        self.distribution.package_data.setdefault('wand', []).extend(data)
+            shutil.copy(os.path.join(libdir, libname),
+                        os.path.join(dstdir, libname))
+            data.append(self.get_package_data_name(libname))
+        package_data.setdefault('wand', []).extend(data)
+        shutil.copytree(os.path.join(libdir, 'modules'),
+                        os.path.join(dstdir, 'modules'))
+        modulesdir = self.get_package_data_name('modules')
+        package_data['wand'].extend([
+            modulesdir + '/*.*',
+            modulesdir + '/*/*.*'
+        ])
         self.distribution.has_ext_modules = lambda: True
         self.distribution.zip_safe = False
 
@@ -89,13 +117,60 @@ class bundle_imagemagick(distutils.cmd.Command):
             traceback.print_exc()
             raise
 
-    def copy(self, source, destination):
-        while 1:
-            chunk = source.read(4096)
-            if chunk:
-                destination.write(chunk)
-            else:
-                break
+
+class bundle_imagemagick_win32(bundle_imagemagick):
+    """Bundle ImageMagick library into the distribution. (Windows)"""
+
+    if platform.architecture()[0] == '64bit':
+        url = 'https://github.com/downloads/dahlia/wand/' \
+              'ImageMagick-6.7.8-7-Q16-windows-x64-dll.exe'
+    else:
+        url = 'https://github.com/downloads/dahlia/wand/' \
+              'ImageMagick-6.7.8-7-Q16-windows-dll.exe'
+    description = __doc__
+    user_options = [
+        ('url=', 'u', 'ImageMagick binary zip url [default: ' + url + ']')
+    ]
+
+    def download_extract(self):
+        log = distutils.log
+        log.info('Downloading ImageMagick installer...')
+        response = urllib2.urlopen(self.url)
+        tmp = tempfile.NamedTemporaryFile(delete=False)
+        shutil.copyfileobj(response, tmp)
+        response.close()
+        tmp.close()
+        log.info('Installing ImageMagick...')
+        installdir = os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                                  'ImageMagick-win')
+        subprocess.call([
+            tmp.name, '/VERYSILENT', '/NORESTART', '/NOICONS',
+            '/DIR=' + installdir
+        ])
+        return installdir
+
+    def get_library_dir(self, source_dir):
+        return source_dir
+
+    def build_library(self, source_dir):
+        pass
+
+    def get_bundle_dir(self):
+        return 'wand'
+
+    def is_library_filename(self, filename):
+        return filename.endswith('.dll')
+
+    def get_package_data_name(self, filename):
+        return filename
+
+    def main(self):
+        bundle_imagemagick.main(self)
+        return
+        subprocess.call([
+            os.path.join('ImageMagick-win', 'unins000'),
+            '/VERYSILENT', '/NORESTART'
+        ])
 
 
 class upload_doc(distutils.cmd.Command):
@@ -154,7 +229,9 @@ setup(
         'Topic :: Multimedia :: Graphics'
     ],
     cmdclass={
-        'bundle_imagemagick': bundle_imagemagick,
+        'bundle_imagemagick': (bundle_imagemagick_win32
+                               if platform.system() == 'Windows'
+                               else bundle_imagemagick),
         'upload_doc': upload_doc
     }
 )

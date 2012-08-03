@@ -37,6 +37,11 @@ def load_library():
             libpath = ctypes.util.find_library('CORE_RL_wand_')
         else:
             libpath = ctypes.util.find_library('MagickWand')
+    if libpath is None:
+        raise ImportError('MagickWand shared library not found')
+    if system == 'Windows':
+        path = os.environ.get('PATH', '')
+        os.environ['PATH'] = path and path + ';' + os.path.dirname(libpath)
     libwand = ctypes.CDLL(libpath)
 
     if system == 'Windows':
@@ -77,7 +82,10 @@ class MagickPixelPacket(ctypes.Structure):
                 ('index', ctypes.c_double)]
 
 
-libraries = load_library()
+try:
+    libraries = load_library()
+except OSError as e:
+    raise ImportError('MagickWand shared library not found; ' + str(e))
 
 #: (:class:`ctypes.CDLL`) The MagickWand library.
 library = libraries[0]
