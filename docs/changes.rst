@@ -6,6 +6,9 @@ Version 0.2.1
 
 To be released.  Alpha version.
 
+- Added :meth:`Image.trim() <wand.image.Image.trim>` method.
+  [:issue:`26` by Jökull Sólberg Auðunsson]
+
 - Added version data of the linked ImageMagick library into :mod:`wand.version`
   module:
 
