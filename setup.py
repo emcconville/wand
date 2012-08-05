@@ -79,40 +79,43 @@ class bundle_imagemagick(distutils.cmd.Command):
 
     def main(self):
         log = distutils.log
+        path = os.path
+        join = path.join
         states = dict(
             (libname, {'dir': dirname})
             for libname, dirname in self.download_extract()
         )
-        magick_dir = os.path.abspath(states['ImageMagick']['dir'])
-        for subdir in 'lib', 'man', os.path.join('man', 'man1'), 'bin':
-            subdir = os.path.join(magick_dir, subdir)
-            if not os.path.isdir(subdir):
+        magick_dir = path.abspath(states['ImageMagick']['dir'])
+        for subdir in 'lib', 'man', join('man', 'man1'), 'bin':
+            subdir = join(magick_dir, subdir)
+            if not path.isdir(subdir):
                 os.mkdir(subdir)
         libnames = states.keys()
         libnames.sort(key=lambda name: name == 'ImageMagick')
-        for libname in libnames:
-            log.info('Getting configured %s...', libname)
-            env = dict(os.environ)
-            env.update(
-                (k, v.replace('@', magick_dir))
-                for k, v in self.__class__.libraries[libname][2].iteritems()
-            )
-            dirname = os.path.abspath(states[libname]['dir'])
-            subprocess.call(['./configure', '--prefix=' + magick_dir] +
-                            self.__class__.libraries[libname][1],
-                            cwd=dirname, env=env)
-            log.info('Building %s...', libname)
-            subprocess.call(['make', 'install'], cwd=dirname, env=env)
-        dstdir = os.path.join('wand', 'lib')
-        if not os.path.isdir(dstdir):
+        if not (path.isfile(join(magick_dir, 'lib', 'libMagickCore.so')) or
+                path.isfile(join(magick_dir, 'lib', 'libMagickCore.dylib'))):
+            for libname in libnames:
+                log.info('Getting configured %s...', libname)
+                env = dict(os.environ)
+                env.update(
+                    (k, v.replace('@', magick_dir))
+                    for k, v in self.__class__.libraries[libname][2].iteritems()
+                )
+                dirname = path.abspath(states[libname]['dir'])
+                subprocess.call(['./configure', '--prefix=' + magick_dir] +
+                                self.__class__.libraries[libname][1],
+                                cwd=dirname, env=env)
+                log.info('Building %s...', libname)
+                subprocess.call(['make', 'install'], cwd=dirname, env=env)
+        dstdir = join('wand', 'lib')
+        if not path.isdir(dstdir):
             os.mkdir(dstdir)
         package_data = self.distribution.package_data
         data = []
-        libdir = os.path.join(states['ImageMagick']['dir'], 'lib')
+        libdir = join(magick_dir, 'lib')
         for soname in os.listdir(libdir):
             if soname.endswith(('.so', '.dylib')):
-                shutil.copy(os.path.join(libdir, soname),
-                            os.path.join(dstdir, soname))
+                shutil.copy(join(libdir, soname), join(dstdir, soname))
                 data.append('lib/' + soname)
         package_data.setdefault('wand', []).extend(data)
         # shutil.copytree(os.path.join(libdir, 'modules'),
