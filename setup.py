@@ -121,16 +121,23 @@ class bundle_imagemagick(distutils.cmd.Command):
 class bundle_imagemagick_win32(bundle_imagemagick):
     """Bundle ImageMagick library into the distribution. (Windows)"""
 
-    if platform.architecture()[0] == '64bit':
-        url = 'https://github.com/downloads/dahlia/wand/' \
-              'ImageMagick-6.7.8-7-Q16-windows-x64-dll.exe'
-    else:
-        url = 'https://github.com/downloads/dahlia/wand/' \
-              'ImageMagick-6.7.8-7-Q16-windows-dll.exe'
+    urls = {
+        'win-amd64': 'https://github.com/downloads/dahlia/wand/'
+                     'ImageMagick-6.7.8-7-Q16-windows-x64-dll.exe',
+        'win32': 'https://github.com/downloads/dahlia/wand/'
+                 'ImageMagick-6.7.8-7-Q16-windows-dll.exe'
+    }
     description = __doc__
     user_options = [
-        ('url=', 'u', 'ImageMagick binary zip url [default: ' + url + ']')
+        ('url=', 'u', 'ImageMagick binary zip url [default: ' +
+                      urls['win-amd64' if platform.architecture()[0] == '64bit'
+                                       else 'win32'] +
+                      ']')
     ]
+
+    def finalize_options(self):
+        if not self.url:
+            self.url = self.__class__.urls[self.plat_name]
 
     def download_extract(self):
         log = distutils.log
@@ -166,7 +173,6 @@ class bundle_imagemagick_win32(bundle_imagemagick):
 
     def main(self):
         bundle_imagemagick.main(self)
-        return
         subprocess.call([
             os.path.join('ImageMagick-win', 'unins000'),
             '/VERYSILENT', '/NORESTART'
