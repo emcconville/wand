@@ -1,4 +1,6 @@
 ImageMagick-*
+jpeg-8d
+libpng-*
 docs/_build
 build
 dist

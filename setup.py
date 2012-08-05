@@ -24,89 +24,103 @@ def readme():
 class bundle_imagemagick(distutils.cmd.Command):
     """Bundle ImageMagick library into the distribution."""
 
-    # url = 'http://www.imagemagick.org/download/ImageMagick-6.7.8-7.tar.bz2'
-    url = 'https://github.com/downloads/dahlia/wand/ImageMagick-6.7.8-7.tar.bz2'
+    url_base = 'https://github.com/downloads/dahlia/wand/'
+    libraries = {
+        'ImageMagick': (
+            url_base + 'ImageMagick-6.7.8-7.tar.bz2',
+            ['--disable-installed', '--without-magick-plus-plus',
+             '--enable-delegate-build'],
+            {
+                'CFLAGS': '-I@/include',
+                'CPPFLAGS': '-I@/include',
+                'LDFLAGS': '-L@/lib'
+            },
+        ),
+        'jpeg': (url_base + 'jpegsrc.v8d.tar.gz', [], {}),
+        'libpng': (url_base + 'libpng-1.5.12.tar.gz', [], {})
+    }
     description = __doc__
-    user_options = [
-        ('url=', 'u', 'ImageMagick source tarball url [default: ' + url + ']')
-    ]
+    user_options = list(
+        (libname.lower() + '-url=', 'u' if libname == 'ImageMagick' else None,
+         libname + ' source tarball url [default: ' + url + ']')
+        for libname, (url, _, __) in libraries.iteritems()
+    )
 
     def initialize_options(self):
-        self.url = self.__class__.url
+        pass
 
     def finalize_options(self):
-        pass
+        self.urls = dict(
+            (libname, getattr(self, libname.lower() + '_url', None) or url)
+            for libname, url in self.__class__.libraries.iteritems()
+        )
 
     def download_extract(self):
         log = distutils.log
-        log.info('Downloading ImageMagick source tarball...')
-        log.info(self.url)
-        response = urllib2.urlopen(self.url)
-        tmp = tempfile.TemporaryFile()
-        shutil.copyfileobj(response, tmp)
-        response.close()
-        tmp.seek(0)
-        log.info('Extracting ImageMagick source tarball...')
-        tar = tarfile.open(fileobj=tmp)
-        dirname = tar.getnames()[0]
-        tar.extractall()
-        return dirname
-
-    def get_library_dir(self, source_dir):
-        return os.path.join(source_dir, 'lib')
-
-    def build_library(self, source_dir):
-        log = distutils.log
-        log.info('Getting configured ImageMagick...')
-        subprocess.call([
-            './configure', '--prefix=' + os.path.abspath(source_dir),
-            '--disable-installed', '--without-magick-plus-plus'
-        ], cwd=source_dir)
-        log.info('Building ImageMagick...')
-        subprocess.call(['make', 'install'], cwd=source_dir)
-
-    def get_bundle_dir(self):
-        return os.path.join('wand', 'lib')
-
-    def is_library_filename(self, filename):
-        return filename.endswith(('.so', '.dylib'))
-
-    def get_package_data_name(self, filename):
-        return os.path.join('lib', filename)
+        names = os.listdir('.')
+        for libname, (url, _, __) in self.urls.iteritems():
+            for dirname in names:
+                if os.path.isdir(dirname) and dirname.startswith(libname + '-'):
+                    log.info(libname + ' source seems to already exist')
+                    break
+            else:
+                log.info('Downloading %s source tarball...', libname)
+                log.info('%s', url)
+                response = urllib2.urlopen(url)
+                tmp = tempfile.TemporaryFile()
+                shutil.copyfileobj(response, tmp)
+                response.close()
+                tmp.seek(0)
+                log.info('Extracting %s source tarball...', libname)
+                tar = tarfile.open(fileobj=tmp)
+                dirname = tar.getnames()[0]
+                tar.extractall()
+            yield libname, dirname
 
     def main(self):
         log = distutils.log
-        for name in os.listdir('.'):
-            if name.startswith('ImageMagick-') and os.path.isdir(name):
-                dirname = name
-                log.info('ImageMagick source seems to already exist')
-                break
-        else:
-            dirname = self.download_extract()
-        libdir = self.get_library_dir(dirname)
-        if os.path.isdir(libdir):
-            log.info('ImageMagick seems already built')
-        else:
-            self.build_library(dirname)
-        dstdir = self.get_bundle_dir()
+        states = dict(
+            (libname, {'dir': dirname})
+            for libname, dirname in self.download_extract()
+        )
+        magick_dir = os.path.abspath(states['ImageMagick']['dir'])
+        for subdir in 'lib', 'man', os.path.join('man', 'man1'), 'bin':
+            subdir = os.path.join(magick_dir, subdir)
+            if not os.path.isdir(subdir):
+                os.mkdir(subdir)
+        libnames = states.keys()
+        libnames.sort(key=lambda name: name == 'ImageMagick')
+        for libname in libnames:
+            log.info('Getting configured %s...', libname)
+            env = dict(os.environ)
+            env.update(
+                (k, v.replace('@', magick_dir))
+                for k, v in self.__class__.libraries[libname][2].iteritems()
+            )
+            dirname = os.path.abspath(states[libname]['dir'])
+            subprocess.call(['./configure', '--prefix=' + magick_dir] +
+                            self.__class__.libraries[libname][1],
+                            cwd=dirname, env=env)
+            log.info('Building %s...', libname)
+            subprocess.call(['make', 'install'], cwd=dirname, env=env)
+        dstdir = os.path.join('wand', 'lib')
         if not os.path.isdir(dstdir):
             os.mkdir(dstdir)
         package_data = self.distribution.package_data
         data = []
-        for libname in os.listdir(libdir):
-            if not self.is_library_filename(libname):
-                continue
-            shutil.copy(os.path.join(libdir, libname),
-                        os.path.join(dstdir, libname))
-            data.append(self.get_package_data_name(libname))
+        libdir = os.path.join(states['ImageMagick']['dir'], 'lib')
+        for soname in os.listdir(libdir):
+            if soname.endswith(('.so', '.dylib')):
+                shutil.copy(os.path.join(libdir, soname),
+                            os.path.join(dstdir, soname))
+                data.append('lib/' + soname)
         package_data.setdefault('wand', []).extend(data)
-        shutil.copytree(os.path.join(libdir, 'modules'),
-                        os.path.join(dstdir, 'modules'))
-        modulesdir = self.get_package_data_name('modules')
-        package_data['wand'].extend([
-            modulesdir + '/*.*',
-            modulesdir + '/*/*.*'
-        ])
+        # shutil.copytree(os.path.join(libdir, 'modules'),
+        #                 os.path.join(dstdir, 'modules'))
+        # package_data['wand'].extend([
+        #     'lib/modules/*.*',
+        #     'lib/modules/*/*.*',
+        # ])
         self.distribution.has_ext_modules = lambda: True
         self.distribution.zip_safe = False
 
@@ -170,7 +184,7 @@ class bundle_imagemagick_win32(distutils.cmd.Command):
             if libname.endswith('.dll'):
                 shutil.copy(os.path.join('ImageMagick-win', libname),
                             os.path.join('wand', libname))
-                data.append(self.get_package_data_name(libname))
+                data.append(libname)
         package_data.setdefault('wand', []).extend(data)
         shutil.copytree(os.path.join('ImageMagick-win', 'modules'),
                         os.path.join('wand', 'modules'))
