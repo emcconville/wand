@@ -118,7 +118,7 @@ class bundle_imagemagick(distutils.cmd.Command):
             raise
 
 
-class bundle_imagemagick_win32(bundle_imagemagick):
+class bundle_imagemagick_win32(distutils.cmd.Command):
     """Bundle ImageMagick library into the distribution. (Windows)"""
 
     urls = {
@@ -134,6 +134,9 @@ class bundle_imagemagick_win32(bundle_imagemagick):
                                        else 'win32'] +
                       ']')
     ]
+
+    def initialize_options(self):
+        pass
 
     def finalize_options(self):
         if not self.url:
@@ -154,29 +157,40 @@ class bundle_imagemagick_win32(bundle_imagemagick):
             tmp.name, '/VERYSILENT', '/NORESTART', '/NOICONS',
             '/DIR=' + installdir
         ])
-        return installdir
-
-    def get_library_dir(self, source_dir):
-        return source_dir
-
-    def build_library(self, source_dir):
-        pass
-
-    def get_bundle_dir(self):
-        return 'wand'
-
-    def is_library_filename(self, filename):
-        return filename.endswith('.dll')
-
-    def get_package_data_name(self, filename):
-        return filename
 
     def main(self):
-        bundle_imagemagick.main(self)
+        log = distutils.log
+        if os.path.isdir('ImageMagick-win'):
+            log.info('ImageMagick source seems to already exist')
+        else:
+            self.download_extract()
+        package_data = self.distribution.package_data
+        data = []
+        for libname in os.listdir('ImageMagick-win'):
+            if libname.endswith('.dll'):
+                shutil.copy(os.path.join('ImageMagick-win', libname),
+                            os.path.join('wand', libname))
+                data.append(self.get_package_data_name(libname))
+        package_data.setdefault('wand', []).extend(data)
+        shutil.copytree(os.path.join('ImageMagick-win', 'modules'),
+                        os.path.join('wand', 'modules'))
+        package_data['wand'].extend([
+            'modules/*.*',
+            'modules/*/*.*'
+        ])
+        self.distribution.has_ext_modules = lambda: True
+        self.distribution.zip_safe = False
         subprocess.call([
             os.path.join('ImageMagick-win', 'unins000'),
             '/VERYSILENT', '/NORESTART'
         ])
+
+    def run(self):
+        try:
+            self.main()
+        except:
+            traceback.print_exc()
+            raise
 
 
 class upload_doc(distutils.cmd.Command):
