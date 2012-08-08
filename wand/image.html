@@ -540,23 +540,8 @@ image, from 0.0 to 1.0</td>
 
 <dl class="method">
 <dt id="wand.image.Image.trim">
-<tt class="descname">trim</tt><big>(</big><em>fuzz=0</em><big>)</big><a class="headerlink" href="#wand.image.Image.trim" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">trim</tt><big>(</big><big>)</big><a class="headerlink" href="#wand.image.Image.trim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove solid border from image. Uses top left pixel as a guide.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fuzz</strong> (<a class="reference external" href="http://docs.python.org/library/numbers.html#numbers.Real" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">numbers.Real</span></tt></a>) &#8211; by default target must match a particular pixel color
-exactly.  however, in many cases two colors may differ
-by a small amount.  the <tt class="docutils literal"><span class="pre">fuzz</span></tt> member of image defines
-how much tolerance is acceptable to consider two colors
-as the same.  for example, set fuzz to 10 and the color
-red at intensities of 100 and 102 respectively are now
-interpreted as the same color for the purposes of the
-floodfill.</td>
-</tr>
-</tbody>
-</table>
 <p class="versionadded">
 <span class="versionmodified">New in version 0.2.1.</span></p>
 </dd></dl>
@@ -640,7 +625,7 @@ one or more <a class="reference internal" href="color.html#wand.color.Color" tit
 
 <dl class="exception">
 <dt id="wand.image.ClosedImageError">
-<em class="property">exception </em><tt class="descclassname">wand.image.</tt><tt class="descname">ClosedImageError</tt><big>(</big><em>*args</em><big>)</big><a class="headerlink" href="#wand.image.ClosedImageError" title="Permalink to this definition">¶</a></dt>
+<em class="property">exception </em><tt class="descclassname">wand.image.</tt><tt class="descname">ClosedImageError</tt><a class="headerlink" href="#wand.image.ClosedImageError" title="Permalink to this definition">¶</a></dt>
 <dd><p>An error that rises when some code tries access to an already closed
 image.</p>
 </dd></dl>
