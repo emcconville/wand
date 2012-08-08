@@ -36,6 +36,8 @@ class upload_doc(distutils.cmd.Command):
         os.system('git clone git@github.com:dahlia/wand.git .')
         os.system('git checkout gh-pages')
         os.system('git rm -r .')
+        with open('CNAME', 'w') as cname_file:
+            cname_file.write('dahlia.github.com')
         os.system('touch .nojekyll')
         os.system('cp -r ' + build + '/* .')
         os.system('git stage .')
