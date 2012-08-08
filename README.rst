@@ -22,7 +22,7 @@ revision of the source code from the `GitHub repository`__::
    :alt: Build Status
    :target: http://travis-ci.org/dahlia/wand
 
-.. _Wand: http://dahlia.github.com/wand/
+.. _Wand: http://dahlia.kr/wand/
 .. _MagickWand API: http://www.imagemagick.org/script/magick-wand.php
 .. _PyPI: http://pypi.python.org/pypi/Wand
 __ https://github.com/dahlia/wand
