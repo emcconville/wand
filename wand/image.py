@@ -485,7 +485,11 @@ class Image(Resource):
 
     @property
     def depth(self):
-        """(:class:`numbers.Integral`) The depth of this image."""
+        """(:class:`numbers.Integral`) The depth of this image.
+
+        .. versionadded:: 0.2.1
+
+        """
         return library.MagickGetImageDepth(self.wand)
 
     @depth.setter
