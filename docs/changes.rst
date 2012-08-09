@@ -9,6 +9,9 @@ To be released.  Alpha version.
 - Added :meth:`Image.trim() <wand.image.Image.trim>` method.
   [:issue:`26` by Jökull Sólberg Auðunsson]
 
+- Added :attr:`Image.depth <wand.image.Image.depth>` property.
+  [:issue:`31` by Piotr Florczyk]
+
 - Added version data of the linked ImageMagick library into :mod:`wand.version`
   module:
 
