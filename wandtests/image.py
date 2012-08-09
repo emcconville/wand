@@ -144,6 +144,18 @@ def size():
         assert img.height == 599
         assert len(img) == 599
 
+@tests.test
+def get_depth():
+    """Gets the image depth"""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        assert img.depth == 8
+
+@tests.test
+def set_depth():
+    """Sets the image depth"""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        img.depth = 16
+        assert img.depth == 16
 
 @tests.test
 def get_format():
