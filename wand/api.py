@@ -144,6 +144,11 @@ try:
     library.MagickGetImageHeight.argtypes = [ctypes.c_void_p]
     library.MagickGetImageHeight.restype = ctypes.c_size_t
 
+    library.MagickGetImageDepth.argtypes = [ctypes.c_void_p]
+    library.MagickGetImageDepth.restype = ctypes.c_size_t
+
+    library.MagickSetImageDepth.argtypes = [ctypes.c_void_p]
+
     library.MagickCropImage.argtypes = [ctypes.c_void_p, ctypes.c_size_t,
                                         ctypes.c_size_t, ctypes.c_ssize_t,
                                         ctypes.c_ssize_t]
