@@ -89,7 +89,7 @@ replace ``right`` and ``bottom``.
    >>> img.size
    (40, 80)
 
-There is an another way to crop images: slicing operator. You can crops
+There is an another way to crop images: slicing operator. You can crop
 an image by ``[left:right, top:bottom]`` with maintaining the original:
 
 .. sourcecode:: pycon
