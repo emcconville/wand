@@ -484,6 +484,17 @@ class Image(Resource):
         return self.width, self.height
 
     @property
+    def depth(self):
+        """(:class:`numbers.Integral`) The depth of this image."""
+        return library.MagickGetImageDepth(self.wand)
+
+    @depth.setter
+    def depth(self, depth):
+        r = library.MagickSetImageDepth(self.wand, depth)
+        if not r:
+            raise self.raise_exception()
+
+    @property
     def format(self):
         """(:class:`basestring`) The image format.
 
