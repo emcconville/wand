@@ -753,7 +753,7 @@ class Image(Resource):
         .. versionadded:: 0.2.0
 
         """
-        library.MagickResetImagePage(self.wand)
+        library.MagickResetImagePage(self.wand, None)
 
     def resize(self, width=None, height=None, filter='triangle', blur=1):
         """Resizes the image.
