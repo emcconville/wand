@@ -234,9 +234,9 @@ def trim():
 def get_mimetype():
     """Gets mimetypes of the image."""
     with Image(filename=asset('mona-lisa.jpg')) as img:
-        assert img.mimetype == 'image/jpeg'
+        assert img.mimetype in ('image/jpeg', 'image/x-jpeg')
     with Image(filename=asset('croptest.png')) as img:
-        assert img.mimetype == 'image/png'
+        assert img.mimetype in ('image/png', 'image/x-png')
 
 
 @tests.test
@@ -502,7 +502,7 @@ def rotate():
         with Color('red') as bg:
             with img.clone() as cloned:
                 cloned.rotate(45, bg)
-                assert 176 <= cloned.width == cloned.height <= 177
+                assert 176 <= cloned.width == cloned.height <= 178
                 assert bg == cloned[0, 0] == cloned[0, -1]
                 assert bg == cloned[-1, 0] == cloned[-1, -1]
                 with Color('black') as black:
