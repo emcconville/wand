@@ -58,6 +58,14 @@ def new_from_blob():
     with raises(ClosedImageError):
         img.wand
 
+@tests.test
+def new_with_format():
+    with open(asset('google.ico'), 'rb') as f:
+        blob = f.read()
+    with raises(Exception):
+        Image(blob=blob)
+    with Image(blob=blob, format='ico') as img:
+        assert img.size == (16, 16)
 
 @tests.test
 def clone():
@@ -560,6 +568,7 @@ def set_background_color():
             img.background_color = color
             assert img.background_color == color
 
+
 @tests.test
 def watermark():
     """Adds  watermark to an image."""
@@ -570,6 +579,7 @@ def watermark():
                 msg = 'img = {0!r}, marked = {1!r}'.format(
                     img.signature, marked.signature)
                 assert img == marked, msg
+
 
 @tests.test
 def reset_coords():
