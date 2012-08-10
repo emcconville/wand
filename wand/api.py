@@ -106,6 +106,8 @@ try:
 
     library.MagickClearException.argtypes = [ctypes.c_void_p]
 
+    library.MagickSetFilename.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
+
     library.MagickReadImageBlob.argtypes = [ctypes.c_void_p, ctypes.c_void_p,
                                             ctypes.c_size_t]
 
