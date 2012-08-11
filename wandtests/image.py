@@ -58,6 +58,7 @@ def new_from_blob():
     with raises(ClosedImageError):
         img.wand
 
+
 @tests.test
 def new_with_format():
     with open(asset('google.ico'), 'rb') as f:
@@ -66,6 +67,7 @@ def new_with_format():
         Image(blob=blob)
     with Image(blob=blob, format='ico') as img:
         assert img.size == (16, 16)
+
 
 @tests.test
 def clone():
@@ -594,5 +596,3 @@ def reset_coords():
                 msg = 'img = {0!r}, control = {1!r}'.format(
                     img.signature, control.signature)
                 assert img == control, msg
-
-

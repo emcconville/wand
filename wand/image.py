@@ -251,7 +251,7 @@ class Image(Resource):
     :type filename: :class:`basestring`
     :param format: forces filename to  buffer.``format`` to help
                    imagemagick detect the file format. Used only in
-                   ``blob`` or ``file`` cases.
+                   ``blob`` or ``file`` cases
     :type format: :class:`basestring`
 
     .. versionadded:: 0.1.5
@@ -293,7 +293,8 @@ class Image(Resource):
 
     __slots__ = '_wand',
 
-    def __init__(self, image=None, blob=None, file=None, filename=None, format=None):
+    def __init__(self, image=None, blob=None, file=None, filename=None,
+                 format=None):
         args = image, blob, file, filename
         if all(a is None for a in args):
             raise TypeError('missing arguments')
@@ -313,8 +314,8 @@ class Image(Resource):
                 read = False
                 if file is not None:
                     if format:
-                        library.MagickSetFilename(self.wand, 'buffer.%s' % format)
-
+                        library.MagickSetFilename(self.wand,
+                                                  'buffer.' + format)
                     if (isinstance(file, types.FileType) and
                         hasattr(libc, 'fdopen')):
                         fd = libc.fdopen(file.fileno(), file.mode)
@@ -329,8 +330,8 @@ class Image(Resource):
                         file = None
                 if blob is not None:
                     if format:
-                        library.MagickSetFilename(self.wand, 'buffer.%s' % format)
-
+                        library.MagickSetFilename(self.wand,
+                                                  'buffer' + format)
                     if not isinstance(blob, collections.Iterable):
                         raise TypeError('blob must be iterable, not ' +
                                         repr(blob))
