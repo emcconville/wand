@@ -306,11 +306,16 @@ class Image(Resource):
                  for b in args[:i] + args[i + 1:]):
             raise TypeError('parameters are exclusive each other; use only '
                             'one at once')
+        elif not (format is None or isinstance(format, basestring)):
+            raise TypeError('format must be a string, not ' + repr(format))
         with self.allocate():
             if image is not None:
                 if not isinstance(image, Image):
                     raise TypeError('image must be a wand.image.Image '
                                     'instance, not ' + repr(image))
+                elif format:
+                    raise TypeError('format option cannot be used with image '
+                                    'nor filename')
                 self.wand = library.CloneMagickWand(image.wand)
             else:
                 self.wand = library.NewMagickWand()
@@ -345,6 +350,11 @@ class Image(Resource):
                     library.MagickReadImageBlob(self.wand, blob, len(blob))
                     read = True
                 elif filename is not None:
+                    if format:
+                        raise TypeError(
+                            'format option cannot be used with image '
+                            'nor filename'
+                        )
                     library.MagickReadImage(self.wand, filename)
                     read = True
                 if not read:
