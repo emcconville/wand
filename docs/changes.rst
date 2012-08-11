@@ -12,6 +12,9 @@ To be released.  Alpha version.
 - Added :attr:`Image.depth <wand.image.Image.depth>` property.
   [:issue:`31` by Piotr Florczyk]
 
+- Now :class:`~wand.image.Image` can take an optional ``format`` hint.
+  [:issue:`32` by Michael Elovskikh]
+
 - Added version data of the linked ImageMagick library into :mod:`wand.version`
   module:
 

@@ -260,6 +260,9 @@ class Image(Resource):
     .. versionadded:: 0.1.1
        The ``blob`` parameter.
 
+    .. versionadded:: 0.2.1
+       The ``format`` parameter.
+
     .. describe:: [left:right, top:bottom]
 
        Crops the image by its ``left``, ``right``, ``top`` and ``bottom``,
