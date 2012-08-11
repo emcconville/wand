@@ -339,7 +339,7 @@ class Image(Resource):
                 if blob is not None:
                     if format:
                         library.MagickSetFilename(self.wand,
-                                                  'buffer' + format)
+                                                  'buffer.' + format)
                     if not isinstance(blob, collections.Iterable):
                         raise TypeError('blob must be iterable, not ' +
                                         repr(blob))
