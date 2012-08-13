@@ -107,7 +107,7 @@ and the file size of the resulting thumbnail images.</dd>
 
 <dl class="class">
 <dt id="wand.image.Image">
-<em class="property">class </em><tt class="descclassname">wand.image.</tt><tt class="descname">Image</tt><big>(</big><em>image=None</em>, <em>blob=None</em>, <em>file=None</em>, <em>filename=None</em><big>)</big><a class="headerlink" href="#wand.image.Image" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">wand.image.</tt><tt class="descname">Image</tt><big>(</big><em>image=None</em>, <em>blob=None</em>, <em>file=None</em>, <em>filename=None</em>, <em>format=None</em><big>)</big><a class="headerlink" href="#wand.image.Image" title="Permalink to this definition">¶</a></dt>
 <dd><p>An image object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -118,6 +118,9 @@ and the file size of the resulting thumbnail images.</dd>
 <li><strong>blob</strong> (<tt class="xref py py-class docutils literal"><span class="pre">str</span></tt>) &#8211; opens an image of the <tt class="docutils literal"><span class="pre">blob</span></tt> byte array</li>
 <li><strong>file</strong> (<em>file object</em>) &#8211; opens an image of the <tt class="docutils literal"><span class="pre">file</span></tt> object</li>
 <li><strong>filename</strong> (<tt class="xref py py-class docutils literal"><span class="pre">basestring</span></tt>) &#8211; opens an image of the <tt class="docutils literal"><span class="pre">filename</span></tt> string</li>
+<li><strong>format</strong> (<tt class="xref py py-class docutils literal"><span class="pre">basestring</span></tt>) &#8211; forces filename to  buffer.``format`` to help
+imagemagick detect the file format. Used only in
+<tt class="docutils literal"><span class="pre">blob</span></tt> or <tt class="docutils literal"><span class="pre">file</span></tt> cases</li>
 </ul>
 </td>
 </tr>
@@ -127,6 +130,8 @@ and the file size of the resulting thumbnail images.</dd>
 <span class="versionmodified">New in version 0.1.5: </span>The <tt class="docutils literal"><span class="pre">file</span></tt> parameter.</p>
 <p class="versionadded">
 <span class="versionmodified">New in version 0.1.1: </span>The <tt class="docutils literal"><span class="pre">blob</span></tt> parameter.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.2.1: </span>The <tt class="docutils literal"><span class="pre">format</span></tt> parameter.</p>
 <dl class="describe">
 <dt>
 <tt class="descname">[left:right, top:bottom]</tt></dt>

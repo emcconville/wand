@@ -112,3 +112,16 @@ code can be replaced by::
         with original.convert('png') as converted:
             # operations on a converted image...
 
+
+Hint file format
+----------------
+
+When it's read from a binary string or a file object, you can explicitly
+give the hint which indicates file format of an image to read --- optional
+``format`` keyword is for that::
+
+    from wand.image import Image
+
+    with Image(blob=image_binary, format='ico') as image:
+        print image.format
+
