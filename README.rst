@@ -18,9 +18,28 @@ revision of the source code from the `GitHub repository`__::
     $ cd wand/
     $ python setup.py install
 
-.. image:: https://secure.travis-ci.org/dahlia/wand.png?branch=master
-   :alt: Build Status
-   :target: http://travis-ci.org/dahlia/wand
+
+Community
+---------
+
+GitHub
+   https://github.com/wand/dahlia
+
+Mailing list
+   wand@librelist.com
+
+List arhive
+   http://librelist.com/browser/wand/
+
+IRC
+   irc://irc.freenode.net/wand
+
+Continuous Integration (Travis CI)
+   http://travis-ci.org/dahlia/wand
+
+   .. image:: https://secure.travis-ci.org/dahlia/wand.png?branch=master
+      :alt: Build Status
+      :target: http://travis-ci.org/dahlia/wand
 
 .. _Wand: http://dahlia.kr/wand/
 .. _MagickWand API: http://www.imagemagick.org/script/magick-wand.php
