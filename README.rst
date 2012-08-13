@@ -28,7 +28,7 @@ GitHub
 Mailing list
    wand@librelist.com
 
-List arhive
+List archive
    http://librelist.com/browser/wand/
 
 IRC
