@@ -1,7 +1,7 @@
 Wand
 ====
 
-Wand is a :mod:`ctypes`-based simple `MagickWand API`_ binding for Python. ::
+Wand is a :mod:`ctypes`-based simple ImageMagick_ binding for Python. ::
 
     from wand.image import Image
     from wand.display import display
@@ -22,7 +22,7 @@ You can install it from PyPI_ (and it requires MagickWand library):
    $ apt-get install libmagickwand-dev
    $ easy_install Wand
 
-.. _MagickWand API: http://www.imagemagick.org/script/magick-wand.php
+.. _ImageMagick: http://www.imagemagick.org/
 .. _PyPI: http://pypi.python.org/pypi/Wand
 
 
