@@ -1,7 +1,7 @@
 Wand
 ====
 
-Wand is a :mod:`ctypes`-based simple `MagickWand API`_ binding for Python. ::
+Wand is a :mod:`ctypes`-based simple ImageMagick_ binding for Python. ::
 
     from wand.image import Image
     from wand.display import display
@@ -22,7 +22,7 @@ You can install it from PyPI_ (and it requires MagickWand library):
    $ apt-get install libmagickwand-dev
    $ easy_install Wand
 
-.. _MagickWand API: http://www.imagemagick.org/script/magick-wand.php
+.. _ImageMagick: http://www.imagemagick.org/
 .. _PyPI: http://pypi.python.org/pypi/Wand
 
 
@@ -77,6 +77,20 @@ References
    wand
 
 
+Mailing list
+------------
+
+Wand has the list for users.  If you want to subscribe the list, just send a
+mail to:
+
+    wand@librelist.com
+
+The `list archive`_ provided by Librelist_ is synchronized every hour.
+
+.. _list archive: http://librelist.com/browser/wand/
+.. _Librelist: http://librelist.com/
+
+
 Open source
 -----------
 
@@ -91,6 +105,9 @@ The source code is distributed under `MIT license`_ and you can find it at
 
 If you find a bug, please notify to `our issue tracker`_. Pull requests
 are always welcome!
+
+We discuss about Wand's development on IRC.  Come #wand channel on
+freenode network.
 
 Check out :doc:`changes` also.
 
