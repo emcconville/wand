@@ -28,7 +28,7 @@ Community
 ---------
 
 GitHub
-   https://github.com/wand/dahlia
+   https://github.com/dahlia/wand
 
 Mailing list
    wand@librelist.com
