@@ -211,6 +211,35 @@ EVALUATE_OPS = ('undefined', 'add', 'and', 'divide', 'leftshift', 'max',
                 'uniformnoise', 'cosine', 'sine', 'addmodulus', 'mean',
                 'abs', 'exponential', 'median', 'sum',)
 
+#: (:class:`tuple`) The list of alpha chanell types
+#:
+#: - ``'undefinedalphachannel'``
+#: - ``'activatealphachannel'``
+#: - ``'backgroundalphachannel'``
+#: - ``'copyalphachannel'``
+#: - ``'deactivatealphachannel'``
+#: - ``'extractalphachannel'``
+#: - ``'opaquealphachannel'``
+#: - ``'resetalphachannel'``
+#: - ``'setalphachannel'``
+#: - ``'shapealphachannel'``
+#: - ``'transparentalphachannel'``
+#: - ``'flattenalphachannel'``
+#: - ``'removealphachannel'``
+#:
+#: .. seealso::
+#:    `ImageMagick Image Channel`__
+#:       Describes the SetImageAlphaChannel method which can be used
+#:       to modify alpha channel. Also describes AlphaChannelType
+#:    __ http://www.imagemagick.org/api/channel.php#SetImageAlphaChannel
+ALPHA_CHANNEL_TYPES = ('undefinedalphachannel', 'activatealphachannel',
+                       'backgroundalphachannel', 'copyalphachannel',
+                       'deactivatealphachannel', 'extractalphachannel',
+                       'opaquealphachannel', 'resetalphachannel',
+                       'setalphachannel', 'shapealphachannel',
+                       'transparentalphachannel', 'flattenalphachannel',
+                       'removealphachannel',)
+
 #: (:class:`tuple`) The list of image types
 #:
 #: - ``'undefined'``
@@ -613,6 +642,26 @@ class Image(Resource):
 
         """
         return library.MagickGetImageSignature(self.wand)
+
+    @property
+    def alpha_channel(self):
+        """(:class:`bool`) Get state of image alpha channel.
+        It can also be used to enable/disable alpha channel.
+
+        .. versionadded:: 0.2.1
+
+        """
+        return library.MagickGetImageAlphaChannel(self.wand)
+
+    @alpha_channel.setter
+    def alpha_channel(self, alpha):
+        if alpha == True:
+            act = ALPHA_CHANNEL_TYPES.index('activatealphachannel')
+        elif alpha == False:
+            act = ALPHA_CHANNEL_TYPES.index('deactivatealphachannel')
+
+        r = library.MagickSetImageAlphaChannel(self.wand, act)
+        return r if r else self.raise_exception()
 
     @property
     def background_color(self):
