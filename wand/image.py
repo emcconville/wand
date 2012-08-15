@@ -659,9 +659,10 @@ class Image(Resource):
             act = ALPHA_CHANNEL_TYPES.index('activatealphachannel')
         elif alpha == False:
             act = ALPHA_CHANNEL_TYPES.index('deactivatealphachannel')
-
         r = library.MagickSetImageAlphaChannel(self.wand, act)
-        return r if r else self.raise_exception()
+        if r:
+            return r
+        self.raise_exception()
 
     @property
     def background_color(self):

@@ -559,9 +559,9 @@ def get_alpha_channel():
     """Checks if image has alpha channel."""
     with Image(filename=asset('watermark.png')) as img:
         assert img.alpha_channel == True
-
     with Image(filename=asset('mona-lisa.jpg')) as img:
         assert img.alpha_channel == False
+
 
 @tests.test
 def set_alpha_channel():
