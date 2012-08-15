@@ -554,13 +554,28 @@ def object_hash():
         b = hash(img)
         assert a == b
 
+@tests.test
+def get_alpha_channel():
+    """Checks if image has alpha channel."""
+    with Image(filename=asset('watermark.png')) as img:
+        assert img.alpha_channel == True
+
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        assert img.alpha_channel == False
+
+@tests.test
+def set_alpha_channel():
+    """Sets alpha channel to off."""
+    with Image(filename=asset('watermark.png')) as img:
+        assert img.alpha_channel == True
+        img.alpha_channel = False
+        assert img.alpha_channel == False
 
 @tests.test
 def get_background_color():
     """Gets the background color."""
     with Image(filename=asset('mona-lisa.jpg')) as img:
         assert Color('white') == img.background_color
-
 
 @tests.test
 def set_background_color():

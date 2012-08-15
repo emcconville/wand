@@ -132,6 +132,12 @@ try:
     library.MagickSetImageBackgroundColor.argtypes = [ctypes.c_void_p,
                                                       ctypes.c_void_p]
 
+    library.MagickGetImageAlphaChannel.argtypes = [ctypes.c_void_p]
+    library.MagickGetImageAlphaChannel.restype = ctypes.c_size_t
+
+    library.MagickSetImageAlphaChannel.argtypes = [ctypes.c_void_p,
+                                                   ctypes.c_int]
+
     library.MagickGetImageBlob.argtypes = [ctypes.c_void_p,
                                            ctypes.POINTER(ctypes.c_size_t)]
     library.MagickGetImageBlob.restype = ctypes.POINTER(ctypes.c_ubyte)
