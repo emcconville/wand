@@ -650,6 +650,11 @@ class Image(Resource):
 
         .. versionadded:: 0.2.1
 
+        .. todo::
+
+           Support other states than ``''activatealphachannel'``
+           or ``'deactivatealphachannel'``.
+
         """
         return library.MagickGetImageAlphaChannel(self.wand)
 
