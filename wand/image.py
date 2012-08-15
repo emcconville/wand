@@ -659,6 +659,9 @@ class Image(Resource):
             act = ALPHA_CHANNEL_TYPES.index('activatealphachannel')
         elif alpha == False:
             act = ALPHA_CHANNEL_TYPES.index('deactivatealphachannel')
+        else:
+            raise TypeError('alpha_channel must be bool, not ' +
+                            repr(alpha))
         r = library.MagickSetImageAlphaChannel(self.wand, act)
         if r:
             return r
