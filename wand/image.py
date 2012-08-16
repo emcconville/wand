@@ -39,21 +39,38 @@ __all__ = 'FILTER_TYPES', 'Image', 'Iterator', 'ClosedImageError'
 #: - ``'cubic'``
 #: - ``'catrom'``
 #: - ``'mitchell'``
-#: - ``'lanczos'``
-#: - ``'bessel'``
+#: - ``'jinc'``
 #: - ``'sinc'``
+#: - ``'sincfast'``
+#: - ``'kaiser'``
+#: - ``'welsh'``
+#: - ``'parzen'``
+#: - ``'bohman'``
+#: - ``'bartlett'``
+#: - ``'lagrange'``
+#: - ``'lanczos'``
+#: - ``'lanczossharp'``
+#: - ``'lanczos2'``
+#: - ``'lanczos2sharp'``
+#: - ``'robidoux'``
+#: - ``'robidouxsharp'``
+#: - ``'cosine'``
+#: - ``'spline'``
+#: - ``'sentinel'``
 #:
 #: .. seealso::
 #:
 #:    `ImageMagick Resize Filters`__
-#:       Demonstrates the results of resampling three images using the various
-#:       resize filters and blur settings available in ImageMagick,
-#:       and the file size of the resulting thumbnail images.
+#:       Demonstrates the results of resampling images using the various
+#:       resize filters and blur settings available in ImageMagick.
 #:
-#:    __ http://www.dylanbeattie.net/magick/filters/result.html
+#:    __ http://www.imagemagick.org/Usage/resize/
 FILTER_TYPES = ('undefined', 'point', 'box', 'triangle', 'hermite', 'hanning',
                 'hamming', 'blackman', 'gaussian', 'quadratic', 'cubic',
-                'catrom', 'mitchell', 'lanczos', 'bessel', 'sinc')
+                'catrom', 'mitchell', 'jinc', 'sinc', 'sincfast', 'kaiser',
+                'welsh', 'parzen', 'bohman', 'bartlett', 'lagrange', 'lanczos',
+                'lanczossharp', 'lanczos2', 'lanczos2sharp', 'robidoux',
+                'robidouxsharp', 'cosine', 'spline', 'sentinel')
 
 #: (:class:`tuple`) The list of composition operators
 #:
