@@ -858,7 +858,7 @@ class Image(Resource):
         """
         library.MagickResetImagePage(self.wand, None)
 
-    def resize(self, width=None, height=None, filter='triangle', blur=1):
+    def resize(self, width=None, height=None, filter='undefined', blur=1):
         """Resizes the image.
 
         :param width: the width in the scaled image. default is the original
@@ -868,7 +868,8 @@ class Image(Resource):
                        height
         :type height: :class:`numbers.Integral`
         :param filter: a filter type to use for resizing. choose one in
-                       :const:`FILTER_TYPES`. default is ``'triangle'``
+                       :const:`FILTER_TYPES`. default is ``'undefined'``
+                       which means IM will try to guess best one to use
         :type filter: :class:`basestring`, :class:`numbers.Integral`
         :param blur: the blur factor where > 1 is blurry, < 1 is sharp.
                      default is 1
