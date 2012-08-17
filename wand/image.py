@@ -875,6 +875,10 @@ class Image(Resource):
                      default is 1
         :type blur: :class:`numbers.Real`
 
+        .. versionchanged:: 0.2.1
+           The default value of ``filter`` has changed from ``'triangle'``
+           to ``'undefined'`` instead.
+
         .. versionchanged:: 0.1.8
            The ``blur`` parameter changed to take :class:`numbers.Real`
            instead of :class:`numbers.Rational`.

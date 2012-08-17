@@ -18,6 +18,10 @@ To be released.  Alpha version.
 - Added :attr:`Image.alpha_channel <wand.image.Image.alpha_channel>`
   property.  [:issue:`35` by Piotr Florczyk]
 
+- The default value of :meth:`Image.resize() <wand.image.Imageresize>`'s
+  ``filter`` option has changed from ``'triangle'`` to ``'undefined'``.
+  [:issue:`37` by Piotr Florczyk]
+
 - Added version data of the linked ImageMagick library into :mod:`wand.version`
   module:
 
