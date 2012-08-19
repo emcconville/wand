@@ -4,7 +4,7 @@ Wand Changelog
 Version 0.2.1
 -------------
 
-To be released.  Alpha version.
+Released on August 19, 2012.  Beta version.
 
 - Added :meth:`Image.trim() <wand.image.Image.trim>` method.
   [:issue:`26` by Jökull Sólberg Auðunsson]
