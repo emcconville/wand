@@ -83,13 +83,14 @@ JPEG, gzips it, and then saves it to :file:`pikachu.jpg.gz`::
 Get binary string
 -----------------
 
-Want just a binary string of the image? Use :meth:`make_blob()` method so::
+Want just a binary string of the image? Use
+:meth:`~wand.image.Image.make_blob()` method so::
 
     from wand.image import image
 
     with image(filename='pikachu.png') as img:
         img.format = 'jpeg'
-        jpeg_bin = img.blob()
+        jpeg_bin = img.make_blob()
 
 There's the optional ``format`` parameter as well. So the above example code
 can be simpler::
@@ -97,5 +98,4 @@ can be simpler::
     from wand.image import Image
 
     with Image(filename='pikachu.png') as img:
-        jpeg_bin = img.blob('jpeg')
-
+        jpeg_bin = img.make_blob('jpeg')

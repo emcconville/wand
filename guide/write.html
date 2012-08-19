@@ -134,12 +134,13 @@ JPEG, gzips it, and then saves it to <tt class="file docutils literal"><span cla
 </div>
 <div class="section" id="get-binary-string">
 <h2>Get binary string<a class="headerlink" href="#get-binary-string" title="Permalink to this headline">¶</a></h2>
-<p>Want just a binary string of the image? Use <tt class="xref py py-meth docutils literal"><span class="pre">make_blob()</span></tt> method so:</p>
+<p>Want just a binary string of the image? Use
+<a class="reference internal" href="../wand/image.html#wand.image.Image.make_blob" title="wand.image.Image.make_blob"><tt class="xref py py-meth docutils literal"><span class="pre">make_blob()</span></tt></a> method so:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">wand.image</span> <span class="kn">import</span> <span class="n">image</span>
 
 <span class="k">with</span> <span class="n">image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s">&#39;pikachu.png&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">img</span><span class="p">:</span>
     <span class="n">img</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="s">&#39;jpeg&#39;</span>
-    <span class="n">jpeg_bin</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">blob</span><span class="p">()</span>
+    <span class="n">jpeg_bin</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">make_blob</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>There&#8217;s the optional <tt class="docutils literal"><span class="pre">format</span></tt> parameter as well. So the above example code
@@ -147,7 +148,7 @@ can be simpler:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">wand.image</span> <span class="kn">import</span> <span class="n">Image</span>
 
 <span class="k">with</span> <span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s">&#39;pikachu.png&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">img</span><span class="p">:</span>
-    <span class="n">jpeg_bin</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">blob</span><span class="p">(</span><span class="s">&#39;jpeg&#39;</span><span class="p">)</span>
+    <span class="n">jpeg_bin</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">make_blob</span><span class="p">(</span><span class="s">&#39;jpeg&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
