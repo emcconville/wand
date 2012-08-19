@@ -170,8 +170,6 @@ try:
     library.MagickRotateImage.argtypes = [ctypes.c_void_p, ctypes.c_void_p,
                                           ctypes.c_double]
 
-    library.MagickResetIterator.argtypes = [ctypes.c_void_p]
-
     library.MagickIdentifyImage.argtypes = [ctypes.c_void_p]
     library.MagickIdentifyImage.restype = ctypes.c_char_p
 
@@ -233,8 +231,32 @@ try:
 
     library.MagickGetQuantumRange.argtypes = [ctypes.POINTER(ctypes.c_size_t)]
 
+    library.MagickAddImage.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
+
+    library.MagickRemoveImage.argtypes = [ctypes.c_void_p]
+
+    library.MagickGetNumberImages.argtypes = [ctypes.c_void_p]
+    library.MagickGetNumberImages.restype = ctypes.c_size_t
+
+    library.MagickGetIteratorIndex.argtypes = [ctypes.c_void_p]
+    library.MagickGetIteratorIndex.restype = ctypes.c_size_t
+
     library.MagickSetIteratorIndex.argtypes = [ctypes.c_void_p,
                                                ctypes.c_ssize_t]
+
+    library.MagickSetFirstIterator.argtypes = [ctypes.c_void_p]
+
+    library.MagickSetLastIterator.argtypes = [ctypes.c_void_p]
+
+    library.MagickResetIterator.argtypes = [ctypes.c_void_p]
+
+    library.MagickHasNextImage.argtypes = [ctypes.c_void_p]
+
+    library.MagickHasPreviousImage.argtypes = [ctypes.c_void_p]
+
+    library.MagickNextImage.argtypes = [ctypes.c_void_p]
+
+    library.MagickPreviousImage.argtypes = [ctypes.c_void_p]
 
     library.MagickSetImageType.argtypes = [ctypes.c_void_p, ctypes.c_int]
 

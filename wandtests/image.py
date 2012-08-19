@@ -7,7 +7,7 @@ except ImportError:
 
 from attest import Tests, assert_hook, raises
 
-from wand.image import ClosedImageError, Image
+from wand.image import ClosedImageError, Image, Sequence
 from wand.color import Color
 
 
@@ -611,3 +611,48 @@ def reset_coords():
                 msg = 'img = {0!r}, control = {1!r}'.format(
                     img.signature, control.signature)
                 assert img == control, msg
+
+@tests.test
+def sequence():
+    """Test base sequences api."""
+    with Image(filename=asset('apple.ico')) as img:
+        assert len(img.sequence) == 4
+        assert img.sequence.index == 0
+        assert img.size == (32, 32)
+        img.sequence.index = 1
+        assert img.size == (16, 16)
+
+        with raises(TypeError):
+            img.sequence.index = 4
+
+        img.sequence.index = 2
+        img.sequence.reset()
+        assert img.sequence.index == 0
+
+@tests.test
+def sequence_iteration():
+    """Iterate sequence."""
+    with Image(filename=asset('apple.ico')) as img:
+        sizes = []
+        sizes_right = [
+            (0, (32, 32)),
+            (1, (16, 16)),
+            (2, (32, 32)),
+            (3, (16, 16)),
+        ]
+        for i in img.sequence:
+            sizes.append((i, img.size))
+        assert sizes == sizes_right
+
+@tests.test
+def sequence_append():
+    """Append image to sequnce."""
+    with Image(filename=asset('apple.ico')) as imga:
+        with Image(filename=asset('google.ico')) as imgg:
+            imga.sequence.append(imgg)
+            assert len(imga.sequence) == 5
+            imga.sequence.reset()
+            for i in xrange(4):
+                del imga.sequence.index
+            assert len(imga.sequence) == 1
+            assert imga.size == (16, 16)
