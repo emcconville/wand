@@ -125,3 +125,5 @@ give the hint which indicates file format of an image to read --- optional
     with Image(blob=image_binary, format='ico') as image:
         print image.format
 
+.. versionadded:: 0.2.1
+   The ``format`` parameter to :class:`~wand.image.Image` constructor.
