@@ -64,7 +64,7 @@
 <h1>Wand Changelog<a class="headerlink" href="#wand-changelog" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="version-0-2-1">
 <h2>Version 0.2.1<a class="headerlink" href="#version-0-2-1" title="Permalink to this headline">¶</a></h2>
-<p>To be released.  Alpha version.</p>
+<p>Released on August 19, 2012.  Beta version.</p>
 <ul class="simple">
 <li>Added <a class="reference internal" href="wand/image.html#wand.image.Image.trim" title="wand.image.Image.trim"><tt class="xref py py-meth docutils literal"><span class="pre">Image.trim()</span></tt></a> method.
 [<a class="reference external" href="https://github.com/dahlia/wand/issues/26">#26</a> by Jökull Sólberg Auðunsson]</li>
@@ -72,6 +72,11 @@
 [<a class="reference external" href="https://github.com/dahlia/wand/issues/31">#31</a> by Piotr Florczyk]</li>
 <li>Now <a class="reference internal" href="wand/image.html#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a> can take an optional <tt class="docutils literal"><span class="pre">format</span></tt> hint.
 [<a class="reference external" href="https://github.com/dahlia/wand/issues/32">#32</a> by Michael Elovskikh]</li>
+<li>Added <a class="reference internal" href="wand/image.html#wand.image.Image.alpha_channel" title="wand.image.Image.alpha_channel"><tt class="xref py py-attr docutils literal"><span class="pre">Image.alpha_channel</span></tt></a>
+property.  [<a class="reference external" href="https://github.com/dahlia/wand/issues/35">#35</a> by Piotr Florczyk]</li>
+<li>The default value of <a class="reference internal" href="wand/image.html#wand.image.Image.resize" title="wand.image.Image.resize"><tt class="xref py py-meth docutils literal"><span class="pre">Image.resize()</span></tt></a>&#8216;s
+<tt class="docutils literal"><span class="pre">filter</span></tt> option has changed from <tt class="docutils literal"><span class="pre">'triangle'</span></tt> to <tt class="docutils literal"><span class="pre">'undefined'</span></tt>.
+[<a class="reference external" href="https://github.com/dahlia/wand/issues/37">#37</a> by Piotr Florczyk]</li>
 <li>Added version data of the linked ImageMagick library into <a class="reference internal" href="wand/version.html#module-wand.version" title="wand.version"><tt class="xref py py-mod docutils literal"><span class="pre">wand.version</span></tt></a>
 module:<ul>
 <li><a class="reference internal" href="wand/version.html#wand.version.MAGICK_VERSION" title="wand.version.MAGICK_VERSION"><tt class="xref py py-const docutils literal"><span class="pre">MAGICK_VERSION</span></tt></a> (<tt class="xref c c-func docutils literal"><span class="pre">GetMagickVersion()</span></tt>)</li>
