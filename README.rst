@@ -37,7 +37,7 @@ List archive
    http://librelist.com/browser/wand/
 
 IRC
-   irc://irc.freenode.net/wand
+   `irc://irc.freenode.net/wand <http://webchat.freenode.net/?channels=wand>`_
 
 Continuous Integration (Travis CI)
    http://travis-ci.org/dahlia/wand
