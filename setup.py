@@ -61,7 +61,6 @@ setup(
     test_loader='attest:auto_reporter.test_loader',
     test_suite='wandtests.tests',
     extras_require={'doc': ['Sphinx >=1.0']},
-    setup_requires=['github-distutils >= 0.1.0'],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
