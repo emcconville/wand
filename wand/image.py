@@ -918,7 +918,8 @@ class Image(Resource):
             raise ValueError(repr(filter) + ' is an invalid filter type')
         blur = ctypes.c_double(float(blur))
         r = library.MagickResizeImage(self.wand, width, height, filter, blur)
-        self.raise_exception()
+        if not r:
+            self.raise_exception()
         return r
 
     def rotate(self, degree, background=None, reset_coords=True):
