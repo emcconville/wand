@@ -1,6 +1,16 @@
 Wand Changelog
 ==============
 
+Version 0.2.2
+-------------
+
+To be released.
+
+- Now :meth:`Image.resize() <wand.image.Image.resize>` method raises
+  a proper error when it fails for any reason.
+  [issue:`41` by Piotr Florczyk]
+
+
 Version 0.2.1
 -------------
 
