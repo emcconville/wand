@@ -917,7 +917,9 @@ class Image(Resource):
               not (0 <= filter < len(FILTER_TYPES))):
             raise ValueError(repr(filter) + ' is an invalid filter type')
         blur = ctypes.c_double(float(blur))
-        library.MagickResizeImage(self.wand, width, height, filter, blur)
+        r = library.MagickResizeImage(self.wand, width, height, filter, blur)
+        if not r:
+            self.raise_exception()
 
     def rotate(self, degree, background=None, reset_coords=True):
         """Rotates the image. It takes a ``background`` color for ``degree``
