@@ -920,7 +920,6 @@ class Image(Resource):
         r = library.MagickResizeImage(self.wand, width, height, filter, blur)
         if not r:
             self.raise_exception()
-        return r
 
     def rotate(self, degree, background=None, reset_coords=True):
         """Rotates the image. It takes a ``background`` color for ``degree``
