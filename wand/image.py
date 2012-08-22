@@ -21,7 +21,8 @@ from .color import Color
 from .resource import DestroyedResourceError, Resource
 
 
-__all__ = 'FILTER_TYPES', 'Image', 'Iterator', 'ClosedImageError'
+__all__ = 'FILTER_TYPES', 'COMPOSITE_OPS', 'CHANNELS', 'EVALUATE_OPS',\
+    'IMAGE_TYPES', 'Image', 'Iterator', 'ClosedImageError'
 
 
 #: (:class:`tuple`) The list of filter types.
@@ -604,6 +605,30 @@ class Image(Resource):
         r = library.MagickSetImageFormat(self.wand, fmt.strip().upper())
         if not r:
             raise ValueError(repr(fmt) + ' is unsupported format')
+        
+    @property
+    def type(self):
+        """(:class:`basestring`) The image type.
+
+        Defines image type as in wand.image.IMAGE_TYPES enumeration.
+        
+        It may raise :exc:`ValueError` when the type is unknown.
+ 
+        .. versionadded:: 0.1.11
+        """ 
+        image_type_index = library.MagickGetImageType(self.wand)        
+        if image_type_index < 0 or image_type_index >= len(IMAGE_TYPES):
+            raise ValueError('Unknown type')
+        return IMAGE_TYPES[image_type_index]
+    
+    @type.setter
+    def type(self, image_type):
+        if not isinstance(image_type, basestring) \
+            or image_type not in IMAGE_TYPES:
+            raise TypeError("Type value must be a string from IMAGE_TYPES"
+                            ', not ' + repr(image_type))
+        library.MagickSetImageType(
+            self.wand, IMAGE_TYPES.index(image_type))
 
     @property
     def compression_quality(self):
