@@ -614,11 +614,12 @@ class Image(Resource):
         
         It may raise :exc:`ValueError` when the type is unknown.
  
-        .. versionadded:: 0.1.11
+        .. versionadded:: 0.2.2
+
         """ 
-        image_type_index = library.MagickGetImageType(self.wand)        
-        if image_type_index < 0 or image_type_index >= len(IMAGE_TYPES):
-            raise ValueError('Unknown type')
+        image_type_index = library.MagickGetImageType(self.wand)
+        if not image_type_index:
+            self.raise_exception()
         return IMAGE_TYPES[image_type_index]
     
     @type.setter
@@ -627,8 +628,11 @@ class Image(Resource):
             or image_type not in IMAGE_TYPES:
             raise TypeError("Type value must be a string from IMAGE_TYPES"
                             ', not ' + repr(image_type))
-        library.MagickSetImageType(
-            self.wand, IMAGE_TYPES.index(image_type))
+        r = library.MagickSetImageType(
+                                       self.wand,
+                                       IMAGE_TYPES.index(image_type))
+        if not r:
+            self.raise_exception()
 
     @property
     def compression_quality(self):
