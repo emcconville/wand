@@ -21,8 +21,9 @@ from .color import Color
 from .resource import DestroyedResourceError, Resource
 
 
-__all__ = 'FILTER_TYPES', 'COMPOSITE_OPS', 'CHANNELS', 'EVALUATE_OPS',\
-    'IMAGE_TYPES', 'Image', 'Iterator', 'ClosedImageError'
+__all__ = ('FILTER_TYPES', 'COMPOSITE_OPS', 'CHANNELS', 'EVALUATE_OPS',
+           'ALPHA_CHANNEL_TYPES', 'IMAGE_TYPES', 'Image', 'Iterator', 
+           'ClosedImageError')
 
 
 #: (:class:`tuple`) The list of filter types.
