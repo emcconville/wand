@@ -21,7 +21,9 @@ from .color import Color
 from .resource import DestroyedResourceError, Resource
 
 
-__all__ = 'FILTER_TYPES', 'Image', 'Iterator', 'ClosedImageError'
+__all__ = ('FILTER_TYPES', 'COMPOSITE_OPS', 'CHANNELS', 'EVALUATE_OPS',
+           'ALPHA_CHANNEL_TYPES', 'IMAGE_TYPES', 'Image', 'Iterator', 
+           'ClosedImageError')
 
 
 #: (:class:`tuple`) The list of filter types.
@@ -230,32 +232,28 @@ EVALUATE_OPS = ('undefined', 'add', 'and', 'divide', 'leftshift', 'max',
 
 #: (:class:`tuple`) The list of alpha chanell types
 #:
-#: - ``'undefinedalphachannel'``
-#: - ``'activatealphachannel'``
-#: - ``'backgroundalphachannel'``
-#: - ``'copyalphachannel'``
-#: - ``'deactivatealphachannel'``
-#: - ``'extractalphachannel'``
-#: - ``'opaquealphachannel'``
-#: - ``'resetalphachannel'``
-#: - ``'setalphachannel'``
-#: - ``'shapealphachannel'``
-#: - ``'transparentalphachannel'``
-#: - ``'flattenalphachannel'``
-#: - ``'removealphachannel'``
+#: - ``'undefined'``
+#: - ``'activate'``
+#: - ``'background'``
+#: - ``'copy'``
+#: - ``'deactivate'``
+#: - ``'extract'``
+#: - ``'opaque'``
+#: - ``'reset'``
+#: - ``'set'``
+#: - ``'shape'``
+#: - ``'transparent'``
+#: - ``'flatten'``
+#: - ``'remove'``
 #:
 #: .. seealso::
 #:    `ImageMagick Image Channel`__
 #:       Describes the SetImageAlphaChannel method which can be used
 #:       to modify alpha channel. Also describes AlphaChannelType
 #:    __ http://www.imagemagick.org/api/channel.php#SetImageAlphaChannel
-ALPHA_CHANNEL_TYPES = ('undefinedalphachannel', 'activatealphachannel',
-                       'backgroundalphachannel', 'copyalphachannel',
-                       'deactivatealphachannel', 'extractalphachannel',
-                       'opaquealphachannel', 'resetalphachannel',
-                       'setalphachannel', 'shapealphachannel',
-                       'transparentalphachannel', 'flattenalphachannel',
-                       'removealphachannel',)
+ALPHA_CHANNEL_TYPES = ('undefined', 'activate', 'background', 'copy',
+                       'deactivate', 'extract', 'opaque', 'reset', 'set',
+                       'shape', 'transparent', 'flatten', 'remove',)
 
 #: (:class:`tuple`) The list of image types
 #:
@@ -604,6 +602,34 @@ class Image(Resource):
         r = library.MagickSetImageFormat(self.wand, fmt.strip().upper())
         if not r:
             raise ValueError(repr(fmt) + ' is unsupported format')
+        
+    @property
+    def type(self):
+        """(:class:`basestring`) The image type.
+
+        Defines image type as in wand.image.IMAGE_TYPES enumeration.
+        
+        It may raise :exc:`ValueError` when the type is unknown.
+ 
+        .. versionadded:: 0.2.2
+
+        """ 
+        image_type_index = library.MagickGetImageType(self.wand)
+        if not image_type_index:
+            self.raise_exception()
+        return IMAGE_TYPES[image_type_index]
+    
+    @type.setter
+    def type(self, image_type):
+        if not isinstance(image_type, basestring) \
+            or image_type not in IMAGE_TYPES:
+            raise TypeError("Type value must be a string from IMAGE_TYPES"
+                            ', not ' + repr(image_type))
+        r = library.MagickSetImageType(
+                                       self.wand,
+                                       IMAGE_TYPES.index(image_type))
+        if not r:
+            self.raise_exception()
 
     @property
     def compression_quality(self):
@@ -678,9 +704,9 @@ class Image(Resource):
     @alpha_channel.setter
     def alpha_channel(self, alpha):
         if alpha == True:
-            act = ALPHA_CHANNEL_TYPES.index('activatealphachannel')
+            act = ALPHA_CHANNEL_TYPES.index('activate')
         elif alpha == False:
-            act = ALPHA_CHANNEL_TYPES.index('deactivatealphachannel')
+            act = ALPHA_CHANNEL_TYPES.index('deactivate')
         else:
             raise TypeError('alpha_channel must be bool, not ' +
                             repr(alpha))

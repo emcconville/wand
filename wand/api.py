@@ -236,6 +236,8 @@ try:
     library.MagickSetIteratorIndex.argtypes = [ctypes.c_void_p,
                                                ctypes.c_ssize_t]
 
+    library.MagickGetImageType.argtypes = [ctypes.c_void_p]
+    
     library.MagickSetImageType.argtypes = [ctypes.c_void_p, ctypes.c_int]
 
     library.MagickEvaluateImageChannel.argtypes = [ctypes.c_void_p,
