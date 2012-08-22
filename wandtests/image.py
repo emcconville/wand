@@ -192,13 +192,26 @@ def set_format():
         with raises(TypeError):
             img.format = 123
 
+@tests.test
+def get_type():
+    """Gets the image type."""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        assert img.type == "truecolor"
+        img.alpha_channel = True
+        assert img.type == "truecolormatte"
+
+@tests.test
+def set_type():
+    """Sets the image type."""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        img.type = "grayscale"
+        assert img.type == "grayscale"
 
 @tests.test
 def get_compression():
     """Gets the image compression quality."""
     with Image(filename=asset('mona-lisa.jpg')) as img:
         assert img.compression_quality == 80
-
 
 @tests.test
 def set_compression():
