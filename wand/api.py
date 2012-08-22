@@ -237,7 +237,6 @@ try:
                                                ctypes.c_ssize_t]
 
     library.MagickGetImageType.argtypes = [ctypes.c_void_p]
-    library.MagickGetImageType.restype = ctypes.c_int
     
     library.MagickSetImageType.argtypes = [ctypes.c_void_p, ctypes.c_int]
 
