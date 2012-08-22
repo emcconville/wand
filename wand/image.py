@@ -623,10 +623,9 @@ class Image(Resource):
     def type(self, image_type):
         if not isinstance(image_type, basestring) \
             or image_type not in IMAGE_TYPES:
-            raise TypeError("Type value must be a string from IMAGE_TYPES"
+            raise TypeError('Type value must be a string from IMAGE_TYPES'
                             ', not ' + repr(image_type))
-        r = library.MagickSetImageType(
-                                       self.wand,
+        r = library.MagickSetImageType(self.wand,
                                        IMAGE_TYPES.index(image_type))
         if not r:
             self.raise_exception()
