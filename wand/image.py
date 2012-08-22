@@ -704,9 +704,9 @@ class Image(Resource):
     @alpha_channel.setter
     def alpha_channel(self, alpha):
         if alpha == True:
-            act = ALPHA_CHANNEL_TYPES.index('activatealphachannel')
+            act = ALPHA_CHANNEL_TYPES.index('activate')
         elif alpha == False:
-            act = ALPHA_CHANNEL_TYPES.index('deactivatealphachannel')
+            act = ALPHA_CHANNEL_TYPES.index('deactivate')
         else:
             raise TypeError('alpha_channel must be bool, not ' +
                             repr(alpha))
