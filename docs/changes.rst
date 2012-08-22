@@ -8,7 +8,9 @@ To be released.
 
 - Now :meth:`Image.resize() <wand.image.Image.resize>` method raises
   a proper error when it fails for any reason.
-  [issue:`41` by Piotr Florczyk]
+  [:issue:`41` by Piotr Florczyk]
+- Added :attr:`Image.type <wand.image.Image.type>` property.
+  [:issue:`33` by Yauhen Yakimovich, :issue:`42` by Piotr Florczyk]
 
 
 Version 0.2.1
