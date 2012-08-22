@@ -232,32 +232,28 @@ EVALUATE_OPS = ('undefined', 'add', 'and', 'divide', 'leftshift', 'max',
 
 #: (:class:`tuple`) The list of alpha chanell types
 #:
-#: - ``'undefinedalphachannel'``
-#: - ``'activatealphachannel'``
-#: - ``'backgroundalphachannel'``
-#: - ``'copyalphachannel'``
-#: - ``'deactivatealphachannel'``
-#: - ``'extractalphachannel'``
-#: - ``'opaquealphachannel'``
-#: - ``'resetalphachannel'``
-#: - ``'setalphachannel'``
-#: - ``'shapealphachannel'``
-#: - ``'transparentalphachannel'``
-#: - ``'flattenalphachannel'``
-#: - ``'removealphachannel'``
+#: - ``'undefined'``
+#: - ``'activate'``
+#: - ``'background'``
+#: - ``'copy'``
+#: - ``'deactivate'``
+#: - ``'extract'``
+#: - ``'opaque'``
+#: - ``'reset'``
+#: - ``'set'``
+#: - ``'shape'``
+#: - ``'transparent'``
+#: - ``'flatten'``
+#: - ``'remove'``
 #:
 #: .. seealso::
 #:    `ImageMagick Image Channel`__
 #:       Describes the SetImageAlphaChannel method which can be used
 #:       to modify alpha channel. Also describes AlphaChannelType
 #:    __ http://www.imagemagick.org/api/channel.php#SetImageAlphaChannel
-ALPHA_CHANNEL_TYPES = ('undefinedalphachannel', 'activatealphachannel',
-                       'backgroundalphachannel', 'copyalphachannel',
-                       'deactivatealphachannel', 'extractalphachannel',
-                       'opaquealphachannel', 'resetalphachannel',
-                       'setalphachannel', 'shapealphachannel',
-                       'transparentalphachannel', 'flattenalphachannel',
-                       'removealphachannel',)
+ALPHA_CHANNEL_TYPES = ('undefined', 'activate', 'background', 'copy',
+                       'deactivate', 'extract', 'opaque', 'reset', 'set',
+                       'shape', 'transparent', 'flatten', 'remove',)
 
 #: (:class:`tuple`) The list of image types
 #:
