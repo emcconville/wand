@@ -71,7 +71,7 @@ def new_with_format():
 
 @tests.test
 def clone():
-    """Cloens the existing image."""
+    """Clones the existing image."""
     funcs = (lambda img: Image(image=img),
              lambda img: img.clone())
     with Image(filename=asset('mona-lisa.jpg')) as img:
