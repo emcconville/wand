@@ -155,6 +155,21 @@ def size():
         assert len(img) == 599
 
 @tests.test
+def get_units():
+    """Gets the image resolution units."""
+    with Image(filename=asset('beach.jpg')) as img:
+        assert img.units == "pixelsperinch"
+    with Image(filename=asset('sasha.jpg')) as img:
+        assert img.units == "undefined"
+
+@tests.test
+def set_units():
+    """Sets the image resolution units."""
+    with Image(filename=asset('watermark.png')) as img:
+        img.units="pixelspercentimeter"
+        assert img.units == "pixelspercentimeter"
+
+@tests.test
 def get_depth():
     """Gets the image depth"""
     with Image(filename=asset('mona-lisa.jpg')) as img:
