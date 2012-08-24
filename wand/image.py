@@ -574,7 +574,7 @@ class Image(Resource):
 
     @units.setter
     def units(self, units):
-        if not isinstance(unit, basestring) or unit not in UNIT_TYPES: 
+        if not isinstance(units, basestring) or units not in UNIT_TYPES: 
             raise TypeError("Unit value must be a string from UNIT_TYPES"
                             ', not ' + repr(units))
         r = library.MagickSetImageUnits(self.wand, UNIT_TYPES.index(units))
