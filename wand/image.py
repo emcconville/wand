@@ -1000,7 +1000,7 @@ class Image(Resource):
             if t.value > self.quantum_range or t.value < 0:
                 raise ValueError('transparency must be a numbers.Real value ' +
                                  'between 0.0 and 1.0')
-            # Set the wand to image zero, incase there are multiple images in it
+            # Set the wand to image zero, in case there are multiple images in it
             library.MagickSetIteratorIndex(self.wand, 0)
             # Change the pixel representation of the image
             # to RGB with an alpha channel
