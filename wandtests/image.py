@@ -170,11 +170,13 @@ def size():
         assert img.height == 599
         assert len(img) == 599
 
+
 @tests.test
 def get_depth():
     """Gets the image depth"""
     with Image(filename=asset('mona-lisa.jpg')) as img:
         assert img.depth == 8
+
 
 @tests.test
 def set_depth():
@@ -182,6 +184,7 @@ def set_depth():
     with Image(filename=asset('mona-lisa.jpg')) as img:
         img.depth = 16
         assert img.depth == 16
+
 
 @tests.test
 def get_format():
@@ -208,6 +211,7 @@ def set_format():
         with raises(TypeError):
             img.format = 123
 
+
 @tests.test
 def get_type():
     """Gets the image type."""
@@ -215,6 +219,7 @@ def get_type():
         assert img.type == "truecolor"
         img.alpha_channel = True
         assert img.type == "truecolormatte"
+
 
 @tests.test
 def set_type():
@@ -228,6 +233,7 @@ def get_compression():
     """Gets the image compression quality."""
     with Image(filename=asset('mona-lisa.jpg')) as img:
         assert img.compression_quality == 80
+
 
 @tests.test
 def set_compression():
@@ -553,8 +559,10 @@ def rotate():
 def signature():
     """Gets the image signature."""
     sig = get_sig_version({
-        (6, 6, 9, 7): '763774301b62cf9ea033b661f5136fbda7e8de96254aec3dd0dff63c05413a1e',
-        (6, 7, 7, 6): '8c6ef1dcb1bacb6ad8edf307f2f2c6a129b3b7aa262ee288325f9fd334006374'
+        (6, 6, 9, 7):
+            '763774301b62cf9ea033b661f5136fbda7e8de96254aec3dd0dff63c05413a1e',
+        (6, 7, 7, 6):
+            '8c6ef1dcb1bacb6ad8edf307f2f2c6a129b3b7aa262ee288325f9fd334006374'
     })
     with Image(filename=asset('mona-lisa.jpg')) as img:
         assert img.signature == sig
@@ -586,6 +594,7 @@ def object_hash():
         b = hash(img)
         assert a == b
 
+
 @tests.test
 def get_alpha_channel():
     """Checks if image has alpha channel."""
@@ -603,11 +612,13 @@ def set_alpha_channel():
         img.alpha_channel = False
         assert img.alpha_channel == False
 
+
 @tests.test
 def get_background_color():
     """Gets the background color."""
     with Image(filename=asset('mona-lisa.jpg')) as img:
         assert Color('white') == img.background_color
+
 
 @tests.test
 def set_background_color():
@@ -622,8 +633,10 @@ def set_background_color():
 def watermark():
     """Adds  watermark to an image."""
     sig = get_sig_version({
-        (6, 6, 9, 7): '0f69e7239ba18acb4c22a85d1abcf447019cdf05a2eac40a3b754a4bfa76536b',
-        (6, 7, 7, 6): '74e25abb7dfcda955b57e5348b91ce73a160a40b4029f84e6beb73b14e99d566',
+        (6, 6, 9, 7):
+            '0f69e7239ba18acb4c22a85d1abcf447019cdf05a2eac40a3b754a4bfa76536b',
+        (6, 7, 7, 6):
+            '74e25abb7dfcda955b57e5348b91ce73a160a40b4029f84e6beb73b14e99d566',
     })
     with Image(filename=asset('beach.jpg')) as img:
         with Image(filename=asset('watermark.png')) as wm:
@@ -640,8 +653,10 @@ def reset_coords():
 
     """
     sig = get_sig_version({
-        (6, 6, 9, 7): '9537655c852cb5a22f29ba016648ea29d1b9a55fd2b4399f4fcbbcd39cce1778',
-        (6, 7, 7, 6): 'e8ea17066378085a60f7213430af62c89ed3f416e98b39f2d434c96c2be82989',
+        (6, 6, 9, 7):
+            '9537655c852cb5a22f29ba016648ea29d1b9a55fd2b4399f4fcbbcd39cce1778',
+        (6, 7, 7, 6):
+            'e8ea17066378085a60f7213430af62c89ed3f416e98b39f2d434c96c2be82989',
     })
     with Image(filename=asset('sasha.jpg')) as img:
             img.rotate(45, reset_coords=True)
