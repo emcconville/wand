@@ -6,7 +6,7 @@ python:
 install:
 - pip install Attest
 script:
-- python -mwand.version
+- python -mwand.version --verbose
 - python -mattest.run wandtests.tests
 notifications:
   irc:
