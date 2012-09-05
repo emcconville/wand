@@ -163,12 +163,17 @@ COMPOSITE_OPS = ('undefined', 'no', 'add', 'atop', 'blend', 'bumpmap',
 #: - ``'magenta'``
 #: - ``'blue'``
 #: - ``'yellow'``
-#: - ``'black'``
 #: - ``'alpha'``
 #: - ``'opacity'``
+#: - ``'black'``
 #: - ``'index'``
-#: - ``'mask'``
-#: - ``'meta'``
+#: - ``'composite_channels'``
+#: - ``'all_channels'``
+#: - ``'true_alpha'``
+#: - ``'rgb_channels'``
+#: - ``'gray_channels'``
+#: - ``'sync_channels'``
+#: - ``'default_channels'``
 #:
 #: .. seealso::
 #:
@@ -177,8 +182,11 @@ COMPOSITE_OPS = ('undefined', 'no', 'add', 'atop', 'blend', 'bumpmap',
 #:
 #:    __ http://www.imagemagick.org/Magick++/Enumerations.html#ChannelType
 CHANNELS = dict(undefined=0, red=1, gray=1, cyan=1, green=2, magenta=2,
-                blue=4, yellow=4, black=8, alpha=16, opacity=16, index=32,
-                mask=64, meta=128)
+                blue=4, yellow=4, alpha=8, opacity=8, black=32, index=32,
+                composite_channels=47, all_channels=134217727, true_alpha=64,
+                rgb_channels=128, gray_channels=128, sync_channels=256,
+                default_channels=134217719)
+
 
 #: (:class:`tuple`) The list of evaluation operators
 #:
@@ -1008,7 +1016,7 @@ class Image(Resource):
                                        IMAGE_TYPES.index('truecolormatte'))
             # Perform the black channel subtraction
             library.MagickEvaluateImageChannel(self.wand,
-                                               CHANNELS.get('black', 8),
+                                               CHANNELS['black'],
                                                EVALUATE_OPS.index('subtract'),
                                                t)
             self.raise_exception()
