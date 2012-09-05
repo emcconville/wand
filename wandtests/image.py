@@ -511,6 +511,81 @@ def resize_errors():
         with raises(ValueError):
             img.resize(height=-5)
 
+@tests.test
+def transform():
+    """Transforms (crops and resizes with geometry strings) the image."""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        with img.clone() as a:
+            assert a.size == (402, 599)
+            a.transform(resize='200%')
+            assert a.size == (804, 1198)
+        with img.clone() as b:
+            assert b.size == (402, 599)
+            b.transform(resize='200%x100%')
+            assert b.size == (804, 599)
+        with img.clone() as c:
+            assert c.size == (402, 599)
+            c.transform(resize='804')
+            assert c.size == (804, 1198)
+        with img.clone() as d:
+            assert d.size == (402, 599)
+            d.transform(resize='x300')
+            assert d.size == (201, 300)
+        with img.clone() as e:
+            assert e.size == (402, 599)
+            e.transform(resize='201x599')
+            assert e.size == (201, 300)
+        with img.clone() as f:
+            assert f.size == (402, 599)
+            f.transform(resize='804x599^')
+            assert f.size == (804, 1198)
+        with img.clone() as g:
+            assert g.size == (402, 599)
+            g.transform(resize='100x100!')
+            assert g.size == (100, 100)
+        with img.clone() as h:
+            assert h.size == (402, 599)
+            h.transform(resize='201x350>')
+            assert h.size == (201, 300)
+        with img.clone() as i:
+            assert i.size == (402, 599)
+            i.transform(resize='804x3000<')
+            assert i.size == (804, 1198)
+        with img.clone() as j:
+            assert j.size == (402, 599)
+            j.transform(resize='60300@')
+            assert j.size == (201, 300)
+        with img.clone() as k:
+            assert k.size == (402, 599)
+            k.transform(crop='300x300')
+            assert k.size == (300, 300)
+        with img.clone() as l:
+            assert l.size == (402, 599)
+            l.transform(crop='300x300+100+100')
+            assert l.size == (300, 300)
+        with img.clone() as m:
+            assert m.size == (402, 599)
+            m.transform(crop='300x300-150-150')
+            assert m.size == (150, 150)
+        with img.clone() as n:
+            assert n.size == (402, 599)
+            n.transform('300x300', '200%')
+            assert n.size == (600, 600)
+
+@tests.test
+def transform_errors():
+    """Tests errors raised by invalid parameters for transform."""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        with raises(TypeError):
+            img.transform(crop=500)
+        with raises(TypeError):
+            img.transform(resize=500)
+        with raises(TypeError):
+            img.transform(500, 500)
+        with raises(ValueError):
+            img.transform(crop=u'⚠ ')
+        with raises(ValueError):
+            img.transform(resize=u'⚠ ')
 
 @tests.test
 def rotate():
