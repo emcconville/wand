@@ -6,15 +6,23 @@ You can find the current version in the command line interface:
 .. sourcecode:: console
 
    $ python -m wand.version
-   0.1.2
+   0.2.2
+   $ python -m wand.version --verbose
+   Wand 0.2.2
+   ImageMagick 6.7.7-6 2012-06-03 Q16 http://www.imagemagick.org
 
 .. versionadded:: 0.2.0
    The command line interface.
+
+.. versionadded:: 0.2.2
+   The ``--verbose``/``-v`` option which also prints ImageMagick library
+   version for CLI.
 
 """
 import ctypes
 import datetime
 import re
+import sys
 
 try:
     from .api import libmagick
@@ -82,10 +90,18 @@ if libmagick:
 
     del c_magick_version, _match
 
-__doc__ = __doc__.replace('0.1.2', VERSION)
+__doc__ = __doc__.replace('0.2.2', VERSION)
 del libmagick
 
 
 if __name__ == '__main__':
-    print VERSION
+    options = frozenset(sys.argv[1:])
+    if '-v' in options or '--verbose' in options:
+        print 'Wand', VERSION
+        try:
+            print MAGICK_VERSION
+        except NameError:
+            pass
+    else:
+        print VERSION
 
