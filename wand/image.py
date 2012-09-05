@@ -1021,13 +1021,13 @@ class Image(Resource):
             crop.encode('ascii')
         except UnicodeEncodeError:
             raise ValueError('crop must only contain ascii-encodable ' +
-                            'characters.')
+                             'characters.')
 
         try:
             resize.encode('ascii')
         except UnicodeEncodeError:
             raise ValueError('resize must only contain ascii-encodable ' +
-                            'characters.')
+                             'characters.')
 
         new_wand = library.MagickTransformImage(self.wand, crop, resize)
         if not new_wand:
