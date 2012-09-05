@@ -294,6 +294,16 @@ try:
     library.DestroyDrawingWand.argtypes = [ctypes.c_void_p]
     library.DestroyDrawingWand.restype = ctypes.c_void_p
 
+    library.IsDrawingWand.argtypes = [ctypes.c_void_p]
+    library.IsDrawingWand.restype = ctypes.c_int
+
+    library.DrawGetException.argtypes = [ctypes.c_void_p,
+                                         ctypes.POINTER(ctypes.c_int)]
+    library.DrawGetException.restype = ctypes.c_char_p
+
+    library.DrawClearException.argtypes = [ctypes.c_void_p]
+    library.DrawClearException.restype = ctypes.c_int
+
     library.DrawSetFont.argtypes = [ctypes.c_void_p,
                                     ctypes.c_char_p]
     library.DrawSetFont.restype = None
