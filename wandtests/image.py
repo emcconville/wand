@@ -7,9 +7,25 @@ except ImportError:
 
 from attest import Tests, assert_hook, raises
 
+from wand.version import MAGICK_VERSION_INFO
 from wand.image import ClosedImageError, Image
 from wand.color import Color
 
+
+def get_sig_version(versions):
+    """Returns matching signature version value for current
+    `ImageMagick` version.
+
+    :param versions: Dict of versions.
+    :type versions: :class:`dict`
+    :returns: matched sig value
+    :rtype: :class:`basestring`
+    """
+    sorted_versions = reversed(sorted(versions.keys()))
+    for v in sorted_versions:
+        if v <= MAGICK_VERSION_INFO:
+            return versions[v]
+    return versions[v]
 
 tests = Tests()
 
@@ -551,7 +567,10 @@ def rotate():
 @tests.test
 def signature():
     """Gets the image signature."""
-    sig = '763774301b62cf9ea033b661f5136fbda7e8de96254aec3dd0dff63c05413a1e'
+    sig = get_sig_version({
+        (6, 6, 9, 7): '763774301b62cf9ea033b661f5136fbda7e8de96254aec3dd0dff63c05413a1e',
+        (6, 7, 7, 6): '8c6ef1dcb1bacb6ad8edf307f2f2c6a129b3b7aa262ee288325f9fd334006374'
+    })
     with Image(filename=asset('mona-lisa.jpg')) as img:
         assert img.signature == sig
         img.format = 'png'
@@ -617,13 +636,16 @@ def set_background_color():
 @tests.test
 def watermark():
     """Adds  watermark to an image."""
+    sig = get_sig_version({
+        (6, 6, 9, 7): '0f69e7239ba18acb4c22a85d1abcf447019cdf05a2eac40a3b754a4bfa76536b',
+        (6, 7, 7, 6): '74e25abb7dfcda955b57e5348b91ce73a160a40b4029f84e6beb73b14e99d566',
+    })
     with Image(filename=asset('beach.jpg')) as img:
         with Image(filename=asset('watermark.png')) as wm:
             img.watermark(wm, 0.3)
-            with Image(filename=asset('marked.png')) as marked:
-                msg = 'img = {0!r}, marked = {1!r}'.format(
-                    img.signature, marked.signature)
-                assert img == marked, msg
+            msg = 'img = {0!r}, marked = {1!r}'.format(
+                img.signature, sig)
+            assert img.signature == sig, msg
 
 
 @tests.test
@@ -632,10 +654,13 @@ def reset_coords():
     the image is (0, 0) again.
 
     """
+    sig = get_sig_version({
+        (6, 6, 9, 7): '9537655c852cb5a22f29ba016648ea29d1b9a55fd2b4399f4fcbbcd39cce1778',
+        (6, 7, 7, 6): 'e8ea17066378085a60f7213430af62c89ed3f416e98b39f2d434c96c2be82989',
+    })
     with Image(filename=asset('sasha.jpg')) as img:
             img.rotate(45, reset_coords=True)
             img.crop(0, 0, 170, 170)
-            with Image(filename=asset('resettest.png')) as control:
-                msg = 'img = {0!r}, control = {1!r}'.format(
-                    img.signature, control.signature)
-                assert img == control, msg
+            msg = 'img = {0!r}, control = {1!r}'.format(
+                img.signature, sig)
+            assert img.signature == sig, msg
