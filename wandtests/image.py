@@ -20,12 +20,14 @@ def get_sig_version(versions):
     :type versions: :class:`dict`
     :returns: matched sig value
     :rtype: :class:`basestring`
+
     """
     sorted_versions = reversed(sorted(versions.keys()))
     for v in sorted_versions:
         if v <= MAGICK_VERSION_INFO:
             return versions[v]
     return versions[v]
+
 
 tests = Tests()
 
