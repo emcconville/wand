@@ -948,23 +948,24 @@ class Image(Resource):
             self.raise_exception()
 
     def transform(self, crop='', resize=''):
-        """Transforms the image using ``MagickTransformImage``, which is a
-        convenience function accepting geometry strings to perform cropping and
-        resizing. Cropping is performed first, followed by resizing. Either or
-        both arguments may be omitted or given an empty string, in which case
-        the corresponding action will not be performed. Geometry specification
-        strings are defined as follows:
+        """Transforms the image using :c:func:`MagickTransformImage`,
+        which is a convenience function accepting geometry strings to
+        perform cropping and resizing.  Cropping is performed first,
+        followed by resizing.  Either or both arguments may be omitted
+        or given an empty string, in which case the corresponding action
+        will not be performed. Geometry specification strings are
+        defined as follows:
 
-        A geometry string consists of a size followed by an optional offset. The
-        size is specified by one of the options below, where **bold** terms are
-        replaced with appropriate integer values:
+        A geometry string consists of a size followed by an optional offset.
+        The size is specified by one of the options below,
+        where **bold** terms are replaced with appropriate integer values:
 
         **scale**\ ``%``
           Height and width both scaled by specified percentage
 
         **scale-x**\ ``%x``\ \ **scale-y**\ ``%``
-          Height and width individually scaled by specified percentages. Only
-          one % symbol is needed.
+          Height and width individually scaled by specified percentages.
+          Only one % symbol is needed.
 
         **width**
           Width given, height automagically selected to preserve aspect ratio.
@@ -979,41 +980,44 @@ class Image(Resource):
           Width and height emphatically given; original aspect ratio ignored.
 
         **width**\ ``x``\ **height**\ ``>``
-          Shrinks images with dimension(s) larger than the corresponding width
-          and/or height dimension(s).
+          Shrinks images with dimension(s) larger than the corresponding
+          width and/or height dimension(s).
 
         **width**\ ``x``\ **height**\ ``<``
-          Enlarges images with dimensions smaller than the corresponding width
-          and/or height dimension(s).
+          Enlarges images with dimensions smaller than the corresponding
+          width and/or height dimension(s).
 
         **area**\ ``@``
-          Resize image to have the specified area in pixels. Aspect ratio is preserved.
+          Resize image to have the specified area in pixels.
+          Aspect ratio is preserved.
 
-        The offset, which only applies to the cropping geometry string, is given
-        by ``{+-}``\ **x**\ ``{+-}``\ **y**\ , that is, one plus or minus sign followed by an
-        **x** offset, followed by another plus or minus sign, followed by a
-        **y** offset.  Offsets are in pixels from the upper left corner of the
-        image. Negative offsets will cause the corresponding number of pixels to
+        The offset, which only applies to the cropping geometry string,
+        is given by ``{+-}``\ **x**\ ``{+-}``\ **y**\ , that is,
+        one plus or minus sign followed by an **x** offset,
+        followed by another plus or minus sign, followed by a **y** offset.
+        Offsets are in pixels from the upper left corner of the image.
+        Negative offsets will cause the corresponding number of pixels to
         be removed from the right or bottom edge of the image, meaning the
-        cropped size will be the computed size minus the absolute value of the
-        offset.
+        cropped size will be the computed size minus the absolute value
+        of the offset.
 
-        For example, if you want to crop your image to 300x300 pixels and then
-        scale it by 2x for a final size of 600x600 pixels, you can call::
+        For example, if you want to crop your image to 300x300 pixels
+        and then scale it by 2x for a final size of 600x600 pixels,
+        you can call::
 
             image.transform('300x300', '200%')
 
         This method is a fairly thing wrapper for the C API, and does not
         perform any additional checking of the parameters except insofar as
-        verifying that they are of the correct type. Thus, like the C
-        API function, the method is very permissive in terms of what it accepts
-        for geometry strings; unrecognized strings and trailing characters will
-        be ignored rather than raising an error.
+        verifying that they are of the correct type.  Thus, like the C
+        API function, the method is very permissive in terms of what
+        it accepts for geometry strings; unrecognized strings and
+        trailing characters will be ignored rather than raising an error.
 
-        :param crop: A geometry string defining a subregion of the image to crop
-                     to.
+        :param crop: A geometry string defining a subregion of the image
+                     to crop to
         :type crop: :class:`basestring`
-        :param resize: A geometry string defining the final size of the image.
+        :param resize: A geometry string defining the final size of the image
         :type resize: :class:`basestring`
 
         .. seealso::
@@ -1029,7 +1033,6 @@ class Image(Resource):
         .. versionadded:: 0.2.2
 
         """
-
         # Check that the values given are the correct types.  ctypes will do
         # this automatically, but we can make the error message more friendly
         # here.
@@ -1037,24 +1040,20 @@ class Image(Resource):
             raise TypeError("crop must be a string, not " + repr(crop))
         if not isinstance(resize, basestring):
             raise TypeError("resize must be a string, not " + repr(resize))
-
         # Also verify that only ASCII characters are included
         try:
             crop.encode('ascii')
         except UnicodeEncodeError:
             raise ValueError('crop must only contain ascii-encodable ' +
                              'characters.')
-
         try:
             resize.encode('ascii')
         except UnicodeEncodeError:
             raise ValueError('resize must only contain ascii-encodable ' +
                              'characters.')
-
         new_wand = library.MagickTransformImage(self.wand, crop, resize)
         if not new_wand:
             self.raise_exception()
-
         self.wand = new_wand
 
     def rotate(self, degree, background=None, reset_coords=True):
