@@ -250,6 +250,7 @@ EVALUATE_OPS = ('undefined', 'add', 'and', 'divide', 'leftshift', 'max',
 #:    `ImageMagick Image Channel`__
 #:       Describes the SetImageAlphaChannel method which can be used
 #:       to modify alpha channel. Also describes AlphaChannelType
+#:
 #:    __ http://www.imagemagick.org/api/channel.php#SetImageAlphaChannel
 ALPHA_CHANNEL_TYPES = ('undefined', 'activate', 'background', 'copy',
                        'deactivate', 'extract', 'opaque', 'reset', 'set',
@@ -947,45 +948,60 @@ class Image(Resource):
             self.raise_exception()
 
     def transform(self, crop='', resize=''):
-        """Transforms the image using MagickTransformImage, which is a
+        """Transforms the image using ``MagickTransformImage``, which is a
         convenience function accepting geometry strings to perform cropping and
         resizing. Cropping is performed first, followed by resizing. Either or
         both arguments may be omitted or given an empty string, in which case
-        the corresponding action will not be performed. Geometry specifications
-        are described on
-        http://www.imagemagick.org/script/command-line-processing.php#geometry;
-        as of version 6.7.9-0 2012-09-03 Q16 they are defined as follows:
+        the corresponding action will not be performed. Geometry specification
+        strings are defined as follows:
 
         A geometry string consists of a size followed by an optional offset. The
-        size is specified by one of the options below, where CAPITALIZED terms
-        are replaced with appropriate integer values: 
+        size is specified by one of the options below, where **bold** terms are
+        replaced with appropriate integer values:
 
-        SCALE%            Height and width both scaled by specified percentage
-        SCALE-X%xSCALE-Y% Height and width individually scaled by specified
-                          percentages. Only one % symbol is needed.
-        WIDTH             Width given, height automagically selected to preserve
-                          aspect ratio.
-        xHEIGHT           Height given, width automagically selected to preserve
-                          aspect ratio.
-        WIDTHxHEIGHT      Maximum values of width and height given, aspect
-                          ratio preserved.
-        WIDTHxHEIGHT!     Width and height emphatically given, original aspect
-                          ratio ignored.
-        WIDTHxHEIGHT>     Shrinks images with dimension(s) larger than the
-                          corresponding width and/or height dimension(s).
-        WIDTHxHEIGHT<     Enlarges images with dimensions smaller than the
-                          corresponding width and/or height dimension(s).
-        AREA@             Resize image to have the specified area in pixels.
-                          Aspect ratio is preserved.
+        **scale**\ ``%``
+          Height and width both scaled by specified percentage
+
+        **scale-x**\ ``%x``\ \ **scale-y**\ ``%``
+          Height and width individually scaled by specified percentages. Only
+          one % symbol is needed.
+
+        **width**
+          Width given, height automagically selected to preserve aspect ratio.
+
+        ``x``\ \ **height**
+          Height given, width automagically selected to preserve aspect ratio.
+
+        **width**\ ``x``\ **height**
+          Maximum values of width and height given; aspect ratio preserved.
+
+        **width**\ ``x``\ **height**\ ``!``
+          Width and height emphatically given; original aspect ratio ignored.
+
+        **width**\ ``x``\ **height**\ ``>``
+          Shrinks images with dimension(s) larger than the corresponding width
+          and/or height dimension(s).
+
+        **width**\ ``x``\ **height**\ ``<``
+          Enlarges images with dimensions smaller than the corresponding width
+          and/or height dimension(s).
+
+        **area**\ ``@``
+          Resize image to have the specified area in pixels. Aspect ratio is preserved.
 
         The offset, which only applies to the cropping geometry string, is given
-        by {+-}X{+-Y}, that is, one plus or minus sign followed by an x offset,
-        followed by another plus or minus sign, followed by a y offset.  Offsets
-        are in pixels from the upper left corner of the image. Negative offsets
-        will cause the corresponding number of pixels to be removed from the
-        right or bottom edge of the image, meaning the cropped size will be the
-        computed size minus the absolute value of the offset.  See the
-        ImageMagick geometry documentation, linked above, for more information.
+        by ``{+-}``\ **x**\ ``{+-}``\ **y**\ , that is, one plus or minus sign followed by an
+        **x** offset, followed by another plus or minus sign, followed by a
+        **y** offset.  Offsets are in pixels from the upper left corner of the
+        image. Negative offsets will cause the corresponding number of pixels to
+        be removed from the right or bottom edge of the image, meaning the
+        cropped size will be the computed size minus the absolute value of the
+        offset.
+
+        For example, if you want to crop your image to 300x300 pixels and then
+        scale it by 2x for a final size of 600x600 pixels, you can call::
+
+            image.transform('300x300', '200%')
 
         This method is a fairly thing wrapper for the C API, and does not
         perform any additional checking of the parameters except insofar as
@@ -999,12 +1015,18 @@ class Image(Resource):
         :type crop: :class:`basestring`
         :param resize: A geometry string defining the final size of the image.
         :type resize: :class:`basestring`
-        :param reset_coords: optional flag. If set, after the rotation, the
-            coordinate frame will be relocated to the upper-left corner of
-            the new image. By default is `True`.
-        :type reset_coords: :class:`bool`
 
-        .. versionadded:: 0.2.3
+        .. seealso::
+
+           `ImageMagick Geometry Specifications`__
+              Cropping and resizing geometry for the ``transform`` method are
+              specified according to ImageMagick's geometry string format.
+              The ImageMagick documentation provides more information about
+              geometry strings.
+
+           __ http://www.imagemagick.org/script/command-line-processing.php#geometry
+
+        .. versionadded:: 0.2.2
 
         """
 
