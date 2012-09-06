@@ -6,6 +6,10 @@ Version 0.2.2
 
 To be released.
 
+- Added :meth:`Image.transform() <wand.image.Image.transform>` method
+  which is a convenience method accepting geometry strings to perform
+  cropping and resizing.
+  [:issue:`50` by Mitch Lindgren]
 - Now :meth:`Image.resize() <wand.image.Image.resize>` method raises
   a proper error when it fails for any reason.
   [:issue:`41` by Piotr Florczyk]
