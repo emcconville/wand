@@ -167,6 +167,10 @@ try:
                                           ctypes.c_size_t, ctypes.c_int,
                                           ctypes.c_double]
 
+    library.MagickTransformImage.argtypes = [ctypes.c_void_p, ctypes.c_char_p,
+                                             ctypes.c_char_p]
+    library.MagickTransformImage.restype = ctypes.c_void_p
+
     library.MagickRotateImage.argtypes = [ctypes.c_void_p, ctypes.c_void_p,
                                           ctypes.c_double]
 
