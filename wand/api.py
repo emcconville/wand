@@ -92,6 +92,9 @@ libmagick = libraries[1]
 try:
     library.NewMagickWand.restype = ctypes.c_void_p
 
+    library.MagickNewImage.argtypes = [ctypes.c_void_p, ctypes.c_int,
+                                       ctypes.c_int, ctypes.c_void_p]
+
     library.DestroyMagickWand.argtypes = [ctypes.c_void_p]
     library.DestroyMagickWand.restype = ctypes.c_void_p
 

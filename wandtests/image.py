@@ -37,6 +37,21 @@ def asset(filename):
 
 
 @tests.test
+def blank_image():
+    gray = Color('#ccc')
+    transparent = Color('transparent')
+    with raises(TypeError):
+        Image(width=0, height=0)
+    with Image(width=20, height=10) as img:
+        assert img[10, 5] == transparent
+    with Image(width=20, height=10, background=gray) as img:
+        assert img.size == (20, 10)
+        assert img[10, 5] == gray
+
+
+
+
+@tests.test
 def new_from_file():
     """Opens an image from the file object."""
     with open(asset('mona-lisa.jpg'), 'rb') as f:
