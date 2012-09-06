@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Wand Changelog &mdash; Wand 0.2.1</title>
+    <title>Wand Changelog &mdash; Wand 0.2.2</title>
     
     <link rel="stylesheet" href="_static/wand.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.2.1',
+        VERSION:     '0.2.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="Wand 0.2.1" href="index.html" />
+    <link rel="top" title="Wand 0.2.2" href="index.html" />
     <link rel="next" title="wand — Simple MagickWand API binding for Python" href="wand.html" />
     <link rel="prev" title="Roadmap" href="roadmap.html" />
    
@@ -62,6 +62,21 @@
             
   <div class="section" id="wand-changelog">
 <h1>Wand Changelog<a class="headerlink" href="#wand-changelog" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="version-0-2-2">
+<h2>Version 0.2.2<a class="headerlink" href="#version-0-2-2" title="Permalink to this headline">¶</a></h2>
+<p>To be released.</p>
+<ul class="simple">
+<li>Added <a class="reference internal" href="wand/image.html#wand.image.Image.transform" title="wand.image.Image.transform"><tt class="xref py py-meth docutils literal"><span class="pre">Image.transform()</span></tt></a> method
+which is a convenience method accepting geometry strings to perform
+cropping and resizing.
+[<a class="reference external" href="https://github.com/dahlia/wand/issues/50">#50</a> by Mitch Lindgren]</li>
+<li>Now <a class="reference internal" href="wand/image.html#wand.image.Image.resize" title="wand.image.Image.resize"><tt class="xref py py-meth docutils literal"><span class="pre">Image.resize()</span></tt></a> method raises
+a proper error when it fails for any reason.
+[<a class="reference external" href="https://github.com/dahlia/wand/issues/41">#41</a> by Piotr Florczyk]</li>
+<li>Added <a class="reference internal" href="wand/image.html#wand.image.Image.type" title="wand.image.Image.type"><tt class="xref py py-attr docutils literal"><span class="pre">Image.type</span></tt></a> property.
+[<a class="reference external" href="https://github.com/dahlia/wand/issues/33">#33</a> by Yauhen Yakimovich, <a class="reference external" href="https://github.com/dahlia/wand/issues/42">#42</a> by Piotr Florczyk]</li>
+</ul>
+</div>
 <div class="section" id="version-0-2-1">
 <h2>Version 0.2.1<a class="headerlink" href="#version-0-2-1" title="Permalink to this headline">¶</a></h2>
 <p>Released on August 19, 2012.  Beta version.</p>
@@ -256,6 +271,7 @@ argument becomes omittable.</li>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Wand Changelog</a><ul>
+<li><a class="reference internal" href="#version-0-2-2">Version 0.2.2</a></li>
 <li><a class="reference internal" href="#version-0-2-1">Version 0.2.1</a></li>
 <li><a class="reference internal" href="#version-0-2-0">Version 0.2.0</a></li>
 <li><a class="reference internal" href="#version-0-1-10">Version 0.1.10</a></li>

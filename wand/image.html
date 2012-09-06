@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>wand.image — Image objects &mdash; Wand 0.2.1</title>
+    <title>wand.image — Image objects &mdash; Wand 0.2.2</title>
     
     <link rel="stylesheet" href="../_static/wand.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.1',
+        VERSION:     '0.2.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Wand 0.2.1" href="../index.html" />
+    <link rel="top" title="Wand 0.2.2" href="../index.html" />
     <link rel="up" title="wand — Simple MagickWand API binding for Python" href="../wand.html" />
     <link rel="next" title="wand.color — Colors" href="color.html" />
     <link rel="prev" title="wand — Simple MagickWand API binding for Python" href="../wand.html" />
@@ -53,7 +53,7 @@
           <a href="../wand.html" title="wand — Simple MagickWand API binding for Python"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Wand</a> &raquo;</li>
-          <li><a href="../wand.html" accesskey="U"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a> &raquo;</li> 
+          <li><a href="../wand.html" accesskey="U"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -115,6 +115,210 @@ error happened):</p>
 <dt><a class="reference external" href="http://www.imagemagick.org/Usage/resize/">ImageMagick Resize Filters</a></dt>
 <dd>Demonstrates the results of resampling images using the various
 resize filters and blur settings available in ImageMagick.</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="data">
+<dt id="wand.image.COMPOSITE_OPS">
+<tt class="descclassname">wand.image.</tt><tt class="descname">COMPOSITE_OPS</tt><em class="property"> = ('undefined', 'no', 'add', 'atop', 'blend', 'bumpmap', 'change_mask', 'clear', 'color_burn', 'color_dodge', 'colorize', 'copy_black', 'copy_blue', 'copy', 'copy_cyan', 'copy_green', 'copy_magenta', 'copy_opacity', 'copy_red', 'copy_yellow', 'darken', 'dst_atop', 'dst', 'dst_in', 'dst_out', 'dst_over', 'difference', 'displace', 'dissolve', 'exclusion', 'hard_light', 'hue', 'in', 'lighten', 'linear_light', 'luminize', 'minus', 'modulate', 'multiply', 'out', 'over', 'overlay', 'plus', 'replace', 'saturate', 'screen', 'soft_light', 'src_atop', 'src', 'src_in', 'src_out', 'src_over', 'subtract', 'threshold', 'xor', 'divide')</em><a class="headerlink" href="#wand.image.COMPOSITE_OPS" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">tuple</span></tt>) The list of composition operators</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">'undefined'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'no'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'add'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'atop'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'blend'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'bumpmap'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'change_mask'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'clear'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'color_burn'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'color_dodge'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'colorize'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'copy_black'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'copy_blue'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'copy'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'copy_cyan'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'copy_green'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'copy_magenta'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'copy_opacity'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'copy_red'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'copy_yellow'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'darken'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'dst_atop'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'dst'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'dst_in'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'dst_out'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'dst_over'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'difference'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'displace'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'dissolve'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'exclusion'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'hard_light'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'hue'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'in'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'lighten'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'linear_light'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'luminize'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'minus'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'modulate'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'multiply'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'out'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'over'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'overlay'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'plus'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'replace'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'saturate'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'screen'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'soft_light'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'src_atop'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'src'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'src_in'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'src_out'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'src_over'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'subtract'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'threshold'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'xor'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'divide'</span></tt></li>
+</ul>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://www.rubblewebs.co.uk/imagemagick/operators/compose.php">ImageMagick Composition Operators</a></dt>
+<dd>Demonstrates the results of applying the various composition
+composition operators.</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="data">
+<dt id="wand.image.CHANNELS">
+<tt class="descclassname">wand.image.</tt><tt class="descname">CHANNELS</tt><em class="property"> = {'opacity': 16, 'index': 32, 'undefined': 0, 'gray': 1, 'blue': 4, 'mask': 64, 'yellow': 4, 'alpha': 16, 'meta': 128, 'green': 2, 'cyan': 1, 'black': 8, 'magenta': 2, 'red': 1}</em><a class="headerlink" href="#wand.image.CHANNELS" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">dict</span></tt></a>) The dictionary of channel types.</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">'undefined'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'red'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'gray'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'cyan'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'green'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'magenta'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'blue'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'yellow'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'black'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'alpha'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'opacity'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'index'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'mask'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'meta'</span></tt></li>
+</ul>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://www.imagemagick.org/Magick++/Enumerations.html#ChannelType">ImageMagick Color Channels</a></dt>
+<dd>Lists the various channel types with descriptions of each</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="data">
+<dt id="wand.image.EVALUATE_OPS">
+<tt class="descclassname">wand.image.</tt><tt class="descname">EVALUATE_OPS</tt><em class="property"> = ('undefined', 'add', 'and', 'divide', 'leftshift', 'max', 'min', 'multiply', 'or', 'rightshift', 'set', 'subtract', 'xor', 'pow', 'log', 'threshold', 'thresholdblack', 'thresholdwhite', 'gaussiannoise', 'impulsenoise', 'laplaciannoise', 'multiplicativenoise', 'poissonnoise', 'uniformnoise', 'cosine', 'sine', 'addmodulus', 'mean', 'abs', 'exponential', 'median', 'sum')</em><a class="headerlink" href="#wand.image.EVALUATE_OPS" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">tuple</span></tt>) The list of evaluation operators</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">'undefined'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'add'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'and'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'divide'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'leftshift'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'max'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'min'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'multiply'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'or'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'rightshift'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'set'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'subtract'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'xor'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'pow'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'log'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'threshold'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'thresholdblack'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'thresholdwhite'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'gaussiannoise'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'impulsenoise'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'laplaciannoise'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'multiplicativenoise'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'poissonnoise'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'uniformnoise'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'cosine'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'sine'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'addmodulus'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'mean'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'abs'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'exponential'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'median'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'sum'</span></tt></li>
+</ul>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://www.magickwand.org/MagickEvaluateImage.html">ImageMagick Image Evaluation Operators</a></dt>
+<dd>Describes the MagickEvaluateImageChannel method and lists the
+various evaluations operators</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="data">
+<dt id="wand.image.ALPHA_CHANNEL_TYPES">
+<tt class="descclassname">wand.image.</tt><tt class="descname">ALPHA_CHANNEL_TYPES</tt><em class="property"> = ('undefined', 'activate', 'background', 'copy', 'deactivate', 'extract', 'opaque', 'reset', 'set', 'shape', 'transparent', 'flatten', 'remove')</em><a class="headerlink" href="#wand.image.ALPHA_CHANNEL_TYPES" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">tuple</span></tt>) The list of alpha chanell types</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">'undefined'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'activate'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'background'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'copy'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'deactivate'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'extract'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'opaque'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'reset'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'set'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'shape'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'transparent'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'flatten'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'remove'</span></tt></li>
+</ul>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="http://www.imagemagick.org/api/channel.php#SetImageAlphaChannel">ImageMagick Image Channel</a>
+   Describes the SetImageAlphaChannel method which can be used
+   to modify alpha channel. Also describes AlphaChannelType</p>
+</div>
+</dd></dl>
+
+<dl class="data">
+<dt id="wand.image.IMAGE_TYPES">
+<tt class="descclassname">wand.image.</tt><tt class="descname">IMAGE_TYPES</tt><em class="property"> = ('undefined', 'bilevel', 'grayscale', 'grayscalematte', 'palette', 'palettematte', 'truecolor', 'truecolormatte', 'colorseparation', 'colorseparationmatte', 'optimize', 'palettebilevelmatte')</em><a class="headerlink" href="#wand.image.IMAGE_TYPES" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">tuple</span></tt>) The list of image types</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">'undefined'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'bilevel'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'grayscale'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'grayscalematte'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'palette'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'palettematte'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'truecolor'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'truecolormatte'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'colorseparation'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'colorseparationmatte'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'optimize'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'palettebilevelmatte'</span></tt></li>
+</ul>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://www.imagemagick.org/api/magick-image.php#MagickSetImageType">ImageMagick Image Types</a></dt>
+<dd>Describes the MagickSetImageType method which can be used
+to set the type of an image</dd>
 </dl>
 </div>
 </dd></dl>
@@ -560,6 +764,91 @@ stream.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="wand.image.Image.transform">
+<tt class="descname">transform</tt><big>(</big><em>crop=''</em>, <em>resize=''</em><big>)</big><a class="headerlink" href="#wand.image.Image.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms the image using <tt class="xref c c-func docutils literal"><span class="pre">MagickTransformImage()</span></tt>,
+which is a convenience function accepting geometry strings to
+perform cropping and resizing.  Cropping is performed first,
+followed by resizing.  Either or both arguments may be omitted
+or given an empty string, in which case the corresponding action
+will not be performed. Geometry specification strings are
+defined as follows:</p>
+<p>A geometry string consists of a size followed by an optional offset.
+The size is specified by one of the options below,
+where <strong>bold</strong> terms are replaced with appropriate integer values:</p>
+<dl class="docutils">
+<dt><strong>scale</strong><tt class="docutils literal"><span class="pre">%</span></tt></dt>
+<dd>Height and width both scaled by specified percentage</dd>
+<dt><strong>scale-x</strong><tt class="docutils literal"><span class="pre">%x</span></tt><strong>scale-y</strong><tt class="docutils literal"><span class="pre">%</span></tt></dt>
+<dd>Height and width individually scaled by specified percentages.
+Only one % symbol is needed.</dd>
+<dt><strong>width</strong></dt>
+<dd>Width given, height automagically selected to preserve aspect ratio.</dd>
+<dt><tt class="docutils literal"><span class="pre">x</span></tt><strong>height</strong></dt>
+<dd>Height given, width automagically selected to preserve aspect ratio.</dd>
+<dt><strong>width</strong><tt class="docutils literal"><span class="pre">x</span></tt><strong>height</strong></dt>
+<dd>Maximum values of width and height given; aspect ratio preserved.</dd>
+<dt><strong>width</strong><tt class="docutils literal"><span class="pre">x</span></tt><strong>height</strong><tt class="docutils literal"><span class="pre">!</span></tt></dt>
+<dd>Width and height emphatically given; original aspect ratio ignored.</dd>
+<dt><strong>width</strong><tt class="docutils literal"><span class="pre">x</span></tt><strong>height</strong><tt class="docutils literal"><span class="pre">&gt;</span></tt></dt>
+<dd>Shrinks images with dimension(s) larger than the corresponding
+width and/or height dimension(s).</dd>
+<dt><strong>width</strong><tt class="docutils literal"><span class="pre">x</span></tt><strong>height</strong><tt class="docutils literal"><span class="pre">&lt;</span></tt></dt>
+<dd>Enlarges images with dimensions smaller than the corresponding
+width and/or height dimension(s).</dd>
+<dt><strong>area</strong><tt class="docutils literal"><span class="pre">&#64;</span></tt></dt>
+<dd>Resize image to have the specified area in pixels.
+Aspect ratio is preserved.</dd>
+</dl>
+<p>The offset, which only applies to the cropping geometry string,
+is given by <tt class="docutils literal"><span class="pre">{+-}</span></tt><strong>x</strong><tt class="docutils literal"><span class="pre">{+-}</span></tt><strong>y</strong>, that is,
+one plus or minus sign followed by an <strong>x</strong> offset,
+followed by another plus or minus sign, followed by a <strong>y</strong> offset.
+Offsets are in pixels from the upper left corner of the image.
+Negative offsets will cause the corresponding number of pixels to
+be removed from the right or bottom edge of the image, meaning the
+cropped size will be the computed size minus the absolute value
+of the offset.</p>
+<p>For example, if you want to crop your image to 300x300 pixels
+and then scale it by 2x for a final size of 600x600 pixels,
+you can call:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">image</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s">&#39;300x300&#39;</span><span class="p">,</span> <span class="s">&#39;200%&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This method is a fairly thing wrapper for the C API, and does not
+perform any additional checking of the parameters except insofar as
+verifying that they are of the correct type.  Thus, like the C
+API function, the method is very permissive in terms of what
+it accepts for geometry strings; unrecognized strings and
+trailing characters will be ignored rather than raising an error.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>crop</strong> (<tt class="xref py py-class docutils literal"><span class="pre">basestring</span></tt>) &#8211; A geometry string defining a subregion of the image
+to crop to</li>
+<li><strong>resize</strong> (<tt class="xref py py-class docutils literal"><span class="pre">basestring</span></tt>) &#8211; A geometry string defining the final size of the image</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://www.imagemagick.org/script/command-line-processing.php#geometry">ImageMagick Geometry Specifications</a></dt>
+<dd>Cropping and resizing geometry for the <tt class="docutils literal"><span class="pre">transform</span></tt> method are
+specified according to ImageMagick&#8217;s geometry string format.
+The ImageMagick documentation provides more information about
+geometry strings.</dd>
+</dl>
+</div>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.2.2.</span></p>
+</dd></dl>
+
+<dl class="method">
 <dt id="wand.image.Image.transparentize">
 <tt class="descname">transparentize</tt><big>(</big><em>transparency</em><big>)</big><a class="headerlink" href="#wand.image.Image.transparentize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Makes the image transparent by subtracting some percentage of
@@ -584,6 +873,16 @@ image, from 0.0 to 1.0</td>
 <dd><p>Remove solid border from image. Uses top left pixel as a guide.</p>
 <p class="versionadded">
 <span class="versionmodified">New in version 0.2.1.</span></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="wand.image.Image.type">
+<tt class="descname">type</tt><a class="headerlink" href="#wand.image.Image.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">basestring</span></tt>) The image type.</p>
+<p>Defines image type as in wand.image.IMAGE_TYPES enumeration.</p>
+<p>It may raise <tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> when the type is unknown.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.2.2.</span></p>
 </dd></dl>
 
 <dl class="attribute">
@@ -687,9 +986,9 @@ image.</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../wand.html"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a><ul>
-      <li>Previous: <a href="../wand.html" title="previous chapter"><tt class="docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a></li>
-      <li>Next: <a href="color.html" title="next chapter"><tt class="docutils literal"><span class="pre">wand.color</span></tt> &#8212; Colors</a></li>
+  <li><a href="../wand.html"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a><ul>
+      <li>Previous: <a href="../wand.html" title="previous chapter"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a></li>
+      <li>Next: <a href="color.html" title="next chapter"><tt class="docutils literal docutils literal"><span class="pre">wand.color</span></tt> &#8212; Colors</a></li>
   </ul></li>
   </ul></li>
 </ul>

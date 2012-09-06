@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Writing images &mdash; Wand 0.2.1</title>
+    <title>Writing images &mdash; Wand 0.2.2</title>
     
     <link rel="stylesheet" href="../_static/wand.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.1',
+        VERSION:     '0.2.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Wand 0.2.1" href="../index.html" />
+    <link rel="top" title="Wand 0.2.2" href="../index.html" />
     <link rel="next" title="Resizing and cropping" href="resizecrop.html" />
     <link rel="prev" title="Reading images" href="read.html" />
    
@@ -136,7 +136,7 @@ JPEG, gzips it, and then saves it to <tt class="file docutils literal"><span cla
 <h2>Get binary string<a class="headerlink" href="#get-binary-string" title="Permalink to this headline">¶</a></h2>
 <p>Want just a binary string of the image? Use
 <a class="reference internal" href="../wand/image.html#wand.image.Image.make_blob" title="wand.image.Image.make_blob"><tt class="xref py py-meth docutils literal"><span class="pre">make_blob()</span></tt></a> method so:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">wand.image</span> <span class="kn">import</span> <span class="n">image</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">wand.image</span> <span class="kn">import</span> <span class="n">Image</span>
 
 <span class="k">with</span> <span class="n">image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s">&#39;pikachu.png&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">img</span><span class="p">:</span>
     <span class="n">img</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="s">&#39;jpeg&#39;</span>
