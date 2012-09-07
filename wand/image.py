@@ -305,6 +305,7 @@ class Image(Resource):
     :param format: forces filename to  buffer.``format`` to help
                    imagemagick detect the file format. Used only in
                    ``blob`` or ``file`` cases
+    :type format: :class:`basestring`
     :param width: the width of new blank image.
     :type width: :class:`numbers.Integral`
     :param height: the height of new blank imgage.
@@ -313,8 +314,6 @@ class Image(Resource):
                        default is transparent
     :type background: :class:`wand.color.Color`
 
-
-    :type format: :class:`basestring`
 
     .. versionadded:: 0.1.5
        The ``file`` parameter.
