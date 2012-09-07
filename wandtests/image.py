@@ -711,7 +711,7 @@ def watermark():
     """Adds  watermark to an image."""
     sig = get_sig_version({
         (6, 6, 9, 7):
-            '0f69e7239ba18acb4c22a85d1abcf447019cdf05a2eac40a3b754a4bfa76536b',
+            '9c4c182e44ee265230761a412e355cb78ea61859658220ecc8cbc1d56f58584e',
         (6, 7, 7, 6):
             'd725d924a9008ddff828f22595237ec6b56fb54057c6ee99584b9fc7ac91092c'
     })
