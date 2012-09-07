@@ -405,6 +405,7 @@ class Image(Resource):
                     read = True
                 if not read:
                     raise TypeError('invalid argument(s)')
+            self.sequence = Sequence(self)
         self.raise_exception()
 
     @property
@@ -1212,6 +1213,81 @@ class Iterator(Resource, collections.Iterator):
 
         """
         return type(self)(iterator=self)
+
+
+class Sequence(collections.Iterator):
+    """MagickWand's image sequences iterator.
+
+    :param image: An `Image` instance
+    :type image: :class:`Image`
+    """
+    def __init__(self, image):
+        if not isinstance(image, Image):
+            raise TypeError('expected a wand.image.Image instance, '
+                            'not ' + repr(image))
+        self.image = image
+        self.reset()
+
+    def __len__(self):
+        return library.MagickGetNumberImages(self.image.wand)
+
+    def __iter__(self):
+        self.reset()
+        return self
+
+    def next(self):
+        if library.MagickHasNextImage(self.image.wand):
+            library.MagickNextImage(self.image.wand)
+            return self.index
+        else:
+            raise StopIteration
+
+    @property
+    def index(self):
+        """(:class:`numbers.Integral`) Index of current image in
+        sequence.
+        """
+        return library.MagickGetIteratorIndex(self.image.wand)
+
+    @index.setter
+    def index(self, value):
+        """Set current image index.
+
+        :param value: new index value between 0 and length of sequence
+        :type value: :class:`numbers.Integral`
+        """
+        if not isinstance(value, numbers.Integral):
+            raise TypeError('expected an integer, but got ' + repr(value))
+        if not 0 <= value < len(self):
+            raise TypeError('value could be between 0 and %s' % len(self))
+        library.MagickSetIteratorIndex(self.image.wand, value)
+
+    @index.deleter
+    def index(self):
+        """Delete current image.
+        """
+        library.MagickRemoveImage(self.image.wand)
+
+    def append(self, image, before=False):
+        """Append image sequence to the sequence before of after current image.
+
+        :param image: An `Image` instance
+        :type image: :class:`Image`
+        :param before: Insert sequence before current
+        :type before: :class:`bool`
+        """
+        if not isinstance(image, Image):
+            raise TypeError('expected a wand.image.Image instance, '
+                            'not ' + repr(image))
+        if before:
+            library.MagickPreviousImage(image.wand)
+
+        library.MagickAddImage(self.image.wand, image.wand)
+
+    def reset(self):
+        """Set first image as the current.
+        """
+        library.MagickResetIterator(self.image.wand)
 
 
 class ClosedImageError(DestroyedResourceError):
