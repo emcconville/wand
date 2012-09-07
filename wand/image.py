@@ -39,21 +39,38 @@ __all__ = 'FILTER_TYPES', 'Image', 'Iterator', 'ClosedImageError'
 #: - ``'cubic'``
 #: - ``'catrom'``
 #: - ``'mitchell'``
-#: - ``'lanczos'``
-#: - ``'bessel'``
+#: - ``'jinc'``
 #: - ``'sinc'``
+#: - ``'sincfast'``
+#: - ``'kaiser'``
+#: - ``'welsh'``
+#: - ``'parzen'``
+#: - ``'bohman'``
+#: - ``'bartlett'``
+#: - ``'lagrange'``
+#: - ``'lanczos'``
+#: - ``'lanczossharp'``
+#: - ``'lanczos2'``
+#: - ``'lanczos2sharp'``
+#: - ``'robidoux'``
+#: - ``'robidouxsharp'``
+#: - ``'cosine'``
+#: - ``'spline'``
+#: - ``'sentinel'``
 #:
 #: .. seealso::
 #:
 #:    `ImageMagick Resize Filters`__
-#:       Demonstrates the results of resampling three images using the various
-#:       resize filters and blur settings available in ImageMagick,
-#:       and the file size of the resulting thumbnail images.
+#:       Demonstrates the results of resampling images using the various
+#:       resize filters and blur settings available in ImageMagick.
 #:
-#:    __ http://www.dylanbeattie.net/magick/filters/result.html
+#:    __ http://www.imagemagick.org/Usage/resize/
 FILTER_TYPES = ('undefined', 'point', 'box', 'triangle', 'hermite', 'hanning',
                 'hamming', 'blackman', 'gaussian', 'quadratic', 'cubic',
-                'catrom', 'mitchell', 'lanczos', 'bessel', 'sinc')
+                'catrom', 'mitchell', 'jinc', 'sinc', 'sincfast', 'kaiser',
+                'welsh', 'parzen', 'bohman', 'bartlett', 'lagrange', 'lanczos',
+                'lanczossharp', 'lanczos2', 'lanczos2sharp', 'robidoux',
+                'robidouxsharp', 'cosine', 'spline', 'sentinel')
 
 #: (:class:`tuple`) The list of composition operators
 #:
@@ -211,6 +228,35 @@ EVALUATE_OPS = ('undefined', 'add', 'and', 'divide', 'leftshift', 'max',
                 'uniformnoise', 'cosine', 'sine', 'addmodulus', 'mean',
                 'abs', 'exponential', 'median', 'sum',)
 
+#: (:class:`tuple`) The list of alpha chanell types
+#:
+#: - ``'undefinedalphachannel'``
+#: - ``'activatealphachannel'``
+#: - ``'backgroundalphachannel'``
+#: - ``'copyalphachannel'``
+#: - ``'deactivatealphachannel'``
+#: - ``'extractalphachannel'``
+#: - ``'opaquealphachannel'``
+#: - ``'resetalphachannel'``
+#: - ``'setalphachannel'``
+#: - ``'shapealphachannel'``
+#: - ``'transparentalphachannel'``
+#: - ``'flattenalphachannel'``
+#: - ``'removealphachannel'``
+#:
+#: .. seealso::
+#:    `ImageMagick Image Channel`__
+#:       Describes the SetImageAlphaChannel method which can be used
+#:       to modify alpha channel. Also describes AlphaChannelType
+#:    __ http://www.imagemagick.org/api/channel.php#SetImageAlphaChannel
+ALPHA_CHANNEL_TYPES = ('undefinedalphachannel', 'activatealphachannel',
+                       'backgroundalphachannel', 'copyalphachannel',
+                       'deactivatealphachannel', 'extractalphachannel',
+                       'opaquealphachannel', 'resetalphachannel',
+                       'setalphachannel', 'shapealphachannel',
+                       'transparentalphachannel', 'flattenalphachannel',
+                       'removealphachannel',)
+
 #: (:class:`tuple`) The list of image types
 #:
 #: - ``'undefined'``
@@ -359,6 +405,7 @@ class Image(Resource):
                     read = True
                 if not read:
                     raise TypeError('invalid argument(s)')
+            self.sequence = Sequence(self)
         self.raise_exception()
 
     @property
@@ -615,6 +662,35 @@ class Image(Resource):
         return library.MagickGetImageSignature(self.wand)
 
     @property
+    def alpha_channel(self):
+        """(:class:`bool`) Get state of image alpha channel.
+        It can also be used to enable/disable alpha channel.
+
+        .. versionadded:: 0.2.1
+
+        .. todo::
+
+           Support other states than ``''activatealphachannel'``
+           or ``'deactivatealphachannel'``.
+
+        """
+        return library.MagickGetImageAlphaChannel(self.wand)
+
+    @alpha_channel.setter
+    def alpha_channel(self, alpha):
+        if alpha == True:
+            act = ALPHA_CHANNEL_TYPES.index('activatealphachannel')
+        elif alpha == False:
+            act = ALPHA_CHANNEL_TYPES.index('deactivatealphachannel')
+        else:
+            raise TypeError('alpha_channel must be bool, not ' +
+                            repr(alpha))
+        r = library.MagickSetImageAlphaChannel(self.wand, act)
+        if r:
+            return r
+        self.raise_exception()
+
+    @property
     def background_color(self):
         """(:class:`wand.color.Color`) The image background color.
         It can also be set to change the background color.
@@ -783,7 +859,7 @@ class Image(Resource):
         """
         library.MagickResetImagePage(self.wand, None)
 
-    def resize(self, width=None, height=None, filter='triangle', blur=1):
+    def resize(self, width=None, height=None, filter='undefined', blur=1):
         """Resizes the image.
 
         :param width: the width in the scaled image. default is the original
@@ -793,11 +869,16 @@ class Image(Resource):
                        height
         :type height: :class:`numbers.Integral`
         :param filter: a filter type to use for resizing. choose one in
-                       :const:`FILTER_TYPES`. default is ``'triangle'``
+                       :const:`FILTER_TYPES`. default is ``'undefined'``
+                       which means IM will try to guess best one to use
         :type filter: :class:`basestring`, :class:`numbers.Integral`
         :param blur: the blur factor where > 1 is blurry, < 1 is sharp.
                      default is 1
         :type blur: :class:`numbers.Real`
+
+        .. versionchanged:: 0.2.1
+           The default value of ``filter`` has changed from ``'triangle'``
+           to ``'undefined'`` instead.
 
         .. versionchanged:: 0.1.8
            The ``blur`` parameter changed to take :class:`numbers.Real`
@@ -1132,6 +1213,81 @@ class Iterator(Resource, collections.Iterator):
 
         """
         return type(self)(iterator=self)
+
+
+class Sequence(collections.Iterator):
+    """MagickWand's image sequences iterator.
+
+    :param image: An `Image` instance
+    :type image: :class:`Image`
+    """
+    def __init__(self, image):
+        if not isinstance(image, Image):
+            raise TypeError('expected a wand.image.Image instance, '
+                            'not ' + repr(image))
+        self.image = image
+        self.reset()
+
+    def __len__(self):
+        return library.MagickGetNumberImages(self.image.wand)
+
+    def __iter__(self):
+        self.reset()
+        return self
+
+    def next(self):
+        if library.MagickHasNextImage(self.image.wand):
+            library.MagickNextImage(self.image.wand)
+            return self.index
+        else:
+            raise StopIteration
+
+    @property
+    def index(self):
+        """(:class:`numbers.Integral`) Index of current image in
+        sequence.
+        """
+        return library.MagickGetIteratorIndex(self.image.wand)
+
+    @index.setter
+    def index(self, value):
+        """Set current image index.
+
+        :param value: new index value between 0 and length of sequence
+        :type value: :class:`numbers.Integral`
+        """
+        if not isinstance(value, numbers.Integral):
+            raise TypeError('expected an integer, but got ' + repr(value))
+        if not 0 <= value < len(self):
+            raise TypeError('value could be between 0 and %s' % len(self))
+        library.MagickSetIteratorIndex(self.image.wand, value)
+
+    @index.deleter
+    def index(self):
+        """Delete current image.
+        """
+        library.MagickRemoveImage(self.image.wand)
+
+    def append(self, image, before=False):
+        """Append image sequence to the sequence before of after current image.
+
+        :param image: An `Image` instance
+        :type image: :class:`Image`
+        :param before: Insert sequence before current
+        :type before: :class:`bool`
+        """
+        if not isinstance(image, Image):
+            raise TypeError('expected a wand.image.Image instance, '
+                            'not ' + repr(image))
+        if before:
+            library.MagickPreviousImage(image.wand)
+
+        library.MagickAddImage(self.image.wand, image.wand)
+
+    def reset(self):
+        """Set first image as the current.
+        """
+        library.MagickResetIterator(self.image.wand)
 
 
 class ClosedImageError(DestroyedResourceError):

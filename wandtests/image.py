@@ -7,7 +7,7 @@ except ImportError:
 
 from attest import Tests, assert_hook, raises
 
-from wand.image import ClosedImageError, Image
+from wand.image import ClosedImageError, Image, Sequence
 from wand.color import Color
 
 
@@ -554,13 +554,28 @@ def object_hash():
         b = hash(img)
         assert a == b
 
+@tests.test
+def get_alpha_channel():
+    """Checks if image has alpha channel."""
+    with Image(filename=asset('watermark.png')) as img:
+        assert img.alpha_channel == True
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        assert img.alpha_channel == False
+
+
+@tests.test
+def set_alpha_channel():
+    """Sets alpha channel to off."""
+    with Image(filename=asset('watermark.png')) as img:
+        assert img.alpha_channel == True
+        img.alpha_channel = False
+        assert img.alpha_channel == False
 
 @tests.test
 def get_background_color():
     """Gets the background color."""
     with Image(filename=asset('mona-lisa.jpg')) as img:
         assert Color('white') == img.background_color
-
 
 @tests.test
 def set_background_color():
@@ -596,3 +611,48 @@ def reset_coords():
                 msg = 'img = {0!r}, control = {1!r}'.format(
                     img.signature, control.signature)
                 assert img == control, msg
+
+@tests.test
+def sequence():
+    """Test base sequences api."""
+    with Image(filename=asset('apple.ico')) as img:
+        assert len(img.sequence) == 4
+        assert img.sequence.index == 0
+        assert img.size == (32, 32)
+        img.sequence.index = 1
+        assert img.size == (16, 16)
+
+        with raises(TypeError):
+            img.sequence.index = 4
+
+        img.sequence.index = 2
+        img.sequence.reset()
+        assert img.sequence.index == 0
+
+@tests.test
+def sequence_iteration():
+    """Iterate sequence."""
+    with Image(filename=asset('apple.ico')) as img:
+        sizes = []
+        sizes_right = [
+            (0, (32, 32)),
+            (1, (16, 16)),
+            (2, (32, 32)),
+            (3, (16, 16)),
+        ]
+        for i in img.sequence:
+            sizes.append((i, img.size))
+        assert sizes == sizes_right
+
+@tests.test
+def sequence_append():
+    """Append image to sequnce."""
+    with Image(filename=asset('apple.ico')) as imga:
+        with Image(filename=asset('google.ico')) as imgg:
+            imga.sequence.append(imgg)
+            assert len(imga.sequence) == 5
+            imga.sequence.reset()
+            for i in xrange(4):
+                del imga.sequence.index
+            assert len(imga.sequence) == 1
+            assert imga.size == (16, 16)
