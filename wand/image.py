@@ -305,6 +305,15 @@ class Image(Resource):
     :param format: forces filename to  buffer.``format`` to help
                    imagemagick detect the file format. Used only in
                    ``blob`` or ``file`` cases
+    :param width: the width of new blank image.
+    :type width: :class:`numbers.Integral`
+    :param height: the height of new blank imgage.
+    :type height: :class:`numbers.Integral`
+    :param background: an optional background color.
+                       default is transparent
+    :type background: :class:`wand.color.Color`
+
+
     :type format: :class:`basestring`
 
     .. versionadded:: 0.1.5
@@ -315,6 +324,9 @@ class Image(Resource):
 
     .. versionadded:: 0.2.1
        The ``format`` parameter.
+
+    .. versionadded:: 0.2.2
+       The ``width``, ``height``, ``background`` parameters.
 
     .. describe:: [left:right, top:bottom]
 
@@ -350,19 +362,41 @@ class Image(Resource):
     __slots__ = '_wand',
 
     def __init__(self, image=None, blob=None, file=None, filename=None,
-                 format=None):
-        args = image, blob, file, filename
-        if all(a is None for a in args):
-            raise TypeError('missing arguments')
+                 format=None, width=None, height=None, background=None):
+        new_args = width, height, background
+        open_args = image, blob, file, filename
+
+        if (any(a is not None for a in new_args) and
+            any(a is not None for a in open_args)):
+            raise TypeError('blank image parameters cant be used with image '
+                            'opening parameters')
+        elif all(a is None for a in open_args):
+            # Create a blank image
+            if not isinstance(width, numbers.Integral) or width < 1:
+                raise TypeError('width must be a natural number, not ' +
+                                repr(width))
+            if not isinstance(height, numbers.Integral) or height < 1:
+                raise TypeError('height must be a natural number, not ' +
+                                repr(height))
+            if background is not None and not isinstance(background, Color):
+                raise TypeError('background must be a wand.color.Color '
+                                'instance, not ' + repr(background))
         elif any(a is not None and b is not None
-                 for i, a in enumerate(args)
-                 for b in args[:i] + args[i + 1:]):
+                 for i, a in enumerate(open_args)
+                 for b in open_args[:i] + open_args[i + 1:]):
             raise TypeError('parameters are exclusive each other; use only '
                             'one at once')
         elif not (format is None or isinstance(format, basestring)):
             raise TypeError('format must be a string, not ' + repr(format))
         with self.allocate():
-            if image is not None:
+            if width is not None and height is not None:
+                if background is None:
+                    background = Color('transparent')
+                self.wand = library.NewMagickWand()
+                with background:
+                    library.MagickNewImage(self.wand, width, height,
+                                           background.resource)
+            elif image is not None:
                 if not isinstance(image, Image):
                     raise TypeError('image must be a wand.image.Image '
                                     'instance, not ' + repr(image))
