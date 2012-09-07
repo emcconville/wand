@@ -6,6 +6,9 @@ Version 0.2.2
 
 To be released.
 
+- Now :class:`Image` can be instantiated without any opening.
+  Instead, it can take ``width``/``height`` and ``background``.
+  [:issue:`53` by Michael Elovskikh]
 - Added :meth:`Image.transform() <wand.image.Image.transform>` method
   which is a convenience method accepting geometry strings to perform
   cropping and resizing.
