@@ -363,8 +363,14 @@ class Image(Resource):
 
     def __init__(self, image=None, blob=None, file=None, filename=None,
                  format=None, width=None, height=None, background=None):
-        args = image, blob, file, filename
-        if all(a is None for a in args):
+        new_args = width, height, background
+        open_args = image, blob, file, filename
+
+        if (any(a is not None for a in new_args) and
+            any(a is not None for a in open_args)):
+            raise TypeError('blank image parameters cant be used with image '
+                            'opening parameters')
+        elif all(a is None for a in open_args):
             # Create a blank image
             if not isinstance(width, numbers.Integral) or width < 1:
                 raise TypeError('width must be a natural number, not ' +
@@ -376,8 +382,8 @@ class Image(Resource):
                 raise TypeError('background must be a wand.color.Color '
                                 'instance, not ' + repr(background))
         elif any(a is not None and b is not None
-                 for i, a in enumerate(args)
-                 for b in args[:i] + args[i + 1:]):
+                 for i, a in enumerate(open_args)
+                 for b in open_args[:i] + open_args[i + 1:]):
             raise TypeError('parameters are exclusive each other; use only '
                             'one at once')
         elif not (format is None or isinstance(format, basestring)):
