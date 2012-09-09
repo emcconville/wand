@@ -62,17 +62,17 @@
             
   <div class="section" id="writing-images">
 <h1>Writing images<a class="headerlink" href="#writing-images" title="Permalink to this headline">¶</a></h1>
-<p>You can write an <tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt> object into a file or a byte
+<p>You can write an <a class="reference internal" href="../wand/image.html#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a> object into a file or a byte
 string buffer (blob) as format what you want.</p>
 <div class="section" id="convert-images-to-jpeg">
 <h2>Convert images to JPEG<a class="headerlink" href="#convert-images-to-jpeg" title="Permalink to this headline">¶</a></h2>
-<p>If you wonder what is image&#8217;s format, use <tt class="xref py py-attr docutils literal"><span class="pre">format</span></tt>
+<p>If you wonder what is image&#8217;s format, use <a class="reference internal" href="../wand/image.html#wand.image.Image.format" title="wand.image.Image.format"><tt class="xref py py-attr docutils literal"><span class="pre">format</span></tt></a>
 property.</p>
 <div class="highlight-pycon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">image</span><span class="o">.</span><span class="n">format</span>
 <span class="go">&#39;JPEG&#39;</span>
 </pre></div>
 </div>
-<p>The <tt class="xref py py-attr docutils literal"><span class="pre">format</span></tt> property is writable, so you can convert
+<p>The <a class="reference internal" href="../wand/image.html#wand.image.Image.format" title="wand.image.Image.format"><tt class="xref py py-attr docutils literal"><span class="pre">format</span></tt></a> property is writable, so you can convert
 images by setting this property.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">wand.image</span> <span class="kn">import</span> <span class="n">Image</span>
 
@@ -82,7 +82,7 @@ images by setting this property.</p>
 </pre></div>
 </div>
 <p>If you want to convert an image without any changes of the original,
-use <tt class="xref py py-meth docutils literal"><span class="pre">convert()</span></tt> method instead:</p>
+use <a class="reference internal" href="../wand/image.html#wand.image.Image.convert" title="wand.image.Image.convert"><tt class="xref py py-meth docutils literal"><span class="pre">convert()</span></tt></a> method instead:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">wand.image</span> <span class="kn">import</span> <span class="n">Image</span>
 
 <span class="k">with</span> <span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s">&#39;pikachu.png&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">original</span><span class="p">:</span>
@@ -103,7 +103,7 @@ on your system, use <strong class="program">identify</strong> command provided b
 </div>
 <div class="section" id="save-to-file">
 <h2>Save to file<a class="headerlink" href="#save-to-file" title="Permalink to this headline">¶</a></h2>
-<p>In order to save an image to a file, use <tt class="xref py py-meth docutils literal"><span class="pre">save()</span></tt>
+<p>In order to save an image to a file, use <a class="reference internal" href="../wand/image.html#wand.image.Image.save" title="wand.image.Image.save"><tt class="xref py py-meth docutils literal"><span class="pre">save()</span></tt></a>
 method with the keyword argument <tt class="docutils literal"><span class="pre">filename</span></tt>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">wand.image</span> <span class="kn">import</span> <span class="n">Image</span>
 
@@ -118,7 +118,7 @@ method with the keyword argument <tt class="docutils literal"><span class="pre">
 <p>You can write an image into a output stream (file-like object which implements
 <a class="reference external" href="http://docs.python.org/library/stdtypes.html#file.write" title="(in Python v2.7)"><tt class="xref py py-meth docutils literal"><span class="pre">write()</span></tt></a> method) as well. The parameter <tt class="docutils literal"><span class="pre">file</span></tt> takes a such
 object (it also is the first positional parameter of
-<tt class="xref py py-meth docutils literal"><span class="pre">save()</span></tt> method).</p>
+<a class="reference internal" href="../wand/image.html#wand.image.Image.save" title="wand.image.Image.save"><tt class="xref py py-meth docutils literal"><span class="pre">save()</span></tt></a> method).</p>
 <p>For example, the following code converts <tt class="file docutils literal"><span class="pre">pikachu.png</span></tt> image into
 JPEG, gzips it, and then saves it to <tt class="file docutils literal"><span class="pre">pikachu.jpg.gz</span></tt>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">gzip</span>
@@ -135,7 +135,7 @@ JPEG, gzips it, and then saves it to <tt class="file docutils literal"><span cla
 <div class="section" id="get-binary-string">
 <h2>Get binary string<a class="headerlink" href="#get-binary-string" title="Permalink to this headline">¶</a></h2>
 <p>Want just a binary string of the image? Use
-<tt class="xref py py-meth docutils literal"><span class="pre">make_blob()</span></tt> method so:</p>
+<a class="reference internal" href="../wand/image.html#wand.image.Image.make_blob" title="wand.image.Image.make_blob"><tt class="xref py py-meth docutils literal"><span class="pre">make_blob()</span></tt></a> method so:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">wand.image</span> <span class="kn">import</span> <span class="n">Image</span>
 
 <span class="k">with</span> <span class="n">image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s">&#39;pikachu.png&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">img</span><span class="p">:</span>

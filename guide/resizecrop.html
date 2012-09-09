@@ -65,7 +65,7 @@
 <p>Creating thumbnails (by resizing images) and cropping are most frequent works
 about images. This guide explains ways to deal with sizes of images.</p>
 <p>Above all, to get the current size of the image check
-<tt class="xref py py-attr docutils literal"><span class="pre">width</span></tt> and <tt class="xref py py-attr docutils literal"><span class="pre">height</span></tt>
+<a class="reference internal" href="../wand/image.html#wand.image.Image.width" title="wand.image.Image.width"><tt class="xref py py-attr docutils literal"><span class="pre">width</span></tt></a> and <a class="reference internal" href="../wand/image.html#wand.image.Image.height" title="wand.image.Image.height"><tt class="xref py py-attr docutils literal"><span class="pre">height</span></tt></a>
 properties:</p>
 <div class="highlight-pycon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">urllib2</span> <span class="kn">import</span> <span class="n">urlopen</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">wand.image</span> <span class="kn">import</span> <span class="n">Image</span>
@@ -81,8 +81,8 @@ properties:</p>
 <span class="go">48</span>
 </pre></div>
 </div>
-<p>If you want to the pair of (<tt class="xref py py-attr docutils literal"><span class="pre">width</span></tt>,
-<tt class="xref py py-attr docutils literal"><span class="pre">height</span></tt>), check <tt class="xref py py-attr docutils literal"><span class="pre">size</span></tt>
+<p>If you want to the pair of (<a class="reference internal" href="../wand/image.html#wand.image.Image.width" title="wand.image.Image.width"><tt class="xref py py-attr docutils literal"><span class="pre">width</span></tt></a>,
+<a class="reference internal" href="../wand/image.html#wand.image.Image.height" title="wand.image.Image.height"><tt class="xref py py-attr docutils literal"><span class="pre">height</span></tt></a>), check <a class="reference internal" href="../wand/image.html#wand.image.Image.size" title="wand.image.Image.size"><tt class="xref py py-attr docutils literal"><span class="pre">size</span></tt></a>
 property also.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -92,7 +92,7 @@ property also.</p>
 <h2>Resize images<a class="headerlink" href="#resize-images" title="Permalink to this headline">¶</a></h2>
 <p>It scales an image into a desired size even if the desired size is larger
 than the original size. ImageMagick provides so many algorithms for resizing.
-The constant <tt class="xref py py-const docutils literal"><span class="pre">FILTER_TYPES</span></tt> contains names of filtering
+The constant <a class="reference internal" href="../wand/image.html#wand.image.FILTER_TYPES" title="wand.image.FILTER_TYPES"><tt class="xref py py-const docutils literal"><span class="pre">FILTER_TYPES</span></tt></a> contains names of filtering
 algorithms.</p>
 <div class="admonition-see-also admonition seealso">
 <p class="first admonition-title">See also</p>
@@ -103,7 +103,7 @@ resize filters and blur settings available in ImageMagick,
 and the file size of the resulting thumbnail images.</dd>
 </dl>
 </div>
-<p><tt class="xref py py-meth docutils literal"><span class="pre">Image.resize()</span></tt> method takes <tt class="docutils literal"><span class="pre">width</span></tt> and
+<p><a class="reference internal" href="../wand/image.html#wand.image.Image.resize" title="wand.image.Image.resize"><tt class="xref py py-meth docutils literal"><span class="pre">Image.resize()</span></tt></a> method takes <tt class="docutils literal"><span class="pre">width</span></tt> and
 <tt class="docutils literal"><span class="pre">height</span></tt> of a desired size, optional <tt class="docutils literal"><span class="pre">filter</span></tt> (<tt class="docutils literal"><span class="pre">'triangle'</span></tt> by
 default) and optional <tt class="docutils literal"><span class="pre">blur</span></tt> (default is 1). It returns nothing but
 resizes itself in-place.</p>
@@ -118,7 +118,7 @@ resizes itself in-place.</p>
 <div class="section" id="crop-images">
 <h2>Crop images<a class="headerlink" href="#crop-images" title="Permalink to this headline">¶</a></h2>
 <p>To extract a sub-rectangle from an image,
-use the <tt class="xref py py-meth docutils literal"><span class="pre">crop()</span></tt> method. It crops the image in-place.
+use the <a class="reference internal" href="../wand/image.html#wand.image.Image.crop" title="wand.image.Image.crop"><tt class="xref py py-meth docutils literal"><span class="pre">crop()</span></tt></a> method. It crops the image in-place.
 Its parameters are <tt class="docutils literal"><span class="pre">left</span></tt>, <tt class="docutils literal"><span class="pre">top</span></tt>, <tt class="docutils literal"><span class="pre">right</span></tt>, <tt class="docutils literal"><span class="pre">bottom</span></tt> in order.</p>
 <div class="highlight-pycon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">img</span><span class="o">.</span><span class="n">size</span>
 <span class="go">(200, 300)</span>
