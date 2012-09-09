@@ -8,7 +8,7 @@ To be released.
 
 - A compatibility fix for FreeBSD.
   [`Patch`__ by Olivier Duchateau]
-- Now :class:`Image` can be instantiated without any opening.
+- Now :class:`~wand.image.Image` can be instantiated without any opening.
   Instead, it can take ``width``/``height`` and ``background``.
   [:issue:`53` by Michael Elovskikh]
 - Added :meth:`Image.transform() <wand.image.Image.transform>` method
