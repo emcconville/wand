@@ -291,6 +291,21 @@ IMAGE_TYPES = ('undefined', 'bilevel', 'grayscale', 'grayscalematte',
                'colorseparation', 'colorseparationmatte', 'optimize',
                'palettebilevelmatte',)
 
+#: (:class:`tuple`) The list of resolution unit types
+#:
+#: - ``'undefined'``
+#: - ``'pixelsperinch'``
+#: - ``'pixelspercentimeter'``
+#:
+#: .. seealso::
+#:
+#:    `ImageMagick Image Units`__
+#:       Describes the MagickSetImageUnits method which can be used
+#:       to set image units of resolution
+#:
+#:    __ http://www.imagemagick.org/api/magick-image.php#MagickSetImageUnits
+UNIT_TYPES = ('undefined', 'pixelsperinch', 'pixelspercentimeter')
+
 class Image(Resource):
     """An image object.
 
@@ -592,6 +607,21 @@ class Image(Resource):
     def size(self):
         """(:class:`tuple`) The pair of (:attr:`width`, :attr:`height`)."""
         return self.width, self.height
+
+    @property
+    def units(self):
+        """(:class:`basestring`) The resolution units of this image."""
+        r = library.MagickGetImageUnits(self.wand)
+        return UNIT_TYPES[r]
+
+    @units.setter
+    def units(self, units):
+        if not isinstance(units, basestring) or units not in UNIT_TYPES: 
+            raise TypeError("Unit value must be a string from UNIT_TYPES"
+                            ', not ' + repr(units))
+        r = library.MagickSetImageUnits(self.wand, UNIT_TYPES.index(units))
+        if not r:
+            self.raise_exception()
 
     @property
     def depth(self):
