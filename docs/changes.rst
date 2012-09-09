@@ -15,6 +15,8 @@ To be released.
   which is a convenience method accepting geometry strings to perform
   cropping and resizing.
   [:issue:`50` by Mitch Lindgren]
+- Added :attr:`Image.units <wand.image.Image.units>` property.
+  [:issue:`45` by Piotr Florczyk]
 - Now :meth:`Image.resize() <wand.image.Image.resize>` method raises
   a proper error when it fails for any reason.
   [:issue:`41` by Piotr Florczyk]
