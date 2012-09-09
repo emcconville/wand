@@ -196,12 +196,14 @@ def get_units():
     with Image(filename=asset('sasha.jpg')) as img:
         assert img.units == "undefined"
 
+
 @tests.test
 def set_units():
     """Sets the image resolution units."""
     with Image(filename=asset('watermark.png')) as img:
         img.units="pixelspercentimeter"
         assert img.units == "pixelspercentimeter"
+
 
 @tests.test
 def get_depth():

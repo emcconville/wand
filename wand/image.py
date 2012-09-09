@@ -21,9 +21,9 @@ from .color import Color
 from .resource import DestroyedResourceError, Resource
 
 
-__all__ = ('FILTER_TYPES', 'COMPOSITE_OPS', 'CHANNELS', 'EVALUATE_OPS',
-           'ALPHA_CHANNEL_TYPES', 'IMAGE_TYPES', 'Image', 'Iterator', 
-           'ClosedImageError')
+__all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COMPOSITE_OPS', 'EVALUATE_OPS',
+           'FILTER_TYPES', 'IMAGE_TYPES', 'UNIT_TYPES', 'ClosedImageError',
+           'Image', 'Iterator')
 
 
 #: (:class:`tuple`) The list of filter types.
@@ -151,7 +151,7 @@ COMPOSITE_OPS = ('undefined', 'no', 'add', 'atop', 'blend', 'bumpmap',
                  'multiply', 'out', 'over', 'overlay', 'plus', 'replace',
                  'saturate', 'screen', 'soft_light', 'src_atop', 'src',
                  'src_in', 'src_out', 'src_over', 'subtract', 'threshold',
-                 'xor', 'divide',)
+                 'xor', 'divide')
 
 #: (:class:`dict`) The dictionary of channel types.
 #:
@@ -186,7 +186,6 @@ CHANNELS = dict(undefined=0, red=1, gray=1, cyan=1, green=2, magenta=2,
                 composite_channels=47, all_channels=134217727, true_alpha=64,
                 rgb_channels=128, gray_channels=128, sync_channels=256,
                 default_channels=134217719)
-
 
 #: (:class:`tuple`) The list of evaluation operators
 #:
@@ -236,7 +235,7 @@ EVALUATE_OPS = ('undefined', 'add', 'and', 'divide', 'leftshift', 'max',
                 'thresholdwhite', 'gaussiannoise', 'impulsenoise',
                 'laplaciannoise', 'multiplicativenoise', 'poissonnoise',
                 'uniformnoise', 'cosine', 'sine', 'addmodulus', 'mean',
-                'abs', 'exponential', 'median', 'sum',)
+                'abs', 'exponential', 'median', 'sum')
 
 #: (:class:`tuple`) The list of alpha chanell types
 #:
@@ -262,7 +261,7 @@ EVALUATE_OPS = ('undefined', 'add', 'and', 'divide', 'leftshift', 'max',
 #:    __ http://www.imagemagick.org/api/channel.php#SetImageAlphaChannel
 ALPHA_CHANNEL_TYPES = ('undefined', 'activate', 'background', 'copy',
                        'deactivate', 'extract', 'opaque', 'reset', 'set',
-                       'shape', 'transparent', 'flatten', 'remove',)
+                       'shape', 'transparent', 'flatten', 'remove')
 
 #: (:class:`tuple`) The list of image types
 #:
@@ -289,7 +288,7 @@ ALPHA_CHANNEL_TYPES = ('undefined', 'activate', 'background', 'copy',
 IMAGE_TYPES = ('undefined', 'bilevel', 'grayscale', 'grayscalematte',
                'palette', 'palettematte', 'truecolor', 'truecolormatte',
                'colorseparation', 'colorseparationmatte', 'optimize',
-               'palettebilevelmatte',)
+               'palettebilevelmatte')
 
 #: (:class:`tuple`) The list of resolution unit types
 #:
@@ -304,7 +303,8 @@ IMAGE_TYPES = ('undefined', 'bilevel', 'grayscale', 'grayscalematte',
 #:       to set image units of resolution
 #:
 #:    __ http://www.imagemagick.org/api/magick-image.php#MagickSetImageUnits
-UNIT_TYPES = ('undefined', 'pixelsperinch', 'pixelspercentimeter')
+UNIT_TYPES = 'undefined', 'pixelsperinch', 'pixelspercentimeter'
+
 
 class Image(Resource):
     """An image object.
@@ -617,8 +617,8 @@ class Image(Resource):
     @units.setter
     def units(self, units):
         if not isinstance(units, basestring) or units not in UNIT_TYPES: 
-            raise TypeError("Unit value must be a string from UNIT_TYPES"
-                            ', not ' + repr(units))
+            raise TypeError('Unit value must be a string from wand.images.'
+                            'UNIT_TYPES, not ' + repr(units))
         r = library.MagickSetImageUnits(self.wand, UNIT_TYPES.index(units))
         if not r:
             self.raise_exception()
