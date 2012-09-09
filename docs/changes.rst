@@ -6,7 +6,8 @@ Version 0.2.2
 
 To be released.
 
-- A compatibility fix for FreeBSD [`Patch`__ by Olivier Duchateau]
+- A compatibility fix for FreeBSD.
+  [`Patch`__ by Olivier Duchateau]
 - Now :class:`Image` can be instantiated without any opening.
   Instead, it can take ``width``/``height`` and ``background``.
   [:issue:`53` by Michael Elovskikh]
