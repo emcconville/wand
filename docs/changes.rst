@@ -6,6 +6,7 @@ Version 0.2.2
 
 To be released.
 
+- A compatibility fix for FreeBSD [`Patch`__ by Olivier Duchateau]
 - Now :class:`Image` can be instantiated without any opening.
   Instead, it can take ``width``/``height`` and ``background``.
   [:issue:`53` by Michael Elovskikh]
@@ -18,6 +19,8 @@ To be released.
   [:issue:`41` by Piotr Florczyk]
 - Added :attr:`Image.type <wand.image.Image.type>` property.
   [:issue:`33` by Yauhen Yakimovich, :issue:`42` by Piotr Florczyk]
+
+__ http://code.google.com/p/olivier-freebsd-ports/source/browse/graphics/py-wand/files/patch-wand_api.py
 
 
 Version 0.2.1
