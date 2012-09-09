@@ -70,11 +70,11 @@
 <li><a class="reference internal" href="#clone-image"><em>To copy an existing image object</em></a></li>
 </ul>
 <p>All of these operations are provided by the constructor of
-<a class="reference internal" href="../wand/image.html#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a> class.</p>
+<tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt> class.</p>
 <div class="section" id="open-an-image-file">
 <span id="open-image-file"></span><h2>Open an image file<a class="headerlink" href="#open-an-image-file" title="Permalink to this headline">¶</a></h2>
 <p>The most frequently used way is just to open an image by its filename.
-<a class="reference internal" href="../wand/image.html#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a>&#8216;s constructor can take the parameter named
+<tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt>&#8216;s constructor can take the parameter named
 <tt class="docutils literal"><span class="pre">filename</span></tt>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">wand.image</span> <span class="kn">import</span> <span class="n">Image</span>
 
@@ -97,7 +97,7 @@ it with <tt class="docutils literal"><span class="pre">filename</span></tt>. Whi
 <p>If an image to open cannot be located by a filename but can be read through
 input stream interface (e.g. opened by <a class="reference external" href="http://docs.python.org/library/os.html#os.popen" title="(in Python v2.7)"><tt class="xref py py-func docutils literal"><span class="pre">os.popen()</span></tt></a>,
 contained in <a class="reference external" href="http://docs.python.org/library/stringio.html#StringIO.StringIO" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">StringIO</span></tt></a>, read by <a class="reference external" href="http://docs.python.org/library/urllib2.html#urllib2.urlopen" title="(in Python v2.7)"><tt class="xref py py-func docutils literal"><span class="pre">urllib2.urlopen()</span></tt></a>),
-it can be read by <a class="reference internal" href="../wand/image.html#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a> constructor&#8217;s <tt class="docutils literal"><span class="pre">file</span></tt> parameter.
+it can be read by <tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt> constructor&#8217;s <tt class="docutils literal"><span class="pre">file</span></tt> parameter.
 It takes all file-like objects which implements <a class="reference external" href="http://docs.python.org/library/stdtypes.html#file.read" title="(in Python v2.7)"><tt class="xref py py-meth docutils literal"><span class="pre">read()</span></tt></a> method:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">urllib2</span> <span class="kn">import</span> <span class="n">urlopen</span>
 <span class="kn">from</span> <span class="nn">wand.image</span> <span class="kn">import</span> <span class="n">Image</span>
@@ -118,7 +118,7 @@ so it also can be used as an input stream for a downloaded image.</p>
 <div class="section" id="read-a-blob">
 <span id="read-blob"></span><h2>Read a blob<a class="headerlink" href="#read-a-blob" title="Permalink to this headline">¶</a></h2>
 <p>If you have just a binary string (<tt class="xref py py-class docutils literal"><span class="pre">str</span></tt>) of the image, you can pass
-it into <a class="reference internal" href="../wand/image.html#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a> constructor&#8217;s <tt class="docutils literal"><span class="pre">blob</span></tt> parameter to read:</p>
+it into <tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt> constructor&#8217;s <tt class="docutils literal"><span class="pre">blob</span></tt> parameter to read:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">wand.image</span> <span class="kn">import</span> <span class="n">Image</span>
 
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;pikachu.png&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -135,7 +135,7 @@ many cases to use it.</p>
 <div class="section" id="clone-an-image">
 <span id="clone-image"></span><h2>Clone an image<a class="headerlink" href="#clone-an-image" title="Permalink to this headline">¶</a></h2>
 <p>If you have an image already and have to copy it for safe manipulation,
-use <a class="reference internal" href="../wand/image.html#wand.image.Image.clone" title="wand.image.Image.clone"><tt class="xref py py-meth docutils literal"><span class="pre">clone()</span></tt></a> method:</p>
+use <tt class="xref py py-meth docutils literal"><span class="pre">clone()</span></tt> method:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">wand.image</span> <span class="kn">import</span> <span class="n">Image</span>
 
 <span class="k">with</span> <span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s">&#39;pikachu.png&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">original</span><span class="p">:</span>
@@ -146,7 +146,7 @@ use <a class="reference internal" href="../wand/image.html#wand.image.Image.clon
 </div>
 <p>For some operations like format converting or cropping, there are safe methods
 that return a new image of manipulated result like
-<a class="reference internal" href="../wand/image.html#wand.image.Image.convert" title="wand.image.Image.convert"><tt class="xref py py-meth docutils literal"><span class="pre">convert()</span></tt></a> or slicing operator. So the above example
+<tt class="xref py py-meth docutils literal"><span class="pre">convert()</span></tt> or slicing operator. So the above example
 code can be replaced by:</p>
 <div class="highlight-python"><pre>from wand.image import Image
 
@@ -167,7 +167,7 @@ give the hint which indicates file format of an image to read &#8212; optional
 </pre></div>
 </div>
 <p class="versionadded">
-<span class="versionmodified">New in version 0.2.1: </span>The <tt class="docutils literal"><span class="pre">format</span></tt> parameter to <a class="reference internal" href="../wand/image.html#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a> constructor.</p>
+<span class="versionmodified">New in version 0.2.1: </span>The <tt class="docutils literal"><span class="pre">format</span></tt> parameter to <tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt> constructor.</p>
 </div>
 </div>
 

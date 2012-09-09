@@ -64,6 +64,7 @@ User's guide
    guide/write
    guide/resizecrop
    guide/resource
+   test
    roadmap
    changes
 
