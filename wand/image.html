@@ -53,7 +53,7 @@
           <a href="../wand.html" title="wand — Simple MagickWand API binding for Python"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Wand</a> &raquo;</li>
-          <li><a href="../wand.html" accesskey="U"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a> &raquo;</li> 
+          <li><a href="../wand.html" accesskey="U"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -73,48 +73,62 @@ error happened):</p>
 </pre></div>
 </div>
 <dl class="data">
-<dt id="wand.image.FILTER_TYPES">
-<tt class="descclassname">wand.image.</tt><tt class="descname">FILTER_TYPES</tt><em class="property"> = ('undefined', 'point', 'box', 'triangle', 'hermite', 'hanning', 'hamming', 'blackman', 'gaussian', 'quadratic', 'cubic', 'catrom', 'mitchell', 'jinc', 'sinc', 'sincfast', 'kaiser', 'welsh', 'parzen', 'bohman', 'bartlett', 'lagrange', 'lanczos', 'lanczossharp', 'lanczos2', 'lanczos2sharp', 'robidoux', 'robidouxsharp', 'cosine', 'spline', 'sentinel')</em><a class="headerlink" href="#wand.image.FILTER_TYPES" title="Permalink to this definition">¶</a></dt>
-<dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">tuple</span></tt>) The list of filter types.</p>
+<dt id="wand.image.ALPHA_CHANNEL_TYPES">
+<tt class="descclassname">wand.image.</tt><tt class="descname">ALPHA_CHANNEL_TYPES</tt><em class="property"> = ('undefined', 'activate', 'background', 'copy', 'deactivate', 'extract', 'opaque', 'reset', 'set', 'shape', 'transparent', 'flatten', 'remove')</em><a class="headerlink" href="#wand.image.ALPHA_CHANNEL_TYPES" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">tuple</span></tt>) The list of alpha chanell types</p>
 <ul class="simple">
 <li><tt class="docutils literal"><span class="pre">'undefined'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'point'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'box'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'triangle'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'hermite'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'hanning'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'hamming'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'blackman'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'gaussian'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'quadratic'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'cubic'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'catrom'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'mitchell'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'jinc'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'sinc'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'sincfast'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'kaiser'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'welsh'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'parzen'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'bohman'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'bartlett'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'lagrange'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'lanczos'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'lanczossharp'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'lanczos2'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'lanczos2sharp'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'robidoux'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'robidouxsharp'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'cosine'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'spline'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'sentinel'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'activate'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'background'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'copy'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'deactivate'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'extract'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'opaque'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'reset'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'set'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'shape'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'transparent'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'flatten'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'remove'</span></tt></li>
+</ul>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="http://www.imagemagick.org/api/channel.php#SetImageAlphaChannel">ImageMagick Image Channel</a>
+   Describes the SetImageAlphaChannel method which can be used
+   to modify alpha channel. Also describes AlphaChannelType</p>
+</div>
+</dd></dl>
+
+<dl class="data">
+<dt id="wand.image.CHANNELS">
+<tt class="descclassname">wand.image.</tt><tt class="descname">CHANNELS</tt><em class="property"> = {'opacity': 8, 'true_alpha': 64, 'gray': 1, 'rgb_channels': 128, 'yellow': 4, 'sync_channels': 256, 'default_channels': 134217719, 'alpha': 8, 'cyan': 1, 'magenta': 2, 'undefined': 0, 'blue': 4, 'index': 32, 'gray_channels': 128, 'composite_channels': 47, 'green': 2, 'all_channels': 134217727, 'black': 32, 'red': 1}</em><a class="headerlink" href="#wand.image.CHANNELS" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">dict</span></tt></a>) The dictionary of channel types.</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">'undefined'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'red'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'gray'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'cyan'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'green'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'magenta'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'blue'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'yellow'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'alpha'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'opacity'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'black'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'index'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'composite_channels'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'all_channels'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'true_alpha'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'rgb_channels'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'gray_channels'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'sync_channels'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'default_channels'</span></tt></li>
 </ul>
 <div class="admonition-see-also admonition seealso">
 <p class="first admonition-title">See also</p>
 <dl class="last docutils">
-<dt><a class="reference external" href="http://www.imagemagick.org/Usage/resize/">ImageMagick Resize Filters</a></dt>
-<dd>Demonstrates the results of resampling images using the various
-resize filters and blur settings available in ImageMagick.</dd>
+<dt><a class="reference external" href="http://www.imagemagick.org/Magick++/Enumerations.html#ChannelType">ImageMagick Color Channels</a></dt>
+<dd>Lists the various channel types with descriptions of each</dd>
 </dl>
 </div>
 </dd></dl>
@@ -192,40 +206,6 @@ composition operators.</dd>
 </dd></dl>
 
 <dl class="data">
-<dt id="wand.image.CHANNELS">
-<tt class="descclassname">wand.image.</tt><tt class="descname">CHANNELS</tt><em class="property"> = {'opacity': 8, 'true_alpha': 64, 'gray': 1, 'rgb_channels': 128, 'yellow': 4, 'sync_channels': 256, 'default_channels': 134217719, 'alpha': 8, 'cyan': 1, 'magenta': 2, 'undefined': 0, 'blue': 4, 'index': 32, 'gray_channels': 128, 'composite_channels': 47, 'green': 2, 'all_channels': 134217727, 'black': 32, 'red': 1}</em><a class="headerlink" href="#wand.image.CHANNELS" title="Permalink to this definition">¶</a></dt>
-<dd><p>(<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">dict</span></tt></a>) The dictionary of channel types.</p>
-<ul class="simple">
-<li><tt class="docutils literal"><span class="pre">'undefined'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'red'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'gray'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'cyan'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'green'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'magenta'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'blue'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'yellow'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'alpha'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'opacity'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'black'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'index'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'composite_channels'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'all_channels'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'true_alpha'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'rgb_channels'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'gray_channels'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'sync_channels'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'default_channels'</span></tt></li>
-</ul>
-<div class="admonition-see-also admonition seealso">
-<p class="first admonition-title">See also</p>
-<dl class="last docutils">
-<dt><a class="reference external" href="http://www.imagemagick.org/Magick++/Enumerations.html#ChannelType">ImageMagick Color Channels</a></dt>
-<dd>Lists the various channel types with descriptions of each</dd>
-</dl>
-</div>
-</dd></dl>
-
-<dl class="data">
 <dt id="wand.image.EVALUATE_OPS">
 <tt class="descclassname">wand.image.</tt><tt class="descname">EVALUATE_OPS</tt><em class="property"> = ('undefined', 'add', 'and', 'divide', 'leftshift', 'max', 'min', 'multiply', 'or', 'rightshift', 'set', 'subtract', 'xor', 'pow', 'log', 'threshold', 'thresholdblack', 'thresholdwhite', 'gaussiannoise', 'impulsenoise', 'laplaciannoise', 'multiplicativenoise', 'poissonnoise', 'uniformnoise', 'cosine', 'sine', 'addmodulus', 'mean', 'abs', 'exponential', 'median', 'sum')</em><a class="headerlink" href="#wand.image.EVALUATE_OPS" title="Permalink to this definition">¶</a></dt>
 <dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">tuple</span></tt>) The list of evaluation operators</p>
@@ -274,29 +254,49 @@ various evaluations operators</dd>
 </dd></dl>
 
 <dl class="data">
-<dt id="wand.image.ALPHA_CHANNEL_TYPES">
-<tt class="descclassname">wand.image.</tt><tt class="descname">ALPHA_CHANNEL_TYPES</tt><em class="property"> = ('undefined', 'activate', 'background', 'copy', 'deactivate', 'extract', 'opaque', 'reset', 'set', 'shape', 'transparent', 'flatten', 'remove')</em><a class="headerlink" href="#wand.image.ALPHA_CHANNEL_TYPES" title="Permalink to this definition">¶</a></dt>
-<dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">tuple</span></tt>) The list of alpha chanell types</p>
+<dt id="wand.image.FILTER_TYPES">
+<tt class="descclassname">wand.image.</tt><tt class="descname">FILTER_TYPES</tt><em class="property"> = ('undefined', 'point', 'box', 'triangle', 'hermite', 'hanning', 'hamming', 'blackman', 'gaussian', 'quadratic', 'cubic', 'catrom', 'mitchell', 'jinc', 'sinc', 'sincfast', 'kaiser', 'welsh', 'parzen', 'bohman', 'bartlett', 'lagrange', 'lanczos', 'lanczossharp', 'lanczos2', 'lanczos2sharp', 'robidoux', 'robidouxsharp', 'cosine', 'spline', 'sentinel')</em><a class="headerlink" href="#wand.image.FILTER_TYPES" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">tuple</span></tt>) The list of filter types.</p>
 <ul class="simple">
 <li><tt class="docutils literal"><span class="pre">'undefined'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'activate'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'background'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'copy'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'deactivate'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'extract'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'opaque'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'reset'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'set'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'shape'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'transparent'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'flatten'</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">'remove'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'point'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'box'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'triangle'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'hermite'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'hanning'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'hamming'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'blackman'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'gaussian'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'quadratic'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'cubic'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'catrom'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'mitchell'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'jinc'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'sinc'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'sincfast'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'kaiser'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'welsh'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'parzen'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'bohman'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'bartlett'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'lagrange'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'lanczos'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'lanczossharp'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'lanczos2'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'lanczos2sharp'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'robidoux'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'robidouxsharp'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'cosine'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'spline'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'sentinel'</span></tt></li>
 </ul>
 <div class="admonition-see-also admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference external" href="http://www.imagemagick.org/api/channel.php#SetImageAlphaChannel">ImageMagick Image Channel</a>
-   Describes the SetImageAlphaChannel method which can be used
-   to modify alpha channel. Also describes AlphaChannelType</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://www.imagemagick.org/Usage/resize/">ImageMagick Resize Filters</a></dt>
+<dd>Demonstrates the results of resampling images using the various
+resize filters and blur settings available in ImageMagick.</dd>
+</dl>
 </div>
 </dd></dl>
 
@@ -326,6 +326,32 @@ various evaluations operators</dd>
 to set the type of an image</dd>
 </dl>
 </div>
+</dd></dl>
+
+<dl class="data">
+<dt id="wand.image.UNIT_TYPES">
+<tt class="descclassname">wand.image.</tt><tt class="descname">UNIT_TYPES</tt><em class="property"> = ('undefined', 'pixelsperinch', 'pixelspercentimeter')</em><a class="headerlink" href="#wand.image.UNIT_TYPES" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">tuple</span></tt>) The list of resolution unit types</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">'undefined'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'pixelsperinch'</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">'pixelspercentimeter'</span></tt></li>
+</ul>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://www.imagemagick.org/api/magick-image.php#MagickSetImageUnits">ImageMagick Image Units</a></dt>
+<dd>Describes the MagickSetImageUnits method which can be used
+to set image units of resolution</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="exception">
+<dt id="wand.image.ClosedImageError">
+<em class="property">exception </em><tt class="descclassname">wand.image.</tt><tt class="descname">ClosedImageError</tt><a class="headerlink" href="#wand.image.ClosedImageError" title="Permalink to this definition">¶</a></dt>
+<dd><p>An error that rises when some code tries access to an already closed
+image.</p>
 </dd></dl>
 
 <dl class="class">
@@ -897,6 +923,12 @@ image, from 0.0 to 1.0</td>
 </dd></dl>
 
 <dl class="attribute">
+<dt id="wand.image.Image.units">
+<tt class="descname">units</tt><a class="headerlink" href="#wand.image.Image.units" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">basestring</span></tt>) The resolution units of this image.</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="wand.image.Image.wand">
 <tt class="descname">wand</tt><a class="headerlink" href="#wand.image.Image.wand" title="Permalink to this definition">¶</a></dt>
 <dd><p>Internal pointer to the MagickWand instance. It may raise
@@ -973,13 +1005,6 @@ one or more <a class="reference internal" href="color.html#wand.color.Color" tit
 
 </dd></dl>
 
-<dl class="exception">
-<dt id="wand.image.ClosedImageError">
-<em class="property">exception </em><tt class="descclassname">wand.image.</tt><tt class="descname">ClosedImageError</tt><a class="headerlink" href="#wand.image.ClosedImageError" title="Permalink to this definition">¶</a></dt>
-<dd><p>An error that rises when some code tries access to an already closed
-image.</p>
-</dd></dl>
-
 </div>
 
 
@@ -997,9 +1022,9 @@ image.</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../wand.html"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a><ul>
-      <li>Previous: <a href="../wand.html" title="previous chapter"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a></li>
-      <li>Next: <a href="color.html" title="next chapter"><tt class="docutils literal docutils literal"><span class="pre">wand.color</span></tt> &#8212; Colors</a></li>
+  <li><a href="../wand.html"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a><ul>
+      <li>Previous: <a href="../wand.html" title="previous chapter"><tt class="docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a></li>
+      <li>Next: <a href="color.html" title="next chapter"><tt class="docutils literal"><span class="pre">wand.color</span></tt> &#8212; Colors</a></li>
   </ul></li>
   </ul></li>
 </ul>

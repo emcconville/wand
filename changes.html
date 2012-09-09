@@ -68,13 +68,15 @@
 <ul class="simple">
 <li>A compatibility fix for FreeBSD.
 [<a class="reference external" href="http://code.google.com/p/olivier-freebsd-ports/source/browse/graphics/py-wand/files/patch-wand_api.py">Patch</a> by Olivier Duchateau]</li>
-<li>Now <tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt> can be instantiated without any opening.
+<li>Now <a class="reference internal" href="wand/image.html#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a> can be instantiated without any opening.
 Instead, it can take <tt class="docutils literal"><span class="pre">width</span></tt>/<tt class="docutils literal"><span class="pre">height</span></tt> and <tt class="docutils literal"><span class="pre">background</span></tt>.
 [<a class="reference external" href="https://github.com/dahlia/wand/issues/53">#53</a> by Michael Elovskikh]</li>
 <li>Added <a class="reference internal" href="wand/image.html#wand.image.Image.transform" title="wand.image.Image.transform"><tt class="xref py py-meth docutils literal"><span class="pre">Image.transform()</span></tt></a> method
 which is a convenience method accepting geometry strings to perform
 cropping and resizing.
 [<a class="reference external" href="https://github.com/dahlia/wand/issues/50">#50</a> by Mitch Lindgren]</li>
+<li>Added <a class="reference internal" href="wand/image.html#wand.image.Image.units" title="wand.image.Image.units"><tt class="xref py py-attr docutils literal"><span class="pre">Image.units</span></tt></a> property.
+[<a class="reference external" href="https://github.com/dahlia/wand/issues/45">#45</a> by Piotr Florczyk]</li>
 <li>Now <a class="reference internal" href="wand/image.html#wand.image.Image.resize" title="wand.image.Image.resize"><tt class="xref py py-meth docutils literal"><span class="pre">Image.resize()</span></tt></a> method raises
 a proper error when it fails for any reason.
 [<a class="reference external" href="https://github.com/dahlia/wand/issues/41">#41</a> by Piotr Florczyk]</li>
