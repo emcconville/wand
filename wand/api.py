@@ -92,6 +92,9 @@ libmagick = libraries[1]
 try:
     library.NewMagickWand.restype = ctypes.c_void_p
 
+    library.MagickNewImage.argtypes = [ctypes.c_void_p, ctypes.c_int,
+                                       ctypes.c_int, ctypes.c_void_p]
+
     library.DestroyMagickWand.argtypes = [ctypes.c_void_p]
     library.DestroyMagickWand.restype = ctypes.c_void_p
 
@@ -152,6 +155,10 @@ try:
     library.MagickGetImageHeight.argtypes = [ctypes.c_void_p]
     library.MagickGetImageHeight.restype = ctypes.c_size_t
 
+    library.MagickGetImageUnits.argtypes = [ctypes.c_void_p]
+
+    library.MagickSetImageUnits.argtypes = [ctypes.c_void_p, ctypes.c_int]
+
     library.MagickGetImageDepth.argtypes = [ctypes.c_void_p]
     library.MagickGetImageDepth.restype = ctypes.c_size_t
 
@@ -166,6 +173,10 @@ try:
     library.MagickResizeImage.argtypes = [ctypes.c_void_p, ctypes.c_size_t,
                                           ctypes.c_size_t, ctypes.c_int,
                                           ctypes.c_double]
+
+    library.MagickTransformImage.argtypes = [ctypes.c_void_p, ctypes.c_char_p,
+                                             ctypes.c_char_p]
+    library.MagickTransformImage.restype = ctypes.c_void_p
 
     library.MagickRotateImage.argtypes = [ctypes.c_void_p, ctypes.c_void_p,
                                           ctypes.c_double]
@@ -258,6 +269,8 @@ try:
 
     library.MagickPreviousImage.argtypes = [ctypes.c_void_p]
 
+    library.MagickGetImageType.argtypes = [ctypes.c_void_p]
+    
     library.MagickSetImageType.argtypes = [ctypes.c_void_p, ctypes.c_int]
 
     library.MagickEvaluateImageChannel.argtypes = [ctypes.c_void_p,
@@ -295,6 +308,8 @@ if platform.system() == 'Windows':
 else:
     if platform.system() == 'Darwin':
         libc = ctypes.cdll.LoadLibrary('libc.dylib')
+    elif platform.system() == 'FreeBSD':
+        libc = ctypes.cdll.LoadLibrary(ctypes.util.find_library('c'))
     else:
         libc = ctypes.cdll.LoadLibrary('libc.so.6')
     libc.fdopen.argtypes = [ctypes.c_int, ctypes.c_char_p]

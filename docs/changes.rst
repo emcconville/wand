@@ -1,10 +1,35 @@
 Wand Changelog
 ==============
 
+Version 0.2.2
+-------------
+
+To be released.
+
+- A compatibility fix for FreeBSD.
+  [`Patch`__ by Olivier Duchateau]
+- Now :class:`~wand.image.Image` can be instantiated without any opening.
+  Instead, it can take ``width``/``height`` and ``background``.
+  [:issue:`53` by Michael Elovskikh]
+- Added :meth:`Image.transform() <wand.image.Image.transform>` method
+  which is a convenience method accepting geometry strings to perform
+  cropping and resizing.
+  [:issue:`50` by Mitch Lindgren]
+- Added :attr:`Image.units <wand.image.Image.units>` property.
+  [:issue:`45` by Piotr Florczyk]
+- Now :meth:`Image.resize() <wand.image.Image.resize>` method raises
+  a proper error when it fails for any reason.
+  [:issue:`41` by Piotr Florczyk]
+- Added :attr:`Image.type <wand.image.Image.type>` property.
+  [:issue:`33` by Yauhen Yakimovich, :issue:`42` by Piotr Florczyk]
+
+__ http://code.google.com/p/olivier-freebsd-ports/source/browse/graphics/py-wand/files/patch-wand_api.py
+
+
 Version 0.2.1
 -------------
 
-To be released.  Alpha version.
+Released on August 19, 2012.  Beta version.
 
 - Added :meth:`Image.trim() <wand.image.Image.trim>` method.
   [:issue:`26` by Jökull Sólberg Auðunsson]
@@ -18,7 +43,7 @@ To be released.  Alpha version.
 - Added :attr:`Image.alpha_channel <wand.image.Image.alpha_channel>`
   property.  [:issue:`35` by Piotr Florczyk]
 
-- The default value of :meth:`Image.resize() <wand.image.Imageresize>`'s
+- The default value of :meth:`Image.resize() <wand.image.Image.resize>`'s
   ``filter`` option has changed from ``'triangle'`` to ``'undefined'``.
   [:issue:`37` by Piotr Florczyk]
 

@@ -21,7 +21,9 @@ from .color import Color
 from .resource import DestroyedResourceError, Resource
 
 
-__all__ = 'FILTER_TYPES', 'Image', 'Iterator', 'ClosedImageError'
+__all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COMPOSITE_OPS', 'EVALUATE_OPS',
+           'FILTER_TYPES', 'IMAGE_TYPES', 'UNIT_TYPES', 'ClosedImageError',
+           'Image', 'Iterator')
 
 
 #: (:class:`tuple`) The list of filter types.
@@ -149,7 +151,7 @@ COMPOSITE_OPS = ('undefined', 'no', 'add', 'atop', 'blend', 'bumpmap',
                  'multiply', 'out', 'over', 'overlay', 'plus', 'replace',
                  'saturate', 'screen', 'soft_light', 'src_atop', 'src',
                  'src_in', 'src_out', 'src_over', 'subtract', 'threshold',
-                 'xor', 'divide',)
+                 'xor', 'divide')
 
 #: (:class:`dict`) The dictionary of channel types.
 #:
@@ -161,12 +163,17 @@ COMPOSITE_OPS = ('undefined', 'no', 'add', 'atop', 'blend', 'bumpmap',
 #: - ``'magenta'``
 #: - ``'blue'``
 #: - ``'yellow'``
-#: - ``'black'``
 #: - ``'alpha'``
 #: - ``'opacity'``
+#: - ``'black'``
 #: - ``'index'``
-#: - ``'mask'``
-#: - ``'meta'``
+#: - ``'composite_channels'``
+#: - ``'all_channels'``
+#: - ``'true_alpha'``
+#: - ``'rgb_channels'``
+#: - ``'gray_channels'``
+#: - ``'sync_channels'``
+#: - ``'default_channels'``
 #:
 #: .. seealso::
 #:
@@ -175,8 +182,10 @@ COMPOSITE_OPS = ('undefined', 'no', 'add', 'atop', 'blend', 'bumpmap',
 #:
 #:    __ http://www.imagemagick.org/Magick++/Enumerations.html#ChannelType
 CHANNELS = dict(undefined=0, red=1, gray=1, cyan=1, green=2, magenta=2,
-                blue=4, yellow=4, black=8, alpha=16, opacity=16, index=32,
-                mask=64, meta=128)
+                blue=4, yellow=4, alpha=8, opacity=8, black=32, index=32,
+                composite_channels=47, all_channels=134217727, true_alpha=64,
+                rgb_channels=128, gray_channels=128, sync_channels=256,
+                default_channels=134217719)
 
 #: (:class:`tuple`) The list of evaluation operators
 #:
@@ -226,36 +235,33 @@ EVALUATE_OPS = ('undefined', 'add', 'and', 'divide', 'leftshift', 'max',
                 'thresholdwhite', 'gaussiannoise', 'impulsenoise',
                 'laplaciannoise', 'multiplicativenoise', 'poissonnoise',
                 'uniformnoise', 'cosine', 'sine', 'addmodulus', 'mean',
-                'abs', 'exponential', 'median', 'sum',)
+                'abs', 'exponential', 'median', 'sum')
 
 #: (:class:`tuple`) The list of alpha chanell types
 #:
-#: - ``'undefinedalphachannel'``
-#: - ``'activatealphachannel'``
-#: - ``'backgroundalphachannel'``
-#: - ``'copyalphachannel'``
-#: - ``'deactivatealphachannel'``
-#: - ``'extractalphachannel'``
-#: - ``'opaquealphachannel'``
-#: - ``'resetalphachannel'``
-#: - ``'setalphachannel'``
-#: - ``'shapealphachannel'``
-#: - ``'transparentalphachannel'``
-#: - ``'flattenalphachannel'``
-#: - ``'removealphachannel'``
+#: - ``'undefined'``
+#: - ``'activate'``
+#: - ``'background'``
+#: - ``'copy'``
+#: - ``'deactivate'``
+#: - ``'extract'``
+#: - ``'opaque'``
+#: - ``'reset'``
+#: - ``'set'``
+#: - ``'shape'``
+#: - ``'transparent'``
+#: - ``'flatten'``
+#: - ``'remove'``
 #:
 #: .. seealso::
 #:    `ImageMagick Image Channel`__
 #:       Describes the SetImageAlphaChannel method which can be used
 #:       to modify alpha channel. Also describes AlphaChannelType
+#:
 #:    __ http://www.imagemagick.org/api/channel.php#SetImageAlphaChannel
-ALPHA_CHANNEL_TYPES = ('undefinedalphachannel', 'activatealphachannel',
-                       'backgroundalphachannel', 'copyalphachannel',
-                       'deactivatealphachannel', 'extractalphachannel',
-                       'opaquealphachannel', 'resetalphachannel',
-                       'setalphachannel', 'shapealphachannel',
-                       'transparentalphachannel', 'flattenalphachannel',
-                       'removealphachannel',)
+ALPHA_CHANNEL_TYPES = ('undefined', 'activate', 'background', 'copy',
+                       'deactivate', 'extract', 'opaque', 'reset', 'set',
+                       'shape', 'transparent', 'flatten', 'remove')
 
 #: (:class:`tuple`) The list of image types
 #:
@@ -282,7 +288,23 @@ ALPHA_CHANNEL_TYPES = ('undefinedalphachannel', 'activatealphachannel',
 IMAGE_TYPES = ('undefined', 'bilevel', 'grayscale', 'grayscalematte',
                'palette', 'palettematte', 'truecolor', 'truecolormatte',
                'colorseparation', 'colorseparationmatte', 'optimize',
-               'palettebilevelmatte',)
+               'palettebilevelmatte')
+
+#: (:class:`tuple`) The list of resolution unit types
+#:
+#: - ``'undefined'``
+#: - ``'pixelsperinch'``
+#: - ``'pixelspercentimeter'``
+#:
+#: .. seealso::
+#:
+#:    `ImageMagick Image Units`__
+#:       Describes the MagickSetImageUnits method which can be used
+#:       to set image units of resolution
+#:
+#:    __ http://www.imagemagick.org/api/magick-image.php#MagickSetImageUnits
+UNIT_TYPES = 'undefined', 'pixelsperinch', 'pixelspercentimeter'
+
 
 class Image(Resource):
     """An image object.
@@ -299,6 +321,14 @@ class Image(Resource):
                    imagemagick detect the file format. Used only in
                    ``blob`` or ``file`` cases
     :type format: :class:`basestring`
+    :param width: the width of new blank image.
+    :type width: :class:`numbers.Integral`
+    :param height: the height of new blank imgage.
+    :type height: :class:`numbers.Integral`
+    :param background: an optional background color.
+                       default is transparent
+    :type background: :class:`wand.color.Color`
+
 
     .. versionadded:: 0.1.5
        The ``file`` parameter.
@@ -308,6 +338,9 @@ class Image(Resource):
 
     .. versionadded:: 0.2.1
        The ``format`` parameter.
+
+    .. versionadded:: 0.2.2
+       The ``width``, ``height``, ``background`` parameters.
 
     .. describe:: [left:right, top:bottom]
 
@@ -343,19 +376,41 @@ class Image(Resource):
     __slots__ = '_wand',
 
     def __init__(self, image=None, blob=None, file=None, filename=None,
-                 format=None):
-        args = image, blob, file, filename
-        if all(a is None for a in args):
-            raise TypeError('missing arguments')
+                 format=None, width=None, height=None, background=None):
+        new_args = width, height, background
+        open_args = image, blob, file, filename
+
+        if (any(a is not None for a in new_args) and
+            any(a is not None for a in open_args)):
+            raise TypeError('blank image parameters cant be used with image '
+                            'opening parameters')
+        elif all(a is None for a in open_args):
+            # Create a blank image
+            if not isinstance(width, numbers.Integral) or width < 1:
+                raise TypeError('width must be a natural number, not ' +
+                                repr(width))
+            if not isinstance(height, numbers.Integral) or height < 1:
+                raise TypeError('height must be a natural number, not ' +
+                                repr(height))
+            if background is not None and not isinstance(background, Color):
+                raise TypeError('background must be a wand.color.Color '
+                                'instance, not ' + repr(background))
         elif any(a is not None and b is not None
-                 for i, a in enumerate(args)
-                 for b in args[:i] + args[i + 1:]):
+                 for i, a in enumerate(open_args)
+                 for b in open_args[:i] + open_args[i + 1:]):
             raise TypeError('parameters are exclusive each other; use only '
                             'one at once')
         elif not (format is None or isinstance(format, basestring)):
             raise TypeError('format must be a string, not ' + repr(format))
         with self.allocate():
-            if image is not None:
+            if width is not None and height is not None:
+                if background is None:
+                    background = Color('transparent')
+                self.wand = library.NewMagickWand()
+                with background:
+                    library.MagickNewImage(self.wand, width, height,
+                                           background.resource)
+            elif image is not None:
                 if not isinstance(image, Image):
                     raise TypeError('image must be a wand.image.Image '
                                     'instance, not ' + repr(image))
@@ -555,6 +610,21 @@ class Image(Resource):
         return self.width, self.height
 
     @property
+    def units(self):
+        """(:class:`basestring`) The resolution units of this image."""
+        r = library.MagickGetImageUnits(self.wand)
+        return UNIT_TYPES[r]
+
+    @units.setter
+    def units(self, units):
+        if not isinstance(units, basestring) or units not in UNIT_TYPES: 
+            raise TypeError('Unit value must be a string from wand.images.'
+                            'UNIT_TYPES, not ' + repr(units))
+        r = library.MagickSetImageUnits(self.wand, UNIT_TYPES.index(units))
+        if not r:
+            self.raise_exception()
+
+    @property
     def depth(self):
         """(:class:`numbers.Integral`) The depth of this image.
 
@@ -605,6 +675,33 @@ class Image(Resource):
         r = library.MagickSetImageFormat(self.wand, fmt.strip().upper())
         if not r:
             raise ValueError(repr(fmt) + ' is unsupported format')
+
+    @property
+    def type(self):
+        """(:class:`basestring`) The image type.
+
+        Defines image type as in wand.image.IMAGE_TYPES enumeration.
+
+        It may raise :exc:`ValueError` when the type is unknown.
+
+        .. versionadded:: 0.2.2
+
+        """
+        image_type_index = library.MagickGetImageType(self.wand)
+        if not image_type_index:
+            self.raise_exception()
+        return IMAGE_TYPES[image_type_index]
+
+    @type.setter
+    def type(self, image_type):
+        if not isinstance(image_type, basestring) \
+            or image_type not in IMAGE_TYPES:
+            raise TypeError('Type value must be a string from IMAGE_TYPES'
+                            ', not ' + repr(image_type))
+        r = library.MagickSetImageType(self.wand,
+                                       IMAGE_TYPES.index(image_type))
+        if not r:
+            self.raise_exception()
 
     @property
     def compression_quality(self):
@@ -679,9 +776,9 @@ class Image(Resource):
     @alpha_channel.setter
     def alpha_channel(self, alpha):
         if alpha == True:
-            act = ALPHA_CHANNEL_TYPES.index('activatealphachannel')
+            act = ALPHA_CHANNEL_TYPES.index('activate')
         elif alpha == False:
-            act = ALPHA_CHANNEL_TYPES.index('deactivatealphachannel')
+            act = ALPHA_CHANNEL_TYPES.index('deactivate')
         else:
             raise TypeError('alpha_channel must be bool, not ' +
                             repr(alpha))
@@ -918,7 +1015,118 @@ class Image(Resource):
               not (0 <= filter < len(FILTER_TYPES))):
             raise ValueError(repr(filter) + ' is an invalid filter type')
         blur = ctypes.c_double(float(blur))
-        library.MagickResizeImage(self.wand, width, height, filter, blur)
+        r = library.MagickResizeImage(self.wand, width, height, filter, blur)
+        if not r:
+            self.raise_exception()
+
+    def transform(self, crop='', resize=''):
+        """Transforms the image using :c:func:`MagickTransformImage`,
+        which is a convenience function accepting geometry strings to
+        perform cropping and resizing.  Cropping is performed first,
+        followed by resizing.  Either or both arguments may be omitted
+        or given an empty string, in which case the corresponding action
+        will not be performed. Geometry specification strings are
+        defined as follows:
+
+        A geometry string consists of a size followed by an optional offset.
+        The size is specified by one of the options below,
+        where **bold** terms are replaced with appropriate integer values:
+
+        **scale**\ ``%``
+          Height and width both scaled by specified percentage
+
+        **scale-x**\ ``%x``\ \ **scale-y**\ ``%``
+          Height and width individually scaled by specified percentages.
+          Only one % symbol is needed.
+
+        **width**
+          Width given, height automagically selected to preserve aspect ratio.
+
+        ``x``\ \ **height**
+          Height given, width automagically selected to preserve aspect ratio.
+
+        **width**\ ``x``\ **height**
+          Maximum values of width and height given; aspect ratio preserved.
+
+        **width**\ ``x``\ **height**\ ``!``
+          Width and height emphatically given; original aspect ratio ignored.
+
+        **width**\ ``x``\ **height**\ ``>``
+          Shrinks images with dimension(s) larger than the corresponding
+          width and/or height dimension(s).
+
+        **width**\ ``x``\ **height**\ ``<``
+          Enlarges images with dimensions smaller than the corresponding
+          width and/or height dimension(s).
+
+        **area**\ ``@``
+          Resize image to have the specified area in pixels.
+          Aspect ratio is preserved.
+
+        The offset, which only applies to the cropping geometry string,
+        is given by ``{+-}``\ **x**\ ``{+-}``\ **y**\ , that is,
+        one plus or minus sign followed by an **x** offset,
+        followed by another plus or minus sign, followed by a **y** offset.
+        Offsets are in pixels from the upper left corner of the image.
+        Negative offsets will cause the corresponding number of pixels to
+        be removed from the right or bottom edge of the image, meaning the
+        cropped size will be the computed size minus the absolute value
+        of the offset.
+
+        For example, if you want to crop your image to 300x300 pixels
+        and then scale it by 2x for a final size of 600x600 pixels,
+        you can call::
+
+            image.transform('300x300', '200%')
+
+        This method is a fairly thing wrapper for the C API, and does not
+        perform any additional checking of the parameters except insofar as
+        verifying that they are of the correct type.  Thus, like the C
+        API function, the method is very permissive in terms of what
+        it accepts for geometry strings; unrecognized strings and
+        trailing characters will be ignored rather than raising an error.
+
+        :param crop: A geometry string defining a subregion of the image
+                     to crop to
+        :type crop: :class:`basestring`
+        :param resize: A geometry string defining the final size of the image
+        :type resize: :class:`basestring`
+
+        .. seealso::
+
+           `ImageMagick Geometry Specifications`__
+              Cropping and resizing geometry for the ``transform`` method are
+              specified according to ImageMagick's geometry string format.
+              The ImageMagick documentation provides more information about
+              geometry strings.
+
+           __ http://www.imagemagick.org/script/command-line-processing.php#geometry
+
+        .. versionadded:: 0.2.2
+
+        """
+        # Check that the values given are the correct types.  ctypes will do
+        # this automatically, but we can make the error message more friendly
+        # here.
+        if not isinstance(crop, basestring):
+            raise TypeError("crop must be a string, not " + repr(crop))
+        if not isinstance(resize, basestring):
+            raise TypeError("resize must be a string, not " + repr(resize))
+        # Also verify that only ASCII characters are included
+        try:
+            crop.encode('ascii')
+        except UnicodeEncodeError:
+            raise ValueError('crop must only contain ascii-encodable ' +
+                             'characters.')
+        try:
+            resize.encode('ascii')
+        except UnicodeEncodeError:
+            raise ValueError('resize must only contain ascii-encodable ' +
+                             'characters.')
+        new_wand = library.MagickTransformImage(self.wand, crop, resize)
+        if not new_wand:
+            self.raise_exception()
+        self.wand = new_wand
 
     def rotate(self, degree, background=None, reset_coords=True):
         """Rotates the image. It takes a ``background`` color for ``degree``
@@ -974,7 +1182,7 @@ class Image(Resource):
             if t.value > self.quantum_range or t.value < 0:
                 raise ValueError('transparency must be a numbers.Real value ' +
                                  'between 0.0 and 1.0')
-            # Set the wand to image zero, incase there are multiple images in it
+            # Set the wand to image zero, in case there are multiple images in it
             library.MagickSetIteratorIndex(self.wand, 0)
             # Change the pixel representation of the image
             # to RGB with an alpha channel
@@ -982,7 +1190,7 @@ class Image(Resource):
                                        IMAGE_TYPES.index('truecolormatte'))
             # Perform the black channel subtraction
             library.MagickEvaluateImageChannel(self.wand,
-                                               CHANNELS.get('black', 8),
+                                               CHANNELS['black'],
                                                EVALUATE_OPS.index('subtract'),
                                                t)
             self.raise_exception()

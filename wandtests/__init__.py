@@ -1,5 +1,6 @@
 import datetime
 import numbers
+import os
 import re
 
 from attest import Tests
@@ -11,9 +12,26 @@ from . import color, image, resource
 
 
 tests = Tests()
-tests.register(resource.tests)  # it must be the first
-tests.register(color.tests)
-tests.register(image.tests)
+skip_tests = frozenset(os.environ.get('WANDTESTS_SKIP', '').split())
+only_tests = frozenset(os.environ.get('WANDTESTS_ONLY', '').split())
+
+
+def register(test_module):
+    """Conditionally register the ``test_module`` according to
+    environment variables.
+
+    """
+    name = test_module.__name__.split('.', 1)[1]
+    if name in skip_tests:
+        return
+    elif only_tests and name not in only_tests:
+        return
+    tests.register(test_module.tests)
+
+
+register(resource)  # it must be the first
+register(color)
+register(image)
 
 
 @tests.test

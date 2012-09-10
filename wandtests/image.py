@@ -7,8 +7,26 @@ except ImportError:
 
 from attest import Tests, assert_hook, raises
 
-from wand.image import ClosedImageError, Image, Sequence
 from wand.color import Color
+from wand.image import ClosedImageError, Image, Sequence
+from wand.version import MAGICK_VERSION_INFO
+
+
+def get_sig_version(versions):
+    """Returns matching signature version value for current
+    `ImageMagick` version.
+
+    :param versions: Dict of versions.
+    :type versions: :class:`dict`
+    :returns: matched sig value
+    :rtype: :class:`basestring`
+
+    """
+    sorted_versions = reversed(sorted(versions.keys()))
+    for v in sorted_versions:
+        if v <= MAGICK_VERSION_INFO:
+            return versions[v]
+    return versions[v]
 
 
 tests = Tests()
@@ -16,6 +34,21 @@ tests = Tests()
 
 def asset(filename):
     return os.path.join(os.path.dirname(__file__), 'assets', filename)
+
+
+@tests.test
+def blank_image():
+    gray = Color('#ccc')
+    transparent = Color('transparent')
+    with raises(TypeError):
+        Image(height=0, filename='/test.png')
+    with raises(TypeError):
+        Image(width=0, height=0)
+    with Image(width=20, height=10) as img:
+        assert img[10, 5] == transparent
+    with Image(width=20, height=10, background=gray) as img:
+        assert img.size == (20, 10)
+        assert img[10, 5] == gray
 
 
 @tests.test
@@ -71,7 +104,7 @@ def new_with_format():
 
 @tests.test
 def clone():
-    """Cloens the existing image."""
+    """Clones the existing image."""
     funcs = (lambda img: Image(image=img),
              lambda img: img.clone())
     with Image(filename=asset('mona-lisa.jpg')) as img:
@@ -154,11 +187,30 @@ def size():
         assert img.height == 599
         assert len(img) == 599
 
+
+@tests.test
+def get_units():
+    """Gets the image resolution units."""
+    with Image(filename=asset('beach.jpg')) as img:
+        assert img.units == "pixelsperinch"
+    with Image(filename=asset('sasha.jpg')) as img:
+        assert img.units == "undefined"
+
+
+@tests.test
+def set_units():
+    """Sets the image resolution units."""
+    with Image(filename=asset('watermark.png')) as img:
+        img.units="pixelspercentimeter"
+        assert img.units == "pixelspercentimeter"
+
+
 @tests.test
 def get_depth():
     """Gets the image depth"""
     with Image(filename=asset('mona-lisa.jpg')) as img:
         assert img.depth == 8
+
 
 @tests.test
 def set_depth():
@@ -166,6 +218,7 @@ def set_depth():
     with Image(filename=asset('mona-lisa.jpg')) as img:
         img.depth = 16
         assert img.depth == 16
+
 
 @tests.test
 def get_format():
@@ -192,6 +245,22 @@ def set_format():
         with raises(TypeError):
             img.format = 123
 
+
+@tests.test
+def get_type():
+    """Gets the image type."""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        assert img.type == "truecolor"
+        img.alpha_channel = True
+        assert img.type == "truecolormatte"
+
+
+@tests.test
+def set_type():
+    """Sets the image type."""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        img.type = "grayscale"
+        assert img.type == "grayscale"
 
 @tests.test
 def get_compression():
@@ -482,6 +551,81 @@ def resize_errors():
         with raises(ValueError):
             img.resize(height=-5)
 
+@tests.test
+def transform():
+    """Transforms (crops and resizes with geometry strings) the image."""
+    with Image(filename=asset('beach.jpg')) as img:
+        with img.clone() as a:
+            assert a.size == (800, 600)
+            a.transform(resize='200%')
+            assert a.size == (1600, 1200)
+        with img.clone() as b:
+            assert b.size == (800, 600)
+            b.transform(resize='200%x100%')
+            assert b.size == (1600, 600)
+        with img.clone() as c:
+            assert c.size == (800, 600)
+            c.transform(resize='1200')
+            assert c.size == (1200, 900)
+        with img.clone() as d:
+            assert d.size == (800, 600)
+            d.transform(resize='x300')
+            assert d.size == (400, 300)
+        with img.clone() as e:
+            assert e.size == (800, 600)
+            e.transform(resize='400x600')
+            assert e.size == (400, 300)
+        with img.clone() as f:
+            assert f.size == (800, 600)
+            f.transform(resize='1000x1200^')
+            assert f.size == (1600, 1200)
+        with img.clone() as g:
+            assert g.size == (800, 600)
+            g.transform(resize='100x100!')
+            assert g.size == (100, 100)
+        with img.clone() as h:
+            assert h.size == (800, 600)
+            h.transform(resize='400x500>')
+            assert h.size == (400, 300)
+        with img.clone() as i:
+            assert i.size == (800, 600)
+            i.transform(resize='1200x3000<')
+            assert i.size == (1200, 900)
+        with img.clone() as j:
+            assert j.size == (800, 600)
+            j.transform(resize='120000@')
+            assert j.size == (400, 300)
+        with img.clone() as k:
+            assert k.size == (800, 600)
+            k.transform(crop='300x300')
+            assert k.size == (300, 300)
+        with img.clone() as l:
+            assert l.size == (800, 600)
+            l.transform(crop='300x300+100+100')
+            assert l.size == (300, 300)
+        with img.clone() as m:
+            assert m.size == (800, 600)
+            m.transform(crop='300x300-150-150')
+            assert m.size == (150, 150)
+        with img.clone() as n:
+            assert n.size == (800, 600)
+            n.transform('300x300', '200%')
+            assert n.size == (600, 600)
+
+@tests.test
+def transform_errors():
+    """Tests errors raised by invalid parameters for transform."""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        with raises(TypeError):
+            img.transform(crop=500)
+        with raises(TypeError):
+            img.transform(resize=500)
+        with raises(TypeError):
+            img.transform(500, 500)
+        with raises(ValueError):
+            img.transform(crop=u'⚠ ')
+        with raises(ValueError):
+            img.transform(resize=u'⚠ ')
 
 @tests.test
 def rotate():
@@ -523,7 +667,12 @@ def rotate():
 @tests.test
 def signature():
     """Gets the image signature."""
-    sig = '763774301b62cf9ea033b661f5136fbda7e8de96254aec3dd0dff63c05413a1e'
+    sig = get_sig_version({
+        (6, 6, 9, 7):
+            '763774301b62cf9ea033b661f5136fbda7e8de96254aec3dd0dff63c05413a1e',
+        (6, 7, 7, 6):
+            '8c6ef1dcb1bacb6ad8edf307f2f2c6a129b3b7aa262ee288325f9fd334006374'
+    })
     with Image(filename=asset('mona-lisa.jpg')) as img:
         assert img.signature == sig
         img.format = 'png'
@@ -554,6 +703,7 @@ def object_hash():
         b = hash(img)
         assert a == b
 
+
 @tests.test
 def get_alpha_channel():
     """Checks if image has alpha channel."""
@@ -571,11 +721,13 @@ def set_alpha_channel():
         img.alpha_channel = False
         assert img.alpha_channel == False
 
+
 @tests.test
 def get_background_color():
     """Gets the background color."""
     with Image(filename=asset('mona-lisa.jpg')) as img:
         assert Color('white') == img.background_color
+
 
 @tests.test
 def set_background_color():
@@ -589,13 +741,18 @@ def set_background_color():
 @tests.test
 def watermark():
     """Adds  watermark to an image."""
+    sig = get_sig_version({
+        (6, 6, 9, 7):
+            '9c4c182e44ee265230761a412e355cb78ea61859658220ecc8cbc1d56f58584e',
+        (6, 7, 7, 6):
+            'd725d924a9008ddff828f22595237ec6b56fb54057c6ee99584b9fc7ac91092c'
+    })
     with Image(filename=asset('beach.jpg')) as img:
         with Image(filename=asset('watermark.png')) as wm:
             img.watermark(wm, 0.3)
-            with Image(filename=asset('marked.png')) as marked:
-                msg = 'img = {0!r}, marked = {1!r}'.format(
-                    img.signature, marked.signature)
-                assert img == marked, msg
+            msg = 'img = {0!r}, marked = {1!r}'.format(
+                img.signature, sig)
+            assert img.signature == sig, msg
 
 
 @tests.test
@@ -604,13 +761,19 @@ def reset_coords():
     the image is (0, 0) again.
 
     """
+    sig = get_sig_version({
+        (6, 6, 9, 7):
+            '9537655c852cb5a22f29ba016648ea29d1b9a55fd2b4399f4fcbbcd39cce1778',
+        (6, 7, 7, 6):
+            'e8ea17066378085a60f7213430af62c89ed3f416e98b39f2d434c96c2be82989',
+    })
     with Image(filename=asset('sasha.jpg')) as img:
             img.rotate(45, reset_coords=True)
             img.crop(0, 0, 170, 170)
-            with Image(filename=asset('resettest.png')) as control:
-                msg = 'img = {0!r}, control = {1!r}'.format(
-                    img.signature, control.signature)
-                assert img == control, msg
+            msg = 'img = {0!r}, control = {1!r}'.format(
+                img.signature, sig)
+            assert img.signature == sig, msg
+
 
 @tests.test
 def sequence():
