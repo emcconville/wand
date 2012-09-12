@@ -50,9 +50,9 @@ algorithms.
    __ http://www.dylanbeattie.net/magick/filters/result.html
 
 :meth:`Image.resize() <wand.image.Image.resize>` method takes ``width`` and
-``height`` of a desired size, optional ``filter`` (``'triangle'`` by
-default) and optional ``blur`` (default is 1). It returns nothing but
-resizes itself in-place.
+``height`` of a desired size, optional ``filter`` (``'undefined'`` by
+default which means IM will try to guess best one to use) and optional
+``blur`` (default is 1). It returns nothing but resizes itself in-place.
 
 .. sourcecode:: pycon
 
