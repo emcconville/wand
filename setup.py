@@ -29,7 +29,8 @@ class bundle_imagemagick(distutils.cmd.Command):
         'ImageMagick': (
             url_base + 'ImageMagick-6.7.9-5.tar.bz2',
             ['--disable-installed', '--without-magick-plus-plus',
-             '--enable-delegate-build'],
+             '--enable-delegate-build'] +
+            (['--disable-openmp'] if platform.system() == 'Darwin' else []),
             {
                 'CFLAGS': '-I@/include',
                 'CPPFLAGS': '-I@/include',
