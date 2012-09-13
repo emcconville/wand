@@ -368,6 +368,9 @@ class Image(Resource):
 
     """
 
+    #: (:class:`Metadata`) The metadata mapping of the image.  Read only.
+    metadata = None
+
     c_is_resource = library.IsMagickWand
     c_destroy_resource = library.DestroyMagickWand
     c_get_exception = library.MagickGetException
