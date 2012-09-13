@@ -90,6 +90,10 @@ library = libraries[0]
 libmagick = libraries[1]
 
 try:
+    library.MagickWandGenesis.argtypes = []
+    library.MagickWandTerminus.argtypes = []
+
+    library.NewMagickWand.argtypes = []
     library.NewMagickWand.restype = ctypes.c_void_p
 
     library.MagickNewImage.argtypes = [ctypes.c_void_p, ctypes.c_int,
