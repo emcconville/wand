@@ -6,6 +6,7 @@ import distutils.cmd
 import os
 import os.path
 import platform
+import re
 import shutil
 import subprocess
 import tarfile
@@ -34,11 +35,19 @@ class bundle_imagemagick(distutils.cmd.Command):
             {
                 'CFLAGS': '-I@/include',
                 'CPPFLAGS': '-I@/include',
-                'LDFLAGS': '-L@/lib'
+                'LDFLAGS': '-L@/lib -static'
             },
         ),
-        'jpeg': (url_base + 'jpegsrc.v8d.tar.gz', [], {}),
-        'libpng': (url_base + 'libpng-1.5.12.tar.gz', [], {})
+        'jpeg': (
+            url_base + 'jpegsrc.v8d.tar.gz',
+            ['--enable-static', '--disable-shared'],
+            {}
+        ),
+        'libpng': (
+            url_base + 'libpng-1.5.12.tar.gz',
+            ['--enable-static', '--disable-shared'],
+            {}
+        )
     }
     description = __doc__
     user_options = list(
@@ -93,8 +102,9 @@ class bundle_imagemagick(distutils.cmd.Command):
                 os.mkdir(subdir)
         libnames = states.keys()
         libnames.sort(key=lambda name: name == 'ImageMagick')
-        if not (path.isfile(join(magick_dir, 'lib', 'libMagickCore.so')) or
-                path.isfile(join(magick_dir, 'lib', 'libMagickCore.dylib'))):
+        magick_libdir = join(magick_dir, 'lib')
+        if not (path.isfile(join(magick_libdir, 'libMagickCore.so')) or
+                path.isfile(join(magick_libdir, 'libMagickCore.dylib'))):
             for libname in libnames:
                 log.info('Getting configured %s...', libname)
                 env = dict(os.environ)
@@ -108,14 +118,24 @@ class bundle_imagemagick(distutils.cmd.Command):
                                 cwd=dirname, env=env)
                 log.info('Building %s...', libname)
                 subprocess.call(['make', 'install'], cwd=dirname, env=env)
+            objects = (f for f in os.listdir(magick_libdir) if f.endswith('.a'))
+            if platform.system() == 'Darwin':
+                so_filename = 'libMagickCore.dylib'
+            else:
+                so_filename = 'libMagickCore.so'
+            subprocess.call(
+                ['cc', '-shared', '-o', so_filename] + list(objects),
+                cwd=magick_libdir
+            )
         dstdir = join('wand', 'lib')
         if not path.isdir(dstdir):
             os.mkdir(dstdir)
         package_data = self.distribution.package_data
         data = []
         libdir = join(magick_dir, 'lib')
+        soname_re = re.compile(r'\.(?:so|dylib)(?:.\d+)*$')
         for soname in os.listdir(libdir):
-            if soname.endswith(('.so', '.dylib')):
+            if soname_re.search(soname):
                 shutil.copy(join(libdir, soname), join(dstdir, soname))
                 data.append('lib/' + soname)
         package_data.setdefault('wand', []).extend(data)
