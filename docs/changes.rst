@@ -8,6 +8,7 @@ To be released.
 
 - Added :attr:`Image.metadata <wand.image.Image.metadata>` immutable mapping
   attribute and :class:`~wand.image.Metadata` mapping type for it.
+  [:issue:`56` by Michael Elovskikh]
 
 
 Version 0.2.2
