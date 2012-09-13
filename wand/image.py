@@ -460,6 +460,7 @@ class Image(Resource):
                     read = True
                 if not read:
                     raise TypeError('invalid argument(s)')
+            self.metadata = Metadata(self)
         self.raise_exception()
 
     @property
@@ -1421,10 +1422,54 @@ class Iterator(Resource, collections.Iterator):
         """
         return type(self)(iterator=self)
 
+import UserDict
+
+
+
+class Metadata(collections.Mapping):
+    """Class that implements dict-like read-only access to image metadata like
+    EXIF or IPTC headers.
+
+    :param image: An `Image` instance
+    :type image: :class:`Image`
+    """
+    def __init__(self, image):
+        if not isinstance(image, Image):
+            raise TypeError('expected a wand.image.Image instance, '
+                            'not ' + repr(image))
+        self.image = image
+
+    def __getitem__(self, k):
+        """
+        :param k: Metadata header name string.
+        :type k: :class:`basestring`
+        :returns: a header value string
+        :rtype: :class:`str`
+        """
+        if not isinstance(k, basestring):
+            raise TypeError('k must be a string, not ' + repr(format))
+
+        v = library.MagickGetImageProperty(self.image.wand, k)
+        if v is None:
+            raise KeyError
+        return v
+
+    def __iter__(self):
+        num = ctypes.c_size_t()
+        props_p = library.MagickGetImageProperties(self.image.wand, '', num)
+        props = [props_p[i] for i in xrange(num.value)]
+        library.MagickRelinquishMemory(props_p)
+        return iter(props)
+
+    def __len__(self):
+        num = ctypes.c_size_t()
+        props_p = library.MagickGetImageProperties(self.image.wand, '', num)
+        library.MagickRelinquishMemory(props_p)
+        return num.value
+
 
 class ClosedImageError(DestroyedResourceError):
     """An error that rises when some code tries access to an already closed
     image.
 
     """
-
