@@ -1427,12 +1427,14 @@ class Iterator(Resource, collections.Iterator):
 
 
 class Metadata(collections.Mapping):
-    """Class that implements dict-like read-only access to image metadata like
-    EXIF or IPTC headers.
+    """Class that implements dict-like read-only access to image metadata
+    like EXIF or IPTC headers.
 
     :param image: An `Image` instance
     :type image: :class:`Image`
+
     """
+
     def __init__(self, image):
         if not isinstance(image, Image):
             raise TypeError('expected a wand.image.Image instance, '
@@ -1448,7 +1450,6 @@ class Metadata(collections.Mapping):
         """
         if not isinstance(k, basestring):
             raise TypeError('k must be a string, not ' + repr(format))
-
         v = library.MagickGetImageProperty(self.image.wand, k)
         if v is None:
             raise KeyError
