@@ -369,6 +369,8 @@ class Image(Resource):
     """
 
     #: (:class:`Metadata`) The metadata mapping of the image.  Read only.
+    #:
+    #: .. versionadded:: 0.3.0
     metadata = None
 
     c_is_resource = library.IsMagickWand
@@ -1430,8 +1432,10 @@ class Metadata(collections.Mapping):
     """Class that implements dict-like read-only access to image metadata
     like EXIF or IPTC headers.
 
-    :param image: An `Image` instance
+    :param image: an image instance
     :type image: :class:`Image`
+
+    .. versionadded:: 0.3.0
 
     """
 
