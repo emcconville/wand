@@ -1422,9 +1422,6 @@ class Iterator(Resource, collections.Iterator):
         """
         return type(self)(iterator=self)
 
-import UserDict
-
-
 
 class Metadata(collections.Mapping):
     """Class that implements dict-like read-only access to image metadata like
