@@ -27,7 +27,7 @@ class bundle_imagemagick(distutils.cmd.Command):
     url_base = 'https://github.com/downloads/dahlia/wand/'
     libraries = {
         'ImageMagick': (
-            url_base + 'ImageMagick-6.7.8-7.tar.bz2',
+            url_base + 'ImageMagick-6.7.9-5.tar.bz2',
             ['--disable-installed', '--without-magick-plus-plus',
              '--enable-delegate-build'],
             {
