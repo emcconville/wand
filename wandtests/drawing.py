@@ -5,7 +5,7 @@ from wand.color import Color
 from wand.api import library, MagickPixelPacket
 from wand.drawing import Drawing
 
-from .image import asset
+from .image import asset, get_sig_version
 import ctypes
 
 tests = Tests()
@@ -117,6 +117,12 @@ def draw_line(wand):
 
 @tests.test
 def draw_text(wand):
+    sig = get_sig_version({
+        (6, 6, 9, 7):
+            '674cddb15f6e8527b509704641af21bd0549c15bd5be870734aeeaa473a7a60c',
+        (6, 7, 7, 6):
+            '54d1fc4825ef0bddebb5de88419f05351a8f137828cbae1f767fa4a2ca1bbab4',
+    })
     with Image(width=100, height=100, background=Color('#fff')) as img:
         with Drawing() as draw:
             draw.font = asset('League_Gothic.otf')
@@ -127,8 +133,7 @@ def draw_text(wand):
             draw.text(0, 0, 'Hello Wand')
             draw.draw(img)
 
-            assert img.signature ==\
-            '54d1fc4825ef0bddebb5de88419f05351a8f137828cbae1f767fa4a2ca1bbab4'
+            assert img.signature == sig
 
 if __name__ == '__main__':
     tests.run()
