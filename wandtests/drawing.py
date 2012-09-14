@@ -86,5 +86,13 @@ def clone_drawing_wand(wand):
             assert wand.drawing_wand is not cloned.drawing_wand
             assert wand.text_kerning == cloned.text_kerning
 
+@tests.test
+def clear_drawing_wand(wand):
+    wand.text_kerning = 10.22
+    assert wand.text_kerning == 10.22
+
+    wand.clear()
+    assert wand.text_kerning == 0
+
 if __name__ == '__main__':
     tests.run()

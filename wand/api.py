@@ -394,6 +394,9 @@ try:
                                             ctypes.c_char_p]
     library.MagickAnnotateImage.restype = ctypes.c_int
 
+    library.ClearDrawingWand.argtypes = [ctypes.c_void_p]
+    library.ClearDrawingWand.restype = None
+
 except AttributeError:
     raise ImportError('MagickWand shared library not found or incompatible')
 

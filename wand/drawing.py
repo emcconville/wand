@@ -202,3 +202,6 @@ class Drawing(Resource):
                             repr(color))
         with color:
             library.DrawSetTextUnderColor(self.drawing_wand, color.resource)
+
+    def clear(self):
+        library.ClearDrawingWand(self.drawing_wand)
