@@ -386,6 +386,13 @@ try:
                                               ctypes.c_void_p]
     library.DrawGetTextUnderColor.restype = None
 
+    library.DrawSetGravity.argtypes = [ctypes.c_void_p,
+                                       ctypes.c_int]
+    library.DrawSetGravity.restype = None
+
+    library.DrawGetGravity.argtypes = [ctypes.c_void_p]
+    library.DrawGetGravity.restype = ctypes.c_int
+
     library.MagickAnnotateImage.argtypes = [ctypes.c_void_p,
                                             ctypes.c_void_p,
                                             ctypes.c_double,
@@ -396,6 +403,23 @@ try:
 
     library.ClearDrawingWand.argtypes = [ctypes.c_void_p]
     library.ClearDrawingWand.restype = None
+
+    library.MagickDrawImage.argtypes = [ctypes.c_void_p,
+                                        ctypes.c_void_p]
+    library.MagickDrawImage.restype = ctypes.c_int
+
+    library.DrawLine.argtypes = [ctypes.c_void_p,
+                                 ctypes.c_double,
+                                 ctypes.c_double,
+                                 ctypes.c_double,
+                                 ctypes.c_double]
+    library.DrawLine.restype = None
+
+    library.DrawAnnotation.argtypes = [ctypes.c_void_p,
+                                       ctypes.c_double,
+                                       ctypes.c_double,
+                                       ctypes.POINTER(ctypes.c_ubyte)]
+    library.DrawAnnotation.restype = None
 
 except AttributeError:
     raise ImportError('MagickWand shared library not found or incompatible')

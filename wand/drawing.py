@@ -12,6 +12,9 @@ from .resource import Resource
 TEXT_ALIGN_TYPES = ('undefined', 'left', 'center', 'right')
 TEXT_DECORATION_TYPES = ('undefined', 'no', 'underline', 'overline',
                          'line_through')
+TEXT_GRAVITY_TYPE = ('forget', 'north_west', 'north',
+                     'north_east', 'west', 'center', 'east', 'south_west',
+                     'south', 'south_east', 'static')
 
 __all__ = "Drawing",
 
@@ -203,5 +206,62 @@ class Drawing(Resource):
         with color:
             library.DrawSetTextUnderColor(self.drawing_wand, color.resource)
 
+    @property
+    def gravity(self):
+        gravity_index = library.DrawGetGravity(self.drawing_wand)
+        if not gravity_index:
+            self.raise_exception()
+
+        return TEXT_GRAVITY_TYPE[gravity_index]
+
+    @gravity.setter
+    def gravity(self, value):
+        if not isinstance(value, basestring) \
+            or value not in TEXT_GRAVITY_TYPE:
+            raise TypeError('Gravity value must be a string from ' +
+                            'TEXT_GRAVITY_TYPE, not ' + repr(value))
+
+        library.DrawSetGravity(self.drawing_wand,
+                               TEXT_GRAVITY_TYPE.index(value))
+
+
     def clear(self):
         library.ClearDrawingWand(self.drawing_wand)
+
+    def draw(self, image):
+        res = library.MagickDrawImage(image.wand, self.drawing_wand)
+        if not res:
+            self.raise_exception()
+
+    def line(self, start, end):
+        if not isinstance(start, tuple) or len(start) != 2:
+            raise TypeError('start must be a 2-dimensional tuple')
+        if not isinstance(end, tuple) or len(end) != 2:
+            raise TypeError('end must be a 2-dimensional tuple')
+
+        library.DrawLine(self.drawing_wand,
+                         start[0],
+                         start[1],
+                         end[0],
+                         end[1])
+
+    def text(self, x, y, body):
+        if not isinstance(x, numbers.Integral) or x < 0:
+            raise TypeError('x must be a natural number, not ' + repr(x))
+
+        if not isinstance(y, numbers.Integral) or y < 0:
+            raise TypeError('y must be a natural number, not ' + repr(x))
+
+        if not isinstance(body, basestring) or len(body) < 1:
+            raise TypeError('body must be a string, not ' + repr(body))
+
+        body_p = None
+        if self.text_encoding:
+            body_p = ctypes.create_string_buffer(body.encode(self.text_encoding))
+        else:
+            body_p = ctypes.create_string_buffer(body)
+
+        library.DrawAnnotation(self.drawing_wand,
+                               x,
+                               y,
+                               ctypes.cast(body_p,ctypes.POINTER(ctypes.c_ubyte)))

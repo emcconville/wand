@@ -1,5 +1,6 @@
 from attest import Tests, assert_hook, raises
 
+from wand.image import Image
 from wand.color import Color
 from wand.api import library, MagickPixelPacket
 from wand.drawing import Drawing
@@ -76,6 +77,11 @@ def set_get_text_under_color(wand):
     assert wand.text_under_color == Color('#333333')
 
 @tests.test
+def set_get_gravity(wand):
+    wand.gravity = 'center'
+    assert wand.gravity == 'center'
+
+@tests.test
 def clone_drawing_wand(wand):
     wand.text_kerning = 10.22
 
@@ -93,6 +99,36 @@ def clear_drawing_wand(wand):
 
     wand.clear()
     assert wand.text_kerning == 0
+
+@tests.test
+def draw_line(wand):
+    gray = Color('#ccc')
+    with Image(width=10, height=10, background=gray) as img:
+        with Color('#333333') as black:
+            wand.fill_color = black
+        wand.line((5,5), (7,5))
+        wand.draw(img)
+
+        assert img[4,5] == Color('#ccc')
+        assert img[5,5] == Color('#333333')
+        assert img[6,5] == Color('#333333')
+        assert img[7,5] == Color('#333333')
+        assert img[8,5] == Color('#ccc')
+
+@tests.test
+def draw_text(wand):
+    with Image(width=100, height=100, background=Color('#fff')) as img:
+        with Drawing() as draw:
+            draw.font = asset('League_Gothic.otf')
+            draw.font_size = 25
+            with Color('#000') as bk:
+                draw.fill_color = bk
+            draw.gravity = 'west'
+            draw.text(0, 0, 'Hello Wand')
+            draw.draw(img)
+
+            assert img.signature ==\
+            '54d1fc4825ef0bddebb5de88419f05351a8f137828cbae1f767fa4a2ca1bbab4'
 
 if __name__ == '__main__':
     tests.run()
