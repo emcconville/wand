@@ -25,9 +25,15 @@ class Drawing(Resource):
 
     __slots__ = 'c_resource'
 
-    def __init__(self):
+    def __init__(self, drawing_wand=None):
         with self.allocate():
-            self.drawing_wand = library.NewDrawingWand()
+            if not drawing_wand:
+                self.drawing_wand = library.NewDrawingWand()
+            else:
+                self.drawing_wand = library.CloneDrawingWand(drawing_wand.drawing_wand)
+
+    def clone(self):
+        return type(self)(drawing_wand=self)
 
     @property
     def drawing_wand(self):

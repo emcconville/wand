@@ -75,5 +75,16 @@ def set_get_text_under_color(wand):
         wand.text_under_color = black
     assert wand.text_under_color == Color('#333333')
 
+@tests.test
+def clone_drawing_wand(wand):
+    wand.text_kerning = 10.22
+
+    funcs = (lambda img: Drawing(drawing_wand=wand),
+             lambda img: wand.clone())
+    for func in funcs:
+        with func(wand) as cloned:
+            assert wand.drawing_wand is not cloned.drawing_wand
+            assert wand.text_kerning == cloned.text_kerning
+
 if __name__ == '__main__':
     tests.run()

@@ -291,6 +291,9 @@ try:
 
     library.NewDrawingWand.restype = ctypes.c_void_p
 
+    library.CloneDrawingWand.argtypes = [ctypes.c_void_p]
+    library.CloneDrawingWand.restype = ctypes.c_void_p
+
     library.DestroyDrawingWand.argtypes = [ctypes.c_void_p]
     library.DestroyDrawingWand.restype = ctypes.c_void_p
 
