@@ -373,6 +373,9 @@ class Image(Resource):
     #: .. versionadded:: 0.3.0
     metadata = None
 
+    #: (:class:`Sequence`) The image sequences iterator.
+    sequence = None
+
     c_is_resource = library.IsMagickWand
     c_destroy_resource = library.DestroyMagickWand
     c_get_exception = library.MagickGetException
