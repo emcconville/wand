@@ -389,6 +389,8 @@ class Image(Resource):
             any(a is not None for a in open_args)):
             raise TypeError('blank image parameters cant be used with image '
                             'opening parameters')
+        elif all(a is None for a in (new_args + open_args)):
+            pass
         elif all(a is None for a in open_args):
             # Create a blank image
             if not isinstance(width, numbers.Integral) or width < 1:
@@ -408,7 +410,9 @@ class Image(Resource):
         elif not (format is None or isinstance(format, basestring)):
             raise TypeError('format must be a string, not ' + repr(format))
         with self.allocate():
-            if width is not None and height is not None:
+            if all(a is None for a in (new_args + open_args)):
+                self.wand = library.NewMagickWand()
+            elif width is not None and height is not None:
                 if background is None:
                     background = Color('transparent')
                 self.wand = library.NewMagickWand()
