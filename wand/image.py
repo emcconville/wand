@@ -461,13 +461,11 @@ class Image(Resource):
         .. versionadded:: 0.3.0
 
         """
-        read = False
         if file is not None:
             if (isinstance(file, types.FileType) and
                 hasattr(libc, 'fdopen')):
                 fd = libc.fdopen(file.fileno(), file.mode)
-                library.MagickReadImageFile(self.wand, fd)
-                read = True
+                r = library.MagickReadImageFile(self.wand, fd)
             elif not callable(getattr(file, 'read', None)):
                 raise TypeError('file must be a readable file object'
                                 ', but the given object does not '
@@ -483,13 +481,11 @@ class Image(Resource):
                 blob = ''.join(blob)
             elif not isinstance(blob, str):
                 blob = str(blob)
-            library.MagickReadImageBlob(self.wand, blob, len(blob))
-            read = True
+            r = library.MagickReadImageBlob(self.wand, blob, len(blob))
         elif filename is not None:
-            library.MagickReadImage(self.wand, filename)
-            read = True
-        if not read:
-            raise TypeError('invalid argument(s)')
+            r = library.MagickReadImage(self.wand, filename)
+        if not r:
+            self.raise_exception()
 
     @property
     def wand(self):
