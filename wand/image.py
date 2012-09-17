@@ -514,6 +514,11 @@ class Image(Resource):
         """
         self.destroy()
 
+    def clear(self):
+        """Clears resources associated with the image, leaving the image blank,
+        and ready to be used with new image."""
+        library.ClearMagickWand(self.wand)
+
     def clone(self):
         """Clones the image. It is equivalent to call :class:`Image` with
         ``image`` parameter. ::
