@@ -220,6 +220,21 @@ def size():
 
 
 @tests.test
+def get_resolution():
+    """Gets image resolution."""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        assert img.resolution == (72, 72)
+
+
+@tests.test
+def set_resolution():
+    """Sets image resolution."""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        img.resolution = (100, 100)
+        assert img.resolution == (100, 100)
+
+
+@tests.test
 def get_units():
     """Gets the image resolution units."""
     with Image(filename=asset('beach.jpg')) as img:

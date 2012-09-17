@@ -164,6 +164,11 @@ try:
 
     library.MagickWriteImageFile.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 
+    library.MagickGetImageResolution.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double)]
+
+    library.MagickSetImageResolution.argtypes = [ctypes.c_void_p, ctypes.c_double, ctypes.c_double]
+    library.MagickSetResolution.argtypes = [ctypes.c_void_p, ctypes.c_double, ctypes.c_double]
+
     library.MagickGetImageWidth.argtypes = [ctypes.c_void_p]
     library.MagickGetImageWidth.restype = ctypes.c_size_t
 

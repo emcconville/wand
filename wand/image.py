@@ -639,6 +639,26 @@ class Image(Resource):
         return library.MagickGetImageHeight(self.wand)
 
     @property
+    def resolution(self):
+        """(:class:`tuple`) Resolution of this image."""
+        x = ctypes.c_double()
+        y = ctypes.c_double()
+        r = library.MagickGetImageResolution(self.wand, x, y)
+        if not r:
+            self.raise_exception()
+        return int(x.value), int(y.value)
+
+    @resolution.setter
+    def resolution(self, geometry):
+        x, y = geometry
+        if self.size == (0,0):
+            r = library.MagickSetResolution(self.wand, x, y)
+        else:
+            r = library.MagickSetImageResolution(self.wand, x, y)
+        if not r:
+            self.raise_exception()
+
+    @property
     def size(self):
         """(:class:`tuple`) The pair of (:attr:`width`, :attr:`height`)."""
         return self.width, self.height
