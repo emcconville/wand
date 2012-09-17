@@ -425,48 +425,56 @@ class Image(Resource):
                 self.wand = library.CloneMagickWand(image.wand)
             else:
                 self.wand = library.NewMagickWand()
-                read = False
                 if file is not None:
                     if format:
                         library.MagickSetFilename(self.wand,
                                                   'buffer.' + format)
-                    if (isinstance(file, types.FileType) and
-                        hasattr(libc, 'fdopen')):
-                        fd = libc.fdopen(file.fileno(), file.mode)
-                        library.MagickReadImageFile(self.wand, fd)
-                        read = True
-                    elif not callable(getattr(file, 'read', None)):
-                        raise TypeError('file must be a readable file object'
-                                        ', but the given object does not '
-                                        'have read() method')
-                    else:
-                        blob = file.read()
-                        file = None
+                    self.read(file=file)
                 if blob is not None:
                     if format:
                         library.MagickSetFilename(self.wand,
                                                   'buffer.' + format)
-                    if not isinstance(blob, collections.Iterable):
-                        raise TypeError('blob must be iterable, not ' +
-                                        repr(blob))
-                    if not isinstance(blob, basestring):
-                        blob = ''.join(blob)
-                    elif not isinstance(blob, str):
-                        blob = str(blob)
-                    library.MagickReadImageBlob(self.wand, blob, len(blob))
-                    read = True
+                    self.read(blob=blob)
                 elif filename is not None:
                     if format:
                         raise TypeError(
                             'format option cannot be used with image '
                             'nor filename'
                         )
-                    library.MagickReadImage(self.wand, filename)
-                    read = True
-                if not read:
-                    raise TypeError('invalid argument(s)')
+                    self.read(filename=filename)
             self.metadata = Metadata(self)
         self.raise_exception()
+
+    def read(self, file=None, filename=None, blob=None):
+        read = False
+        if file is not None:
+            if (isinstance(file, types.FileType) and
+                hasattr(libc, 'fdopen')):
+                fd = libc.fdopen(file.fileno(), file.mode)
+                library.MagickReadImageFile(self.wand, fd)
+                read = True
+            elif not callable(getattr(file, 'read', None)):
+                raise TypeError('file must be a readable file object'
+                                ', but the given object does not '
+                                'have read() method')
+            else:
+                blob = file.read()
+                file = None
+        if blob is not None:
+            if not isinstance(blob, collections.Iterable):
+                raise TypeError('blob must be iterable, not ' +
+                                repr(blob))
+            if not isinstance(blob, basestring):
+                blob = ''.join(blob)
+            elif not isinstance(blob, str):
+                blob = str(blob)
+            library.MagickReadImageBlob(self.wand, blob, len(blob))
+            read = True
+        elif filename is not None:
+            library.MagickReadImage(self.wand, filename)
+            read = True
+        if not read:
+            raise TypeError('invalid argument(s)')
 
     @property
     def wand(self):
