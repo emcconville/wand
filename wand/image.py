@@ -450,6 +450,17 @@ class Image(Resource):
         self.raise_exception()
 
     def read(self, file=None, filename=None, blob=None):
+        """Read new image into Image() object.
+        :param blob: reads an image from the ``blob`` byte array
+        :type blob: :class:`str`
+        :param file: reads an image from the ``file`` object
+        :type file: file object
+        :param filename: reads an image from the ``filename`` string
+        :type filename: :class:`basestring`
+
+        .. versionadded:: 0.3.0
+
+        """
         read = False
         if file is not None:
             if (isinstance(file, types.FileType) and
@@ -516,7 +527,12 @@ class Image(Resource):
 
     def clear(self):
         """Clears resources associated with the image, leaving the image blank,
-        and ready to be used with new image."""
+        and ready to be used with new image.
+
+        .. versionadded:: 0.3.0
+
+        """
+
         library.ClearMagickWand(self.wand)
 
     def clone(self):
