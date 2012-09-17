@@ -129,6 +129,19 @@ try:
     library.MagickGetImageSignature.argtypes = [ctypes.c_void_p]
     library.MagickGetImageSignature.restype = ctypes.c_char_p
 
+    library.MagickGetImageProperty.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
+    library.MagickGetImageProperty.restype = ctypes.c_char_p
+
+    library.MagickGetImageProperties.argtypes = [ctypes.c_void_p,
+                                                 ctypes.c_char_p,
+                                                 ctypes.POINTER(ctypes.c_size_t)]
+    library.MagickGetImageProperties.restype = ctypes.POINTER(ctypes.c_char_p)
+
+    library.MagickSetImageProperty.argtypes = [ctypes.c_void_p, ctypes.c_char_p,
+                                               ctypes.c_char_p]
+
+    library.MagickDeleteImageProperty.argtypes = [ctypes.c_void_p,
+                                                  ctypes.c_char_p]
     library.MagickGetImageBackgroundColor.argtypes = [ctypes.c_void_p,
                                                       ctypes.c_void_p]
 

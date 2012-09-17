@@ -819,3 +819,13 @@ def sequence_append():
                 del imga.sequence.index
             assert len(imga.sequence) == 1
             assert imga.size == (16, 16)
+
+
+def metadata():
+    """Test metadata api"""
+    with Image(filename=asset('beach.jpg')) as img:
+        assert len(img.metadata) == 52
+        assert 'exif:ApertureValue' in img.metadata
+        assert 'exif:UnknownValue' not in img.metadata
+        assert img.metadata['exif:ApertureValue'] == '192/32'
+        assert img.metadata.get('exif:UnknownValue', "IDK") == "IDK"
