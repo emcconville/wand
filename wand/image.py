@@ -451,6 +451,7 @@ class Image(Resource):
 
     def read(self, file=None, filename=None, blob=None):
         """Read new image into Image() object.
+
         :param blob: reads an image from the ``blob`` byte array
         :type blob: :class:`str`
         :param file: reads an image from the ``file`` object
@@ -651,7 +652,7 @@ class Image(Resource):
     @resolution.setter
     def resolution(self, geometry):
         x, y = geometry
-        if self.size == (0,0):
+        if self.size == (0, 0):
             r = library.MagickSetResolution(self.wand, x, y)
         else:
             r = library.MagickSetImageResolution(self.wand, x, y)
