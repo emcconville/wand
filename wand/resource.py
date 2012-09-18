@@ -167,6 +167,7 @@ class Resource(object):
     def resource(self):
         self.c_destroy_resource(self.resource)
         self.c_resource = None
+        decrement_refcount()
 
     @contextlib.contextmanager
     def allocate(self):
