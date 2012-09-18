@@ -389,6 +389,8 @@ class Image(Resource):
             any(a is not None for a in open_args)):
             raise TypeError('blank image parameters cant be used with image '
                             'opening parameters')
+        elif all(a is None for a in (new_args + open_args)):
+            pass
         elif all(a is None for a in open_args):
             # Create a blank image
             if not isinstance(width, numbers.Integral) or width < 1:
@@ -408,7 +410,9 @@ class Image(Resource):
         elif not (format is None or isinstance(format, basestring)):
             raise TypeError('format must be a string, not ' + repr(format))
         with self.allocate():
-            if width is not None and height is not None:
+            if all(a is None for a in (new_args + open_args)):
+                self.wand = library.NewMagickWand()
+            elif width is not None and height is not None:
                 if background is None:
                     background = Color('transparent')
                 self.wand = library.NewMagickWand()
@@ -425,48 +429,63 @@ class Image(Resource):
                 self.wand = library.CloneMagickWand(image.wand)
             else:
                 self.wand = library.NewMagickWand()
-                read = False
                 if file is not None:
                     if format:
                         library.MagickSetFilename(self.wand,
                                                   'buffer.' + format)
-                    if (isinstance(file, types.FileType) and
-                        hasattr(libc, 'fdopen')):
-                        fd = libc.fdopen(file.fileno(), file.mode)
-                        library.MagickReadImageFile(self.wand, fd)
-                        read = True
-                    elif not callable(getattr(file, 'read', None)):
-                        raise TypeError('file must be a readable file object'
-                                        ', but the given object does not '
-                                        'have read() method')
-                    else:
-                        blob = file.read()
-                        file = None
+                    self.read(file=file)
                 if blob is not None:
                     if format:
                         library.MagickSetFilename(self.wand,
                                                   'buffer.' + format)
-                    if not isinstance(blob, collections.Iterable):
-                        raise TypeError('blob must be iterable, not ' +
-                                        repr(blob))
-                    if not isinstance(blob, basestring):
-                        blob = ''.join(blob)
-                    elif not isinstance(blob, str):
-                        blob = str(blob)
-                    library.MagickReadImageBlob(self.wand, blob, len(blob))
-                    read = True
+                    self.read(blob=blob)
                 elif filename is not None:
                     if format:
                         raise TypeError(
                             'format option cannot be used with image '
                             'nor filename'
                         )
-                    library.MagickReadImage(self.wand, filename)
-                    read = True
-                if not read:
-                    raise TypeError('invalid argument(s)')
+                    self.read(filename=filename)
             self.metadata = Metadata(self)
         self.raise_exception()
+
+    def read(self, file=None, filename=None, blob=None):
+        """Read new image into Image() object.
+        :param blob: reads an image from the ``blob`` byte array
+        :type blob: :class:`str`
+        :param file: reads an image from the ``file`` object
+        :type file: file object
+        :param filename: reads an image from the ``filename`` string
+        :type filename: :class:`basestring`
+
+        .. versionadded:: 0.3.0
+
+        """
+        if file is not None:
+            if (isinstance(file, types.FileType) and
+                hasattr(libc, 'fdopen')):
+                fd = libc.fdopen(file.fileno(), file.mode)
+                r = library.MagickReadImageFile(self.wand, fd)
+            elif not callable(getattr(file, 'read', None)):
+                raise TypeError('file must be a readable file object'
+                                ', but the given object does not '
+                                'have read() method')
+            else:
+                blob = file.read()
+                file = None
+        if blob is not None:
+            if not isinstance(blob, collections.Iterable):
+                raise TypeError('blob must be iterable, not ' +
+                                repr(blob))
+            if not isinstance(blob, basestring):
+                blob = ''.join(blob)
+            elif not isinstance(blob, str):
+                blob = str(blob)
+            r = library.MagickReadImageBlob(self.wand, blob, len(blob))
+        elif filename is not None:
+            r = library.MagickReadImage(self.wand, filename)
+        if not r:
+            self.raise_exception()
 
     @property
     def wand(self):
@@ -501,6 +520,16 @@ class Image(Resource):
 
         """
         self.destroy()
+
+    def clear(self):
+        """Clears resources associated with the image, leaving the image blank,
+        and ready to be used with new image.
+
+        .. versionadded:: 0.3.0
+
+        """
+
+        library.ClearMagickWand(self.wand)
 
     def clone(self):
         """Clones the image. It is equivalent to call :class:`Image` with
@@ -608,6 +637,26 @@ class Image(Resource):
     def height(self):
         """(:class:`numbers.Integral`) The height of this image."""
         return library.MagickGetImageHeight(self.wand)
+
+    @property
+    def resolution(self):
+        """(:class:`tuple`) Resolution of this image."""
+        x = ctypes.c_double()
+        y = ctypes.c_double()
+        r = library.MagickGetImageResolution(self.wand, x, y)
+        if not r:
+            self.raise_exception()
+        return int(x.value), int(y.value)
+
+    @resolution.setter
+    def resolution(self, geometry):
+        x, y = geometry
+        if self.size == (0,0):
+            r = library.MagickSetResolution(self.wand, x, y)
+        else:
+            r = library.MagickSetImageResolution(self.wand, x, y)
+        if not r:
+            self.raise_exception()
 
     @property
     def size(self):

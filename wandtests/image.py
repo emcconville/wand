@@ -35,6 +35,11 @@ tests = Tests()
 def asset(filename):
     return os.path.join(os.path.dirname(__file__), 'assets', filename)
 
+@tests.test
+def empty_image():
+    with Image() as img:
+        assert img.size == (0,0)
+
 
 @tests.test
 def blank_image():
@@ -49,6 +54,32 @@ def blank_image():
     with Image(width=20, height=10, background=gray) as img:
         assert img.size == (20, 10)
         assert img[10, 5] == gray
+
+@tests.test
+def clear_image():
+    with Image() as img:
+        img.read(filename=asset('mona-lisa.jpg'))
+        assert img.size == (402,599)
+        img.clear()
+        assert img.size == (0,0)
+        img.read(filename=asset('beach.jpg'))
+        assert img.size == (800,600)
+
+
+@tests.test
+def read_from_file():
+    with Image() as img:
+        img.read(filename=asset('mona-lisa.jpg'))
+        assert img.width == 402
+        img.clear()
+        with open(asset('mona-lisa.jpg'), 'rb') as f:
+            img.read(file=f)
+            assert img.width == 402
+            img.clear()
+        with open(asset('mona-lisa.jpg'), 'rb') as f:
+            blob = f.read()
+            img.read(blob=blob)
+            assert img.width == 402
 
 
 @tests.test
@@ -186,6 +217,21 @@ def size():
         assert img.width == 402
         assert img.height == 599
         assert len(img) == 599
+
+
+@tests.test
+def get_resolution():
+    """Gets image resolution."""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        assert img.resolution == (72, 72)
+
+
+@tests.test
+def set_resolution():
+    """Sets image resolution."""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        img.resolution = (100, 100)
+        assert img.resolution == (100, 100)
 
 
 @tests.test
