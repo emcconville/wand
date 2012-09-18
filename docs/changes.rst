@@ -9,6 +9,10 @@ To be released.
 - Added :attr:`Image.metadata <wand.image.Image.metadata>` immutable mapping
   attribute and :class:`~wand.image.Metadata` mapping type for it.
   [:issue:`56` by Michael Elovskikh]
+- Added :meth:`Image.read() <wand.image.read>` method.
+  [:issue:`58` by Piotr Florczyk]
+- Added :attr:`Image.resolution <wand.image.Image.resolution>` property.
+  [:issue:`58` by Piotr Florczyk]
 
 
 Version 0.2.2

@@ -641,7 +641,11 @@ class Image(Resource):
 
     @property
     def resolution(self):
-        """(:class:`tuple`) Resolution of this image."""
+        """(:class:`tuple`) Resolution of this image.
+
+        .. versionadded:: 0.3.0
+
+        """
         x = ctypes.c_double()
         y = ctypes.c_double()
         r = library.MagickGetImageResolution(self.wand, x, y)
