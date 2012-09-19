@@ -857,6 +857,8 @@ class Image(Resource):
         :returns: blank image
         :rtype: :class:`Image`
 
+        .. versionadded:: 0.3.0
+
         """
         if not isinstance(width, numbers.Integral) or width < 1:
             raise TypeError('width must be a natural number, not ' +

@@ -13,6 +13,8 @@ To be released.
   [:issue:`58` by Piotr Florczyk]
 - Added :attr:`Image.resolution <wand.image.Image.resolution>` property.
   [:issue:`58` by Piotr Florczyk]
+- Added :meth:`Image.blank() <wand.image.blank>` method.
+  [:issue:`60` by Piotr Florczyk]
 
 
 Version 0.2.2
