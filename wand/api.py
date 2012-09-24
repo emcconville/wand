@@ -78,7 +78,10 @@ class MagickPixelPacket(ctypes.Structure):
                 ('index', ctypes.c_double)]
 
 
-libraries = load_library()
+try:
+    libraries = load_library()
+except (OSError, IOError):
+    raise ImportError('MagickWand shared library not found')
 
 #: (:class:`ctypes.CDLL`) The MagickWand library.
 library = libraries[0]
@@ -90,6 +93,10 @@ library = libraries[0]
 libmagick = libraries[1]
 
 try:
+    library.MagickWandGenesis.argtypes = []
+    library.MagickWandTerminus.argtypes = []
+
+    library.NewMagickWand.argtypes = []
     library.NewMagickWand.restype = ctypes.c_void_p
 
     library.MagickNewImage.argtypes = [ctypes.c_void_p, ctypes.c_int,

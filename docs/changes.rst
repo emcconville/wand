@@ -20,7 +20,7 @@ To be released.
 Version 0.2.2
 -------------
 
-To be released.
+Released on September 24, 2012.
 
 - A compatibility fix for FreeBSD.
   [`Patch`__ by Olivier Duchateau]
