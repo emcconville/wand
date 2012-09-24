@@ -104,9 +104,9 @@ and the file size of the resulting thumbnail images.</dd>
 </dl>
 </div>
 <p><a class="reference internal" href="../wand/image.html#wand.image.Image.resize" title="wand.image.Image.resize"><tt class="xref py py-meth docutils literal"><span class="pre">Image.resize()</span></tt></a> method takes <tt class="docutils literal"><span class="pre">width</span></tt> and
-<tt class="docutils literal"><span class="pre">height</span></tt> of a desired size, optional <tt class="docutils literal"><span class="pre">filter</span></tt> (<tt class="docutils literal"><span class="pre">'triangle'</span></tt> by
-default) and optional <tt class="docutils literal"><span class="pre">blur</span></tt> (default is 1). It returns nothing but
-resizes itself in-place.</p>
+<tt class="docutils literal"><span class="pre">height</span></tt> of a desired size, optional <tt class="docutils literal"><span class="pre">filter</span></tt> (<tt class="docutils literal"><span class="pre">'undefined'</span></tt> by
+default which means IM will try to guess best one to use) and optional
+<tt class="docutils literal"><span class="pre">blur</span></tt> (default is 1). It returns nothing but resizes itself in-place.</p>
 <div class="highlight-pycon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">img</span><span class="o">.</span><span class="n">size</span>
 <span class="go">(500, 600)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">img</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>

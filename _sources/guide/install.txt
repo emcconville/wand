@@ -15,6 +15,7 @@ Wand is a Python binding of ImageMagick_, so you have to install it as well:
 - :ref:`Fedora/CentOS <install-imagemagick-redhat>`
 - :ref:`Mac <install-imagemagick-mac>`
 - :ref:`Windows <install-imagemagick-windows>`
+- :ref:`FreeBSD <install-wand-freebsd>`
 
 .. _PyPI: http://pypi.python.org/pypi/Wand
 .. _ImageMagick: http://www.imagemagick.org/
@@ -108,3 +109,16 @@ __ http://www.imagemagick.org/download/binaries/ImageMagick-6.7.7-6-Q16-windows-
 __ http://www.imagemagick.org/download/binaries/ImageMagick-6.7.7-6-Q16-windows-x64-dll.exe
 
 
+.. _install-wand-freebsd:
+
+Install Wand on FreeBSD
+-----------------------
+
+Wand itself is already packaged in FreeBSD ports collection: py-wand_.
+You can install using :program:`pkg_add` command:
+
+.. sourcecode:: console
+
+   $ pkg_add -r py-wand
+
+.. _py-wand: http://www.freebsd.org/cgi/cvsweb.cgi/ports/graphics/py-wand/
