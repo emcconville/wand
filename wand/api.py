@@ -10,6 +10,7 @@ import ctypes
 import ctypes.util
 import os
 import os.path
+import sys
 import platform
 
 __all__ = 'load_library', 'MagickPixelPacket', 'library', 'libmagick', 'libc'
@@ -81,7 +82,29 @@ class MagickPixelPacket(ctypes.Structure):
 try:
     libraries = load_library()
 except (OSError, IOError):
-    raise ImportError('MagickWand shared library not found')
+    msg = 'http://dahlia.github.com/wand/guide/install.html'
+    if sys.platform.startswith('freebsd'):
+        msg = 'pkg_add -r'
+    elif sys.platform == 'win32':
+        msg += '#install-imagemagick-on-windows'
+    elif sys.platform == 'darwin':
+        for pkgmgr in 'brew', 'port':
+            with os.popen('which ' + pkgmgr) as f:
+                if f.read().strip():
+                    msg = pkgmgr + ' install imagemagick'
+                    break
+        else:
+            msg += '#install-imagemagick-on-mac'
+    else:
+        distname, _, __ = platform.linux_distribution()
+        distname = (distname or '').lower()
+        if distname in ('debian', 'ubuntu'):
+            msg = 'apt-get install libmagickwand-dev'
+        elif distname in ('fedora', 'centos', 'redhat'):
+            msg = 'yum install ImageMagick-devel'
+    raise ImportError('MagickWand shared library not found.\n'
+                      'You probably had not installed ImageMagick library.\n'
+                      'Try to install:\n  ' + msg)
 
 #: (:class:`ctypes.CDLL`) The MagickWand library.
 library = libraries[0]
