@@ -18,16 +18,17 @@ __all__ = 'load_library', 'MagickPixelPacket', 'library', 'libmagick', 'libc'
 class c_magick_char_p(ctypes.c_char_p):
     """
     This subclass prevents the automatic conversion behavior of c_char_p,
-    allowing memory to be properly freed in the destructor.
+    allowing memory to be properly freed in the destructor. It must only be
+    used for non-const character pointers returned by ImageMagick functions.
     """
 
-    def __enter__(self):
-        return self
-
-    def __exit__(self):
-        del self
-
     def __del__(self):
+        """
+        Relinquishes memory allocated by ImageMagick. We don't need to worry
+        about checking for NULL because MagickRelinquishMemory does that for
+        us. Note alslo that c_char_p has no __del__ method, so we don't need
+        to (and indeed can't) call the superclass destructor.
+        """
         library.MagickRelinquishMemory(self)
 
 def load_library():
