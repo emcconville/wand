@@ -99,7 +99,8 @@ class Color(Resource):
     def string(self):
         """(:class:`basestring`) The string representation of the color."""
         with self as this:
-            return library.PixelGetColorAsString(self.resource)
+            color_string = library.PixelGetColorAsString(self.resource)
+            return color_string.value
 
     @staticmethod
     def c_equals(a, b):
