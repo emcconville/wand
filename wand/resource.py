@@ -157,6 +157,10 @@ class Resource(object):
 
     @resource.setter
     def resource(self, resource):
+        # Delete the existing resource if there is one
+        if getattr(self, 'c_resource', None):
+            self.destroy()
+
         if self.c_is_resource(resource):
             self.c_resource = resource
         else:
@@ -208,7 +212,7 @@ class Resource(object):
             return
         self.c_clear_exception(self.wand)
         exc_cls = exceptions.TYPE_MAP[severity.value]
-        return exc_cls(ctypes.string_at(desc))
+        return exc_cls(desc.value)
 
     def raise_exception(self, stacklevel=1):
         """Raises an exception or warning if it has occurred."""
