@@ -15,6 +15,21 @@ import platform
 
 __all__ = 'load_library', 'MagickPixelPacket', 'library', 'libmagick', 'libc'
 
+class c_magick_char_p(ctypes.c_char_p):
+    """
+    This subclass prevents the automatic conversion behavior of c_char_p,
+    allowing memory to be properly freed in the destructor. It must only be
+    used for non-const character pointers returned by ImageMagick functions.
+    """
+
+    def __del__(self):
+        """
+        Relinquishes memory allocated by ImageMagick. We don't need to worry
+        about checking for NULL because MagickRelinquishMemory does that for
+        us. Note alslo that c_char_p has no __del__ method, so we don't need
+        to (and indeed can't) call the superclass destructor.
+        """
+        library.MagickRelinquishMemory(self)
 
 def load_library():
     """Loads the MagickWand library.
@@ -137,7 +152,7 @@ try:
 
     library.MagickGetException.argtypes = [ctypes.c_void_p,
                                            ctypes.POINTER(ctypes.c_int)]
-    library.MagickGetException.restype = ctypes.c_char_p
+    library.MagickGetException.restype = c_magick_char_p
 
     library.MagickClearException.argtypes = [ctypes.c_void_p]
 
@@ -151,18 +166,18 @@ try:
     library.MagickReadImageFile.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 
     library.MagickGetImageFormat.argtypes = [ctypes.c_void_p]
-    library.MagickGetImageFormat.restype = ctypes.c_char_p
+    library.MagickGetImageFormat.restype = c_magick_char_p
 
     library.MagickSetImageFormat.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
 
     libmagick.MagickToMime.argtypes = [ctypes.c_char_p]
-    libmagick.MagickToMime.restype = ctypes.POINTER(ctypes.c_char)
+    libmagick.MagickToMime.restype = c_magick_char_p
 
     library.MagickGetImageSignature.argtypes = [ctypes.c_void_p]
-    library.MagickGetImageSignature.restype = ctypes.c_char_p
+    library.MagickGetImageSignature.restype = c_magick_char_p
 
     library.MagickGetImageProperty.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
-    library.MagickGetImageProperty.restype = ctypes.c_char_p
+    library.MagickGetImageProperty.restype = c_magick_char_p
 
     library.MagickGetImageProperties.argtypes = [ctypes.c_void_p,
                                                  ctypes.c_char_p,
@@ -194,7 +209,8 @@ try:
 
     library.MagickWriteImageFile.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 
-    library.MagickGetImageResolution.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double)]
+    library.MagickGetImageResolution.argtypes = [ctypes.c_void_p,
+                  ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double)]
 
     library.MagickSetImageResolution.argtypes = [ctypes.c_void_p, ctypes.c_double, ctypes.c_double]
     library.MagickSetResolution.argtypes = [ctypes.c_void_p, ctypes.c_double, ctypes.c_double]
@@ -252,7 +268,7 @@ try:
 
     library.PixelGetIteratorException.argtypes = [ctypes.c_void_p,
                                                   ctypes.POINTER(ctypes.c_int)]
-    library.PixelGetIteratorException.restype = ctypes.c_char_p
+    library.PixelGetIteratorException.restype = c_magick_char_p
 
     library.PixelClearIteratorException.argtypes = [ctypes.c_void_p]
 
@@ -273,7 +289,7 @@ try:
 
     library.PixelGetException.argtypes = [ctypes.c_void_p,
                                           ctypes.POINTER(ctypes.c_int)]
-    library.PixelGetException.restype = ctypes.c_char_p
+    library.PixelGetException.restype = c_magick_char_p
 
     library.PixelClearException.argtypes = [ctypes.c_void_p]
 
@@ -287,7 +303,7 @@ try:
     library.PixelSetColor.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
 
     library.PixelGetColorAsString.argtypes = [ctypes.c_void_p]
-    library.PixelGetColorAsString.restype = ctypes.c_char_p
+    library.PixelGetColorAsString.restype = c_magick_char_p
 
     library.PixelGetAlpha.argtypes = [ctypes.c_void_p]
     library.PixelGetAlpha.restype = ctypes.c_double
@@ -298,7 +314,7 @@ try:
                                                ctypes.c_ssize_t]
 
     library.MagickGetImageType.argtypes = [ctypes.c_void_p]
-    
+
     library.MagickSetImageType.argtypes = [ctypes.c_void_p, ctypes.c_int]
 
     library.MagickEvaluateImageChannel.argtypes = [ctypes.c_void_p,
@@ -320,6 +336,7 @@ try:
 
     library.MagickTrimImage.argtypes = [ctypes.c_void_p]
 
+    # These functions are const so it's okay for them to be c_char_p
     libmagick.GetMagickVersion.argtypes = [ctypes.POINTER(ctypes.c_size_t)]
     libmagick.GetMagickVersion.restype = ctypes.c_char_p
 

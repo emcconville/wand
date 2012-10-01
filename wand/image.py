@@ -15,6 +15,7 @@ import ctypes
 import numbers
 import platform
 import types
+import weakref
 
 from .api import MagickPixelPacket, libc, libmagick, library
 from .color import Color
@@ -703,8 +704,8 @@ class Image(Resource):
 
         """
         fmt = library.MagickGetImageFormat(self.wand)
-        if fmt:
-            return fmt
+        if bool(fmt):
+            return fmt.value
         self.raise_exception()
 
     @format.setter
@@ -777,15 +778,9 @@ class Image(Resource):
 
         """
         rp = libmagick.MagickToMime(self.format)
-        if not rp:
+        if not bool(rp):
             self.raise_exception()
-        mimetype = ctypes.string_at(rp)
-        if platform.system() != 'Windows':
-            # FIXME: On Windows, the above free() makes access violation
-            #        reading error.  This conditional free() is of course
-            #        *not* the right solution, but I currently can't
-            #        understand why.
-            libc.free(rp)
+        mimetype = rp.value
         return mimetype
 
     @property
@@ -796,7 +791,8 @@ class Image(Resource):
         .. versionadded:: 0.1.9
 
         """
-        return library.MagickGetImageSignature(self.wand)
+        signature = library.MagickGetImageSignature(self.wand)
+        return signature.value
 
     @property
     def alpha_channel(self):
@@ -1512,7 +1508,25 @@ class Metadata(collections.Mapping):
         if not isinstance(image, Image):
             raise TypeError('expected a wand.image.Image instance, '
                             'not ' + repr(image))
-        self.image = image
+        self.image = weakref.ref(image)
+
+    def __validate_reference(self):
+        """
+        Ensures that the parent Image, which is held in a weak reference,
+        still exists. Returns the dereferenced Image if it does exist, or
+        raises a ClosedImageError otherwise.
+
+        :exc: `ClosedImageError` when the parent Image has been destroyed
+        :returns: The dereferenced parent image
+        :rtype: :class:`Image`
+        """
+
+        # Dereference our weakref and check that the parent Image stil exists
+        image = self.image()
+        if not image:
+            raise ClosedImageError('Parent Image of ' + repr(self) +
+                                         ' has been destroyed.')
+        return image
 
     def __getitem__(self, k):
         """
@@ -1521,23 +1535,30 @@ class Metadata(collections.Mapping):
         :returns: a header value string
         :rtype: :class:`str`
         """
+
+        image = self.__validate_reference()
+
         if not isinstance(k, basestring):
             raise TypeError('k must be a string, not ' + repr(format))
-        v = library.MagickGetImageProperty(self.image.wand, k)
-        if v is None:
+        v = library.MagickGetImageProperty(image.wand, k)
+        if bool(v) is False:
             raise KeyError
-        return v
+
+        value = v.value
+        return value
 
     def __iter__(self):
+        image = self.__validate_reference()
         num = ctypes.c_size_t()
-        props_p = library.MagickGetImageProperties(self.image.wand, '', num)
+        props_p = library.MagickGetImageProperties(image.wand, '', num)
         props = [props_p[i] for i in xrange(num.value)]
         library.MagickRelinquishMemory(props_p)
         return iter(props)
 
     def __len__(self):
+        image = self.__validate_reference()
         num = ctypes.c_size_t()
-        props_p = library.MagickGetImageProperties(self.image.wand, '', num)
+        props_p = library.MagickGetImageProperties(image.wand, '', num)
         library.MagickRelinquishMemory(props_p)
         return num.value
 
