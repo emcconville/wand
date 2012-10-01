@@ -15,6 +15,7 @@ To be released.
   [:issue:`58` by Piotr Florczyk]
 - Added :meth:`Image.blank() <wand.image.blank>` method.
   [:issue:`60` by Piotr Florczyk]
+- Fixed several memory leaks.  [:issue:`62` by Mitch Lindgren]
 - Now it shows helpful error message when ImageMagick library cannot be
   found.
 
