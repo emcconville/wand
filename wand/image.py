@@ -611,6 +611,9 @@ class Image(Resource):
     def __hash__(self):
         return hash(self.signature)
 
+    def has_sequence(self):
+        return library.MagickGetNumberImages(self.wand) > 1
+
     @property
     def width(self):
         """(:class:`numbers.Integral`) The width of this image."""
@@ -658,7 +661,7 @@ class Image(Resource):
 
     @units.setter
     def units(self, units):
-        if not isinstance(units, basestring) or units not in UNIT_TYPES: 
+        if not isinstance(units, basestring) or units not in UNIT_TYPES:
             raise TypeError('Unit value must be a string from wand.images.'
                             'UNIT_TYPES, not ' + repr(units))
         r = library.MagickSetImageUnits(self.wand, UNIT_TYPES.index(units))
