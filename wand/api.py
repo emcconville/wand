@@ -342,6 +342,10 @@ try:
 
     libmagick.GetMagickReleaseDate.argtypes = []
     libmagick.GetMagickReleaseDate.restype = ctypes.c_char_p
+
+    libmagick.MagickSetResolution.argtypes = [ctypes.c_void_p, ctypes.c_double,
+                                                                ctypes.c_double]
+    libmagick.MagickSetResolution.restype = ctypes.c_bool
 except AttributeError:
     raise ImportError('MagickWand shared library not found or incompatible')
 
