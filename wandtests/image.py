@@ -852,3 +852,49 @@ def channel_depths():
             'default_channels': 8, 'black': 1, 'cyan': 8, 'all_channels': 8,
             'green': 8, 'magenta': 8, 'red': 8, 'gray_channels': 1
         }
+
+
+@tests.test
+def channel_images():
+    with Image(filename=asset('sasha.jpg')) as i:
+        actual = dict((c, i.signature) for c, i in i.channel_images.items())
+    assert actual == {
+        'blue': 'a372637ff6256ed45c07b7be04617b99'
+                'cea024dbd6dd961492a1906f419d3f84',
+        'gray': 'bac4906578408e0f46b1943f96c8c392'
+                '73997659feb005e581e7ddfa0ba1da41',
+        'true_alpha': '3da06216c40cdb4011339bed11804714'
+                      'bf262ac7c20e7eaa5401ed3218e9e59f',
+        'opacity': '0e7d4136121208cf6c2e12017ffe9c48'
+                   '7e8ada5fca1ad76b06bc41ad8a932de3',
+        'undefined': 'd659b35502ac753c52cc44d488c78acd'
+                     'c0201e65a7e9c5d7715ff79dbb0b24b3',
+        'composite_channels': 'd659b35502ac753c52cc44d488c78acd'
+                              'c0201e65a7e9c5d7715ff79dbb0b24b3',
+        'index': 'd659b35502ac753c52cc44d488c78acd'
+                 'c0201e65a7e9c5d7715ff79dbb0b24b3',
+        'rgb_channels': 'dffde420ada9506e6eabd6f3b9050060'
+                        '42517c0344fa3c4e009bf94ccd4e9356',
+        'yellow': 'a372637ff6256ed45c07b7be04617b99'
+                   'cea024dbd6dd961492a1906f419d3f84',
+        'black': 'd659b35502ac753c52cc44d488c78acd'
+                 'c0201e65a7e9c5d7715ff79dbb0b24b3',
+        'sync_channels': 'd659b35502ac753c52cc44d488c78acd'
+                         'c0201e65a7e9c5d7715ff79dbb0b24b3',
+        'default_channels': 'd659b35502ac753c52cc44d488c78acd'
+                            'c0201e65a7e9c5d7715ff79dbb0b24b3',
+        'green': '87139d62ff097e312ab4cc1859ee2db6'
+                 '066c9845de006f38163b325d405df782',
+        'cyan': 'bac4906578408e0f46b1943f96c8c392'
+                '73997659feb005e581e7ddfa0ba1da41',
+        'all_channels': 'd659b35502ac753c52cc44d488c78acd'
+                        'c0201e65a7e9c5d7715ff79dbb0b24b3',
+        'alpha': '0e7d4136121208cf6c2e12017ffe9c48'
+                 '7e8ada5fca1ad76b06bc41ad8a932de3',
+        'magenta': '87139d62ff097e312ab4cc1859ee2db6'
+                   '066c9845de006f38163b325d405df782',
+        'red': 'bac4906578408e0f46b1943f96c8c392'
+               '73997659feb005e581e7ddfa0ba1da41',
+        'gray_channels': 'dffde420ada9506e6eabd6f3b9050060'
+                         '42517c0344fa3c4e009bf94ccd4e9356'
+    }

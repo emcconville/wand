@@ -9,6 +9,12 @@ To be released.
 - Added :attr:`Image.metadata <wand.image.Image.metadata>` immutable mapping
   attribute and :class:`~wand.image.Metadata` mapping type for it.
   [:issue:`56` by Michael Elovskikh]
+- Add :attr:`Image.channel_images <wand.image.Image.channel_images>`
+  immutable mapping attribute and :class:`~wand.image.ChannelImageDict`
+  mapping for it.
+- Add :attr:`Image.channel_depths <wand.image.Image.channel_depths>`
+  immutable mapping attribute and :class:`~wand.image.ChannelDepthDict`
+  mapping for it.
 - Added :meth:`Image.read() <wand.image.read>` method.
   [:issue:`58` by Piotr Florczyk]
 - Added :attr:`Image.resolution <wand.image.Image.resolution>` property.

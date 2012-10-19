@@ -19,13 +19,14 @@ import weakref
 
 from .api import MagickPixelPacket, libc, libmagick, library
 from .color import Color
+from .exceptions import WandException
 from .resource import DestroyedResourceError, Resource
 
 
 __all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COMPOSITE_OPS', 'EVALUATE_OPS',
            'FILTER_TYPES', 'IMAGE_TYPES', 'UNIT_TYPES', 'ChannelDepthDict',
-           'ClosedImageError', 'Image', 'ImageProperty', 'Iterator',
-           'Metadata')
+           'ChannelImageDict', 'ClosedImageError', 'Image', 'ImageProperty',
+           'Iterator', 'Metadata')
 
 
 #: (:class:`tuple`) The list of filter types.
@@ -375,6 +376,13 @@ class Image(Resource):
     #: .. versionadded:: 0.3.0
     metadata = None
 
+    #: (:class:`ChannelImageDict`) The mapping of separated channels
+    #: from the image. ::
+    #:
+    #:     with image.channel_images['red'] as red_image:
+    #:         display(red_image)
+    channel_images = None
+
     #: (:class:`ChannelDepthDict`) The mapping of channels to their depth.
     #: Read only.
     #:
@@ -436,6 +444,7 @@ class Image(Resource):
                         )
                     self.read(filename=filename)
             self.metadata = Metadata(self)
+            self.channel_images = ChannelImageDict(self)
             self.channel_depths = ChannelDepthDict(self)
         self.raise_exception()
 
@@ -1581,6 +1590,41 @@ class Metadata(ImageProperty, collections.Mapping):
         props_p = library.MagickGetImageProperties(image.wand, '', num)
         library.MagickRelinquishMemory(props_p)
         return num.value
+
+
+class ChannelImageDict(ImageProperty, collections.Mapping):
+    """The mapping table of separated images of the particular channel
+    from the image.
+
+    :param image: an image instance
+    :type image: :class:`Image`
+
+    .. note::
+
+       You don't have to use this by yourself.
+       Use :attr:`Image.channel_images` property instead.
+
+    .. versionadded:: 0.3.0
+
+    """
+
+    def __iter__(self):
+        return iter(CHANNELS)
+
+    def __len__(self):
+        return len(CHANNELS)
+
+    def __getitem__(self, channel):
+        c = CHANNELS[channel]
+        img = self.image.clone()
+        succeeded = library.MagickSeparateImageChannel(img.wand, c)
+        if not succeeded:
+            try:
+                img.raise_exception()
+            except WandException:
+                img.close()
+                raise
+        return img
 
 
 class ChannelDepthDict(ImageProperty, collections.Mapping):

@@ -240,6 +240,9 @@ try:
                                                    ctypes.c_int]
     library.MagickGetImageChannelDepth.restype = ctypes.c_size_t
 
+    library.MagickSeparateImageChannel.argtypes = [ctypes.c_void_p,
+                                                   ctypes.c_int]
+
     library.MagickCropImage.argtypes = [ctypes.c_void_p, ctypes.c_size_t,
                                         ctypes.c_size_t, ctypes.c_ssize_t,
                                         ctypes.c_ssize_t]
