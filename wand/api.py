@@ -13,23 +13,29 @@ import os.path
 import sys
 import platform
 
-__all__ = 'load_library', 'MagickPixelPacket', 'library', 'libmagick', 'libc'
+__all__ = ('MagickPixelPacket', 'c_magick_char_p', 'library', 'libc',
+           'libmagick', 'load_library')
+
 
 class c_magick_char_p(ctypes.c_char_p):
-    """
-    This subclass prevents the automatic conversion behavior of c_char_p,
-    allowing memory to be properly freed in the destructor. It must only be
-    used for non-const character pointers returned by ImageMagick functions.
+    """This subclass prevents the automatic conversion behavior of
+    :class:`ctypes.c_char_p`, allowing memory to be properly freed in the
+    destructor.  It must only be used for non-const character pointers
+    returned by ImageMagick functions.
+
     """
 
     def __del__(self):
-        """
-        Relinquishes memory allocated by ImageMagick. We don't need to worry
-        about checking for NULL because MagickRelinquishMemory does that for
-        us. Note alslo that c_char_p has no __del__ method, so we don't need
-        to (and indeed can't) call the superclass destructor.
+        """Relinquishes memory allocated by ImageMagick.
+        We don't need to worry about checking for ``NULL`` because
+        :c:func:`MagickRelinquishMemory` does that for us.
+        Note alslo that :class:`ctypes.c_char_p` has no
+        :meth:`~object.__del__` method, so we don't need to
+        (and indeed can't) call the superclass destructor.
+
         """
         library.MagickRelinquishMemory(self)
+
 
 def load_library():
     """Loads the MagickWand library.
