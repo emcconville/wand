@@ -11,7 +11,7 @@ import logging
 import warnings
 
 from .api import library
-from . import exceptions
+from .exceptions import TYPE_MAP
 
 
 __all__ = ('genesis', 'terminus', 'increment_refcount', 'decrement_refcount',
@@ -211,7 +211,7 @@ class Resource(object):
         if severity.value == 0:
             return
         self.c_clear_exception(self.wand)
-        exc_cls = exceptions.TYPE_MAP[severity.value]
+        exc_cls = TYPE_MAP[severity.value]
         return exc_cls(desc.value)
 
     def raise_exception(self, stacklevel=1):
