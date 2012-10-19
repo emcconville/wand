@@ -23,7 +23,7 @@ from .resource import DestroyedResourceError, Resource
 
 
 __all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COMPOSITE_OPS', 'EVALUATE_OPS',
-           'FILTER_TYPES', 'IMAGE_TYPES', 'UNIT_TYPES',
+           'FILTER_TYPES', 'IMAGE_TYPES', 'UNIT_TYPES', 'ChannelDepthDict',
            'ClosedImageError', 'Image', 'ImageProperty', 'Iterator',
            'Metadata')
 
@@ -375,6 +375,12 @@ class Image(Resource):
     #: .. versionadded:: 0.3.0
     metadata = None
 
+    #: (:class:`ChannelDepthDict`) The mapping of channels to their depth.
+    #: Read only.
+    #:
+    #: .. versionadded:: 0.3.0
+    channel_depths = None
+
     c_is_resource = library.IsMagickWand
     c_destroy_resource = library.DestroyMagickWand
     c_get_exception = library.MagickGetException
@@ -430,6 +436,7 @@ class Image(Resource):
                         )
                     self.read(filename=filename)
             self.metadata = Metadata(self)
+            self.channel_depths = ChannelDepthDict(self)
         self.raise_exception()
 
     def read(self, file=None, filename=None, blob=None):
@@ -1574,6 +1581,33 @@ class Metadata(ImageProperty, collections.Mapping):
         props_p = library.MagickGetImageProperties(image.wand, '', num)
         library.MagickRelinquishMemory(props_p)
         return num.value
+
+
+class ChannelDepthDict(ImageProperty, collections.Mapping):
+    """The mapping table of channels to their depth.
+
+    :param image: an image instance
+    :type image: :class:`Image`
+
+    .. note::
+
+       You don't have to use this by yourself.
+       Use :attr:`Image.channel_depths` property instead.
+
+    .. versionadded:: 0.3.0
+
+    """
+
+    def __iter__(self):
+        return iter(CHANNELS)
+
+    def __len__(self):
+        return len(CHANNELS)
+
+    def __getitem__(self, channel):
+        c = CHANNELS[channel]
+        depth = library.MagickGetImageChannelDepth(self.image.wand, c)
+        return int(depth)
 
 
 class ClosedImageError(DestroyedResourceError):
