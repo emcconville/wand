@@ -23,8 +23,9 @@ from .resource import DestroyedResourceError, Resource
 
 
 __all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COMPOSITE_OPS', 'EVALUATE_OPS',
-           'FILTER_TYPES', 'IMAGE_TYPES', 'UNIT_TYPES', 'ClosedImageError',
-           'Image', 'Iterator')
+           'FILTER_TYPES', 'IMAGE_TYPES', 'UNIT_TYPES',
+           'ClosedImageError', 'Image', 'ImageProperty', 'Iterator',
+           'Metadata')
 
 
 #: (:class:`tuple`) The list of filter types.
@@ -1493,12 +1494,9 @@ class Iterator(Resource, collections.Iterator):
         return type(self)(iterator=self)
 
 
-class Metadata(collections.Mapping):
-    """Class that implements dict-like read-only access to image metadata
-    like EXIF or IPTC headers.
-
-    :param image: an image instance
-    :type image: :class:`Image`
+class ImageProperty(object):
+    """The mixin class to maintain a weak reference to the parent
+    :class:`Image` object.
 
     .. versionadded:: 0.3.0
 
@@ -1508,25 +1506,43 @@ class Metadata(collections.Mapping):
         if not isinstance(image, Image):
             raise TypeError('expected a wand.image.Image instance, '
                             'not ' + repr(image))
-        self.image = weakref.ref(image)
+        self._image = weakref.ref(image)
 
-    def __validate_reference(self):
-        """
-        Ensures that the parent Image, which is held in a weak reference,
-        still exists. Returns the dereferenced Image if it does exist, or
-        raises a ClosedImageError otherwise.
+    @property
+    def image(self):
+        """(:class:`Image`) The parent image.
+
+        It ensures that the parent :class:`Image`, which is held in a weak
+        reference, still exists.  Returns the dereferenced :class:`Image`
+        if it does exist, or raises a :exc:`ClosedImageError` otherwise.
 
         :exc: `ClosedImageError` when the parent Image has been destroyed
-        :returns: The dereferenced parent image
-        :rtype: :class:`Image`
-        """
 
+        """
         # Dereference our weakref and check that the parent Image stil exists
-        image = self.image()
-        if not image:
-            raise ClosedImageError('Parent Image of ' + repr(self) +
-                                         ' has been destroyed.')
-        return image
+        image = self._image()
+        if image:
+            return image
+        raise ClosedImageError(
+            'parent Image of {0!r} has been destroyed'.format(self)
+        )
+
+
+class Metadata(ImageProperty, collections.Mapping):
+    """Class that implements dict-like read-only access to image metadata
+    like EXIF or IPTC headers.
+
+    :param image: an image instance
+    :type image: :class:`Image`
+
+    .. note::
+
+       You don't have to use this by yourself.
+       Use :attr:`Image.metadata` property instead.
+
+    .. versionadded:: 0.3.0
+
+    """
 
     def __getitem__(self, k):
         """
@@ -1535,20 +1551,17 @@ class Metadata(collections.Mapping):
         :returns: a header value string
         :rtype: :class:`str`
         """
-
-        image = self.__validate_reference()
-
+        image = self.image
         if not isinstance(k, basestring):
             raise TypeError('k must be a string, not ' + repr(format))
         v = library.MagickGetImageProperty(image.wand, k)
         if bool(v) is False:
-            raise KeyError
-
+            raise KeyError(k)
         value = v.value
         return value
 
     def __iter__(self):
-        image = self.__validate_reference()
+        image = self.image
         num = ctypes.c_size_t()
         props_p = library.MagickGetImageProperties(image.wand, '', num)
         props = [props_p[i] for i in xrange(num.value)]
@@ -1556,7 +1569,7 @@ class Metadata(collections.Mapping):
         return iter(props)
 
     def __len__(self):
-        image = self.__validate_reference()
+        image = self.image
         num = ctypes.c_size_t()
         props_p = library.MagickGetImageProperties(image.wand, '', num)
         library.MagickRelinquishMemory(props_p)
