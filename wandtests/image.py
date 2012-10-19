@@ -831,3 +831,24 @@ def metadata():
         assert 'exif:UnknownValue' not in img.metadata
         assert img.metadata['exif:ApertureValue'] == '192/32'
         assert img.metadata.get('exif:UnknownValue', "IDK") == "IDK"
+
+
+@tests.test
+def channel_depths():
+    with Image(filename=asset('beach.jpg')) as i:
+        assert dict(i.channel_depths) == {
+            'blue': 8, 'gray': 8, 'true_alpha': 1, 'opacity': 1,
+            'undefined': 1, 'composite_channels': 8, 'index': 1,
+            'rgb_channels': 1, 'alpha': 1, 'yellow': 8, 'sync_channels': 1,
+            'default_channels': 8, 'black': 1, 'cyan': 8,
+            'all_channels': 8, 'green': 8, 'magenta': 8, 'red': 8,
+            'gray_channels': 1
+        }
+    with Image(filename=asset('google.ico')) as i:
+        assert dict(i.channel_depths) == {
+            'blue': 8, 'gray': 8, 'true_alpha': 1, 'opacity': 1,
+            'undefined': 1, 'composite_channels': 8, 'index': 1,
+            'rgb_channels': 1, 'alpha': 1, 'yellow': 8, 'sync_channels': 1,
+            'default_channels': 8, 'black': 1, 'cyan': 8, 'all_channels': 8,
+            'green': 8, 'magenta': 8, 'red': 8, 'gray_channels': 1
+        }
