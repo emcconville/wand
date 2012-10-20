@@ -36,6 +36,7 @@ tests = Tests()
 def asset(filename):
     return os.path.join(os.path.dirname(__file__), 'assets', filename)
 
+
 @tests.test
 def empty_image():
     with Image() as img:
@@ -308,6 +309,7 @@ def set_type():
     with Image(filename=asset('mona-lisa.jpg')) as img:
         img.type = "grayscale"
         assert img.type == "grayscale"
+
 
 @tests.test
 def get_compression():
