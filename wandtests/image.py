@@ -866,91 +866,117 @@ def channel_images():
         'blue': get_sig_version({
             (6, 6, 9, 7): 'b56f0c0763b49d4b0661d0bf7028d82a'
                           '66d0d15817ff5c6fd68a3c76377bd05a',
-            (6, 7, 7, 6): 'a372637ff6256ed45c07b7be04617b99'
+            (6, 7, 7, 6): 'b5e59c5bb24379e0f741b8073e19f564'
+                          '9a456af4023d2dd3764a5c012989470b',
+            (6, 7, 9, 5): 'a372637ff6256ed45c07b7be04617b99'
                           'cea024dbd6dd961492a1906f419d3f84'
         }),
         'gray': get_sig_version({
-            (6, 6, 9, 7): 'ee84ed5532ade43e28c1f8baa0d522351'
-                          'aee73ff0265d188797d457f1df2bc82',
-            (6, 7, 7, 6): 'bac4906578408e0f46b1943f96c8c392'
+            (6, 6, 9, 7): 'ee84ed5532ade43e28c1f8baa0d52235'
+                          '1aee73ff0265d188797d457f1df2bc82',
+            (6, 7, 7, 6): 'd0d2bae86a40e0107f69bb8016800dae'
+                          '4ad8178e29ac11649c9c3fa465a5a493',
+            (6, 7, 9, 5): 'bac4906578408e0f46b1943f96c8c392'
                           '73997659feb005e581e7ddfa0ba1da41'
         }),
         'true_alpha': get_sig_version({
             (6, 6, 9, 7): '3da06216c40cdb4011339bed11804714'
                           'bf262ac7c20e7eaa5401ed3218e9e59f',
-            (6, 7, 7, 6): '3da06216c40cdb4011339bed11804714'
+            (6, 7, 9, 5): '3da06216c40cdb4011339bed11804714'
                           'bf262ac7c20e7eaa5401ed3218e9e59f'
         }),
         'opacity': get_sig_version({
             (6, 6, 9, 7): '0e7d4136121208cf6c2e12017ffe9c48'
                           '7e8ada5fca1ad76b06bc41ad8a932de3',
-            (6, 7, 7, 6): '0e7d4136121208cf6c2e12017ffe9c48'
+            (6, 7, 9, 5): '0e7d4136121208cf6c2e12017ffe9c48'
                           '7e8ada5fca1ad76b06bc41ad8a932de3'
         }),
         'undefined': get_sig_version({
             (6, 6, 9, 7): 'b68db111c7d6a58301d9d824671ed810'
                           'b790d397429d2988dcdeb7562729bb46',
-            (6, 7, 7, 6): 'd659b35502ac753c52cc44d488c78acd'
+            (6, 7, 7, 6): 'ae62e71111167c83d9449bcca50dd65f'
+                          '565227104fe148aac514d3c2ef0fe9e2',
+            (6, 7, 9, 5): 'd659b35502ac753c52cc44d488c78acd'
                           'c0201e65a7e9c5d7715ff79dbb0b24b3'
         }),
         'composite_channels': get_sig_version({
             (6, 6, 9, 7): 'b68db111c7d6a58301d9d824671ed810'
                           'b790d397429d2988dcdeb7562729bb46',
-            (6, 7, 7, 6): 'd659b35502ac753c52cc44d488c78acd'
+            (6, 7, 7, 6): 'ae62e71111167c83d9449bcca50dd65f'
+                          '565227104fe148aac514d3c2ef0fe9e2',
+            (6, 7, 9, 5): 'd659b35502ac753c52cc44d488c78acd'
                           'c0201e65a7e9c5d7715ff79dbb0b24b3'
         }),
         'index': get_sig_version({
             (6, 6, 9, 7): 'b68db111c7d6a58301d9d824671ed810'
                           'b790d397429d2988dcdeb7562729bb46',
-            (6, 7, 7, 6): 'd659b35502ac753c52cc44d488c78acd'
+            (6, 7, 7, 6): 'ae62e71111167c83d9449bcca50dd65f'
+                          '565227104fe148aac514d3c2ef0fe9e2',
+            (6, 7, 9, 5): 'd659b35502ac753c52cc44d488c78acd'
                           'c0201e65a7e9c5d7715ff79dbb0b24b3'
         }),
         'rgb_channels': get_sig_version({
             (6, 6, 9, 7): '269c6106340012485c5fb45319a3138f'
                           '458338884de20fd05851001f86781eea',
-            (6, 7, 7, 6): 'dffde420ada9506e6eabd6f3b9050060'
+            (6, 7, 7, 6): '2a9eb27edcd2af4dbf57ab3e3ea60d92'
+                          '6ed03959c550409b1cd32e4d2979b431',
+            (6, 7, 9, 5): 'dffde420ada9506e6eabd6f3b9050060'
                           '42517c0344fa3c4e009bf94ccd4e9356'
         }),
         'yellow': get_sig_version({
             (6, 6, 9, 7): 'b56f0c0763b49d4b0661d0bf7028d82a'
                           '66d0d15817ff5c6fd68a3c76377bd05a',
-            (6, 7, 7, 6): 'a372637ff6256ed45c07b7be04617b99'
+            (6, 7, 7, 6): 'b5e59c5bb24379e0f741b8073e19f564'
+                          '9a456af4023d2dd3764a5c012989470b',
+            (6, 7, 9, 5): 'a372637ff6256ed45c07b7be04617b99'
                           'cea024dbd6dd961492a1906f419d3f84'
         }),
         'black': get_sig_version({
             (6, 6, 9, 7): 'b68db111c7d6a58301d9d824671ed810'
                           'b790d397429d2988dcdeb7562729bb46',
-            (6, 7, 7, 6): 'd659b35502ac753c52cc44d488c78acd'
+            (6, 7, 7, 6): 'ae62e71111167c83d9449bcca50dd65f'
+                          '565227104fe148aac514d3c2ef0fe9e2',
+            (6, 7, 9, 5): 'd659b35502ac753c52cc44d488c78acd'
                           'c0201e65a7e9c5d7715ff79dbb0b24b3'
         }),
         'sync_channels': get_sig_version({
             (6, 6, 9, 7): 'b68db111c7d6a58301d9d824671ed810'
                           'b790d397429d2988dcdeb7562729bb46',
-            (6, 7, 7, 6): 'd659b35502ac753c52cc44d488c78acd'
+            (6, 7, 7, 6): 'ae62e71111167c83d9449bcca50dd65f'
+                          '565227104fe148aac514d3c2ef0fe9e2',
+            (6, 7, 9, 5): 'd659b35502ac753c52cc44d488c78acd'
                           'c0201e65a7e9c5d7715ff79dbb0b24b3'
         }),
         'default_channels': get_sig_version({
             (6, 6, 9, 7): 'b68db111c7d6a58301d9d824671ed810'
                           'b790d397429d2988dcdeb7562729bb46',
-            (6, 7, 7, 6): 'd659b35502ac753c52cc44d488c78acd'
+            (6, 7, 7, 6): 'ae62e71111167c83d9449bcca50dd65f'
+                          '565227104fe148aac514d3c2ef0fe9e2',
+            (6, 7, 9, 5): 'd659b35502ac753c52cc44d488c78acd'
                           'c0201e65a7e9c5d7715ff79dbb0b24b3'
         }),
         'green': get_sig_version({
             (6, 6, 9, 7): 'ee703ad96996a796d47f34f9afdc74b6'
                           '89817320d2b6e6423c4c2f7e4ed076db',
-            (6, 7, 7, 6): '87139d62ff097e312ab4cc1859ee2db6'
+            (6, 7, 7, 6): 'ad770e0977567c12a336b6f3bf07e57e'
+                          'c370af40641238b3328699be590b5d16',
+            (6, 7, 9, 5): '87139d62ff097e312ab4cc1859ee2db6'
                           '066c9845de006f38163b325d405df782'
         }),
         'cyan': get_sig_version({
             (6, 6, 9, 7): 'ee84ed5532ade43e28c1f8baa0d52235'
                           '1aee73ff0265d188797d457f1df2bc82',
-            (6, 7, 7, 6): 'bac4906578408e0f46b1943f96c8c392'
+            (6, 7, 7, 6): 'd0d2bae86a40e0107f69bb8016800dae'
+                          '4ad8178e29ac11649c9c3fa465a5a493',
+            (6, 7, 9, 5): 'bac4906578408e0f46b1943f96c8c392'
                           '73997659feb005e581e7ddfa0ba1da41'
         }),
         'all_channels': get_sig_version({
             (6, 6, 9, 7): 'b68db111c7d6a58301d9d824671ed810'
                           'b790d397429d2988dcdeb7562729bb46',
-            (6, 7, 7, 6): 'd659b35502ac753c52cc44d488c78acd'
+            (6, 7, 7, 6): 'ae62e71111167c83d9449bcca50dd65f'
+                          '565227104fe148aac514d3c2ef0fe9e2',
+            (6, 7, 9, 5): 'd659b35502ac753c52cc44d488c78acd'
                           'c0201e65a7e9c5d7715ff79dbb0b24b3'
         }),
         'alpha': get_sig_version({
@@ -962,19 +988,25 @@ def channel_images():
         'magenta': get_sig_version({
             (6, 6, 9, 7): 'ee703ad96996a796d47f34f9afdc74b6'
                           '89817320d2b6e6423c4c2f7e4ed076db',
-            (6, 7, 7, 6): '87139d62ff097e312ab4cc1859ee2db6'
+            (6, 7, 7, 6): 'ad770e0977567c12a336b6f3bf07e57e'
+                          'c370af40641238b3328699be590b5d16',
+            (6, 7, 9, 5): '87139d62ff097e312ab4cc1859ee2db6'
                           '066c9845de006f38163b325d405df782'
         }),
         'red': get_sig_version({
             (6, 6, 9, 7): 'ee84ed5532ade43e28c1f8baa0d52235'
                           '1aee73ff0265d188797d457f1df2bc82',
-            (6, 7, 7, 6): 'bac4906578408e0f46b1943f96c8c392'
+            (6, 7, 7, 6): 'd0d2bae86a40e0107f69bb8016800dae'
+                          '4ad8178e29ac11649c9c3fa465a5a493',
+            (6, 7, 9, 5): 'bac4906578408e0f46b1943f96c8c392'
                           '73997659feb005e581e7ddfa0ba1da41'
         }),
         'gray_channels': get_sig_version({
             (6, 6, 9, 7): '269c6106340012485c5fb45319a3138f'
                           '458338884de20fd05851001f86781eea',
-            (6, 7, 7, 6): 'dffde420ada9506e6eabd6f3b9050060'
+            (6, 7, 7, 6): '2a9eb27edcd2af4dbf57ab3e3ea60d92'
+                          '6ed03959c550409b1cd32e4d2979b431',
+            (6, 7, 9, 5): 'dffde420ada9506e6eabd6f3b9050060'
                           '42517c0344fa3c4e009bf94ccd4e9356'
         })
     }
