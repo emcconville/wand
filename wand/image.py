@@ -1306,8 +1306,13 @@ class Image(Resource):
         .. versionadded:: 0.2.0
 
         """
+        if not isinstance(left, numbers.Integral):
+            raise TypeError('left must be an integer, not ' + repr(left))
+        elif not isinstance(top, numbers.Integral):
+            raise TypeError('top must be an integer, not ' + repr(left))
         op = COMPOSITE_OPERATORS.index('over')
-        library.MagickCompositeImage(self.wand, image.wand, op, left, top)
+        library.MagickCompositeImage(self.wand, image.wand, op,
+                                     int(left), int(top))
         self.raise_exception()
 
     def composite_channel(self, channel, image, operator, left=0, top=0):
@@ -1378,7 +1383,7 @@ class Image(Resource):
         """
         with image.clone() as watermark_image:
             watermark_image.transparentize(transparency)
-            self.composite(watermark_image, left, top)
+            self.composite(watermark_image, left=left, top=top)
         self.raise_exception()
 
     def save(self, file=None, filename=None):
