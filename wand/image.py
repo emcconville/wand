@@ -13,7 +13,6 @@ error happened)::
 import collections
 import ctypes
 import numbers
-import platform
 import types
 import weakref
 
