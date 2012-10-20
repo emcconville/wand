@@ -1002,3 +1002,16 @@ def composite_with_xy():
                 (6, 7, 9, 5): 'a40133f53093ce92e3e010d99a68fe13'
                               '55544821cec2f707d5bd426d326921f8'
             })
+
+
+@tests.test
+def composite_channel():
+    with Image(filename=asset('beach.jpg')) as img:
+        w, h = img.size
+        with Color('black') as color:
+            with Image(width=w / 2, height=h / 2, background=color) as cimg:
+                img.composite_channel('red', cimg, 'copy_red', w / 4, h / 4)
+                assert img.signature == get_sig_version({
+                    (6, 7, 9, 5): '51ebd57f8507ed8ca6355906972af369'
+                                  '5797d278ae3ed04dfc1f9b8c517bcfab'
+                })

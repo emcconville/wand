@@ -15,6 +15,8 @@ To be released.
 - Add :attr:`Image.channel_depths <wand.image.Image.channel_depths>`
   immutable mapping attribute and :class:`~wand.image.ChannelDepthDict`
   mapping for it.
+- Added :meth:`Image.composite_channel() <wand.image.Image.composite_channel>`
+  method.
 - Added :meth:`Image.read() <wand.image.read>` method.
   [:issue:`58` by Piotr Florczyk]
 - Added :attr:`Image.resolution <wand.image.Image.resolution>` property.

@@ -1310,6 +1310,53 @@ class Image(Resource):
         library.MagickCompositeImage(self.wand, image.wand, op, left, top)
         self.raise_exception()
 
+    def composite_channel(self, channel, image, operator, left=0, top=0):
+        """
+
+        :param channel: the channel type.  available values can be found
+                        in the :const:`CHANNELS` mapping
+        :param image: the composited source image.
+                      (the receiver image becomes the destination)
+        :type image: :class:`Image`
+        :param operator: the operator that affects how the composite
+                         is applied to the image.  available values
+                         can be found in the :const:`COMPOSITE_OPERATORS`
+                         list
+        :param left: the column offset of the composited source image
+        :type left: :class:`numbers.Integral`
+        :param top: the row offset of the composited source image
+        :type top: :class:`numbers.Integral`
+        :raises exceptions.ValueError: when the given ``channel`` or
+                                       ``operator`` is invalid
+
+        .. versionadded:: 0.3.0
+
+        """
+        if not isinstance(channel, basestring):
+            raise TypeError('channel must be a string, not ' +
+                            repr(channel))
+        elif not isinstance(operator, basestring):
+            raise TypeError('operator must be a string, not ' +
+                            repr(operator))
+        elif not isinstance(left, numbers.Integral):
+            raise TypeError('left must be an integer, not ' + repr(left))
+        elif not isinstance(top, numbers.Integral):
+            raise TypeError('top must be an integer, not ' + repr(left))
+        try:
+            ch_const = CHANNELS[channel]
+        except KeyError:
+            raise ValueError(repr(channel) + ' is an invalid channel type'
+                             '; see wand.image.CHANNELS dictionary')
+        try:
+            op =  COMPOSITE_OPERATORS.index(operator)
+        except IndexError:
+            raise IndexError(repr(operator) + ' is an invalid composite '
+                             'operator type; see wand.image.COMPOSITE_'
+                             'OPERATORS dictionary')
+        library.MagickCompositeImageChannel(self.wand, ch_const, image.wand,
+                                            op, int(left), int(top))
+        self.raise_exception()
+
     def watermark(self, image, transparency=0.0, left=0, top=0):
         """Transparentized the supplied ``image`` and places it over the
         current image, with the top left corner of ``image`` at coordinates

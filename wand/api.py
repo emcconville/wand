@@ -340,6 +340,11 @@ try:
                                              ctypes.c_int, ctypes.c_ssize_t,
                                              ctypes.c_ssize_t]
 
+    library.MagickCompositeImageChannel.argtypes = [
+        ctypes.c_void_p, ctypes.c_int, ctypes.c_void_p,
+        ctypes.c_int, ctypes.c_ssize_t, ctypes.c_ssize_t
+    ]
+
     library.MagickGetImageCompressionQuality.argtypes = [ctypes.c_void_p]
     library.MagickGetImageCompressionQuality.restype = ctypes.c_ssize_t
 
