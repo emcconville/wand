@@ -974,3 +974,21 @@ def channel_images():
                           '42517c0344fa3c4e009bf94ccd4e9356'
         })
     }
+
+
+@tests.test
+def composite():
+    with Image(filename=asset('beach.jpg')) as img:
+        with Image(filename=asset('watermark.png')) as fg:
+            img.composite(fg, 0, 0)
+            assert img.signature == ('d725d924a9008ddff828f22595237ec6'
+                                     'b56fb54057c6ee99584b9fc7ac91092c')
+
+
+@tests.test
+def composite_with_xy():
+    with Image(filename=asset('beach.jpg')) as img:
+        with Image(filename=asset('watermark.png')) as fg:
+            img.composite(fg, 5, 10)
+            assert img.signature == ('a40133f53093ce92e3e010d99a68fe13'
+                                     '55544821cec2f707d5bd426d326921f8')
