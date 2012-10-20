@@ -1316,7 +1316,7 @@ class Image(Resource):
         self.raise_exception()
 
     def composite_channel(self, channel, image, operator, left=0, top=0):
-        """
+        """Composite two images using the particular ``channel``.
 
         :param channel: the channel type.  available values can be found
                         in the :const:`CHANNELS` mapping
