@@ -1012,6 +1012,8 @@ def composite_channel():
             with Image(width=w / 2, height=h / 2, background=color) as cimg:
                 img.composite_channel('red', cimg, 'copy_red', w / 4, h / 4)
                 assert img.signature == get_sig_version({
+                    (6, 6, 9, 7): 'df4531b9cb50b0b70f0d4d88ac962cc7'
+                                  '51133d2772d7ce695d19179804a955ae',
                     (6, 7, 9, 5): '51ebd57f8507ed8ca6355906972af369'
                                   '5797d278ae3ed04dfc1f9b8c517bcfab'
                 })
