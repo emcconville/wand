@@ -5,12 +5,14 @@ try:
     import cStringIO as StringIO
 except ImportError:
     import StringIO
+import warnings
 
 from attest import Tests, assert_hook, raises
 
 from wand.version import MAGICK_VERSION_INFO
 from wand.image import ClosedImageError, Image
 from wand.color import Color
+from wand.exceptions import MissingDelegateError
 
 
 def get_sig_version(versions):
@@ -1017,3 +1019,17 @@ def composite_channel():
                     (6, 7, 9, 5): '51ebd57f8507ed8ca6355906972af369'
                                   '5797d278ae3ed04dfc1f9b8c517bcfab'
                 })
+
+
+@tests.test
+def liquid_rescale():
+    with Image(filename=asset('beach.jpg')) as img:
+        try:
+            img.liquid_rescale(600, 600)
+        except MissingDelegateError:
+            warnings.warn('skip liquid_rescale test; has no LQR delegate')
+        else:
+            assert img.signature == get_sig_version({
+                (6, 6, 9, 7): '459337dce62ada2a2e6a3c69b6819447'
+                              '38a71389efcbde0ee72b2147957e25eb'
+            })

@@ -1224,6 +1224,50 @@ class Image(Resource):
             self.raise_exception()
         self.wand = new_wand
 
+    def liquid_rescale(self, width, height, delta_x=0, rigidity=0):
+        """Rescales the image with `seam carving`_, also known as
+        image retargeting, content-aware resizing, or liquid rescaling.
+
+        :param width: the width in the scaled image
+        :type width: :class:`numbers.Integral`
+        :param height: the height in the scaled image
+        :type height: :class:`numbers.Integral`
+        :param delta_x: maximum seam transversal step.
+                        0 means straight seams.  default is 0
+        :type delta_x: :class:`numbers.Real`
+        :param rigidity: introduce a bias for non-straight seams.
+                         default is 0
+        :type rigidity: :class:`numbers.Real`
+        :raises wand.exceptions.MissingDelegateError:
+           when ImageMagick isn't configured ``--with-lqr`` option.
+
+        .. note::
+
+           This feature requires ImageMagick to be configured
+           ``--with-lqr`` option.  Or it will raise
+           :exc:`~wand.exceptions.MissingDelegateError`:
+
+        .. seealso::
+
+           `Seam carving`_ --- Wikipedia
+              The article which explains what seam carving is
+              on Wikipedia.
+
+        .. _Seam carving: http://en.wikipedia.org/wiki/Seam_carving
+
+        """
+        if not isinstance(width, numbers.Integral):
+            raise TypeError('width must be an integer, not ' + repr(width))
+        elif not isinstance(height, numbers.Integral):
+            raise TypeError('height must be an integer, not ' + repr(height))
+        elif not isinstance(delta_x, numbers.Real):
+            raise TypeError('delta_x must be a float, not ' + repr(delta_x))
+        elif not isinstance(rigidity, numbers.Real):
+            raise TypeError('rigidity must be a float, not ' + repr(rigidity))
+        library.MagickLiquidRescaleImage(self.wand, int(width), int(height),
+                                         float(delta_x), float(rigidity))
+        self.raise_exception()
+
     def rotate(self, degree, background=None, reset_coords=True):
         """Rotates the image right.  It takes a ``background`` color
         for ``degree`` that isn't a multiple of 90.

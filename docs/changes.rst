@@ -6,6 +6,8 @@ Version 0.3.0
 
 To be released.
 
+- Added :meth:`Image.liquid_rescale() <wand.image.Image.liquid_rescale>`
+  method which does `seam carving`__.
 - Added :attr:`Image.metadata <wand.image.Image.metadata>` immutable mapping
   attribute and :class:`~wand.image.Metadata` mapping type for it.
   [:issue:`56` by Michael Elovskikh]
@@ -30,6 +32,8 @@ To be released.
   :const:`~wand.image.COMPOSITE_OPERATORS`.
 - Now it shows helpful error message when ImageMagick library cannot be
   found.
+
+__ http://en.wikipedia.org/wiki/Seam_carving
 
 
 Version 0.2.2
