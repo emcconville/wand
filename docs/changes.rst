@@ -24,6 +24,8 @@ To be released.
 - Fixed several memory leaks.  [:issue:`62` by Mitch Lindgren]
 - Added :class:`~wand.image.ImageProperty` mixin class to maintain
   a weak reference to the parent image.
+- Ranamed :const:`wand.image.COMPOSITE_OPS` to
+  :const:`~wand.image.COMPOSITE_OPERATORS`.
 - Now it shows helpful error message when ImageMagick library cannot be
   found.
 

@@ -22,10 +22,10 @@ from .exceptions import WandException
 from .resource import DestroyedResourceError, Resource
 
 
-__all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COMPOSITE_OPS', 'EVALUATE_OPS',
-           'FILTER_TYPES', 'IMAGE_TYPES', 'UNIT_TYPES', 'ChannelDepthDict',
-           'ChannelImageDict', 'ClosedImageError', 'Image', 'ImageProperty',
-           'Iterator', 'Metadata')
+__all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COMPOSITE_OPERATORS',
+           'EVALUATE_OPS', 'FILTER_TYPES', 'IMAGE_TYPES', 'UNIT_TYPES',
+           'ChannelDepthDict', 'ChannelImageDict', 'ClosedImageError',
+           'Image', 'ImageProperty', 'Iterator', 'Metadata')
 
 
 #: (:class:`tuple`) The list of filter types.
@@ -135,25 +135,35 @@ FILTER_TYPES = ('undefined', 'point', 'box', 'triangle', 'hermite', 'hanning',
 #: - ``'xor'``
 #: - ``'divide'``
 #:
+#: .. versionchanged:: 0.3.0
+#:    Renamed from :const:`COMPOSITE_OPS` to :const:`COMPOSITE_OPERATORS`.
+#:
 #: .. seealso::
+#:
+#:    `Compositing Images`__ ImageMagick v6 Examples
+#:       Image composition is the technique of combining images that have,
+#:       or do not have, transparency or an alpha channel.
+#:       This is usually performed using the IM :program:`composite` command.
+#:       It may also be performed as either part of a larger sequence of
+#:       operations or internally by other image operators.
 #:
 #:    `ImageMagick Composition Operators`__
 #:       Demonstrates the results of applying the various composition
 #:       composition operators.
 #:
+#:    __ http://www.imagemagick.org/Usage/compose/
 #:    __ http://www.rubblewebs.co.uk/imagemagick/operators/compose.php
-COMPOSITE_OPS = ('undefined', 'no', 'add', 'atop', 'blend', 'bumpmap',
-                 'change_mask', 'clear', 'color_burn', 'color_dodge',
-                 'colorize', 'copy_black', 'copy_blue', 'copy', 'copy_cyan',
-                 'copy_green', 'copy_magenta', 'copy_opacity', 'copy_red',
-                 'copy_yellow', 'darken', 'dst_atop', 'dst', 'dst_in',
-                 'dst_out', 'dst_over', 'difference', 'displace',
-                 'dissolve', 'exclusion', 'hard_light', 'hue', 'in',
-                 'lighten', 'linear_light', 'luminize', 'minus', 'modulate',
-                 'multiply', 'out', 'over', 'overlay', 'plus', 'replace',
-                 'saturate', 'screen', 'soft_light', 'src_atop', 'src',
-                 'src_in', 'src_out', 'src_over', 'subtract', 'threshold',
-                 'xor', 'divide')
+COMPOSITE_OPERATORS = (
+    'undefined', 'no', 'add', 'atop', 'blend', 'bumpmap', 'change_mask',
+    'clear', 'color_burn', 'color_dodge', 'colorize', 'copy_black',
+    'copy_blue', 'copy', 'copy_cyan', 'copy_green', 'copy_magenta',
+    'copy_opacity', 'copy_red', 'copy_yellow', 'darken', 'dst_atop', 'dst',
+    'dst_in', 'dst_out', 'dst_over', 'difference', 'displace', 'dissolve',
+    'exclusion', 'hard_light', 'hue', 'in', 'lighten', 'linear_light',
+    'luminize', 'minus', 'modulate', 'multiply', 'out', 'over', 'overlay',
+    'plus', 'replace', 'saturate', 'screen', 'soft_light', 'src_atop', 'src',
+    'src_in', 'src_out', 'src_over', 'subtract', 'threshold', 'xor', 'divide'
+)
 
 #: (:class:`dict`) The dictionary of channel types.
 #:
@@ -1296,8 +1306,8 @@ class Image(Resource):
         .. versionadded:: 0.2.0
 
         """
-        library.MagickCompositeImage(self.wand, image.wand,
-                                     COMPOSITE_OPS.index('over'), left, top)
+        op = COMPOSITE_OPERATORS.index('over')
+        library.MagickCompositeImage(self.wand, image.wand, op, left, top)
         self.raise_exception()
 
     def watermark(self, image, transparency=0.0, left=0, top=0):
