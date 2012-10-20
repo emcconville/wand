@@ -7,7 +7,7 @@ Version 0.3.0
 To be released.
 
 - Added :meth:`Image.liquid_rescale() <wand.image.Image.liquid_rescale>`
-  method which does `seam carving`__.
+  method which does `seam carving`__.  See also :ref:`seam-carving`.
 - Added :attr:`Image.metadata <wand.image.Image.metadata>` immutable mapping
   attribute and :class:`~wand.image.Metadata` mapping type for it.
   [:issue:`56` by Michael Elovskikh]
