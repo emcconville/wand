@@ -293,6 +293,7 @@ try:
                                                 ctypes.POINTER(ctypes.c_size_t)]
     library.PixelGetNextIteratorRow.restype = ctypes.POINTER(ctypes.c_void_p)
 
+    library.NewPixelWand.argtypes = []
     library.NewPixelWand.restype = ctypes.c_void_p
 
     library.DestroyPixelWand.argtypes = [ctypes.c_void_p]
