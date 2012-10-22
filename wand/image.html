@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>wand.image — Image objects &mdash; Wand 0.2.2</title>
+    <title>wand.image — Image objects &mdash; Wand 0.3.0</title>
     
     <link rel="stylesheet" href="../_static/wand.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.2',
+        VERSION:     '0.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Wand 0.2.2" href="../index.html" />
+    <link rel="top" title="Wand 0.3.0" href="../index.html" />
     <link rel="up" title="wand — Simple MagickWand API binding for Python" href="../wand.html" />
     <link rel="next" title="wand.color — Colors" href="color.html" />
     <link rel="prev" title="wand — Simple MagickWand API binding for Python" href="../wand.html" />
@@ -53,7 +53,7 @@
           <a href="../wand.html" title="wand — Simple MagickWand API binding for Python"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Wand</a> &raquo;</li>
-          <li><a href="../wand.html" accesskey="U"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a> &raquo;</li> 
+          <li><a href="../wand.html" accesskey="U"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -134,8 +134,8 @@ error happened):</p>
 </dd></dl>
 
 <dl class="data">
-<dt id="wand.image.COMPOSITE_OPS">
-<tt class="descclassname">wand.image.</tt><tt class="descname">COMPOSITE_OPS</tt><em class="property"> = ('undefined', 'no', 'add', 'atop', 'blend', 'bumpmap', 'change_mask', 'clear', 'color_burn', 'color_dodge', 'colorize', 'copy_black', 'copy_blue', 'copy', 'copy_cyan', 'copy_green', 'copy_magenta', 'copy_opacity', 'copy_red', 'copy_yellow', 'darken', 'dst_atop', 'dst', 'dst_in', 'dst_out', 'dst_over', 'difference', 'displace', 'dissolve', 'exclusion', 'hard_light', 'hue', 'in', 'lighten', 'linear_light', 'luminize', 'minus', 'modulate', 'multiply', 'out', 'over', 'overlay', 'plus', 'replace', 'saturate', 'screen', 'soft_light', 'src_atop', 'src', 'src_in', 'src_out', 'src_over', 'subtract', 'threshold', 'xor', 'divide')</em><a class="headerlink" href="#wand.image.COMPOSITE_OPS" title="Permalink to this definition">¶</a></dt>
+<dt id="wand.image.COMPOSITE_OPERATORS">
+<tt class="descclassname">wand.image.</tt><tt class="descname">COMPOSITE_OPERATORS</tt><em class="property"> = ('undefined', 'no', 'add', 'atop', 'blend', 'bumpmap', 'change_mask', 'clear', 'color_burn', 'color_dodge', 'colorize', 'copy_black', 'copy_blue', 'copy', 'copy_cyan', 'copy_green', 'copy_magenta', 'copy_opacity', 'copy_red', 'copy_yellow', 'darken', 'dst_atop', 'dst', 'dst_in', 'dst_out', 'dst_over', 'difference', 'displace', 'dissolve', 'exclusion', 'hard_light', 'hue', 'in', 'lighten', 'linear_light', 'luminize', 'minus', 'modulate', 'multiply', 'out', 'over', 'overlay', 'plus', 'replace', 'saturate', 'screen', 'soft_light', 'src_atop', 'src', 'src_in', 'src_out', 'src_over', 'subtract', 'threshold', 'xor', 'divide')</em><a class="headerlink" href="#wand.image.COMPOSITE_OPERATORS" title="Permalink to this definition">¶</a></dt>
 <dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">tuple</span></tt>) The list of composition operators</p>
 <ul class="simple">
 <li><tt class="docutils literal"><span class="pre">'undefined'</span></tt></li>
@@ -195,9 +195,17 @@ error happened):</p>
 <li><tt class="docutils literal"><span class="pre">'xor'</span></tt></li>
 <li><tt class="docutils literal"><span class="pre">'divide'</span></tt></li>
 </ul>
+<p class="versionchanged">
+<span class="versionmodified">Changed in version 0.3.0: </span>Renamed from <tt class="xref py py-const docutils literal"><span class="pre">COMPOSITE_OPS</span></tt> to <a class="reference internal" href="#wand.image.COMPOSITE_OPERATORS" title="wand.image.COMPOSITE_OPERATORS"><tt class="xref py py-const docutils literal"><span class="pre">COMPOSITE_OPERATORS</span></tt></a>.</p>
 <div class="admonition-see-also admonition seealso">
 <p class="first admonition-title">See also</p>
 <dl class="last docutils">
+<dt><a class="reference external" href="http://www.imagemagick.org/Usage/compose/">Compositing Images</a> ImageMagick v6 Examples</dt>
+<dd>Image composition is the technique of combining images that have,
+or do not have, transparency or an alpha channel.
+This is usually performed using the IM <strong class="program">composite</strong> command.
+It may also be performed as either part of a larger sequence of
+operations or internally by other image operators.</dd>
 <dt><a class="reference external" href="http://www.rubblewebs.co.uk/imagemagick/operators/compose.php">ImageMagick Composition Operators</a></dt>
 <dd>Demonstrates the results of applying the various composition
 composition operators.</dd>
@@ -347,6 +355,49 @@ to set image units of resolution</dd>
 </div>
 </dd></dl>
 
+<dl class="class">
+<dt id="wand.image.ChannelDepthDict">
+<em class="property">class </em><tt class="descclassname">wand.image.</tt><tt class="descname">ChannelDepthDict</tt><big>(</big><em>image</em><big>)</big><a class="headerlink" href="#wand.image.ChannelDepthDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>The mapping table of channels to their depth.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>image</strong> (<a class="reference internal" href="#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a>) &#8211; an image instance</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You don&#8217;t have to use this by yourself.
+Use <a class="reference internal" href="#wand.image.Image.channel_depths" title="wand.image.Image.channel_depths"><tt class="xref py py-attr docutils literal"><span class="pre">Image.channel_depths</span></tt></a> property instead.</p>
+</div>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.3.0.</span></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="wand.image.ChannelImageDict">
+<em class="property">class </em><tt class="descclassname">wand.image.</tt><tt class="descname">ChannelImageDict</tt><big>(</big><em>image</em><big>)</big><a class="headerlink" href="#wand.image.ChannelImageDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>The mapping table of separated images of the particular channel
+from the image.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>image</strong> (<a class="reference internal" href="#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a>) &#8211; an image instance</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You don&#8217;t have to use this by yourself.
+Use <a class="reference internal" href="#wand.image.Image.channel_images" title="wand.image.Image.channel_images"><tt class="xref py py-attr docutils literal"><span class="pre">Image.channel_images</span></tt></a> property instead.</p>
+</div>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.3.0.</span></p>
+</dd></dl>
+
 <dl class="exception">
 <dt id="wand.image.ClosedImageError">
 <em class="property">exception </em><tt class="descclassname">wand.image.</tt><tt class="descname">ClosedImageError</tt><a class="headerlink" href="#wand.image.ClosedImageError" title="Permalink to this definition">¶</a></dt>
@@ -440,6 +491,63 @@ It can also be set to change the background color.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="wand.image.Image.blank">
+<tt class="descname">blank</tt><big>(</big><em>width</em>, <em>height</em>, <em>background=None</em><big>)</big><a class="headerlink" href="#wand.image.Image.blank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates blank image.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>width</strong> (<a class="reference external" href="http://docs.python.org/library/numbers.html#numbers.Integral" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">numbers.Integral</span></tt></a>) &#8211; the width of new blank image.</li>
+<li><strong>height</strong> (<a class="reference external" href="http://docs.python.org/library/numbers.html#numbers.Integral" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">numbers.Integral</span></tt></a>) &#8211; the height of new blank imgage.</li>
+<li><strong>background</strong> (<a class="reference internal" href="color.html#wand.color.Color" title="wand.color.Color"><tt class="xref py py-class docutils literal"><span class="pre">wand.color.Color</span></tt></a>) &#8211; an optional background color.
+default is transparent</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">blank image</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.3.0.</span></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="wand.image.Image.channel_depths">
+<tt class="descname">channel_depths</tt><em class="property"> = None</em><a class="headerlink" href="#wand.image.Image.channel_depths" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<a class="reference internal" href="#wand.image.ChannelDepthDict" title="wand.image.ChannelDepthDict"><tt class="xref py py-class docutils literal"><span class="pre">ChannelDepthDict</span></tt></a>) The mapping of channels to their depth.
+Read only.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.3.0.</span></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="wand.image.Image.channel_images">
+<tt class="descname">channel_images</tt><em class="property"> = None</em><a class="headerlink" href="#wand.image.Image.channel_images" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<a class="reference internal" href="#wand.image.ChannelImageDict" title="wand.image.ChannelImageDict"><tt class="xref py py-class docutils literal"><span class="pre">ChannelImageDict</span></tt></a>) The mapping of separated channels
+from the image.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">with</span> <span class="n">image</span><span class="o">.</span><span class="n">channel_images</span><span class="p">[</span><span class="s">&#39;red&#39;</span><span class="p">]</span> <span class="k">as</span> <span class="n">red_image</span><span class="p">:</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">red_image</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="wand.image.Image.clear">
+<tt class="descname">clear</tt><big>(</big><big>)</big><a class="headerlink" href="#wand.image.Image.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clears resources associated with the image, leaving the image blank,
+and ready to be used with new image.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.3.0.</span></p>
+</dd></dl>
+
+<dl class="method">
 <dt id="wand.image.Image.clone">
 <tt class="descname">clone</tt><big>(</big><big>)</big><a class="headerlink" href="#wand.image.Image.clone" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clones the image. It is equivalent to call <a class="reference internal" href="#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a> with
@@ -496,6 +604,39 @@ current image.  The dimensions of the current image are not changed.</p>
 </table>
 <p class="versionadded">
 <span class="versionmodified">New in version 0.2.0.</span></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wand.image.Image.composite_channel">
+<tt class="descname">composite_channel</tt><big>(</big><em>channel</em>, <em>image</em>, <em>operator</em>, <em>left=0</em>, <em>top=0</em><big>)</big><a class="headerlink" href="#wand.image.Image.composite_channel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Composite two images using the particular <tt class="docutils literal"><span class="pre">channel</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>channel</strong> &#8211; the channel type.  available values can be found
+in the <a class="reference internal" href="#wand.image.CHANNELS" title="wand.image.CHANNELS"><tt class="xref py py-const docutils literal"><span class="pre">CHANNELS</span></tt></a> mapping</li>
+<li><strong>image</strong> (<a class="reference internal" href="#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a>) &#8211; the composited source image.
+(the receiver image becomes the destination)</li>
+<li><strong>operator</strong> &#8211; the operator that affects how the composite
+is applied to the image.  available values
+can be found in the <a class="reference internal" href="#wand.image.COMPOSITE_OPERATORS" title="wand.image.COMPOSITE_OPERATORS"><tt class="xref py py-const docutils literal"><span class="pre">COMPOSITE_OPERATORS</span></tt></a>
+list</li>
+<li><strong>left</strong> (<a class="reference external" href="http://docs.python.org/library/numbers.html#numbers.Integral" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">numbers.Integral</span></tt></a>) &#8211; the column offset of the composited source image</li>
+<li><strong>top</strong> (<a class="reference external" href="http://docs.python.org/library/numbers.html#numbers.Integral" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">numbers.Integral</span></tt></a>) &#8211; the row offset of the composited source image</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Raises <a class="reference external" href="http://docs.python.org/library/exceptions.html#exceptions.ValueError" title="(in Python v2.7)">exceptions.ValueError</a>:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first last">when the given <tt class="docutils literal"><span class="pre">channel</span></tt> or
+<tt class="docutils literal"><span class="pre">operator</span></tt> is invalid</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.3.0.</span></p>
 </dd></dl>
 
 <dl class="attribute">
@@ -640,6 +781,47 @@ built-in patterns, and embedded profile types.</dd>
 </dd></dl>
 
 <dl class="method">
+<dt id="wand.image.Image.liquid_rescale">
+<tt class="descname">liquid_rescale</tt><big>(</big><em>width</em>, <em>height</em>, <em>delta_x=0</em>, <em>rigidity=0</em><big>)</big><a class="headerlink" href="#wand.image.Image.liquid_rescale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rescales the image with <a class="reference external" href="http://en.wikipedia.org/wiki/Seam_carving">seam carving</a>, also known as
+image retargeting, content-aware resizing, or liquid rescaling.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>width</strong> (<a class="reference external" href="http://docs.python.org/library/numbers.html#numbers.Integral" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">numbers.Integral</span></tt></a>) &#8211; the width in the scaled image</li>
+<li><strong>height</strong> (<a class="reference external" href="http://docs.python.org/library/numbers.html#numbers.Integral" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">numbers.Integral</span></tt></a>) &#8211; the height in the scaled image</li>
+<li><strong>delta_x</strong> (<a class="reference external" href="http://docs.python.org/library/numbers.html#numbers.Real" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">numbers.Real</span></tt></a>) &#8211; maximum seam transversal step.
+0 means straight seams.  default is 0</li>
+<li><strong>rigidity</strong> (<a class="reference external" href="http://docs.python.org/library/numbers.html#numbers.Real" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">numbers.Real</span></tt></a>) &#8211; introduce a bias for non-straight seams.
+default is 0</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Raises <a class="reference internal" href="exceptions.html#wand.exceptions.MissingDelegateError" title="wand.exceptions.MissingDelegateError">wand.exceptions.MissingDelegateError</a>:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first last">when ImageMagick isn&#8217;t configured <tt class="docutils literal"><span class="pre">--with-lqr</span></tt> option.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This feature requires ImageMagick to be configured
+<tt class="docutils literal"><span class="pre">--with-lqr</span></tt> option.  Or it will raise
+<a class="reference internal" href="exceptions.html#wand.exceptions.MissingDelegateError" title="wand.exceptions.MissingDelegateError"><tt class="xref py py-exc docutils literal"><span class="pre">MissingDelegateError</span></tt></a>:</p>
+</div>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://en.wikipedia.org/wiki/Seam_carving">Seam carving</a> &#8212; Wikipedia</dt>
+<dd>The article which explains what seam carving is
+on Wikipedia.</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="method">
 <dt id="wand.image.Image.make_blob">
 <tt class="descname">make_blob</tt><big>(</big><em>format=None</em><big>)</big><a class="headerlink" href="#wand.image.Image.make_blob" title="Permalink to this definition">¶</a></dt>
 <dd><p>Makes the binary string of the image.</p>
@@ -668,6 +850,14 @@ silently.</p>
 </dd></dl>
 
 <dl class="attribute">
+<dt id="wand.image.Image.metadata">
+<tt class="descname">metadata</tt><em class="property"> = None</em><a class="headerlink" href="#wand.image.Image.metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<a class="reference internal" href="#wand.image.Metadata" title="wand.image.Metadata"><tt class="xref py py-class docutils literal"><span class="pre">Metadata</span></tt></a>) The metadata mapping of the image.  Read only.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.3.0.</span></p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="wand.image.Image.mimetype">
 <tt class="descname">mimetype</tt><a class="headerlink" href="#wand.image.Image.mimetype" title="Permalink to this definition">¶</a></dt>
 <dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">basestring</span></tt>) The MIME type of the image
@@ -683,6 +873,27 @@ e.g. <tt class="docutils literal"><span class="pre">'image/jpeg'</span></tt>, <t
 supported by the imagemgick library.</p>
 <p class="versionadded">
 <span class="versionmodified">New in version 0.2.0.</span></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wand.image.Image.read">
+<tt class="descname">read</tt><big>(</big><em>file=None</em>, <em>filename=None</em>, <em>blob=None</em><big>)</big><a class="headerlink" href="#wand.image.Image.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read new image into Image() object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>blob</strong> (<tt class="xref py py-class docutils literal"><span class="pre">str</span></tt>) &#8211; reads an image from the <tt class="docutils literal"><span class="pre">blob</span></tt> byte array</li>
+<li><strong>file</strong> (<em>file object</em>) &#8211; reads an image from the <tt class="docutils literal"><span class="pre">file</span></tt> object</li>
+<li><strong>filename</strong> (<tt class="xref py py-class docutils literal"><span class="pre">basestring</span></tt>) &#8211; reads an image from the <tt class="docutils literal"><span class="pre">filename</span></tt> string</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.3.0.</span></p>
 </dd></dl>
 
 <dl class="method">
@@ -725,6 +936,14 @@ to <tt class="docutils literal"><span class="pre">'undefined'</span></tt> instea
 instead of <a class="reference external" href="http://docs.python.org/library/numbers.html#numbers.Rational" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">numbers.Rational</span></tt></a>.</p>
 <p class="versionadded">
 <span class="versionmodified">New in version 0.1.1.</span></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="wand.image.Image.resolution">
+<tt class="descname">resolution</tt><a class="headerlink" href="#wand.image.Image.resolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">tuple</span></tt>) Resolution of this image.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.3.0.</span></p>
 </dd></dl>
 
 <dl class="method">
@@ -970,6 +1189,32 @@ the image, from 0.0 to 1.0</li>
 </dd></dl>
 
 <dl class="class">
+<dt id="wand.image.ImageProperty">
+<em class="property">class </em><tt class="descclassname">wand.image.</tt><tt class="descname">ImageProperty</tt><big>(</big><em>image</em><big>)</big><a class="headerlink" href="#wand.image.ImageProperty" title="Permalink to this definition">¶</a></dt>
+<dd><p>The mixin class to maintain a weak reference to the parent
+<a class="reference internal" href="#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a> object.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.3.0.</span></p>
+<dl class="attribute">
+<dt id="wand.image.ImageProperty.image">
+<tt class="descname">image</tt><a class="headerlink" href="#wand.image.ImageProperty.image" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<a class="reference internal" href="#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a>) The parent image.</p>
+<p>It ensures that the parent <a class="reference internal" href="#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a>, which is held in a weak
+reference, still exists.  Returns the dereferenced <a class="reference internal" href="#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a>
+if it does exist, or raises a <a class="reference internal" href="#wand.image.ClosedImageError" title="wand.image.ClosedImageError"><tt class="xref py py-exc docutils literal"><span class="pre">ClosedImageError</span></tt></a> otherwise.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Exc :</th><td class="field-body"><cite>ClosedImageError</cite> when the parent Image has been destroyed</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="wand.image.Iterator">
 <em class="property">class </em><tt class="descclassname">wand.image.</tt><tt class="descname">Iterator</tt><big>(</big><em>image=None</em>, <em>iterator=None</em><big>)</big><a class="headerlink" href="#wand.image.Iterator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Row iterator for <a class="reference internal" href="#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a>. It shouldn&#8217;t be instantiated
@@ -1005,6 +1250,28 @@ one or more <a class="reference internal" href="color.html#wand.color.Color" tit
 
 </dd></dl>
 
+<dl class="class">
+<dt id="wand.image.Metadata">
+<em class="property">class </em><tt class="descclassname">wand.image.</tt><tt class="descname">Metadata</tt><big>(</big><em>image</em><big>)</big><a class="headerlink" href="#wand.image.Metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class that implements dict-like read-only access to image metadata
+like EXIF or IPTC headers.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>image</strong> (<a class="reference internal" href="#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a>) &#8211; an image instance</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You don&#8217;t have to use this by yourself.
+Use <a class="reference internal" href="#wand.image.Image.metadata" title="wand.image.Image.metadata"><tt class="xref py py-attr docutils literal"><span class="pre">Image.metadata</span></tt></a> property instead.</p>
+</div>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.3.0.</span></p>
+</dd></dl>
+
 </div>
 
 
@@ -1022,9 +1289,9 @@ one or more <a class="reference internal" href="color.html#wand.color.Color" tit
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../wand.html"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a><ul>
-      <li>Previous: <a href="../wand.html" title="previous chapter"><tt class="docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a></li>
-      <li>Next: <a href="color.html" title="next chapter"><tt class="docutils literal"><span class="pre">wand.color</span></tt> &#8212; Colors</a></li>
+  <li><a href="../wand.html"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a><ul>
+      <li>Previous: <a href="../wand.html" title="previous chapter"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a></li>
+      <li>Next: <a href="color.html" title="next chapter"><tt class="docutils literal docutils literal"><span class="pre">wand.color</span></tt> &#8212; Colors</a></li>
   </ul></li>
   </ul></li>
 </ul>

@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Wand Changelog &mdash; Wand 0.2.2</title>
+    <title>Wand Changelog &mdash; Wand 0.3.0</title>
     
     <link rel="stylesheet" href="_static/wand.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.2.2',
+        VERSION:     '0.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="Wand 0.2.2" href="index.html" />
+    <link rel="top" title="Wand 0.3.0" href="index.html" />
     <link rel="next" title="wand — Simple MagickWand API binding for Python" href="wand.html" />
     <link rel="prev" title="Roadmap" href="roadmap.html" />
    
@@ -62,6 +62,38 @@
             
   <div class="section" id="wand-changelog">
 <h1>Wand Changelog<a class="headerlink" href="#wand-changelog" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="version-0-3-0">
+<h2>Version 0.3.0<a class="headerlink" href="#version-0-3-0" title="Permalink to this headline">¶</a></h2>
+<p>To be released.</p>
+<ul class="simple">
+<li>Added <a class="reference internal" href="wand/image.html#wand.image.Image.liquid_rescale" title="wand.image.Image.liquid_rescale"><tt class="xref py py-meth docutils literal"><span class="pre">Image.liquid_rescale()</span></tt></a>
+method which does <a class="reference external" href="http://en.wikipedia.org/wiki/Seam_carving">seam carving</a>.  See also <a class="reference internal" href="guide/resizecrop.html#seam-carving"><em>Seam carving (also known as content-aware resizing)</em></a>.</li>
+<li>Added <a class="reference internal" href="wand/image.html#wand.image.Image.metadata" title="wand.image.Image.metadata"><tt class="xref py py-attr docutils literal"><span class="pre">Image.metadata</span></tt></a> immutable mapping
+attribute and <a class="reference internal" href="wand/image.html#wand.image.Metadata" title="wand.image.Metadata"><tt class="xref py py-class docutils literal"><span class="pre">Metadata</span></tt></a> mapping type for it.
+[<a class="reference external" href="https://github.com/dahlia/wand/issues/56">#56</a> by Michael Elovskikh]</li>
+<li>Added <a class="reference internal" href="wand/image.html#wand.image.Image.channel_images" title="wand.image.Image.channel_images"><tt class="xref py py-attr docutils literal"><span class="pre">Image.channel_images</span></tt></a>
+immutable mapping attribute and <a class="reference internal" href="wand/image.html#wand.image.ChannelImageDict" title="wand.image.ChannelImageDict"><tt class="xref py py-class docutils literal"><span class="pre">ChannelImageDict</span></tt></a>
+mapping for it.</li>
+<li>Added <a class="reference internal" href="wand/image.html#wand.image.Image.channel_depths" title="wand.image.Image.channel_depths"><tt class="xref py py-attr docutils literal"><span class="pre">Image.channel_depths</span></tt></a>
+immutable mapping attribute and <a class="reference internal" href="wand/image.html#wand.image.ChannelDepthDict" title="wand.image.ChannelDepthDict"><tt class="xref py py-class docutils literal"><span class="pre">ChannelDepthDict</span></tt></a>
+mapping for it.</li>
+<li>Added <a class="reference internal" href="wand/image.html#wand.image.Image.composite_channel" title="wand.image.Image.composite_channel"><tt class="xref py py-meth docutils literal"><span class="pre">Image.composite_channel()</span></tt></a>
+method.</li>
+<li>Added <tt class="xref py py-meth docutils literal"><span class="pre">Image.read()</span></tt> method.
+[<a class="reference external" href="https://github.com/dahlia/wand/issues/58">#58</a> by Piotr Florczyk]</li>
+<li>Added <a class="reference internal" href="wand/image.html#wand.image.Image.resolution" title="wand.image.Image.resolution"><tt class="xref py py-attr docutils literal"><span class="pre">Image.resolution</span></tt></a> property.
+[<a class="reference external" href="https://github.com/dahlia/wand/issues/58">#58</a> by Piotr Florczyk]</li>
+<li>Added <tt class="xref py py-meth docutils literal"><span class="pre">Image.blank()</span></tt> method.
+[<a class="reference external" href="https://github.com/dahlia/wand/issues/60">#60</a> by Piotr Florczyk]</li>
+<li>Fixed several memory leaks.  [<a class="reference external" href="https://github.com/dahlia/wand/issues/62">#62</a> by Mitch Lindgren]</li>
+<li>Added <a class="reference internal" href="wand/image.html#wand.image.ImageProperty" title="wand.image.ImageProperty"><tt class="xref py py-class docutils literal"><span class="pre">ImageProperty</span></tt></a> mixin class to maintain
+a weak reference to the parent image.</li>
+<li>Ranamed <tt class="xref py py-const docutils literal"><span class="pre">wand.image.COMPOSITE_OPS</span></tt> to
+<a class="reference internal" href="wand/image.html#wand.image.COMPOSITE_OPERATORS" title="wand.image.COMPOSITE_OPERATORS"><tt class="xref py py-const docutils literal"><span class="pre">COMPOSITE_OPERATORS</span></tt></a>.</li>
+<li>Now it shows helpful error message when ImageMagick library cannot be
+found.</li>
+</ul>
+</div>
 <div class="section" id="version-0-2-2">
 <h2>Version 0.2.2<a class="headerlink" href="#version-0-2-2" title="Permalink to this headline">¶</a></h2>
 <p>Released on September 24, 2012.</p>
@@ -278,6 +310,7 @@ argument becomes omittable.</li>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Wand Changelog</a><ul>
+<li><a class="reference internal" href="#version-0-3-0">Version 0.3.0</a></li>
 <li><a class="reference internal" href="#version-0-2-2">Version 0.2.2</a></li>
 <li><a class="reference internal" href="#version-0-2-1">Version 0.2.1</a></li>
 <li><a class="reference internal" href="#version-0-2-0">Version 0.2.0</a></li>

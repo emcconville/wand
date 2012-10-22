@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Resizing and cropping &mdash; Wand 0.2.2</title>
+    <title>Resizing and cropping &mdash; Wand 0.3.0</title>
     
     <link rel="stylesheet" href="../_static/wand.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.2',
+        VERSION:     '0.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Wand 0.2.2" href="../index.html" />
-    <link rel="next" title="Resource management" href="resource.html" />
+    <link rel="top" title="Wand 0.3.0" href="../index.html" />
+    <link rel="next" title="Reading EXIF" href="exif.html" />
     <link rel="prev" title="Writing images" href="write.html" />
    
   
@@ -46,7 +46,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="resource.html" title="Resource management"
+          <a href="exif.html" title="Reading EXIF"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="write.html" title="Writing images"
@@ -149,6 +149,64 @@ an image by <tt class="docutils literal"><span class="pre">[left:right,</span> <
 </pre></div>
 </div>
 </div>
+<div class="section" id="seam-carving-also-known-as-content-aware-resizing">
+<span id="seam-carving"></span><h2>Seam carving (also known as <em>content-aware resizing</em>)<a class="headerlink" href="#seam-carving-also-known-as-content-aware-resizing" title="Permalink to this headline">¶</a></h2>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.3.0.</span></p>
+<p><a class="reference external" href="http://en.wikipedia.org/wiki/Seam_carving">Seam carving</a> is an algorithm for image resizing that functions by
+establishing a number of <em>seams</em> (paths of least importance) in an image
+and automatically removes seams to reduce image size or inserts seams
+to extend it.</p>
+<p>In short: you can magickally resize images without distortion!
+See the following examples:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="51%" />
+<col width="49%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Original</td>
+<td>Resized</td>
+</tr>
+<tr class="row-even"><td><img alt="../_images/original.jpg" class="first last" src="../_images/original.jpg" style="width: 187px;" />
+</td>
+<td><img alt="../_images/resize.jpg" class="first last" src="../_images/resize.jpg" style="width: 140px;" />
+</td>
+</tr>
+<tr class="row-odd"><td>Cropped</td>
+<td><strong>Seam carving</strong></td>
+</tr>
+<tr class="row-even"><td><img alt="../_images/crop.jpg" class="first last" src="../_images/crop.jpg" style="width: 140px;" />
+</td>
+<td><img alt="../_images/liquid.jpg" class="first last" src="../_images/liquid.jpg" style="width: 140px;" />
+</td>
+</tr>
+</tbody>
+</table>
+<p>You can easily rescale images with seam carving using Wand:
+use <a class="reference internal" href="../wand/image.html#wand.image.Image.liquid_rescale" title="wand.image.Image.liquid_rescale"><tt class="xref py py-meth docutils literal"><span class="pre">Image.liquid_rescale()</span></tt></a>
+method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">img</span><span class="o">.</span><span class="n">size</span>
+<span class="go">(375, 485)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">img</span><span class="o">.</span><span class="n">liquid_rescale</span><span class="p">(</span><span class="mi">281</span><span class="p">,</span> <span class="mi">485</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">img</span><span class="o">.</span><span class="n">size</span>
+<span class="go">(281, 485)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">It may raise <a class="reference internal" href="../wand/exceptions.html#wand.exceptions.MissingDelegateError" title="wand.exceptions.MissingDelegateError"><tt class="xref py py-exc docutils literal"><span class="pre">MissingDelegateError</span></tt></a> if your
+ImageMagick is configured <tt class="docutils literal"><span class="pre">--without-lqr</span></tt> option.  In this case
+you should recompile ImageMagick.</p>
+</div>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://en.wikipedia.org/wiki/Seam_carving">Seam carving</a> &#8212; Wikipedia</dt>
+<dd>The article which explains what seam carving is on Wikipedia.</dd>
+</dl>
+</div>
+</div>
 </div>
 
 
@@ -169,6 +227,7 @@ an image by <tt class="docutils literal"><span class="pre">[left:right,</span> <
 <li><a class="reference internal" href="#">Resizing and cropping</a><ul>
 <li><a class="reference internal" href="#resize-images">Resize images</a></li>
 <li><a class="reference internal" href="#crop-images">Crop images</a></li>
+<li><a class="reference internal" href="#seam-carving-also-known-as-content-aware-resizing">Seam carving (also known as <em>content-aware resizing</em>)</a></li>
 </ul>
 </li>
 </ul>
@@ -176,7 +235,7 @@ an image by <tt class="docutils literal"><span class="pre">[left:right,</span> <
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
       <li>Previous: <a href="write.html" title="previous chapter">Writing images</a></li>
-      <li>Next: <a href="resource.html" title="next chapter">Resource management</a></li>
+      <li>Next: <a href="exif.html" title="next chapter">Reading EXIF</a></li>
   </ul></li>
 </ul>
   <h3>This Page</h3>
