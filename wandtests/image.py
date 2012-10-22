@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os.path
+import sys
 import tempfile
 try:
     import cStringIO as StringIO
@@ -28,8 +29,13 @@ def get_sig_version(versions):
     sorted_versions = reversed(sorted(versions.keys()))
     for v in sorted_versions:
         if v <= MAGICK_VERSION_INFO:
-            return versions[v]
-    return versions[v]
+            sig = versions[v]
+    else:
+        sig = versions[v]
+    if isinstance(sig, tuple):
+        is64 = sys.maxsize > 2 ** 32
+        sig = sig[1 if is64 else 0]
+    return sig
 
 
 tests = Tests()
@@ -887,8 +893,6 @@ def channel_images():
         }),
         'opacity': get_sig_version({
             (6, 5, 7, 8): '0e7d4136121208cf6c2e12017ffe9c48'
-                          '7e8ada5fca1ad76b06bc41ad8a932de3',
-            (6, 7, 9, 5): '0e7d4136121208cf6c2e12017ffe9c48'
                           '7e8ada5fca1ad76b06bc41ad8a932de3'
         }),
         'undefined': get_sig_version({
@@ -918,8 +922,12 @@ def channel_images():
         'rgb_channels': get_sig_version({
             (6, 5, 7, 8): 'e8226d73228e2c21ee9d7c70db4428c1'
                           '526065a786606bf3aabbe158f806e08b',
-            (6, 6, 9, 7): '269c6106340012485c5fb45319a3138f'
-                          '458338884de20fd05851001f86781eea',
+            (6, 6, 9, 7): (
+                '269c6106340012485c5fb45319a3138f' # 32bit
+                '458338884de20fd05851001f86781eea',
+                '76f09c126924df8debb42b1952ff0775' # 64bit
+                'c7b746a0b5a8a61befd7ce58a3cd20d7'
+            ),
             (6, 7, 7, 6): '2a9eb27edcd2af4dbf57ab3e3ea60d92'
                           '6ed03959c550409b1cd32e4d2979b431',
             (6, 7, 9, 5): 'dffde420ada9506e6eabd6f3b9050060'
@@ -1006,8 +1014,12 @@ def channel_images():
         'gray_channels': get_sig_version({
             (6, 5, 7, 8): 'e8226d73228e2c21ee9d7c70db4428c1'
                           '526065a786606bf3aabbe158f806e08b',
-            (6, 6, 9, 7): '269c6106340012485c5fb45319a3138f'
-                          '458338884de20fd05851001f86781eea',
+            (6, 6, 9, 7): (
+                '269c6106340012485c5fb45319a3138f' # 32bit
+                '458338884de20fd05851001f86781eea',
+                '76f09c126924df8debb42b1952ff0775' # 64bit
+                'c7b746a0b5a8a61befd7ce58a3cd20d7'
+            ),
             (6, 7, 7, 6): '2a9eb27edcd2af4dbf57ab3e3ea60d92'
                           '6ed03959c550409b1cd32e4d2979b431',
             (6, 7, 9, 5): 'dffde420ada9506e6eabd6f3b9050060'
