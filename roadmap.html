@@ -69,19 +69,55 @@
 <dd><p class="first">Wand 0.3 will be the first version that supports Python 3.</p>
 <p class="last">The branch name for it will be <a class="reference external" href="https://github.com/dahlia/wand/compare/master...python3">python3</a>.</p>
 </dd>
+<dt>Drawing (<a class="reference external" href="https://github.com/dahlia/wand/issues/64">#64</a>)</dt>
+<dd><p class="first">Wand 0.3 will provide drawing facilities of ImageMagick.</p>
+<p>Adrian Jung did the the most of it (<a class="reference external" href="https://github.com/dahlia/wand/issues/64">#64</a>).</p>
+<p class="last">It&#8217;s been working on <a class="reference external" href="https://github.com/dahlia/wand/compare/master...drawing">drawing</a> branch.</p>
+</dd>
+<dt>Sequences (<a class="reference external" href="https://github.com/dahlia/wand/issues/34">#34</a>, <a class="reference external" href="https://github.com/dahlia/wand/issues/39">#39</a>, <a class="reference external" href="https://github.com/dahlia/wand/issues/66">#66</a>)</dt>
+<dd><p class="first">Wand 0.3 will be able to deal with sequences.  For example, ICO format
+can contain multiple sizes of images in a file, Wand 0.3 can work with
+it.</p>
+<p>Michael Elovskikh had done the most of works for it (<a class="reference external" href="https://github.com/dahlia/wand/issues/39">#39</a>) and
+Andrey Antukh also suggested an alternative improved API (<a class="reference external" href="https://github.com/dahlia/wand/issues/66">#66</a>)
+for it.</p>
+<p class="last">The branch name for it will be <a class="reference external" href="https://github.com/dahlia/wand/compare/master...sequence">sequence</a>.</p>
+</dd>
+<dt>EXIF (<a class="reference external" href="https://github.com/dahlia/wand/issues/56">#56</a>, <a class="reference external" href="https://github.com/dahlia/wand/issues/25">#25</a>)</dt>
+<dd><p class="first">ImageMagick itself can read/write EXIF through <tt class="xref c c-func docutils literal"><span class="pre">GetMagickInfo()</span></tt>
+function.  Wand 0.3 will make a binding for it.</p>
+<p class="last">It&#8217;s already available on <a class="reference external" href="https://github.com/dahlia/wand/compare/master...master">master</a>.  (Worked by Michael Elovskikh.)</p>
+</dd>
+<dt><a class="reference external" href="http://en.wikipedia.org/wiki/Seam_carving">Seam carving</a></dt>
+<dd><p class="first">ImageMagick optionally provides seam carving (also known as liquid rescaling
+or content-aware resizing) through <tt class="xref c c-func docutils literal"><span class="pre">MagickLiquidRescaleImage()</span></tt>
+function if it&#8217;s properly configured <tt class="docutils literal"><span class="pre">--with-lqr</span></tt>.</p>
+<p>Wand 0.3 will have a simple method <a class="reference internal" href="wand/image.html#wand.image.Image.liquid_rescale" title="wand.image.Image.liquid_rescale"><tt class="xref py py-meth docutils literal"><span class="pre">Image.liquid_rescale()</span></tt></a> method which binds this API.</p>
+<p class="last">It&#8217;s already available on <a class="reference external" href="https://github.com/dahlia/wand/compare/master...master">master</a> and you can see the docs
+for it as well: <a class="reference internal" href="guide/resizecrop.html#seam-carving"><em>Seam carving (also known as content-aware resizing)</em></a>.</p>
+</dd>
+<dt>Channels</dt>
+<dd><p class="first">Wand 0.3 will provide channel-related APIs:</p>
+<ul class="simple">
+<li><a class="reference internal" href="wand/image.html#wand.image.Image.channel_images" title="wand.image.Image.channel_images"><tt class="xref py py-attr docutils literal"><span class="pre">Image.channel_images</span></tt></a></li>
+<li><a class="reference internal" href="wand/image.html#wand.image.Image.channel_depths" title="wand.image.Image.channel_depths"><tt class="xref py py-attr docutils literal"><span class="pre">Image.channel_depths</span></tt></a></li>
+<li><a class="reference internal" href="wand/image.html#wand.image.Image.composite_channel" title="wand.image.Image.composite_channel"><tt class="xref py py-meth docutils literal"><span class="pre">Image.composite_channel()</span></tt></a></li>
+</ul>
+<p class="last">It&#8217;s already available on <a class="reference external" href="https://github.com/dahlia/wand/compare/master...master">master</a>.</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="version-0-4">
+<h2>Version 0.4<a class="headerlink" href="#version-0-4" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
 <dt>Jython compatibility (<a class="reference external" href="https://github.com/dahlia/wand/issues/9">#9</a>)</dt>
 <dd><p class="first">Wand 0.3 will support Jython 2.7+.  Jython 2.7 is (June 2012) currently
 under alpha release, and Wand has been tested on it and fixed incompatible
 things.</p>
 <p class="last">It has been developed in the branch <a class="reference external" href="https://github.com/dahlia/wand/compare/master...jython">jython</a>.</p>
 </dd>
-<dt>EXIF (<a class="reference external" href="https://github.com/dahlia/wand/issues/25">#25</a>)</dt>
-<dd><p class="first">ImageMagick itself can read/write EXIF through <tt class="xref c c-func docutils literal"><span class="pre">GetMagickInfo()</span></tt>
-function.  Wand 0.3 will make a binding for it.</p>
-<p class="last">Its branch name will be <a class="reference external" href="https://github.com/dahlia/wand/compare/master...exif">exif</a>.</p>
-</dd>
 <dt>Image layers (<a class="reference external" href="https://github.com/dahlia/wand/issues/22">#22</a>)</dt>
-<dd><p class="first">Wand 0.3 will be able to deal with layers of an image.</p>
+<dd><p class="first">Wand 0.4 will be able to deal with layers of an image.</p>
 <p class="last">Its branch name will be <a class="reference external" href="https://github.com/dahlia/wand/compare/master...layer">layer</a>.</p>
 </dd>
 </dl>
@@ -114,6 +150,7 @@ function.  Wand 0.3 will make a binding for it.</p>
   <ul>
 <li><a class="reference internal" href="#">Roadmap</a><ul>
 <li><a class="reference internal" href="#version-0-3">Version 0.3</a></li>
+<li><a class="reference internal" href="#version-0-4">Version 0.4</a></li>
 <li><a class="reference internal" href="#very-future-versions">Very future versions</a></li>
 </ul>
 </li>
