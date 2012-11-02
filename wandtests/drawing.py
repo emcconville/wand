@@ -18,7 +18,7 @@ def drawing_wand():
 
 @tests.test
 def is_drawing_wand(wand):
-    assert library.IsDrawingWand(wand.drawing_wand)
+    assert library.IsDrawingWand(wand.resource)
 
 
 @tests.test
@@ -102,7 +102,7 @@ def clone_drawing_wand(wand):
              lambda img: wand.clone())
     for func in funcs:
         with func(wand) as cloned:
-            assert wand.drawing_wand is not cloned.drawing_wand
+            assert wand.resource is not cloned.resource
             assert wand.text_kerning == cloned.text_kerning
 
 

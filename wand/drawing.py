@@ -35,38 +35,26 @@ class Drawing(Resource):
             if not drawing_wand:
                 wand = library.NewDrawingWand()
             else:
-                wand = library.CloneDrawingWand(drawing_wand.drawing_wand)
-            self.drawing_wand = wand
+                wand = library.CloneDrawingWand(drawing_wand.resource)
+            self.resource = wand
 
     def clone(self):
         return type(self)(drawing_wand=self)
 
     @property
-    def drawing_wand(self):
-        return self.resource
-
-    @drawing_wand.setter
-    def drawing_wand(self, drawing_wand):
-        self.resource = drawing_wand
-
-    @drawing_wand.deleter
-    def drawing_wand(self):
-        del self.resource
-
-    @property
     def font(self):
-        return library.DrawGetFont(self.drawing_wand)
+        return library.DrawGetFont(self.resource)
 
     @font.setter
     def font(self, font):
         if not isinstance(font, basestring):
             raise TypeError('font must be a basestring object, not ' +
                             repr(font))
-        library.DrawSetFont(self.drawing_wand, font)
+        library.DrawSetFont(self.resource, font)
 
     @property
     def font_size(self):
-        return library.DrawGetFontSize(self.drawing_wand)
+        return library.DrawGetFontSize(self.resource)
 
     @font_size.setter
     def font_size(self, size):
@@ -74,12 +62,12 @@ class Drawing(Resource):
             raise TypeError('expected a number, but got ' + repr(size))
         elif size < 0.0:
             raise ValueError('cannot be less then 0.0, but got ' + repr(size))
-        library.DrawSetFontSize(self.drawing_wand, size)
+        library.DrawSetFontSize(self.resource, size)
 
     @property
     def fill_color(self):
         pixel = library.NewPixelWand()
-        library.DrawGetFillColor(self.drawing_wand, pixel)
+        library.DrawGetFillColor(self.resource, pixel)
         size = ctypes.sizeof(MagickPixelPacket)
         buffer = ctypes.create_string_buffer(size)
         library.PixelGetMagickColor(pixel, buffer)
@@ -91,11 +79,11 @@ class Drawing(Resource):
             raise TypeError('color must be a wand.color.Color object, not ' +
                             repr(color))
         with color:
-            library.DrawSetFillColor(self.drawing_wand, color.resource)
+            library.DrawSetFillColor(self.resource, color.resource)
 
     @property
     def text_alignment(self):
-        text_alignment_index = library.DrawGetTextAlignment(self.drawing_wand)
+        text_alignment_index = library.DrawGetTextAlignment(self.resource)
         if not text_alignment_index:
             self.raise_exception()
         return TEXT_ALIGN_TYPES[text_alignment_index]
@@ -106,12 +94,12 @@ class Drawing(Resource):
             align not in TEXT_ALIGN_TYPES):
             raise TypeError('align value must be a string from ' +
                             'TEXT_ALIGN_TYPES, not ' + repr(align))
-        library.DrawSetTextAlignment(self.drawing_wand,
+        library.DrawSetTextAlignment(self.resource,
                                      TEXT_ALIGN_TYPES.index(align))
 
     @property
     def text_antialias(self):
-        result = library.DrawGetTextAntialias(self.drawing_wand)
+        result = library.DrawGetTextAntialias(self.resource)
         return True if result == 1 else False
 
     @text_antialias.setter
@@ -119,12 +107,11 @@ class Drawing(Resource):
         if not isinstance(value, bool):
             raise TypeError('value must be a boolean, not ' +
                             repr(value))
-        library.DrawSetTextAntialias(self.drawing_wand,
-                                     1 if value is True else 0)
+        library.DrawSetTextAntialias(self.resource, 1 if value is True else 0)
 
     @property
     def text_decoration(self):
-        text_decoration_index = library.DrawGetTextDecoration(self.drawing_wand)
+        text_decoration_index = library.DrawGetTextDecoration(self.resource)
         if not text_decoration_index:
             self.raise_exception()
         return TEXT_DECORATION_TYPES[text_decoration_index]
@@ -135,12 +122,12 @@ class Drawing(Resource):
             decoration not in TEXT_DECORATION_TYPES):
             raise TypeError('fecoration value must be a string from ' +
                             'TEXT_DECORATION_TYPES, not ' + repr(decoration))
-        library.DrawSetTextDecoration(self.drawing_wand,
+        library.DrawSetTextDecoration(self.resource,
                                       TEXT_DECORATION_TYPES.index(decoration))
 
     @property
     def text_encoding(self):
-        return library.DrawGetTextEncoding(self.drawing_wand)
+        return library.DrawGetTextEncoding(self.resource)
 
     @text_encoding.setter
     def text_encoding(self, encoding):
@@ -151,42 +138,42 @@ class Drawing(Resource):
             # encoding specify an empty string to set text encoding
             # to system's default.
             encoding = ''
-        library.DrawSetTextEncoding(self.drawing_wand, encoding)
+        library.DrawSetTextEncoding(self.resource, encoding)
 
     @property
     def text_interline_spacing(self):
-        return library.DrawGetTextInterlineSpacing(self.drawing_wand)
+        return library.DrawGetTextInterlineSpacing(self.resource)
 
     @text_interline_spacing.setter
     def text_interline_spacing(self, spacing):
         if not isinstance(spacing, numbers.Number):
             raise TypeError('expeted a number, but got ' + repr(spacing))
-        library.DrawSetTextInterlineSpacing(self.drawing_wand, spacing)
+        library.DrawSetTextInterlineSpacing(self.resource, spacing)
 
     @property
     def text_interword_spacing(self):
-        return library.DrawGetTextInterwordSpacing(self.drawing_wand)
+        return library.DrawGetTextInterwordSpacing(self.resource)
 
     @text_interword_spacing.setter
     def text_interword_spacing(self, spacing):
         if not isinstance(spacing, numbers.Number):
             raise TypeError('expeted a number, but got ' + repr(spacing))
-        library.DrawSetTextInterwordSpacing(self.drawing_wand, spacing)
+        library.DrawSetTextInterwordSpacing(self.resource, spacing)
 
     @property
     def text_kerning(self):
-        return library.DrawGetTextKerning(self.drawing_wand)
+        return library.DrawGetTextKerning(self.resource)
 
     @text_kerning.setter
     def text_kerning(self, kerning):
         if not isinstance(kerning, numbers.Number):
             raise TypeError('expeted a number, but got ' + repr(kerning))
-        library.DrawSetTextKerning(self.drawing_wand, kerning)
+        library.DrawSetTextKerning(self.resource, kerning)
 
     @property
     def text_under_color(self):
         pixel = library.NewPixelWand()
-        library.DrawGetTextUnderColor(self.drawing_wand, pixel)
+        library.DrawGetTextUnderColor(self.resource, pixel)
         size = ctypes.sizeof(MagickPixelPacket)
         buffer = ctypes.create_string_buffer(size)
         library.PixelGetMagickColor(pixel, buffer)
@@ -198,11 +185,11 @@ class Drawing(Resource):
             raise TypeError('color must be a wand.color.Color object, not ' +
                             repr(color))
         with color:
-            library.DrawSetTextUnderColor(self.drawing_wand, color.resource)
+            library.DrawSetTextUnderColor(self.resource, color.resource)
 
     @property
     def gravity(self):
-        gravity_index = library.DrawGetGravity(self.drawing_wand)
+        gravity_index = library.DrawGetGravity(self.resource)
         if not gravity_index:
             self.raise_exception()
         return TEXT_GRAVITY_TYPES[gravity_index]
@@ -213,15 +200,14 @@ class Drawing(Resource):
             value not in TEXT_GRAVITY_TYPES):
             raise TypeError('gravity value must be a string from ' +
                             'TEXT_GRAVITY_TYPES, not ' + repr(value))
-        library.DrawSetGravity(self.drawing_wand,
-                               TEXT_GRAVITY_TYPES.index(value))
+        library.DrawSetGravity(self.resource, TEXT_GRAVITY_TYPES.index(value))
 
 
     def clear(self):
-        library.ClearDrawingWand(self.drawing_wand)
+        library.ClearDrawingWand(self.resource)
 
     def draw(self, image):
-        res = library.MagickDrawImage(image.wand, self.drawing_wand)
+        res = library.MagickDrawImage(image.wand, self.resource)
         if not res:
             self.raise_exception()
 
@@ -230,7 +216,7 @@ class Drawing(Resource):
             raise TypeError('start must be a 2-dimensional tuple')
         if not isinstance(end, tuple) or len(end) != 2:
             raise TypeError('end must be a 2-dimensional tuple')
-        library.DrawLine(self.drawing_wand, start[0], start[1], end[0], end[1])
+        library.DrawLine(self.resource, start[0], start[1], end[0], end[1])
 
     def text(self, x, y, body):
         if not isinstance(x, numbers.Integral) or x < 0:
@@ -243,6 +229,6 @@ class Drawing(Resource):
             body = body.encode(self.text_encoding)
         body_p = ctypes.create_string_buffer(body)
         library.DrawAnnotation(
-            self.drawing_wand, x, y,
+            self.resource, x, y,
             ctypes.cast(body_p,ctypes.POINTER(ctypes.c_ubyte))
         )
