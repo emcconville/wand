@@ -5,18 +5,20 @@
 import ctypes
 import numbers
 
-from .color import Color
 from .api import library, MagickPixelPacket
+from .color import Color
 from .resource import Resource
 
-TEXT_ALIGN_TYPES = ('undefined', 'left', 'center', 'right')
+TEXT_ALIGN_TYPES = 'undefined', 'left', 'center', 'right'
 TEXT_DECORATION_TYPES = ('undefined', 'no', 'underline', 'overline',
                          'line_through')
-TEXT_GRAVITY_TYPE = ('forget', 'north_west', 'north',
-                     'north_east', 'west', 'center', 'east', 'south_west',
-                     'south', 'south_east', 'static')
+TEXT_GRAVITY_TYPES = ('forget', 'north_west', 'north',
+                      'north_east', 'west', 'center', 'east', 'south_west',
+                      'south', 'south_east', 'static')
 
-__all__ = "Drawing",
+__all__ = ('TEXT_ALIGN_TYPES', 'TEXT_DECORATION_TYPES', 'TEXT_GRAVITY_TYPES',
+           'Drawing')
+
 
 class Drawing(Resource):
     """Drawing"""
@@ -31,9 +33,10 @@ class Drawing(Resource):
     def __init__(self, drawing_wand=None):
         with self.allocate():
             if not drawing_wand:
-                self.drawing_wand = library.NewDrawingWand()
+                wand = library.NewDrawingWand()
             else:
-                self.drawing_wand = library.CloneDrawingWand(drawing_wand.drawing_wand)
+                wand = library.CloneDrawingWand(drawing_wand.drawing_wand)
+            self.drawing_wand = wand
 
     def clone(self):
         return type(self)(drawing_wand=self)
@@ -71,18 +74,15 @@ class Drawing(Resource):
             raise TypeError('expected a number, but got ' + repr(size))
         elif size < 0.0:
             raise ValueError('cannot be less then 0.0, but got ' + repr(size))
-
         library.DrawSetFontSize(self.drawing_wand, size)
 
     @property
     def fill_color(self):
         pixel = library.NewPixelWand()
         library.DrawGetFillColor(self.drawing_wand, pixel)
-
         size = ctypes.sizeof(MagickPixelPacket)
         buffer = ctypes.create_string_buffer(size)
         library.PixelGetMagickColor(pixel, buffer)
-
         return Color(raw=buffer)
 
     @fill_color.setter
@@ -102,11 +102,10 @@ class Drawing(Resource):
 
     @text_alignment.setter
     def text_alignment(self, align):
-        if not isinstance(align, basestring) \
-            or align not in TEXT_ALIGN_TYPES:
-            raise TypeError('Align value must be a string from ' +
+        if (not isinstance(align, basestring) or
+            align not in TEXT_ALIGN_TYPES):
+            raise TypeError('align value must be a string from ' +
                             'TEXT_ALIGN_TYPES, not ' + repr(align))
-
         library.DrawSetTextAlignment(self.drawing_wand,
                                      TEXT_ALIGN_TYPES.index(align))
 
@@ -132,11 +131,10 @@ class Drawing(Resource):
 
     @text_decoration.setter
     def text_decoration(self, decoration):
-        if not isinstance(decoration, basestring) \
-            or decoration not in TEXT_DECORATION_TYPES:
-            raise TypeError('Decoration value must be a string from ' +
+        if (not isinstance(decoration, basestring) or
+            decoration not in TEXT_DECORATION_TYPES):
+            raise TypeError('fecoration value must be a string from ' +
                             'TEXT_DECORATION_TYPES, not ' + repr(decoration))
-
         library.DrawSetTextDecoration(self.drawing_wand,
                                       TEXT_DECORATION_TYPES.index(decoration))
 
@@ -146,15 +144,13 @@ class Drawing(Resource):
 
     @text_encoding.setter
     def text_encoding(self, encoding):
-        if encoding is not None \
-            and not isinstance(encoding, basestring):
+        if encoding is not None and not isinstance(encoding, basestring):
             raise TypeError('encoding must be a basestring object, not ' + 
                             repr(encoding))
         elif encoding is None:
             # encoding specify an empty string to set text encoding
             # to system's default.
             encoding = ''
-
         library.DrawSetTextEncoding(self.drawing_wand, encoding)
 
     @property
@@ -191,11 +187,9 @@ class Drawing(Resource):
     def text_under_color(self):
         pixel = library.NewPixelWand()
         library.DrawGetTextUnderColor(self.drawing_wand, pixel)
-
         size = ctypes.sizeof(MagickPixelPacket)
         buffer = ctypes.create_string_buffer(size)
         library.PixelGetMagickColor(pixel, buffer)
-
         return Color(raw=buffer)
 
     @text_under_color.setter
@@ -211,18 +205,16 @@ class Drawing(Resource):
         gravity_index = library.DrawGetGravity(self.drawing_wand)
         if not gravity_index:
             self.raise_exception()
-
-        return TEXT_GRAVITY_TYPE[gravity_index]
+        return TEXT_GRAVITY_TYPES[gravity_index]
 
     @gravity.setter
     def gravity(self, value):
-        if not isinstance(value, basestring) \
-            or value not in TEXT_GRAVITY_TYPE:
-            raise TypeError('Gravity value must be a string from ' +
-                            'TEXT_GRAVITY_TYPE, not ' + repr(value))
-
+        if (not isinstance(value, basestring) or
+            value not in TEXT_GRAVITY_TYPES):
+            raise TypeError('gravity value must be a string from ' +
+                            'TEXT_GRAVITY_TYPES, not ' + repr(value))
         library.DrawSetGravity(self.drawing_wand,
-                               TEXT_GRAVITY_TYPE.index(value))
+                               TEXT_GRAVITY_TYPES.index(value))
 
 
     def clear(self):
@@ -238,30 +230,19 @@ class Drawing(Resource):
             raise TypeError('start must be a 2-dimensional tuple')
         if not isinstance(end, tuple) or len(end) != 2:
             raise TypeError('end must be a 2-dimensional tuple')
-
-        library.DrawLine(self.drawing_wand,
-                         start[0],
-                         start[1],
-                         end[0],
-                         end[1])
+        library.DrawLine(self.drawing_wand, start[0], start[1], end[0], end[1])
 
     def text(self, x, y, body):
         if not isinstance(x, numbers.Integral) or x < 0:
             raise TypeError('x must be a natural number, not ' + repr(x))
-
         if not isinstance(y, numbers.Integral) or y < 0:
             raise TypeError('y must be a natural number, not ' + repr(x))
-
         if not isinstance(body, basestring) or len(body) < 1:
             raise TypeError('body must be a string, not ' + repr(body))
-
-        body_p = None
         if self.text_encoding:
-            body_p = ctypes.create_string_buffer(body.encode(self.text_encoding))
-        else:
-            body_p = ctypes.create_string_buffer(body)
-
-        library.DrawAnnotation(self.drawing_wand,
-                               x,
-                               y,
-                               ctypes.cast(body_p,ctypes.POINTER(ctypes.c_ubyte)))
+            body = body.encode(self.text_encoding)
+        body_p = ctypes.create_string_buffer(body)
+        library.DrawAnnotation(
+            self.drawing_wand, x, y,
+            ctypes.cast(body_p,ctypes.POINTER(ctypes.c_ubyte))
+        )
