@@ -227,7 +227,7 @@ class Drawing(Resource):
             raise TypeError('body must be a string, not ' + repr(body))
         elif not body:
             raise ValueError('body string cannot be empty')
-        if self.text_encoding:
+        if self.text_encoding and isinstance(body, unicode):
             body = body.encode(self.text_encoding)
         body_p = ctypes.create_string_buffer(body)
         library.DrawAnnotation(
