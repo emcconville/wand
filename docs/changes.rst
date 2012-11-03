@@ -58,7 +58,7 @@ Released on September 24, 2012.
 - Added :attr:`Image.type <wand.image.Image.type>` property.
   [:issue:`33` by Yauhen Yakimovich, :issue:`42` by Piotr Florczyk]
 
-__ http://code.google.com/p/olivier-freebsd-ports/source/browse/graphics/py-wand/files/patch-wand_api.py
+__ http://olivier-freebsd-ports.googlecode.com/hg-history/efb852a5572/graphics/py-wand/files/patch-wand_api.py
 
 
 Version 0.2.1
