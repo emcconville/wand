@@ -239,3 +239,6 @@ class Drawing(Resource):
             self.resource, x, y,
             ctypes.cast(body_p,ctypes.POINTER(ctypes.c_ubyte))
         )
+
+    def __call__(self, image):
+        return self.draw(image)
