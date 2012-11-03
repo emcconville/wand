@@ -14,7 +14,7 @@ from .color import Color
 from .image import Image
 from .resource import Resource
 
-__all__ = ('TEXT_ALIGN_TYPES', 'TEXT_DECORATION_TYPES', 'TEXT_GRAVITY_TYPES',
+__all__ = ('TEXT_ALIGN_TYPES', 'TEXT_DECORATION_TYPES', 'GRAVITY_TYPES',
            'Drawing')
 
 
@@ -49,9 +49,9 @@ TEXT_DECORATION_TYPES = ('undefined', 'no', 'underline', 'overline',
 #: - ``'south'``
 #: - ``'south_east'``
 #: - ``'static'``
-TEXT_GRAVITY_TYPES = ('forget', 'north_west', 'north',
-                      'north_east', 'west', 'center', 'east', 'south_west',
-                      'south', 'south_east', 'static')
+GRAVITY_TYPES = ('forget', 'north_west', 'north', 'north_east', 'west',
+                 'center', 'east', 'south_west', 'south', 'south_east',
+                 'static')
 
 
 class Drawing(Resource):
@@ -284,23 +284,23 @@ class Drawing(Resource):
     @property
     def gravity(self):
         """(:class:`basestring`) The text placement gravity used when
-        annotating with text.  It's a string from :const:`TEXT_GRAVITY_TYPES`
+        annotating with text.  It's a string from :const:`GRAVITY_TYPES`
         list.  It also can be set.
 
         """
         gravity_index = library.DrawGetGravity(self.resource)
         if not gravity_index:
             self.raise_exception()
-        return TEXT_GRAVITY_TYPES[gravity_index]
+        return GRAVITY_TYPES[gravity_index]
 
     @gravity.setter
     def gravity(self, value):
         if not isinstance(value, basestring):
             raise TypeError('expected a string, not ' + repr(value))
-        elif value not in TEXT_GRAVITY_TYPES:
-            raise ValueError('expected a string from TEXT_GRAVITY_TYPES, not '
+        elif value not in GRAVITY_TYPES:
+            raise ValueError('expected a string from GRAVITY_TYPES, not '
                              + repr(value))
-        library.DrawSetGravity(self.resource, TEXT_GRAVITY_TYPES.index(value))
+        library.DrawSetGravity(self.resource, GRAVITY_TYPES.index(value))
 
     def clear(self):
         library.ClearDrawingWand(self.resource)
