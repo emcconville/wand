@@ -45,3 +45,29 @@ a red diagonal line into the ``image``::
         draw.fill_color = color
         draw.line((0, 0), image.size)
         draw(image)
+
+
+Texts
+-----
+
+:class:`~wand.drawing.Drawing` object can write texts as well using its
+:meth:`~wand.drawing.Drawing.text()` method.  It takes ``x`` and ``y``
+cordinates to be drawn and a string to write::
+
+    draw.font = 'wandtests/assets/League_Gothic.otf'
+    draw.font_size = 40
+    draw.text(image.width / 2, image.height / 2, 'Hello, world!')
+    draw(image)
+
+As the above code shows you can adjust several settings before writing texts:
+
+- :attr:`~wand.drawing.Drawing.font`
+- :attr:`~wand.drawing.Drawing.font_size`
+- :attr:`~wand.drawing.Drawing.gravity`
+- :attr:`~wand.drawing.Drawing.text_alignment`
+- :attr:`~wand.drawing.Drawing.text_antialias`
+- :attr:`~wand.drawing.Drawing.text_decoration`
+- :attr:`~wand.drawing.Drawing.text_interline_spacing`
+- :attr:`~wand.drawing.Drawing.text_interword_spacing`
+- :attr:`~wand.drawing.Drawing.text_kerning`
+- :attr:`~wand.drawing.Drawing.text_under_color`
