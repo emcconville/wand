@@ -98,7 +98,7 @@ def set_get_gravity(wand):
 @tests.test
 def clone_drawing_wand(wand):
     wand.text_kerning = 10.22
-    funcs = (lambda img: Drawing(drawing_wand=wand),
+    funcs = (lambda img: Drawing(drawing=wand),
              lambda img: wand.clone())
     for func in funcs:
         with func(wand) as cloned:

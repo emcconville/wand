@@ -30,16 +30,19 @@ class Drawing(Resource):
     c_get_exception = library.DrawGetException
     c_clear_exception = library.DrawClearException
 
-    def __init__(self, drawing_wand=None):
+    def __init__(self, drawing=None):
         with self.allocate():
-            if not drawing_wand:
+            if not drawing:
                 wand = library.NewDrawingWand()
+            elif not isinstance(drawing, type(self)):
+                raise TypeError('drawing must be a wand.drawing.Drawing '
+                                'instance, not ' + repr(drawing))
             else:
-                wand = library.CloneDrawingWand(drawing_wand.resource)
+                wand = library.CloneDrawingWand(drawing.resource)
             self.resource = wand
 
     def clone(self):
-        return type(self)(drawing_wand=self)
+        return type(self)(drawing=self)
 
     @property
     def font(self):
