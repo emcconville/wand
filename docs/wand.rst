@@ -7,6 +7,7 @@
 
       wand/image
       wand/color
+      wand/drawing
       wand/resource
       wand/exceptions
       wand/api

@@ -1,6 +1,10 @@
 """:mod:`wand.drawing` --- Drawings
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+The module provides some vector drawing functions.
+
+.. versionadded:: 0.3.0
+
 """
 import ctypes
 import numbers
@@ -14,16 +18,60 @@ __all__ = ('TEXT_ALIGN_TYPES', 'TEXT_DECORATION_TYPES', 'TEXT_GRAVITY_TYPES',
            'Drawing')
 
 
+#: (:class:`collections.Sequence`) The list of text align types.
+#:
+#: - ``'undefined'``
+#: - ``'left'``
+#: - ``'center'``
+#: - ``'right'``
 TEXT_ALIGN_TYPES = 'undefined', 'left', 'center', 'right'
+
+#: (:class:`collections.Sequence`) The list of text decoration types.
+#:
+#: - ``'undefined'``
+#: - ``'no'``
+#: - ``'underline'``
+#: - ``'overline'``
+#: - ``'line_through'``
 TEXT_DECORATION_TYPES = ('undefined', 'no', 'underline', 'overline',
                          'line_through')
+
+#: (:class:`collections.Sequence`) The list of text gravity types.
+#:
+#: - ``'forget'``
+#: - ``'north_west'``
+#: - ``'north'``
+#: - ``'north_east'``
+#: - ``'west'``
+#: - ``'center'``
+#: - ``'east'``
+#: - ``'south_west'``
+#: - ``'south'``
+#: - ``'south_east'``
+#: - ``'static'``
 TEXT_GRAVITY_TYPES = ('forget', 'north_west', 'north',
                       'north_east', 'west', 'center', 'east', 'south_west',
                       'south', 'south_east', 'static')
 
 
 class Drawing(Resource):
-    """Drawing"""
+    """Drawing object.  It maintains several vector drawing instructions
+    and can get drawn into zero or more :class:`~wand.image.Image` objects
+    by calling it.
+
+    For example, the following code draws a diagonal line to the ``image``::
+
+        with Drawing() as draw:
+            draw.line((0, 0), image.size)
+            draw(image)
+
+    :param drawing: an optional drawing object to clone.
+                    use :meth:`clone()` method rathan than this parameter
+    :type drawing: :class:`Drawing`
+
+    .. versionadded:: 0.3.0
+
+    """
 
     c_is_resource = library.IsDrawingWand
     c_destroy_resource = library.DestroyDrawingWand
@@ -42,10 +90,17 @@ class Drawing(Resource):
             self.resource = wand
 
     def clone(self):
+        """Copies a drawing object.
+
+        :returns: a duplication
+        :rtype: :class:`Drawing`
+
+        """
         return type(self)(drawing=self)
 
     @property
     def font(self):
+        """(:class:`basestring`) The current font name.  It also can be set."""
         return library.DrawGetFont(self.resource)
 
     @font.setter
@@ -56,6 +111,7 @@ class Drawing(Resource):
 
     @property
     def font_size(self):
+        """(:class:`numbers.Real`) The font size.  It also can be set."""
         return library.DrawGetFontSize(self.resource)
 
     @font_size.setter
@@ -68,6 +124,10 @@ class Drawing(Resource):
 
     @property
     def fill_color(self):
+        """(:class:`~wand.color.Color`) The current color to fill.
+        It also can be set.
+
+        """
         pixel = library.NewPixelWand()
         library.DrawGetFillColor(self.resource, pixel)
         size = ctypes.sizeof(MagickPixelPacket)
@@ -85,6 +145,11 @@ class Drawing(Resource):
 
     @property
     def text_alignment(self):
+        """(:class:`basestring`) The current text alignment setting.
+        It's a string value from :const:`TEXT_ALIGN_TYPES` list.
+        It also can be set.
+
+        """
         text_alignment_index = library.DrawGetTextAlignment(self.resource)
         if not text_alignment_index:
             self.raise_exception()
@@ -102,6 +167,11 @@ class Drawing(Resource):
 
     @property
     def text_antialias(self):
+        """(:class:`bool`) The boolean value which represents whether
+        antialiasing is used for text rendering.  It also can be set to
+        ``True`` or ``False`` to switch the setting.
+
+        """
         result = library.DrawGetTextAntialias(self.resource)
         return bool(result)
 
@@ -111,6 +181,10 @@ class Drawing(Resource):
 
     @property
     def text_decoration(self):
+        """(:class:`basestring`) The text decoration setting, a string
+        from :const:`TEXT_DECORATION_TYPES` list.  It also can be set.
+
+        """
         text_decoration_index = library.DrawGetTextDecoration(self.resource)
         if not text_decoration_index:
             self.raise_exception()
@@ -128,6 +202,10 @@ class Drawing(Resource):
 
     @property
     def text_encoding(self):
+        """(:class:`basestring`) The internally used text encoding setting.
+        Although it also can be set, but it's not encorouged.
+
+        """
         return library.DrawGetTextEncoding(self.resource)
 
     @text_encoding.setter
@@ -142,6 +220,10 @@ class Drawing(Resource):
 
     @property
     def text_interline_spacing(self):
+        """(:class:`numbers.Real`) The setting of the text line spacing.
+        It also can be set.
+
+        """
         return library.DrawGetTextInterlineSpacing(self.resource)
 
     @text_interline_spacing.setter
@@ -152,6 +234,10 @@ class Drawing(Resource):
 
     @property
     def text_interword_spacing(self):
+        """(:class:`numbers.Real`) The setting of the word spacing.
+        It also can be set.
+
+        """
         return library.DrawGetTextInterwordSpacing(self.resource)
 
     @text_interword_spacing.setter
@@ -162,6 +248,10 @@ class Drawing(Resource):
 
     @property
     def text_kerning(self):
+        """(:class:`numbers.Real`) The setting of the text kerning.
+        It also can be set.
+
+        """
         return library.DrawGetTextKerning(self.resource)
 
     @text_kerning.setter
@@ -172,6 +262,10 @@ class Drawing(Resource):
 
     @property
     def text_under_color(self):
+        """(:class:`~wand.color.Color`) The color of a background rectangle
+        to place under text annotations.  It also can be set.
+
+        """
         pixel = library.NewPixelWand()
         library.DrawGetTextUnderColor(self.resource, pixel)
         size = ctypes.sizeof(MagickPixelPacket)
@@ -189,6 +283,11 @@ class Drawing(Resource):
 
     @property
     def gravity(self):
+        """(:class:`basestring`) The text placement gravity used when
+        annotating with text.  It's a string from :const:`TEXT_GRAVITY_TYPES`
+        list.  It also can be set.
+
+        """
         gravity_index = library.DrawGetGravity(self.resource)
         if not gravity_index:
             self.raise_exception()
@@ -207,6 +306,21 @@ class Drawing(Resource):
         library.ClearDrawingWand(self.resource)
 
     def draw(self, image):
+        """Renders the current drawing into the ``image``.  You can simply
+        call :class:`Drawing` instance rather than calling this method.
+        That means the following code which calls :class:`Drawing` object
+        itself::
+
+            drawing(image)
+
+        is equivalent to the following code which calls :meth:`draw()` method::
+
+            drawing.draw(image)
+
+        :param image: the image to be drawn
+        :type image: :class:`~wand.image.Image`
+
+        """
         if not isinstance(image, Image):
             raise TypeError('image must be a wand.image.Image instance, not '
                             + repr(image))
@@ -215,6 +329,16 @@ class Drawing(Resource):
             self.raise_exception()
 
     def line(self, start, end):
+        """Draws a line ``start`` to ``end``.
+
+        :param start: (:class:`~numbers.Integral`, :class:`numbers.Integral`)
+                      pair which represents starting x and y of the line
+        :type start: :class:`numbers.Sequence`
+        :param end: (:class:`~numbers.Integral`, :class:`numbers.Integral`)
+                    pair which represents ending x and y of the line
+        :type end: :class:`numbers.Sequence`
+
+        """
         start_x, start_y = start
         end_x, end_y = end
         library.DrawLine(self.resource,
@@ -222,6 +346,16 @@ class Drawing(Resource):
                          int(end_x), int(end_y))
 
     def text(self, x, y, body):
+        """Writes a text ``body`` into (``x``, ``y``).
+
+        :param x: the left offset where to start writing a text
+        :type x: :class:`numbers.Integral`
+        :param y: the top offset where to start writing a text
+        :type y: :class:`numbers.Integral`
+        :param body: the body string to write
+        :type body: :class:`basestring`
+
+        """
         if not isinstance(x, numbers.Integral) or x < 0:
             exc = ValueError if x < 0 else TypeError
             raise exc('x must be a natural number, not ' + repr(x))
