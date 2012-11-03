@@ -7,6 +7,7 @@ import numbers
 
 from .api import library, MagickPixelPacket
 from .color import Color
+from .image import Image
 from .resource import Resource
 
 __all__ = ('TEXT_ALIGN_TYPES', 'TEXT_DECORATION_TYPES', 'TEXT_GRAVITY_TYPES',
@@ -203,6 +204,9 @@ class Drawing(Resource):
         library.ClearDrawingWand(self.resource)
 
     def draw(self, image):
+        if not isinstance(image, Image):
+            raise TypeError('image must be a wand.image.Image instance, not '
+                            + repr(image))
         res = library.MagickDrawImage(image.wand, self.resource)
         if not res:
             self.raise_exception()
