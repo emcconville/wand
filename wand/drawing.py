@@ -214,7 +214,9 @@ class Drawing(Resource):
     def line(self, start, end):
         start_x, start_y = start
         end_x, end_y = end
-        library.DrawLine(self.resource, start_x, start_y, end_x, end_y)
+        library.DrawLine(self.resource,
+                         int(start_x), int(start_y),
+                         int(end_x), int(end_y))
 
     def text(self, x, y, body):
         if not isinstance(x, numbers.Integral) or x < 0:
