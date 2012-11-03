@@ -29,8 +29,6 @@ class Drawing(Resource):
     c_get_exception = library.DrawGetException
     c_clear_exception = library.DrawClearException
 
-    __slots__ = 'c_resource'
-
     def __init__(self, drawing_wand=None):
         with self.allocate():
             if not drawing_wand:
