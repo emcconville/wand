@@ -9,6 +9,8 @@ The module provides some vector drawing functions.
 import ctypes
 import numbers
 
+from collections import namedtuple
+
 from .api import library, MagickPixelPacket
 from .color import Color
 from .image import Image
@@ -53,6 +55,14 @@ GRAVITY_TYPES = ('forget', 'north_west', 'north', 'north_east', 'west',
                  'center', 'east', 'south_west', 'south', 'south_east',
                  'static')
 
+METRICS_ELEMS = ('character_width', 'character_height', 
+                 'ascender', 'descender', 
+                 'text_width', 'text_height', 
+                 'maximum_horizontal_advance', 
+                 'x1', 'y1', 'x2', 'y2', 
+                 'x', 'y')
+
+FontMetrics = namedtuple('FontMetrics', METRICS_ELEMS)
 
 class Drawing(Resource):
     """Drawing object.  It maintains several vector drawing instructions
@@ -373,6 +383,39 @@ class Drawing(Resource):
             self.resource, x, y,
             ctypes.cast(body_p,ctypes.POINTER(ctypes.c_ubyte))
         )
+
+    def get_font_metrics(self, image, text, multiline=False):
+        """Get font metrics.
+
+        :param image: the image to be drawn
+        :type image: :class:`~wand.image.Image`
+        :param text: the text string for get font metrics.
+        :type text: :class:`basestring`
+        :param multiline: text is multiline or not
+        :type multiline: `boolean`
+
+        """
+
+        if not isinstance(image, Image):
+            raise TypeError('image must be a wand.image.Image instance, not '
+                            + repr(image))
+        if not isinstance(text, basestring):
+            raise TypeError('text must be a string, not ' + repr(text))
+
+        if not multiline:
+            font_metrics_f = library.MagickQueryFontMetrics
+        else:
+            font_metrics_f = library.MagickQueryMultilineFontMetrics
+
+        result = font_metrics_f(
+            image.wand, self.resource, text
+        )
+
+        args = dict()
+        for i in xrange(0, 13):
+            args[METRICS_ELEMS[i]] = result[i]
+
+        return FontMetrics(**args)
 
     def __call__(self, image):
         return self.draw(image)
