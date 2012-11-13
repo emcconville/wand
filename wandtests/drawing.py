@@ -3,7 +3,7 @@ from attest import Tests, assert_hook
 from wand.image import Image
 from wand.color import Color
 from wand.api import library
-from wand.drawing import Drawing
+from wand.drawing import Drawing, FontMetrics
 
 from .image import asset, get_sig_version
 
@@ -148,3 +148,87 @@ def draw_text(wand):
             draw.draw(img)
 
             assert img.signature == sig
+
+@tests.test
+def get_font_metrics_test(wand):
+    with Image(width=144, height=192, background=Color('#fff')) as img:
+        with Drawing() as draw:
+            draw.font = asset('Legague_Gothic.otf')
+            draw.font_size = 13
+            draw.text_encoding = 'utf-8'
+
+            not_multiline_and_not_linebreak = \
+                    draw.get_font_metrics(img, 
+                            "This is test string for get_font_metrics")
+            multiline_and_not_linebreak = \
+                    draw.get_font_metrics(img, 
+                            "This is test string for get_font_metrics", 
+                            True)
+            not_multiline_and_linebreak = \
+                    draw.get_font_metrics(img, 
+                            "This is test string\nfor get_font_metrics")
+            multiline_and_linebreak = \
+                    draw.get_font_metrics(img, 
+                            "This is test string\nfor get_font_metrics", 
+                            True)
+
+            assert not_multiline_and_not_linebreak == \
+                    FontMetrics(character_width=13.0, 
+                                character_height=13.0, 
+                                ascender=10.0, 
+                                descender=-3.0, 
+                                text_width=221.125, 
+                                text_height=16.0, 
+                                maximum_horizontal_advance=14.0, 
+                                x1=-0.125, 
+                                y1=-3.0, 
+                                x2=10.0, 
+                                y2=9.0, 
+                                x=221.0, 
+                                y=0.0)
+
+            assert multiline_and_not_linebreak == \
+                    FontMetrics(character_width=13.0, 
+                                character_height=13.0, 
+                                ascender=10.0, 
+                                descender=-3.0, 
+                                text_width=221.125, 
+                                text_height=13.0, 
+                                maximum_horizontal_advance=14.0, 
+                                x1=-0.125, 
+                                y1=-3.0, 
+                                x2=10.0, 
+                                y2=9.0, 
+                                x=221.0, 
+                                y=0.0)
+
+            assert not_multiline_and_linebreak == \
+                    FontMetrics(character_width=13.0, 
+                                character_height=13.0, 
+                                ascender=10.0, 
+                                descender=-3.0, 
+                                text_width=224.125,
+                                text_height=16.0, 
+                                maximum_horizontal_advance=14.0, 
+                                x1=-0.125, 
+                                y1=-3.0, 
+                                x2=10.0, 
+                                y2=9.0, 
+                                x=224.0, 
+                                y=0.0)
+
+            assert multiline_and_linebreak == \
+                    FontMetrics(character_width=13.0, 
+                                character_height=13.0, 
+                                ascender=10.0, 
+                                descender=-3.0, 
+                                text_width=116.0, 
+                                text_height=26.0, 
+                                maximum_horizontal_advance=14.0, 
+                                x1=0.0, 
+                                y1=-3.0, 
+                                x2=10.0, 
+                                y2=9.0, 
+                                x=116.0, 
+                                y=0.0)
+
