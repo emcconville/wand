@@ -3,7 +3,7 @@ from attest import Tests, assert_hook
 from wand.image import Image
 from wand.color import Color
 from wand.api import library
-from wand.drawing import Drawing, FontMetrics
+from wand.drawing import Drawing
 
 from .image import asset, get_sig_version
 
@@ -149,39 +149,24 @@ def draw_text(wand):
 
             assert img.signature == sig
 
+
 @tests.test
 def get_font_metrics_test(wand):
     with Image(width=144, height=192, background=Color('#fff')) as img:
         with Drawing() as draw:
             draw.font = asset('Legague_Gothic.otf')
             draw.font_size = 13
-            draw.text_encoding = 'utf-8'
-
-            nm1 = draw.get_font_metrics(img,
-                    "asdf1234")
-
-            nm2 = draw.get_font_metrics(img,
-                    "asdf1234asdf1234")
-
-            nm3 = draw.get_font_metrics(img,
-                    "asdf1234\nasdf1234")
-
+            nm1 = draw.get_font_metrics(img, 'asdf1234')
+            nm2 = draw.get_font_metrics(img, 'asdf1234asdf1234')
+            nm3 = draw.get_font_metrics(img, 'asdf1234\nasdf1234')
             assert nm1.character_width == draw.font_size
             assert nm1.text_width < nm2.text_width
             assert nm2.text_width <= nm3.text_width
             assert nm2.text_height == nm3.text_height
-
-            m1 = draw.get_font_metrics(img,
-                    "asdf1234", True)
-
-            m2 = draw.get_font_metrics(img,
-                    "asdf1234asdf1234", True)
-
-            m3 = draw.get_font_metrics(img,
-                    "asdf1234\nasdf1234", True)
-
+            m1 = draw.get_font_metrics(img, 'asdf1234', True)
+            m2 = draw.get_font_metrics(img, 'asdf1234asdf1234', True)
+            m3 = draw.get_font_metrics(img, 'asdf1234\nasdf1234', True)
             assert m1.character_width == draw.font_size
             assert m1.text_width < m2.text_width
             assert m2.text_width > m3.text_width
             assert m2.text_height < m3.text_height
-

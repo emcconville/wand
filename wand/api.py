@@ -429,7 +429,9 @@ try:
     library.MagickQueryMultilineFontMetrics.argtypes = [ctypes.c_void_p,
                                                         ctypes.c_void_p,
                                                         ctypes.c_char_p]
-    library.MagickQueryMultilineFontMetrics.restype = ctypes.POINTER(ctypes.c_double)
+    library.MagickQueryMultilineFontMetrics.restype = ctypes.POINTER(
+        ctypes.c_double
+    )
 
 
 except AttributeError:

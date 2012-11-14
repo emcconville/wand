@@ -6,18 +6,17 @@ The module provides some vector drawing functions.
 .. versionadded:: 0.3.0
 
 """
+import collections
 import ctypes
 import numbers
-
-from collections import namedtuple
 
 from .api import library, MagickPixelPacket
 from .color import Color
 from .image import Image
 from .resource import Resource
 
-__all__ = ('TEXT_ALIGN_TYPES', 'TEXT_DECORATION_TYPES', 'GRAVITY_TYPES',
-           'Drawing')
+__all__ = ('FONT_METRICS_ATTRIBUTES', 'TEXT_ALIGN_TYPES',
+           'TEXT_DECORATION_TYPES', 'GRAVITY_TYPES', 'Drawing', 'FontMetrics')
 
 
 #: (:class:`collections.Sequence`) The list of text align types.
@@ -55,14 +54,15 @@ GRAVITY_TYPES = ('forget', 'north_west', 'north', 'north_east', 'west',
                  'center', 'east', 'south_west', 'south', 'south_east',
                  'static')
 
-METRICS_ELEMS = ('character_width', 'character_height', 
-                 'ascender', 'descender', 
-                 'text_width', 'text_height', 
-                 'maximum_horizontal_advance', 
-                 'x1', 'y1', 'x2', 'y2', 
-                 'x', 'y')
+#: (:class:`collections.Sequence`) The attribute names of font metrics.
+FONT_METRICS_ATTRIBUTES = ('character_width', 'character_height', 'ascender',
+                           'descender', 'text_width', 'text_height',
+                           'maximum_horizontal_advance', 'x1', 'y1', 'x2',
+                           'y2', 'x', 'y')
 
-FontMetrics = namedtuple('FontMetrics', METRICS_ELEMS)
+#: The tuple subtype which consists of font metrics data.
+FontMetrics = collections.namedtuple('FontMetrics', FONT_METRICS_ATTRIBUTES)
+
 
 class Drawing(Resource):
     """Drawing object.  It maintains several vector drawing instructions
@@ -385,7 +385,7 @@ class Drawing(Resource):
         )
 
     def get_font_metrics(self, image, text, multiline=False):
-        """Get font metrics.
+        """Queries font metrics from the given ``text``.
 
         :param image: the image to be drawn
         :type image: :class:`~wand.image.Image`
@@ -395,27 +395,18 @@ class Drawing(Resource):
         :type multiline: `boolean`
 
         """
-
         if not isinstance(image, Image):
             raise TypeError('image must be a wand.image.Image instance, not '
                             + repr(image))
         if not isinstance(text, basestring):
             raise TypeError('text must be a string, not ' + repr(text))
-
-        if not multiline:
-            font_metrics_f = library.MagickQueryFontMetrics
-        else:
+        if multiline:
             font_metrics_f = library.MagickQueryMultilineFontMetrics
-
-        result = font_metrics_f(
-            image.wand, self.resource, text
-        )
-
-        args = dict()
-        for i in xrange(0, 13):
-            args[METRICS_ELEMS[i]] = result[i]
-
-        return FontMetrics(**args)
+        else:
+            font_metrics_f = library.MagickQueryFontMetrics
+        result = font_metrics_f(image.wand, self.resource, text)
+        args = (result[i] for i in xrange(13))
+        return FontMetrics(*args)
 
     def __call__(self, image):
         return self.draw(image)
