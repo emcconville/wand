@@ -157,78 +157,31 @@ def get_font_metrics_test(wand):
             draw.font_size = 13
             draw.text_encoding = 'utf-8'
 
-            not_multiline_and_not_linebreak = \
-                    draw.get_font_metrics(img, 
-                            "This is test string for get_font_metrics")
-            multiline_and_not_linebreak = \
-                    draw.get_font_metrics(img, 
-                            "This is test string for get_font_metrics", 
-                            True)
-            not_multiline_and_linebreak = \
-                    draw.get_font_metrics(img, 
-                            "This is test string\nfor get_font_metrics")
-            multiline_and_linebreak = \
-                    draw.get_font_metrics(img, 
-                            "This is test string\nfor get_font_metrics", 
-                            True)
+            nm1 = draw.get_font_metrics(img,
+                    "asdf1234")
 
-            assert not_multiline_and_not_linebreak == \
-                    FontMetrics(character_width=13.0, 
-                                character_height=13.0, 
-                                ascender=10.0, 
-                                descender=-3.0, 
-                                text_width=221.125, 
-                                text_height=16.0, 
-                                maximum_horizontal_advance=14.0, 
-                                x1=-0.125, 
-                                y1=-3.0, 
-                                x2=10.0, 
-                                y2=9.0, 
-                                x=221.0, 
-                                y=0.0)
+            nm2 = draw.get_font_metrics(img,
+                    "asdf1234asdf1234")
 
-            assert multiline_and_not_linebreak == \
-                    FontMetrics(character_width=13.0, 
-                                character_height=13.0, 
-                                ascender=10.0, 
-                                descender=-3.0, 
-                                text_width=221.125, 
-                                text_height=13.0, 
-                                maximum_horizontal_advance=14.0, 
-                                x1=-0.125, 
-                                y1=-3.0, 
-                                x2=10.0, 
-                                y2=9.0, 
-                                x=221.0, 
-                                y=0.0)
+            nm3 = draw.get_font_metrics(img,
+                    "asdf1234\nasdf1234")
 
-            assert not_multiline_and_linebreak == \
-                    FontMetrics(character_width=13.0, 
-                                character_height=13.0, 
-                                ascender=10.0, 
-                                descender=-3.0, 
-                                text_width=224.125,
-                                text_height=16.0, 
-                                maximum_horizontal_advance=14.0, 
-                                x1=-0.125, 
-                                y1=-3.0, 
-                                x2=10.0, 
-                                y2=9.0, 
-                                x=224.0, 
-                                y=0.0)
+            assert nm1.character_width == draw.font_size
+            assert nm1.text_width < nm2.text_width
+            assert nm2.text_width <= nm3.text_width
+            assert nm2.text_height == nm3.text_height
 
-            assert multiline_and_linebreak == \
-                    FontMetrics(character_width=13.0, 
-                                character_height=13.0, 
-                                ascender=10.0, 
-                                descender=-3.0, 
-                                text_width=116.0, 
-                                text_height=26.0, 
-                                maximum_horizontal_advance=14.0, 
-                                x1=0.0, 
-                                y1=-3.0, 
-                                x2=10.0, 
-                                y2=9.0, 
-                                x=116.0, 
-                                y=0.0)
+            m1 = draw.get_font_metrics(img,
+                    "asdf1234", True)
+
+            m2 = draw.get_font_metrics(img,
+                    "asdf1234asdf1234", True)
+
+            m3 = draw.get_font_metrics(img,
+                    "asdf1234\nasdf1234", True)
+
+            assert m1.character_width == draw.font_size
+            assert m1.text_width < m2.text_width
+            assert m2.text_width > m3.text_width
+            assert m2.text_height < m3.text_height
 
