@@ -7,6 +7,9 @@ Branch :branch:`drawing`
 To be shipped with 0.3.0.
 
 - Added :mod:`wand.drawing` module.  [:issue:`64` by Adrian Jung]
+- Added :meth:`Drawing.get_font_metrics()
+  <wand.drawing.Drawing.get_font_metrics>` method.
+  [:issue:`69`, :issue:`71` by Cha, Hojeong]
 
 
 Version 0.3.0
