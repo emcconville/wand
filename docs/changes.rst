@@ -1,6 +1,14 @@
 Wand Changelog
 ==============
 
+Branch :branch:`drawing`
+------------------------
+
+To be shipped with 0.3.0.
+
+- Added :mod:`wand.drawing` module.  [:issue:`64` by Adrian Jung]
+
+
 Version 0.3.0
 -------------
 

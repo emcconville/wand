@@ -366,6 +366,150 @@ try:
 
     libmagick.GetMagickReleaseDate.argtypes = []
     libmagick.GetMagickReleaseDate.restype = ctypes.c_char_p
+
+    library.NewDrawingWand.restype = ctypes.c_void_p
+
+    library.CloneDrawingWand.argtypes = [ctypes.c_void_p]
+    library.CloneDrawingWand.restype = ctypes.c_void_p
+
+    library.DestroyDrawingWand.argtypes = [ctypes.c_void_p]
+    library.DestroyDrawingWand.restype = ctypes.c_void_p
+
+    library.IsDrawingWand.argtypes = [ctypes.c_void_p]
+    library.IsDrawingWand.restype = ctypes.c_int
+
+    library.DrawGetException.argtypes = [ctypes.c_void_p,
+                                         ctypes.POINTER(ctypes.c_int)]
+    library.DrawGetException.restype = ctypes.c_char_p
+
+    library.DrawClearException.argtypes = [ctypes.c_void_p]
+    library.DrawClearException.restype = ctypes.c_int
+
+    library.DrawSetFont.argtypes = [ctypes.c_void_p,
+                                    ctypes.c_char_p]
+    library.DrawSetFont.restype = None
+
+    library.DrawSetFontSize.argtypes = [ctypes.c_void_p,
+                                        ctypes.c_double]
+    library.DrawSetFontSize.restype = None
+
+    library.DrawSetFillColor.argtypes = [ctypes.c_void_p,
+                                         ctypes.c_void_p]
+    library.DrawSetFillColor.restype = None
+
+    library.DrawSetTextAlignment.argtypes = [ctypes.c_void_p,
+                                             ctypes.c_int]
+    library.DrawSetTextAlignment.restype = None
+
+    library.DrawSetTextAntialias.argtypes = [ctypes.c_void_p,
+                                             ctypes.c_int]
+    library.DrawSetTextAntialias.restype = None
+
+    library.DrawSetTextDecoration.argtypes = [ctypes.c_void_p,
+                                              ctypes.c_int]
+    library.DrawSetTextDecoration.restype = None
+
+    library.DrawSetTextEncoding.argtypes = [ctypes.c_void_p,
+                                            ctypes.c_char_p]
+    library.DrawSetTextEncoding.restype = None
+
+    library.DrawSetTextInterlineSpacing.argtypes = [ctypes.c_void_p,
+                                                    ctypes.c_double]
+    library.DrawSetTextInterlineSpacing.restype = None
+
+    library.DrawSetTextInterwordSpacing.argtypes = [ctypes.c_void_p,
+                                                    ctypes.c_double]
+    library.DrawSetTextInterwordSpacing.restype = None
+
+    library.DrawSetTextKerning.argtypes = [ctypes.c_void_p,
+                                           ctypes.c_double]
+    library.DrawSetTextKerning.restype = None
+
+    library.DrawSetTextUnderColor.argtypes = [ctypes.c_void_p,
+                                              ctypes.c_void_p]
+    library.DrawSetTextUnderColor.restype = None
+
+    library.DrawGetFillColor.argtypes = [ctypes.c_void_p,
+                                         ctypes.c_void_p]
+    library.DrawGetFillColor.restype = None
+
+    library.DrawGetFont.argtypes = [ctypes.c_void_p]
+    library.DrawGetFont.restype = ctypes.c_char_p
+
+    library.DrawGetFontSize.argtypes = [ctypes.c_void_p]
+    library.DrawGetFontSize.restype = ctypes.c_double
+
+    library.DrawGetTextAlignment.argtypes = [ctypes.c_void_p]
+    library.DrawGetTextAlignment.restype = ctypes.c_int
+
+    library.DrawGetTextAntialias.argtypes = [ctypes.c_void_p]
+    library.DrawGetTextAntialias.restype = ctypes.c_int
+
+    library.DrawGetTextDecoration.argtypes = [ctypes.c_void_p]
+    library.DrawGetTextDecoration.restype = ctypes.c_int
+
+    library.DrawGetTextEncoding.argtypes = [ctypes.c_void_p]
+    library.DrawGetTextEncoding.restype = ctypes.c_char_p
+
+    library.DrawGetTextInterlineSpacing.argtypes = [ctypes.c_void_p]
+    library.DrawGetTextInterlineSpacing.restype = ctypes.c_double
+
+    library.DrawGetTextInterwordSpacing.argtypes = [ctypes.c_void_p]
+    library.DrawGetTextInterwordSpacing.restype = ctypes.c_double
+
+    library.DrawGetTextKerning.argtypes = [ctypes.c_void_p]
+    library.DrawGetTextKerning.restype = ctypes.c_double
+
+    library.DrawGetTextUnderColor.argtypes = [ctypes.c_void_p,
+                                              ctypes.c_void_p]
+    library.DrawGetTextUnderColor.restype = None
+
+    library.DrawSetGravity.argtypes = [ctypes.c_void_p,
+                                       ctypes.c_int]
+    library.DrawSetGravity.restype = None
+
+    library.DrawGetGravity.argtypes = [ctypes.c_void_p]
+    library.DrawGetGravity.restype = ctypes.c_int
+
+    library.MagickAnnotateImage.argtypes = [ctypes.c_void_p,
+                                            ctypes.c_void_p,
+                                            ctypes.c_double,
+                                            ctypes.c_double,
+                                            ctypes.c_double,
+                                            ctypes.c_char_p]
+    library.MagickAnnotateImage.restype = ctypes.c_int
+
+    library.ClearDrawingWand.argtypes = [ctypes.c_void_p]
+    library.ClearDrawingWand.restype = None
+
+    library.MagickDrawImage.argtypes = [ctypes.c_void_p,
+                                        ctypes.c_void_p]
+    library.MagickDrawImage.restype = ctypes.c_int
+
+    library.DrawLine.argtypes = [ctypes.c_void_p,
+                                 ctypes.c_double,
+                                 ctypes.c_double,
+                                 ctypes.c_double,
+                                 ctypes.c_double]
+    library.DrawLine.restype = None
+
+    library.DrawAnnotation.argtypes = [ctypes.c_void_p,
+                                       ctypes.c_double,
+                                       ctypes.c_double,
+                                       ctypes.POINTER(ctypes.c_ubyte)]
+    library.DrawAnnotation.restype = None
+
+    library.MagickQueryFontMetrics.argtypes = [ctypes.c_void_p,
+                                               ctypes.c_void_p,
+                                               ctypes.c_char_p]
+    library.MagickQueryFontMetrics.restype = ctypes.POINTER(ctypes.c_double)
+
+    library.MagickQueryMultilineFontMetrics.argtypes = [ctypes.c_void_p,
+                                                        ctypes.c_void_p,
+                                                        ctypes.c_char_p]
+    library.MagickQueryMultilineFontMetrics.restype = ctypes.POINTER(ctypes.c_double)
+
+
 except AttributeError:
     raise ImportError('MagickWand shared library not found or incompatible')
 
