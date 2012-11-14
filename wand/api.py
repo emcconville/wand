@@ -421,6 +421,17 @@ try:
                                        ctypes.POINTER(ctypes.c_ubyte)]
     library.DrawAnnotation.restype = None
 
+    library.MagickQueryFontMetrics.argtypes = [ctypes.c_void_p,
+                                               ctypes.c_void_p,
+                                               ctypes.c_char_p]
+    library.MagickQueryFontMetrics.restype = ctypes.POINTER(ctypes.c_double)
+
+    library.MagickQueryMultilineFontMetrics.argtypes = [ctypes.c_void_p,
+                                                        ctypes.c_void_p,
+                                                        ctypes.c_char_p]
+    library.MagickQueryMultilineFontMetrics.restype = ctypes.POINTER(ctypes.c_double)
+
+
 except AttributeError:
     raise ImportError('MagickWand shared library not found or incompatible')
 
