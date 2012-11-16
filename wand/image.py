@@ -406,7 +406,8 @@ class Image(Resource):
     __slots__ = '_wand',
 
     def __init__(self, image=None, blob=None, file=None, filename=None,
-                 format=None, width=None, height=None, background=None):
+                 format=None, width=None, height=None, background=None,
+                 density=None):
         new_args = width, height, background
         open_args = image, blob, file, filename
 
@@ -424,6 +425,8 @@ class Image(Resource):
         with self.allocate():
             if image is None:
                 self.wand = library.NewMagickWand()
+                if density:
+                    library.MagickSetResolution(self.wand, density, density)
             if width is not None and height is not None:
                 self.blank(width, height, background)
             elif image is not None:
@@ -684,7 +687,7 @@ class Image(Resource):
 
     @units.setter
     def units(self, units):
-        if not isinstance(units, basestring) or units not in UNIT_TYPES: 
+        if not isinstance(units, basestring) or units not in UNIT_TYPES:
             raise TypeError('Unit value must be a string from wand.images.'
                             'UNIT_TYPES, not ' + repr(units))
         r = library.MagickSetImageUnits(self.wand, UNIT_TYPES.index(units))
