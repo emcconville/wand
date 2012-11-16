@@ -1061,12 +1061,6 @@ def caption():
         img.caption("Test message", font=font, x=5, y=144, width=134, height=20, gravity='center')
 
 @tests.test
-def setsize():
-    with Image() as img:
-        img.size = (144, 192)
-        assert img.size == (144, 192)
-
-@tests.test
 def setfont():
     with Image(width=144, height=192, background=Color("#1e50a2")) as img:
         font = Font(path=asset('League_Gothic.otf'), color=Color("gold"), size=12, antialias=False)

@@ -767,7 +767,8 @@ class Image(Resource):
         if height is None: height = self.height - y
 
         with Image() as textboard:
-            textboard.size = (width, height)
+            library.MagickSetSize(textboard.wand, width, height)
+
             if font is not None: textboard.font = font
             if gravity is not None: textboard.gravity = gravity
 
@@ -805,14 +806,7 @@ i
     @property
     def size(self):
         """(:class:`tuple`) The pair of (:attr:`width`, :attr:`height`)."""
-        width = ctypes.c_uint()
-        height = ctypes.c_uint()
-        library.MagickGetSize(self.wand, ctypes.byref(width), ctypes.byref(height))
-        return width.value, height.value
-
-    @size.setter
-    def size(self, size):
-        library.MagickSetSize(self.wand, size[0], size[1])
+        return self.width, self.height
 
     @property
     def units(self):
