@@ -1642,7 +1642,7 @@ class ImageProperty(object):
         """
         # Dereference our weakref and check that the parent Image stil exists
         image = self._image()
-        if image:
+        if image is not None:
             return image
         raise ClosedImageError(
             'parent Image of {0!r} has been destroyed'.format(self)
