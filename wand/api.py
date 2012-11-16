@@ -360,12 +360,71 @@ try:
 
     library.MagickTrimImage.argtypes = [ctypes.c_void_p]
 
+    library.MagickGetSize.argtypes = [ctypes.c_void_p,
+                                      ctypes.POINTER(ctypes.c_uint),
+                                      ctypes.POINTER(ctypes.c_uint)]
+    library.MagickGetSize.restype = ctypes.c_int
+                                      
+    library.MagickSetSize.argtypes = [ctypes.c_void_p,
+                                      ctypes.c_uint,
+                                      ctypes.c_uint]
+    library.MagickSetSize.restype = ctypes.c_int
+
+    library.MagickGetFont.argtypes = [ctypes.c_void_p]
+    library.MagickGetFont.restype = ctypes.c_char_p
+
+    library.MagickSetFont.argtypes = [ctypes.c_void_p,
+                                      ctypes.c_char_p]
+    library.MagickSetFont.restype = ctypes.c_int
+
+    library.MagickGetPointsize.argtypes = [ctypes.c_void_p]
+    library.MagickGetPointsize.restype = ctypes.c_double
+
+    library.MagickSetPointsize.argtypes = [ctypes.c_void_p,
+                                           ctypes.c_double]
+    library.MagickSetPointsize.restype = ctypes.c_int
+
+    library.MagickGetGravity.argtypes = [ctypes.c_void_p]
+    library.MagickGetGravity.restype = ctypes.c_int
+
+    library.MagickSetGravity.argtypes = [ctypes.c_void_p,
+                                         ctypes.c_int]
+    library.MagickSetGravity.restype = ctypes.c_int
+
+    library.MagickSetLastIterator.argtypes = [ctypes.c_void_p]
+    library.MagickSetLastIterator.restype = None
+
+    library.MagickGetBackgroundColor.argtypes = [ctypes.c_void_p]
+    library.MagickGetBackgroundColor.restype = ctypes.c_void_p
+
+    library.MagickSetBackgroundColor.argtypes = [ctypes.c_void_p,
+                                                 ctypes.c_void_p]
+    library.MagickSetBackgroundColor.restype = ctypes.c_int
+
+    library.MagickGetOption.argtypes = [ctypes.c_void_p,
+                                        ctypes.c_char_p]
+    library.MagickGetOption.restype = ctypes.c_char_p
+
+    library.MagickSetOption.argtypes = [ctypes.c_void_p,
+                                        ctypes.c_char_p,
+                                        ctypes.c_char_p]
+    library.MagickSetOption.restype = ctypes.c_int
+
+    library.MagickGetAntialias.argtypes = [ctypes.c_void_p]
+    library.MagickGetAntialias.restype = ctypes.c_int
+
+    library.MagickSetAntialias.argtypes = [ctypes.c_void_p,
+                                           ctypes.c_int]
+    library.MagickSetAntialias.restype = ctypes.c_int
+
     # These functions are const so it's okay for them to be c_char_p
     libmagick.GetMagickVersion.argtypes = [ctypes.POINTER(ctypes.c_size_t)]
     libmagick.GetMagickVersion.restype = ctypes.c_char_p
 
     libmagick.GetMagickReleaseDate.argtypes = []
     libmagick.GetMagickReleaseDate.restype = ctypes.c_char_p
+
+
 except AttributeError:
     raise ImportError('MagickWand shared library not found or incompatible')
 
