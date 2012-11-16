@@ -14,6 +14,7 @@ from wand.version import MAGICK_VERSION_INFO
 from wand.image import ClosedImageError, Image
 from wand.color import Color
 from wand.exceptions import MissingDelegateError
+from wand.font import Font
 
 
 def get_sig_version(versions):
@@ -41,7 +42,6 @@ tests = Tests()
 
 def asset(filename):
     return os.path.join(os.path.dirname(__file__), 'assets', filename)
-
 
 @tests.test
 def empty_image():
@@ -1053,3 +1053,27 @@ def liquid_rescale():
                 (6, 6, 9, 7): '459337dce62ada2a2e6a3c69b6819447'
                               '38a71389efcbde0ee72b2147957e25eb'
             })
+
+@tests.test
+def caption():
+    with Image(width=144, height=192, background=Color("#1e50a2")) as img:
+        font = Font(path=asset('League_Gothic.otf'), color=Color("gold"), size=12, antialias=False)
+        img.caption("Test message", font=font, x=5, y=144, width=134, height=20, gravity='center')
+
+@tests.test
+def setfont():
+    with Image(width=144, height=192, background=Color("#1e50a2")) as img:
+        font = Font(path=asset('League_Gothic.otf'), color=Color("gold"), size=12, antialias=False)
+        img.font = font
+
+        assert img.fontpath == font.path
+        assert img.pointsize == font.size
+        assert img.fill == font.color
+        assert img.antialias == font.antialias
+
+@tests.test
+def setgravity():
+    with Image(width=144, height=192, background=Color("#1e50a2")) as img:
+        img.gravity = 'center'
+        assert img.gravity == 'center'
+

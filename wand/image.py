@@ -20,13 +20,17 @@ from .api import MagickPixelPacket, libc, libmagick, library
 from .color import Color
 from .exceptions import WandException
 from .resource import DestroyedResourceError, Resource
+from .font import Font
 
 
 __all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COMPOSITE_OPERATORS',
            'EVALUATE_OPS', 'FILTER_TYPES', 'IMAGE_TYPES', 'UNIT_TYPES',
            'ChannelDepthDict', 'ChannelImageDict', 'ClosedImageError',
-           'Image', 'ImageProperty', 'Iterator', 'Metadata')
+           'Image', 'ImageProperty', 'Iterator', 'Metadata', 'GRAVITY_TYPES')
 
+GRAVITY_TYPES = ('forget', 'north_west', 'north', 'north_east', 'west',
+                 'center', 'east', 'south_west', 'south', 'south_east',
+                 'static')
 
 #: (:class:`tuple`) The list of filter types.
 #:
@@ -198,6 +202,8 @@ CHANNELS = dict(undefined=0, red=1, gray=1, cyan=1, green=2, magenta=2,
                 composite_channels=47, all_channels=134217727, true_alpha=64,
                 rgb_channels=128, gray_channels=128, sync_channels=256,
                 default_channels=134217719)
+
+OPTIONS = set(['fill'])
 
 #: (:class:`tuple`) The list of evaluation operators
 #:
@@ -398,6 +404,8 @@ class Image(Resource):
     #: .. versionadded:: 0.3.0
     channel_depths = None
 
+    options = None
+
     c_is_resource = library.IsMagickWand
     c_destroy_resource = library.DestroyMagickWand
     c_get_exception = library.MagickGetException
@@ -455,6 +463,7 @@ class Image(Resource):
             self.metadata = Metadata(self)
             self.channel_images = ChannelImageDict(self)
             self.channel_depths = ChannelDepthDict(self)
+            self.options = Options(self)
         self.raise_exception()
 
     def read(self, file=None, filename=None, blob=None):
@@ -638,19 +647,142 @@ class Image(Resource):
         return hash(self.signature)
 
     @property
+    def gravity(self):
+        """(:class:`basestring`) The text placement gravity used when
+        annotating with text.  It's a string from :const:`GRAVITY_TYPES`
+        list.  It also can be set.
+
+        """
+        gravity_index = library.MagickGetGravity(self.wand)
+        if not gravity_index:
+            self.raise_exception()
+        return GRAVITY_TYPES[gravity_index]
+
+    @gravity.setter
+    def gravity(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError('expected a string, not ' + repr(value))
+        elif value not in GRAVITY_TYPES:
+            raise ValueError('expected a string from GRAVITY_TYPES, not '
+                             + repr(value))
+        library.MagickSetGravity(self.wand, GRAVITY_TYPES.index(value))
+
+    @property
+    def fontpath(self):
+        """(:class:`basestring`) The current font name.  It also can be set."""
+        return library.MagickGetFont(self.wand)
+
+    @fontpath.setter
+    def fontpath(self, font):
+        if not isinstance(font, basestring):
+            raise TypeError('expected a string, not ' + repr(font))
+        if library.MagickSetFont(self.wand, font) == False:
+            raise ValueError('Font is invalid.')
+
+    @property
+    def pointsize(self):
+        """(:class:`numbers.Real`) The font size.  It also can be set."""
+        return library.MagickGetPointsize(self.wand)
+
+    @pointsize.setter
+    def pointsize(self, size):
+        if not isinstance(size, numbers.Real):
+            raise TypeError('expected a numbers.Real, but got ' + repr(size))
+        elif size < 0.0:
+            raise ValueError('cannot be less then 0.0, but got ' + repr(size))
+        if library.MagickSetPointsize(self.wand, size) == False:
+            raise ValueError('unexpected error is occur')
+
+    @property
+    def antialias(self):
+        return bool(library.MagickGetAntialias(self.wand))
+
+    @antialias.setter
+    def antialias(self, antialias):
+        if not isinstance(antialias, bool):
+            raise TypeError('antialias must be a bool, not ' + repr(antialias))
+        library.MagickSetAntialias(self.wand, antialias)
+
+    @property
+    def font(self):
+        return Font(path=self._font, size=self._pointsize, color=self.fill)
+
+    @font.setter
+    def font(self, font):
+        if not isinstance(font, Font):
+            raise TypeError('font must be a wand.font.Font, not ' + repr(font))
+
+        if font.path is not None:
+            self.fontpath = font.path
+        if font.size is not None:
+            self.pointsize = font.size
+        if font.color is not None:
+            self.fill = font.color
+        if font.antialias is not None:
+            self.antialias = font.antialias
+
+    @property
     def width(self):
         """(:class:`numbers.Integral`) The width of this image."""
         return library.MagickGetImageWidth(self.wand)
+
+    @width.setter
+    def width(self, width):
+        if width is not None and not isinstance(width, numbers.Integral):
+            raise TypeError('width must be a integral, not ' + repr(width))
+        library.MagickSetSize(self.wand, width, self.height)
 
     @property
     def height(self):
         """(:class:`numbers.Integral`) The height of this image."""
         return library.MagickGetImageHeight(self.wand)
 
+    @height.setter
+    def height(self, height):
+        if height is not None and not isinstance(height, numbers.Integral):
+            raise TypeError('height must be a integral, not ' + repr(height))
+        library.MagickSetSize(self.wand, self.width, height)
+
+    @property
+    def fill(self):
+        return Color(self.options['fill'])
+
+    @fill.setter
+    def fill(self, color):
+        if not isinstance(color, Color):
+            raise TypeError('color must be a wand.color.Color, not ' + repr(color))
+        self.options['fill'] = color.string
+
+    def caption(self, text='', x=0, y=0, width=None, height=None, font=None, gravity=None):
+        if width is not None and not isinstance(width, numbers.Integral):
+            raise TypeError('width must be a integral, not ' + repr(width))
+        if height is not None and not isinstance(height, numbers.Integral):
+            raise TypeError('height must be a integral, not ' + repr(height))
+        if font is not None and not isinstance(font, Font):
+            raise TypeError('font must be a wand.font.Font, not ' + repr(font))
+        if gravity is not None and gravity not in GRAVITY_TYPES:
+            raise ValueError('invalid gravity value')
+
+        if width is None: width = self.width - x
+        if height is None: height = self.height - y
+
+        with Image() as textboard:
+            library.MagickSetSize(textboard.wand, width, height)
+
+            if font is not None: textboard.font = font
+            if gravity is not None: textboard.gravity = gravity
+
+            with Color('transparent') as background_color:
+                library.MagickSetBackgroundColor(textboard.wand, background_color.resource)
+
+            textboard.read(filename="caption:%s" % text)
+            self.composite(textboard, x, y)
+
+
     @property
     def resolution(self):
         """(:class:`tuple`) Resolution of this image.
-
+i
         .. versionadded:: 0.3.0
 
         """
@@ -1642,11 +1774,41 @@ class ImageProperty(object):
         """
         # Dereference our weakref and check that the parent Image stil exists
         image = self._image()
-        if image:
+        if image is not None:
             return image
         raise ClosedImageError(
             'parent Image of {0!r} has been destroyed'.format(self)
         )
+
+class Options(ImageProperty, collections.MutableMapping):
+    def __iter__(self):
+        return iter(OPTIONS)
+
+    def __len__(self):
+        return len(OPTIONS)
+
+    def __getitem__(self, key):
+        if not isinstance(key, basestring):
+            raise TypeError('key must be a string, not ' + repr(key))
+        if key not in OPTIONS:
+            raise ValueError('invalid keyname')
+
+        image = self.image
+        return library.MagickGetOption(image.wand, key)
+
+    def __setitem__(self, key, value):
+        if not isinstance(key, basestring):
+            raise TypeError('key must be a string, not ' + repr(key))
+        if not isinstance(value, basestring):
+            raise TypeError('key must be a string, not ' + repr(value))
+        if key not in OPTIONS:
+            raise ValueError('invalid keyname')
+
+        image = self.image
+        library.MagickSetOption(image.wand, key, value)
+
+    def __delitem__(self, k):
+        pass
 
 
 class Metadata(ImageProperty, collections.Mapping):
