@@ -6,6 +6,9 @@ Version 0.3.0
 
 To be released.
 
+- Added ``resolution`` parameter to :meth:`Image.read() <wand.image.Image.read>`
+  method and the constructor of :class:`~wand.image.Image`.
+  [:issue:`75` by Andrey Antukh]
 - Added :meth:`Image.liquid_rescale() <wand.image.Image.liquid_rescale>`
   method which does `seam carving`__.  See also :ref:`seam-carving`.
 - Added :attr:`Image.metadata <wand.image.Image.metadata>` immutable mapping

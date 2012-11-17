@@ -241,6 +241,7 @@ def set_resolution_01():
         img.resolution = (100, 100)
         assert img.resolution == (100, 100)
 
+
 @tests.test
 def set_resolution_02():
     """Sets image resolution with integer as parameter."""
@@ -248,17 +249,20 @@ def set_resolution_02():
         img.resolution = 100
         assert img.resolution == (100, 100)
 
+
 @tests.test
 def set_resolution_03():
     """Sets image resolution on constructor"""
     with Image(filename=asset('sample.pdf'), resolution=(100,100)) as img:
         assert img.resolution == (100, 100)
 
+
 @tests.test
 def set_resolution_04():
     """Sets image resolution on constructor with integer as parameter."""
     with Image(filename=asset('sample.pdf'), resolution=100) as img:
         assert img.resolution == (100, 100)
+
 
 @tests.test
 def get_units():

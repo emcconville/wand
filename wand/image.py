@@ -415,7 +415,6 @@ class Image(Resource):
                  resolution=None):
         new_args = width, height, background
         open_args = image, blob, file, filename
-
         if (any(a is not None for a in new_args) and
             any(a is not None for a in open_args)):
             raise TypeError('blank image parameters cant be used with image '
@@ -472,8 +471,8 @@ class Image(Resource):
         :type file: file object
         :param filename: reads an image from the ``filename`` string
         :type filename: :class:`basestring`
-        :param resolution: set a resolution value (dpi),
-            usefull for vectorial formats (like pdf)
+        :param resolution: set a resolution value (DPI),
+                           usefull for vectorial formats (like PDF)
         :type resolution: :class:`collections.Sequence`,
                           :class:`collections.Integral`
 
@@ -557,7 +556,6 @@ class Image(Resource):
         .. versionadded:: 0.3.0
 
         """
-
         library.ClearMagickWand(self.wand)
 
     def clone(self):
@@ -1348,7 +1346,8 @@ class Image(Resource):
             if t.value > self.quantum_range or t.value < 0:
                 raise ValueError('transparency must be a numbers.Real value ' +
                                  'between 0.0 and 1.0')
-            # Set the wand to image zero, in case there are multiple images in it
+            # Set the wand to image zero, in case there are multiple images
+            # in it
             library.MagickSetIteratorIndex(self.wand, 0)
             # Change the pixel representation of the image
             # to RGB with an alpha channel
