@@ -484,7 +484,7 @@ class Image(Resource):
             if (isinstance(resolution, collections.Sequence) and
                 len(resolution) == 2):
                 library.MagickSetResolution(self.wand, *resolution)
-            elif isinstance(numbers.Integral):
+            elif isinstance(resolution, numbers.Integral):
                 library.MagickSetResolution(self.wand, resolution, resolution)
             else:
                 raise TypeError('resolution must be a (x, y) pair or an '
