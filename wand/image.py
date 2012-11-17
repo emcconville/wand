@@ -340,7 +340,9 @@ class Image(Resource):
     :param background: an optional background color.
                        default is transparent
     :type background: :class:`wand.color.Color`
-
+    :param resolution: set a resolution value (dpi),
+        usefull for vectorial formats (like pdf)
+    :type resolution: tuple/int
 
     .. versionadded:: 0.1.5
        The ``file`` parameter.
@@ -353,6 +355,9 @@ class Image(Resource):
 
     .. versionadded:: 0.2.2
        The ``width``, ``height``, ``background`` parameters.
+
+    .. versionadded:: 0.3.0
+       The ``resolution`` parameter.
 
     .. describe:: [left:right, top:bottom]
 
@@ -406,7 +411,8 @@ class Image(Resource):
     __slots__ = '_wand',
 
     def __init__(self, image=None, blob=None, file=None, filename=None,
-                 format=None, width=None, height=None, background=None):
+                 format=None, width=None, height=None, background=None,
+                 resolution=None):
         new_args = width, height, background
         open_args = image, blob, file, filename
 
@@ -439,25 +445,25 @@ class Image(Resource):
                     if format:
                         library.MagickSetFilename(self.wand,
                                                   'buffer.' + format)
-                    self.read(file=file)
+                    self.read(file=file, resolution=resolution)
                 if blob is not None:
                     if format:
                         library.MagickSetFilename(self.wand,
                                                   'buffer.' + format)
-                    self.read(blob=blob)
+                    self.read(blob=blob, resolution=resolution)
                 elif filename is not None:
                     if format:
                         raise TypeError(
                             'format option cannot be used with image '
                             'nor filename'
                         )
-                    self.read(filename=filename)
+                    self.read(filename=filename, resolution=resolution)
             self.metadata = Metadata(self)
             self.channel_images = ChannelImageDict(self)
             self.channel_depths = ChannelDepthDict(self)
         self.raise_exception()
 
-    def read(self, file=None, filename=None, blob=None):
+    def read(self, file=None, filename=None, blob=None, resolution=None):
         """Read new image into Image() object.
 
         :param blob: reads an image from the ``blob`` byte array
@@ -466,10 +472,21 @@ class Image(Resource):
         :type file: file object
         :param filename: reads an image from the ``filename`` string
         :type filename: :class:`basestring`
+        :param resolution: set a resolution value (dpi),
+            usefull for vectorial formats (like pdf)
+        :type resolution: tuple/int
 
         .. versionadded:: 0.3.0
 
         """
+
+        # Resolution must be set after image reading.
+        if resolution is not None:
+            if isinstance(resolution,(tuple, list)) and len(resolution) == 2:
+                library.MagickSetResolution(self.wand, resolution[0], resolution[1])
+            else:
+                library.MagickSetResolution(self.wand, resolution, resolution)
+
         if file is not None:
             if (isinstance(file, types.FileType) and
                 hasattr(libc, 'fdopen')):
@@ -663,7 +680,11 @@ class Image(Resource):
 
     @resolution.setter
     def resolution(self, geometry):
-        x, y = geometry
+        if isinstance(geometry, (list, tuple)):
+            x, y = geometry
+        else:
+            x, y = geometry, geometry
+
         if self.size == (0, 0):
             r = library.MagickSetResolution(self.wand, x, y)
         else:
@@ -684,7 +705,7 @@ class Image(Resource):
 
     @units.setter
     def units(self, units):
-        if not isinstance(units, basestring) or units not in UNIT_TYPES: 
+        if not isinstance(units, basestring) or units not in UNIT_TYPES:
             raise TypeError('Unit value must be a string from wand.images.'
                             'UNIT_TYPES, not ' + repr(units))
         r = library.MagickSetImageUnits(self.wand, UNIT_TYPES.index(units))

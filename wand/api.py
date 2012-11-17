@@ -220,6 +220,7 @@ try:
 
     library.MagickSetImageResolution.argtypes = [ctypes.c_void_p, ctypes.c_double, ctypes.c_double]
     library.MagickSetResolution.argtypes = [ctypes.c_void_p, ctypes.c_double, ctypes.c_double]
+    library.MagickSetResolution.restype = ctypes.c_bool
 
     library.MagickGetImageWidth.argtypes = [ctypes.c_void_p]
     library.MagickGetImageWidth.restype = ctypes.c_size_t
