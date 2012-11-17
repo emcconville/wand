@@ -69,7 +69,7 @@
 <a class="reference external" href="http://docs.python.org/library/exceptions.html#exceptions.AttributeError" title="(in Python v2.7)"><tt class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></tt></a> when the shared library fails to load.</p>
 <dl class="class">
 <dt id="wand.api.c_magick_char_p">
-<em class="property">class </em><tt class="descclassname">wand.api.</tt><tt class="descname">c_magick_char_p</tt><a class="headerlink" href="#wand.api.c_magick_char_p" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">wand.api.</tt><tt class="descname">c_magick_char_p</tt><big>(</big><em>value=&lt;object object at 0x0000000102f20508&gt;</em><big>)</big><a class="headerlink" href="#wand.api.c_magick_char_p" title="Permalink to this definition">¶</a></dt>
 <dd><p>This subclass prevents the automatic conversion behavior of
 <a class="reference external" href="http://docs.python.org/library/ctypes.html#ctypes.c_char_p" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">ctypes.c_char_p</span></tt></a>, allowing memory to be properly freed in the
 destructor.  It must only be used for non-const character pointers
@@ -78,19 +78,19 @@ returned by ImageMagick functions.</p>
 
 <dl class="data">
 <dt id="wand.api.library">
-<tt class="descclassname">wand.api.</tt><tt class="descname">library</tt><em class="property"> = &lt;CDLL '/Users/dahlia/Projects/wand/ImageMagick-6.7.9-5/lib/libMagickWand.dylib', handle 7fe16be3fd60 at 107c34750&gt;</em><a class="headerlink" href="#wand.api.library" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">wand.api.</tt><tt class="descname">library</tt><em class="property"> = &lt;CDLL '/usr/local/lib/libMagickWand.dylib', handle &lt;_ffi.CDLL object at 0x0000000104cfa4e0&gt; at 104cf8598&gt;</em><a class="headerlink" href="#wand.api.library" title="Permalink to this definition">¶</a></dt>
 <dd><p>(<a class="reference external" href="http://docs.python.org/library/ctypes.html#ctypes.CDLL" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">ctypes.CDLL</span></tt></a>) The MagickWand library.</p>
 </dd></dl>
 
 <dl class="data">
 <dt id="wand.api.libc">
-<tt class="descclassname">wand.api.</tt><tt class="descname">libc</tt><em class="property"> = &lt;CDLL 'libc.dylib', handle 7fff672b1c58 at 107c3a810&gt;</em><a class="headerlink" href="#wand.api.libc" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">wand.api.</tt><tt class="descname">libc</tt><em class="property"> = &lt;CDLL 'libc.dylib', handle &lt;_ffi.CDLL object at 0x0000000104cfa140&gt; at 104cf8100&gt;</em><a class="headerlink" href="#wand.api.libc" title="Permalink to this definition">¶</a></dt>
 <dd><p>(<a class="reference external" href="http://docs.python.org/library/ctypes.html#ctypes.CDLL" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">ctypes.CDLL</span></tt></a>) The C standard library.</p>
 </dd></dl>
 
 <dl class="data">
 <dt id="wand.api.libmagick">
-<tt class="descclassname">wand.api.</tt><tt class="descname">libmagick</tt><em class="property"> = &lt;CDLL '/Users/dahlia/Projects/wand/ImageMagick-6.7.9-5/lib/libMagickWand.dylib', handle 7fe16be3fd60 at 107c34750&gt;</em><a class="headerlink" href="#wand.api.libmagick" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">wand.api.</tt><tt class="descname">libmagick</tt><em class="property"> = &lt;CDLL '/usr/local/lib/libMagickWand.dylib', handle &lt;_ffi.CDLL object at 0x0000000104cfa4e0&gt; at 104cf8598&gt;</em><a class="headerlink" href="#wand.api.libmagick" title="Permalink to this definition">¶</a></dt>
 <dd><p>(<a class="reference external" href="http://docs.python.org/library/ctypes.html#ctypes.CDLL" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">ctypes.CDLL</span></tt></a>) The ImageMagick library.  It is the same with
 <a class="reference internal" href="#wand.api.library" title="wand.api.library"><tt class="xref py py-data docutils literal"><span class="pre">library</span></tt></a> on platforms other than Windows.</p>
 <p class="versionadded">
@@ -122,7 +122,7 @@ returned by ImageMagick functions.</p>
   
     
             <p class="logo"><a href="../index.html">
-              <img class="logo" src="../_static/wand_120.png" alt="Logo"/>
+              <img class="logo" src="../_static/wand.png" alt="Logo"/>
             </a></p>
   
 <h3>Related Topics</h3>
@@ -157,7 +157,7 @@ returned by ImageMagick functions.</p>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright 2011, Hong Minhee.
+    &copy; Copyright 2012, Hong Minhee.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   

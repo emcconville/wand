@@ -17,8 +17,15 @@ install Attest as well if it's not installed yet.
 Skipping tests
 --------------
 
-There are some time-consuming tests.  If :envvar:`WANDTESTS_SKIP` environment
-variable it skips specified modules:
+There are some time-consuming tests.  If :envvar:`WANDTESTS_SKIP_SLOW_TESTS`
+environment variable is defined it skips too slow tests:
+
+.. sourcecode:: console
+
+   $ WANDTESTS_SKIP_SLOW_TESTS=1 python setup.py test
+
+If there's :envvar:`WANDTESTS_SKIP` environment variable it skips
+specified modules:
 
 .. sourcecode:: console
 

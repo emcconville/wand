@@ -66,6 +66,9 @@
 <h2>Version 0.3.0<a class="headerlink" href="#version-0-3-0" title="Permalink to this headline">¶</a></h2>
 <p>To be released.</p>
 <ul class="simple">
+<li>Added <tt class="docutils literal"><span class="pre">resolution</span></tt> parameter to <a class="reference internal" href="wand/image.html#wand.image.Image.read" title="wand.image.Image.read"><tt class="xref py py-meth docutils literal"><span class="pre">Image.read()</span></tt></a>
+method and the constructor of <a class="reference internal" href="wand/image.html#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a>.
+[<a class="reference external" href="https://github.com/dahlia/wand/issues/75">#75</a> by Andrey Antukh]</li>
 <li>Added <a class="reference internal" href="wand/image.html#wand.image.Image.liquid_rescale" title="wand.image.Image.liquid_rescale"><tt class="xref py py-meth docutils literal"><span class="pre">Image.liquid_rescale()</span></tt></a>
 method which does <a class="reference external" href="http://en.wikipedia.org/wiki/Seam_carving">seam carving</a>.  See also <a class="reference internal" href="guide/resizecrop.html#seam-carving"><em>Seam carving (also known as content-aware resizing)</em></a>.</li>
 <li>Added <a class="reference internal" href="wand/image.html#wand.image.Image.metadata" title="wand.image.Image.metadata"><tt class="xref py py-attr docutils literal"><span class="pre">Image.metadata</span></tt></a> immutable mapping
@@ -99,7 +102,7 @@ found.</li>
 <p>Released on September 24, 2012.</p>
 <ul class="simple">
 <li>A compatibility fix for FreeBSD.
-[<a class="reference external" href="http://code.google.com/p/olivier-freebsd-ports/source/browse/graphics/py-wand/files/patch-wand_api.py">Patch</a> by Olivier Duchateau]</li>
+[<a class="reference external" href="http://olivier-freebsd-ports.googlecode.com/hg-history/efb852a5572/graphics/py-wand/files/patch-wand_api.py">Patch</a> by Olivier Duchateau]</li>
 <li>Now <a class="reference internal" href="wand/image.html#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a> can be instantiated without any opening.
 Instead, it can take <tt class="docutils literal"><span class="pre">width</span></tt>/<tt class="docutils literal"><span class="pre">height</span></tt> and <tt class="docutils literal"><span class="pre">background</span></tt>.
 [<a class="reference external" href="https://github.com/dahlia/wand/issues/53">#53</a> by Michael Elovskikh]</li>
@@ -303,7 +306,7 @@ argument becomes omittable.</li>
   
     
             <p class="logo"><a href="index.html">
-              <img class="logo" src="_static/wand_120.png" alt="Logo"/>
+              <img class="logo" src="_static/wand.png" alt="Logo"/>
             </a></p>
   
 
@@ -358,7 +361,7 @@ argument becomes omittable.</li>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright 2011, Hong Minhee.
+    &copy; Copyright 2012, Hong Minhee.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   

@@ -101,7 +101,7 @@ error happened):</p>
 
 <dl class="data">
 <dt id="wand.image.CHANNELS">
-<tt class="descclassname">wand.image.</tt><tt class="descname">CHANNELS</tt><em class="property"> = {'opacity': 8, 'true_alpha': 64, 'gray': 1, 'rgb_channels': 128, 'yellow': 4, 'sync_channels': 256, 'default_channels': 134217719, 'alpha': 8, 'cyan': 1, 'magenta': 2, 'undefined': 0, 'blue': 4, 'index': 32, 'gray_channels': 128, 'composite_channels': 47, 'green': 2, 'all_channels': 134217727, 'black': 32, 'red': 1}</em><a class="headerlink" href="#wand.image.CHANNELS" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">wand.image.</tt><tt class="descname">CHANNELS</tt><em class="property"> = {'blue': 4, 'gray': 1, 'true_alpha': 64, 'opacity': 8, 'undefined': 0, 'composite_channels': 47, 'index': 32, 'rgb_channels': 128, 'yellow': 4, 'black': 32, 'sync_channels': 256, 'default_channels': 134217719, 'green': 2, 'cyan': 1, 'all_channels': 134217727, 'alpha': 8, 'magenta': 2, 'red': 1, 'gray_channels': 128}</em><a class="headerlink" href="#wand.image.CHANNELS" title="Permalink to this definition">¶</a></dt>
 <dd><p>(<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">dict</span></tt></a>) The dictionary of channel types.</p>
 <ul class="simple">
 <li><tt class="docutils literal"><span class="pre">'undefined'</span></tt></li>
@@ -400,14 +400,14 @@ Use <a class="reference internal" href="#wand.image.Image.channel_images" title=
 
 <dl class="exception">
 <dt id="wand.image.ClosedImageError">
-<em class="property">exception </em><tt class="descclassname">wand.image.</tt><tt class="descname">ClosedImageError</tt><a class="headerlink" href="#wand.image.ClosedImageError" title="Permalink to this definition">¶</a></dt>
+<em class="property">exception </em><tt class="descclassname">wand.image.</tt><tt class="descname">ClosedImageError</tt><big>(</big><em>*args</em><big>)</big><a class="headerlink" href="#wand.image.ClosedImageError" title="Permalink to this definition">¶</a></dt>
 <dd><p>An error that rises when some code tries access to an already closed
 image.</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="wand.image.Image">
-<em class="property">class </em><tt class="descclassname">wand.image.</tt><tt class="descname">Image</tt><big>(</big><em>image=None</em>, <em>blob=None</em>, <em>file=None</em>, <em>filename=None</em>, <em>format=None</em>, <em>width=None</em>, <em>height=None</em>, <em>background=None</em><big>)</big><a class="headerlink" href="#wand.image.Image" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">wand.image.</tt><tt class="descname">Image</tt><big>(</big><em>image=None</em>, <em>blob=None</em>, <em>file=None</em>, <em>filename=None</em>, <em>format=None</em>, <em>width=None</em>, <em>height=None</em>, <em>background=None</em>, <em>resolution=None</em><big>)</big><a class="headerlink" href="#wand.image.Image" title="Permalink to this definition">¶</a></dt>
 <dd><p>An image object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -425,6 +425,8 @@ imagemagick detect the file format. Used only in
 <li><strong>height</strong> (<a class="reference external" href="http://docs.python.org/library/numbers.html#numbers.Integral" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">numbers.Integral</span></tt></a>) &#8211; the height of new blank imgage.</li>
 <li><strong>background</strong> (<a class="reference internal" href="color.html#wand.color.Color" title="wand.color.Color"><tt class="xref py py-class docutils literal"><span class="pre">wand.color.Color</span></tt></a>) &#8211; an optional background color.
 default is transparent</li>
+<li><strong>resolution</strong> (<em>tuple/int</em>) &#8211; set a resolution value (dpi),
+usefull for vectorial formats (like pdf)</li>
 </ul>
 </td>
 </tr>
@@ -438,6 +440,8 @@ default is transparent</li>
 <span class="versionmodified">New in version 0.2.1: </span>The <tt class="docutils literal"><span class="pre">format</span></tt> parameter.</p>
 <p class="versionadded">
 <span class="versionmodified">New in version 0.2.2: </span>The <tt class="docutils literal"><span class="pre">width</span></tt>, <tt class="docutils literal"><span class="pre">height</span></tt>, <tt class="docutils literal"><span class="pre">background</span></tt> parameters.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.3.0: </span>The <tt class="docutils literal"><span class="pre">resolution</span></tt> parameter.</p>
 <dl class="describe">
 <dt>
 <tt class="descname">[left:right, top:bottom]</tt></dt>
@@ -877,7 +881,7 @@ supported by the imagemgick library.</p>
 
 <dl class="method">
 <dt id="wand.image.Image.read">
-<tt class="descname">read</tt><big>(</big><em>file=None</em>, <em>filename=None</em>, <em>blob=None</em><big>)</big><a class="headerlink" href="#wand.image.Image.read" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">read</tt><big>(</big><em>file=None</em>, <em>filename=None</em>, <em>blob=None</em>, <em>resolution=None</em><big>)</big><a class="headerlink" href="#wand.image.Image.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read new image into Image() object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -887,6 +891,9 @@ supported by the imagemgick library.</p>
 <li><strong>blob</strong> (<tt class="xref py py-class docutils literal"><span class="pre">str</span></tt>) &#8211; reads an image from the <tt class="docutils literal"><span class="pre">blob</span></tt> byte array</li>
 <li><strong>file</strong> (<em>file object</em>) &#8211; reads an image from the <tt class="docutils literal"><span class="pre">file</span></tt> object</li>
 <li><strong>filename</strong> (<tt class="xref py py-class docutils literal"><span class="pre">basestring</span></tt>) &#8211; reads an image from the <tt class="docutils literal"><span class="pre">filename</span></tt> string</li>
+<li><strong>resolution</strong> (<a class="reference external" href="http://docs.python.org/library/collections.html#collections.Sequence" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">collections.Sequence</span></tt></a>,
+<a class="reference external" href="http://docs.python.org/library/numbers.html#numbers.Integral" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">numbers.Integral</span></tt></a>) &#8211; set a resolution value (DPI),
+usefull for vectorial formats (like PDF)</li>
 </ul>
 </td>
 </tr>
@@ -1283,7 +1290,7 @@ Use <a class="reference internal" href="#wand.image.Image.metadata" title="wand.
   
     
             <p class="logo"><a href="../index.html">
-              <img class="logo" src="../_static/wand_120.png" alt="Logo"/>
+              <img class="logo" src="../_static/wand.png" alt="Logo"/>
             </a></p>
   
 <h3>Related Topics</h3>
@@ -1318,7 +1325,7 @@ Use <a class="reference internal" href="#wand.image.Image.metadata" title="wand.
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright 2011, Hong Minhee.
+    &copy; Copyright 2012, Hong Minhee.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   
