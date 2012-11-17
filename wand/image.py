@@ -474,19 +474,22 @@ class Image(Resource):
         :type filename: :class:`basestring`
         :param resolution: set a resolution value (dpi),
             usefull for vectorial formats (like pdf)
-        :type resolution: tuple/int
+        :type resolution: :class:`collections.Sequence`,
+                          :class:`collections.Integral`
 
         .. versionadded:: 0.3.0
 
         """
-
         # Resolution must be set after image reading.
         if resolution is not None:
-            if isinstance(resolution,(tuple, list)) and len(resolution) == 2:
-                library.MagickSetResolution(self.wand, resolution[0], resolution[1])
-            else:
+            if (isinstance(resolution, collections.Sequence) and
+                len(resolution) == 2):
+                library.MagickSetResolution(self.wand, *resolution)
+            elif isinstance(collections.Integral):
                 library.MagickSetResolution(self.wand, resolution, resolution)
-
+            else:
+                raise TypeError('resolution must be a (x, y) pair or an '
+                                'integer of the same x/y')
         if file is not None:
             if (isinstance(file, types.FileType) and
                 hasattr(libc, 'fdopen')):
@@ -680,11 +683,13 @@ class Image(Resource):
 
     @resolution.setter
     def resolution(self, geometry):
-        if isinstance(geometry, (list, tuple)):
+        if isinstance(geometry, collections.Sequence):
             x, y = geometry
-        else:
+        elif isinstance(geometry, numbers.Integral):
             x, y = geometry, geometry
-
+        else:
+            raise TypeError('resolution must be a (x, y) pair or an integer '
+                            'of the same x/y')
         if self.size == (0, 0):
             r = library.MagickSetResolution(self.wand, x, y)
         else:
