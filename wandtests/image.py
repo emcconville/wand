@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 import os.path
 import sys
 import tempfile
@@ -14,6 +15,9 @@ from wand.version import MAGICK_VERSION_INFO
 from wand.image import ClosedImageError, Image
 from wand.color import Color
 from wand.exceptions import MissingDelegateError
+
+
+skip_slow_tests = bool(os.environ.get('WANDTESTS_SKIP_SLOW_TESTS'))
 
 
 def get_sig_version(versions):
@@ -412,7 +416,7 @@ def convert():
             img.convert(123)
 
 
-@tests.test
+@tests.test_if(not skip_slow_tests)
 def iterate():
     """Uses iterator."""
     with Color('#000') as black:
@@ -543,7 +547,7 @@ def slice_crop():
             img[290:310, 290:310]
 
 
-@tests.test
+@tests.test_if(not skip_slow_tests)
 def crop():
     """Crops in-place."""
     with Image(filename=asset('croptest.png')) as img:
@@ -704,7 +708,7 @@ def transform_errors():
         with raises(ValueError):
             img.transform(resize=u'⚠ ')
 
-@tests.test
+@tests.test_if(not skip_slow_tests)
 def rotate():
     """Rotates an image."""
     with Image(filename=asset('rotatetest.gif')) as img:
