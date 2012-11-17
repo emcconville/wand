@@ -474,7 +474,7 @@ class Image(Resource):
         :param resolution: set a resolution value (DPI),
                            usefull for vectorial formats (like PDF)
         :type resolution: :class:`collections.Sequence`,
-                          :class:`collections.Integral`
+                          :class:`numbers.Integral`
 
         .. versionadded:: 0.3.0
 
@@ -484,7 +484,7 @@ class Image(Resource):
             if (isinstance(resolution, collections.Sequence) and
                 len(resolution) == 2):
                 library.MagickSetResolution(self.wand, *resolution)
-            elif isinstance(collections.Integral):
+            elif isinstance(numbers.Integral):
                 library.MagickSetResolution(self.wand, resolution, resolution)
             else:
                 raise TypeError('resolution must be a (x, y) pair or an '
