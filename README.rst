@@ -1,4 +1,6 @@
-.. image:: http://dahlia.github.com/wand/_static/wand_120.png
+.. image:: http://dahlia.github.com/wand/_static/wand.png
+   :width: 120
+   :height: 120
 
 Wand_
 ~~~~~
