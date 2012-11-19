@@ -342,7 +342,8 @@ class Image(Resource):
     :type background: :class:`wand.color.Color`
     :param resolution: set a resolution value (dpi),
         usefull for vectorial formats (like pdf)
-    :type resolution: tuple/int
+    :type resolution: :class:`collections.Sequence`,
+                      :Class:`numbers.Integral`
 
     .. versionadded:: 0.1.5
        The ``file`` parameter.
