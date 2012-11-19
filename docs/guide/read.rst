@@ -8,6 +8,7 @@ There are several ways to open images:
   <read-input-stream>`
 - :ref:`To read a binary string that contains image <read-blob>`
 - :ref:`To copy an existing image object <clone-image>`
+- :ref:`To open an empty image <open-empty-image>`
 
 All of these operations are provided by the constructor of
 :class:`~wand.image.Image` class.
@@ -127,3 +128,30 @@ give the hint which indicates file format of an image to read --- optional
 
 .. versionadded:: 0.2.1
    The ``format`` parameter to :class:`~wand.image.Image` constructor.
+
+
+.. _open-empty-image:
+
+Open an empty image
+-------------------
+
+To open an empty image, you have to set its width and height::
+
+    from wand.image import Image
+
+    with Image(width=200, height=100, background=bg) as img:
+        img.save(filename='200x100-transparent.png')
+
+Its background color will be transparent by default.  You can set ``background``
+argument as well::
+
+    from wand.color import Color
+    from wand.image import Image
+
+    with Color('red') as bg:
+        with Image(width=200, height=100, background=bg) as img:
+            img.save(filename='200x100-red.png')
+
+.. versionadded:: 0.2.2
+   The ``width``, ``height``, and ``background`` parameters to
+   :class:`~wand.image.Image` constructor.
