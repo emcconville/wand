@@ -68,6 +68,7 @@
 <li><a class="reference internal" href="#read-input-stream"><em>To read a input stream (file-like object) that provides an image binary</em></a></li>
 <li><a class="reference internal" href="#read-blob"><em>To read a binary string that contains image</em></a></li>
 <li><a class="reference internal" href="#clone-image"><em>To copy an existing image object</em></a></li>
+<li><a class="reference internal" href="#open-empty-image"><em>To open an empty image</em></a></li>
 </ul>
 <p>All of these operations are provided by the constructor of
 <a class="reference internal" href="../wand/image.html#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a> class.</p>
@@ -169,6 +170,29 @@ give the hint which indicates file format of an image to read &#8212; optional
 <p class="versionadded">
 <span class="versionmodified">New in version 0.2.1: </span>The <tt class="docutils literal"><span class="pre">format</span></tt> parameter to <a class="reference internal" href="../wand/image.html#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a> constructor.</p>
 </div>
+<div class="section" id="open-an-empty-image">
+<span id="open-empty-image"></span><h2>Open an empty image<a class="headerlink" href="#open-an-empty-image" title="Permalink to this headline">¶</a></h2>
+<p>To open an empty image, you have to set its width and height:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">wand.image</span> <span class="kn">import</span> <span class="n">Image</span>
+
+<span class="k">with</span> <span class="n">Image</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="n">bg</span><span class="p">)</span> <span class="k">as</span> <span class="n">img</span><span class="p">:</span>
+    <span class="n">img</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s">&#39;200x100-transparent.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Its background color will be transparent by default.  You can set <tt class="docutils literal"><span class="pre">background</span></tt>
+argument as well:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">wand.color</span> <span class="kn">import</span> <span class="n">Color</span>
+<span class="kn">from</span> <span class="nn">wand.image</span> <span class="kn">import</span> <span class="n">Image</span>
+
+<span class="k">with</span> <span class="n">Color</span><span class="p">(</span><span class="s">&#39;red&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">bg</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">Image</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="n">bg</span><span class="p">)</span> <span class="k">as</span> <span class="n">img</span><span class="p">:</span>
+        <span class="n">img</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s">&#39;200x100-red.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.2.2: </span>The <tt class="docutils literal"><span class="pre">width</span></tt>, <tt class="docutils literal"><span class="pre">height</span></tt>, and <tt class="docutils literal"><span class="pre">background</span></tt> parameters to
+<a class="reference internal" href="../wand/image.html#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a> constructor.</p>
+</div>
 </div>
 
 
@@ -192,6 +216,7 @@ give the hint which indicates file format of an image to read &#8212; optional
 <li><a class="reference internal" href="#read-a-blob">Read a blob</a></li>
 <li><a class="reference internal" href="#clone-an-image">Clone an image</a></li>
 <li><a class="reference internal" href="#hint-file-format">Hint file format</a></li>
+<li><a class="reference internal" href="#open-an-empty-image">Open an empty image</a></li>
 </ul>
 </li>
 </ul>
