@@ -1230,12 +1230,12 @@ class Image(Resource):
             raise TypeError("resize must be a string, not " + repr(resize))
         # Also verify that only ASCII characters are included
         try:
-            crop.encode('ascii')
+            crop = crop.encode('ascii')
         except UnicodeEncodeError:
             raise ValueError('crop must only contain ascii-encodable ' +
                              'characters.')
         try:
-            resize.encode('ascii')
+            resize = resize.encode('ascii')
         except UnicodeEncodeError:
             raise ValueError('resize must only contain ascii-encodable ' +
                              'characters.')
