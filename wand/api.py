@@ -60,6 +60,8 @@ def load_library():
             libpath = ctypes.util.find_library('CORE_RL_wand_')
         else:
             libpath = ctypes.util.find_library('MagickWand')
+    if libpath is None:
+        raise OSError('library not found')
     libwand = ctypes.CDLL(libpath)
 
     if system == 'Windows':
@@ -103,7 +105,7 @@ class MagickPixelPacket(ctypes.Structure):
 try:
     libraries = load_library()
 except (OSError, IOError):
-    msg = 'http://dahlia.github.com/wand/guide/install.html'
+    msg = 'http://dahlia.kr/wand/guide/install.html'
     if sys.platform.startswith('freebsd'):
         msg = 'pkg_add -r'
     elif sys.platform == 'win32':
