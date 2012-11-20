@@ -491,7 +491,7 @@ class Image(Resource):
                 raise TypeError('resolution must be a (x, y) pair or an '
                                 'integer of the same x/y')
         if file is not None:
-            if (isinstance(file, types.FileType) and
+            if (hasattr(file, 'fileno') and
                 hasattr(libc, 'fdopen')):
                 fd = libc.fdopen(file.fileno(), file.mode)
                 r = library.MagickReadImageFile(self.wand, fd)
