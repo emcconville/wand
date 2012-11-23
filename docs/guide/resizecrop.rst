@@ -23,7 +23,7 @@ properties:
    >>> height
    48
 
-If you want to the pair of (:attr:`~wand.image.Image.width`,
+If you want the pair of (:attr:`~wand.image.Image.width`,
 :attr:`~wand.image.Image.height`), check :attr:`~wand.image.Image.size`
 property also.
 
