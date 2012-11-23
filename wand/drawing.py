@@ -371,7 +371,7 @@ class Drawing(Resource):
             raise exc('x must be a natural number, not ' + repr(x))
         elif not isinstance(y, numbers.Integral) or y < 0:
             exc = ValueError if y < 0 else TypeError
-            raise exc('y must be a natural number, not ' + repr(x))
+            raise exc('y must be a natural number, not ' + repr(y))
         elif not isinstance(body, basestring):
             raise TypeError('body must be a string, not ' + repr(body))
         elif not body:
