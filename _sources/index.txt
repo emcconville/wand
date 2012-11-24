@@ -68,6 +68,7 @@ User's guide
    test
    roadmap
    changes
+   talks
 
 
 References
