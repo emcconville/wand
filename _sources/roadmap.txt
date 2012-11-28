@@ -79,3 +79,21 @@ Animations (:issue:`1`)
    Wand will finally support animations like GIF and SWF in the future.
 
    Its branch name will be :branch:`animation`.
+
+PIL compatibility layer
+   PIL has very long history and the most of Python projects still
+   depend on it.  We will work on PIL compatiblity layer using Wand.
+   It will provide two ways to emulate PIL:
+
+   - Module-level compatibility which can be used by changing
+     :keyword:`import`::
+
+         try:
+             from wand.pilcompat import Image
+         except
+             from PIL import Image
+
+   - Global monkeypatcher which changes :attr:`sys.modules`::
+
+         from wand.pilcompat.monkey import patch; patch()
+         import PIL.Image  # it imports wand.pilcompat.Image module
