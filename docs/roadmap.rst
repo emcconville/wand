@@ -90,7 +90,7 @@ PIL compatibility layer
 
          try:
              from wand.pilcompat import Image
-         except
+         except ImportError:
              from PIL import Image
 
    - Global monkeypatcher which changes :attr:`sys.modules`::
