@@ -104,6 +104,43 @@ an image by ``[left:right, top:bottom]`` with maintaining the original:
    (300, 300)
 
 
+Transform images
+----------------
+
+Use this function to crop and resize and image at the same time,
+using ImageMagick geometry strings. Cropping is performed first,
+followed by resizing.
+
+For example, if you want to crop your image to 300x300 pixels
+and then scale it by 2x for a final size of 600x600 pixels,
+you can call::
+
+   img.transform('300x300', '200%')
+
+Other example calls: ::
+
+   # crop top left corner
+   img.transform('50%')
+
+   # scale height to 100px and preserve aspect ratio
+   img.transform(resize='x100')
+
+   # if larger than 640x480, fit within box, preserving aspect ratio
+   img.transform(resize='640x480>')
+
+   # crop a 320x320 square starting at 160x160 from the top left
+   img.transform(crop='320+160+160')
+
+.. seealso::
+
+  `ImageMagick Geometry Specifications`__
+     Cropping and resizing geometry for the ``transform`` method are
+     specified according to ImageMagick's geometry string format.
+     The ImageMagick documentation provides more information about
+     geometry strings.
+
+  __ http://www.imagemagick.org/script/command-line-processing.php#geometry
+
 .. _seam-carving:
 
 Seam carving (also known as *content-aware resizing*)
