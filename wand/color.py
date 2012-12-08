@@ -151,6 +151,12 @@ class Color(Resource):
         with self:
             return library.PixelGetBlue(self.resource)
 
+    @property
+    def alpha(self):
+        """(:class:`numbers.Real`) Alpha value, from 0.0 to 1.0."""
+        with self:
+            return library.PixelGetAlpha(self.resource)
+
     def __str__(self):
         return self.string
 

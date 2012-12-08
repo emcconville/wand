@@ -9,6 +9,7 @@ To be released.
 - Fixed segmentation fault occured when :attr:`Color.red
   <wand.color.Color.red>`, :attr:`Color.green <wand.color.Color.green>`,
   or :attr:`Color.blue <Wand.color.Color.blue>` is accessed.
+- Added :attr:`Color.alpha <wand.color.Color.alpha>` property.
 
 
 Version 0.2.2

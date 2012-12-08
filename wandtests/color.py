@@ -45,3 +45,10 @@ def blue():
     assert Color('blue').blue == 1
     assert Color('white').blue == 1
     assert 0.5 <= Color('rgba(0, 0, 128, 1)').blue < 0.51
+
+
+@tests.test
+def alpha():
+    assert Color('rgba(0, 0, 0, 1)').alpha == 1
+    assert Color('rgba(0, 0, 0, 0)').alpha == 0
+    assert 0.49 <= Color('rgba(0, 0, 0, 0.5)').alpha <= 0.5
