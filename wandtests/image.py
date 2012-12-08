@@ -739,20 +739,33 @@ def set_background_color():
 
 
 @tests.test
+def transparentize():
+    with Image(filename=asset('croptest.png')) as im:
+        with Color('transparent') as transparent:
+            with Color('black') as black:
+                assert im[99, 100] == transparent
+                assert im[100, 100] == black
+                im.transparentize(0.3)
+                assert im[99, 100] == transparent
+                with im[100, 100] as c:
+                    assert c.red == c.green == c.blue == 0
+                    assert 0.69 < c.alpha < 0.71
+
+
+@tests.test
 def watermark():
     """Adds  watermark to an image."""
-    sig = get_sig_version({
-        (6, 6, 9, 7):
-            '9c4c182e44ee265230761a412e355cb78ea61859658220ecc8cbc1d56f58584e',
-        (6, 7, 7, 6):
-            'd725d924a9008ddff828f22595237ec6b56fb54057c6ee99584b9fc7ac91092c'
-    })
     with Image(filename=asset('beach.jpg')) as img:
         with Image(filename=asset('watermark.png')) as wm:
+            assert img[70, 83] == Color('srgb(82,116,154)')
+            assert img[70, 84] == Color('srgb(66,89,123)')
+            assert img[623, 282] == Color('srgb(167,193,216)')
+            assert img[622, 281] == Color('srgb(166,192,217)')
             img.watermark(wm, 0.3)
-            msg = 'img = {0!r}, marked = {1!r}'.format(
-                img.signature, sig)
-            assert img.signature == sig, msg
+            assert img[70, 83] == Color('srgb(82,116,154)')
+            assert img[70, 84] == Color('srgb(11.1147%,14.9874%,20.7126%)')
+            assert img[623, 282] == Color('srgb(167,193,216)')
+            assert img[622, 281] == Color('srgb(19.7848%,22.8824%,25.8625%)')
 
 
 @tests.test

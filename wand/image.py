@@ -1189,7 +1189,7 @@ class Image(Resource):
                                        IMAGE_TYPES.index('truecolormatte'))
             # Perform the black channel subtraction
             library.MagickEvaluateImageChannel(self.wand,
-                                               CHANNELS['black'],
+                                               CHANNELS['opacity'],
                                                EVALUATE_OPS.index('subtract'),
                                                t)
             self.raise_exception()

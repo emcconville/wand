@@ -6,6 +6,10 @@ Version 0.2.3
 
 To be released.
 
+- Fixed a bug that :meth:`Image.transparentize()
+  <wand.image.Image.transparentize>` method (and :meth:`Image.watermark()
+  <wand.image.Image.watermark>` method which internally uses it) didn't
+  work.
 - Fixed segmentation fault occured when :attr:`Color.red
   <wand.color.Color.red>`, :attr:`Color.green <wand.color.Color.green>`,
   or :attr:`Color.blue <Wand.color.Color.blue>` is accessed.
