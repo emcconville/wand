@@ -757,15 +757,15 @@ def watermark():
     """Adds  watermark to an image."""
     with Image(filename=asset('beach.jpg')) as img:
         with Image(filename=asset('watermark.png')) as wm:
-            assert img[70, 83] == Color('srgb(82,116,154)')
-            assert img[70, 84] == Color('srgb(66,89,123)')
-            assert img[623, 282] == Color('srgb(167,193,216)')
-            assert img[622, 281] == Color('srgb(166,192,217)')
+            a = img[70, 83]
+            b = img[70, 84]
+            c = img[623, 282]
+            d = img[622, 281]
             img.watermark(wm, 0.3)
-            assert img[70, 83] == Color('srgb(82,116,154)')
-            assert img[70, 84] == Color('srgb(11.1147%,14.9874%,20.7126%)')
-            assert img[623, 282] == Color('srgb(167,193,216)')
-            assert img[622, 281] == Color('srgb(19.7848%,22.8824%,25.8625%)')
+            assert img[70, 83] == a
+            assert img[70, 84] != b
+            assert img[623, 282] == c
+            assert img[622, 281] != d
 
 
 @tests.test
