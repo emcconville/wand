@@ -656,6 +656,9 @@ class Image(Resource):
     def __hash__(self):
         return hash(self.signature)
 
+    def has_sequence(self):
+        return library.MagickGetNumberImages(self.wand) > 1
+
     @property
     def width(self):
         """(:class:`numbers.Integral`) The width of this image."""
