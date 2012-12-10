@@ -8,6 +8,69 @@ This branch implements API for sequences.  See Michael Elovskikh's proposal
 and discussions about it: :issue:`34`.
 
 
+Version 0.3.0
+-------------
+
+To be released.
+
+- Added ``resolution`` parameter to :meth:`Image.read() <wand.image.Image.read>`
+  method and the constructor of :class:`~wand.image.Image`.
+  [:issue:`75` by Andrey Antukh]
+- Added :meth:`Image.liquid_rescale() <wand.image.Image.liquid_rescale>`
+  method which does `seam carving`__.  See also :ref:`seam-carving`.
+- Added :attr:`Image.metadata <wand.image.Image.metadata>` immutable mapping
+  attribute and :class:`~wand.image.Metadata` mapping type for it.
+  [:issue:`56` by Michael Elovskikh]
+- Added :attr:`Image.channel_images <wand.image.Image.channel_images>`
+  immutable mapping attribute and :class:`~wand.image.ChannelImageDict`
+  mapping for it.
+- Added :attr:`Image.channel_depths <wand.image.Image.channel_depths>`
+  immutable mapping attribute and :class:`~wand.image.ChannelDepthDict`
+  mapping for it.
+- Added :meth:`Image.composite_channel() <wand.image.Image.composite_channel>`
+  method.
+- Added :meth:`Image.read() <wand.image.read>` method.
+  [:issue:`58` by Piotr Florczyk]
+- Added :attr:`Image.resolution <wand.image.Image.resolution>` property.
+  [:issue:`58` by Piotr Florczyk]
+- Added :meth:`Image.blank() <wand.image.blank>` method.
+  [:issue:`60` by Piotr Florczyk]
+- Fixed several memory leaks.  [:issue:`62` by Mitch Lindgren]
+- Added :class:`~wand.image.ImageProperty` mixin class to maintain
+  a weak reference to the parent image.
+- Ranamed :const:`wand.image.COMPOSITE_OPS` to
+  :const:`~wand.image.COMPOSITE_OPERATORS`.
+- Now it shows helpful error message when ImageMagick library cannot be
+  found.
+
+__ http://en.wikipedia.org/wiki/Seam_carving
+
+
+Version 0.2.2
+-------------
+
+Released on September 24, 2012.
+
+- A compatibility fix for FreeBSD.
+  [`Patch`__ by Olivier Duchateau]
+- Now :class:`~wand.image.Image` can be instantiated without any opening.
+  Instead, it can take ``width``/``height`` and ``background``.
+  [:issue:`53` by Michael Elovskikh]
+- Added :meth:`Image.transform() <wand.image.Image.transform>` method
+  which is a convenience method accepting geometry strings to perform
+  cropping and resizing.
+  [:issue:`50` by Mitch Lindgren]
+- Added :attr:`Image.units <wand.image.Image.units>` property.
+  [:issue:`45` by Piotr Florczyk]
+- Now :meth:`Image.resize() <wand.image.Image.resize>` method raises
+  a proper error when it fails for any reason.
+  [:issue:`41` by Piotr Florczyk]
+- Added :attr:`Image.type <wand.image.Image.type>` property.
+  [:issue:`33` by Yauhen Yakimovich, :issue:`42` by Piotr Florczyk]
+
+__ http://olivier-freebsd-ports.googlecode.com/hg-history/efb852a5572/graphics/py-wand/files/patch-wand_api.py
+
+
 Version 0.2.1
 -------------
 

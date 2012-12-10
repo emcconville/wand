@@ -6,10 +6,12 @@ python:
 install:
 - pip install Attest
 script:
+- python -mwand.version --verbose
 - python -mattest.run wandtests.tests
 notifications:
   irc:
     channels:
-    - "irc.ozinger.org#hongminhee"
+    - "irc://ocarina.irc.ozinger.org:8080#hongminhee"
+    - "irc.freenode.net#wand"
     on_success: change
     on_failure: always

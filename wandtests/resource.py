@@ -40,14 +40,13 @@ def refcount():
 
 def negative_refcount():
     """reference_count cannot be negative"""
-    with raises(RuntimeError) as error:
+    with raises(RuntimeError):
         resource.decrement_refcount()
 
 @tests.test
 def raises_exceptions():
     """Exceptions raise, and warnings warn"""
-    from wand import resource
-    exceptions = resource.exceptions
+    from wand import exceptions, resource
     class DummyResource(resource.Resource):
 
         def set_exception_type(self, idx):

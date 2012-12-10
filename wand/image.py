@@ -13,15 +13,19 @@ error happened)::
 import collections
 import ctypes
 import numbers
-import platform
 import types
+import weakref
 
 from .api import MagickPixelPacket, libc, libmagick, library
 from .color import Color
+from .exceptions import WandException
 from .resource import DestroyedResourceError, Resource
 
 
-__all__ = 'FILTER_TYPES', 'Image', 'Iterator', 'ClosedImageError'
+__all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COMPOSITE_OPERATORS',
+           'EVALUATE_OPS', 'FILTER_TYPES', 'IMAGE_TYPES', 'UNIT_TYPES',
+           'ChannelDepthDict', 'ChannelImageDict', 'ClosedImageError',
+           'Image', 'ImageProperty', 'Iterator', 'Metadata')
 
 
 #: (:class:`tuple`) The list of filter types.
@@ -131,25 +135,35 @@ FILTER_TYPES = ('undefined', 'point', 'box', 'triangle', 'hermite', 'hanning',
 #: - ``'xor'``
 #: - ``'divide'``
 #:
+#: .. versionchanged:: 0.3.0
+#:    Renamed from :const:`COMPOSITE_OPS` to :const:`COMPOSITE_OPERATORS`.
+#:
 #: .. seealso::
+#:
+#:    `Compositing Images`__ ImageMagick v6 Examples
+#:       Image composition is the technique of combining images that have,
+#:       or do not have, transparency or an alpha channel.
+#:       This is usually performed using the IM :program:`composite` command.
+#:       It may also be performed as either part of a larger sequence of
+#:       operations or internally by other image operators.
 #:
 #:    `ImageMagick Composition Operators`__
 #:       Demonstrates the results of applying the various composition
 #:       composition operators.
 #:
+#:    __ http://www.imagemagick.org/Usage/compose/
 #:    __ http://www.rubblewebs.co.uk/imagemagick/operators/compose.php
-COMPOSITE_OPS = ('undefined', 'no', 'add', 'atop', 'blend', 'bumpmap',
-                 'change_mask', 'clear', 'color_burn', 'color_dodge',
-                 'colorize', 'copy_black', 'copy_blue', 'copy', 'copy_cyan',
-                 'copy_green', 'copy_magenta', 'copy_opacity', 'copy_red',
-                 'copy_yellow', 'darken', 'dst_atop', 'dst', 'dst_in',
-                 'dst_out', 'dst_over', 'difference', 'displace',
-                 'dissolve', 'exclusion', 'hard_light', 'hue', 'in',
-                 'lighten', 'linear_light', 'luminize', 'minus', 'modulate',
-                 'multiply', 'out', 'over', 'overlay', 'plus', 'replace',
-                 'saturate', 'screen', 'soft_light', 'src_atop', 'src',
-                 'src_in', 'src_out', 'src_over', 'subtract', 'threshold',
-                 'xor', 'divide',)
+COMPOSITE_OPERATORS = (
+    'undefined', 'no', 'add', 'atop', 'blend', 'bumpmap', 'change_mask',
+    'clear', 'color_burn', 'color_dodge', 'colorize', 'copy_black',
+    'copy_blue', 'copy', 'copy_cyan', 'copy_green', 'copy_magenta',
+    'copy_opacity', 'copy_red', 'copy_yellow', 'darken', 'dst_atop', 'dst',
+    'dst_in', 'dst_out', 'dst_over', 'difference', 'displace', 'dissolve',
+    'exclusion', 'hard_light', 'hue', 'in', 'lighten', 'linear_light',
+    'luminize', 'minus', 'modulate', 'multiply', 'out', 'over', 'overlay',
+    'plus', 'replace', 'saturate', 'screen', 'soft_light', 'src_atop', 'src',
+    'src_in', 'src_out', 'src_over', 'subtract', 'threshold', 'xor', 'divide'
+)
 
 #: (:class:`dict`) The dictionary of channel types.
 #:
@@ -161,12 +175,17 @@ COMPOSITE_OPS = ('undefined', 'no', 'add', 'atop', 'blend', 'bumpmap',
 #: - ``'magenta'``
 #: - ``'blue'``
 #: - ``'yellow'``
-#: - ``'black'``
 #: - ``'alpha'``
 #: - ``'opacity'``
+#: - ``'black'``
 #: - ``'index'``
-#: - ``'mask'``
-#: - ``'meta'``
+#: - ``'composite_channels'``
+#: - ``'all_channels'``
+#: - ``'true_alpha'``
+#: - ``'rgb_channels'``
+#: - ``'gray_channels'``
+#: - ``'sync_channels'``
+#: - ``'default_channels'``
 #:
 #: .. seealso::
 #:
@@ -175,8 +194,10 @@ COMPOSITE_OPS = ('undefined', 'no', 'add', 'atop', 'blend', 'bumpmap',
 #:
 #:    __ http://www.imagemagick.org/Magick++/Enumerations.html#ChannelType
 CHANNELS = dict(undefined=0, red=1, gray=1, cyan=1, green=2, magenta=2,
-                blue=4, yellow=4, black=8, alpha=16, opacity=16, index=32,
-                mask=64, meta=128)
+                blue=4, yellow=4, alpha=8, opacity=8, black=32, index=32,
+                composite_channels=47, all_channels=134217727, true_alpha=64,
+                rgb_channels=128, gray_channels=128, sync_channels=256,
+                default_channels=134217719)
 
 #: (:class:`tuple`) The list of evaluation operators
 #:
@@ -226,36 +247,33 @@ EVALUATE_OPS = ('undefined', 'add', 'and', 'divide', 'leftshift', 'max',
                 'thresholdwhite', 'gaussiannoise', 'impulsenoise',
                 'laplaciannoise', 'multiplicativenoise', 'poissonnoise',
                 'uniformnoise', 'cosine', 'sine', 'addmodulus', 'mean',
-                'abs', 'exponential', 'median', 'sum',)
+                'abs', 'exponential', 'median', 'sum')
 
 #: (:class:`tuple`) The list of alpha chanell types
 #:
-#: - ``'undefinedalphachannel'``
-#: - ``'activatealphachannel'``
-#: - ``'backgroundalphachannel'``
-#: - ``'copyalphachannel'``
-#: - ``'deactivatealphachannel'``
-#: - ``'extractalphachannel'``
-#: - ``'opaquealphachannel'``
-#: - ``'resetalphachannel'``
-#: - ``'setalphachannel'``
-#: - ``'shapealphachannel'``
-#: - ``'transparentalphachannel'``
-#: - ``'flattenalphachannel'``
-#: - ``'removealphachannel'``
+#: - ``'undefined'``
+#: - ``'activate'``
+#: - ``'background'``
+#: - ``'copy'``
+#: - ``'deactivate'``
+#: - ``'extract'``
+#: - ``'opaque'``
+#: - ``'reset'``
+#: - ``'set'``
+#: - ``'shape'``
+#: - ``'transparent'``
+#: - ``'flatten'``
+#: - ``'remove'``
 #:
 #: .. seealso::
 #:    `ImageMagick Image Channel`__
 #:       Describes the SetImageAlphaChannel method which can be used
 #:       to modify alpha channel. Also describes AlphaChannelType
+#:
 #:    __ http://www.imagemagick.org/api/channel.php#SetImageAlphaChannel
-ALPHA_CHANNEL_TYPES = ('undefinedalphachannel', 'activatealphachannel',
-                       'backgroundalphachannel', 'copyalphachannel',
-                       'deactivatealphachannel', 'extractalphachannel',
-                       'opaquealphachannel', 'resetalphachannel',
-                       'setalphachannel', 'shapealphachannel',
-                       'transparentalphachannel', 'flattenalphachannel',
-                       'removealphachannel',)
+ALPHA_CHANNEL_TYPES = ('undefined', 'activate', 'background', 'copy',
+                       'deactivate', 'extract', 'opaque', 'reset', 'set',
+                       'shape', 'transparent', 'flatten', 'remove')
 
 #: (:class:`tuple`) The list of image types
 #:
@@ -282,7 +300,23 @@ ALPHA_CHANNEL_TYPES = ('undefinedalphachannel', 'activatealphachannel',
 IMAGE_TYPES = ('undefined', 'bilevel', 'grayscale', 'grayscalematte',
                'palette', 'palettematte', 'truecolor', 'truecolormatte',
                'colorseparation', 'colorseparationmatte', 'optimize',
-               'palettebilevelmatte',)
+               'palettebilevelmatte')
+
+#: (:class:`tuple`) The list of resolution unit types
+#:
+#: - ``'undefined'``
+#: - ``'pixelsperinch'``
+#: - ``'pixelspercentimeter'``
+#:
+#: .. seealso::
+#:
+#:    `ImageMagick Image Units`__
+#:       Describes the MagickSetImageUnits method which can be used
+#:       to set image units of resolution
+#:
+#:    __ http://www.imagemagick.org/api/magick-image.php#MagickSetImageUnits
+UNIT_TYPES = 'undefined', 'pixelsperinch', 'pixelspercentimeter'
+
 
 class Image(Resource):
     """An image object.
@@ -299,6 +333,17 @@ class Image(Resource):
                    imagemagick detect the file format. Used only in
                    ``blob`` or ``file`` cases
     :type format: :class:`basestring`
+    :param width: the width of new blank image.
+    :type width: :class:`numbers.Integral`
+    :param height: the height of new blank imgage.
+    :type height: :class:`numbers.Integral`
+    :param background: an optional background color.
+                       default is transparent
+    :type background: :class:`wand.color.Color`
+    :param resolution: set a resolution value (dpi),
+        usefull for vectorial formats (like pdf)
+    :type resolution: :class:`collections.Sequence`,
+                      :Class:`numbers.Integral`
 
     .. versionadded:: 0.1.5
        The ``file`` parameter.
@@ -308,6 +353,12 @@ class Image(Resource):
 
     .. versionadded:: 0.2.1
        The ``format`` parameter.
+
+    .. versionadded:: 0.2.2
+       The ``width``, ``height``, ``background`` parameters.
+
+    .. versionadded:: 0.3.0
+       The ``resolution`` parameter.
 
     .. describe:: [left:right, top:bottom]
 
@@ -335,6 +386,24 @@ class Image(Resource):
 
     """
 
+    #: (:class:`Metadata`) The metadata mapping of the image.  Read only.
+    #:
+    #: .. versionadded:: 0.3.0
+    metadata = None
+
+    #: (:class:`ChannelImageDict`) The mapping of separated channels
+    #: from the image. ::
+    #:
+    #:     with image.channel_images['red'] as red_image:
+    #:         display(red_image)
+    channel_images = None
+
+    #: (:class:`ChannelDepthDict`) The mapping of channels to their depth.
+    #: Read only.
+    #:
+    #: .. versionadded:: 0.3.0
+    channel_depths = None
+
     c_is_resource = library.IsMagickWand
     c_destroy_resource = library.DestroyMagickWand
     c_get_exception = library.MagickGetException
@@ -343,19 +412,27 @@ class Image(Resource):
     __slots__ = '_wand',
 
     def __init__(self, image=None, blob=None, file=None, filename=None,
-                 format=None):
-        args = image, blob, file, filename
-        if all(a is None for a in args):
-            raise TypeError('missing arguments')
+                 format=None, width=None, height=None, background=None,
+                 resolution=None):
+        new_args = width, height, background
+        open_args = image, blob, file, filename
+        if (any(a is not None for a in new_args) and
+            any(a is not None for a in open_args)):
+            raise TypeError('blank image parameters cant be used with image '
+                            'opening parameters')
         elif any(a is not None and b is not None
-                 for i, a in enumerate(args)
-                 for b in args[:i] + args[i + 1:]):
+                 for i, a in enumerate(open_args)
+                 for b in open_args[:i] + open_args[i + 1:]):
             raise TypeError('parameters are exclusive each other; use only '
                             'one at once')
         elif not (format is None or isinstance(format, basestring)):
             raise TypeError('format must be a string, not ' + repr(format))
         with self.allocate():
-            if image is not None:
+            if image is None:
+                self.wand = library.NewMagickWand()
+            if width is not None and height is not None:
+                self.blank(width, height, background)
+            elif image is not None:
                 if not isinstance(image, Image):
                     raise TypeError('image must be a wand.image.Image '
                                     'instance, not ' + repr(image))
@@ -364,48 +441,80 @@ class Image(Resource):
                                     'nor filename')
                 self.wand = library.CloneMagickWand(image.wand)
             else:
-                self.wand = library.NewMagickWand()
-                read = False
                 if file is not None:
                     if format:
                         library.MagickSetFilename(self.wand,
                                                   'buffer.' + format)
-                    if (isinstance(file, types.FileType) and
-                        hasattr(libc, 'fdopen')):
-                        fd = libc.fdopen(file.fileno(), file.mode)
-                        library.MagickReadImageFile(self.wand, fd)
-                        read = True
-                    elif not callable(getattr(file, 'read', None)):
-                        raise TypeError('file must be a readable file object'
-                                        ', but the given object does not '
-                                        'have read() method')
-                    else:
-                        blob = file.read()
-                        file = None
+                    self.read(file=file, resolution=resolution)
                 if blob is not None:
                     if format:
                         library.MagickSetFilename(self.wand,
                                                   'buffer.' + format)
-                    if not isinstance(blob, collections.Iterable):
-                        raise TypeError('blob must be iterable, not ' +
-                                        repr(blob))
-                    if not isinstance(blob, basestring):
-                        blob = ''.join(blob)
-                    elif not isinstance(blob, str):
-                        blob = str(blob)
-                    library.MagickReadImageBlob(self.wand, blob, len(blob))
-                    read = True
+                    self.read(blob=blob, resolution=resolution)
                 elif filename is not None:
                     if format:
                         raise TypeError(
                             'format option cannot be used with image '
                             'nor filename'
                         )
-                    library.MagickReadImage(self.wand, filename)
-                    read = True
-                if not read:
-                    raise TypeError('invalid argument(s)')
+                    self.read(filename=filename, resolution=resolution)
+            self.metadata = Metadata(self)
+            self.channel_images = ChannelImageDict(self)
+            self.channel_depths = ChannelDepthDict(self)
         self.raise_exception()
+
+    def read(self, file=None, filename=None, blob=None, resolution=None):
+        """Read new image into Image() object.
+
+        :param blob: reads an image from the ``blob`` byte array
+        :type blob: :class:`str`
+        :param file: reads an image from the ``file`` object
+        :type file: file object
+        :param filename: reads an image from the ``filename`` string
+        :type filename: :class:`basestring`
+        :param resolution: set a resolution value (DPI),
+                           usefull for vectorial formats (like PDF)
+        :type resolution: :class:`collections.Sequence`,
+                          :class:`numbers.Integral`
+
+        .. versionadded:: 0.3.0
+
+        """
+        # Resolution must be set after image reading.
+        if resolution is not None:
+            if (isinstance(resolution, collections.Sequence) and
+                len(resolution) == 2):
+                library.MagickSetResolution(self.wand, *resolution)
+            elif isinstance(resolution, numbers.Integral):
+                library.MagickSetResolution(self.wand, resolution, resolution)
+            else:
+                raise TypeError('resolution must be a (x, y) pair or an '
+                                'integer of the same x/y')
+        if file is not None:
+            if (isinstance(file, types.FileType) and
+                hasattr(libc, 'fdopen')):
+                fd = libc.fdopen(file.fileno(), file.mode)
+                r = library.MagickReadImageFile(self.wand, fd)
+            elif not callable(getattr(file, 'read', None)):
+                raise TypeError('file must be a readable file object'
+                                ', but the given object does not '
+                                'have read() method')
+            else:
+                blob = file.read()
+                file = None
+        if blob is not None:
+            if not isinstance(blob, collections.Iterable):
+                raise TypeError('blob must be iterable, not ' +
+                                repr(blob))
+            if not isinstance(blob, basestring):
+                blob = ''.join(blob)
+            elif not isinstance(blob, str):
+                blob = str(blob)
+            r = library.MagickReadImageBlob(self.wand, blob, len(blob))
+        elif filename is not None:
+            r = library.MagickReadImage(self.wand, filename)
+        if not r:
+            self.raise_exception()
 
     @property
     def wand(self):
@@ -440,6 +549,15 @@ class Image(Resource):
 
         """
         self.destroy()
+
+    def clear(self):
+        """Clears resources associated with the image, leaving the image blank,
+        and ready to be used with new image.
+
+        .. versionadded:: 0.3.0
+
+        """
+        library.ClearMagickWand(self.wand)
 
     def clone(self):
         """Clones the image. It is equivalent to call :class:`Image` with
@@ -549,9 +667,54 @@ class Image(Resource):
         return library.MagickGetImageHeight(self.wand)
 
     @property
+    def resolution(self):
+        """(:class:`tuple`) Resolution of this image.
+
+        .. versionadded:: 0.3.0
+
+        """
+        x = ctypes.c_double()
+        y = ctypes.c_double()
+        r = library.MagickGetImageResolution(self.wand, x, y)
+        if not r:
+            self.raise_exception()
+        return int(x.value), int(y.value)
+
+    @resolution.setter
+    def resolution(self, geometry):
+        if isinstance(geometry, collections.Sequence):
+            x, y = geometry
+        elif isinstance(geometry, numbers.Integral):
+            x, y = geometry, geometry
+        else:
+            raise TypeError('resolution must be a (x, y) pair or an integer '
+                            'of the same x/y')
+        if self.size == (0, 0):
+            r = library.MagickSetResolution(self.wand, x, y)
+        else:
+            r = library.MagickSetImageResolution(self.wand, x, y)
+        if not r:
+            self.raise_exception()
+
+    @property
     def size(self):
         """(:class:`tuple`) The pair of (:attr:`width`, :attr:`height`)."""
         return self.width, self.height
+
+    @property
+    def units(self):
+        """(:class:`basestring`) The resolution units of this image."""
+        r = library.MagickGetImageUnits(self.wand)
+        return UNIT_TYPES[r]
+
+    @units.setter
+    def units(self, units):
+        if not isinstance(units, basestring) or units not in UNIT_TYPES:
+            raise TypeError('Unit value must be a string from wand.images.'
+                            'UNIT_TYPES, not ' + repr(units))
+        r = library.MagickSetImageUnits(self.wand, UNIT_TYPES.index(units))
+        if not r:
+            self.raise_exception()
 
     @property
     def depth(self):
@@ -592,8 +755,8 @@ class Image(Resource):
 
         """
         fmt = library.MagickGetImageFormat(self.wand)
-        if fmt:
-            return fmt
+        if bool(fmt):
+            return fmt.value
         self.raise_exception()
 
     @format.setter
@@ -604,6 +767,33 @@ class Image(Resource):
         r = library.MagickSetImageFormat(self.wand, fmt.strip().upper())
         if not r:
             raise ValueError(repr(fmt) + ' is unsupported format')
+
+    @property
+    def type(self):
+        """(:class:`basestring`) The image type.
+
+        Defines image type as in wand.image.IMAGE_TYPES enumeration.
+
+        It may raise :exc:`ValueError` when the type is unknown.
+
+        .. versionadded:: 0.2.2
+
+        """
+        image_type_index = library.MagickGetImageType(self.wand)
+        if not image_type_index:
+            self.raise_exception()
+        return IMAGE_TYPES[image_type_index]
+
+    @type.setter
+    def type(self, image_type):
+        if not isinstance(image_type, basestring) \
+            or image_type not in IMAGE_TYPES:
+            raise TypeError('Type value must be a string from IMAGE_TYPES'
+                            ', not ' + repr(image_type))
+        r = library.MagickSetImageType(self.wand,
+                                       IMAGE_TYPES.index(image_type))
+        if not r:
+            self.raise_exception()
 
     @property
     def compression_quality(self):
@@ -639,15 +829,9 @@ class Image(Resource):
 
         """
         rp = libmagick.MagickToMime(self.format)
-        if not rp:
+        if not bool(rp):
             self.raise_exception()
-        mimetype = ctypes.string_at(rp)
-        if platform.system() != 'Windows':
-            # FIXME: On Windows, the above free() makes access violation
-            #        reading error.  This conditional free() is of course
-            #        *not* the right solution, but I currently can't
-            #        understand why.
-            libc.free(rp)
+        mimetype = rp.value
         return mimetype
 
     @property
@@ -658,7 +842,8 @@ class Image(Resource):
         .. versionadded:: 0.1.9
 
         """
-        return library.MagickGetImageSignature(self.wand)
+        signature = library.MagickGetImageSignature(self.wand)
+        return signature.value
 
     @property
     def alpha_channel(self):
@@ -678,9 +863,9 @@ class Image(Resource):
     @alpha_channel.setter
     def alpha_channel(self, alpha):
         if alpha == True:
-            act = ALPHA_CHANNEL_TYPES.index('activatealphachannel')
+            act = ALPHA_CHANNEL_TYPES.index('activate')
         elif alpha == False:
-            act = ALPHA_CHANNEL_TYPES.index('deactivatealphachannel')
+            act = ALPHA_CHANNEL_TYPES.index('deactivate')
         else:
             raise TypeError('alpha_channel must be bool, not ' +
                             repr(alpha))
@@ -705,6 +890,40 @@ class Image(Resource):
             library.PixelGetMagickColor(pixel, buffer)
             return Color(raw=buffer)
         self.raise_exception()
+
+    def blank(self, width, height, background=None):
+        """Creates blank image.
+
+        :param width: the width of new blank image.
+        :type width: :class:`numbers.Integral`
+        :param height: the height of new blank imgage.
+        :type height: :class:`numbers.Integral`
+        :param background: an optional background color.
+                           default is transparent
+        :type background: :class:`wand.color.Color`
+        :returns: blank image
+        :rtype: :class:`Image`
+
+        .. versionadded:: 0.3.0
+
+        """
+        if not isinstance(width, numbers.Integral) or width < 1:
+            raise TypeError('width must be a natural number, not ' +
+                            repr(width))
+        if not isinstance(height, numbers.Integral) or height < 1:
+            raise TypeError('height must be a natural number, not ' +
+                            repr(height))
+        if background is not None and not isinstance(background, Color):
+            raise TypeError('background must be a wand.color.Color '
+                            'instance, not ' + repr(background))
+        if background is None:
+            background = Color('transparent')
+        with background:
+            r = library.MagickNewImage(self.wand, width, height,
+                                   background.resource)
+            if not r:
+                self.raise_exception()
+        return self
 
     @property
     def quantum_range(self):
@@ -917,11 +1136,166 @@ class Image(Resource):
               not (0 <= filter < len(FILTER_TYPES))):
             raise ValueError(repr(filter) + ' is an invalid filter type')
         blur = ctypes.c_double(float(blur))
-        library.MagickResizeImage(self.wand, width, height, filter, blur)
+        r = library.MagickResizeImage(self.wand, width, height, filter, blur)
+        if not r:
+            self.raise_exception()
+
+    def transform(self, crop='', resize=''):
+        """Transforms the image using :c:func:`MagickTransformImage`,
+        which is a convenience function accepting geometry strings to
+        perform cropping and resizing.  Cropping is performed first,
+        followed by resizing.  Either or both arguments may be omitted
+        or given an empty string, in which case the corresponding action
+        will not be performed. Geometry specification strings are
+        defined as follows:
+
+        A geometry string consists of a size followed by an optional offset.
+        The size is specified by one of the options below,
+        where **bold** terms are replaced with appropriate integer values:
+
+        **scale**\ ``%``
+          Height and width both scaled by specified percentage
+
+        **scale-x**\ ``%x``\ \ **scale-y**\ ``%``
+          Height and width individually scaled by specified percentages.
+          Only one % symbol is needed.
+
+        **width**
+          Width given, height automagically selected to preserve aspect ratio.
+
+        ``x``\ \ **height**
+          Height given, width automagically selected to preserve aspect ratio.
+
+        **width**\ ``x``\ **height**
+          Maximum values of width and height given; aspect ratio preserved.
+
+        **width**\ ``x``\ **height**\ ``!``
+          Width and height emphatically given; original aspect ratio ignored.
+
+        **width**\ ``x``\ **height**\ ``>``
+          Shrinks images with dimension(s) larger than the corresponding
+          width and/or height dimension(s).
+
+        **width**\ ``x``\ **height**\ ``<``
+          Enlarges images with dimensions smaller than the corresponding
+          width and/or height dimension(s).
+
+        **area**\ ``@``
+          Resize image to have the specified area in pixels.
+          Aspect ratio is preserved.
+
+        The offset, which only applies to the cropping geometry string,
+        is given by ``{+-}``\ **x**\ ``{+-}``\ **y**\ , that is,
+        one plus or minus sign followed by an **x** offset,
+        followed by another plus or minus sign, followed by a **y** offset.
+        Offsets are in pixels from the upper left corner of the image.
+        Negative offsets will cause the corresponding number of pixels to
+        be removed from the right or bottom edge of the image, meaning the
+        cropped size will be the computed size minus the absolute value
+        of the offset.
+
+        For example, if you want to crop your image to 300x300 pixels
+        and then scale it by 2x for a final size of 600x600 pixels,
+        you can call::
+
+            image.transform('300x300', '200%')
+
+        This method is a fairly thing wrapper for the C API, and does not
+        perform any additional checking of the parameters except insofar as
+        verifying that they are of the correct type.  Thus, like the C
+        API function, the method is very permissive in terms of what
+        it accepts for geometry strings; unrecognized strings and
+        trailing characters will be ignored rather than raising an error.
+
+        :param crop: A geometry string defining a subregion of the image
+                     to crop to
+        :type crop: :class:`basestring`
+        :param resize: A geometry string defining the final size of the image
+        :type resize: :class:`basestring`
+
+        .. seealso::
+
+           `ImageMagick Geometry Specifications`__
+              Cropping and resizing geometry for the ``transform`` method are
+              specified according to ImageMagick's geometry string format.
+              The ImageMagick documentation provides more information about
+              geometry strings.
+
+           __ http://www.imagemagick.org/script/command-line-processing.php#geometry
+
+        .. versionadded:: 0.2.2
+
+        """
+        # Check that the values given are the correct types.  ctypes will do
+        # this automatically, but we can make the error message more friendly
+        # here.
+        if not isinstance(crop, basestring):
+            raise TypeError("crop must be a string, not " + repr(crop))
+        if not isinstance(resize, basestring):
+            raise TypeError("resize must be a string, not " + repr(resize))
+        # Also verify that only ASCII characters are included
+        try:
+            crop.encode('ascii')
+        except UnicodeEncodeError:
+            raise ValueError('crop must only contain ascii-encodable ' +
+                             'characters.')
+        try:
+            resize.encode('ascii')
+        except UnicodeEncodeError:
+            raise ValueError('resize must only contain ascii-encodable ' +
+                             'characters.')
+        new_wand = library.MagickTransformImage(self.wand, crop, resize)
+        if not new_wand:
+            self.raise_exception()
+        self.wand = new_wand
+
+    def liquid_rescale(self, width, height, delta_x=0, rigidity=0):
+        """Rescales the image with `seam carving`_, also known as
+        image retargeting, content-aware resizing, or liquid rescaling.
+
+        :param width: the width in the scaled image
+        :type width: :class:`numbers.Integral`
+        :param height: the height in the scaled image
+        :type height: :class:`numbers.Integral`
+        :param delta_x: maximum seam transversal step.
+                        0 means straight seams.  default is 0
+        :type delta_x: :class:`numbers.Real`
+        :param rigidity: introduce a bias for non-straight seams.
+                         default is 0
+        :type rigidity: :class:`numbers.Real`
+        :raises wand.exceptions.MissingDelegateError:
+           when ImageMagick isn't configured ``--with-lqr`` option.
+
+        .. note::
+
+           This feature requires ImageMagick to be configured
+           ``--with-lqr`` option.  Or it will raise
+           :exc:`~wand.exceptions.MissingDelegateError`:
+
+        .. seealso::
+
+           `Seam carving`_ --- Wikipedia
+              The article which explains what seam carving is
+              on Wikipedia.
+
+        .. _Seam carving: http://en.wikipedia.org/wiki/Seam_carving
+
+        """
+        if not isinstance(width, numbers.Integral):
+            raise TypeError('width must be an integer, not ' + repr(width))
+        elif not isinstance(height, numbers.Integral):
+            raise TypeError('height must be an integer, not ' + repr(height))
+        elif not isinstance(delta_x, numbers.Real):
+            raise TypeError('delta_x must be a float, not ' + repr(delta_x))
+        elif not isinstance(rigidity, numbers.Real):
+            raise TypeError('rigidity must be a float, not ' + repr(rigidity))
+        library.MagickLiquidRescaleImage(self.wand, int(width), int(height),
+                                         float(delta_x), float(rigidity))
+        self.raise_exception()
 
     def rotate(self, degree, background=None, reset_coords=True):
-        """Rotates the image. It takes a ``background`` color for ``degree``
-        that isn't a multiple of 90.
+        """Rotates the image right.  It takes a ``background`` color
+        for ``degree`` that isn't a multiple of 90.
 
         :param degree: a degree to rotate. multiples of 360 affect nothing
         :type degree: :class:`numbers.Real`
@@ -973,7 +1347,8 @@ class Image(Resource):
             if t.value > self.quantum_range or t.value < 0:
                 raise ValueError('transparency must be a numbers.Real value ' +
                                  'between 0.0 and 1.0')
-            # Set the wand to image zero, incase there are multiple images in it
+            # Set the wand to image zero, in case there are multiple images
+            # in it
             library.MagickSetIteratorIndex(self.wand, 0)
             # Change the pixel representation of the image
             # to RGB with an alpha channel
@@ -981,7 +1356,7 @@ class Image(Resource):
                                        IMAGE_TYPES.index('truecolormatte'))
             # Perform the black channel subtraction
             library.MagickEvaluateImageChannel(self.wand,
-                                               CHANNELS.get('black', 8),
+                                               CHANNELS['black'],
                                                EVALUATE_OPS.index('subtract'),
                                                t)
             self.raise_exception()
@@ -1001,8 +1376,60 @@ class Image(Resource):
         .. versionadded:: 0.2.0
 
         """
-        library.MagickCompositeImage(self.wand, image.wand,
-                                     COMPOSITE_OPS.index('over'), left, top)
+        if not isinstance(left, numbers.Integral):
+            raise TypeError('left must be an integer, not ' + repr(left))
+        elif not isinstance(top, numbers.Integral):
+            raise TypeError('top must be an integer, not ' + repr(left))
+        op = COMPOSITE_OPERATORS.index('over')
+        library.MagickCompositeImage(self.wand, image.wand, op,
+                                     int(left), int(top))
+        self.raise_exception()
+
+    def composite_channel(self, channel, image, operator, left=0, top=0):
+        """Composite two images using the particular ``channel``.
+
+        :param channel: the channel type.  available values can be found
+                        in the :const:`CHANNELS` mapping
+        :param image: the composited source image.
+                      (the receiver image becomes the destination)
+        :type image: :class:`Image`
+        :param operator: the operator that affects how the composite
+                         is applied to the image.  available values
+                         can be found in the :const:`COMPOSITE_OPERATORS`
+                         list
+        :param left: the column offset of the composited source image
+        :type left: :class:`numbers.Integral`
+        :param top: the row offset of the composited source image
+        :type top: :class:`numbers.Integral`
+        :raises exceptions.ValueError: when the given ``channel`` or
+                                       ``operator`` is invalid
+
+        .. versionadded:: 0.3.0
+
+        """
+        if not isinstance(channel, basestring):
+            raise TypeError('channel must be a string, not ' +
+                            repr(channel))
+        elif not isinstance(operator, basestring):
+            raise TypeError('operator must be a string, not ' +
+                            repr(operator))
+        elif not isinstance(left, numbers.Integral):
+            raise TypeError('left must be an integer, not ' + repr(left))
+        elif not isinstance(top, numbers.Integral):
+            raise TypeError('top must be an integer, not ' + repr(left))
+        try:
+            ch_const = CHANNELS[channel]
+        except KeyError:
+            raise ValueError(repr(channel) + ' is an invalid channel type'
+                             '; see wand.image.CHANNELS dictionary')
+        try:
+            op =  COMPOSITE_OPERATORS.index(operator)
+        except IndexError:
+            raise IndexError(repr(operator) + ' is an invalid composite '
+                             'operator type; see wand.image.COMPOSITE_'
+                             'OPERATORS dictionary')
+        library.MagickCompositeImageChannel(self.wand, ch_const, image.wand,
+                                            op, int(left), int(top))
         self.raise_exception()
 
     def watermark(self, image, transparency=0.0, left=0, top=0):
@@ -1026,7 +1453,7 @@ class Image(Resource):
         """
         with image.clone() as watermark_image:
             watermark_image.transparentize(transparency)
-            self.composite(watermark_image, left, top)
+            self.composite(watermark_image, left=left, top=top)
         self.raise_exception()
 
     def save(self, file=None, filename=None):
@@ -1214,9 +1641,152 @@ class Iterator(Resource, collections.Iterator):
         return type(self)(iterator=self)
 
 
+class ImageProperty(object):
+    """The mixin class to maintain a weak reference to the parent
+    :class:`Image` object.
+
+    .. versionadded:: 0.3.0
+
+    """
+
+    def __init__(self, image):
+        if not isinstance(image, Image):
+            raise TypeError('expected a wand.image.Image instance, '
+                            'not ' + repr(image))
+        self._image = weakref.ref(image)
+
+    @property
+    def image(self):
+        """(:class:`Image`) The parent image.
+
+        It ensures that the parent :class:`Image`, which is held in a weak
+        reference, still exists.  Returns the dereferenced :class:`Image`
+        if it does exist, or raises a :exc:`ClosedImageError` otherwise.
+
+        :exc: `ClosedImageError` when the parent Image has been destroyed
+
+        """
+        # Dereference our weakref and check that the parent Image stil exists
+        image = self._image()
+        if image:
+            return image
+        raise ClosedImageError(
+            'parent Image of {0!r} has been destroyed'.format(self)
+        )
+
+
+class Metadata(ImageProperty, collections.Mapping):
+    """Class that implements dict-like read-only access to image metadata
+    like EXIF or IPTC headers.
+
+    :param image: an image instance
+    :type image: :class:`Image`
+
+    .. note::
+
+       You don't have to use this by yourself.
+       Use :attr:`Image.metadata` property instead.
+
+    .. versionadded:: 0.3.0
+
+    """
+
+    def __getitem__(self, k):
+        """
+        :param k: Metadata header name string.
+        :type k: :class:`basestring`
+        :returns: a header value string
+        :rtype: :class:`str`
+        """
+        image = self.image
+        if not isinstance(k, basestring):
+            raise TypeError('k must be a string, not ' + repr(format))
+        v = library.MagickGetImageProperty(image.wand, k)
+        if bool(v) is False:
+            raise KeyError(k)
+        value = v.value
+        return value
+
+    def __iter__(self):
+        image = self.image
+        num = ctypes.c_size_t()
+        props_p = library.MagickGetImageProperties(image.wand, '', num)
+        props = [props_p[i] for i in xrange(num.value)]
+        library.MagickRelinquishMemory(props_p)
+        return iter(props)
+
+    def __len__(self):
+        image = self.image
+        num = ctypes.c_size_t()
+        props_p = library.MagickGetImageProperties(image.wand, '', num)
+        library.MagickRelinquishMemory(props_p)
+        return num.value
+
+
+class ChannelImageDict(ImageProperty, collections.Mapping):
+    """The mapping table of separated images of the particular channel
+    from the image.
+
+    :param image: an image instance
+    :type image: :class:`Image`
+
+    .. note::
+
+       You don't have to use this by yourself.
+       Use :attr:`Image.channel_images` property instead.
+
+    .. versionadded:: 0.3.0
+
+    """
+
+    def __iter__(self):
+        return iter(CHANNELS)
+
+    def __len__(self):
+        return len(CHANNELS)
+
+    def __getitem__(self, channel):
+        c = CHANNELS[channel]
+        img = self.image.clone()
+        succeeded = library.MagickSeparateImageChannel(img.wand, c)
+        if not succeeded:
+            try:
+                img.raise_exception()
+            except WandException:
+                img.close()
+                raise
+        return img
+
+
+class ChannelDepthDict(ImageProperty, collections.Mapping):
+    """The mapping table of channels to their depth.
+
+    :param image: an image instance
+    :type image: :class:`Image`
+
+    .. note::
+
+       You don't have to use this by yourself.
+       Use :attr:`Image.channel_depths` property instead.
+
+    .. versionadded:: 0.3.0
+
+    """
+
+    def __iter__(self):
+        return iter(CHANNELS)
+
+    def __len__(self):
+        return len(CHANNELS)
+
+    def __getitem__(self, channel):
+        c = CHANNELS[channel]
+        depth = library.MagickGetImageChannelDepth(self.image.wand, c)
+        return int(depth)
+
+
 class ClosedImageError(DestroyedResourceError):
     """An error that rises when some code tries access to an already closed
     image.
 
     """
-

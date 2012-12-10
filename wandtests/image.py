@@ -1,14 +1,43 @@
+# -*- coding: utf-8 -*-
+import os
 import os.path
+import sys
 import tempfile
 try:
     import cStringIO as StringIO
 except ImportError:
     import StringIO
+import warnings
 
 from attest import Tests, assert_hook, raises
 
+from wand.version import MAGICK_VERSION_INFO
 from wand.image import ClosedImageError, Image
 from wand.color import Color
+from wand.exceptions import MissingDelegateError
+
+
+skip_slow_tests = bool(os.environ.get('WANDTESTS_SKIP_SLOW_TESTS'))
+
+
+def get_sig_version(versions):
+    """Returns matching signature version value for current
+    `ImageMagick` version.
+
+    :param versions: Dict of versions.
+    :type versions: :class:`dict`
+    :returns: matched sig value
+    :rtype: :class:`basestring`
+
+    """
+    sorted_versions = reversed(sorted(versions.keys()))
+    for v in sorted_versions:
+        if v <= MAGICK_VERSION_INFO:
+            sig = versions[v]
+            break
+    else:
+        sig = versions[v]
+    return sig
 
 
 tests = Tests()
@@ -16,6 +45,53 @@ tests = Tests()
 
 def asset(filename):
     return os.path.join(os.path.dirname(__file__), 'assets', filename)
+
+
+@tests.test
+def empty_image():
+    with Image() as img:
+        assert img.size == (0,0)
+
+
+@tests.test
+def blank_image():
+    gray = Color('#ccc')
+    transparent = Color('transparent')
+    with raises(TypeError):
+        Image(height=0, filename='/test.png')
+    with raises(TypeError):
+        Image(width=0, height=0)
+    with Image(width=20, height=10) as img:
+        assert img[10, 5] == transparent
+    with Image(width=20, height=10, background=gray) as img:
+        assert img.size == (20, 10)
+        assert img[10, 5] == gray
+
+@tests.test
+def clear_image():
+    with Image() as img:
+        img.read(filename=asset('mona-lisa.jpg'))
+        assert img.size == (402,599)
+        img.clear()
+        assert img.size == (0,0)
+        img.read(filename=asset('beach.jpg'))
+        assert img.size == (800,600)
+
+
+@tests.test
+def read_from_file():
+    with Image() as img:
+        img.read(filename=asset('mona-lisa.jpg'))
+        assert img.width == 402
+        img.clear()
+        with open(asset('mona-lisa.jpg'), 'rb') as f:
+            img.read(file=f)
+            assert img.width == 402
+            img.clear()
+        with open(asset('mona-lisa.jpg'), 'rb') as f:
+            blob = f.read()
+            img.read(blob=blob)
+            assert img.width == 402
 
 
 @tests.test
@@ -71,7 +147,7 @@ def new_with_format():
 
 @tests.test
 def clone():
-    """Cloens the existing image."""
+    """Clones the existing image."""
     funcs = (lambda img: Image(image=img),
              lambda img: img.clone())
     with Image(filename=asset('mona-lisa.jpg')) as img:
@@ -154,11 +230,67 @@ def size():
         assert img.height == 599
         assert len(img) == 599
 
+
+@tests.test
+def get_resolution():
+    """Gets image resolution."""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        assert img.resolution == (72, 72)
+
+
+@tests.test
+def set_resolution_01():
+    """Sets image resolution."""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        img.resolution = (100, 100)
+        assert img.resolution == (100, 100)
+
+
+@tests.test
+def set_resolution_02():
+    """Sets image resolution with integer as parameter."""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        img.resolution = 100
+        assert img.resolution == (100, 100)
+
+
+@tests.test
+def set_resolution_03():
+    """Sets image resolution on constructor"""
+    with Image(filename=asset('sample.pdf'), resolution=(100,100)) as img:
+        assert img.resolution == (100, 100)
+
+
+@tests.test
+def set_resolution_04():
+    """Sets image resolution on constructor with integer as parameter."""
+    with Image(filename=asset('sample.pdf'), resolution=100) as img:
+        assert img.resolution == (100, 100)
+
+
+@tests.test
+def get_units():
+    """Gets the image resolution units."""
+    with Image(filename=asset('beach.jpg')) as img:
+        assert img.units == "pixelsperinch"
+    with Image(filename=asset('sasha.jpg')) as img:
+        assert img.units == "undefined"
+
+
+@tests.test
+def set_units():
+    """Sets the image resolution units."""
+    with Image(filename=asset('watermark.png')) as img:
+        img.units="pixelspercentimeter"
+        assert img.units == "pixelspercentimeter"
+
+
 @tests.test
 def get_depth():
     """Gets the image depth"""
     with Image(filename=asset('mona-lisa.jpg')) as img:
         assert img.depth == 8
+
 
 @tests.test
 def set_depth():
@@ -166,6 +298,7 @@ def set_depth():
     with Image(filename=asset('mona-lisa.jpg')) as img:
         img.depth = 16
         assert img.depth == 16
+
 
 @tests.test
 def get_format():
@@ -191,6 +324,23 @@ def set_format():
             img.format = 'HONG'
         with raises(TypeError):
             img.format = 123
+
+
+@tests.test
+def get_type():
+    """Gets the image type."""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        assert img.type == "truecolor"
+        img.alpha_channel = True
+        assert img.type == "truecolormatte"
+
+
+@tests.test
+def set_type():
+    """Sets the image type."""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        img.type = "grayscale"
+        assert img.type == "grayscale"
 
 
 @tests.test
@@ -266,7 +416,7 @@ def convert():
             img.convert(123)
 
 
-@tests.test
+@tests.test_if(not skip_slow_tests)
 def iterate():
     """Uses iterator."""
     with Color('#000') as black:
@@ -397,7 +547,7 @@ def slice_crop():
             img[290:310, 290:310]
 
 
-@tests.test
+@tests.test_if(not skip_slow_tests)
 def crop():
     """Crops in-place."""
     with Image(filename=asset('croptest.png')) as img:
@@ -482,8 +632,83 @@ def resize_errors():
         with raises(ValueError):
             img.resize(height=-5)
 
+@tests.test
+def transform():
+    """Transforms (crops and resizes with geometry strings) the image."""
+    with Image(filename=asset('beach.jpg')) as img:
+        with img.clone() as a:
+            assert a.size == (800, 600)
+            a.transform(resize='200%')
+            assert a.size == (1600, 1200)
+        with img.clone() as b:
+            assert b.size == (800, 600)
+            b.transform(resize='200%x100%')
+            assert b.size == (1600, 600)
+        with img.clone() as c:
+            assert c.size == (800, 600)
+            c.transform(resize='1200')
+            assert c.size == (1200, 900)
+        with img.clone() as d:
+            assert d.size == (800, 600)
+            d.transform(resize='x300')
+            assert d.size == (400, 300)
+        with img.clone() as e:
+            assert e.size == (800, 600)
+            e.transform(resize='400x600')
+            assert e.size == (400, 300)
+        with img.clone() as f:
+            assert f.size == (800, 600)
+            f.transform(resize='1000x1200^')
+            assert f.size == (1600, 1200)
+        with img.clone() as g:
+            assert g.size == (800, 600)
+            g.transform(resize='100x100!')
+            assert g.size == (100, 100)
+        with img.clone() as h:
+            assert h.size == (800, 600)
+            h.transform(resize='400x500>')
+            assert h.size == (400, 300)
+        with img.clone() as i:
+            assert i.size == (800, 600)
+            i.transform(resize='1200x3000<')
+            assert i.size == (1200, 900)
+        with img.clone() as j:
+            assert j.size == (800, 600)
+            j.transform(resize='120000@')
+            assert j.size == (400, 300)
+        with img.clone() as k:
+            assert k.size == (800, 600)
+            k.transform(crop='300x300')
+            assert k.size == (300, 300)
+        with img.clone() as l:
+            assert l.size == (800, 600)
+            l.transform(crop='300x300+100+100')
+            assert l.size == (300, 300)
+        with img.clone() as m:
+            assert m.size == (800, 600)
+            m.transform(crop='300x300-150-150')
+            assert m.size == (150, 150)
+        with img.clone() as n:
+            assert n.size == (800, 600)
+            n.transform('300x300', '200%')
+            assert n.size == (600, 600)
 
 @tests.test
+def transform_errors():
+    """Tests errors raised by invalid parameters for transform."""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        with raises(TypeError):
+            img.transform(crop=500)
+        with raises(TypeError):
+            img.transform(resize=500)
+        with raises(TypeError):
+            img.transform(500, 500)
+        with raises(ValueError):
+            img.transform(crop=u'⚠ ')
+        with raises(ValueError):
+            img.transform(resize=u'⚠ ')
+
+@tests.test_if(not skip_slow_tests)
 def rotate():
     """Rotates an image."""
     with Image(filename=asset('rotatetest.gif')) as img:
@@ -523,7 +748,12 @@ def rotate():
 @tests.test
 def signature():
     """Gets the image signature."""
-    sig = '763774301b62cf9ea033b661f5136fbda7e8de96254aec3dd0dff63c05413a1e'
+    sig = get_sig_version({
+        (6, 6, 9, 7):
+            '763774301b62cf9ea033b661f5136fbda7e8de96254aec3dd0dff63c05413a1e',
+        (6, 7, 7, 6):
+            '8c6ef1dcb1bacb6ad8edf307f2f2c6a129b3b7aa262ee288325f9fd334006374'
+    })
     with Image(filename=asset('mona-lisa.jpg')) as img:
         assert img.signature == sig
         img.format = 'png'
@@ -554,6 +784,7 @@ def object_hash():
         b = hash(img)
         assert a == b
 
+
 @tests.test
 def get_alpha_channel():
     """Checks if image has alpha channel."""
@@ -571,11 +802,13 @@ def set_alpha_channel():
         img.alpha_channel = False
         assert img.alpha_channel == False
 
+
 @tests.test
 def get_background_color():
     """Gets the background color."""
     with Image(filename=asset('mona-lisa.jpg')) as img:
         assert Color('white') == img.background_color
+
 
 @tests.test
 def set_background_color():
@@ -589,13 +822,18 @@ def set_background_color():
 @tests.test
 def watermark():
     """Adds  watermark to an image."""
+    sig = get_sig_version({
+        (6, 6, 9, 7):
+            '9c4c182e44ee265230761a412e355cb78ea61859658220ecc8cbc1d56f58584e',
+        (6, 7, 7, 6):
+            'd725d924a9008ddff828f22595237ec6b56fb54057c6ee99584b9fc7ac91092c'
+    })
     with Image(filename=asset('beach.jpg')) as img:
         with Image(filename=asset('watermark.png')) as wm:
             img.watermark(wm, 0.3)
-            with Image(filename=asset('marked.png')) as marked:
-                msg = 'img = {0!r}, marked = {1!r}'.format(
-                    img.signature, marked.signature)
-                assert img == marked, msg
+            msg = 'img = {0!r}, marked = {1!r}'.format(
+                img.signature, sig)
+            assert img.signature == sig, msg
 
 
 @tests.test
@@ -604,10 +842,240 @@ def reset_coords():
     the image is (0, 0) again.
 
     """
+    sig = get_sig_version({
+        (6, 6, 9, 7):
+            '9537655c852cb5a22f29ba016648ea29d1b9a55fd2b4399f4fcbbcd39cce1778',
+        (6, 7, 7, 6):
+            'e8ea17066378085a60f7213430af62c89ed3f416e98b39f2d434c96c2be82989',
+    })
     with Image(filename=asset('sasha.jpg')) as img:
             img.rotate(45, reset_coords=True)
             img.crop(0, 0, 170, 170)
-            with Image(filename=asset('resettest.png')) as control:
-                msg = 'img = {0!r}, control = {1!r}'.format(
-                    img.signature, control.signature)
-                assert img == control, msg
+            msg = 'img = {0!r}, control = {1!r}'.format(
+                img.signature, sig)
+            assert img.signature == sig, msg
+
+
+@tests.test
+def metadata():
+    """Test metadata api"""
+    with Image(filename=asset('beach.jpg')) as img:
+        assert len(img.metadata) == 52
+        assert 'exif:ApertureValue' in img.metadata
+        assert 'exif:UnknownValue' not in img.metadata
+        assert img.metadata['exif:ApertureValue'] == '192/32'
+        assert img.metadata.get('exif:UnknownValue', "IDK") == "IDK"
+
+
+@tests.test
+def channel_depths():
+    with Image(filename=asset('beach.jpg')) as i:
+        assert dict(i.channel_depths) == {
+            'blue': 8, 'gray': 8, 'true_alpha': 1, 'opacity': 1,
+            'undefined': 1, 'composite_channels': 8, 'index': 1,
+            'rgb_channels': 1, 'alpha': 1, 'yellow': 8, 'sync_channels': 1,
+            'default_channels': 8, 'black': 1, 'cyan': 8,
+            'all_channels': 8, 'green': 8, 'magenta': 8, 'red': 8,
+            'gray_channels': 1
+        }
+    with Image(filename=asset('google.ico')) as i:
+        assert dict(i.channel_depths) == {
+            'blue': 8, 'gray': 8, 'true_alpha': 1, 'opacity': 1,
+            'undefined': 1, 'composite_channels': 8, 'index': 1,
+            'rgb_channels': 1, 'alpha': 1, 'yellow': 8, 'sync_channels': 1,
+            'default_channels': 8, 'black': 1, 'cyan': 8, 'all_channels': 8,
+            'green': 8, 'magenta': 8, 'red': 8, 'gray_channels': 1
+        }
+
+
+@tests.test
+def channel_images():
+    with Image(filename=asset('sasha.jpg')) as i:
+        actual = dict((c, i.signature) for c, i in i.channel_images.items())
+    del actual['rgb_channels']   # FIXME: workaround for Travis CI
+    del actual['gray_channels']  # FIXME: workaround for Travis CI
+    assert actual == {
+        'blue': get_sig_version({
+            (6, 5, 7, 8): 'b56f0c0763b49d4b0661d0bf7028d82a'
+                          '66d0d15817ff5c6fd68a3c76377bd05a',
+            (6, 7, 7, 6): 'b5e59c5bb24379e0f741b8073e19f564'
+                          '9a456af4023d2dd3764a5c012989470b',
+            (6, 7, 9, 5): 'a372637ff6256ed45c07b7be04617b99'
+                          'cea024dbd6dd961492a1906f419d3f84'
+        }),
+        'gray': get_sig_version({
+            (6, 6, 9, 7): 'ee84ed5532ade43e28c1f8baa0d52235'
+                          '1aee73ff0265d188797d457f1df2bc82',
+            (6, 7, 7, 6): 'd0d2bae86a40e0107f69bb8016800dae'
+                          '4ad8178e29ac11649c9c3fa465a5a493',
+            (6, 7, 9, 5): 'bac4906578408e0f46b1943f96c8c392'
+                          '73997659feb005e581e7ddfa0ba1da41'
+        }),
+        'true_alpha': get_sig_version({
+            (6, 5, 7, 8): '3da06216c40cdb4011339bed11804714'
+                          'bf262ac7c20e7eaa5401ed3218e9e59f',
+            (6, 7, 9, 5): '3da06216c40cdb4011339bed11804714'
+                          'bf262ac7c20e7eaa5401ed3218e9e59f'
+        }),
+        'opacity': get_sig_version({
+            (6, 5, 7, 8): '0e7d4136121208cf6c2e12017ffe9c48'
+                          '7e8ada5fca1ad76b06bc41ad8a932de3'
+        }),
+        'undefined': get_sig_version({
+            (6, 5, 7, 8): 'b68db111c7d6a58301d9d824671ed810'
+                          'b790d397429d2988dcdeb7562729bb46',
+            (6, 7, 7, 6): 'ae62e71111167c83d9449bcca50dd65f'
+                          '565227104fe148aac514d3c2ef0fe9e2',
+            (6, 7, 9, 5): 'd659b35502ac753c52cc44d488c78acd'
+                          'c0201e65a7e9c5d7715ff79dbb0b24b3'
+        }),
+        'composite_channels': get_sig_version({
+            (6, 5, 7, 8): 'b68db111c7d6a58301d9d824671ed810'
+                          'b790d397429d2988dcdeb7562729bb46',
+            (6, 7, 7, 6): 'ae62e71111167c83d9449bcca50dd65f'
+                          '565227104fe148aac514d3c2ef0fe9e2',
+            (6, 7, 9, 5): 'd659b35502ac753c52cc44d488c78acd'
+                          'c0201e65a7e9c5d7715ff79dbb0b24b3'
+        }),
+        'index': get_sig_version({
+            (6, 5, 7, 8): 'b68db111c7d6a58301d9d824671ed810'
+                          'b790d397429d2988dcdeb7562729bb46',
+            (6, 7, 7, 6): 'ae62e71111167c83d9449bcca50dd65f'
+                          '565227104fe148aac514d3c2ef0fe9e2',
+            (6, 7, 9, 5): 'd659b35502ac753c52cc44d488c78acd'
+                          'c0201e65a7e9c5d7715ff79dbb0b24b3'
+        }),
+        'yellow': get_sig_version({
+            (6, 6, 9, 7): 'b56f0c0763b49d4b0661d0bf7028d82a'
+                          '66d0d15817ff5c6fd68a3c76377bd05a',
+            (6, 7, 7, 6): 'b5e59c5bb24379e0f741b8073e19f564'
+                          '9a456af4023d2dd3764a5c012989470b',
+            (6, 7, 9, 5): 'a372637ff6256ed45c07b7be04617b99'
+                          'cea024dbd6dd961492a1906f419d3f84'
+        }),
+        'black': get_sig_version({
+            (6, 5, 7, 8): 'b68db111c7d6a58301d9d824671ed810'
+                          'b790d397429d2988dcdeb7562729bb46',
+            (6, 7, 7, 6): 'ae62e71111167c83d9449bcca50dd65f'
+                          '565227104fe148aac514d3c2ef0fe9e2',
+            (6, 7, 9, 5): 'd659b35502ac753c52cc44d488c78acd'
+                          'c0201e65a7e9c5d7715ff79dbb0b24b3'
+        }),
+        'sync_channels': get_sig_version({
+            (6, 5, 7, 8): 'b68db111c7d6a58301d9d824671ed810'
+                          'b790d397429d2988dcdeb7562729bb46',
+            (6, 7, 7, 6): 'ae62e71111167c83d9449bcca50dd65f'
+                          '565227104fe148aac514d3c2ef0fe9e2',
+            (6, 7, 9, 5): 'd659b35502ac753c52cc44d488c78acd'
+                          'c0201e65a7e9c5d7715ff79dbb0b24b3'
+        }),
+        'default_channels': get_sig_version({
+            (6, 5, 7, 8): 'b68db111c7d6a58301d9d824671ed810'
+                          'b790d397429d2988dcdeb7562729bb46',
+            (6, 7, 7, 6): 'ae62e71111167c83d9449bcca50dd65f'
+                          '565227104fe148aac514d3c2ef0fe9e2',
+            (6, 7, 9, 5): 'd659b35502ac753c52cc44d488c78acd'
+                          'c0201e65a7e9c5d7715ff79dbb0b24b3'
+        }),
+        'green': get_sig_version({
+            (6, 5, 7, 8): 'ee703ad96996a796d47f34f9afdc74b6'
+                          '89817320d2b6e6423c4c2f7e4ed076db',
+            (6, 7, 7, 6): 'ad770e0977567c12a336b6f3bf07e57e'
+                          'c370af40641238b3328699be590b5d16',
+            (6, 7, 9, 5): '87139d62ff097e312ab4cc1859ee2db6'
+                          '066c9845de006f38163b325d405df782'
+        }),
+        'cyan': get_sig_version({
+            (6, 5, 7, 8): 'ee84ed5532ade43e28c1f8baa0d52235'
+                          '1aee73ff0265d188797d457f1df2bc82',
+            (6, 7, 7, 6): 'd0d2bae86a40e0107f69bb8016800dae'
+                          '4ad8178e29ac11649c9c3fa465a5a493',
+            (6, 7, 9, 5): 'bac4906578408e0f46b1943f96c8c392'
+                          '73997659feb005e581e7ddfa0ba1da41'
+        }),
+        'all_channels': get_sig_version({
+            (6, 5, 7, 8): 'b68db111c7d6a58301d9d824671ed810'
+                          'b790d397429d2988dcdeb7562729bb46',
+            (6, 7, 7, 6): 'ae62e71111167c83d9449bcca50dd65f'
+                          '565227104fe148aac514d3c2ef0fe9e2',
+            (6, 7, 9, 5): 'd659b35502ac753c52cc44d488c78acd'
+                          'c0201e65a7e9c5d7715ff79dbb0b24b3'
+        }),
+        'alpha': get_sig_version({
+            (6, 5, 7, 8): '0e7d4136121208cf6c2e12017ffe9c48'
+                          '7e8ada5fca1ad76b06bc41ad8a932de3',
+            (6, 7, 7, 6): '0e7d4136121208cf6c2e12017ffe9c48'
+                          '7e8ada5fca1ad76b06bc41ad8a932de3'
+        }),
+        'magenta': get_sig_version({
+            (6, 5, 7, 8): 'ee703ad96996a796d47f34f9afdc74b6'
+                          '89817320d2b6e6423c4c2f7e4ed076db',
+            (6, 7, 7, 6): 'ad770e0977567c12a336b6f3bf07e57e'
+                          'c370af40641238b3328699be590b5d16',
+            (6, 7, 9, 5): '87139d62ff097e312ab4cc1859ee2db6'
+                          '066c9845de006f38163b325d405df782'
+        }),
+        'red': get_sig_version({
+            (6, 5, 7, 8): 'ee84ed5532ade43e28c1f8baa0d52235'
+                          '1aee73ff0265d188797d457f1df2bc82',
+            (6, 7, 7, 6): 'd0d2bae86a40e0107f69bb8016800dae'
+                          '4ad8178e29ac11649c9c3fa465a5a493',
+            (6, 7, 9, 5): 'bac4906578408e0f46b1943f96c8c392'
+                          '73997659feb005e581e7ddfa0ba1da41'
+        })
+    }
+
+
+@tests.test
+def composite():
+    with Image(filename=asset('beach.jpg')) as img:
+        with Image(filename=asset('watermark.png')) as fg:
+            img.composite(fg, 0, 0)
+            assert img.signature == get_sig_version({
+                (6, 6, 9, 7): '9c4c182e44ee265230761a412e355cb7'
+                              '8ea61859658220ecc8cbc1d56f58584e',
+                (6, 7, 7, 6): 'd725d924a9008ddff828f22595237ec6'
+                              'b56fb54057c6ee99584b9fc7ac91092c'
+            })
+
+
+@tests.test
+def composite_with_xy():
+    with Image(filename=asset('beach.jpg')) as img:
+        with Image(filename=asset('watermark.png')) as fg:
+            img.composite(fg, 5, 10)
+            assert img.signature == get_sig_version({
+                (6, 6, 9, 7): 'e2a17a176de6b995b0f0f83e3c523006'
+                              '99190c7536ce1c599e65346d28f74b3b',
+                (6, 7, 7, 6): 'a40133f53093ce92e3e010d99a68fe13'
+                              '55544821cec2f707d5bd426d326921f8'
+            })
+
+
+@tests.test
+def composite_channel():
+    with Image(filename=asset('beach.jpg')) as img:
+        w, h = img.size
+        with Color('black') as color:
+            with Image(width=w / 2, height=h / 2, background=color) as cimg:
+                img.composite_channel('red', cimg, 'copy_red', w / 4, h / 4)
+                assert img.signature == get_sig_version({
+                    (6, 6, 9, 7): 'df4531b9cb50b0b70f0d4d88ac962cc7'
+                                  '51133d2772d7ce695d19179804a955ae',
+                    (6, 7, 7, 6): '51ebd57f8507ed8ca6355906972af369'
+                                  '5797d278ae3ed04dfc1f9b8c517bcfab'
+                })
+
+
+@tests.test
+def liquid_rescale():
+    with Image(filename=asset('beach.jpg')) as img:
+        try:
+            img.liquid_rescale(600, 600)
+        except MissingDelegateError:
+            warnings.warn('skip liquid_rescale test; has no LQR delegate')
+        else:
+            assert img.signature == get_sig_version({
+                (6, 6, 9, 7): '459337dce62ada2a2e6a3c69b6819447'
+                              '38a71389efcbde0ee72b2147957e25eb'
+            })

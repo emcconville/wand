@@ -10,9 +10,31 @@ import ctypes
 import ctypes.util
 import os
 import os.path
+import sys
 import platform
 
-__all__ = 'load_library', 'MagickPixelPacket', 'library', 'libmagick', 'libc'
+__all__ = ('MagickPixelPacket', 'c_magick_char_p', 'library', 'libc',
+           'libmagick', 'load_library')
+
+
+class c_magick_char_p(ctypes.c_char_p):
+    """This subclass prevents the automatic conversion behavior of
+    :class:`ctypes.c_char_p`, allowing memory to be properly freed in the
+    destructor.  It must only be used for non-const character pointers
+    returned by ImageMagick functions.
+
+    """
+
+    def __del__(self):
+        """Relinquishes memory allocated by ImageMagick.
+        We don't need to worry about checking for ``NULL`` because
+        :c:func:`MagickRelinquishMemory` does that for us.
+        Note alslo that :class:`ctypes.c_char_p` has no
+        :meth:`~object.__del__` method, so we don't need to
+        (and indeed can't) call the superclass destructor.
+
+        """
+        library.MagickRelinquishMemory(self)
 
 
 def load_library():
@@ -78,7 +100,32 @@ class MagickPixelPacket(ctypes.Structure):
                 ('index', ctypes.c_double)]
 
 
-libraries = load_library()
+try:
+    libraries = load_library()
+except (OSError, IOError):
+    msg = 'http://dahlia.github.com/wand/guide/install.html'
+    if sys.platform.startswith('freebsd'):
+        msg = 'pkg_add -r'
+    elif sys.platform == 'win32':
+        msg += '#install-imagemagick-on-windows'
+    elif sys.platform == 'darwin':
+        for pkgmgr in 'brew', 'port':
+            with os.popen('which ' + pkgmgr) as f:
+                if f.read().strip():
+                    msg = pkgmgr + ' install imagemagick'
+                    break
+        else:
+            msg += '#install-imagemagick-on-mac'
+    else:
+        distname, _, __ = platform.linux_distribution()
+        distname = (distname or '').lower()
+        if distname in ('debian', 'ubuntu'):
+            msg = 'apt-get install libmagickwand-dev'
+        elif distname in ('fedora', 'centos', 'redhat'):
+            msg = 'yum install ImageMagick-devel'
+    raise ImportError('MagickWand shared library not found.\n'
+                      'You probably had not installed ImageMagick library.\n'
+                      'Try to install:\n  ' + msg)
 
 #: (:class:`ctypes.CDLL`) The MagickWand library.
 library = libraries[0]
@@ -90,7 +137,16 @@ library = libraries[0]
 libmagick = libraries[1]
 
 try:
+    library.MagickWandGenesis.argtypes = []
+    library.MagickWandTerminus.argtypes = []
+
+    library.NewMagickWand.argtypes = []
     library.NewMagickWand.restype = ctypes.c_void_p
+
+    library.MagickNewImage.argtypes = [ctypes.c_void_p, ctypes.c_int,
+                                       ctypes.c_int, ctypes.c_void_p]
+
+    library.ClearMagickWand.argtypes = [ctypes.c_void_p]
 
     library.DestroyMagickWand.argtypes = [ctypes.c_void_p]
     library.DestroyMagickWand.restype = ctypes.c_void_p
@@ -102,7 +158,7 @@ try:
 
     library.MagickGetException.argtypes = [ctypes.c_void_p,
                                            ctypes.POINTER(ctypes.c_int)]
-    library.MagickGetException.restype = ctypes.c_char_p
+    library.MagickGetException.restype = c_magick_char_p
 
     library.MagickClearException.argtypes = [ctypes.c_void_p]
 
@@ -116,16 +172,29 @@ try:
     library.MagickReadImageFile.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 
     library.MagickGetImageFormat.argtypes = [ctypes.c_void_p]
-    library.MagickGetImageFormat.restype = ctypes.c_char_p
+    library.MagickGetImageFormat.restype = c_magick_char_p
 
     library.MagickSetImageFormat.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
 
     libmagick.MagickToMime.argtypes = [ctypes.c_char_p]
-    libmagick.MagickToMime.restype = ctypes.POINTER(ctypes.c_char)
+    libmagick.MagickToMime.restype = c_magick_char_p
 
     library.MagickGetImageSignature.argtypes = [ctypes.c_void_p]
-    library.MagickGetImageSignature.restype = ctypes.c_char_p
+    library.MagickGetImageSignature.restype = c_magick_char_p
 
+    library.MagickGetImageProperty.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
+    library.MagickGetImageProperty.restype = c_magick_char_p
+
+    library.MagickGetImageProperties.argtypes = [ctypes.c_void_p,
+                                                 ctypes.c_char_p,
+                                                 ctypes.POINTER(ctypes.c_size_t)]
+    library.MagickGetImageProperties.restype = ctypes.POINTER(ctypes.c_char_p)
+
+    library.MagickSetImageProperty.argtypes = [ctypes.c_void_p, ctypes.c_char_p,
+                                               ctypes.c_char_p]
+
+    library.MagickDeleteImageProperty.argtypes = [ctypes.c_void_p,
+                                                  ctypes.c_char_p]
     library.MagickGetImageBackgroundColor.argtypes = [ctypes.c_void_p,
                                                       ctypes.c_void_p]
 
@@ -146,16 +215,34 @@ try:
 
     library.MagickWriteImageFile.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 
+    library.MagickGetImageResolution.argtypes = [ctypes.c_void_p,
+                  ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double)]
+
+    library.MagickSetImageResolution.argtypes = [ctypes.c_void_p, ctypes.c_double, ctypes.c_double]
+    library.MagickSetResolution.argtypes = [ctypes.c_void_p, ctypes.c_double, ctypes.c_double]
+    library.MagickSetResolution.restype = ctypes.c_bool
+
     library.MagickGetImageWidth.argtypes = [ctypes.c_void_p]
     library.MagickGetImageWidth.restype = ctypes.c_size_t
 
     library.MagickGetImageHeight.argtypes = [ctypes.c_void_p]
     library.MagickGetImageHeight.restype = ctypes.c_size_t
 
+    library.MagickGetImageUnits.argtypes = [ctypes.c_void_p]
+
+    library.MagickSetImageUnits.argtypes = [ctypes.c_void_p, ctypes.c_int]
+
     library.MagickGetImageDepth.argtypes = [ctypes.c_void_p]
     library.MagickGetImageDepth.restype = ctypes.c_size_t
 
     library.MagickSetImageDepth.argtypes = [ctypes.c_void_p]
+
+    library.MagickGetImageChannelDepth.argtypes = [ctypes.c_void_p,
+                                                   ctypes.c_int]
+    library.MagickGetImageChannelDepth.restype = ctypes.c_size_t
+
+    library.MagickSeparateImageChannel.argtypes = [ctypes.c_void_p,
+                                                   ctypes.c_int]
 
     library.MagickCropImage.argtypes = [ctypes.c_void_p, ctypes.c_size_t,
                                         ctypes.c_size_t, ctypes.c_ssize_t,
@@ -166,6 +253,15 @@ try:
     library.MagickResizeImage.argtypes = [ctypes.c_void_p, ctypes.c_size_t,
                                           ctypes.c_size_t, ctypes.c_int,
                                           ctypes.c_double]
+
+    library.MagickTransformImage.argtypes = [ctypes.c_void_p, ctypes.c_char_p,
+                                             ctypes.c_char_p]
+    library.MagickTransformImage.restype = ctypes.c_void_p
+
+    library.MagickLiquidRescaleImage.argtypes = [
+        ctypes.c_void_p, ctypes.c_size_t, ctypes.c_size_t,
+        ctypes.c_double, ctypes.c_double
+    ]
 
     library.MagickRotateImage.argtypes = [ctypes.c_void_p, ctypes.c_void_p,
                                           ctypes.c_double]
@@ -191,7 +287,7 @@ try:
 
     library.PixelGetIteratorException.argtypes = [ctypes.c_void_p,
                                                   ctypes.POINTER(ctypes.c_int)]
-    library.PixelGetIteratorException.restype = ctypes.c_char_p
+    library.PixelGetIteratorException.restype = c_magick_char_p
 
     library.PixelClearIteratorException.argtypes = [ctypes.c_void_p]
 
@@ -203,6 +299,7 @@ try:
                                                 ctypes.POINTER(ctypes.c_size_t)]
     library.PixelGetNextIteratorRow.restype = ctypes.POINTER(ctypes.c_void_p)
 
+    library.NewPixelWand.argtypes = []
     library.NewPixelWand.restype = ctypes.c_void_p
 
     library.DestroyPixelWand.argtypes = [ctypes.c_void_p]
@@ -212,7 +309,7 @@ try:
 
     library.PixelGetException.argtypes = [ctypes.c_void_p,
                                           ctypes.POINTER(ctypes.c_int)]
-    library.PixelGetException.restype = ctypes.c_char_p
+    library.PixelGetException.restype = c_magick_char_p
 
     library.PixelClearException.argtypes = [ctypes.c_void_p]
 
@@ -226,7 +323,7 @@ try:
     library.PixelSetColor.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
 
     library.PixelGetColorAsString.argtypes = [ctypes.c_void_p]
-    library.PixelGetColorAsString.restype = ctypes.c_char_p
+    library.PixelGetColorAsString.restype = c_magick_char_p
 
     library.PixelGetAlpha.argtypes = [ctypes.c_void_p]
     library.PixelGetAlpha.restype = ctypes.c_double
@@ -235,6 +332,8 @@ try:
 
     library.MagickSetIteratorIndex.argtypes = [ctypes.c_void_p,
                                                ctypes.c_ssize_t]
+
+    library.MagickGetImageType.argtypes = [ctypes.c_void_p]
 
     library.MagickSetImageType.argtypes = [ctypes.c_void_p, ctypes.c_int]
 
@@ -247,6 +346,11 @@ try:
                                              ctypes.c_int, ctypes.c_ssize_t,
                                              ctypes.c_ssize_t]
 
+    library.MagickCompositeImageChannel.argtypes = [
+        ctypes.c_void_p, ctypes.c_int, ctypes.c_void_p,
+        ctypes.c_int, ctypes.c_ssize_t, ctypes.c_ssize_t
+    ]
+
     library.MagickGetImageCompressionQuality.argtypes = [ctypes.c_void_p]
     library.MagickGetImageCompressionQuality.restype = ctypes.c_ssize_t
 
@@ -257,6 +361,7 @@ try:
 
     library.MagickTrimImage.argtypes = [ctypes.c_void_p]
 
+    # These functions are const so it's okay for them to be c_char_p
     libmagick.GetMagickVersion.argtypes = [ctypes.POINTER(ctypes.c_size_t)]
     libmagick.GetMagickVersion.restype = ctypes.c_char_p
 
@@ -273,6 +378,8 @@ if platform.system() == 'Windows':
 else:
     if platform.system() == 'Darwin':
         libc = ctypes.cdll.LoadLibrary('libc.dylib')
+    elif platform.system() == 'FreeBSD':
+        libc = ctypes.cdll.LoadLibrary(ctypes.util.find_library('c'))
     else:
         libc = ctypes.cdll.LoadLibrary('libc.so.6')
     libc.fdopen.argtypes = [ctypes.c_int, ctypes.c_char_p]

@@ -23,7 +23,7 @@ properties:
    >>> height
    48
 
-If you want to the pair of (:attr:`~wand.image.Image.width`,
+If you want the pair of (:attr:`~wand.image.Image.width`,
 :attr:`~wand.image.Image.height`), check :attr:`~wand.image.Image.size`
 property also.
 
@@ -50,9 +50,9 @@ algorithms.
    __ http://www.dylanbeattie.net/magick/filters/result.html
 
 :meth:`Image.resize() <wand.image.Image.resize>` method takes ``width`` and
-``height`` of a desired size, optional ``filter`` (``'triangle'`` by
-default) and optional ``blur`` (default is 1). It returns nothing but
-resizes itself in-place.
+``height`` of a desired size, optional ``filter`` (``'undefined'`` by
+default which means IM will try to guess best one to use) and optional
+``blur`` (default is 1). It returns nothing but resizes itself in-place.
 
 .. sourcecode:: pycon
 
@@ -103,3 +103,90 @@ an image by ``[left:right, top:bottom]`` with maintaining the original:
    >>> img.size
    (300, 300)
 
+
+Transform images
+----------------
+
+Use this function to crop and resize and image at the same time,
+using ImageMagick geometry strings. Cropping is performed first,
+followed by resizing.
+
+For example, if you want to crop your image to 300x300 pixels
+and then scale it by 2x for a final size of 600x600 pixels,
+you can call::
+
+   img.transform('300x300', '200%')
+
+Other example calls: ::
+
+   # crop top left corner
+   img.transform('50%')
+
+   # scale height to 100px and preserve aspect ratio
+   img.transform(resize='x100')
+
+   # if larger than 640x480, fit within box, preserving aspect ratio
+   img.transform(resize='640x480>')
+
+   # crop a 320x320 square starting at 160x160 from the top left
+   img.transform(crop='320+160+160')
+
+.. seealso::
+
+  `ImageMagick Geometry Specifications`__
+     Cropping and resizing geometry for the ``transform`` method are
+     specified according to ImageMagick's geometry string format.
+     The ImageMagick documentation provides more information about
+     geometry strings.
+
+  __ http://www.imagemagick.org/script/command-line-processing.php#geometry
+
+.. _seam-carving:
+
+Seam carving (also known as *content-aware resizing*)
+-----------------------------------------------------
+
+.. versionadded:: 0.3.0
+
+`Seam carving`_ is an algorithm for image resizing that functions by
+establishing a number of *seams* (paths of least importance) in an image
+and automatically removes seams to reduce image size or inserts seams
+to extend it.
+
+In short: you can magickally resize images without distortion!
+See the following examples:
+
++------------------------------------+----------------------------------+
+| Original                           | Resized                          |
++------------------------------------+----------------------------------+
+| .. image:: ../_static/original.jpg | .. image:: ../_static/resize.jpg |
+|    :width: 187                     |    :width: 140                   |
++------------------------------------+----------------------------------+
+| Cropped                            | **Seam carving**                 |
++------------------------------------+----------------------------------+
+| .. image:: ../_static/crop.jpg     | .. image:: ../_static/liquid.jpg |
+|    :width: 140                     |    :width: 140                   |
++------------------------------------+----------------------------------+
+
+You can easily rescale images with seam carving using Wand:
+use :meth:`Image.liquid_rescale() <wand.image.Image.liquid_rescale>`
+method:
+
+>>> img.size
+(375, 485)
+>>> img.liquid_rescale(281, 485)
+>>> img.size
+(281, 485)
+
+.. note::
+
+   It may raise :exc:`~wand.exceptions.MissingDelegateError` if your
+   ImageMagick is configured ``--without-lqr`` option.  In this case
+   you should recompile ImageMagick.
+
+.. seealso::
+
+   `Seam carving`_ --- Wikipedia
+      The article which explains what seam carving is on Wikipedia.
+
+.. _Seam carving: http://en.wikipedia.org/wiki/Seam_carving
