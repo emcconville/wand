@@ -8,7 +8,7 @@ from attest import Tests
 from wand.version import (MAGICK_VERSION, MAGICK_VERSION_INFO,
                           MAGICK_VERSION_NUMBER, MAGICK_RELEASE_DATE,
                           MAGICK_RELEASE_DATE_STRING)
-from . import color, image, resource
+from . import color, image, resource, sequence
 
 
 tests = Tests()
@@ -32,6 +32,7 @@ def register(test_module):
 register(resource)  # it must be the first
 register(color)
 register(image)
+register(sequence)
 
 
 @tests.test

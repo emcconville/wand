@@ -361,6 +361,39 @@ try:
 
     library.MagickTrimImage.argtypes = [ctypes.c_void_p]
 
+    library.MagickGetNumberImages.argtypes = [ctypes.c_void_p]
+    library.MagickGetNumberImages.restype = ctypes.c_size_t
+
+    library.MagickGetIteratorIndex.argtypes = [ctypes.c_void_p]
+    library.MagickGetIteratorIndex.restype = ctypes.c_size_t
+
+    library.MagickSetIteratorIndex.argtypes = [ctypes.c_void_p,
+                                               ctypes.c_ssize_t]
+
+    library.MagickSetFirstIterator.argtypes = [ctypes.c_void_p]
+
+    library.MagickSetLastIterator.argtypes = [ctypes.c_void_p]
+
+    library.MagickAddImage.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
+
+    library.MagickRemoveImage.argtypes = [ctypes.c_void_p]
+
+    library.NewMagickWandFromImage.argtypes = [ctypes.c_void_p]
+    library.NewMagickWandFromImage.restype = ctypes.c_void_p
+
+    library.GetImageFromMagickWand.argtypes = [ctypes.c_void_p]
+    library.GetImageFromMagickWand.restype = ctypes.c_void_p
+
+    library.CloneImages.argtypes = [ctypes.c_void_p, ctypes.c_char_p,
+                                    ctypes.c_void_p]
+    library.CloneImages.restype = ctypes.c_void_p
+
+    library.AcquireExceptionInfo.argtypes = []
+    library.AcquireExceptionInfo.restype = ctypes.c_void_p
+
+    library.DestroyExceptionInfo.argtypes = [ctypes.c_void_p]
+    library.DestroyExceptionInfo.restype = ctypes.c_void_p
+
     # These functions are const so it's okay for them to be c_char_p
     libmagick.GetMagickVersion.argtypes = [ctypes.POINTER(ctypes.c_size_t)]
     libmagick.GetMagickVersion.restype = ctypes.c_char_p
