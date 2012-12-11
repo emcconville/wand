@@ -17,6 +17,11 @@ class Sequence(ImageProperty, collections.MutableSequence):
         super(Sequence, self).__init__(image)
         self.instances = []
 
+    def __del__(self):
+        for instance in self.instances:
+            if instance is not None:
+                instance.c_resource = None
+
     @property
     def current_index(self):
         """(:class:`numbers.Integral`) The current index of
@@ -93,6 +98,7 @@ class Sequence(ImageProperty, collections.MutableSequence):
             if index < len(instances):  # detach
                 instance = instances[index]
                 instance.index = None
+                instance.c_resource = None
                 instances[index] = None
 
     def __delitem__(self, index):
@@ -102,6 +108,7 @@ class Sequence(ImageProperty, collections.MutableSequence):
             if index < len(instances):  # detach
                 instance = instances[index]
                 instance.index = None
+                instance.c_resource = None
                 del instances[index]
 
     def insert(self, index, image):
