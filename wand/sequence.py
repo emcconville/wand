@@ -211,3 +211,12 @@ class SingleImage(BaseImage):
         cloned = library.CloneImages(image, str(self.index), exc)
         library.DestroyExceptionInfo(exc)
         return library.NewMagickWandFromImage(cloned)
+
+    def __repr__(self):
+        cls = type(self)
+        if self.index is None or getattr(self, 'c_resource', None) is None:
+            return '<{0}.{1}: (closed)>'.format(cls.__module__, cls.__name__)
+        return '<{0}.{1}: ({2}x{3}) [{4}]>'.format(
+            cls.__module__, cls.__name__,
+            self.width, self.height, self.index
+        )

@@ -1166,6 +1166,13 @@ class BaseImage(Resource):
         if not result:
             self.raise_exception()
 
+    def __repr__(self):
+        cls = type(self)
+        if getattr(self, 'c_resource', None) is None:
+            return '<{0}.{1}: (closed)>'.format(cls.__module__, cls.__name__)
+        return '<{0}.{1}: ({2}x{3})>'.format(cls.__module__, cls.__name__,
+                                             self.width, self.height)
+
 
 class Image(BaseImage):
     """An image object.
@@ -1569,6 +1576,15 @@ class Image(BaseImage):
         result = library.MagickStripImage(self.wand)
         if not result:
             self.raise_exception()
+
+    def __repr__(self):
+        cls = type(self)
+        if getattr(self, 'c_resource', None) is None:
+            return '<{0}.{1}: (closed)>'.format(cls.__module__, cls.__name__)
+        return '<{0}.{1}: {2!r} ({3}x{4})>'.format(
+            cls.__module__, cls.__name__,
+            self.format, self.width, self.height
+        )
 
 
 class Iterator(Resource, collections.Iterator):
