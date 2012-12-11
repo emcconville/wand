@@ -24,8 +24,9 @@ from .resource import DestroyedResourceError, Resource
 
 __all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COMPOSITE_OPERATORS',
            'EVALUATE_OPS', 'FILTER_TYPES', 'IMAGE_TYPES', 'UNIT_TYPES',
-           'ChannelDepthDict', 'ChannelImageDict', 'ClosedImageError',
-           'Image', 'ImageProperty', 'Iterator', 'Metadata')
+           'BaseImage', 'ChannelDepthDict', 'ChannelImageDict',
+           'ClosedImageError', 'Image', 'ImageProperty', 'Iterator',
+           'Metadata')
 
 
 #: (:class:`tuple`) The list of filter types.
@@ -318,203 +319,17 @@ IMAGE_TYPES = ('undefined', 'bilevel', 'grayscale', 'grayscalematte',
 UNIT_TYPES = 'undefined', 'pixelsperinch', 'pixelspercentimeter'
 
 
-class Image(Resource):
-    """An image object.
-
-    :param image: makes an exact copy of the ``image``
-    :type image: :class:`Image`
-    :param blob: opens an image of the ``blob`` byte array
-    :type blob: :class:`str`
-    :param file: opens an image of the ``file`` object
-    :type file: file object
-    :param filename: opens an image of the ``filename`` string
-    :type filename: :class:`basestring`
-    :param format: forces filename to  buffer.``format`` to help
-                   imagemagick detect the file format. Used only in
-                   ``blob`` or ``file`` cases
-    :type format: :class:`basestring`
-    :param width: the width of new blank image.
-    :type width: :class:`numbers.Integral`
-    :param height: the height of new blank imgage.
-    :type height: :class:`numbers.Integral`
-    :param background: an optional background color.
-                       default is transparent
-    :type background: :class:`wand.color.Color`
-    :param resolution: set a resolution value (dpi),
-        usefull for vectorial formats (like pdf)
-    :type resolution: :class:`collections.Sequence`,
-                      :Class:`numbers.Integral`
-
-    .. versionadded:: 0.1.5
-       The ``file`` parameter.
-
-    .. versionadded:: 0.1.1
-       The ``blob`` parameter.
-
-    .. versionadded:: 0.2.1
-       The ``format`` parameter.
-
-    .. versionadded:: 0.2.2
-       The ``width``, ``height``, ``background`` parameters.
-
-    .. versionadded:: 0.3.0
-       The ``resolution`` parameter.
-
-    .. describe:: [left:right, top:bottom]
-
-       Crops the image by its ``left``, ``right``, ``top`` and ``bottom``,
-       and then returns the cropped one. ::
-
-           with img[100:200, 150:300] as cropped:
-               # manipulated the cropped image
-               pass
-
-       Like other subscriptable objects, default is 0 or its width/height::
-
-           img[:, :]        #--> just clone
-           img[:100, 200:]  #--> equivalent to img[0:100, 200:img.height]
-
-       Negative integers count from the end (width/height)::
-
-           img[-70:-50, -20:-10]
-           #--> equivalent to img[width-70:width-50, height-20:height-10]
-
-       :returns: the cropped image
-       :rtype: :class:`Image`
-
-       .. versionadded:: 0.1.2
-
-    """
-
-    #: (:class:`Metadata`) The metadata mapping of the image.  Read only.
-    #:
-    #: .. versionadded:: 0.3.0
-    metadata = None
-
-    #: (:class:`ChannelImageDict`) The mapping of separated channels
-    #: from the image. ::
-    #:
-    #:     with image.channel_images['red'] as red_image:
-    #:         display(red_image)
-    channel_images = None
-
-    #: (:class:`ChannelDepthDict`) The mapping of channels to their depth.
-    #: Read only.
-    #:
-    #: .. versionadded:: 0.3.0
-    channel_depths = None
+class BaseImage(Resource):
 
     c_is_resource = library.IsMagickWand
     c_destroy_resource = library.DestroyMagickWand
     c_get_exception = library.MagickGetException
     c_clear_exception = library.MagickClearException
 
-    __slots__ = '_wand',
-
-    def __init__(self, image=None, blob=None, file=None, filename=None,
-                 format=None, width=None, height=None, background=None,
-                 resolution=None):
-        new_args = width, height, background
-        open_args = image, blob, file, filename
-        if (any(a is not None for a in new_args) and
-            any(a is not None for a in open_args)):
-            raise TypeError('blank image parameters cant be used with image '
-                            'opening parameters')
-        elif any(a is not None and b is not None
-                 for i, a in enumerate(open_args)
-                 for b in open_args[:i] + open_args[i + 1:]):
-            raise TypeError('parameters are exclusive each other; use only '
-                            'one at once')
-        elif not (format is None or isinstance(format, basestring)):
-            raise TypeError('format must be a string, not ' + repr(format))
-        with self.allocate():
-            if image is None:
-                self.wand = library.NewMagickWand()
-            if width is not None and height is not None:
-                self.blank(width, height, background)
-            elif image is not None:
-                if not isinstance(image, Image):
-                    raise TypeError('image must be a wand.image.Image '
-                                    'instance, not ' + repr(image))
-                elif format:
-                    raise TypeError('format option cannot be used with image '
-                                    'nor filename')
-                self.wand = library.CloneMagickWand(image.wand)
-            else:
-                if file is not None:
-                    if format:
-                        library.MagickSetFilename(self.wand,
-                                                  'buffer.' + format)
-                    self.read(file=file, resolution=resolution)
-                if blob is not None:
-                    if format:
-                        library.MagickSetFilename(self.wand,
-                                                  'buffer.' + format)
-                    self.read(blob=blob, resolution=resolution)
-                elif filename is not None:
-                    if format:
-                        raise TypeError(
-                            'format option cannot be used with image '
-                            'nor filename'
-                        )
-                    self.read(filename=filename, resolution=resolution)
-            self.metadata = Metadata(self)
-            self.channel_images = ChannelImageDict(self)
-            self.channel_depths = ChannelDepthDict(self)
-        self.raise_exception()
-
-    def read(self, file=None, filename=None, blob=None, resolution=None):
-        """Read new image into Image() object.
-
-        :param blob: reads an image from the ``blob`` byte array
-        :type blob: :class:`str`
-        :param file: reads an image from the ``file`` object
-        :type file: file object
-        :param filename: reads an image from the ``filename`` string
-        :type filename: :class:`basestring`
-        :param resolution: set a resolution value (DPI),
-                           usefull for vectorial formats (like PDF)
-        :type resolution: :class:`collections.Sequence`,
-                          :class:`numbers.Integral`
-
-        .. versionadded:: 0.3.0
-
-        """
-        # Resolution must be set after image reading.
-        if resolution is not None:
-            if (isinstance(resolution, collections.Sequence) and
-                len(resolution) == 2):
-                library.MagickSetResolution(self.wand, *resolution)
-            elif isinstance(resolution, numbers.Integral):
-                library.MagickSetResolution(self.wand, resolution, resolution)
-            else:
-                raise TypeError('resolution must be a (x, y) pair or an '
-                                'integer of the same x/y')
-        if file is not None:
-            if (isinstance(file, types.FileType) and
-                hasattr(libc, 'fdopen')):
-                fd = libc.fdopen(file.fileno(), file.mode)
-                r = library.MagickReadImageFile(self.wand, fd)
-            elif not callable(getattr(file, 'read', None)):
-                raise TypeError('file must be a readable file object'
-                                ', but the given object does not '
-                                'have read() method')
-            else:
-                blob = file.read()
-                file = None
-        if blob is not None:
-            if not isinstance(blob, collections.Iterable):
-                raise TypeError('blob must be iterable, not ' +
-                                repr(blob))
-            if not isinstance(blob, basestring):
-                blob = ''.join(blob)
-            elif not isinstance(blob, str):
-                blob = str(blob)
-            r = library.MagickReadImageBlob(self.wand, blob, len(blob))
-        elif filename is not None:
-            r = library.MagickReadImage(self.wand, filename)
-        if not r:
-            self.raise_exception()
+    def __init__(self, wand):
+        self.wand = wand
+        self.channel_images = ChannelImageDict(self)
+        self.channel_depths = ChannelDepthDict(self)
 
     @property
     def wand(self):
@@ -538,27 +353,6 @@ class Image(Resource):
     def wand(self):
         del self.resource
 
-    def close(self):
-        """Closes the image explicitly. If you use the image object in
-        :keyword:`with` statement, it was called implicitly so don't have to
-        call it.
-
-        .. note::
-
-           It has the same functionality of :attr:`destroy()` method.
-
-        """
-        self.destroy()
-
-    def clear(self):
-        """Clears resources associated with the image, leaving the image blank,
-        and ready to be used with new image.
-
-        .. versionadded:: 0.3.0
-
-        """
-        library.ClearMagickWand(self.wand)
-
     def clone(self):
         """Clones the image. It is equivalent to call :class:`Image` with
         ``image`` parameter. ::
@@ -573,7 +367,18 @@ class Image(Resource):
         .. versionadded:: 0.1.1
 
         """
-        return type(self)(image=self)
+        return Image(image=self)
+
+    def clone_wand(self):
+        """Clones the image and returns internal pointer to it.
+        It's only for internal use.
+
+        .. note::
+
+           To contributors: it has to be implemented in subclass.
+
+        """
+        raise NotImplementedError('it has to be implemented')
 
     def __len__(self):
         return self.height
@@ -732,43 +537,6 @@ class Image(Resource):
             raise self.raise_exception()
 
     @property
-    def format(self):
-        """(:class:`basestring`) The image format.
-
-        If you want to convert the image format, just reset this property::
-
-            assert isinstance(img, wand.image.Image)
-            img.format = 'png'
-
-        It may raise :exc:`ValueError` when the format is unsupported.
-
-        .. seealso::
-
-           `ImageMagick Image Formats`__
-              ImageMagick uses an ASCII string known as *magick* (e.g. ``GIF``)
-              to identify file formats, algorithms acting as formats,
-              built-in patterns, and embedded profile types.
-
-           __ http://www.imagemagick.org/script/formats.php
-
-        .. versionadded:: 0.1.6
-
-        """
-        fmt = library.MagickGetImageFormat(self.wand)
-        if bool(fmt):
-            return fmt.value
-        self.raise_exception()
-
-    @format.setter
-    def format(self, fmt):
-        if not isinstance(fmt, basestring):
-            raise TypeError("format must be a string like 'png' or 'jpeg'"
-                            ', not ' + repr(fmt))
-        r = library.MagickSetImageFormat(self.wand, fmt.strip().upper())
-        if not r:
-            raise ValueError(repr(fmt) + ' is unsupported format')
-
-    @property
     def type(self):
         """(:class:`basestring`) The image type.
 
@@ -819,20 +587,6 @@ class Image(Resource):
         if not r:
             raise ValueError('Unable to set compression quality to ' +
                              repr(quality))
-
-    @property
-    def mimetype(self):
-        """(:class:`basestring`) The MIME type of the image
-        e.g. ``'image/jpeg'``, ``'image/png'``.
-
-        .. versionadded:: 0.1.7
-
-        """
-        rp = libmagick.MagickToMime(self.format)
-        if not bool(rp):
-            self.raise_exception()
-        mimetype = rp.value
-        return mimetype
 
     @property
     def signature(self):
@@ -891,39 +645,16 @@ class Image(Resource):
             return Color(raw=buffer)
         self.raise_exception()
 
-    def blank(self, width, height, background=None):
-        """Creates blank image.
-
-        :param width: the width of new blank image.
-        :type width: :class:`numbers.Integral`
-        :param height: the height of new blank imgage.
-        :type height: :class:`numbers.Integral`
-        :param background: an optional background color.
-                           default is transparent
-        :type background: :class:`wand.color.Color`
-        :returns: blank image
-        :rtype: :class:`Image`
-
-        .. versionadded:: 0.3.0
-
-        """
-        if not isinstance(width, numbers.Integral) or width < 1:
-            raise TypeError('width must be a natural number, not ' +
-                            repr(width))
-        if not isinstance(height, numbers.Integral) or height < 1:
-            raise TypeError('height must be a natural number, not ' +
-                            repr(height))
-        if background is not None and not isinstance(background, Color):
-            raise TypeError('background must be a wand.color.Color '
-                            'instance, not ' + repr(background))
-        if background is None:
-            background = Color('transparent')
-        with background:
-            r = library.MagickNewImage(self.wand, width, height,
-                                   background.resource)
-            if not r:
+    @background_color.setter
+    def background_color(self, color):
+        if not isinstance(color, Color):
+            raise TypeError('color must be a wand.color.Color object, not ' +
+                            repr(color))
+        with color:
+            result = library.MagickSetImageBackgroundColor(self.wand,
+                                                           color.resource)
+            if not result:
                 self.raise_exception()
-        return self
 
     @property
     def quantum_range(self):
@@ -936,37 +667,6 @@ class Image(Resource):
         result = ctypes.c_size_t()
         library.MagickGetQuantumRange(ctypes.byref(result))
         return result.value
-
-    @background_color.setter
-    def background_color(self, color):
-        if not isinstance(color, Color):
-            raise TypeError('color must be a wand.color.Color object, not ' +
-                            repr(color))
-        with color:
-            result = library.MagickSetImageBackgroundColor(self.wand,
-                                                           color.resource)
-            if not result:
-                self.raise_exception()
-
-    def convert(self, format):
-        """Converts the image format with the original image maintained.
-        It returns a converted image instance which is new. ::
-
-            with img.convert('png') as converted:
-                converted.save(filename='converted.png')
-
-        :param format: image format to convert to
-        :type format: :class:`basestring`
-        :returns: a converted image
-        :rtype: :class:`Image`
-        :raises: :exc:`ValueError` when the given ``format`` is unsupported
-
-        .. versionadded:: 0.1.6
-
-        """
-        cloned = self.clone()
-        cloned.format = format
-        return cloned
 
     def crop(self, left=0, top=0, right=None, bottom=None,
              width=None, height=None, reset_coords=True):
@@ -1456,6 +1156,339 @@ class Image(Resource):
             self.composite(watermark_image, left=left, top=top)
         self.raise_exception()
 
+    def trim(self):
+        """Remove solid border from image. Uses top left pixel as a guide.
+
+        .. versionadded:: 0.2.1
+
+        """
+        result = library.MagickTrimImage(self.wand)
+        if not result:
+            self.raise_exception()
+
+
+class Image(BaseImage):
+    """An image object.
+
+    :param image: makes an exact copy of the ``image``
+    :type image: :class:`Image`
+    :param blob: opens an image of the ``blob`` byte array
+    :type blob: :class:`str`
+    :param file: opens an image of the ``file`` object
+    :type file: file object
+    :param filename: opens an image of the ``filename`` string
+    :type filename: :class:`basestring`
+    :param format: forces filename to  buffer.``format`` to help
+                   imagemagick detect the file format. Used only in
+                   ``blob`` or ``file`` cases
+    :type format: :class:`basestring`
+    :param width: the width of new blank image.
+    :type width: :class:`numbers.Integral`
+    :param height: the height of new blank imgage.
+    :type height: :class:`numbers.Integral`
+    :param background: an optional background color.
+                       default is transparent
+    :type background: :class:`wand.color.Color`
+    :param resolution: set a resolution value (dpi),
+        usefull for vectorial formats (like pdf)
+    :type resolution: :class:`collections.Sequence`,
+                      :Class:`numbers.Integral`
+
+    .. versionadded:: 0.1.5
+       The ``file`` parameter.
+
+    .. versionadded:: 0.1.1
+       The ``blob`` parameter.
+
+    .. versionadded:: 0.2.1
+       The ``format`` parameter.
+
+    .. versionadded:: 0.2.2
+       The ``width``, ``height``, ``background`` parameters.
+
+    .. versionadded:: 0.3.0
+       The ``resolution`` parameter.
+
+    .. describe:: [left:right, top:bottom]
+
+       Crops the image by its ``left``, ``right``, ``top`` and ``bottom``,
+       and then returns the cropped one. ::
+
+           with img[100:200, 150:300] as cropped:
+               # manipulated the cropped image
+               pass
+
+       Like other subscriptable objects, default is 0 or its width/height::
+
+           img[:, :]        #--> just clone
+           img[:100, 200:]  #--> equivalent to img[0:100, 200:img.height]
+
+       Negative integers count from the end (width/height)::
+
+           img[-70:-50, -20:-10]
+           #--> equivalent to img[width-70:width-50, height-20:height-10]
+
+       :returns: the cropped image
+       :rtype: :class:`Image`
+
+       .. versionadded:: 0.1.2
+
+    """
+
+    #: (:class:`Metadata`) The metadata mapping of the image.  Read only.
+    #:
+    #: .. versionadded:: 0.3.0
+    metadata = None
+
+    #: (:class:`ChannelImageDict`) The mapping of separated channels
+    #: from the image. ::
+    #:
+    #:     with image.channel_images['red'] as red_image:
+    #:         display(red_image)
+    channel_images = None
+
+    #: (:class:`ChannelDepthDict`) The mapping of channels to their depth.
+    #: Read only.
+    #:
+    #: .. versionadded:: 0.3.0
+    channel_depths = None
+
+    def __init__(self, image=None, blob=None, file=None, filename=None,
+                 format=None, width=None, height=None, background=None,
+                 resolution=None):
+        new_args = width, height, background
+        open_args = image, blob, file, filename
+        if (any(a is not None for a in new_args) and
+            any(a is not None for a in open_args)):
+            raise TypeError('blank image parameters cant be used with image '
+                            'opening parameters')
+        elif any(a is not None and b is not None
+                 for i, a in enumerate(open_args)
+                 for b in open_args[:i] + open_args[i + 1:]):
+            raise TypeError('parameters are exclusive each other; use only '
+                            'one at once')
+        elif not (format is None or isinstance(format, basestring)):
+            raise TypeError('format must be a string, not ' + repr(format))
+        with self.allocate():
+            if image is None:
+                wand = library.NewMagickWand()
+                super(Image, self).__init__(wand)
+            if width is not None and height is not None:
+                self.blank(width, height, background)
+            elif image is not None:
+                if not isinstance(image, BaseImage):
+                    raise TypeError('image must be a wand.image.Image '
+                                    'instance, not ' + repr(image))
+                elif format:
+                    raise TypeError('format option cannot be used with image '
+                                    'nor filename')
+                wand = image.clone_wand()
+                super(Image, self).__init__(wand)
+            else:
+                if file is not None:
+                    if format:
+                        library.MagickSetFilename(self.wand,
+                                                  'buffer.' + format)
+                    self.read(file=file, resolution=resolution)
+                if blob is not None:
+                    if format:
+                        library.MagickSetFilename(self.wand,
+                                                  'buffer.' + format)
+                    self.read(blob=blob, resolution=resolution)
+                elif filename is not None:
+                    if format:
+                        raise TypeError(
+                            'format option cannot be used with image '
+                            'nor filename'
+                        )
+                    self.read(filename=filename, resolution=resolution)
+            self.metadata = Metadata(self)
+            from .sequence import Sequence
+            self.sequence = Sequence(self)
+        self.raise_exception()
+
+    def read(self, file=None, filename=None, blob=None, resolution=None):
+        """Read new image into Image() object.
+
+        :param blob: reads an image from the ``blob`` byte array
+        :type blob: :class:`str`
+        :param file: reads an image from the ``file`` object
+        :type file: file object
+        :param filename: reads an image from the ``filename`` string
+        :type filename: :class:`basestring`
+        :param resolution: set a resolution value (DPI),
+                           usefull for vectorial formats (like PDF)
+        :type resolution: :class:`collections.Sequence`,
+                          :class:`numbers.Integral`
+
+        .. versionadded:: 0.3.0
+
+        """
+        # Resolution must be set after image reading.
+        if resolution is not None:
+            if (isinstance(resolution, collections.Sequence) and
+                len(resolution) == 2):
+                library.MagickSetResolution(self.wand, *resolution)
+            elif isinstance(resolution, numbers.Integral):
+                library.MagickSetResolution(self.wand, resolution, resolution)
+            else:
+                raise TypeError('resolution must be a (x, y) pair or an '
+                                'integer of the same x/y')
+        if file is not None:
+            if (isinstance(file, types.FileType) and
+                hasattr(libc, 'fdopen')):
+                fd = libc.fdopen(file.fileno(), file.mode)
+                r = library.MagickReadImageFile(self.wand, fd)
+            elif not callable(getattr(file, 'read', None)):
+                raise TypeError('file must be a readable file object'
+                                ', but the given object does not '
+                                'have read() method')
+            else:
+                blob = file.read()
+                file = None
+        if blob is not None:
+            if not isinstance(blob, collections.Iterable):
+                raise TypeError('blob must be iterable, not ' +
+                                repr(blob))
+            if not isinstance(blob, basestring):
+                blob = ''.join(blob)
+            elif not isinstance(blob, str):
+                blob = str(blob)
+            r = library.MagickReadImageBlob(self.wand, blob, len(blob))
+        elif filename is not None:
+            r = library.MagickReadImage(self.wand, filename)
+        if not r:
+            self.raise_exception()
+
+    def close(self):
+        """Closes the image explicitly. If you use the image object in
+        :keyword:`with` statement, it was called implicitly so don't have to
+        call it.
+
+        .. note::
+
+           It has the same functionality of :attr:`destroy()` method.
+
+        """
+        self.destroy()
+
+    def clear(self):
+        """Clears resources associated with the image, leaving the image blank,
+        and ready to be used with new image.
+
+        .. versionadded:: 0.3.0
+
+        """
+        library.ClearMagickWand(self.wand)
+
+    def clone_wand(self):
+        return library.CloneMagickWand(self.wand)
+
+    @property
+    def format(self):
+        """(:class:`basestring`) The image format.
+
+        If you want to convert the image format, just reset this property::
+
+            assert isinstance(img, wand.image.Image)
+            img.format = 'png'
+
+        It may raise :exc:`ValueError` when the format is unsupported.
+
+        .. seealso::
+
+           `ImageMagick Image Formats`__
+              ImageMagick uses an ASCII string known as *magick* (e.g. ``GIF``)
+              to identify file formats, algorithms acting as formats,
+              built-in patterns, and embedded profile types.
+
+           __ http://www.imagemagick.org/script/formats.php
+
+        .. versionadded:: 0.1.6
+
+        """
+        fmt = library.MagickGetImageFormat(self.wand)
+        if bool(fmt):
+            return fmt.value
+        self.raise_exception()
+
+    @format.setter
+    def format(self, fmt):
+        if not isinstance(fmt, basestring):
+            raise TypeError("format must be a string like 'png' or 'jpeg'"
+                            ', not ' + repr(fmt))
+        r = library.MagickSetImageFormat(self.wand, fmt.strip().upper())
+        if not r:
+            raise ValueError(repr(fmt) + ' is unsupported format')
+
+    @property
+    def mimetype(self):
+        """(:class:`basestring`) The MIME type of the image
+        e.g. ``'image/jpeg'``, ``'image/png'``.
+
+        .. versionadded:: 0.1.7
+
+        """
+        rp = libmagick.MagickToMime(self.format)
+        if not bool(rp):
+            self.raise_exception()
+        mimetype = rp.value
+        return mimetype
+
+    def blank(self, width, height, background=None):
+        """Creates blank image.
+
+        :param width: the width of new blank image.
+        :type width: :class:`numbers.Integral`
+        :param height: the height of new blank imgage.
+        :type height: :class:`numbers.Integral`
+        :param background: an optional background color.
+                           default is transparent
+        :type background: :class:`wand.color.Color`
+        :returns: blank image
+        :rtype: :class:`Image`
+
+        .. versionadded:: 0.3.0
+
+        """
+        if not isinstance(width, numbers.Integral) or width < 1:
+            raise TypeError('width must be a natural number, not ' +
+                            repr(width))
+        if not isinstance(height, numbers.Integral) or height < 1:
+            raise TypeError('height must be a natural number, not ' +
+                            repr(height))
+        if background is not None and not isinstance(background, Color):
+            raise TypeError('background must be a wand.color.Color '
+                            'instance, not ' + repr(background))
+        if background is None:
+            background = Color('transparent')
+        with background:
+            r = library.MagickNewImage(self.wand, width, height,
+                                   background.resource)
+            if not r:
+                self.raise_exception()
+        return self
+
+    def convert(self, format):
+        """Converts the image format with the original image maintained.
+        It returns a converted image instance which is new. ::
+
+            with img.convert('png') as converted:
+                converted.save(filename='converted.png')
+
+        :param format: image format to convert to
+        :type format: :class:`basestring`
+        :returns: a converted image
+        :rtype: :class:`Image`
+        :raises: :exc:`ValueError` when the given ``format`` is unsupported
+
+        .. versionadded:: 0.1.6
+
+        """
+        cloned = self.clone()
+        cloned.format = format
+        return cloned
+
     def save(self, file=None, filename=None):
         """Saves the image into the ``file`` or ``filename``. It takes
         only one argument at a time.
@@ -1537,15 +1570,6 @@ class Image(Resource):
         if not result:
             self.raise_exception()
 
-    def trim(self):
-        """Remove solid border from image. Uses top left pixel as a guide.
-
-        .. versionadded:: 0.2.1
-
-        """
-        result = library.MagickTrimImage(self.wand)
-        if not result:
-            self.raise_exception()
 
 class Iterator(Resource, collections.Iterator):
     """Row iterator for :class:`Image`. It shouldn't be instantiated
@@ -1650,8 +1674,8 @@ class ImageProperty(object):
     """
 
     def __init__(self, image):
-        if not isinstance(image, Image):
-            raise TypeError('expected a wand.image.Image instance, '
+        if not isinstance(image, BaseImage):
+            raise TypeError('expected a wand.image.BaseImage instance, '
                             'not ' + repr(image))
         self._image = weakref.ref(image)
 
@@ -1690,6 +1714,12 @@ class Metadata(ImageProperty, collections.Mapping):
     .. versionadded:: 0.3.0
 
     """
+
+    def __init__(self, image):
+        if not isinstance(image, Image):
+            raise TypeError('expected a wand.image.Image instance, '
+                            'not ' + repr(image))
+        super(Metadata, self).__init__(image)
 
     def __getitem__(self, k):
         """
