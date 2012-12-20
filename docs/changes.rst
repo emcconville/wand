@@ -35,6 +35,7 @@ To be released.
   :const:`~wand.image.COMPOSITE_OPERATORS`.
 - Now it shows helpful error message when ImageMagick library cannot be
   found.
+- Added IPython-specialized formatter.
 
 __ http://en.wikipedia.org/wiki/Seam_carving
 

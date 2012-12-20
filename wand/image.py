@@ -1547,6 +1547,11 @@ class Image(Resource):
         if not result:
             self.raise_exception()
 
+    def _repr_png_(self):
+        with self.convert('png') as cloned:
+            return cloned.make_blob()
+
+
 class Iterator(Resource, collections.Iterator):
     """Row iterator for :class:`Image`. It shouldn't be instantiated
     directly; instead, it can be acquired through :class:`Image` instance::
