@@ -671,9 +671,13 @@ class Image(Resource):
         if not isinstance(fmt, basestring):
             raise TypeError("format must be a string like 'png' or 'jpeg'"
                             ', not ' + repr(fmt))
-        r = library.MagickSetImageFormat(self.wand, fmt.strip().upper())
+        fmt = fmt.strip()
+        r = library.MagickSetImageFormat(self.wand, fmt.upper())
         if not r:
             raise ValueError(repr(fmt) + ' is unsupported format')
+        r = library.MagickSetFilename(self.wand, 'buffer.' + fmt.lower())
+        if not r:
+            self.raise_exception()
 
     @property
     def type(self):

@@ -176,6 +176,21 @@ def make_blob():
         assert img.format == 'JPEG'
         with raises(TypeError):
             img.make_blob(123)
+    svg = '''
+    <svg width="100px" height="100px">
+    <circle cx="100" cy="50" r="40" stroke="black" stroke-width="2" fill="red"/>
+    </svg>
+    '''
+    with Image(blob=svg, format='svg') as img:
+        assert img.size == (100, 100)
+        assert img.format in ('SVG', 'MVG')
+        img.format = 'PNG'
+        assert img.size == (100, 100)
+        assert img.format == 'PNG'
+        png = img.make_blob()
+    with Image(blob=png, format='png') as img:
+        assert img.size == (100, 100)
+        assert img.format == 'PNG'
 
 
 @tests.test
