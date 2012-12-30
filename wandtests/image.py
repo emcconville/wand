@@ -384,10 +384,18 @@ def trim():
     """Remove transparent area around image."""
     with Image(filename=asset('trimtest.png')) as img:
         oldx, oldy = img.size
-        print img.trim()
+        img.trim()
         newx, newy = img.size
         assert newx < oldx
         assert newy < oldy
+    with Image(filename=asset('trim-color-test.png')) as img:
+        assert img.size == (100, 100)
+        with Color('blue') as blue:
+            img.trim(blue)
+            assert img.size == (50, 100)
+        with Color('srgb(0,255,0)') as green:
+            assert (img[0, 0] == img[0, -1] == img[-1, 0] == img[-1, -1] ==
+                    green)
 
 
 @tests.test

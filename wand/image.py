@@ -1537,12 +1537,23 @@ class Image(Resource):
         if not result:
             self.raise_exception()
 
-    def trim(self):
-        """Remove solid border from image. Uses top left pixel as a guide.
+    def trim(self, color=None):
+        """Remove solid border from image. Uses top left pixel as a guide
+        by default, or you can also specify the ``color`` to remove.
+
+        :param color: the border color to remove.
+                      if it's omitted top left pixel is used by default
+        :type color: :class:`~wand.color.Color`
 
         .. versionadded:: 0.2.1
 
+        .. versionadded:: 0.3.0
+
+           Optional ``color`` parameter.
+
         """
+        with color or self[0, 0] as color:
+            self.border(color, 1, 1)
         result = library.MagickTrimImage(self.wand)
         if not result:
             self.raise_exception()
