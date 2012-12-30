@@ -274,6 +274,9 @@ try:
     library.MagickRotateImage.argtypes = [ctypes.c_void_p, ctypes.c_void_p,
                                           ctypes.c_double]
 
+    library.MagickBorderImage.argtypes = [ctypes.c_void_p, ctypes.c_void_p,
+                                          ctypes.c_size_t, ctypes.c_size_t]
+
     library.MagickResetIterator.argtypes = [ctypes.c_void_p]
 
     library.MagickIdentifyImage.argtypes = [ctypes.c_void_p]

@@ -1547,6 +1547,30 @@ class Image(Resource):
         if not result:
             self.raise_exception()
 
+    def border(image, color, width, height):
+        """Surrounds the image with a border.
+
+        :param image: the wand image
+        :type image: :class:`Image`
+        :param bordercolor: the border color pixel wand
+        :type image: :class:`~wand.color.Color`
+        :param width: the border width
+        :type width: :class:`numbers.Integral`
+        :param height: the border height
+        :type height: :class:`numbers.Integral`
+
+        .. versionadded:: 0.3.0
+
+        """
+        if not isinstance(color, Color):
+            raise TypeError('color must be a wand.color.Color object, not ' +
+                            repr(color))
+        with color:
+            result = library.MagickBorderImage(image.wand, color.resource,
+                                               width, height)
+        if not result:
+            image.raise_exception()
+
     def _repr_png_(self):
         with self.convert('png') as cloned:
             return cloned.make_blob()
