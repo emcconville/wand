@@ -1079,3 +1079,21 @@ def liquid_rescale():
                 (6, 6, 9, 7): '459337dce62ada2a2e6a3c69b6819447'
                               '38a71389efcbde0ee72b2147957e25eb'
             })
+
+
+@tests.test
+def border():
+    with Image(filename=asset('sasha.jpg')) as img:
+        left_top = img[0, 0]
+        left_bottom = img[0, -1]
+        right_top = img[-1, 0]
+        right_bottom = img[-1, -1]
+        with Color('red') as color:
+            img.border(color, 2, 5)
+            assert (img[0, 0] == img[0, -1] == img[-1, 0] == img[-1, -1] ==
+                    img[1, 4] == img[1, -5] == img[-2, 4] == img[-2, -5] ==
+                    color)
+            assert img[2, 5] == left_top
+            assert img[2, -6] == left_bottom
+            assert img[-3, 5] == right_top
+            assert img[-3, -6] == right_bottom

@@ -6,6 +6,8 @@ Version 0.3.0
 
 To be released.
 
+- Added :meth:`Image.border() <wand.image.Image.border>` method.
+  [:commit:`2496d37f75d75e9425f95dde07033217dc8afefc` by Jae-Myoung Yu]
 - Added ``resolution`` parameter to :meth:`Image.read() <wand.image.Image.read>`
   method and the constructor of :class:`~wand.image.Image`.
   [:issue:`75` by Andrey Antukh]

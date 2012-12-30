@@ -226,7 +226,8 @@ intersphinx_mapping = {'http://docs.python.org/': None}
 
 extlinks = {
     'issue': ('https://github.com/dahlia/wand/issues/%s', '#'),
-    'branch': ('https://github.com/dahlia/wand/compare/master...%s', '')
+    'branch': ('https://github.com/dahlia/wand/compare/master...%s', ''),
+    'commit': ('https://github.com/dahlia/wand/commit/%s', '')
 }
 
 
