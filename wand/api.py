@@ -185,9 +185,11 @@ try:
     library.MagickGetImageProperty.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
     library.MagickGetImageProperty.restype = c_magick_char_p
 
-    library.MagickGetImageProperties.argtypes = [ctypes.c_void_p,
-                                                 ctypes.c_char_p,
-                                                 ctypes.POINTER(ctypes.c_size_t)]
+    library.MagickGetImageProperties.argtypes = [
+        ctypes.c_void_p,
+        ctypes.c_char_p,
+        ctypes.POINTER(ctypes.c_size_t)
+    ]
     library.MagickGetImageProperties.restype = ctypes.POINTER(ctypes.c_char_p)
 
     library.MagickSetImageProperty.argtypes = [ctypes.c_void_p, ctypes.c_char_p,
@@ -215,11 +217,17 @@ try:
 
     library.MagickWriteImageFile.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 
-    library.MagickGetImageResolution.argtypes = [ctypes.c_void_p,
-                  ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double)]
+    library.MagickGetImageResolution.argtypes = [
+        ctypes.c_void_p, ctypes.POINTER(ctypes.c_double),
+        ctypes.POINTER(ctypes.c_double)
+    ]
 
-    library.MagickSetImageResolution.argtypes = [ctypes.c_void_p, ctypes.c_double, ctypes.c_double]
-    library.MagickSetResolution.argtypes = [ctypes.c_void_p, ctypes.c_double, ctypes.c_double]
+    library.MagickSetImageResolution.argtypes = [ctypes.c_void_p,
+                                                 ctypes.c_double,
+                                                 ctypes.c_double]
+
+    library.MagickSetResolution.argtypes = [ctypes.c_void_p, ctypes.c_double,
+                                            ctypes.c_double]
     library.MagickSetResolution.restype = ctypes.c_bool
 
     library.MagickGetImageWidth.argtypes = [ctypes.c_void_p]
