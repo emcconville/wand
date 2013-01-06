@@ -103,3 +103,53 @@ an image by ``[left:right, top:bottom]`` with maintaining the original:
    >>> img.size
    (300, 300)
 
+
+.. _seam-carving:
+
+Seam carving (also known as *content-aware resizing*)
+-----------------------------------------------------
+
+.. versionadded:: 0.3.0
+
+`Seam carving`_ is an algorithm for image resizing that functions by
+establishing a number of *seams* (paths of least importance) in an image
+and automatically removes seams to reduce image size or inserts seams
+to extend it.
+
+In short: you can magickally resize images without distortion!
+See the following examples:
+
++------------------------------------+----------------------------------+
+| Original                           | Resized                          |
++------------------------------------+----------------------------------+
+| .. image:: ../_static/original.jpg | .. image:: ../_static/resize.jpg |
+|    :width: 187                     |    :width: 140                   |
++------------------------------------+----------------------------------+
+| Cropped                            | **Seam carving**                 |
++------------------------------------+----------------------------------+
+| .. image:: ../_static/crop.jpg     | .. image:: ../_static/liquid.jpg |
+|    :width: 140                     |    :width: 140                   |
++------------------------------------+----------------------------------+
+
+You can easily rescale images with seam carving using Wand:
+use :meth:`Image.liquid_rescale() <wand.image.Image.liquid_rescale>`
+method:
+
+>>> img.size
+(375, 485)
+>>> img.liquid_rescale(281, 485)
+>>> img.size
+(281, 485)
+
+.. note::
+
+   It may raise :exc:`~wand.exceptions.MissingDelegateError` if your
+   ImageMagick is configured ``--without-lqr`` option.  In this case
+   you should recompile ImageMagick.
+
+.. seealso::
+
+   `Seam carving`_ --- Wikipedia
+      The article which explains what seam carving is on Wikipedia.
+
+.. _Seam carving: http://en.wikipedia.org/wiki/Seam_carving

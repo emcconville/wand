@@ -1,15 +1,20 @@
+# -*- coding: utf-8 -*-
 import os.path
+import sys
 import tempfile
 try:
     import cStringIO as StringIO
 except ImportError:
     import StringIO
+import warnings
 
 from attest import Tests, assert_hook, raises
 
 from wand.version import MAGICK_VERSION_INFO
 from wand.image import ClosedImageError, Image
 from wand.color import Color
+from wand.exceptions import MissingDelegateError
+from wand.font import Font
 
 
 def get_sig_version(versions):
@@ -25,8 +30,11 @@ def get_sig_version(versions):
     sorted_versions = reversed(sorted(versions.keys()))
     for v in sorted_versions:
         if v <= MAGICK_VERSION_INFO:
-            return versions[v]
-    return versions[v]
+            sig = versions[v]
+            break
+    else:
+        sig = versions[v]
+    return sig
 
 
 tests = Tests()
@@ -34,6 +42,11 @@ tests = Tests()
 
 def asset(filename):
     return os.path.join(os.path.dirname(__file__), 'assets', filename)
+
+@tests.test
+def empty_image():
+    with Image() as img:
+        assert img.size == (0,0)
 
 
 @tests.test
@@ -49,6 +62,32 @@ def blank_image():
     with Image(width=20, height=10, background=gray) as img:
         assert img.size == (20, 10)
         assert img[10, 5] == gray
+
+@tests.test
+def clear_image():
+    with Image() as img:
+        img.read(filename=asset('mona-lisa.jpg'))
+        assert img.size == (402,599)
+        img.clear()
+        assert img.size == (0,0)
+        img.read(filename=asset('beach.jpg'))
+        assert img.size == (800,600)
+
+
+@tests.test
+def read_from_file():
+    with Image() as img:
+        img.read(filename=asset('mona-lisa.jpg'))
+        assert img.width == 402
+        img.clear()
+        with open(asset('mona-lisa.jpg'), 'rb') as f:
+            img.read(file=f)
+            assert img.width == 402
+            img.clear()
+        with open(asset('mona-lisa.jpg'), 'rb') as f:
+            blob = f.read()
+            img.read(blob=blob)
+            assert img.width == 402
 
 
 @tests.test
@@ -189,6 +228,21 @@ def size():
 
 
 @tests.test
+def get_resolution():
+    """Gets image resolution."""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        assert img.resolution == (72, 72)
+
+
+@tests.test
+def set_resolution():
+    """Sets image resolution."""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        img.resolution = (100, 100)
+        assert img.resolution == (100, 100)
+
+
+@tests.test
 def get_units():
     """Gets the image resolution units."""
     with Image(filename=asset('beach.jpg')) as img:
@@ -261,6 +315,7 @@ def set_type():
     with Image(filename=asset('mona-lisa.jpg')) as img:
         img.type = "grayscale"
         assert img.type == "grayscale"
+
 
 @tests.test
 def get_compression():
@@ -784,3 +839,241 @@ def metadata():
         assert 'exif:UnknownValue' not in img.metadata
         assert img.metadata['exif:ApertureValue'] == '192/32'
         assert img.metadata.get('exif:UnknownValue', "IDK") == "IDK"
+
+
+@tests.test
+def channel_depths():
+    with Image(filename=asset('beach.jpg')) as i:
+        assert dict(i.channel_depths) == {
+            'blue': 8, 'gray': 8, 'true_alpha': 1, 'opacity': 1,
+            'undefined': 1, 'composite_channels': 8, 'index': 1,
+            'rgb_channels': 1, 'alpha': 1, 'yellow': 8, 'sync_channels': 1,
+            'default_channels': 8, 'black': 1, 'cyan': 8,
+            'all_channels': 8, 'green': 8, 'magenta': 8, 'red': 8,
+            'gray_channels': 1
+        }
+    with Image(filename=asset('google.ico')) as i:
+        assert dict(i.channel_depths) == {
+            'blue': 8, 'gray': 8, 'true_alpha': 1, 'opacity': 1,
+            'undefined': 1, 'composite_channels': 8, 'index': 1,
+            'rgb_channels': 1, 'alpha': 1, 'yellow': 8, 'sync_channels': 1,
+            'default_channels': 8, 'black': 1, 'cyan': 8, 'all_channels': 8,
+            'green': 8, 'magenta': 8, 'red': 8, 'gray_channels': 1
+        }
+
+
+@tests.test
+def channel_images():
+    with Image(filename=asset('sasha.jpg')) as i:
+        actual = dict((c, i.signature) for c, i in i.channel_images.items())
+    del actual['rgb_channels']   # FIXME: workaround for Travis CI
+    del actual['gray_channels']  # FIXME: workaround for Travis CI
+    assert actual == {
+        'blue': get_sig_version({
+            (6, 5, 7, 8): 'b56f0c0763b49d4b0661d0bf7028d82a'
+                          '66d0d15817ff5c6fd68a3c76377bd05a',
+            (6, 7, 7, 6): 'b5e59c5bb24379e0f741b8073e19f564'
+                          '9a456af4023d2dd3764a5c012989470b',
+            (6, 7, 9, 5): 'a372637ff6256ed45c07b7be04617b99'
+                          'cea024dbd6dd961492a1906f419d3f84'
+        }),
+        'gray': get_sig_version({
+            (6, 6, 9, 7): 'ee84ed5532ade43e28c1f8baa0d52235'
+                          '1aee73ff0265d188797d457f1df2bc82',
+            (6, 7, 7, 6): 'd0d2bae86a40e0107f69bb8016800dae'
+                          '4ad8178e29ac11649c9c3fa465a5a493',
+            (6, 7, 9, 5): 'bac4906578408e0f46b1943f96c8c392'
+                          '73997659feb005e581e7ddfa0ba1da41'
+        }),
+        'true_alpha': get_sig_version({
+            (6, 5, 7, 8): '3da06216c40cdb4011339bed11804714'
+                          'bf262ac7c20e7eaa5401ed3218e9e59f',
+            (6, 7, 9, 5): '3da06216c40cdb4011339bed11804714'
+                          'bf262ac7c20e7eaa5401ed3218e9e59f'
+        }),
+        'opacity': get_sig_version({
+            (6, 5, 7, 8): '0e7d4136121208cf6c2e12017ffe9c48'
+                          '7e8ada5fca1ad76b06bc41ad8a932de3'
+        }),
+        'undefined': get_sig_version({
+            (6, 5, 7, 8): 'b68db111c7d6a58301d9d824671ed810'
+                          'b790d397429d2988dcdeb7562729bb46',
+            (6, 7, 7, 6): 'ae62e71111167c83d9449bcca50dd65f'
+                          '565227104fe148aac514d3c2ef0fe9e2',
+            (6, 7, 9, 5): 'd659b35502ac753c52cc44d488c78acd'
+                          'c0201e65a7e9c5d7715ff79dbb0b24b3'
+        }),
+        'composite_channels': get_sig_version({
+            (6, 5, 7, 8): 'b68db111c7d6a58301d9d824671ed810'
+                          'b790d397429d2988dcdeb7562729bb46',
+            (6, 7, 7, 6): 'ae62e71111167c83d9449bcca50dd65f'
+                          '565227104fe148aac514d3c2ef0fe9e2',
+            (6, 7, 9, 5): 'd659b35502ac753c52cc44d488c78acd'
+                          'c0201e65a7e9c5d7715ff79dbb0b24b3'
+        }),
+        'index': get_sig_version({
+            (6, 5, 7, 8): 'b68db111c7d6a58301d9d824671ed810'
+                          'b790d397429d2988dcdeb7562729bb46',
+            (6, 7, 7, 6): 'ae62e71111167c83d9449bcca50dd65f'
+                          '565227104fe148aac514d3c2ef0fe9e2',
+            (6, 7, 9, 5): 'd659b35502ac753c52cc44d488c78acd'
+                          'c0201e65a7e9c5d7715ff79dbb0b24b3'
+        }),
+        'yellow': get_sig_version({
+            (6, 6, 9, 7): 'b56f0c0763b49d4b0661d0bf7028d82a'
+                          '66d0d15817ff5c6fd68a3c76377bd05a',
+            (6, 7, 7, 6): 'b5e59c5bb24379e0f741b8073e19f564'
+                          '9a456af4023d2dd3764a5c012989470b',
+            (6, 7, 9, 5): 'a372637ff6256ed45c07b7be04617b99'
+                          'cea024dbd6dd961492a1906f419d3f84'
+        }),
+        'black': get_sig_version({
+            (6, 5, 7, 8): 'b68db111c7d6a58301d9d824671ed810'
+                          'b790d397429d2988dcdeb7562729bb46',
+            (6, 7, 7, 6): 'ae62e71111167c83d9449bcca50dd65f'
+                          '565227104fe148aac514d3c2ef0fe9e2',
+            (6, 7, 9, 5): 'd659b35502ac753c52cc44d488c78acd'
+                          'c0201e65a7e9c5d7715ff79dbb0b24b3'
+        }),
+        'sync_channels': get_sig_version({
+            (6, 5, 7, 8): 'b68db111c7d6a58301d9d824671ed810'
+                          'b790d397429d2988dcdeb7562729bb46',
+            (6, 7, 7, 6): 'ae62e71111167c83d9449bcca50dd65f'
+                          '565227104fe148aac514d3c2ef0fe9e2',
+            (6, 7, 9, 5): 'd659b35502ac753c52cc44d488c78acd'
+                          'c0201e65a7e9c5d7715ff79dbb0b24b3'
+        }),
+        'default_channels': get_sig_version({
+            (6, 5, 7, 8): 'b68db111c7d6a58301d9d824671ed810'
+                          'b790d397429d2988dcdeb7562729bb46',
+            (6, 7, 7, 6): 'ae62e71111167c83d9449bcca50dd65f'
+                          '565227104fe148aac514d3c2ef0fe9e2',
+            (6, 7, 9, 5): 'd659b35502ac753c52cc44d488c78acd'
+                          'c0201e65a7e9c5d7715ff79dbb0b24b3'
+        }),
+        'green': get_sig_version({
+            (6, 5, 7, 8): 'ee703ad96996a796d47f34f9afdc74b6'
+                          '89817320d2b6e6423c4c2f7e4ed076db',
+            (6, 7, 7, 6): 'ad770e0977567c12a336b6f3bf07e57e'
+                          'c370af40641238b3328699be590b5d16',
+            (6, 7, 9, 5): '87139d62ff097e312ab4cc1859ee2db6'
+                          '066c9845de006f38163b325d405df782'
+        }),
+        'cyan': get_sig_version({
+            (6, 5, 7, 8): 'ee84ed5532ade43e28c1f8baa0d52235'
+                          '1aee73ff0265d188797d457f1df2bc82',
+            (6, 7, 7, 6): 'd0d2bae86a40e0107f69bb8016800dae'
+                          '4ad8178e29ac11649c9c3fa465a5a493',
+            (6, 7, 9, 5): 'bac4906578408e0f46b1943f96c8c392'
+                          '73997659feb005e581e7ddfa0ba1da41'
+        }),
+        'all_channels': get_sig_version({
+            (6, 5, 7, 8): 'b68db111c7d6a58301d9d824671ed810'
+                          'b790d397429d2988dcdeb7562729bb46',
+            (6, 7, 7, 6): 'ae62e71111167c83d9449bcca50dd65f'
+                          '565227104fe148aac514d3c2ef0fe9e2',
+            (6, 7, 9, 5): 'd659b35502ac753c52cc44d488c78acd'
+                          'c0201e65a7e9c5d7715ff79dbb0b24b3'
+        }),
+        'alpha': get_sig_version({
+            (6, 5, 7, 8): '0e7d4136121208cf6c2e12017ffe9c48'
+                          '7e8ada5fca1ad76b06bc41ad8a932de3',
+            (6, 7, 7, 6): '0e7d4136121208cf6c2e12017ffe9c48'
+                          '7e8ada5fca1ad76b06bc41ad8a932de3'
+        }),
+        'magenta': get_sig_version({
+            (6, 5, 7, 8): 'ee703ad96996a796d47f34f9afdc74b6'
+                          '89817320d2b6e6423c4c2f7e4ed076db',
+            (6, 7, 7, 6): 'ad770e0977567c12a336b6f3bf07e57e'
+                          'c370af40641238b3328699be590b5d16',
+            (6, 7, 9, 5): '87139d62ff097e312ab4cc1859ee2db6'
+                          '066c9845de006f38163b325d405df782'
+        }),
+        'red': get_sig_version({
+            (6, 5, 7, 8): 'ee84ed5532ade43e28c1f8baa0d52235'
+                          '1aee73ff0265d188797d457f1df2bc82',
+            (6, 7, 7, 6): 'd0d2bae86a40e0107f69bb8016800dae'
+                          '4ad8178e29ac11649c9c3fa465a5a493',
+            (6, 7, 9, 5): 'bac4906578408e0f46b1943f96c8c392'
+                          '73997659feb005e581e7ddfa0ba1da41'
+        })
+    }
+
+
+@tests.test
+def composite():
+    with Image(filename=asset('beach.jpg')) as img:
+        with Image(filename=asset('watermark.png')) as fg:
+            img.composite(fg, 0, 0)
+            assert img.signature == get_sig_version({
+                (6, 6, 9, 7): '9c4c182e44ee265230761a412e355cb7'
+                              '8ea61859658220ecc8cbc1d56f58584e',
+                (6, 7, 7, 6): 'd725d924a9008ddff828f22595237ec6'
+                              'b56fb54057c6ee99584b9fc7ac91092c'
+            })
+
+
+@tests.test
+def composite_with_xy():
+    with Image(filename=asset('beach.jpg')) as img:
+        with Image(filename=asset('watermark.png')) as fg:
+            img.composite(fg, 5, 10)
+            assert img.signature == get_sig_version({
+                (6, 6, 9, 7): 'e2a17a176de6b995b0f0f83e3c523006'
+                              '99190c7536ce1c599e65346d28f74b3b',
+                (6, 7, 7, 6): 'a40133f53093ce92e3e010d99a68fe13'
+                              '55544821cec2f707d5bd426d326921f8'
+            })
+
+
+@tests.test
+def composite_channel():
+    with Image(filename=asset('beach.jpg')) as img:
+        w, h = img.size
+        with Color('black') as color:
+            with Image(width=w / 2, height=h / 2, background=color) as cimg:
+                img.composite_channel('red', cimg, 'copy_red', w / 4, h / 4)
+                assert img.signature == get_sig_version({
+                    (6, 6, 9, 7): 'df4531b9cb50b0b70f0d4d88ac962cc7'
+                                  '51133d2772d7ce695d19179804a955ae',
+                    (6, 7, 7, 6): '51ebd57f8507ed8ca6355906972af369'
+                                  '5797d278ae3ed04dfc1f9b8c517bcfab'
+                })
+
+
+@tests.test
+def liquid_rescale():
+    with Image(filename=asset('beach.jpg')) as img:
+        try:
+            img.liquid_rescale(600, 600)
+        except MissingDelegateError:
+            warnings.warn('skip liquid_rescale test; has no LQR delegate')
+        else:
+            assert img.signature == get_sig_version({
+                (6, 6, 9, 7): '459337dce62ada2a2e6a3c69b6819447'
+                              '38a71389efcbde0ee72b2147957e25eb'
+            })
+
+@tests.test
+def caption():
+    with Image(width=144, height=192, background=Color("#1e50a2")) as img:
+        font = Font(path=asset('League_Gothic.otf'), color=Color("gold"), size=12, antialias=False)
+        img.caption("Test message", font=font, x=5, y=144, width=134, height=20, gravity='center')
+
+@tests.test
+def setfont():
+    with Image(width=144, height=192, background=Color("#1e50a2")) as img:
+        font = Font(path=asset('League_Gothic.otf'), color=Color("gold"), size=12, antialias=False)
+        img.font = font
+
+        assert img.fontpath == font.path
+        assert img.pointsize == font.size
+        assert img.fill == font.color
+        assert img.antialias == font.antialias
+
+@tests.test
+def setgravity():
+    with Image(width=144, height=192, background=Color("#1e50a2")) as img:
+        img.gravity = 'center'
+        assert img.gravity == 'center'
+

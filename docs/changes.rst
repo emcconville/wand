@@ -17,15 +17,40 @@ Version 0.3.0
 
 To be released.
 
+- Added :meth:`Image.liquid_rescale() <wand.image.Image.liquid_rescale>`
+  method which does `seam carving`__.  See also :ref:`seam-carving`.
 - Added :attr:`Image.metadata <wand.image.Image.metadata>` immutable mapping
   attribute and :class:`~wand.image.Metadata` mapping type for it.
   [:issue:`56` by Michael Elovskikh]
+- Added :attr:`Image.channel_images <wand.image.Image.channel_images>`
+  immutable mapping attribute and :class:`~wand.image.ChannelImageDict`
+  mapping for it.
+- Added :attr:`Image.channel_depths <wand.image.Image.channel_depths>`
+  immutable mapping attribute and :class:`~wand.image.ChannelDepthDict`
+  mapping for it.
+- Added :meth:`Image.composite_channel() <wand.image.Image.composite_channel>`
+  method.
+- Added :meth:`Image.read() <wand.image.read>` method.
+  [:issue:`58` by Piotr Florczyk]
+- Added :attr:`Image.resolution <wand.image.Image.resolution>` property.
+  [:issue:`58` by Piotr Florczyk]
+- Added :meth:`Image.blank() <wand.image.blank>` method.
+  [:issue:`60` by Piotr Florczyk]
+- Fixed several memory leaks.  [:issue:`62` by Mitch Lindgren]
+- Added :class:`~wand.image.ImageProperty` mixin class to maintain
+  a weak reference to the parent image.
+- Ranamed :const:`wand.image.COMPOSITE_OPS` to
+  :const:`~wand.image.COMPOSITE_OPERATORS`.
+- Now it shows helpful error message when ImageMagick library cannot be
+  found.
+
+__ http://en.wikipedia.org/wiki/Seam_carving
 
 
 Version 0.2.2
 -------------
 
-To be released.
+Released on September 24, 2012.
 
 - A compatibility fix for FreeBSD.
   [`Patch`__ by Olivier Duchateau]
@@ -44,7 +69,7 @@ To be released.
 - Added :attr:`Image.type <wand.image.Image.type>` property.
   [:issue:`33` by Yauhen Yakimovich, :issue:`42` by Piotr Florczyk]
 
-__ http://code.google.com/p/olivier-freebsd-ports/source/browse/graphics/py-wand/files/patch-wand_api.py
+__ http://olivier-freebsd-ports.googlecode.com/hg-history/efb852a5572/graphics/py-wand/files/patch-wand_api.py
 
 
 Version 0.2.1
