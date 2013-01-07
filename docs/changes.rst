@@ -6,6 +6,12 @@ Version 0.3.0
 
 To be released.
 
+- Added :mod:`wand.drawing` module.  [:issue:`64` by Adrian Jung]
+- Added :meth:`Drawing.get_font_metrics()
+  <wand.drawing.Drawing.get_font_metrics>` method.
+  [:issue:`69`, :issue:`71` by Cha, Hojeong]
+- Added :meth:`Image.caption() <wand.image.Image.caption>` method.
+  [:issue:`74` by Cha, Hojeong]
 - Added optional ``color`` parameter to :meth:`Image.border()
   <wand.image.Image.border>` method.
 - Added :meth:`Image.border() <wand.image.Image.border>` method.
