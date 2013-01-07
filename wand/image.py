@@ -304,7 +304,7 @@ IMAGE_TYPES = ('undefined', 'bilevel', 'grayscale', 'grayscalematte',
                'colorseparation', 'colorseparationmatte', 'optimize',
                'palettebilevelmatte')
 
-#: (:class:`tuple`) The list of resolution unit types
+#: (:class:`tuple`) The list of resolution unit types.
 #:
 #: - ``'undefined'``
 #: - ``'pixelsperinch'``
@@ -319,12 +319,17 @@ IMAGE_TYPES = ('undefined', 'bilevel', 'grayscale', 'grayscalematte',
 #:    __ http://www.imagemagick.org/api/magick-image.php#MagickSetImageUnits
 UNIT_TYPES = 'undefined', 'pixelsperinch', 'pixelspercentimeter'
 
-
+#: (:class:`tuple`) The list of :attr:`~Image.gravity` types.
+#:
+#: .. versionadded:: 0.3.0
 GRAVITY_TYPES = ('forget', 'north_west', 'north', 'north_east', 'west',
                  'center', 'east', 'south_west', 'south', 'south_east',
                  'static')
 
-OPTIONS = set(['fill'])
+#: (:class:`collections.Set`) The set of available :attr:`~Image.options`.
+#:
+#: .. versionadded:: 0.3.0
+OPTIONS = frozenset(['fill'])
 
 
 class Image(Resource):
@@ -407,6 +412,9 @@ class Image(Resource):
     #: .. versionadded:: 0.3.0
     channel_depths = None
 
+    #: (:class:`OptionDict`) The mapping of internal option settings.
+    #:
+    #: .. versionadded:: 0.3.0
     options = None
 
     c_is_resource = library.IsMagickWand
@@ -764,6 +772,26 @@ class Image(Resource):
 
     def caption(self, text, left=0, top=0, width=None, height=None, font=None,
                 gravity=None):
+        """Writes a caption ``text`` into the position.
+
+        :param left: x offset in pixels
+        :type left: :class:`numbers.Integral`
+        :param right: y offset in pixels
+        :type right: :class:`numbers.Integral`
+        :param width: width of caption in pixels.
+                      default is :attr:`width` of the image
+        :type width: :class:`numbers.Integral`
+        :param height: height of caption in pixels.
+                       default is :attr:`height` of the image
+        :type height: :class:`numbers.Integral`
+        :param font: font to use.  default is :attr:`font` of the image
+        :type font: :class:`wand.font.Font`
+        :param gravity: text placement gravity.
+                        uses the current :attr:`gravity` setting of the image
+                        by default
+        :type gravity: :class:`basestring`
+
+        """
         if not isinstance(left, numbers.Integral):
             raise TypeError('left must be an integer, not ' + repr(left))
         elif not isinstance(top, numbers.Integral):
@@ -1793,6 +1821,12 @@ class ImageProperty(object):
         )
 
 class OptionDict(ImageProperty, collections.MutableMapping):
+    """Mutable mapping of the image internal options.  See available
+    options in :const:`OPTIONS` constant.
+
+    .. versionadded:: 0.3.0
+
+    """
 
     def __iter__(self):
         return iter(OPTIONS)
