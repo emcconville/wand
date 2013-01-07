@@ -782,10 +782,8 @@ class Image(Resource):
             height = self.height - top
         with Image() as textboard:
             library.MagickSetSize(textboard.wand, width, height)
-            if font is not None:
-                textboard.font = font
-            if gravity is not None:
-                textboard.gravity = gravity
+            textboard.font = font or self.font
+            textboard.gravity = gravity or self.gravity
             with Color('transparent') as background_color:
                 library.MagickSetBackgroundColor(textboard.wand,
                                                  background_color.resource)
