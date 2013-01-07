@@ -790,7 +790,7 @@ class Image(Resource):
     @property
     def resolution(self):
         """(:class:`tuple`) Resolution of this image.
-i
+
         .. versionadded:: 0.3.0
 
         """
