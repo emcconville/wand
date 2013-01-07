@@ -668,58 +668,66 @@ class Image(Resource):
         library.MagickSetGravity(self.wand, GRAVITY_TYPES.index(value))
 
     @property
-    def fontpath(self):
-        """(:class:`basestring`) The current font name.  It also can be set."""
+    def font_path(self):
+        """(:class:`basestring`) The path of the current font.
+        It also can be set.
+
+        """
         return library.MagickGetFont(self.wand)
 
-    @fontpath.setter
-    def fontpath(self, font):
+    @font_path.setter
+    def font_path(self, font):
         if not isinstance(font, basestring):
             raise TypeError('expected a string, not ' + repr(font))
         if library.MagickSetFont(self.wand, font) == False:
-            raise ValueError('Font is invalid.')
+            raise ValueError('font is invalid')
 
     @property
-    def pointsize(self):
+    def font_size(self):
         """(:class:`numbers.Real`) The font size.  It also can be set."""
         return library.MagickGetPointsize(self.wand)
 
-    @pointsize.setter
-    def pointsize(self, size):
+    @font_size.setter
+    def font_size(self, size):
         if not isinstance(size, numbers.Real):
             raise TypeError('expected a numbers.Real, but got ' + repr(size))
         elif size < 0.0:
             raise ValueError('cannot be less then 0.0, but got ' + repr(size))
-        if library.MagickSetPointsize(self.wand, size) == False:
+        elif library.MagickSetPointsize(self.wand, size) == False:
             raise ValueError('unexpected error is occur')
 
     @property
-    def antialias(self):
+    def font_antialias(self):
         return bool(library.MagickGetAntialias(self.wand))
 
-    @antialias.setter
-    def antialias(self, antialias):
+    @font_antialias.setter
+    def font_antialias(self, antialias):
         if not isinstance(antialias, bool):
-            raise TypeError('antialias must be a bool, not ' + repr(antialias))
+            raise TypeError('font_antialias must be a bool, not ' +
+                            repr(antialias))
         library.MagickSetAntialias(self.wand, antialias)
 
     @property
     def font(self):
-        return Font(path=self._font, size=self._pointsize, color=self.fill)
+        return Font(
+            path=self.font_path,
+            size=self.font_size,
+            color=self.fill,
+            antialias=self.font_antialias
+        )
 
     @font.setter
     def font(self, font):
         if not isinstance(font, Font):
             raise TypeError('font must be a wand.font.Font, not ' + repr(font))
-
         if font.path is not None:
-            self.fontpath = font.path
+            self.font_path = font.path
         if font.size is not None:
-            self.pointsize = font.size
+            self.font_size = font.size
         if font.color is not None:
             self.fill = font.color
         if font.antialias is not None:
-            self.antialias = font.antialias
+            self.font_antialias = font.antialias
 
     @property
     def width(self):

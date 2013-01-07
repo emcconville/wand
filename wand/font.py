@@ -1,10 +1,39 @@
-""":mod:`wand.font` --- Font
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+""":mod:`wand.font` --- Fonts
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. versionadded:: 0.1.2
+.. versionadded:: 0.3.0
+
+:class:`Font` is an object which takes the :attr:`~Font.path` of font file,
+:attr:`~Font.size`, :attr:`~Font.color`, and whether to use
+:attr:`~Font.antialias`\ ing.  If you want to use font by its name rather
+than the file path, use TTFQuery_ package.  The font path resolution by its
+name is a very complicated problem to achieve.
+
+.. seealso::
+
+   TTFQuery_ --- Find and Extract Information from TTF Files
+      TTFQuery builds on the `FontTools-TTX`_ package to allow the Python
+      programmer to accomplish a number of tasks:
+
+      - query the system to find installed fonts
+
+      - retrieve metadata about any TTF font file
+
+        - this includes the glyph outlines (shape) of individual code-points,
+          which allows for rendering the glyphs in 3D (such as is done in
+          OpenGLContext)
+
+      - lookup/find fonts by:
+
+        - abstract family type
+        - proper font name
+
+      - build simple metadata registries for run-time font matching
+
+.. _TTFQuery: http://ttfquery.sourceforge.net/
+.. _FontTools-TTX: http://sourceforge.net/projects/fonttools/
 
 """
-import ctypes
 import numbers
 
 from .color import Color
@@ -12,58 +41,48 @@ from .color import Color
 __all__ = 'Font',
 
 
-class Font(object):
-    raw_path = None
-    raw_size = None
-    raw_color = None
-    raw_antialias = None
+class Font(tuple):
+    """Font struct which is a subtype of :class:`tuple`.  Its constructor
+    takes :attr:`path`, :attr:`size`, :attr:`color` (black by default), and
+    :attr:`antialias` (``True`` by default).
 
-    def __init__(self, path=None, size=None, color=None, antialias=None):
-        if path is not None:
-            self.path = path
-        if size is not None:
-            self.size = size
-        if color is not None:
-            self.color = color
-        if antialias is not None:
-            self.antialias = antialias
+    """
+
+    def __new__(cls, path, size, color=Color('black'), antialias=True):
+        if not isinstance(path, basestring):
+            raise TypeError('path must be a string, not ' + repr(path))
+        if not isinstance(size, numbers.Real):
+            raise TypeError('size must be a real number, not ' + repr(size))
+        if not isinstance(color, Color):
+            raise TypeError('color must be an instance of wand.color.Color, '
+                            'not ' + repr(color))
+        return tuple.__new__(cls, (path, size, color, bool(antialias)))
 
     @property
     def path(self):
-        return self.raw_path
-
-    @path.setter
-    def path(self, path):
-        if not isinstance(path, basestring):
-            raise TypeError('path must be a string, not ' + repr(path))
-        self.raw_path = path
+        """(:class:`basestring`) The path of font file."""
+        return self[0]
 
     @property
     def size(self):
-        return self.raw_size
-
-    @size.setter
-    def size(self, size):
-        if not isinstance(size, numbers.Real):
-            raise TypeError('size must be a real number, not ' + repr(size))
-        self.raw_size = size
+        """(:class:`numbers.Real`) The font size."""
+        return self[1]
 
     @property
     def color(self):
-        return self.raw_color
-
-    @color.setter
-    def color(self, color):
-        if not isinstance(color, Color):
-            raise TypeError('color must be a wand.color.Color, not ' + repr(color))
-        self.raw_color = color
+        """(:class:`wand.color.Color`) The font color."""
+        return self[2]
 
     @property
     def antialias(self):
-        return self.raw_antialias
+        """(:class:`bool`) Whether to apply antialiasing (``True``)
+        or not (``False``).
 
-    @antialias.setter
-    def antialias(self, antialias):
-        if not isinstance(antialias, bool):
-            raise TypeError('antialias must be a bool, not ' + repr(antialias))
-        self.raw_antialias = antialias
+        """
+        return self[3]
+
+    def __repr__(self):
+        return '{0.__module__}.{0.__name__}({1})'.format(
+            type(self),
+            tuple.__repr__(self)
+        )

@@ -1056,24 +1056,41 @@ def liquid_rescale():
 
 @tests.test
 def caption():
-    with Image(width=144, height=192, background=Color("#1e50a2")) as img:
-        font = Font(path=asset('League_Gothic.otf'), color=Color("gold"), size=12, antialias=False)
-        img.caption("Test message", font=font, x=5, y=144, width=134, height=20, gravity='center')
+    with Image(width=144, height=192, background=Color('#1e50a2')) as img:
+        font = Font(
+            path=asset('League_Gothic.otf'),
+            color=Color("gold"),
+            size=12,
+            antialias=False
+        )
+        img.caption(
+            'Test message',
+            font=font,
+            x=5, y=144,
+            width=134, height=20,
+            gravity='center'
+        )
+
 
 @tests.test
 def setfont():
-    with Image(width=144, height=192, background=Color("#1e50a2")) as img:
-        font = Font(path=asset('League_Gothic.otf'), color=Color("gold"), size=12, antialias=False)
+    with Image(width=144, height=192, background=Color('#1e50a2')) as img:
+        font = Font(
+            path=asset('League_Gothic.otf'),
+            color=Color("gold"),
+            size=12,
+            antialias=False
+        )
         img.font = font
-
-        assert img.fontpath == font.path
-        assert img.pointsize == font.size
+        assert img.font_path == font.path
+        assert img.font_size == font.size
         assert img.fill == font.color
-        assert img.antialias == font.antialias
+        assert img.font_antialias == font.antialias
+        assert img.font == font
+
 
 @tests.test
 def setgravity():
-    with Image(width=144, height=192, background=Color("#1e50a2")) as img:
+    with Image(width=144, height=192, background=Color('#1e50a2')) as img:
         img.gravity = 'center'
         assert img.gravity == 'center'
-
