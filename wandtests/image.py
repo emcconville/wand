@@ -1077,14 +1077,14 @@ def setfont():
     with Image(width=144, height=192, background=Color('#1e50a2')) as img:
         font = Font(
             path=asset('League_Gothic.otf'),
-            color=Color("gold"),
+            color=Color('gold'),
             size=12,
             antialias=False
         )
         img.font = font
         assert img.font_path == font.path
         assert img.font_size == font.size
-        assert img.fill == font.color
+        assert img.font_color == font.color
         assert img.font_antialias == font.antialias
         assert img.font == font
 

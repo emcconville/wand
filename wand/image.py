@@ -24,13 +24,11 @@ from .font import Font
 
 
 __all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COMPOSITE_OPERATORS',
-           'EVALUATE_OPS', 'FILTER_TYPES', 'IMAGE_TYPES', 'UNIT_TYPES',
+           'EVALUATE_OPS', 'FILTER_TYPES', 'GRAVITY_TYPES', 'IMAGE_TYPES',
+           'UNIT_TYPES',
            'ChannelDepthDict', 'ChannelImageDict', 'ClosedImageError',
-           'Image', 'ImageProperty', 'Iterator', 'Metadata', 'GRAVITY_TYPES')
+           'Image', 'ImageProperty', 'Iterator', 'Metadata', 'OptionDict')
 
-GRAVITY_TYPES = ('forget', 'north_west', 'north', 'north_east', 'west',
-                 'center', 'east', 'south_west', 'south', 'south_east',
-                 'static')
 
 #: (:class:`tuple`) The list of filter types.
 #:
@@ -203,8 +201,6 @@ CHANNELS = dict(undefined=0, red=1, gray=1, cyan=1, green=2, magenta=2,
                 rgb_channels=128, gray_channels=128, sync_channels=256,
                 default_channels=134217719)
 
-OPTIONS = set(['fill'])
-
 #: (:class:`tuple`) The list of evaluation operators
 #:
 #: - ``'undefined'``
@@ -322,6 +318,13 @@ IMAGE_TYPES = ('undefined', 'bilevel', 'grayscale', 'grayscalematte',
 #:
 #:    __ http://www.imagemagick.org/api/magick-image.php#MagickSetImageUnits
 UNIT_TYPES = 'undefined', 'pixelsperinch', 'pixelspercentimeter'
+
+
+GRAVITY_TYPES = ('forget', 'north_west', 'north', 'north_east', 'west',
+                 'center', 'east', 'south_west', 'south', 'south_east',
+                 'static')
+
+OPTIONS = set(['fill'])
 
 
 class Image(Resource):
@@ -463,7 +466,7 @@ class Image(Resource):
             self.metadata = Metadata(self)
             self.channel_images = ChannelImageDict(self)
             self.channel_depths = ChannelDepthDict(self)
-            self.options = Options(self)
+            self.options = OptionDict(self)
         self.raise_exception()
 
     def read(self, file=None, filename=None, blob=None):
@@ -709,10 +712,11 @@ class Image(Resource):
 
     @property
     def font(self):
+        """(:class:`wand.font.Font`) The current font options."""
         return Font(
             path=self.font_path,
             size=self.font_size,
-            color=self.fill,
+            color=self.font_color,
             antialias=self.font_antialias
         )
 
@@ -720,14 +724,10 @@ class Image(Resource):
     def font(self, font):
         if not isinstance(font, Font):
             raise TypeError('font must be a wand.font.Font, not ' + repr(font))
-        if font.path is not None:
-            self.font_path = font.path
-        if font.size is not None:
-            self.font_size = font.size
-        if font.color is not None:
-            self.fill = font.color
-        if font.antialias is not None:
-            self.font_antialias = font.antialias
+        self.font_path = font.path
+        self.font_size = font.size
+        self.font_color = font.color
+        self.font_antialias = font.antialias
 
     @property
     def width(self):
@@ -752,16 +752,18 @@ class Image(Resource):
         library.MagickSetSize(self.wand, self.width, height)
 
     @property
-    def fill(self):
+    def font_color(self):
         return Color(self.options['fill'])
 
-    @fill.setter
-    def fill(self, color):
+    @font_color.setter
+    def font_color(self, color):
         if not isinstance(color, Color):
-            raise TypeError('color must be a wand.color.Color, not ' + repr(color))
+            raise TypeError('font_color must be a wand.color.Color, not ' +
+                            repr(color))
         self.options['fill'] = color.string
 
-    def caption(self, text='', x=0, y=0, width=None, height=None, font=None, gravity=None):
+    def caption(self, text, x=0, y=0, width=None, height=None, font=None,
+                gravity=None):
         if width is not None and not isinstance(width, numbers.Integral):
             raise TypeError('width must be a integral, not ' + repr(width))
         if height is not None and not isinstance(height, numbers.Integral):
@@ -770,20 +772,20 @@ class Image(Resource):
             raise TypeError('font must be a wand.font.Font, not ' + repr(font))
         if gravity is not None and gravity not in GRAVITY_TYPES:
             raise ValueError('invalid gravity value')
-
-        if width is None: width = self.width - x
-        if height is None: height = self.height - y
-
+        if width is None:
+            width = self.width - x
+        if height is None:
+            height = self.height - y
         with Image() as textboard:
             library.MagickSetSize(textboard.wand, width, height)
-
-            if font is not None: textboard.font = font
-            if gravity is not None: textboard.gravity = gravity
-
+            if font is not None:
+                textboard.font = font
+            if gravity is not None:
+                textboard.gravity = gravity
             with Color('transparent') as background_color:
-                library.MagickSetBackgroundColor(textboard.wand, background_color.resource)
-
-            textboard.read(filename="caption:%s" % text)
+                library.MagickSetBackgroundColor(textboard.wand,
+                                                 background_color.resource)
+            textboard.read(filename='caption:' + text)
             self.composite(textboard, x, y)
 
 
@@ -1788,7 +1790,8 @@ class ImageProperty(object):
             'parent Image of {0!r} has been destroyed'.format(self)
         )
 
-class Options(ImageProperty, collections.MutableMapping):
+class OptionDict(ImageProperty, collections.MutableMapping):
+
     def __iter__(self):
         return iter(OPTIONS)
 
