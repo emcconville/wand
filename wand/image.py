@@ -764,17 +764,17 @@ class Image(Resource):
 
     def caption(self, text, left=0, top=0, width=None, height=None, font=None,
                 gravity=None):
-        if width is not None and not isinstance(width, numbers.Integral):
-            raise TypeError('width must be a integral, not ' + repr(width))
-        if height is not None and not isinstance(height, numbers.Integral):
-            raise TypeError('height must be a integral, not ' + repr(height))
-        if font is not None and not isinstance(font, Font):
         if not isinstance(left, numbers.Integral):
             raise TypeError('left must be an integer, not ' + repr(left))
         elif not isinstance(top, numbers.Integral):
             raise TypeError('top must be an integer, not ' + repr(top))
+        elif width is not None and not isinstance(width, numbers.Integral):
+            raise TypeError('width must be an integer, not ' + repr(width))
+        elif height is not None and not isinstance(height, numbers.Integral):
+            raise TypeError('height must be an integer, not ' + repr(height))
+        elif font is not None and not isinstance(font, Font):
             raise TypeError('font must be a wand.font.Font, not ' + repr(font))
-        if gravity is not None and gravity not in GRAVITY_TYPES:
+        elif gravity is not None and gravity not in GRAVITY_TYPES:
             raise ValueError('invalid gravity value')
         if width is None:
             width = self.width - left
@@ -1804,21 +1804,20 @@ class OptionDict(ImageProperty, collections.MutableMapping):
 
     def __getitem__(self, key):
         if not isinstance(key, basestring):
-            raise TypeError('key must be a string, not ' + repr(key))
+            raise TypeError('option name must be a string, not ' + repr(key))
         if key not in OPTIONS:
-            raise ValueError('invalid keyname')
-
+            raise ValueError('invalid option: ' + repr(key))
         image = self.image
         return library.MagickGetOption(image.wand, key)
 
     def __setitem__(self, key, value):
         if not isinstance(key, basestring):
-            raise TypeError('key must be a string, not ' + repr(key))
+            raise TypeError('option name must be a string, not ' + repr(key))
         if not isinstance(value, basestring):
-            raise TypeError('key must be a string, not ' + repr(value))
+            raise TypeError('option value must be a string, not ' +
+                            repr(value))
         if key not in OPTIONS:
-            raise ValueError('invalid keyname')
-
+            raise ValueError('invalid option: ' + repr(key))
         image = self.image
         library.MagickSetOption(image.wand, key, value)
 
