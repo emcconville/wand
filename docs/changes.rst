@@ -10,6 +10,8 @@ To be shipped with 0.3.0.
 - Added :meth:`Drawing.get_font_metrics()
   <wand.drawing.Drawing.get_font_metrics>` method.
   [:issue:`69`, :issue:`71` by Cha, Hojeong]
+- Added :meth:`Image.caption() <wand.image.Image.caption>` method.
+  [:issue:`74` by Cha, Hojeong]
 
 
 Version 0.3.0
