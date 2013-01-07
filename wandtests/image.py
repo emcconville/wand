@@ -1066,7 +1066,7 @@ def caption():
         img.caption(
             'Test message',
             font=font,
-            x=5, y=144,
+            left=5, top=144,
             width=134, height=20,
             gravity='center'
         )

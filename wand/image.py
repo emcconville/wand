@@ -762,20 +762,24 @@ class Image(Resource):
                             repr(color))
         self.options['fill'] = color.string
 
-    def caption(self, text, x=0, y=0, width=None, height=None, font=None,
+    def caption(self, text, left=0, top=0, width=None, height=None, font=None,
                 gravity=None):
         if width is not None and not isinstance(width, numbers.Integral):
             raise TypeError('width must be a integral, not ' + repr(width))
         if height is not None and not isinstance(height, numbers.Integral):
             raise TypeError('height must be a integral, not ' + repr(height))
         if font is not None and not isinstance(font, Font):
+        if not isinstance(left, numbers.Integral):
+            raise TypeError('left must be an integer, not ' + repr(left))
+        elif not isinstance(top, numbers.Integral):
+            raise TypeError('top must be an integer, not ' + repr(top))
             raise TypeError('font must be a wand.font.Font, not ' + repr(font))
         if gravity is not None and gravity not in GRAVITY_TYPES:
             raise ValueError('invalid gravity value')
         if width is None:
-            width = self.width - x
+            width = self.width - left
         if height is None:
-            height = self.height - y
+            height = self.height - top
         with Image() as textboard:
             library.MagickSetSize(textboard.wand, width, height)
             if font is not None:
@@ -786,7 +790,7 @@ class Image(Resource):
                 library.MagickSetBackgroundColor(textboard.wand,
                                                  background_color.resource)
             textboard.read(filename='caption:' + text)
-            self.composite(textboard, x, y)
+            self.composite(textboard, left, top)
 
 
     @property
