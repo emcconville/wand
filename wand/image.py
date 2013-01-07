@@ -1819,8 +1819,8 @@ class OptionDict(ImageProperty, collections.MutableMapping):
         image = self.image
         library.MagickSetOption(image.wand, key, value)
 
-    def __delitem__(self, k):
-        pass
+    def __delitem__(self, key):
+        self[key] = ''
 
 
 class Metadata(ImageProperty, collections.Mapping):
