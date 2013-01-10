@@ -6,7 +6,6 @@
    :exc:`~exceptions.AttributeError` when the shared library fails to load.
 
 """
-import traceback
 import ctypes
 import ctypes.util
 import os
@@ -392,7 +391,6 @@ try:
     libmagick.GetMagickReleaseDate.argtypes = []
     libmagick.GetMagickReleaseDate.restype = ctypes.c_char_p
 except AttributeError:
-    print traceback.print_exc()
     raise ImportError('MagickWand shared library not found or incompatible')
 
 #: (:class:`ctypes.CDLL`) The C standard library.
