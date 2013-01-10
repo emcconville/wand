@@ -213,6 +213,9 @@ try:
     library.MagickGetImageBlob.argtypes = [ctypes.c_void_p,
                                            ctypes.POINTER(ctypes.c_size_t)]
     library.MagickGetImageBlob.restype = ctypes.POINTER(ctypes.c_ubyte)
+    library.MagickGetImagesBlob.argtypes = [ctypes.c_void_p,
+                                           ctypes.POINTER(ctypes.c_size_t)]
+    library.MagickGetImagesBlob.restype = ctypes.POINTER(ctypes.c_ubyte)
 
     library.MagickWriteImage.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
 
