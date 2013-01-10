@@ -634,13 +634,13 @@ def resize_gif():
             assert a.frame_num == 46
             assert a.size == (175, 98)
         with img.clone() as b:
-            assert a.size == (350, 197)
+            assert b.size == (350, 197)
             b.resize(height=100)
             b.write(filename="350_100.gif")
             assert b.frame_num == 46
             assert b.size == (350, 100)
         with img.clone() as c:
-            assert a.size == (350, 197)
+            assert c.size == (350, 197)
             c.resize(width=100)
             c.write(filename="100_197.gif")
             assert c.frame_num == 46
