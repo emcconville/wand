@@ -221,6 +221,10 @@ try:
 
     library.MagickWriteImageFile.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 
+    library.MagickWriteImages.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
+
+    library.MagickWriteImagesFile.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
+
     library.MagickGetImageResolution.argtypes = [
         ctypes.c_void_p, ctypes.POINTER(ctypes.c_double),
         ctypes.POINTER(ctypes.c_double)

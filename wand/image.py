@@ -1136,16 +1136,12 @@ class Image(Resource):
               not (0 <= filter < len(FILTER_TYPES))):
             raise ValueError(repr(filter) + ' is an invalid filter type')
         blur = ctypes.c_double(float(blur))
-        print "resize", self.mimetype
         if self.mimetype == 'image/gif':
-            print "gif resize"
             self.wand = library.MagickCoalesceImages(self.wand)
             library.MagickSetLastIterator(self.wand)
             n = library.MagickGetIteratorIndex(self.wand)
-            print "gif frames", n
             library.MagickResetIterator(self.wand)
             for i in range(0, n + 1):
-                print "resize frame", i
                 library.MagickSetIteratorIndex(self.wand, i)
                 library.MagickResizeImage(self.wand, width, height, filter, blur)
         else:
@@ -1504,7 +1500,10 @@ class Image(Resource):
             if not isinstance(filename, basestring):
                 raise TypeError('filename must be a string, not ' +
                                 repr(filename))
-            r = library.MagickWriteImage(self.wand, filename)
+            if self.mimetype == 'image/gif':
+                r = library.MagickWriteImages(self.wand, filename)
+            else:
+                r = library.MagickWriteImage(self.wand, filename)
             if not r:
                 self.raise_exception()
 
@@ -1534,13 +1533,10 @@ class Image(Resource):
         library.MagickResetIterator(self.wand)
         length = ctypes.c_size_t()
         blob_p = None
-        print 'make blob'
         if self.mimetype == 'image/gif':
-            print 'gif blob'
             blob_p = library.MagickGetImagesBlob(self.wand, ctypes.byref(length))
         else:
             blob_p = library.MagickGetImageBlob(self.wand, ctypes.byref(length))
-        print 'blob', length.value
         if blob_p and length.value:
             blob = ctypes.string_at(blob_p, length.value)
             library.MagickRelinquishMemory(blob_p)
