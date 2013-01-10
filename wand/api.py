@@ -6,6 +6,7 @@
    :exc:`~exceptions.AttributeError` when the shared library fails to load.
 
 """
+import traceback
 import ctypes
 import ctypes.util
 import os
@@ -278,6 +279,11 @@ try:
                                           ctypes.c_size_t, ctypes.c_size_t]
 
     library.MagickResetIterator.argtypes = [ctypes.c_void_p]
+    library.MagickSetLastIterator.argtypes = [ctypes.c_void_p]
+    library.MagickGetIteratorIndex.argtypes = [ctypes.c_void_p]
+    library.MagickGetIteratorIndex.restype = ctypes.c_ssize_t
+    library.MagickCoalesceImages.argtypes = [ctypes.c_void_p]
+    library.MagickCoalesceImages.restype = ctypes.c_void_p
 
     library.MagickIdentifyImage.argtypes = [ctypes.c_void_p]
     library.MagickIdentifyImage.restype = ctypes.c_char_p
@@ -379,6 +385,7 @@ try:
     libmagick.GetMagickReleaseDate.argtypes = []
     libmagick.GetMagickReleaseDate.restype = ctypes.c_char_p
 except AttributeError:
+    print traceback.print_exc()
     raise ImportError('MagickWand shared library not found or incompatible')
 
 #: (:class:`ctypes.CDLL`) The C standard library.

@@ -1136,9 +1136,20 @@ class Image(Resource):
               not (0 <= filter < len(FILTER_TYPES))):
             raise ValueError(repr(filter) + ' is an invalid filter type')
         blur = ctypes.c_double(float(blur))
-        r = library.MagickResizeImage(self.wand, width, height, filter, blur)
-        if not r:
-            self.raise_exception()
+        print "resize", self.mimetype
+        if self.mimetype == 'image/gif':
+            print "gif resize"
+            self.wand = library.MagickCoalesceImages(self.wand)
+            library.MagickSetLastIterator(self.wand)
+            n = library.MagickGetIteratorIndex(self.wand)
+            library.MagickResetIterator(self.wand)
+            for i in range(0, n + 1):
+                library.MagickSetIteratorIndex(self.wand, i)
+                library.MagickResizeImage(self.wand, width, height, filter, blur)
+        else:
+            r = library.MagickResizeImage(self.wand, width, height, filter, blur)
+            if not r:
+                self.raise_exception()
 
     def transform(self, crop='', resize=''):
         """Transforms the image using :c:func:`MagickTransformImage`,
