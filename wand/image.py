@@ -1149,6 +1149,13 @@ class Image(Resource):
             if not r:
                 self.raise_exception()
 
+    @property
+    def frame_num(self):
+        library.MagickSetLastIterator(self.wand)
+        n = library.MagickGetIteratorIndex(self.wand)
+        library.MagickResetIterator(self.wand)
+        return n + 1
+
     def transform(self, crop='', resize=''):
         """Transforms the image using :c:func:`MagickTransformImage`,
         which is a convenience function accepting geometry strings to

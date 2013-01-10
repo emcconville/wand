@@ -622,6 +622,29 @@ def resize():
             c.resize(width=100)
             assert c.size == (100, 599)
 
+@tests.test
+def resize_gif():
+    """Resizes the gif image."""
+    with Image(filename=asset('nocomments.gif')) as img:
+        assert img.frame_num == 46
+        with img.clone() as a:
+            assert a.size == (350, 197)
+            a.resize(175, 98)
+            a.write(filename="175_98.gif")
+            assert a.frame_num == 46
+            assert a.size == (175, 98)
+        with img.clone() as b:
+            assert a.size == (350, 197)
+            b.resize(height=100)
+            b.write(filename="350_100.gif")
+            assert b.frame_num == 46
+            assert b.size == (350, 100)
+        with img.clone() as c:
+            assert a.size == (350, 197)
+            c.resize(width=100)
+            c.write(filename="100_197.gif")
+            assert c.frame_num == 46
+            assert c.size == (100, 197)
 
 @tests.test
 def resize_errors():
