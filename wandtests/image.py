@@ -630,19 +630,19 @@ def resize_gif():
         with img.clone() as a:
             assert a.size == (350, 197)
             a.resize(175, 98)
-            a.write(filename="175_98.gif")
+            a.save(filename="175_98.gif")
             assert a.frame_num == 46
             assert a.size == (175, 98)
         with img.clone() as b:
             assert b.size == (350, 197)
             b.resize(height=100)
-            b.write(filename="350_100.gif")
+            b.save(filename="350_100.gif")
             assert b.frame_num == 46
             assert b.size == (350, 100)
         with img.clone() as c:
             assert c.size == (350, 197)
             c.resize(width=100)
-            c.write(filename="100_197.gif")
+            c.save(filename="100_197.gif")
             assert c.frame_num == 46
             assert c.size == (100, 197)
 
