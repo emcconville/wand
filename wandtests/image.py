@@ -623,8 +623,8 @@ def resize():
             assert c.size == (100, 599)
 
 @tests.test
-def resize_gif():
-    """Resizes the gif image."""
+def test_gif():
+    """Test the gif image resize/crop/rotate"""
     with Image(filename=asset('nocomments.gif')) as img:
         assert img.frame_num == 46
         with img.clone() as a:
@@ -645,6 +645,18 @@ def resize_gif():
             c.save(filename="100_197.gif")
             assert c.frame_num == 46
             assert c.size == (100, 197)
+        with img.clone() as d:
+            assert d.size == (350, 197)
+            d.crop(50, 50, 200, 150)
+            d.save(filename="50_50_200_150.gif")
+            assert d.frame_num == 46
+            assert d.size == (150, 100)
+        with img.clone() as e:
+            assert e.size == (350, 197)
+            e.rotate(90)
+            e.save(filename="rotate_90.gif")
+            assert e.size == (197, 350)
+            assert e.frame_num == 46
 
 @tests.test
 def resize_errors():

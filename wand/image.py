@@ -1063,10 +1063,21 @@ class Image(Resource):
             raise ValueError('image width cannot be zero')
         elif left == top == 0 and width == self.width and height == self.height:
             return
-        library.MagickCropImage(self.wand, width, height, left, top)
-        self.raise_exception()
-        if reset_coords:
-            self.reset_coords()
+        if self.mimetype == 'image/gif':
+            self.wand = library.MagickCoalesceImages(self.wand)
+            library.MagickSetLastIterator(self.wand)
+            n = library.MagickGetIteratorIndex(self.wand)
+            library.MagickResetIterator(self.wand)
+            for i in range(0, n + 1):
+                library.MagickSetIteratorIndex(self.wand, i)
+                library.MagickCropImage(self.wand, width, height, left, top)
+                if reset_coords:
+                    library.MagickResetImagePage(self.wand, None)
+        else:
+            library.MagickCropImage(self.wand, width, height, left, top)
+            self.raise_exception()
+            if reset_coords:
+                self.reset_coords()
 
     def reset_coords(self):
         """Reset the coordinate frame of the image so to the upper-left corner
@@ -1338,13 +1349,22 @@ class Image(Resource):
             raise TypeError('degree must be a numbers.Real value, not ' +
                             repr(degree))
         with background:
-            result = library.MagickRotateImage(self.wand,
-                                               background.resource,
-                                               degree)
-        if not result:
-            self.raise_exception()
-        if reset_coords:
-            self.reset_coords()
+            if self.mimetype == 'image/gif':
+                self.wand = library.MagickCoalesceImages(self.wand)
+                library.MagickSetLastIterator(self.wand)
+                n = library.MagickGetIteratorIndex(self.wand)
+                library.MagickResetIterator(self.wand)
+                for i in range(0, n + 1):
+                    library.MagickSetIteratorIndex(self.wand, i)
+                    library.MagickRotateImage(self.wand, background.resource, degree)
+                    if reset_coords:
+                        library.MagickResetImagePage(self.wand, None)
+            else:
+                result = library.MagickRotateImage(self.wand, background.resource, degree)
+                if not result:
+                    self.raise_exception()
+                if reset_coords:
+                    self.reset_coords()
 
     def transparentize(self, transparency):
         """Makes the image transparent by subtracting some percentage of
