@@ -149,6 +149,42 @@ an image by <tt class="docutils literal"><span class="pre">[left:right,</span> <
 </pre></div>
 </div>
 </div>
+<div class="section" id="transform-images">
+<h2>Transform images<a class="headerlink" href="#transform-images" title="Permalink to this headline">¶</a></h2>
+<p>Use this function to crop and resize and image at the same time,
+using ImageMagick geometry strings. Cropping is performed first,
+followed by resizing.</p>
+<p>For example, if you want to crop your image to 300x300 pixels
+and then scale it by 2x for a final size of 600x600 pixels,
+you can call:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">img</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s">&#39;300x300&#39;</span><span class="p">,</span> <span class="s">&#39;200%&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Other example calls:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># crop top left corner</span>
+<span class="n">img</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s">&#39;50%&#39;</span><span class="p">)</span>
+
+<span class="c"># scale height to 100px and preserve aspect ratio</span>
+<span class="n">img</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">resize</span><span class="o">=</span><span class="s">&#39;x100&#39;</span><span class="p">)</span>
+
+<span class="c"># if larger than 640x480, fit within box, preserving aspect ratio</span>
+<span class="n">img</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">resize</span><span class="o">=</span><span class="s">&#39;640x480&gt;&#39;</span><span class="p">)</span>
+
+<span class="c"># crop a 320x320 square starting at 160x160 from the top left</span>
+<span class="n">img</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">crop</span><span class="o">=</span><span class="s">&#39;320+160+160&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://www.imagemagick.org/script/command-line-processing.php#geometry">ImageMagick Geometry Specifications</a></dt>
+<dd>Cropping and resizing geometry for the <tt class="docutils literal"><span class="pre">transform</span></tt> method are
+specified according to ImageMagick&#8217;s geometry string format.
+The ImageMagick documentation provides more information about
+geometry strings.</dd>
+</dl>
+</div>
+</div>
 <div class="section" id="seam-carving-also-known-as-content-aware-resizing">
 <span id="seam-carving"></span><h2>Seam carving (also known as <em>content-aware resizing</em>)<a class="headerlink" href="#seam-carving-also-known-as-content-aware-resizing" title="Permalink to this headline">¶</a></h2>
 <p class="versionadded">
@@ -227,6 +263,7 @@ you should recompile ImageMagick.</p>
 <li><a class="reference internal" href="#">Resizing and cropping</a><ul>
 <li><a class="reference internal" href="#resize-images">Resize images</a></li>
 <li><a class="reference internal" href="#crop-images">Crop images</a></li>
+<li><a class="reference internal" href="#transform-images">Transform images</a></li>
 <li><a class="reference internal" href="#seam-carving-also-known-as-content-aware-resizing">Seam carving (also known as <em>content-aware resizing</em>)</a></li>
 </ul>
 </li>
@@ -261,7 +298,7 @@ you should recompile ImageMagick.</p>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright 2012, Hong Minhee.
+    &copy; Copyright 2013, Hong Minhee.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   

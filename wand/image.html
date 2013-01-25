@@ -53,7 +53,7 @@
           <a href="../wand.html" title="wand — Simple MagickWand API binding for Python"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Wand</a> &raquo;</li>
-          <li><a href="../wand.html" accesskey="U"><tt class="docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a> &raquo;</li> 
+          <li><a href="../wand.html" accesskey="U"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -515,6 +515,28 @@ default is transparent</li>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.3.0.</span></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wand.image.Image.border">
+<tt class="descname">border</tt><big>(</big><em>image</em>, <em>color</em>, <em>width</em>, <em>height</em><big>)</big><a class="headerlink" href="#wand.image.Image.border" title="Permalink to this definition">¶</a></dt>
+<dd><p>Surrounds the image with a border.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>image</strong> (<a class="reference internal" href="color.html#wand.color.Color" title="wand.color.Color"><tt class="xref py py-class docutils literal"><span class="pre">Color</span></tt></a>) &#8211; the wand image</li>
+<li><strong>bordercolor</strong> &#8211; the border color pixel wand</li>
+<li><strong>width</strong> (<a class="reference external" href="http://docs.python.org/library/numbers.html#numbers.Integral" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">numbers.Integral</span></tt></a>) &#8211; the border width</li>
+<li><strong>height</strong> (<a class="reference external" href="http://docs.python.org/library/numbers.html#numbers.Integral" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">numbers.Integral</span></tt></a>) &#8211; the border height</li>
+</ul>
 </td>
 </tr>
 </tbody>
@@ -1133,10 +1155,22 @@ image, from 0.0 to 1.0</td>
 
 <dl class="method">
 <dt id="wand.image.Image.trim">
-<tt class="descname">trim</tt><big>(</big><big>)</big><a class="headerlink" href="#wand.image.Image.trim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove solid border from image. Uses top left pixel as a guide.</p>
+<tt class="descname">trim</tt><big>(</big><em>color=None</em><big>)</big><a class="headerlink" href="#wand.image.Image.trim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove solid border from image. Uses top left pixel as a guide
+by default, or you can also specify the <tt class="docutils literal"><span class="pre">color</span></tt> to remove.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>color</strong> (<a class="reference internal" href="color.html#wand.color.Color" title="wand.color.Color"><tt class="xref py py-class docutils literal"><span class="pre">Color</span></tt></a>) &#8211; the border color to remove.
+if it&#8217;s omitted top left pixel is used by default</td>
+</tr>
+</tbody>
+</table>
 <p class="versionadded">
 <span class="versionmodified">New in version 0.2.1.</span></p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.3.0.</span></p>
 </dd></dl>
 
 <dl class="attribute">
@@ -1297,9 +1331,9 @@ Use <a class="reference internal" href="#wand.image.Image.metadata" title="wand.
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../wand.html"><tt class="docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a><ul>
-      <li>Previous: <a href="../wand.html" title="previous chapter"><tt class="docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a></li>
-      <li>Next: <a href="color.html" title="next chapter"><tt class="docutils literal"><span class="pre">wand.color</span></tt> &#8212; Colors</a></li>
+  <li><a href="../wand.html"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a><ul>
+      <li>Previous: <a href="../wand.html" title="previous chapter"><tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a></li>
+      <li>Next: <a href="color.html" title="next chapter"><tt class="docutils literal docutils literal"><span class="pre">wand.color</span></tt> &#8212; Colors</a></li>
   </ul></li>
   </ul></li>
 </ul>
@@ -1326,7 +1360,7 @@ Use <a class="reference internal" href="#wand.image.Image.metadata" title="wand.
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright 2012, Hong Minhee.
+    &copy; Copyright 2013, Hong Minhee.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   

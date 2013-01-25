@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="Wand 0.3.0" href="index.html" />
-    <link rel="next" title="wand — Simple MagickWand API binding for Python" href="wand.html" />
+    <link rel="next" title="Talks and Presentations" href="talks.html" />
     <link rel="prev" title="Roadmap" href="roadmap.html" />
    
   
@@ -46,7 +46,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="wand.html" title="wand — Simple MagickWand API binding for Python"
+          <a href="talks.html" title="Talks and Presentations"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="roadmap.html" title="Roadmap"
@@ -66,6 +66,9 @@
 <h2>Version 0.3.0<a class="headerlink" href="#version-0-3-0" title="Permalink to this headline">¶</a></h2>
 <p>To be released.</p>
 <ul class="simple">
+<li>Added optional <tt class="docutils literal"><span class="pre">color</span></tt> parameter to <a class="reference internal" href="wand/image.html#wand.image.Image.border" title="wand.image.Image.border"><tt class="xref py py-meth docutils literal"><span class="pre">Image.border()</span></tt></a> method.</li>
+<li>Added <a class="reference internal" href="wand/image.html#wand.image.Image.border" title="wand.image.Image.border"><tt class="xref py py-meth docutils literal"><span class="pre">Image.border()</span></tt></a> method.
+[<a class="reference external" href="https://github.com/dahlia/wand/commit/2496d37f75d75e9425f95dde07033217dc8afefc">2496d37f75d75e9425f95dde07033217dc8afefc</a> by Jae-Myoung Yu]</li>
 <li>Added <tt class="docutils literal"><span class="pre">resolution</span></tt> parameter to <a class="reference internal" href="wand/image.html#wand.image.Image.read" title="wand.image.Image.read"><tt class="xref py py-meth docutils literal"><span class="pre">Image.read()</span></tt></a>
 method and the constructor of <a class="reference internal" href="wand/image.html#wand.image.Image" title="wand.image.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a>.
 [<a class="reference external" href="https://github.com/dahlia/wand/issues/75">#75</a> by Andrey Antukh]</li>
@@ -95,6 +98,20 @@ a weak reference to the parent image.</li>
 <a class="reference internal" href="wand/image.html#wand.image.COMPOSITE_OPERATORS" title="wand.image.COMPOSITE_OPERATORS"><tt class="xref py py-const docutils literal"><span class="pre">COMPOSITE_OPERATORS</span></tt></a>.</li>
 <li>Now it shows helpful error message when ImageMagick library cannot be
 found.</li>
+<li>Added IPython-specialized formatter.</li>
+</ul>
+</div>
+<div class="section" id="version-0-2-3">
+<h2>Version 0.2.3<a class="headerlink" href="#version-0-2-3" title="Permalink to this headline">¶</a></h2>
+<p>Released on January 25, 2013.</p>
+<ul class="simple">
+<li>Fixed a bug that <a class="reference internal" href="wand/image.html#wand.image.Image.transparentize" title="wand.image.Image.transparentize"><tt class="xref py py-meth docutils literal"><span class="pre">Image.transparentize()</span></tt></a> method (and <a class="reference internal" href="wand/image.html#wand.image.Image.watermark" title="wand.image.Image.watermark"><tt class="xref py py-meth docutils literal"><span class="pre">Image.watermark()</span></tt></a> method which internally uses it) didn&#8217;t
+work.</li>
+<li>Fixed segmentation fault occured when <a class="reference internal" href="wand/color.html#wand.color.Color.red" title="wand.color.Color.red"><tt class="xref py py-attr docutils literal"><span class="pre">Color.red</span></tt></a>, <a class="reference internal" href="wand/color.html#wand.color.Color.green" title="wand.color.Color.green"><tt class="xref py py-attr docutils literal"><span class="pre">Color.green</span></tt></a>,
+or <tt class="xref py py-attr docutils literal"><span class="pre">Color.blue</span></tt> is accessed.</li>
+<li>Added <a class="reference internal" href="wand/color.html#wand.color.Color.alpha" title="wand.color.Color.alpha"><tt class="xref py py-attr docutils literal"><span class="pre">Color.alpha</span></tt></a> property.</li>
+<li>Fixed a bug that format converting using <a class="reference internal" href="wand/image.html#wand.image.Image.format" title="wand.image.Image.format"><tt class="xref py py-attr docutils literal"><span class="pre">Image.format</span></tt></a> property or <a class="reference internal" href="wand/image.html#wand.image.Image.convert" title="wand.image.Image.convert"><tt class="xref py py-meth docutils literal"><span class="pre">Image.convert()</span></tt></a> method doesn&#8217;t correctly work
+to save blob.</li>
 </ul>
 </div>
 <div class="section" id="version-0-2-2">
@@ -314,6 +331,7 @@ argument becomes omittable.</li>
   <ul>
 <li><a class="reference internal" href="#">Wand Changelog</a><ul>
 <li><a class="reference internal" href="#version-0-3-0">Version 0.3.0</a></li>
+<li><a class="reference internal" href="#version-0-2-3">Version 0.2.3</a></li>
 <li><a class="reference internal" href="#version-0-2-2">Version 0.2.2</a></li>
 <li><a class="reference internal" href="#version-0-2-1">Version 0.2.1</a></li>
 <li><a class="reference internal" href="#version-0-2-0">Version 0.2.0</a></li>
@@ -335,7 +353,7 @@ argument becomes omittable.</li>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
       <li>Previous: <a href="roadmap.html" title="previous chapter">Roadmap</a></li>
-      <li>Next: <a href="wand.html" title="next chapter"><tt class="docutils literal"><span class="pre">wand</span></tt> &#8212; Simple MagickWand API binding for Python</a></li>
+      <li>Next: <a href="talks.html" title="next chapter">Talks and Presentations</a></li>
   </ul></li>
 </ul>
   <h3>This Page</h3>
@@ -361,7 +379,7 @@ argument becomes omittable.</li>
       <div class="clearer"></div>
     </div>
   <div class="footer">
-    &copy; Copyright 2012, Hong Minhee.
+    &copy; Copyright 2013, Hong Minhee.
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   
