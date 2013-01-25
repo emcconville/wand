@@ -44,6 +44,25 @@ To be released.
 __ http://en.wikipedia.org/wiki/Seam_carving
 
 
+Version 0.2.3
+-------------
+
+Released on January 25, 2013.
+
+- Fixed a bug that :meth:`Image.transparentize()
+  <wand.image.Image.transparentize>` method (and :meth:`Image.watermark()
+  <wand.image.Image.watermark>` method which internally uses it) didn't
+  work.
+- Fixed segmentation fault occured when :attr:`Color.red
+  <wand.color.Color.red>`, :attr:`Color.green <wand.color.Color.green>`,
+  or :attr:`Color.blue <Wand.color.Color.blue>` is accessed.
+- Added :attr:`Color.alpha <wand.color.Color.alpha>` property.
+- Fixed a bug that format converting using :attr:`Image.format
+  <wand.image.Image.format>` property or :meth:`Image.convert()
+  <wand.image.Image.convert>` method doesn't correctly work
+  to save blob.
+
+
 Version 0.2.2
 -------------
 

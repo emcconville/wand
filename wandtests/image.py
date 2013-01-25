@@ -219,6 +219,21 @@ def make_blob():
         assert img.format == 'JPEG'
         with raises(TypeError):
             img.make_blob(123)
+    svg = '''
+    <svg width="100px" height="100px">
+    <circle cx="100" cy="50" r="40" stroke="black" stroke-width="2" fill="red"/>
+    </svg>
+    '''
+    with Image(blob=svg, format='svg') as img:
+        assert img.size == (100, 100)
+        assert img.format in ('SVG', 'MVG')
+        img.format = 'PNG'
+        assert img.size == (100, 100)
+        assert img.format == 'PNG'
+        png = img.make_blob()
+    with Image(blob=png, format='png') as img:
+        assert img.size == (100, 100)
+        assert img.format == 'PNG'
 
 
 @tests.test
@@ -828,20 +843,33 @@ def set_background_color():
 
 
 @tests.test
+def transparentize():
+    with Image(filename=asset('croptest.png')) as im:
+        with Color('transparent') as transparent:
+            with Color('black') as black:
+                assert im[99, 100] == transparent
+                assert im[100, 100] == black
+                im.transparentize(0.3)
+                assert im[99, 100] == transparent
+                with im[100, 100] as c:
+                    assert c.red == c.green == c.blue == 0
+                    assert 0.69 < c.alpha < 0.71
+
+
+@tests.test
 def watermark():
     """Adds  watermark to an image."""
-    sig = get_sig_version({
-        (6, 6, 9, 7):
-            '9c4c182e44ee265230761a412e355cb78ea61859658220ecc8cbc1d56f58584e',
-        (6, 7, 7, 6):
-            'd725d924a9008ddff828f22595237ec6b56fb54057c6ee99584b9fc7ac91092c'
-    })
     with Image(filename=asset('beach.jpg')) as img:
         with Image(filename=asset('watermark.png')) as wm:
+            a = img[70, 83]
+            b = img[70, 84]
+            c = img[623, 282]
+            d = img[622, 281]
             img.watermark(wm, 0.3)
-            msg = 'img = {0!r}, marked = {1!r}'.format(
-                img.signature, sig)
-            assert img.signature == sig, msg
+            assert img[70, 83] == a
+            assert img[70, 84] != b
+            assert img[623, 282] == c
+            assert img[622, 281] != d
 
 
 @tests.test

@@ -336,6 +336,15 @@ try:
     library.PixelGetColorAsString.argtypes = [ctypes.c_void_p]
     library.PixelGetColorAsString.restype = c_magick_char_p
 
+    library.PixelGetRed.argtypes = [ctypes.c_void_p]
+    library.PixelGetRed.restype = ctypes.c_double
+
+    library.PixelGetGreen.argtypes = [ctypes.c_void_p]
+    library.PixelGetGreen.restype = ctypes.c_double
+
+    library.PixelGetBlue.argtypes = [ctypes.c_void_p]
+    library.PixelGetBlue.restype = ctypes.c_double
+
     library.PixelGetAlpha.argtypes = [ctypes.c_void_p]
     library.PixelGetAlpha.restype = ctypes.c_double
 
