@@ -4,7 +4,7 @@ Wand Changelog
 Version 0.2.3
 -------------
 
-To be released.
+Released on January 25, 2013.
 
 - Fixed a bug that :meth:`Image.transparentize()
   <wand.image.Image.transparentize>` method (and :meth:`Image.watermark()
