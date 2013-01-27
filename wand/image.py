@@ -491,7 +491,7 @@ class Image(Resource):
                 raise TypeError('resolution must be a (x, y) pair or an '
                                 'integer of the same x/y')
         if file is not None:
-            if (isinstance(file, types.FileType) and
+            if (hasattr(file, 'fileno') and
                 hasattr(libc, 'fdopen')):
                 fd = libc.fdopen(file.fileno(), file.mode)
                 r = library.MagickReadImageFile(self.wand, fd)
@@ -503,13 +503,8 @@ class Image(Resource):
                 blob = file.read()
                 file = None
         if blob is not None:
-            if not isinstance(blob, collections.Iterable):
-                raise TypeError('blob must be iterable, not ' +
-                                repr(blob))
-            if not isinstance(blob, basestring):
-                blob = ''.join(blob)
-            elif not isinstance(blob, str):
-                blob = str(blob)
+            if not isinstance(blob, bytes):
+                raise TypeError('blob must be bytes, not ' + str(type(blob)))
             r = library.MagickReadImageBlob(self.wand, blob, len(blob))
         elif filename is not None:
             r = library.MagickReadImage(self.wand, filename)
@@ -1239,12 +1234,12 @@ class Image(Resource):
             raise TypeError("resize must be a string, not " + repr(resize))
         # Also verify that only ASCII characters are included
         try:
-            crop.encode('ascii')
+            crop = crop.encode('ascii')
         except UnicodeEncodeError:
             raise ValueError('crop must only contain ascii-encodable ' +
                              'characters.')
         try:
-            resize.encode('ascii')
+            resize = resize.encode('ascii')
         except UnicodeEncodeError:
             raise ValueError('resize must only contain ascii-encodable ' +
                              'characters.')
@@ -1480,7 +1475,7 @@ class Image(Resource):
         elif file is not None and filename is not None:
             raise TypeError('expected only one argument; but two passed')
         elif file is not None:
-            if isinstance(file, types.FileType) and hasattr(libc, 'fdopen'):
+            if hasattr(file, 'fileno') and hasattr(libc, 'fdopen'):
                 fd = libc.fdopen(file.fileno(), file.mode)
                 r = library.MagickWriteImageFile(self.wand, fd)
                 if not r:

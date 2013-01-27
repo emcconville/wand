@@ -97,11 +97,11 @@ del libmagick
 if __name__ == '__main__':
     options = frozenset(sys.argv[1:])
     if '-v' in options or '--verbose' in options:
-        print 'Wand', VERSION
+        print('Wand ' + VERSION)
         try:
-            print MAGICK_VERSION
+            print(MAGICK_VERSION)
         except NameError:
             pass
     else:
-        print VERSION
+        print(VERSION)
 
