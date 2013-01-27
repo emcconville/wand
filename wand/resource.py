@@ -160,7 +160,7 @@ class Resource(object):
         if self.c_is_resource(resource):
             self.c_resource = resource
         else:
-            raise TypeError(repr(wand) + ' is an invalid resource')
+            raise TypeError(repr(resource) + ' is an invalid resource')
         increment_refcount()
 
     @resource.deleter
