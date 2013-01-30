@@ -44,6 +44,19 @@ To be released.
 __ http://en.wikipedia.org/wiki/Seam_carving
 
 
+Version 0.2.4
+-------------
+
+Reserved version, but maybe not released.
+
+- Fix :exc:`~exceptions.NameError` in :attr:`Resource.resource
+  <wand.resource.Resource.resource>` setter.
+  [:issue:`89` forwareded from Debian bug report `#699064`__
+  by Jakub Wilk]
+
+__ http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=699064
+
+
 Version 0.2.3
 -------------
 
