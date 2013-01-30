@@ -1,4 +1,4 @@
-.. image:: http://dahlia.github.com/wand/_static/wand.png
+.. image:: http://docs.wand-py.org/en/latest/_static/wand.png
    :width: 120
    :height: 120
 
@@ -20,7 +20,7 @@ revision of the source code from the `GitHub repository`__::
     $ cd wand/
     $ python setup.py install
 
-.. _Wand: http://dahlia.kr/wand/
+.. _Wand: http://wand-py.org/
 .. _ImageMagick: http://www.imagemagick.org/
 .. _PyPI: http://pypi.python.org/pypi/Wand
 __ https://github.com/dahlia/wand
