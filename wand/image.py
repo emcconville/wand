@@ -776,7 +776,7 @@ class Image(Resource):
     def type(self):
         """(:class:`basestring`) The image type.
 
-        Defines image type as in wand.image.IMAGE_TYPES enumeration.
+        Defines image type as in :const:`IMAGE_TYPES` enumeration.
 
         It may raise :exc:`ValueError` when the type is unknown.
 
@@ -862,7 +862,7 @@ class Image(Resource):
            or ``'deactivatealphachannel'``.
 
         """
-        return library.MagickGetImageAlphaChannel(self.wand)
+        return bool(library.MagickGetImageAlphaChannel(self.wand))
 
     @alpha_channel.setter
     def alpha_channel(self, alpha):

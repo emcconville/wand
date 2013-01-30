@@ -63,6 +63,7 @@ User's guide
    guide/read
    guide/write
    guide/resizecrop
+   guide/colorspace
    guide/exif
    guide/resource
    test
