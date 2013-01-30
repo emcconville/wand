@@ -11,6 +11,7 @@ import ctypes.util
 import os
 import os.path
 import platform
+import sys
 
 __all__ = 'load_library', 'MagickPixelPacket', 'library', 'libmagick', 'libc'
 
@@ -77,6 +78,9 @@ class MagickPixelPacket(ctypes.Structure):
                 ('opacity', ctypes.c_double),
                 ('index', ctypes.c_double)]
 
+
+# Preserve the module itself even if it fails to import
+sys.modules['wand._api'] = sys.modules['wand.api']
 
 try:
     libraries = load_library()
