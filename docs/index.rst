@@ -64,6 +64,7 @@ User's guide
    guide/write
    guide/resizecrop
    guide/draw
+   guide/colorspace
    guide/exif
    guide/resource
    test

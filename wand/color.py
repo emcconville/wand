@@ -98,9 +98,9 @@ class Color(Resource):
     @property
     def string(self):
         """(:class:`basestring`) The string representation of the color."""
-        with self as this:
+        with self:
             color_string = library.PixelGetColorAsString(self.resource)
-            return color_string.value
+            return color_string
 
     @staticmethod
     def c_equals(a, b):
@@ -135,18 +135,27 @@ class Color(Resource):
 
     @property
     def red(self):
+        """(:class:`numbers.Real`) Red, from 0.0 to 1.0."""
         with self:
-            return library.PixelGetRedQuantum(self.resource)
+            return library.PixelGetRed(self.resource)
 
     @property
     def green(self):
+        """(:class:`numbers.Real`) Green, from 0.0 to 1.0."""
         with self:
-            return library.PixelGetGreenQuantum(self.resource)
+            return library.PixelGetGreen(self.resource)
 
     @property
     def blue(self):
+        """(:class:`numbers.Real`) Blue, from 0.0 to 1.0."""
         with self:
-            return library.PixelGetBlueQuantum(self.resource)
+            return library.PixelGetBlue(self.resource)
+
+    @property
+    def alpha(self):
+        """(:class:`numbers.Real`) Alpha value, from 0.0 to 1.0."""
+        with self:
+            return library.PixelGetAlpha(self.resource)
 
     def __str__(self):
         return self.string
