@@ -37,44 +37,69 @@ class c_magick_char_p(ctypes.c_char_p):
         library.MagickRelinquishMemory(self)
 
 
+def find_library(suffix=''):
+    """Finds library path to try loading.  The result paths are not
+    guarenteed that they exist.
+
+    :param suffix: optional suffix e.g. ``'-Q16'``
+    :type suffix: :class:`basestring`
+    :returns: a pair of libwand and libmagick paths.  they can be the same.
+              path can be ``None`` as well
+    :rtype: :class:`tuple`
+
+    """
+    libwand = None
+    system = platform.system()
+    magick_home = os.environ.get('MAGICK_HOME')
+    if magick_home:
+        if system == 'Windows':
+            libwand = 'CORE_RL_wand_{0}.dll'.format(suffix),
+        elif system == 'Darwin':
+            libwand = 'lib', 'libMagickWand{0}.dylib'.format(suffix),
+        else:
+            libwand = 'lib', 'libMagickWand{0}.so'.format(suffix),
+        libwand = os.path.join(magick_home, *libwand)
+    else:
+        if system == 'Windows':
+            libwand = ctypes.util.find_library('CORE_RL_wand_' + suffix)
+        else:
+            libwand = ctypes.util.find_library('MagickWand' + suffix)
+    if system == 'Windows':
+        # On Windows, the API is split between two libs. On other platforms,
+        # it's all contained in one.
+        libmagick_filename = 'CORE_RL_magick_' + suffix
+        if magick_home:
+            libmagick = os.path.join(magick_home, libmagick_filename + '.dll')
+        else:
+            libmagick = ctypes.util.find_library(libmagick_filename)
+        return libwand, libmagick
+    return libwand, libwand
+
+
 def load_library():
     """Loads the MagickWand library.
 
     :returns: the MagickWand library and the ImageMagick library
+    :rtype: :class:`ctypes.CDLL`
 
     """
-    libpath = None
-    system = platform.system()
-
-    magick_home = os.environ.get('MAGICK_HOME')
-    if magick_home:
-        if system == 'Windows':
-            libpath = 'CORE_RL_wand_.dll',
-        elif system == 'Darwin':
-            libpath = 'lib', 'libMagickWand.dylib',
-        else:
-            libpath = 'lib', 'libMagickWand.so',
-        libpath = os.path.join(magick_home, *libpath)
-    else:
-        if system == 'Windows':
-            libpath = ctypes.util.find_library('CORE_RL_wand_')
-        else:
-            libpath = ctypes.util.find_library('MagickWand')
-    libwand = ctypes.CDLL(libpath)
-
-    if system == 'Windows':
-        # On Windows, the API is split between two libs. On other platforms,
-        # it's all contained in one.
-        libmagick_filename = 'CORE_RL_magick_'
-        if magick_home:
-            libmagick_path = os.path.join(magick_home,
-                                          libmagick_filename + '.dll')
-        else:
-            libmagick_path = ctypes.util.find_library(libmagick_filename)
-        libmagick = ctypes.CDLL(libmagick_path)
+    tried_paths = []
+    for suffix in '', '-Q16', '-Q8':
+        libwand_path, libmagick_path = find_library(suffix)
+        if libwand_path is None or libmagick_path is None:
+            continue
+        tried_paths.append(libwand_path)
+        try:
+            libwand = ctypes.CDLL(libwand_path)
+            if libwand_path == libmagick_path:
+                libmagick = libwand
+            else:
+                tried_paths.append(libmagick_path)
+                libmagick = ctypes.CDLL(libmagick_path)
+        except (IOError, OSError):
+            continue
         return libwand, libmagick
-
-    return libwand, libwand
+    raise IOError('cannot find library; tried paths: ' + repr(tried_paths))
 
 
 if not hasattr(ctypes, 'c_ssize_t'):
