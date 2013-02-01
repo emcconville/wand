@@ -219,6 +219,7 @@ try:
 
     library.MagickGetImageResolution.argtypes = [
         ctypes.c_void_p,
+        ctypes.POINTER(ctypes.c_double),
         ctypes.POINTER(ctypes.c_double)
     ]
 
