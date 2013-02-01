@@ -48,12 +48,14 @@ class Font(tuple):
 
     """
 
-    def __new__(cls, path, size, color=Color('black'), antialias=True):
+    def __new__(cls, path, size, color=None, antialias=True):
         if not isinstance(path, basestring):
             raise TypeError('path must be a string, not ' + repr(path))
         if not isinstance(size, numbers.Real):
             raise TypeError('size must be a real number, not ' + repr(size))
-        if not isinstance(color, Color):
+        if color is None:
+            color = Color('black')
+        elif not isinstance(color, Color):
             raise TypeError('color must be an instance of wand.color.Color, '
                             'not ' + repr(color))
         return tuple.__new__(cls, (path, size, color, bool(antialias)))
