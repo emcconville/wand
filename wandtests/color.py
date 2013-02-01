@@ -56,4 +56,5 @@ def alpha():
 
 @tests.test
 def string():
-    assert str(Color('black')) == Color('black').string == 'srgb(0,0,0)'
+    assert Color('black').string in ('rgb(0,0,0)', 'srgb(0,0,0)')
+    assert str(Color('black')) in ('rgb(0,0,0)', 'srgb(0,0,0)')
