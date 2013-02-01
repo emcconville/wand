@@ -52,3 +52,8 @@ def alpha():
     assert Color('rgba(0, 0, 0, 1)').alpha == 1
     assert Color('rgba(0, 0, 0, 0)').alpha == 0
     assert 0.49 <= Color('rgba(0, 0, 0, 0.5)').alpha <= 0.5
+
+
+@tests.test
+def string():
+    assert str(Color('black')) == Color('black').string == 'srgb(0,0,0)'
