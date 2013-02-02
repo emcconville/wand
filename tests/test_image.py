@@ -1,21 +1,23 @@
 # -*- coding: utf-8 -*-
 
-from wand.version import MAGICK_VERSION_INFO
-from wand.image import ClosedImageError, Image
-from wand.color import Color
-from wand.exceptions import MissingDelegateError
-
+import io
+import os
 import unittest
 import tempfile
-import os
-import io
+
+from wand.color import Color
+from wand.image import ClosedImageError, Image
+from wand.version import MAGICK_VERSION_INFO
+from wand.exceptions import MissingDelegateError
 
 
 def asset(filename):
     return os.path.join(os.path.dirname(__file__), 'assets', filename)
 
+
 def get_sig_version(versions):
-    """Returns matching signature version value for current
+    """
+    Returns matching signature version value for current
     `ImageMagick` version.
 
     :param versions: Dict of versions.
@@ -746,9 +748,9 @@ class ImageTests(unittest.TestCase):
 
     def test_set_alpha_channel(self):
         with Image(filename=asset('watermark.png')) as img:
-            assert img.alpha_channel == True
+            self.assertEqual(img.alpha_channel, True)
             img.alpha_channel = False
-            assert img.alpha_channel == False
+            self.assertEqual(img.alpha_channel, False)
 
     def test_get_background_color(self):
         with Image(filename=asset('mona-lisa.jpg')) as img:
@@ -791,45 +793,47 @@ class ImageTests(unittest.TestCase):
                 img.crop(0, 0, 170, 170)
                 msg = 'img = {0!r}, control = {1!r}'.format(
                     img.signature, sig)
-                assert img.signature == sig, msg
+                self.assertEqual(img.signature, sig)
 
 
     def test_metadata(self):
         """Test metadata api"""
         with Image(filename=asset('beach.jpg')) as img:
-            assert len(img.metadata) == 52
-            assert 'exif:ApertureValue' in img.metadata
-            assert 'exif:UnknownValue' not in img.metadata
-            assert img.metadata['exif:ApertureValue'] == '192/32'
-            assert img.metadata.get('exif:UnknownValue', "IDK") == "IDK"
+            self.assertEqual(len(img.metadata), 52)
+            self.assertIn('exif:ApertureValue', img.metadata)
+            self.assertIn('exif:UnknownValue', img.metadata)
+            self.assertNotIn('exif:UnknownValue', img.metadata)
+
+            self.assertEqual(img.metadata['exif:ApertureValue'], '192/32')
+            self.assertEqual(img.metadata.get('exif:UnknownValue', "IDK"), "IDK")
 
 
     def test_channel_depths(self):
         with Image(filename=asset('beach.jpg')) as i:
-            assert dict(i.channel_depths) == {
+            self.assertEqual(dict(i.channel_depths), {
                 'blue': 8, 'gray': 8, 'true_alpha': 1, 'opacity': 1,
                 'undefined': 1, 'composite_channels': 8, 'index': 1,
                 'rgb_channels': 1, 'alpha': 1, 'yellow': 8, 'sync_channels': 1,
                 'default_channels': 8, 'black': 1, 'cyan': 8,
                 'all_channels': 8, 'green': 8, 'magenta': 8, 'red': 8,
                 'gray_channels': 1
-            }
+            })
+
         with Image(filename=asset('google.ico')) as i:
-            assert dict(i.channel_depths) == {
+            self.assertEqual(dict(i.channel_depths), {
                 'blue': 8, 'gray': 8, 'true_alpha': 1, 'opacity': 1,
                 'undefined': 1, 'composite_channels': 8, 'index': 1,
                 'rgb_channels': 1, 'alpha': 1, 'yellow': 8, 'sync_channels': 1,
                 'default_channels': 8, 'black': 1, 'cyan': 8, 'all_channels': 8,
                 'green': 8, 'magenta': 8, 'red': 8, 'gray_channels': 1
-            }
-
+            })
 
     def test_channel_images(self):
         with Image(filename=asset('sasha.jpg')) as i:
             actual = dict((c, i.signature) for c, i in i.channel_images.items())
         del actual['rgb_channels']   # FIXME: workaround for Travis CI
         del actual['gray_channels']  # FIXME: workaround for Travis CI
-        assert actual == {
+        self.assertEqual(actual, {
             'blue': get_sig_version({
                 (6, 5, 7, 8): 'b56f0c0763b49d4b0661d0bf7028d82a'
                               '66d0d15817ff5c6fd68a3c76377bd05a',
@@ -958,31 +962,29 @@ class ImageTests(unittest.TestCase):
                 (6, 7, 9, 5): 'bac4906578408e0f46b1943f96c8c392'
                               '73997659feb005e581e7ddfa0ba1da41'
             })
-        }
+        })
 
     def test_composite(self):
         with Image(filename=asset('beach.jpg')) as img:
             with Image(filename=asset('watermark.png')) as fg:
                 img.composite(fg, 0, 0)
-                assert img.signature == get_sig_version({
+                self.assertEqual(img.signature, get_sig_version({
                     (6, 6, 9, 7): '9c4c182e44ee265230761a412e355cb7'
                                   '8ea61859658220ecc8cbc1d56f58584e',
                     (6, 7, 7, 6): 'd725d924a9008ddff828f22595237ec6'
                                   'b56fb54057c6ee99584b9fc7ac91092c'
-                })
-
+                }))
 
     def test_composite_with_xy(self):
         with Image(filename=asset('beach.jpg')) as img:
             with Image(filename=asset('watermark.png')) as fg:
                 img.composite(fg, 5, 10)
-                assert img.signature == get_sig_version({
+                self.assertEqual(img.signature, get_sig_version({
                     (6, 6, 9, 7): 'e2a17a176de6b995b0f0f83e3c523006'
                                   '99190c7536ce1c599e65346d28f74b3b',
                     (6, 7, 7, 6): 'a40133f53093ce92e3e010d99a68fe13'
                                   '55544821cec2f707d5bd426d326921f8'
-                })
-
+                }))
 
     def test_composite_channel(self):
         with Image(filename=asset('beach.jpg')) as img:
@@ -990,12 +992,12 @@ class ImageTests(unittest.TestCase):
             with Color('black') as color:
                 with Image(width=w / 2, height=h / 2, background=color) as cimg:
                     img.composite_channel('red', cimg, 'copy_red', w / 4, h / 4)
-                    assert img.signature == get_sig_version({
+                    self.assertEqual(img.signature, get_sig_version({
                         (6, 6, 9, 7): 'df4531b9cb50b0b70f0d4d88ac962cc7'
                                       '51133d2772d7ce695d19179804a955ae',
                         (6, 7, 7, 6): '51ebd57f8507ed8ca6355906972af369'
                                       '5797d278ae3ed04dfc1f9b8c517bcfab'
-                    })
+                    }))
 
 
     def test_liquid_rescale(self):
@@ -1005,27 +1007,35 @@ class ImageTests(unittest.TestCase):
             except MissingDelegateError:
                 warnings.warn('skip liquid_rescale test; has no LQR delegate')
             else:
-                assert img.signature == get_sig_version({
+                self.assertEqual(img.signature, get_sig_version({
                     (6, 6, 9, 7): '459337dce62ada2a2e6a3c69b6819447'
                                   '38a71389efcbde0ee72b2147957e25eb'
-                })
+                }))
 
 
-    def test_border():
+    def test_border(self):
         with Image(filename=asset('sasha.jpg')) as img:
             left_top = img[0, 0]
             left_bottom = img[0, -1]
             right_top = img[-1, 0]
             right_bottom = img[-1, -1]
+
             with Color('red') as color:
                 img.border(color, 2, 5)
-                assert (img[0, 0] == img[0, -1] == img[-1, 0] == img[-1, -1] ==
-                        img[1, 4] == img[1, -5] == img[-2, 4] == img[-2, -5] ==
-                        color)
+
+                self.assertEqual(img[0, 0], img[0, -1])
+                self.assertEqual(img[0, 0], img[-1, 0])
+                self.assertEqual(img[0, 0], img[-1, -1])
+                self.assertEqual(img[0, 0], img[1, 4])
+                self.assertEqual(img[0, 0], img[1, -5])
+                self.assertEqual(img[0, 0], img[-2, 4])
+                self.assertEqual(img[0, 0], img[-2, -5])
+
                 self.assertEqual(img[2, 5], left_top)
                 self.assertEqual(img[2, -6], left_bottom)
                 self.assertEqual(img[-3, 5], right_top)
                 self.assertEqual(img[-3, -6], right_bottom)
+
 
 class ImageSlowTests(unittest.TestCase):
     def test_iterate(self):
@@ -1060,10 +1070,15 @@ class ImageSlowTests(unittest.TestCase):
                 cloned.rotate(360)
                 self.assertEqual(img.size, cloned.size)
                 with Color('black') as black:
-                    assert black == cloned[0, 50] == cloned[74, 50]
-                    assert black == cloned[0, 99] == cloned[74, 99]
+                    self.assertEqual(black, cloned[0, 50])
+                    self.assertEqual(black, cloned[74, 50])
+                    self.assertEqual(black, cloned[0, 99])
+                    self.assertEqual(black, cloned[74, 99])
+
                 with Color('white') as white:
-                    assert white == cloned[75, 50] == cloned[75, 99]
+                    self.assertEqual(white, cloned[75, 50])
+                    self.assertEqual(white, cloned[75, 99])
+
             with img.clone() as cloned:
                 cloned.rotate(90)
                 self.assertEqual(100, cloned.width)
@@ -1079,9 +1094,18 @@ class ImageSlowTests(unittest.TestCase):
             with Color('red') as bg:
                 with img.clone() as cloned:
                     cloned.rotate(45, bg)
-                    assert 176 <= cloned.width == cloned.height <= 178
-                    assert bg == cloned[0, 0] == cloned[0, -1]
-                    assert bg == cloned[-1, 0] == cloned[-1, -1]
+
+                    self.assertLessEqual(176, cloned.width)
+                    self.assertLessEqual(cloned.height, 178)
+
+                    self.assertEqual(bg, cloned[0, 0])
+                    self.assertEqual(bg, cloned[0, -1])
+
+                    self.assertEqual(bg, cloned[-1, 0])
+                    self.assertEqual(bg, cloned[-1, -1])
+
                     with Color('black') as black:
-                        assert black == cloned[2, 70] == cloned[35, 37]
-                        assert black == cloned[85, 88] == cloned[52, 120]
+                        self.assertEqual(black, cloned[2, 70])
+                        self.assertEqual(black, cloned[35, 37])
+                        self.assertEqual(black, cloned[85, 88])
+                        self.assertEqual(black, cloned[52, 120])
