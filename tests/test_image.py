@@ -4,6 +4,7 @@ import io
 import os
 import unittest
 import tempfile
+import warnings
 
 from wand.color import Color
 from wand.image import ClosedImageError, Image
