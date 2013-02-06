@@ -789,6 +789,17 @@ class Image(Resource):
                             repr(color))
         self.options['fill'] = color.string
 
+    def sub(self, text, font):
+        if not isinstance(text, basestring):
+            raise TypeError('text must be a string, not ' + repr(text))
+        if font is not None and not isinstance(font, Font):
+            raise TypeError('font must be a wand.font.Font, not ' + repr(font))
+        w = font.size * 1.5 * (len(text) + 1)
+        h = font.size * 2
+        l = self.width - w
+        t = self.height - h
+        self.caption(text, l, t, w, h, font)
+
     def caption(self, text, left=0, top=0, width=None, height=None, font=None,
                 gravity=None):
         """Writes a caption ``text`` into the position.
