@@ -794,8 +794,8 @@ class Image(Resource):
             raise TypeError('text must be a string, not ' + repr(text))
         if font is not None and not isinstance(font, Font):
             raise TypeError('font must be a wand.font.Font, not ' + repr(font))
-        w = font.size * 1.5 * (len(text) + 1)
-        h = font.size * 2
+        w = int(font.size * 1.5 * (len(text) + 1))
+        h = int(font.size * 2)
         l = self.width - w
         t = self.height - h
         self.caption(text, l, t, w, h, font)
