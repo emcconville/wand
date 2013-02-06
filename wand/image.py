@@ -794,11 +794,8 @@ class Image(Resource):
             raise TypeError('text must be a string, not ' + repr(text))
         if font is not None and not isinstance(font, Font):
             raise TypeError('font must be a wand.font.Font, not ' + repr(font))
-        w = int(font.size * 1.5 * (len(text) + 1))
-        h = int(font.size * 2)
-        l = self.width - w
-        t = self.height - h
-        self.caption(text, l, t, w, h, font)
+        self.caption(text, 0, 0, self.width - 6, self.height - 6, font=font, gravity='south_east')
+        #self.caption(text, l, t, w, h, font, 'south_east')
 
     def caption(self, text, left=0, top=0, width=None, height=None, font=None,
                 gravity=None):
@@ -1342,8 +1339,10 @@ class Image(Resource):
             for i in range(0, n + 1):
                 library.MagickSetIteratorIndex(self.wand, i)
                 library.MagickResizeImage(self.wand, width, height, filter, blur)
+            library.MagickSetSize(self.wand, width, height)
         else:
             r = library.MagickResizeImage(self.wand, width, height, filter, blur)
+            library.MagickSetSize(self.wand, width, height)
             if not r:
                 self.raise_exception()
 
