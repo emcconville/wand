@@ -8,10 +8,11 @@ from attest import Tests
 from wand.version import (MAGICK_VERSION, MAGICK_VERSION_INFO,
                           MAGICK_VERSION_NUMBER, MAGICK_RELEASE_DATE,
                           MAGICK_RELEASE_DATE_STRING)
-from . import color, image, resource
+from . import color, image, resource, drawing
 
 
 tests = Tests()
+
 skip_tests = frozenset(os.environ.get('WANDTESTS_SKIP', '').split())
 only_tests = frozenset(os.environ.get('WANDTESTS_ONLY', '').split())
 
@@ -32,6 +33,7 @@ def register(test_module):
 register(resource)  # it must be the first
 register(color)
 register(image)
+register(drawing)
 
 
 @tests.test

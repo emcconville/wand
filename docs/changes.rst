@@ -6,6 +6,12 @@ Version 0.3.0
 
 To be released.
 
+- Added :mod:`wand.drawing` module.  [:issue:`64` by Adrian Jung]
+- Added :meth:`Drawing.get_font_metrics()
+  <wand.drawing.Drawing.get_font_metrics>` method.
+  [:issue:`69`, :issue:`71` by Cha, Hojeong]
+- Added :meth:`Image.caption() <wand.image.Image.caption>` method.
+  [:issue:`74` by Cha, Hojeong]
 - Added optional ``color`` parameter to :meth:`Image.border()
   <wand.image.Image.border>` method.
 - Added :meth:`Image.border() <wand.image.Image.border>` method.
@@ -42,6 +48,38 @@ To be released.
 - Added IPython-specialized formatter.
 
 __ http://en.wikipedia.org/wiki/Seam_carving
+
+
+Version 0.2.4
+-------------
+
+Reserved version, but maybe not released.
+
+- Fix :exc:`~exceptions.NameError` in :attr:`Resource.resource
+  <wand.resource.Resource.resource>` setter.
+  [:issue:`89` forwareded from Debian bug report `#699064`__
+  by Jakub Wilk]
+
+__ http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=699064
+
+
+Version 0.2.3
+-------------
+
+Released on January 25, 2013.
+
+- Fixed a bug that :meth:`Image.transparentize()
+  <wand.image.Image.transparentize>` method (and :meth:`Image.watermark()
+  <wand.image.Image.watermark>` method which internally uses it) didn't
+  work.
+- Fixed segmentation fault occured when :attr:`Color.red
+  <wand.color.Color.red>`, :attr:`Color.green <wand.color.Color.green>`,
+  or :attr:`Color.blue <Wand.color.Color.blue>` is accessed.
+- Added :attr:`Color.alpha <wand.color.Color.alpha>` property.
+- Fixed a bug that format converting using :attr:`Image.format
+  <wand.image.Image.format>` property or :meth:`Image.convert()
+  <wand.image.Image.convert>` method doesn't correctly work
+  to save blob.
 
 
 Version 0.2.2
