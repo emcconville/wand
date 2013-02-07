@@ -237,7 +237,7 @@ EVALUATE_OPS = ('undefined', 'add', 'and', 'divide', 'leftshift', 'max',
                 'uniformnoise', 'cosine', 'sine', 'addmodulus', 'mean',
                 'abs', 'exponential', 'median', 'sum')
 
-#: (:class:`tuple`) The list of alpha chanell types
+#: (:class:`tuple`) The list of alpha channel types
 #:
 #: - ``'undefined'``
 #: - ``'activate'``
