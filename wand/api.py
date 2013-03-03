@@ -414,7 +414,7 @@ try:
                                       ctypes.POINTER(ctypes.c_uint),
                                       ctypes.POINTER(ctypes.c_uint)]
     library.MagickGetSize.restype = ctypes.c_int
-                                      
+
     library.MagickSetSize.argtypes = [ctypes.c_void_p,
                                       ctypes.c_uint,
                                       ctypes.c_uint]
@@ -587,6 +587,9 @@ try:
                                        ctypes.c_double,
                                        ctypes.c_double,
                                        ctypes.POINTER(ctypes.c_ubyte)]
+
+    library.MagickNormalizeImage.argtypes = [ctypes.c_void_p,
+                                            ctypes.c_int]
 
     library.MagickQueryFontMetrics.argtypes = [ctypes.c_void_p,
                                                ctypes.c_void_p,

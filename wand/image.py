@@ -1762,6 +1762,16 @@ class Image(Resource):
         with self.convert('png') as cloned:
             return cloned.make_blob()
 
+    def normalize(self, channel=CHANNELS['all_channels']):
+        """Normalize color channels.
+        :param channel: The channel to normalize.  Defaults to 'all_channels'
+        :type channel: integer (one of the CHANNELS dict values.)
+
+        """
+        r = library.MagickNormalizeImage(self.wand, channel)
+        if not r:
+            self.raise_exception()
+
 
 class Iterator(Resource, collections.Iterator):
     """Row iterator for :class:`Image`. It shouldn't be instantiated
