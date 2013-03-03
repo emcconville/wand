@@ -588,8 +588,10 @@ try:
                                        ctypes.c_double,
                                        ctypes.POINTER(ctypes.c_ubyte)]
 
-    library.MagickNormalizeImage.argtypes = [ctypes.c_void_p,
-                                            ctypes.c_int]
+    library.MagickNormalizeImage.argtypes = [ctypes.c_void_p]
+
+    library.MagickNormalizeImageChannel.argtypes = [ctypes.c_void_p,
+                                                    ctypes.c_int]
 
     library.MagickQueryFontMetrics.argtypes = [ctypes.c_void_p,
                                                ctypes.c_void_p,

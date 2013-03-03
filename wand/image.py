@@ -1762,13 +1762,18 @@ class Image(Resource):
         with self.convert('png') as cloned:
             return cloned.make_blob()
 
-    def normalize(self, channel=CHANNELS['all_channels']):
+    def normalize(self, channel=None):
         """Normalize color channels.
 
-        :param channel: The channel to normalize.  Defaults to 'all_channels'
+        :param channel: The channel to normalize.  Defaults to None,
+                        which will normalize all channels.
+
         :type channel: integer (one of the CHANNELS dict values.)
         """
-        r = library.MagickNormalizeImage(self.wand, channel)
+        if channel:
+            r = library.MagickNormalizeImageChannel(self.wand, channel)
+        else:
+            r = library.MagickNormalizeImage(self.wand)
         if not r:
             self.raise_exception()
 
