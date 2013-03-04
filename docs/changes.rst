@@ -46,6 +46,7 @@ To be released.
 - Now it shows helpful error message when ImageMagick library cannot be
   found.
 - Added IPython-specialized formatter.
+- Added :const:`~wand.version.QUANTUM_DEPTH` constant.
 
 __ http://en.wikipedia.org/wiki/Seam_carving
 
