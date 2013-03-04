@@ -473,6 +473,9 @@ try:
     libmagick.GetMagickReleaseDate.argtypes = []
     libmagick.GetMagickReleaseDate.restype = ctypes.c_char_p
 
+    libmagick.GetMagickQuantumDepth.argtypes = [ctypes.POINTER(ctypes.c_size_t)]
+    libmagick.GetMagickQuantumDepth.restype = ctypes.c_char_p
+
     library.NewDrawingWand.restype = ctypes.c_void_p
 
     library.CloneDrawingWand.argtypes = [ctypes.c_void_p]
