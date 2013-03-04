@@ -1176,6 +1176,7 @@ def setgravity():
         img.gravity = 'center'
         assert img.gravity == 'center'
 
+
 @tests.test
 def normalize_default():
     with Image(filename=asset('gray_range.jpg')) as img:
@@ -1188,11 +1189,11 @@ def normalize_default():
         assert img[0, -1] != left_bottom
         assert img[-1, 0] != right_top
         assert img[-1, -1] != right_bottom
-
         black = Color('#000')
         white = Color('#FFFFFF')
         assert img[0, 0] == white
         assert img[-1, -1] == black
+
 
 @tests.test
 def normalize_channel():
@@ -1206,12 +1207,10 @@ def normalize_channel():
         assert img[0, -1] != left_bottom
         assert img[-1, 0] != right_top
         assert img[-1, -1] != right_bottom
-
         # Normalizing the 'red' channel of gray_range.jpg should result in
         # top,left red channel == 255, and lower left red channel == 0
         assert img[0, 0].red_int8 == 255
         assert img[0, -1].red_int8 == 0
-
         # Just for fun, make sure we haven't altered any other color channels.
         for chan in ('blue', 'green'):
             c = chan + '_int8'
