@@ -1768,10 +1768,10 @@ class Image(Resource):
         :param channel: The channel to normalize.  Defaults to None,
                         which will normalize all channels.
 
-        :type channel: integer (one of the CHANNELS dict values.)
+        :type channel: string (one of the CHANNELS key values.)
         """
         if channel:
-            r = library.MagickNormalizeImageChannel(self.wand, channel)
+            r = library.MagickNormalizeImageChannel(self.wand, CHANNELS[channel])
         else:
             r = library.MagickNormalizeImage(self.wand)
         if not r:
