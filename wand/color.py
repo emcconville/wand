@@ -10,7 +10,7 @@ from .api import MagickPixelPacket, library
 from .resource import Resource
 from .version import QUANTUM_DEPTH
 
-__all__ = 'Color', 'scale_quantum_to_char'
+__all__ = 'Color', 'scale_quantum_to_int8'
 
 
 class Color(Resource):
