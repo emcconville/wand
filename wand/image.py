@@ -1765,10 +1765,9 @@ class Image(Resource):
     def normalize(self, channel=None):
         """Normalize color channels.
 
-        :param channel: The channel to normalize.  Defaults to None,
-                        which will normalize all channels.
-
-        :type channel: string (one of the CHANNELS key values.)
+        :param channel: the channel type.  available values can be found
+                        in the :const:`CHANNELS` mapping.  If None,
+                        normalize all channels.
         """
         if channel:
             r = library.MagickNormalizeImageChannel(self.wand, CHANNELS[channel])
