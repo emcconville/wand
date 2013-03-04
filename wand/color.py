@@ -157,6 +157,42 @@ class Color(Resource):
         with self:
             return library.PixelGetAlpha(self.resource)
 
+    @property
+    def red_quantum(self):
+        """(:class:`numbers.Integral`) Red.
+        Scale depends on :const:`~wand.version.QUANTUM_DEPTH`.
+
+        """
+        with self:
+            return library.PixelGetRedQuantum(self.resource)
+
+    @property
+    def green_quantum(self):
+        """(:class:`numbers.Integral`) Green.
+        Scale depends on :const:`~wand.version.QUANTUM_DEPTH`.
+
+        """
+        with self:
+            return library.PixelGetGreenQuantum(self.resource)
+
+    @property
+    def blue_quantum(self):
+        """(:class:`numbers.Integral`) Blue.
+        Scale depends on :const:`~wand.version.QUANTUM_DEPTH`.
+
+        """
+        with self:
+            return library.PixelGetBlueQuantum(self.resource)
+
+    @property
+    def alpha_quantum(self):
+        """(:class:`numbers.Integral`) Alpha value.
+        Scale depends on :const:`~wand.version.QUANTUM_DEPTH`.
+
+        """
+        with self:
+            return library.PixelGetAlphaQuantum(self.resource)
+
     def __str__(self):
         return self.string
 

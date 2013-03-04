@@ -377,6 +377,18 @@ try:
     library.PixelGetAlpha.argtypes = [ctypes.c_void_p]
     library.PixelGetAlpha.restype = ctypes.c_double
 
+    library.PixelGetRedQuantum.argtypes = [ctypes.c_void_p]
+    library.PixelGetRedQuantum.restype = ctypes.c_size_t
+
+    library.PixelGetGreenQuantum.argtypes = [ctypes.c_void_p]
+    library.PixelGetGreenQuantum.restype = ctypes.c_size_t
+
+    library.PixelGetBlueQuantum.argtypes = [ctypes.c_void_p]
+    library.PixelGetBlueQuantum.restype = ctypes.c_size_t
+
+    library.PixelGetAlphaQuantum.argtypes = [ctypes.c_void_p]
+    library.PixelGetAlphaQuantum.restype = ctypes.c_size_t
+
     library.MagickGetQuantumRange.argtypes = [ctypes.POINTER(ctypes.c_size_t)]
 
     library.MagickSetIteratorIndex.argtypes = [ctypes.c_void_p,
