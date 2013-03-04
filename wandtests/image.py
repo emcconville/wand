@@ -1175,3 +1175,21 @@ def setgravity():
     with Image(width=144, height=192, background=Color('#1e50a2')) as img:
         img.gravity = 'center'
         assert img.gravity == 'center'
+
+@tests.test
+def normalize():
+    with Image(filename=asset('gray_range.jpg')) as img:
+        left_top = img[0, 0]
+        left_bottom = img[0, -1]
+        right_top = img[-1, 0]
+        right_bottom = img[-1, -1]
+        img.normalize()
+        assert img[0, 0] != left_top
+        assert img[0, -1] != left_bottom
+        assert img[-1, 0] != right_top
+        assert img[-1, -1] != right_bottom
+
+        black = Color('#000')
+        white = Color('#FFFFFF')
+        assert img[0, 0] == white
+        assert img[-1, -1] == black
