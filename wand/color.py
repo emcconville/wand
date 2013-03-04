@@ -8,8 +8,9 @@ import ctypes
 
 from .api import MagickPixelPacket, library
 from .resource import Resource
+from .version import QUANTUM_DEPTH
 
-__all__ = 'Color',
+__all__ = 'Color', 'scale_quantum_to_char'
 
 
 class Color(Resource):
@@ -193,6 +194,38 @@ class Color(Resource):
         with self:
             return library.PixelGetAlphaQuantum(self.resource)
 
+    @property
+    def red_int8(self):
+        """(:class:`numbers.Integral`) Red as 8bit integer which is a common
+        style.  From 0 to 255.
+
+        """
+        return scale_quantum_to_int8(self.red_quantum)
+
+    @property
+    def green_int8(self):
+        """(:class:`numbers.Integral`) Green as 8bit integer which is
+        a common style.  From 0 to 255.
+
+        """
+        return scale_quantum_to_int8(self.green_quantum)
+
+    @property
+    def blue_int8(self):
+        """(:class:`numbers.Integral`) Blue as 8bit integer which is
+        a common style.  From 0 to 255.
+
+        """
+        return scale_quantum_to_int8(self.blue_quantum)
+
+    @property
+    def alpha_int8(self):
+        """(:class:`numbers.Integral`) Alpha value as 8bit integer which is
+        a common style.  From 0 to 255.
+
+        """
+        return scale_quantum_to_int8(self.alpha_quantum)
+
     def __str__(self):
         return self.string
 
@@ -200,3 +233,21 @@ class Color(Resource):
         c = type(self)
         return '{0}.{1}({2!r})'.format(c.__module__, c.__name__, self.string)
 
+
+def scale_quantum_to_int8(quantum):
+    """Straightforward port of :c:func:`ScaleQuantumToChar()` inline
+    function.
+
+    :param quantum: quantum value
+    :type quantum: :class:`numbers.Integral`
+    :returns: 8bit integer of the given ``quantum`` value
+    :rtype: :class:`numbers.Integral`
+
+    """
+    if quantum <= 0:
+        return 0
+    table = {8: 1, 16: 257.0, 32: 16843009.0, 64: 72340172838076673.0}
+    v = quantum / table[QUANTUM_DEPTH]
+    if v >= 255:
+        return 255
+    return int(v + 0.5)
