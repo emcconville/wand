@@ -163,6 +163,8 @@ class Color(Resource):
         """(:class:`numbers.Integral`) Red.
         Scale depends on :const:`~wand.version.QUANTUM_DEPTH`.
 
+        .. versionadded:: 0.3.0
+
         """
         with self:
             return library.PixelGetRedQuantum(self.resource)
@@ -171,6 +173,8 @@ class Color(Resource):
     def green_quantum(self):
         """(:class:`numbers.Integral`) Green.
         Scale depends on :const:`~wand.version.QUANTUM_DEPTH`.
+
+        .. versionadded:: 0.3.0
 
         """
         with self:
@@ -181,6 +185,8 @@ class Color(Resource):
         """(:class:`numbers.Integral`) Blue.
         Scale depends on :const:`~wand.version.QUANTUM_DEPTH`.
 
+        .. versionadded:: 0.3.0
+
         """
         with self:
             return library.PixelGetBlueQuantum(self.resource)
@@ -189,6 +195,8 @@ class Color(Resource):
     def alpha_quantum(self):
         """(:class:`numbers.Integral`) Alpha value.
         Scale depends on :const:`~wand.version.QUANTUM_DEPTH`.
+
+        .. versionadded:: 0.3.0
 
         """
         with self:
@@ -199,6 +207,8 @@ class Color(Resource):
         """(:class:`numbers.Integral`) Red as 8bit integer which is a common
         style.  From 0 to 255.
 
+        .. versionadded:: 0.3.0
+
         """
         return scale_quantum_to_int8(self.red_quantum)
 
@@ -206,6 +216,8 @@ class Color(Resource):
     def green_int8(self):
         """(:class:`numbers.Integral`) Green as 8bit integer which is
         a common style.  From 0 to 255.
+
+        .. versionadded:: 0.3.0
 
         """
         return scale_quantum_to_int8(self.green_quantum)
@@ -215,6 +227,8 @@ class Color(Resource):
         """(:class:`numbers.Integral`) Blue as 8bit integer which is
         a common style.  From 0 to 255.
 
+        .. versionadded:: 0.3.0
+
         """
         return scale_quantum_to_int8(self.blue_quantum)
 
@@ -222,6 +236,8 @@ class Color(Resource):
     def alpha_int8(self):
         """(:class:`numbers.Integral`) Alpha value as 8bit integer which is
         a common style.  From 0 to 255.
+
+        .. versionadded:: 0.3.0
 
         """
         return scale_quantum_to_int8(self.alpha_quantum)
@@ -242,6 +258,8 @@ def scale_quantum_to_int8(quantum):
     :type quantum: :class:`numbers.Integral`
     :returns: 8bit integer of the given ``quantum`` value
     :rtype: :class:`numbers.Integral`
+
+    .. versionadded:: 0.3.0
 
     """
     if quantum <= 0:

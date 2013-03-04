@@ -47,6 +47,15 @@ To be released.
   found.
 - Added IPython-specialized formatter.
 - Added :const:`~wand.version.QUANTUM_DEPTH` constant.
+- Added these properties to :class:`~wand.Color` class:
+  - :attr:`~wand.color.Color.red_quantum`
+  - :attr:`~wand.color.Color.green_quantum`
+  - :attr:`~wand.color.Color.blue_quantum`
+  - :attr:`~wand.color.Color.alpha_quantum`
+  - :attr:`~wand.color.Color.red_int8`
+  - :attr:`~wand.color.Color.green_int8`
+  - :attr:`~wand.color.Color.blue_int8`
+  - :attr:`~wand.color.Color.alpha_int8`
 
 __ http://en.wikipedia.org/wiki/Seam_carving
 
