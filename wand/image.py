@@ -1770,7 +1770,12 @@ class Image(Resource):
                         normalize all channels.
         """
         if channel:
-            r = library.MagickNormalizeImageChannel(self.wand, CHANNELS[channel])
+            try:
+                ch_const = CHANNELS[channel]
+            except KeyError:
+                raise ValueError(repr(channel) + ' is an invalid channel type'
+                                 '; see wand.image.CHANNELS dictionary')
+            r = library.MagickNormalizeImageChannel(self.wand, ch_const)
         else:
             r = library.MagickNormalizeImage(self.wand)
         if not r:
