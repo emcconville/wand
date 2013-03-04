@@ -1766,8 +1766,10 @@ class Image(Resource):
         """Normalize color channels.
 
         :param channel: the channel type.  available values can be found
-                        in the :const:`CHANNELS` mapping.  If None,
+                        in the :const:`CHANNELS` mapping.  If ``None``,
                         normalize all channels.
+        :type channel: :class:`basestring`
+
         """
         if channel:
             try:

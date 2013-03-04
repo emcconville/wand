@@ -59,6 +59,9 @@ To be released.
   - :attr:`~wand.color.Color.blue_int8`
   - :attr:`~wand.color.Color.alpha_int8`
 
+- Added :meth:`Image.normalize() <wand.image.Image.normalize>` method.
+  [:issue:`95` by Michael Curry]
+
 __ http://en.wikipedia.org/wiki/Seam_carving
 
 
