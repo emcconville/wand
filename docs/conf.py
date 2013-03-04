@@ -43,7 +43,8 @@ if os.environ.get('READTHEDOCS', 0):
     sys.modules['wand.version'].MAGICK_VERSION_NUMBER = \
     sys.modules['wand.version'].MAGICK_VERSION_INFO = \
     sys.modules['wand.version'].MAGICK_RELEASE_DATE_STRING = \
-    sys.modules['wand.version'].MAGICK_RELEASE_DATE = None
+    sys.modules['wand.version'].MAGICK_RELEASE_DATE = \
+    sys.modules['wand.version'].QUANTUM_DEPTH = None
 
 # -- General configuration -----------------------------------------------------
 
