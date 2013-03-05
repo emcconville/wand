@@ -7,7 +7,7 @@ from attest import Tests
 
 from wand.version import (MAGICK_VERSION, MAGICK_VERSION_INFO,
                           MAGICK_VERSION_NUMBER, MAGICK_RELEASE_DATE,
-                          MAGICK_RELEASE_DATE_STRING)
+                          MAGICK_RELEASE_DATE_STRING, QUANTUM_DEPTH)
 from . import color, image, resource, drawing
 
 
@@ -50,3 +50,8 @@ def version():
     assert (MAGICK_RELEASE_DATE_STRING ==
             MAGICK_RELEASE_DATE.strftime('%Y-%m-%d'))
 
+
+@tests.test
+def quantum_depth():
+    """QUANTUM_DEPTH must be one of 8, 16, 32, or 64."""
+    assert QUANTUM_DEPTH in (8, 16, 32, 64)

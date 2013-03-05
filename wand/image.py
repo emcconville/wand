@@ -1815,6 +1815,27 @@ class Image(Resource):
         with self.convert('png') as cloned:
             return cloned.make_blob()
 
+    def normalize(self, channel=None):
+        """Normalize color channels.
+
+        :param channel: the channel type.  available values can be found
+                        in the :const:`CHANNELS` mapping.  If ``None``,
+                        normalize all channels.
+        :type channel: :class:`basestring`
+
+        """
+        if channel:
+            try:
+                ch_const = CHANNELS[channel]
+            except KeyError:
+                raise ValueError(repr(channel) + ' is an invalid channel type'
+                                 '; see wand.image.CHANNELS dictionary')
+            r = library.MagickNormalizeImageChannel(self.wand, ch_const)
+        else:
+            r = library.MagickNormalizeImage(self.wand)
+        if not r:
+            self.raise_exception()
+
 
 class Iterator(Resource, collections.Iterator):
     """Row iterator for :class:`Image`. It shouldn't be instantiated

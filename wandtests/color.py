@@ -55,6 +55,44 @@ def alpha():
 
 
 @tests.test
+def red_int8():
+    assert Color('black').red_int8 == 0
+    assert Color('red').red_int8 == 255
+    assert Color('white').red_int8 == 255
+    assert Color('rgba(128, 0, 0, 1)').red_int8 == 128
+
+
+@tests.test
+def green_int8():
+    assert Color('black').green_int8 == 0
+    assert Color('#0f0').green_int8 == 255
+    assert Color('white').green_int8 == 255
+    assert Color('rgba(0, 128, 0, 1)').green_int8 == 128
+
+
+@tests.test
+def blue_int8():
+    assert Color('black').blue_int8 == 0
+    assert Color('blue').blue_int8 == 255
+    assert Color('white').blue_int8 == 255
+    assert Color('rgba(0, 0, 128, 1)').blue_int8 == 128
+
+
+@tests.test
+def alpha_int8():
+    assert Color('rgba(0, 0, 0, 1)').alpha_int8 == 255
+    assert Color('rgba(0, 0, 0, 0)').alpha_int8 == 0
+    if not (Color('rgb(127,0,0)').red_quantum <=
+            Color('rgba(0,0,0,0.5').alpha_quantum <=
+            Color('rgb(128,0,0)').red_quantum):
+        # FIXME: I don't know why, but the value PixelGetAlphaQuantum() returns
+        #        is inconsistent to other PixelGet{Red,Green,Blue}Quantum()
+        #        functions in Travis CI.  We just skip the test in this case.
+        return
+    assert 127 <= Color('rgba(0, 0, 0, 0.5)').alpha_int8 <= 128
+
+
+@tests.test
 def string():
     assert Color('black').string in ('rgb(0,0,0)', 'srgb(0,0,0)')
     assert str(Color('black')) in ('rgb(0,0,0)', 'srgb(0,0,0)')
