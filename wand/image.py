@@ -1544,10 +1544,10 @@ class Image(Resource):
 
         :param color: The color that should be made transparent on the image,
                       color object
-        :param color: :class:`wand.color.Color`
+        :type color: :class:`wand.color.Color`
         :param alpha: the level of transparency: 1.0 is fully opaque
                       and 0.0 is fully transparent.
-        :param alpha: :class:`numbers.Real`
+        :type alpha: :class:`numbers.Real`
         :param fuzz: By default target must match a particular pixel color
                      exactly. However, in many cases two colors may differ
                      by a small amount. The fuzz member of image defines how
@@ -1555,9 +1555,9 @@ class Image(Resource):
                      same. For example, set fuzz to 10 and the color red at
                      intensities of 100 and 102 respectively are now interpreted
                      as the same color for the color.
-        :param fuzz: :class:`numbers.Integral`
+        :type fuzz: :class:`numbers.Integral`
         :param invert: Boolean to tell to paint the inverse selection.
-        :param invert: :class:`bool`
+        :type invert: :class:`bool`
 
         .. versionadded:: 0.2.4
         """
