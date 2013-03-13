@@ -1537,6 +1537,40 @@ class Image(Resource):
                                                t)
             self.raise_exception()
 
+    def transparent_color(self, color, alpha, fuzz = 0, invert=False):
+        """Makes the color ```color`` a transparent color with a tolerance of
+        fuzz. The ``alpha``parameter specify the transparency level and the
+        parameter ``fuzz`` specify the tolerance.
+
+        :param color: The color that should be made transparent on the image,
+                      color object
+        :type color: :class:`wand.color.Color`
+        :param alpha: the level of transparency: 1.0 is fully opaque
+                      and 0.0 is fully transparent.
+        :type alpha: :class:`numbers.Real`
+        :param fuzz: By default target must match a particular pixel color
+                     exactly. However, in many cases two colors may differ
+                     by a small amount. The fuzz member of image defines how
+                     much tolerance is acceptable to consider two colors as the
+                     same. For example, set fuzz to 10 and the color red at
+                     intensities of 100 and 102 respectively are now interpreted
+                     as the same color for the color.
+        :type fuzz: :class:`numbers.Integral`
+        :param invert: Boolean to tell to paint the inverse selection.
+        :type invert: :class:`bool`
+
+        .. versionadded:: 0.2.4
+        """
+        if not isinstance(alpha, numbers.Real):
+            raise TypeError('alpha must be an float, not ' + repr(left))
+        elif not isinstance(fuzz, numbers.Integral):
+            raise TypeError('fuzz must be an integer, not ' + repr(left))
+        elif not isinstance(color, Color):
+            raise TypeError('color must be a wand.color.Color object, not ' +
+                            repr(color))
+        library.MagickTransparentPaintImage(self.wand, color.resource, alpha, fuzz, invert)
+        self.raise_exception()
+
     def composite(self, image, left, top):
         """Places the supplied ``image`` over the current image, with the top
         left corner of ``image`` at coordinates ``left``, ``top`` of the
