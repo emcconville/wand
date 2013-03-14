@@ -61,7 +61,7 @@ To be released.
 
 - Added :meth:`Image.normalize() <wand.image.Image.normalize>` method.
   [:issue:`95` by Michael Curry]
-- Added :meth:`Image.transparent_color <wand.image.Image.transparent_color>`
+- Added :meth:`Image.transparent_color() <wand.image.Image.transparent_color>`
   method.  [:issue:`98` by Lionel Koenig]
 
 __ http://en.wikipedia.org/wiki/Seam_carving

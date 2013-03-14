@@ -1538,8 +1538,8 @@ class Image(Resource):
             self.raise_exception()
 
     def transparent_color(self, color, alpha, fuzz=0, invert=False):
-        """Makes the color ```color`` a transparent color with a tolerance of
-        fuzz. The ``alpha``parameter specify the transparency level and the
+        """Makes the color ``color`` a transparent color with a tolerance of
+        fuzz. The ``alpha`` parameter specify the transparency level and the
         parameter ``fuzz`` specify the tolerance.
 
         :param color: The color that should be made transparent on the image,
