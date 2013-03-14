@@ -1537,7 +1537,7 @@ class Image(Resource):
                                                t)
             self.raise_exception()
 
-    def transparent_color(self, color, alpha, fuzz = 0, invert=False):
+    def transparent_color(self, color, alpha, fuzz=0, invert=False):
         """Makes the color ```color`` a transparent color with a tolerance of
         fuzz. The ``alpha``parameter specify the transparency level and the
         parameter ``fuzz`` specify the tolerance.
@@ -1568,7 +1568,8 @@ class Image(Resource):
         elif not isinstance(color, Color):
             raise TypeError('color must be a wand.color.Color object, not ' +
                             repr(color))
-        library.MagickTransparentPaintImage(self.wand, color.resource, alpha, fuzz, invert)
+        library.MagickTransparentPaintImage(self.wand, color.resource,
+                                            alpha, fuzz, invert)
         self.raise_exception()
 
     def composite(self, image, left, top):
