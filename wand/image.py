@@ -1562,9 +1562,9 @@ class Image(Resource):
         .. versionadded:: 0.2.4
         """
         if not isinstance(alpha, numbers.Real):
-            raise TypeError('alpha must be an float, not ' + repr(left))
+            raise TypeError('alpha must be an float, not ' + repr(alpha))
         elif not isinstance(fuzz, numbers.Integral):
-            raise TypeError('fuzz must be an integer, not ' + repr(left))
+            raise TypeError('fuzz must be an integer, not ' + repr(fuzz))
         elif not isinstance(color, Color):
             raise TypeError('color must be a wand.color.Color object, not ' +
                             repr(color))
