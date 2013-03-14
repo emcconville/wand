@@ -1559,7 +1559,8 @@ class Image(Resource):
         :param invert: Boolean to tell to paint the inverse selection.
         :type invert: :class:`bool`
 
-        .. versionadded:: 0.2.4
+        .. versionadded:: 0.3.0
+
         """
         if not isinstance(alpha, numbers.Real):
             raise TypeError('alpha must be an float, not ' + repr(alpha))
