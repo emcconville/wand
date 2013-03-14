@@ -767,6 +767,15 @@ def rotate():
                     assert black == cloned[2, 70] == cloned[35, 37]
                     assert black == cloned[85, 88] == cloned[52, 120]
 
+@tests.test
+def transparent_color():
+    """TransparentPaint test"""
+    with Image(filename=asset('rotatetest.gif')) as img:
+        img.alpha_channel = True
+        with Color('white') as white:
+            img.transparent_color(white, 0.0, 2, 0)
+            assert img[75, 50].alpha == 0
+            assert img[0, 50].alpha == 1.0
 
 @tests.test
 def signature():
