@@ -889,18 +889,10 @@ def reset_coords():
     the image is (0, 0) again.
 
     """
-    sig = get_sig_version({
-        (6, 6, 9, 7):
-            '9537655c852cb5a22f29ba016648ea29d1b9a55fd2b4399f4fcbbcd39cce1778',
-        (6, 7, 7, 6):
-            'e8ea17066378085a60f7213430af62c89ed3f416e98b39f2d434c96c2be82989',
-    })
     with Image(filename=asset('sasha.jpg')) as img:
             img.rotate(45, reset_coords=True)
             img.crop(0, 0, 170, 170)
-            msg = 'img = {0!r}, control = {1!r}'.format(
-                img.signature, sig)
-            assert img.signature == sig, msg
+            assert img[85, 85] == Color('transparent')
 
 
 @tests.test
