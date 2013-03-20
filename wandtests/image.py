@@ -1075,19 +1075,6 @@ def channel_images():
 
 @tests.test
 def composite():
-    with Image(filename=asset('beach.jpg')) as img:
-        with Image(filename=asset('watermark.png')) as fg:
-            img.composite(fg, 0, 0)
-            assert img.signature == get_sig_version({
-                (6, 6, 9, 7): '9c4c182e44ee265230761a412e355cb7'
-                              '8ea61859658220ecc8cbc1d56f58584e',
-                (6, 7, 7, 6): 'd725d924a9008ddff828f22595237ec6'
-                              'b56fb54057c6ee99584b9fc7ac91092c'
-            })
-
-
-@tests.test
-def composite_with_xy():
     with Image(filename=asset('beach.jpg')) as orig:
         with orig.clone() as img:
             with Image(filename=asset('watermark.png')) as fg:
