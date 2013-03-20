@@ -1088,15 +1088,23 @@ def composite():
 
 @tests.test
 def composite_with_xy():
-    with Image(filename=asset('beach.jpg')) as img:
-        with Image(filename=asset('watermark.png')) as fg:
-            img.composite(fg, 5, 10)
-            assert img.signature == get_sig_version({
-                (6, 6, 9, 7): 'e2a17a176de6b995b0f0f83e3c523006'
-                              '99190c7536ce1c599e65346d28f74b3b',
-                (6, 7, 7, 6): 'a40133f53093ce92e3e010d99a68fe13'
-                              '55544821cec2f707d5bd426d326921f8'
-            })
+    with Image(filename=asset('beach.jpg')) as orig:
+        with orig.clone() as img:
+            with Image(filename=asset('watermark.png')) as fg:
+                img.composite(fg, 5, 10)
+            # These pixels should not be changed:
+            assert img[0, 0] == orig[0, 0]
+            assert img[0, img.height - 1] == orig[0, orig.height - 1]
+            assert img[img.width - 1, 0] == orig[orig.width - 1, 0]
+            assert (img[img.width - 1, img.height - 1] == 
+                    orig[orig.width - 1, img.height - 1])
+            # These pixels should be the almost black:
+            assert img[70, 100].red <= 1
+            assert img[70, 100].green <= 1
+            assert img[70, 100].blue <= 1
+            assert img[130, 100].red <= 1
+            assert img[130, 100].green <= 1
+            assert img[130, 100].blue <= 1
 
 
 @tests.test
