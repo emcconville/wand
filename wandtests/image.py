@@ -1101,17 +1101,35 @@ def composite_with_xy():
 
 @tests.test
 def composite_channel():
-    with Image(filename=asset('beach.jpg')) as img:
-        w, h = img.size
-        with Color('black') as color:
-            with Image(width=w / 2, height=h / 2, background=color) as cimg:
-                img.composite_channel('red', cimg, 'copy_red', w / 4, h / 4)
-                assert img.signature == get_sig_version({
-                    (6, 6, 9, 7): 'df4531b9cb50b0b70f0d4d88ac962cc7'
-                                  '51133d2772d7ce695d19179804a955ae',
-                    (6, 7, 7, 6): '51ebd57f8507ed8ca6355906972af369'
-                                  '5797d278ae3ed04dfc1f9b8c517bcfab'
-                })
+    with Image(filename=asset('beach.jpg')) as orig:
+        w, h = orig.size
+        left = w / 4
+        top = h / 4
+        right = left * 3 - 1
+        bottom = h / 4 * 3 - 1
+        # List of (x, y) points that shouldn't be changed:
+        outer_points = [
+            (0, 0), (0, h - 1), (w - 1, 0), (w - 1, h - 1),
+            (left, top - 1), (left - 1, top), (left - 1, top - 1),
+            (right, top - 1), (right + 1, top), (right + 1, top - 1),
+            (left, bottom + 1), (left - 1, bottom), (left - 1, bottom + 1),
+            (right, bottom + 1), (right + 1, bottom), (right + 1, bottom + 1)
+        ]
+        with orig.clone() as img:
+            with Color('black') as color:
+                with Image(width=w / 2, height=h / 2, background=color) as cimg:
+                    img.composite_channel('red', cimg, 'copy_red',
+                                          w / 4, h / 4)
+            # These points should be not changed:
+            for point in outer_points:
+                assert orig[point] == img[point]
+            # Inner pixels should lost its red color (red becomes 0)
+            for point in zip([left, right], [top, bottom]):
+                with orig[point] as oc:
+                    with img[point] as ic:
+                        assert not ic.red
+                        assert ic.green == oc.green
+                        assert ic.blue == oc.blue
 
 
 @tests.test
