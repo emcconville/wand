@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
 import os.path
-import sys
 import tempfile
 try:
     import cStringIO as StringIO
@@ -931,10 +930,10 @@ def channel_depths():
 def channel_images():
     with Image(filename=asset('sasha.jpg')) as i:
         i.format = 'png'
-        for name, channel in i.channel_images.items():
+        for name in 'opacity', 'alpha', 'true_alpha':
             expected_path = asset('channel_images', name + '.png')
             with Image(filename=expected_path) as expected:
-                assert channel == expected
+                assert i.channel_images[name] == expected
 
 
 @tests.test
