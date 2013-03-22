@@ -10,7 +10,6 @@ import warnings
 
 from attest import Tests, assert_hook, raises
 
-from wand.version import MAGICK_VERSION_INFO
 from wand.image import ClosedImageError, Image
 from wand.color import Color
 from wand.exceptions import MissingDelegateError
@@ -18,27 +17,6 @@ from wand.font import Font
 
 
 skip_slow_tests = bool(os.environ.get('WANDTESTS_SKIP_SLOW_TESTS'))
-
-
-def get_sig_version(versions):
-    """Returns matching signature version value for current
-    `ImageMagick` version.
-
-    :param versions: Dict of versions.
-    :type versions: :class:`dict`
-    :returns: matched sig value
-    :rtype: :class:`basestring`
-
-    """
-    sorted_versions = reversed(sorted(versions.keys()))
-    for v in sorted_versions:
-        if v <= MAGICK_VERSION_INFO:
-            sig = versions[v]
-            break
-    else:
-        sig = versions[v]
-    return sig
-
 
 tests = Tests()
 
@@ -781,16 +759,14 @@ def transparent_color():
 @tests.test
 def signature():
     """Gets the image signature."""
-    sig = get_sig_version({
-        (6, 6, 9, 7):
-            '763774301b62cf9ea033b661f5136fbda7e8de96254aec3dd0dff63c05413a1e',
-        (6, 7, 7, 6):
-            '8c6ef1dcb1bacb6ad8edf307f2f2c6a129b3b7aa262ee288325f9fd334006374'
-    })
     with Image(filename=asset('mona-lisa.jpg')) as img:
-        assert img.signature == sig
-        img.format = 'png'
-        assert img.signature == sig
+        with open(asset('mona-lisa.jpg'), 'rb') as f:
+            with Image(file=f) as same:
+                assert img.signature == same.signature
+        with img.convert('png') as same:
+            assert img.signature == same.signature
+        with Image(filename=asset('beach.jpg')) as diff:
+            assert img.signature != diff.signature
 
 
 @tests.test
