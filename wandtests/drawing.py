@@ -144,7 +144,7 @@ def draw_text(wand):
             assert (img[0, 0] == img[0, -1] == img[-1, 0] == img[-1, -1] ==
                     img[0, 39] == img[0, 57] == img[77, 39] == img[77, 57] ==
                     white)
-            assert (img[1, 39] == img[1, 57] == img[75, 39] == img[75, 57] ==
+            assert (img[2, 39] == img[2, 57] == img[75, 39] == img[75, 57] ==
                     Color('black'))
 
 
