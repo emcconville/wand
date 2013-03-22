@@ -992,16 +992,23 @@ def composite_channel():
 
 @tests.test
 def liquid_rescale():
-    with Image(filename=asset('beach.jpg')) as img:
-        try:
-            img.liquid_rescale(600, 600)
-        except MissingDelegateError:
-            warnings.warn('skip liquid_rescale test; has no LQR delegate')
-        else:
-            assert img.signature == get_sig_version({
-                (6, 6, 9, 7): '459337dce62ada2a2e6a3c69b6819447'
-                              '38a71389efcbde0ee72b2147957e25eb'
-            })
+    def assert_equal_except_alpha(a, b):
+        with a:
+            with b:
+                assert (a.red == b.red and
+                        a.green == b.green and
+                        a.blue == b.blue)
+    with Image(filename=asset('beach.jpg')) as orig:
+        with orig.clone() as img:
+            try:
+                img.liquid_rescale(600, 600)
+            except MissingDelegateError:
+                warnings.warn('skip liquid_rescale test; has no LQR delegate')
+            else:
+                assert img.size == (600, 600)
+                for x in 0, -1:
+                    for y in 0, -1:
+                        assert_equal_except_alpha(img[x, y], img[x, y])
 
 
 @tests.test
