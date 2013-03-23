@@ -26,7 +26,7 @@ revision of the source code from the `GitHub repository`__:
 
 .. _Wand: http://wand-py.org/
 .. _ImageMagick: http://www.imagemagick.org/
-.. _PyPI: http://pypi.python.org/pypi/Wand
+.. _PyPI: https://pypi.python.org/pypi/Wand
 __ https://github.com/dahlia/wand
 
 
@@ -48,6 +48,9 @@ Website
 
 GitHub
    https://github.com/dahlia/wand
+
+Package Index (Cheeseshop)
+   https://pypi.python.org/pypi/Wand
 
 Mailing list
    wand@librelist.com
