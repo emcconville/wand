@@ -12,7 +12,6 @@ import os
 import os.path
 import sys
 import platform
-import sys
 
 __all__ = ('MagickPixelPacket', 'c_magick_char_p', 'library', 'libc',
            'libmagick', 'load_library')
@@ -241,8 +240,9 @@ try:
     library.MagickGetImageBlob.argtypes = [ctypes.c_void_p,
                                            ctypes.POINTER(ctypes.c_size_t)]
     library.MagickGetImageBlob.restype = ctypes.POINTER(ctypes.c_ubyte)
+
     library.MagickGetImagesBlob.argtypes = [ctypes.c_void_p,
-                                           ctypes.POINTER(ctypes.c_size_t)]
+                                            ctypes.POINTER(ctypes.c_size_t)]
     library.MagickGetImagesBlob.restype = ctypes.POINTER(ctypes.c_ubyte)
 
     library.MagickWriteImage.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
@@ -319,9 +319,12 @@ try:
                                           ctypes.c_size_t, ctypes.c_size_t]
 
     library.MagickResetIterator.argtypes = [ctypes.c_void_p]
+
     library.MagickSetLastIterator.argtypes = [ctypes.c_void_p]
+
     library.MagickGetIteratorIndex.argtypes = [ctypes.c_void_p]
     library.MagickGetIteratorIndex.restype = ctypes.c_ssize_t
+
     library.MagickCoalesceImages.argtypes = [ctypes.c_void_p]
     library.MagickCoalesceImages.restype = ctypes.c_void_p
 

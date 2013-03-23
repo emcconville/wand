@@ -789,14 +789,6 @@ class Image(Resource):
                             repr(color))
         self.options['fill'] = color.string
 
-    def sub(self, text, font):
-        if not isinstance(text, basestring):
-            raise TypeError('text must be a string, not ' + repr(text))
-        if font is not None and not isinstance(font, Font):
-            raise TypeError('font must be a wand.font.Font, not ' + repr(font))
-        self.caption(text, 0, 0, self.width - 6, self.height - 6, font=font, gravity='south_east')
-        #self.caption(text, l, t, w, h, font, 'south_east')
-
     def caption(self, text, left=0, top=0, width=None, height=None, font=None,
                 gravity=None):
         """Writes a caption ``text`` into the position.
@@ -1247,12 +1239,13 @@ class Image(Resource):
             raise ValueError('image width cannot be zero')
         elif left == top == 0 and width == self.width and height == self.height:
             return
+        # FIXME: it should be cleaned up when "sequences" branch is merged
         if self.mimetype == 'image/gif':
             self.wand = library.MagickCoalesceImages(self.wand)
             library.MagickSetLastIterator(self.wand)
             n = library.MagickGetIteratorIndex(self.wand)
             library.MagickResetIterator(self.wand)
-            for i in range(0, n + 1):
+            for i in xrange(0, n + 1):
                 library.MagickSetIteratorIndex(self.wand, i)
                 library.MagickCropImage(self.wand, width, height, left, top)
                 if reset_coords:
@@ -1331,23 +1324,27 @@ class Image(Resource):
               not (0 <= filter < len(FILTER_TYPES))):
             raise ValueError(repr(filter) + ' is an invalid filter type')
         blur = ctypes.c_double(float(blur))
+        # FIXME: it should be cleaned up when "sequences" branch is merged
         if self.mimetype == 'image/gif':
             self.wand = library.MagickCoalesceImages(self.wand)
             library.MagickSetLastIterator(self.wand)
             n = library.MagickGetIteratorIndex(self.wand)
             library.MagickResetIterator(self.wand)
-            for i in range(0, n + 1):
+            for i in xrange(0, n + 1):
                 library.MagickSetIteratorIndex(self.wand, i)
-                library.MagickResizeImage(self.wand, width, height, filter, blur)
+                library.MagickResizeImage(self.wand, width, height,
+                                          filter, blur)
             library.MagickSetSize(self.wand, width, height)
         else:
-            r = library.MagickResizeImage(self.wand, width, height, filter, blur)
+            r = library.MagickResizeImage(self.wand, width, height,
+                                          filter, blur)
             library.MagickSetSize(self.wand, width, height)
             if not r:
                 self.raise_exception()
 
     @property
     def frame_num(self):
+        # FIXME: it should eventually removed when "sequences" branch is merged
         library.MagickSetLastIterator(self.wand)
         n = library.MagickGetIteratorIndex(self.wand)
         library.MagickResetIterator(self.wand)
