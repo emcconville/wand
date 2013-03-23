@@ -63,6 +63,7 @@ To be released.
   [:issue:`95` by Michael Curry]
 - Added :meth:`Image.transparent_color() <wand.image.Image.transparent_color>`
   method.  [:issue:`98` by Lionel Koenig]
+- Started supporting resizing and cropping of GIF images.  [:issue:`88`]
 
 __ http://en.wikipedia.org/wiki/Seam_carving
 
