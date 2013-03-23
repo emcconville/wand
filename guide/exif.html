@@ -1,130 +1,15 @@
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Reading EXIF &mdash; Wand 0.3.0</title>
-    
-    <link rel="stylesheet" href="../_static/wand.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '0.3.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Wand 0.3.0" href="../index.html" />
-    <link rel="next" title="Resource management" href="resource.html" />
-    <link rel="prev" title="Resizing and cropping" href="resizecrop.html" />
-   
-  
-  <link media="only screen and (max-device-width: 480px)" href="../_static/small_flask.css" type= "text/css" rel="stylesheet" />
-
+    <meta charset="utf-8">
+    <meta http-equiv="refresh" content="0; url=http://docs.wand-py.org/en/0.2-maintenance/guide/exif.html">
+    <title>Redirecting to http://docs.wand-py.org/en/0.2-maintenance/guide/exif.html&hellip;</title>
+    <link rel="canonical" href="http://docs.wand-py.org/en/0.2-maintenance/guide/exif.html">
   </head>
-  <body>
-  
-  
-
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="resource.html" title="Resource management"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="resizecrop.html" title="Resizing and cropping"
-             accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Wand</a> &raquo;</li> 
-      </ul>
-    </div>  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body">
-            
-  <div class="section" id="reading-exif">
-<h1>Reading EXIF<a class="headerlink" href="#reading-exif" title="Permalink to this headline">¶</a></h1>
-<p class="versionadded">
-<span class="versionmodified">New in version 0.3.0.</span></p>
-<p><a class="reference internal" href="../wand/image.html#wand.image.Image.metadata" title="wand.image.Image.metadata"><tt class="xref py py-attr docutils literal"><span class="pre">Image.metadata</span></tt></a> contains metadata
-of the image including EXIF.  These are prefixed by <tt class="docutils literal"><span class="pre">'exif:'</span></tt>
-e.g. <tt class="docutils literal"><span class="pre">'exif:ExifVersion'</span></tt>, <tt class="docutils literal"><span class="pre">'exif:Flash'</span></tt>.</p>
-<p>Here&#8217;s a straightforward example to access EXIF of an image:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">exif</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="k">with</span> <span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s">&#39;wandtests/assets/beach.jpg&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">image</span><span class="p">:</span>
-    <span class="n">exif</span><span class="o">.</span><span class="n">update</span><span class="p">((</span><span class="n">k</span><span class="p">[</span><span class="mi">5</span><span class="p">:],</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">image</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                           <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;exif:&#39;</span><span class="p">))</span>
-</pre></div>
-</div>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">You can&#8217;t write into <a class="reference internal" href="../wand/image.html#wand.image.Image.metadata" title="wand.image.Image.metadata"><tt class="xref py py-attr docutils literal"><span class="pre">Image.metadata</span></tt></a>.</p>
-</div>
-</div>
-
-
-          </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-  
-    
-            <p class="logo"><a href="../index.html">
-              <img class="logo" src="../_static/wand.png" alt="Logo"/>
-            </a></p>
-  
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="resizecrop.html" title="previous chapter">Resizing and cropping</a></li>
-      <li>Next: <a href="resource.html" title="next chapter">Resource management</a></li>
-  </ul></li>
-</ul>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/guide/exif.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-  <div class="footer">
-    &copy; Copyright 2013, Hong Minhee.
-    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
-  </div>
-  
+  <body style="color: transparent;">
+    <h1>Redirecting to
+        <a href="http://docs.wand-py.org/en/0.2-maintenance/guide/exif.html" style="color: transparent;">http://docs.wand-py.org/en/0.2-maintenance/guide/exif.html</a>&hellip;</h1>
+    <p>The website was moved&hellip;</p>
   </body>
 </html>
+        
