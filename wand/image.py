@@ -789,6 +789,14 @@ class Image(Resource):
                             repr(color))
         self.options['fill'] = color.string
 
+    def sub(self, text, font):
+        if not isinstance(text, basestring):
+            raise TypeError('text must be a string, not ' + repr(text))
+        if font is not None and not isinstance(font, Font):
+            raise TypeError('font must be a wand.font.Font, not ' + repr(font))
+        self.caption(text, 0, 0, self.width - 6, self.height - 6, font=font, gravity='south_east')
+        #self.caption(text, l, t, w, h, font, 'south_east')
+
     def caption(self, text, left=0, top=0, width=None, height=None, font=None,
                 gravity=None):
         """Writes a caption ``text`` into the position.
@@ -1239,10 +1247,21 @@ class Image(Resource):
             raise ValueError('image width cannot be zero')
         elif left == top == 0 and width == self.width and height == self.height:
             return
-        library.MagickCropImage(self.wand, width, height, left, top)
-        self.raise_exception()
-        if reset_coords:
-            self.reset_coords()
+        if self.mimetype == 'image/gif':
+            self.wand = library.MagickCoalesceImages(self.wand)
+            library.MagickSetLastIterator(self.wand)
+            n = library.MagickGetIteratorIndex(self.wand)
+            library.MagickResetIterator(self.wand)
+            for i in range(0, n + 1):
+                library.MagickSetIteratorIndex(self.wand, i)
+                library.MagickCropImage(self.wand, width, height, left, top)
+                if reset_coords:
+                    library.MagickResetImagePage(self.wand, None)
+        else:
+            library.MagickCropImage(self.wand, width, height, left, top)
+            self.raise_exception()
+            if reset_coords:
+                self.reset_coords()
 
     def reset_coords(self):
         """Reset the coordinate frame of the image so to the upper-left corner
@@ -1312,9 +1331,27 @@ class Image(Resource):
               not (0 <= filter < len(FILTER_TYPES))):
             raise ValueError(repr(filter) + ' is an invalid filter type')
         blur = ctypes.c_double(float(blur))
-        r = library.MagickResizeImage(self.wand, width, height, filter, blur)
-        if not r:
-            self.raise_exception()
+        if self.mimetype == 'image/gif':
+            self.wand = library.MagickCoalesceImages(self.wand)
+            library.MagickSetLastIterator(self.wand)
+            n = library.MagickGetIteratorIndex(self.wand)
+            library.MagickResetIterator(self.wand)
+            for i in range(0, n + 1):
+                library.MagickSetIteratorIndex(self.wand, i)
+                library.MagickResizeImage(self.wand, width, height, filter, blur)
+            library.MagickSetSize(self.wand, width, height)
+        else:
+            r = library.MagickResizeImage(self.wand, width, height, filter, blur)
+            library.MagickSetSize(self.wand, width, height)
+            if not r:
+                self.raise_exception()
+
+    @property
+    def frame_num(self):
+        library.MagickSetLastIterator(self.wand)
+        n = library.MagickGetIteratorIndex(self.wand)
+        library.MagickResetIterator(self.wand)
+        return n + 1
 
     def transform(self, crop='', resize=''):
         """Transforms the image using :c:func:`MagickTransformImage`,
@@ -1498,13 +1535,22 @@ class Image(Resource):
             raise TypeError('degree must be a numbers.Real value, not ' +
                             repr(degree))
         with background:
-            result = library.MagickRotateImage(self.wand,
-                                               background.resource,
-                                               degree)
-        if not result:
-            self.raise_exception()
-        if reset_coords:
-            self.reset_coords()
+            if self.mimetype == 'image/gif':
+                self.wand = library.MagickCoalesceImages(self.wand)
+                library.MagickSetLastIterator(self.wand)
+                n = library.MagickGetIteratorIndex(self.wand)
+                library.MagickResetIterator(self.wand)
+                for i in range(0, n + 1):
+                    library.MagickSetIteratorIndex(self.wand, i)
+                    library.MagickRotateImage(self.wand, background.resource, degree)
+                    if reset_coords:
+                        library.MagickResetImagePage(self.wand, None)
+            else:
+                result = library.MagickRotateImage(self.wand, background.resource, degree)
+                if not result:
+                    self.raise_exception()
+                if reset_coords:
+                    self.reset_coords()
 
     def transparentize(self, transparency):
         """Makes the image transparent by subtracting some percentage of
@@ -1703,7 +1749,10 @@ class Image(Resource):
             if not isinstance(filename, basestring):
                 raise TypeError('filename must be a string, not ' +
                                 repr(filename))
-            r = library.MagickWriteImage(self.wand, filename)
+            if self.mimetype == 'image/gif':
+                r = library.MagickWriteImages(self.wand, filename)
+            else:
+                r = library.MagickWriteImage(self.wand, filename)
             if not r:
                 self.raise_exception()
 
@@ -1732,7 +1781,11 @@ class Image(Resource):
                 return converted.make_blob()
         library.MagickResetIterator(self.wand)
         length = ctypes.c_size_t()
-        blob_p = library.MagickGetImageBlob(self.wand, ctypes.byref(length))
+        blob_p = None
+        if self.mimetype == 'image/gif':
+            blob_p = library.MagickGetImagesBlob(self.wand, ctypes.byref(length))
+        else:
+            blob_p = library.MagickGetImageBlob(self.wand, ctypes.byref(length))
         if blob_p and length.value:
             blob = ctypes.string_at(blob_p, length.value)
             library.MagickRelinquishMemory(blob_p)
