@@ -1136,3 +1136,14 @@ def flip():
             assert flipped[0, -1] == img[0, 0]
             assert flipped[-1, 0] == img[-1, -1]
             assert flipped[-1, -1] == img[-1, 0]
+
+
+@tests.test
+def flop():
+    with Image(filename=asset('beach.jpg')) as img:
+        with img.clone() as flopped:
+            flopped.flop()
+            assert flopped[0, 0] == img[-1, 0]
+            assert flopped[-1, 0] == img[0, 0]
+            assert flopped[0, -1] == img[-1, -1]
+            assert flopped[-1, -1] == img[0, -1]

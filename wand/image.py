@@ -1565,6 +1565,17 @@ class Image(Resource):
         if not result:
             self.raise_exception()
 
+    def flop(self):
+        """Creates a horizontal mirror image by reflecting the pixels around
+        the central y-axis.  It manipulates the image in place.
+
+        .. versionadded:: 0.3.0
+
+        """
+        result = library.MagickFlopImage(self.wand)
+        if not result:
+            self.raise_exception()
+
     def transparentize(self, transparency):
         """Makes the image transparent by subtracting some percentage of
         the black color channel.  The ``transparency`` parameter specifies the

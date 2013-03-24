@@ -66,6 +66,7 @@ To be released.
 - Started supporting resizing and cropping of GIF images.
   [:issue:`88` by Bear Dong]
 - Added :meth:`Image.flip() <wand.image.Image.flip>` method.
+- Added :meth:`Image.flop() <wand.image.Image.flop>` method.
 
 __ http://en.wikipedia.org/wiki/Seam_carving
 
