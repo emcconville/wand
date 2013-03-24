@@ -1532,6 +1532,7 @@ class Image(Resource):
             raise TypeError('degree must be a numbers.Real value, not ' +
                             repr(degree))
         with background:
+            # FIXME: it should be cleaned up when "sequences" branch is merged
             if self.mimetype == 'image/gif':
                 self.wand = library.MagickCoalesceImages(self.wand)
                 library.MagickSetLastIterator(self.wand)
@@ -1539,11 +1540,15 @@ class Image(Resource):
                 library.MagickResetIterator(self.wand)
                 for i in range(0, n + 1):
                     library.MagickSetIteratorIndex(self.wand, i)
-                    library.MagickRotateImage(self.wand, background.resource, degree)
+                    library.MagickRotateImage(self.wand,
+                                              background.resource,
+                                              degree)
                     if reset_coords:
                         library.MagickResetImagePage(self.wand, None)
             else:
-                result = library.MagickRotateImage(self.wand, background.resource, degree)
+                result = library.MagickRotateImage(self.wand,
+                                                   background.resource,
+                                                   degree)
                 if not result:
                     self.raise_exception()
                 if reset_coords:
