@@ -1125,3 +1125,14 @@ def normalize_channel():
             assert getattr(img[0, -1], c) == getattr(left_bottom, c)
             assert getattr(img[-1, 0], c) == getattr(right_top, c)
             assert getattr(img[-1, -1], c) == getattr(right_bottom, c)
+
+
+@tests.test
+def flip():
+    with Image(filename=asset('beach.jpg')) as img:
+        with img.clone() as flipped:
+            flipped.flip()
+            assert flipped[0, 0] == img[0, -1]
+            assert flipped[0, -1] == img[0, 0]
+            assert flipped[-1, 0] == img[-1, -1]
+            assert flipped[-1, -1] == img[-1, 0]

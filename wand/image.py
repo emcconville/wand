@@ -1554,6 +1554,17 @@ class Image(Resource):
                 if reset_coords:
                     self.reset_coords()
 
+    def flip(self):
+        """Creates a vertical mirror image by reflecting the pixels around
+        the central x-axis.  It manipulates the image in place.
+
+        .. versionadded:: 0.3.0
+
+        """
+        result = library.MagickFlipImage(self.wand)
+        if not result:
+            self.raise_exception()
+
     def transparentize(self, transparency):
         """Makes the image transparent by subtracting some percentage of
         the black color channel.  The ``transparency`` parameter specifies the

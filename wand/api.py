@@ -292,6 +292,8 @@ try:
                                         ctypes.c_size_t, ctypes.c_ssize_t,
                                         ctypes.c_ssize_t]
 
+    library.MagickFlipImage.argtypes = [ctypes.c_void_p]
+
     library.MagickResetImagePage.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
 
     library.MagickResizeImage.argtypes = [ctypes.c_void_p, ctypes.c_size_t,
