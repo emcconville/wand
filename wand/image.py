@@ -1423,12 +1423,6 @@ class Image(Resource):
         :param resize: A geometry string defining the final size of the image
         :type resize: :class:`basestring`
 
-        .. note::
-
-           :issue:`104`  reported that :meth:`transform()` leaks memory
-           under version 0.3.0, so be careful when you use it on long-running
-           process like web server.
-
         .. seealso::
 
            `ImageMagick Geometry Specifications`__
