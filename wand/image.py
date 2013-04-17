@@ -251,7 +251,7 @@ EVALUATE_OPS = ('undefined', 'add', 'and', 'divide', 'leftshift', 'max',
                 'uniformnoise', 'cosine', 'sine', 'addmodulus', 'mean',
                 'abs', 'exponential', 'median', 'sum')
 
-#: (:class:`tuple`) The list of alpha chanell types
+#: (:class:`tuple`) The list of alpha channel types
 #:
 #: - ``'undefined'``
 #: - ``'activate'``
@@ -1422,6 +1422,12 @@ class Image(Resource):
         :type crop: :class:`basestring`
         :param resize: A geometry string defining the final size of the image
         :type resize: :class:`basestring`
+
+        .. note::
+
+           :issue:`104`  reported that :meth:`transform()` leaks memory
+           under version 0.3.0, so be careful when you use it on long-running
+           process like web server.
 
         .. seealso::
 
