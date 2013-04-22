@@ -911,7 +911,7 @@ def reset_coords():
 def metadata():
     """Test metadata api"""
     with Image(filename=asset('beach.jpg')) as img:
-        assert len(img.metadata) == 52
+        assert 52 <= len(img.metadata) <= 55
         assert 'exif:ApertureValue' in img.metadata
         assert 'exif:UnknownValue' not in img.metadata
         assert img.metadata['exif:ApertureValue'] == '192/32'
