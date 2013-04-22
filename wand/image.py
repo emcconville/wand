@@ -20,13 +20,15 @@ from .api import MagickPixelPacket, libc, libmagick, library
 from .color import Color
 from .exceptions import WandException
 from .resource import DestroyedResourceError, Resource
+from .font import Font
 
 
 __all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COMPOSITE_OPERATORS',
-           'EVALUATE_OPS', 'FILTER_TYPES', 'IMAGE_TYPES', 'UNIT_TYPES',
+           'EVALUATE_OPS', 'FILTER_TYPES', 'GRAVITY_TYPES', 'IMAGE_TYPES',
+           'UNIT_TYPES',
            'BaseImage', 'ChannelDepthDict', 'ChannelImageDict',
            'ClosedImageError', 'Image', 'ImageProperty', 'Iterator',
-           'Metadata')
+           'Metadata', 'OptionDict')
 
 
 #: (:class:`tuple`) The list of filter types.
@@ -250,7 +252,7 @@ EVALUATE_OPS = ('undefined', 'add', 'and', 'divide', 'leftshift', 'max',
                 'uniformnoise', 'cosine', 'sine', 'addmodulus', 'mean',
                 'abs', 'exponential', 'median', 'sum')
 
-#: (:class:`tuple`) The list of alpha chanell types
+#: (:class:`tuple`) The list of alpha channel types
 #:
 #: - ``'undefined'``
 #: - ``'activate'``
@@ -303,7 +305,7 @@ IMAGE_TYPES = ('undefined', 'bilevel', 'grayscale', 'grayscalematte',
                'colorseparation', 'colorseparationmatte', 'optimize',
                'palettebilevelmatte')
 
-#: (:class:`tuple`) The list of resolution unit types
+#: (:class:`tuple`) The list of resolution unit types.
 #:
 #: - ``'undefined'``
 #: - ``'pixelsperinch'``
@@ -318,18 +320,38 @@ IMAGE_TYPES = ('undefined', 'bilevel', 'grayscale', 'grayscalematte',
 #:    __ http://www.imagemagick.org/api/magick-image.php#MagickSetImageUnits
 UNIT_TYPES = 'undefined', 'pixelsperinch', 'pixelspercentimeter'
 
+#: (:class:`tuple`) The list of :attr:`~Image.gravity` types.
+#:
+#: .. versionadded:: 0.3.0
+GRAVITY_TYPES = ('forget', 'north_west', 'north', 'north_east', 'west',
+                 'center', 'east', 'south_west', 'south', 'south_east',
+                 'static')
+
+#: (:class:`collections.Set`) The set of available :attr:`~Image.options`.
+#:
+#: .. versionadded:: 0.3.0
+OPTIONS = frozenset(['fill'])
+
 
 class BaseImage(Resource):
+
+    #: (:class:`OptionDict`) The mapping of internal option settings.
+    #:
+    #: .. versionadded:: 0.3.0
+    options = None
 
     c_is_resource = library.IsMagickWand
     c_destroy_resource = library.DestroyMagickWand
     c_get_exception = library.MagickGetException
     c_clear_exception = library.MagickClearException
 
+    __slots__ = '_wand',
+
     def __init__(self, wand):
         self.wand = wand
         self.channel_images = ChannelImageDict(self)
         self.channel_depths = ChannelDepthDict(self)
+        self.options = OptionDict(self)
 
     @property
     def wand(self):
@@ -462,14 +484,166 @@ class BaseImage(Resource):
         return hash(self.signature)
 
     @property
+    def gravity(self):
+        """(:class:`basestring`) The text placement gravity used when
+        annotating with text.  It's a string from :const:`GRAVITY_TYPES`
+        list.  It also can be set.
+
+        """
+        gravity_index = library.MagickGetGravity(self.wand)
+        if not gravity_index:
+            self.raise_exception()
+        return GRAVITY_TYPES[gravity_index]
+
+    @gravity.setter
+    def gravity(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError('expected a string, not ' + repr(value))
+        elif value not in GRAVITY_TYPES:
+            raise ValueError('expected a string from GRAVITY_TYPES, not '
+                             + repr(value))
+        library.MagickSetGravity(self.wand, GRAVITY_TYPES.index(value))
+
+    @property
+    def font_path(self):
+        """(:class:`basestring`) The path of the current font.
+        It also can be set.
+
+        """
+        return library.MagickGetFont(self.wand)
+
+    @font_path.setter
+    def font_path(self, font):
+        if not isinstance(font, basestring):
+            raise TypeError('expected a string, not ' + repr(font))
+        if library.MagickSetFont(self.wand, font) == False:
+            raise ValueError('font is invalid')
+
+    @property
+    def font_size(self):
+        """(:class:`numbers.Real`) The font size.  It also can be set."""
+        return library.MagickGetPointsize(self.wand)
+
+    @font_size.setter
+    def font_size(self, size):
+        if not isinstance(size, numbers.Real):
+            raise TypeError('expected a numbers.Real, but got ' + repr(size))
+        elif size < 0.0:
+            raise ValueError('cannot be less then 0.0, but got ' + repr(size))
+        elif library.MagickSetPointsize(self.wand, size) == False:
+            raise ValueError('unexpected error is occur')
+
+    @property
+    def font_antialias(self):
+        return bool(library.MagickGetAntialias(self.wand))
+
+    @font_antialias.setter
+    def font_antialias(self, antialias):
+        if not isinstance(antialias, bool):
+            raise TypeError('font_antialias must be a bool, not ' +
+                            repr(antialias))
+        library.MagickSetAntialias(self.wand, antialias)
+
+    @property
+    def font(self):
+        """(:class:`wand.font.Font`) The current font options."""
+        return Font(
+            path=self.font_path,
+            size=self.font_size,
+            color=self.font_color,
+            antialias=self.font_antialias
+        )
+
+    @font.setter
+    def font(self, font):
+        if not isinstance(font, Font):
+            raise TypeError('font must be a wand.font.Font, not ' + repr(font))
+        self.font_path = font.path
+        self.font_size = font.size
+        self.font_color = font.color
+        self.font_antialias = font.antialias
+
+    @property
     def width(self):
         """(:class:`numbers.Integral`) The width of this image."""
         return library.MagickGetImageWidth(self.wand)
+
+    @width.setter
+    def width(self, width):
+        if width is not None and not isinstance(width, numbers.Integral):
+            raise TypeError('width must be a integral, not ' + repr(width))
+        library.MagickSetSize(self.wand, width, self.height)
 
     @property
     def height(self):
         """(:class:`numbers.Integral`) The height of this image."""
         return library.MagickGetImageHeight(self.wand)
+
+    @height.setter
+    def height(self, height):
+        if height is not None and not isinstance(height, numbers.Integral):
+            raise TypeError('height must be a integral, not ' + repr(height))
+        library.MagickSetSize(self.wand, self.width, height)
+
+    @property
+    def font_color(self):
+        return Color(self.options['fill'])
+
+    @font_color.setter
+    def font_color(self, color):
+        if not isinstance(color, Color):
+            raise TypeError('font_color must be a wand.color.Color, not ' +
+                            repr(color))
+        self.options['fill'] = color.string
+
+    def caption(self, text, left=0, top=0, width=None, height=None, font=None,
+                gravity=None):
+        """Writes a caption ``text`` into the position.
+
+        :param left: x offset in pixels
+        :type left: :class:`numbers.Integral`
+        :param right: y offset in pixels
+        :type right: :class:`numbers.Integral`
+        :param width: width of caption in pixels.
+                      default is :attr:`width` of the image
+        :type width: :class:`numbers.Integral`
+        :param height: height of caption in pixels.
+                       default is :attr:`height` of the image
+        :type height: :class:`numbers.Integral`
+        :param font: font to use.  default is :attr:`font` of the image
+        :type font: :class:`wand.font.Font`
+        :param gravity: text placement gravity.
+                        uses the current :attr:`gravity` setting of the image
+                        by default
+        :type gravity: :class:`basestring`
+
+        """
+        if not isinstance(left, numbers.Integral):
+            raise TypeError('left must be an integer, not ' + repr(left))
+        elif not isinstance(top, numbers.Integral):
+            raise TypeError('top must be an integer, not ' + repr(top))
+        elif width is not None and not isinstance(width, numbers.Integral):
+            raise TypeError('width must be an integer, not ' + repr(width))
+        elif height is not None and not isinstance(height, numbers.Integral):
+            raise TypeError('height must be an integer, not ' + repr(height))
+        elif font is not None and not isinstance(font, Font):
+            raise TypeError('font must be a wand.font.Font, not ' + repr(font))
+        elif gravity is not None and gravity not in GRAVITY_TYPES:
+            raise ValueError('invalid gravity value')
+        if width is None:
+            width = self.width - left
+        if height is None:
+            height = self.height - top
+        with Image() as textboard:
+            library.MagickSetSize(textboard.wand, width, height)
+            textboard.font = font or self.font
+            textboard.gravity = gravity or self.gravity
+            with Color('transparent') as background_color:
+                library.MagickSetBackgroundColor(textboard.wand,
+                                                 background_color.resource)
+            textboard.read(filename='caption:' + text)
+            self.composite(textboard, left, top)
+
 
     @property
     def resolution(self):
@@ -540,7 +714,7 @@ class BaseImage(Resource):
     def type(self):
         """(:class:`basestring`) The image type.
 
-        Defines image type as in wand.image.IMAGE_TYPES enumeration.
+        Defines image type as in :const:`IMAGE_TYPES` enumeration.
 
         It may raise :exc:`ValueError` when the type is unknown.
 
@@ -612,7 +786,7 @@ class BaseImage(Resource):
            or ``'deactivatealphachannel'``.
 
         """
-        return library.MagickGetImageAlphaChannel(self.wand)
+        return bool(library.MagickGetImageAlphaChannel(self.wand))
 
     @alpha_channel.setter
     def alpha_channel(self, alpha):
@@ -763,10 +937,22 @@ class BaseImage(Resource):
             raise ValueError('image width cannot be zero')
         elif left == top == 0 and width == self.width and height == self.height:
             return
-        library.MagickCropImage(self.wand, width, height, left, top)
-        self.raise_exception()
-        if reset_coords:
-            self.reset_coords()
+        # FIXME: it should be cleaned up when "sequences" branch is merged
+        if self.mimetype == 'image/gif':
+            self.wand = library.MagickCoalesceImages(self.wand)
+            library.MagickSetLastIterator(self.wand)
+            n = library.MagickGetIteratorIndex(self.wand)
+            library.MagickResetIterator(self.wand)
+            for i in xrange(0, n + 1):
+                library.MagickSetIteratorIndex(self.wand, i)
+                library.MagickCropImage(self.wand, width, height, left, top)
+                if reset_coords:
+                    library.MagickResetImagePage(self.wand, None)
+        else:
+            library.MagickCropImage(self.wand, width, height, left, top)
+            self.raise_exception()
+            if reset_coords:
+                self.reset_coords()
 
     def reset_coords(self):
         """Reset the coordinate frame of the image so to the upper-left corner
@@ -836,9 +1022,31 @@ class BaseImage(Resource):
               not (0 <= filter < len(FILTER_TYPES))):
             raise ValueError(repr(filter) + ' is an invalid filter type')
         blur = ctypes.c_double(float(blur))
-        r = library.MagickResizeImage(self.wand, width, height, filter, blur)
-        if not r:
-            self.raise_exception()
+        # FIXME: it should be cleaned up when "sequences" branch is merged
+        if self.mimetype == 'image/gif':
+            self.wand = library.MagickCoalesceImages(self.wand)
+            library.MagickSetLastIterator(self.wand)
+            n = library.MagickGetIteratorIndex(self.wand)
+            library.MagickResetIterator(self.wand)
+            for i in xrange(0, n + 1):
+                library.MagickSetIteratorIndex(self.wand, i)
+                library.MagickResizeImage(self.wand, width, height,
+                                          filter, blur)
+            library.MagickSetSize(self.wand, width, height)
+        else:
+            r = library.MagickResizeImage(self.wand, width, height,
+                                          filter, blur)
+            library.MagickSetSize(self.wand, width, height)
+            if not r:
+                self.raise_exception()
+
+    @property
+    def frame_num(self):
+        # FIXME: it should eventually removed when "sequences" branch is merged
+        library.MagickSetLastIterator(self.wand)
+        n = library.MagickGetIteratorIndex(self.wand)
+        library.MagickResetIterator(self.wand)
+        return n + 1
 
     def transform(self, crop='', resize=''):
         """Transforms the image using :c:func:`MagickTransformImage`,
@@ -1022,13 +1230,49 @@ class BaseImage(Resource):
             raise TypeError('degree must be a numbers.Real value, not ' +
                             repr(degree))
         with background:
-            result = library.MagickRotateImage(self.wand,
-                                               background.resource,
-                                               degree)
+            # FIXME: it should be cleaned up when "sequences" branch is merged
+            if self.mimetype == 'image/gif':
+                self.wand = library.MagickCoalesceImages(self.wand)
+                library.MagickSetLastIterator(self.wand)
+                n = library.MagickGetIteratorIndex(self.wand)
+                library.MagickResetIterator(self.wand)
+                for i in range(0, n + 1):
+                    library.MagickSetIteratorIndex(self.wand, i)
+                    library.MagickRotateImage(self.wand,
+                                              background.resource,
+                                              degree)
+                    if reset_coords:
+                        library.MagickResetImagePage(self.wand, None)
+            else:
+                result = library.MagickRotateImage(self.wand,
+                                                   background.resource,
+                                                   degree)
+                if not result:
+                    self.raise_exception()
+                if reset_coords:
+                    self.reset_coords()
+
+    def flip(self):
+        """Creates a vertical mirror image by reflecting the pixels around
+        the central x-axis.  It manipulates the image in place.
+
+        .. versionadded:: 0.3.0
+
+        """
+        result = library.MagickFlipImage(self.wand)
         if not result:
             self.raise_exception()
-        if reset_coords:
-            self.reset_coords()
+
+    def flop(self):
+        """Creates a horizontal mirror image by reflecting the pixels around
+        the central y-axis.  It manipulates the image in place.
+
+        .. versionadded:: 0.3.0
+
+        """
+        result = library.MagickFlopImage(self.wand)
+        if not result:
+            self.raise_exception()
 
     def transparentize(self, transparency):
         """Makes the image transparent by subtracting some percentage of
@@ -1056,10 +1300,46 @@ class BaseImage(Resource):
                                        IMAGE_TYPES.index('truecolormatte'))
             # Perform the black channel subtraction
             library.MagickEvaluateImageChannel(self.wand,
-                                               CHANNELS['black'],
+                                               CHANNELS['opacity'],
                                                EVALUATE_OPS.index('subtract'),
                                                t)
             self.raise_exception()
+
+    def transparent_color(self, color, alpha, fuzz=0, invert=False):
+        """Makes the color ``color`` a transparent color with a tolerance of
+        fuzz. The ``alpha`` parameter specify the transparency level and the
+        parameter ``fuzz`` specify the tolerance.
+
+        :param color: The color that should be made transparent on the image,
+                      color object
+        :type color: :class:`wand.color.Color`
+        :param alpha: the level of transparency: 1.0 is fully opaque
+                      and 0.0 is fully transparent.
+        :type alpha: :class:`numbers.Real`
+        :param fuzz: By default target must match a particular pixel color
+                     exactly. However, in many cases two colors may differ
+                     by a small amount. The fuzz member of image defines how
+                     much tolerance is acceptable to consider two colors as the
+                     same. For example, set fuzz to 10 and the color red at
+                     intensities of 100 and 102 respectively are now interpreted
+                     as the same color for the color.
+        :type fuzz: :class:`numbers.Integral`
+        :param invert: Boolean to tell to paint the inverse selection.
+        :type invert: :class:`bool`
+
+        .. versionadded:: 0.3.0
+
+        """
+        if not isinstance(alpha, numbers.Real):
+            raise TypeError('alpha must be an float, not ' + repr(alpha))
+        elif not isinstance(fuzz, numbers.Integral):
+            raise TypeError('fuzz must be an integer, not ' + repr(fuzz))
+        elif not isinstance(color, Color):
+            raise TypeError('color must be a wand.color.Color object, not ' +
+                            repr(color))
+        library.MagickTransparentPaintImage(self.wand, color.resource,
+                                            alpha, fuzz, invert)
+        self.raise_exception()
 
     def composite(self, image, left, top):
         """Places the supplied ``image`` over the current image, with the top
@@ -1155,16 +1435,6 @@ class BaseImage(Resource):
             watermark_image.transparentize(transparency)
             self.composite(watermark_image, left=left, top=top)
         self.raise_exception()
-
-    def trim(self):
-        """Remove solid border from image. Uses top left pixel as a guide.
-
-        .. versionadded:: 0.2.1
-
-        """
-        result = library.MagickTrimImage(self.wand)
-        if not result:
-            self.raise_exception()
 
     def __repr__(self):
         cls = type(self)
@@ -1424,9 +1694,13 @@ class Image(BaseImage):
         if not isinstance(fmt, basestring):
             raise TypeError("format must be a string like 'png' or 'jpeg'"
                             ', not ' + repr(fmt))
-        r = library.MagickSetImageFormat(self.wand, fmt.strip().upper())
+        fmt = fmt.strip()
+        r = library.MagickSetImageFormat(self.wand, fmt.upper())
         if not r:
             raise ValueError(repr(fmt) + ' is unsupported format')
+        r = library.MagickSetFilename(self.wand, 'buffer.' + fmt.lower())
+        if not r:
+            self.raise_exception()
 
     @property
     def mimetype(self):
@@ -1531,7 +1805,10 @@ class Image(BaseImage):
             if not isinstance(filename, basestring):
                 raise TypeError('filename must be a string, not ' +
                                 repr(filename))
-            r = library.MagickWriteImage(self.wand, filename)
+            if self.mimetype == 'image/gif':
+                r = library.MagickWriteImages(self.wand, filename)
+            else:
+                r = library.MagickWriteImage(self.wand, filename)
             if not r:
                 self.raise_exception()
 
@@ -1560,7 +1837,11 @@ class Image(BaseImage):
                 return converted.make_blob()
         library.MagickResetIterator(self.wand)
         length = ctypes.c_size_t()
-        blob_p = library.MagickGetImageBlob(self.wand, ctypes.byref(length))
+        blob_p = None
+        if self.mimetype == 'image/gif':
+            blob_p = library.MagickGetImagesBlob(self.wand, ctypes.byref(length))
+        else:
+            blob_p = library.MagickGetImageBlob(self.wand, ctypes.byref(length))
         if blob_p and length.value:
             blob = ctypes.string_at(blob_p, length.value)
             library.MagickRelinquishMemory(blob_p)
@@ -1576,6 +1857,76 @@ class Image(BaseImage):
         result = library.MagickStripImage(self.wand)
         if not result:
             self.raise_exception()
+
+    def trim(self, color=None):
+        """Remove solid border from image. Uses top left pixel as a guide
+        by default, or you can also specify the ``color`` to remove.
+
+        :param color: the border color to remove.
+                      if it's omitted top left pixel is used by default
+        :type color: :class:`~wand.color.Color`
+
+        .. versionadded:: 0.2.1
+
+        .. versionadded:: 0.3.0
+
+           Optional ``color`` parameter.
+
+        """
+        with color or self[0, 0] as color:
+            self.border(color, 1, 1)
+        result = library.MagickTrimImage(self.wand)
+        if not result:
+            self.raise_exception()
+
+    def border(image, color, width, height):
+        """Surrounds the image with a border.
+
+        :param image: the wand image
+        :type image: :class:`Image`
+        :param bordercolor: the border color pixel wand
+        :type image: :class:`~wand.color.Color`
+        :param width: the border width
+        :type width: :class:`numbers.Integral`
+        :param height: the border height
+        :type height: :class:`numbers.Integral`
+
+        .. versionadded:: 0.3.0
+
+        """
+        if not isinstance(color, Color):
+            raise TypeError('color must be a wand.color.Color object, not ' +
+                            repr(color))
+        with color:
+            result = library.MagickBorderImage(image.wand, color.resource,
+                                               width, height)
+        if not result:
+            image.raise_exception()
+
+    def normalize(self, channel=None):
+        """Normalize color channels.
+
+        :param channel: the channel type.  available values can be found
+                        in the :const:`CHANNELS` mapping.  If ``None``,
+                        normalize all channels.
+        :type channel: :class:`basestring`
+
+        """
+        if channel:
+            try:
+                ch_const = CHANNELS[channel]
+            except KeyError:
+                raise ValueError(repr(channel) + ' is an invalid channel type'
+                                 '; see wand.image.CHANNELS dictionary')
+            r = library.MagickNormalizeImageChannel(self.wand, ch_const)
+        else:
+            r = library.MagickNormalizeImage(self.wand)
+        if not r:
+            self.raise_exception()
+
+    def _repr_png_(self):
+        with self.convert('png') as cloned:
+            return cloned.make_blob()
 
     def __repr__(self):
         cls = type(self)
@@ -1708,11 +2059,47 @@ class ImageProperty(object):
         """
         # Dereference our weakref and check that the parent Image stil exists
         image = self._image()
-        if image:
+        if image is not None:
             return image
         raise ClosedImageError(
             'parent Image of {0!r} has been destroyed'.format(self)
         )
+
+class OptionDict(ImageProperty, collections.MutableMapping):
+    """Mutable mapping of the image internal options.  See available
+    options in :const:`OPTIONS` constant.
+
+    .. versionadded:: 0.3.0
+
+    """
+
+    def __iter__(self):
+        return iter(OPTIONS)
+
+    def __len__(self):
+        return len(OPTIONS)
+
+    def __getitem__(self, key):
+        if not isinstance(key, basestring):
+            raise TypeError('option name must be a string, not ' + repr(key))
+        if key not in OPTIONS:
+            raise ValueError('invalid option: ' + repr(key))
+        image = self.image
+        return library.MagickGetOption(image.wand, key)
+
+    def __setitem__(self, key, value):
+        if not isinstance(key, basestring):
+            raise TypeError('option name must be a string, not ' + repr(key))
+        if not isinstance(value, basestring):
+            raise TypeError('option value must be a string, not ' +
+                            repr(value))
+        if key not in OPTIONS:
+            raise ValueError('invalid option: ' + repr(key))
+        image = self.image
+        library.MagickSetOption(image.wand, key, value)
+
+    def __delitem__(self, key):
+        self[key] = ''
 
 
 class Metadata(ImageProperty, collections.Mapping):

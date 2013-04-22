@@ -11,7 +11,7 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys, os, datetime
+import sys, os, datetime, types
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -19,6 +19,32 @@ import sys, os, datetime
 sys.path.insert(0, os.path.abspath('..'))
 sys.path.append(os.path.abspath('_themes'))
 from wand.version import VERSION
+
+# Mocking C libraries to fake wand.api module which is unavailable
+# on ReadTheDocs builder.
+if os.environ.get('READTHEDOCS', 0):
+    try:
+        import wand.api
+    except ImportError:
+        pass
+    class Mock(object):
+        def __init__(self, name):
+            self.name = name
+        def __getattr__(self, name):
+            return Mock(self.name + '.' + name)
+        def __repr__(self):
+            return self.name
+    mockapi = sys.modules['wand._api']
+    mockapi.library = Mock('wand.api.library')
+    mockapi.libmagick = Mock('wand.api.libmagick')
+    mockapi.libc = Mock('wand.api.libc')
+    sys.modules['wand'].api = sys.modules['wand.api'] = mockapi
+    sys.modules['wand.version'].MAGICK_VERSION = \
+    sys.modules['wand.version'].MAGICK_VERSION_NUMBER = \
+    sys.modules['wand.version'].MAGICK_VERSION_INFO = \
+    sys.modules['wand.version'].MAGICK_RELEASE_DATE_STRING = \
+    sys.modules['wand.version'].MAGICK_RELEASE_DATE = \
+    sys.modules['wand.version'].QUANTUM_DEPTH = None
 
 # -- General configuration -----------------------------------------------------
 
@@ -226,7 +252,8 @@ intersphinx_mapping = {'http://docs.python.org/': None}
 
 extlinks = {
     'issue': ('https://github.com/dahlia/wand/issues/%s', '#'),
-    'branch': ('https://github.com/dahlia/wand/compare/master...%s', '')
+    'branch': ('https://github.com/dahlia/wand/compare/master...%s', ''),
+    'commit': ('https://github.com/dahlia/wand/commit/%s', '')
 }
 
 

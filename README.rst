@@ -1,36 +1,56 @@
-.. image:: http://dahlia.github.com/wand/_static/wand.png
+.. image:: http://docs.wand-py.org/en/latest/_static/wand.png
    :width: 120
    :height: 120
 
 Wand_
-~~~~~
+=====
 
 Wand is a ``ctypes``-based simple ImageMagick_ binding for Python.
 It doesn't cover all functionalities of MagickWand API currently.
 
 You can install the package from PyPI_ by using ``pip`` or
-``easy_install``::
+``easy_install``:
 
-    $ pip install Wand
+.. code-block:: console
+
+   $ pip install Wand
 
 Or would you like to enjoy with bleeding edge?  Check out the head
-revision of the source code from the `GitHub repository`__::
+revision of the source code from the `GitHub repository`__:
 
-    $ git clone git://github.com/dahlia/wand.git
-    $ cd wand/
-    $ python setup.py install
+.. code-block:: console
 
-.. _Wand: http://dahlia.kr/wand/
+   $ git clone git://github.com/dahlia/wand.git
+   $ cd wand/
+   $ python setup.py install
+
+.. _Wand: http://wand-py.org/
 .. _ImageMagick: http://www.imagemagick.org/
-.. _PyPI: http://pypi.python.org/pypi/Wand
+.. _PyPI: https://pypi.python.org/pypi/Wand
 __ https://github.com/dahlia/wand
+
+
+Docs
+----
+
+Recent version
+   http://docs.wand-py.org/
+
+Development version
+   http://docs.wand-py.org/en/latest/
 
 
 Community
 ---------
 
+Website
+   http://wand-py.org/
+
 GitHub
    https://github.com/dahlia/wand
+
+Package Index (Cheeseshop)
+   https://pypi.python.org/pypi/Wand
 
 Mailing list
    wand@librelist.com

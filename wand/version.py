@@ -32,7 +32,8 @@ except ImportError:
 
 __all__ = ('VERSION', 'VERSION_INFO', 'MAGICK_VERSION',
            'MAGICK_VERSION_INFO', 'MAGICK_VERSION_NUMBER',
-           'MAGICK_RELEASE_DATE', 'MAGICK_RELEASE_DATE_STRING')
+           'MAGICK_RELEASE_DATE', 'MAGICK_RELEASE_DATE_STRING',
+           'QUANTUM_DEPTH')
 
 #: (:class:`tuple`) The version tuple e.g. ``(0, 1, 2)``.
 #:
@@ -88,7 +89,15 @@ if libmagick:
     MAGICK_RELEASE_DATE = datetime.date(
         *map(int, MAGICK_RELEASE_DATE_STRING.split('-')))
 
-    del c_magick_version, _match
+    c_quantum_depth = ctypes.c_size_t()
+    libmagick.GetMagickQuantumDepth(ctypes.byref(c_quantum_depth))
+    #: (:class:`numbers.Integral`) The quantum depth configuration of
+    #: the linked ImageMagick library.  One of 8, 16, 32, or 64.
+    #:
+    #: .. versionadded:: 0.3.0
+    QUANTUM_DEPTH = c_quantum_depth.value
+
+    del c_magick_version, _match, c_quantum_depth
 
 __doc__ = __doc__.replace('0.2.2', VERSION)
 del libmagick

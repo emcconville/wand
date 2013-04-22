@@ -1,0 +1,3 @@
+
+.. automodule:: wand.drawing
+   :members:

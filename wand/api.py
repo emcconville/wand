@@ -37,44 +37,69 @@ class c_magick_char_p(ctypes.c_char_p):
         library.MagickRelinquishMemory(self)
 
 
+def find_library(suffix=''):
+    """Finds library path to try loading.  The result paths are not
+    guarenteed that they exist.
+
+    :param suffix: optional suffix e.g. ``'-Q16'``
+    :type suffix: :class:`basestring`
+    :returns: a pair of libwand and libmagick paths.  they can be the same.
+              path can be ``None`` as well
+    :rtype: :class:`tuple`
+
+    """
+    libwand = None
+    system = platform.system()
+    magick_home = os.environ.get('MAGICK_HOME')
+    if magick_home:
+        if system == 'Windows':
+            libwand = 'CORE_RL_wand_{0}.dll'.format(suffix),
+        elif system == 'Darwin':
+            libwand = 'lib', 'libMagickWand{0}.dylib'.format(suffix),
+        else:
+            libwand = 'lib', 'libMagickWand{0}.so'.format(suffix),
+        libwand = os.path.join(magick_home, *libwand)
+    else:
+        if system == 'Windows':
+            libwand = ctypes.util.find_library('CORE_RL_wand_' + suffix)
+        else:
+            libwand = ctypes.util.find_library('MagickWand' + suffix)
+    if system == 'Windows':
+        # On Windows, the API is split between two libs. On other platforms,
+        # it's all contained in one.
+        libmagick_filename = 'CORE_RL_magick_' + suffix
+        if magick_home:
+            libmagick = os.path.join(magick_home, libmagick_filename + '.dll')
+        else:
+            libmagick = ctypes.util.find_library(libmagick_filename)
+        return libwand, libmagick
+    return libwand, libwand
+
+
 def load_library():
     """Loads the MagickWand library.
 
     :returns: the MagickWand library and the ImageMagick library
+    :rtype: :class:`ctypes.CDLL`
 
     """
-    libpath = None
-    system = platform.system()
-
-    magick_home = os.environ.get('MAGICK_HOME')
-    if magick_home:
-        if system == 'Windows':
-            libpath = 'CORE_RL_wand_.dll',
-        elif system == 'Darwin':
-            libpath = 'lib', 'libMagickWand.dylib',
-        else:
-            libpath = 'lib', 'libMagickWand.so',
-        libpath = os.path.join(magick_home, *libpath)
-    else:
-        if system == 'Windows':
-            libpath = ctypes.util.find_library('CORE_RL_wand_')
-        else:
-            libpath = ctypes.util.find_library('MagickWand')
-    libwand = ctypes.CDLL(libpath)
-
-    if system == 'Windows':
-        # On Windows, the API is split between two libs. On other platforms,
-        # it's all contained in one.
-        libmagick_filename = 'CORE_RL_magick_'
-        if magick_home:
-            libmagick_path = os.path.join(magick_home,
-                                          libmagick_filename + '.dll')
-        else:
-            libmagick_path = ctypes.util.find_library(libmagick_filename)
-        libmagick = ctypes.CDLL(libmagick_path)
+    tried_paths = []
+    for suffix in '', '-Q16', '-Q8', '-6.Q16':
+        libwand_path, libmagick_path = find_library(suffix)
+        if libwand_path is None or libmagick_path is None:
+            continue
+        tried_paths.append(libwand_path)
+        try:
+            libwand = ctypes.CDLL(libwand_path)
+            if libwand_path == libmagick_path:
+                libmagick = libwand
+            else:
+                tried_paths.append(libmagick_path)
+                libmagick = ctypes.CDLL(libmagick_path)
+        except (IOError, OSError):
+            continue
         return libwand, libmagick
-
-    return libwand, libwand
+    raise IOError('cannot find library; tried paths: ' + repr(tried_paths))
 
 
 if not hasattr(ctypes, 'c_ssize_t'):
@@ -100,10 +125,13 @@ class MagickPixelPacket(ctypes.Structure):
                 ('index', ctypes.c_double)]
 
 
+# Preserve the module itself even if it fails to import
+sys.modules['wand._api'] = sys.modules['wand.api']
+
 try:
     libraries = load_library()
 except (OSError, IOError):
-    msg = 'http://dahlia.github.com/wand/guide/install.html'
+    msg = 'http://docs.wand-py.org/en/latest/guide/install.html'
     if sys.platform.startswith('freebsd'):
         msg = 'pkg_add -r'
     elif sys.platform == 'win32':
@@ -185,9 +213,11 @@ try:
     library.MagickGetImageProperty.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
     library.MagickGetImageProperty.restype = c_magick_char_p
 
-    library.MagickGetImageProperties.argtypes = [ctypes.c_void_p,
-                                                 ctypes.c_char_p,
-                                                 ctypes.POINTER(ctypes.c_size_t)]
+    library.MagickGetImageProperties.argtypes = [
+        ctypes.c_void_p,
+        ctypes.c_char_p,
+        ctypes.POINTER(ctypes.c_size_t)
+    ]
     library.MagickGetImageProperties.restype = ctypes.POINTER(ctypes.c_char_p)
 
     library.MagickSetImageProperty.argtypes = [ctypes.c_void_p, ctypes.c_char_p,
@@ -211,16 +241,30 @@ try:
                                            ctypes.POINTER(ctypes.c_size_t)]
     library.MagickGetImageBlob.restype = ctypes.POINTER(ctypes.c_ubyte)
 
+    library.MagickGetImagesBlob.argtypes = [ctypes.c_void_p,
+                                            ctypes.POINTER(ctypes.c_size_t)]
+    library.MagickGetImagesBlob.restype = ctypes.POINTER(ctypes.c_ubyte)
+
     library.MagickWriteImage.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
 
     library.MagickWriteImageFile.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 
-    library.MagickGetImageResolution.argtypes = [ctypes.c_void_p,
-                  ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double)]
+    library.MagickWriteImages.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
 
-    library.MagickSetImageResolution.argtypes = [ctypes.c_void_p, ctypes.c_double, ctypes.c_double]
-    library.MagickSetResolution.argtypes = [ctypes.c_void_p, ctypes.c_double, ctypes.c_double]
-    library.MagickSetResolution.restype = ctypes.c_bool
+    library.MagickWriteImagesFile.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
+
+    library.MagickGetImageResolution.argtypes = [
+        ctypes.c_void_p,
+        ctypes.POINTER(ctypes.c_double),
+        ctypes.POINTER(ctypes.c_double)
+    ]
+
+    library.MagickSetImageResolution.argtypes = [ctypes.c_void_p,
+                                                 ctypes.c_double,
+                                                 ctypes.c_double]
+
+    library.MagickSetResolution.argtypes = [ctypes.c_void_p, ctypes.c_double,
+                                            ctypes.c_double]
 
     library.MagickGetImageWidth.argtypes = [ctypes.c_void_p]
     library.MagickGetImageWidth.restype = ctypes.c_size_t
@@ -248,6 +292,10 @@ try:
                                         ctypes.c_size_t, ctypes.c_ssize_t,
                                         ctypes.c_ssize_t]
 
+    library.MagickFlipImage.argtypes = [ctypes.c_void_p]
+
+    library.MagickFlopImage.argtypes = [ctypes.c_void_p]
+
     library.MagickResetImagePage.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
 
     library.MagickResizeImage.argtypes = [ctypes.c_void_p, ctypes.c_size_t,
@@ -258,6 +306,11 @@ try:
                                              ctypes.c_char_p]
     library.MagickTransformImage.restype = ctypes.c_void_p
 
+    library.MagickTransparentPaintImage.argtypes = [
+        ctypes.c_void_p, ctypes.c_void_p, ctypes.c_double, ctypes.c_double,
+        ctypes.c_int
+    ]
+
     library.MagickLiquidRescaleImage.argtypes = [
         ctypes.c_void_p, ctypes.c_size_t, ctypes.c_size_t,
         ctypes.c_double, ctypes.c_double
@@ -266,7 +319,18 @@ try:
     library.MagickRotateImage.argtypes = [ctypes.c_void_p, ctypes.c_void_p,
                                           ctypes.c_double]
 
+    library.MagickBorderImage.argtypes = [ctypes.c_void_p, ctypes.c_void_p,
+                                          ctypes.c_size_t, ctypes.c_size_t]
+
     library.MagickResetIterator.argtypes = [ctypes.c_void_p]
+
+    library.MagickSetLastIterator.argtypes = [ctypes.c_void_p]
+
+    library.MagickGetIteratorIndex.argtypes = [ctypes.c_void_p]
+    library.MagickGetIteratorIndex.restype = ctypes.c_ssize_t
+
+    library.MagickCoalesceImages.argtypes = [ctypes.c_void_p]
+    library.MagickCoalesceImages.restype = ctypes.c_void_p
 
     library.MagickIdentifyImage.argtypes = [ctypes.c_void_p]
     library.MagickIdentifyImage.restype = ctypes.c_char_p
@@ -325,8 +389,29 @@ try:
     library.PixelGetColorAsString.argtypes = [ctypes.c_void_p]
     library.PixelGetColorAsString.restype = c_magick_char_p
 
+    library.PixelGetRed.argtypes = [ctypes.c_void_p]
+    library.PixelGetRed.restype = ctypes.c_double
+
+    library.PixelGetGreen.argtypes = [ctypes.c_void_p]
+    library.PixelGetGreen.restype = ctypes.c_double
+
+    library.PixelGetBlue.argtypes = [ctypes.c_void_p]
+    library.PixelGetBlue.restype = ctypes.c_double
+
     library.PixelGetAlpha.argtypes = [ctypes.c_void_p]
     library.PixelGetAlpha.restype = ctypes.c_double
+
+    library.PixelGetRedQuantum.argtypes = [ctypes.c_void_p]
+    library.PixelGetRedQuantum.restype = ctypes.c_size_t
+
+    library.PixelGetGreenQuantum.argtypes = [ctypes.c_void_p]
+    library.PixelGetGreenQuantum.restype = ctypes.c_size_t
+
+    library.PixelGetBlueQuantum.argtypes = [ctypes.c_void_p]
+    library.PixelGetBlueQuantum.restype = ctypes.c_size_t
+
+    library.PixelGetAlphaQuantum.argtypes = [ctypes.c_void_p]
+    library.PixelGetAlphaQuantum.restype = ctypes.c_size_t
 
     library.MagickGetQuantumRange.argtypes = [ctypes.POINTER(ctypes.c_size_t)]
 
@@ -394,12 +479,203 @@ try:
     library.DestroyExceptionInfo.argtypes = [ctypes.c_void_p]
     library.DestroyExceptionInfo.restype = ctypes.c_void_p
 
+    library.MagickGetSize.argtypes = [ctypes.c_void_p,
+                                      ctypes.POINTER(ctypes.c_uint),
+                                      ctypes.POINTER(ctypes.c_uint)]
+    library.MagickGetSize.restype = ctypes.c_int
+
+    library.MagickSetSize.argtypes = [ctypes.c_void_p,
+                                      ctypes.c_uint,
+                                      ctypes.c_uint]
+    library.MagickSetSize.restype = ctypes.c_int
+
+    library.MagickGetFont.argtypes = [ctypes.c_void_p]
+    library.MagickGetFont.restype = ctypes.c_char_p
+
+    library.MagickSetFont.argtypes = [ctypes.c_void_p,
+                                      ctypes.c_char_p]
+    library.MagickSetFont.restype = ctypes.c_int
+
+    library.MagickGetPointsize.argtypes = [ctypes.c_void_p]
+    library.MagickGetPointsize.restype = ctypes.c_double
+
+    library.MagickSetPointsize.argtypes = [ctypes.c_void_p,
+                                           ctypes.c_double]
+    library.MagickSetPointsize.restype = ctypes.c_int
+
+    library.MagickGetGravity.argtypes = [ctypes.c_void_p]
+    library.MagickGetGravity.restype = ctypes.c_int
+
+    library.MagickSetGravity.argtypes = [ctypes.c_void_p,
+                                         ctypes.c_int]
+    library.MagickSetGravity.restype = ctypes.c_int
+
+    library.MagickSetLastIterator.argtypes = [ctypes.c_void_p]
+
+    library.MagickGetBackgroundColor.argtypes = [ctypes.c_void_p]
+    library.MagickGetBackgroundColor.restype = ctypes.c_void_p
+
+    library.MagickSetBackgroundColor.argtypes = [ctypes.c_void_p,
+                                                 ctypes.c_void_p]
+    library.MagickSetBackgroundColor.restype = ctypes.c_int
+
+    library.MagickGetOption.argtypes = [ctypes.c_void_p,
+                                        ctypes.c_char_p]
+    library.MagickGetOption.restype = ctypes.c_char_p
+
+    library.MagickSetOption.argtypes = [ctypes.c_void_p,
+                                        ctypes.c_char_p,
+                                        ctypes.c_char_p]
+    library.MagickSetOption.restype = ctypes.c_int
+
+    library.MagickGetAntialias.argtypes = [ctypes.c_void_p]
+    library.MagickGetAntialias.restype = ctypes.c_int
+
+    library.MagickSetAntialias.argtypes = [ctypes.c_void_p,
+                                           ctypes.c_int]
+    library.MagickSetAntialias.restype = ctypes.c_int
+
     # These functions are const so it's okay for them to be c_char_p
     libmagick.GetMagickVersion.argtypes = [ctypes.POINTER(ctypes.c_size_t)]
     libmagick.GetMagickVersion.restype = ctypes.c_char_p
 
     libmagick.GetMagickReleaseDate.argtypes = []
     libmagick.GetMagickReleaseDate.restype = ctypes.c_char_p
+
+    libmagick.GetMagickQuantumDepth.argtypes = [ctypes.POINTER(ctypes.c_size_t)]
+    libmagick.GetMagickQuantumDepth.restype = ctypes.c_char_p
+
+    library.NewDrawingWand.restype = ctypes.c_void_p
+
+    library.CloneDrawingWand.argtypes = [ctypes.c_void_p]
+    library.CloneDrawingWand.restype = ctypes.c_void_p
+
+    library.DestroyDrawingWand.argtypes = [ctypes.c_void_p]
+    library.DestroyDrawingWand.restype = ctypes.c_void_p
+
+    library.IsDrawingWand.argtypes = [ctypes.c_void_p]
+    library.IsDrawingWand.restype = ctypes.c_int
+
+    library.DrawGetException.argtypes = [ctypes.c_void_p,
+                                         ctypes.POINTER(ctypes.c_int)]
+    library.DrawGetException.restype = ctypes.c_char_p
+
+    library.DrawClearException.argtypes = [ctypes.c_void_p]
+    library.DrawClearException.restype = ctypes.c_int
+
+    library.DrawSetFont.argtypes = [ctypes.c_void_p,
+                                    ctypes.c_char_p]
+
+    library.DrawSetFontSize.argtypes = [ctypes.c_void_p,
+                                        ctypes.c_double]
+
+    library.DrawSetFillColor.argtypes = [ctypes.c_void_p,
+                                         ctypes.c_void_p]
+
+    library.DrawSetTextAlignment.argtypes = [ctypes.c_void_p,
+                                             ctypes.c_int]
+
+    library.DrawSetTextAntialias.argtypes = [ctypes.c_void_p,
+                                             ctypes.c_int]
+
+    library.DrawSetTextDecoration.argtypes = [ctypes.c_void_p,
+                                              ctypes.c_int]
+
+    library.DrawSetTextEncoding.argtypes = [ctypes.c_void_p,
+                                            ctypes.c_char_p]
+
+    library.DrawSetTextInterlineSpacing.argtypes = [ctypes.c_void_p,
+                                                    ctypes.c_double]
+
+    library.DrawSetTextInterwordSpacing.argtypes = [ctypes.c_void_p,
+                                                    ctypes.c_double]
+
+    library.DrawSetTextKerning.argtypes = [ctypes.c_void_p,
+                                           ctypes.c_double]
+
+    library.DrawSetTextUnderColor.argtypes = [ctypes.c_void_p,
+                                              ctypes.c_void_p]
+
+    library.DrawGetFillColor.argtypes = [ctypes.c_void_p,
+                                         ctypes.c_void_p]
+
+    library.DrawGetFont.argtypes = [ctypes.c_void_p]
+    library.DrawGetFont.restype = ctypes.c_char_p
+
+    library.DrawGetFontSize.argtypes = [ctypes.c_void_p]
+    library.DrawGetFontSize.restype = ctypes.c_double
+
+    library.DrawGetTextAlignment.argtypes = [ctypes.c_void_p]
+    library.DrawGetTextAlignment.restype = ctypes.c_int
+
+    library.DrawGetTextAntialias.argtypes = [ctypes.c_void_p]
+    library.DrawGetTextAntialias.restype = ctypes.c_int
+
+    library.DrawGetTextDecoration.argtypes = [ctypes.c_void_p]
+    library.DrawGetTextDecoration.restype = ctypes.c_int
+
+    library.DrawGetTextEncoding.argtypes = [ctypes.c_void_p]
+    library.DrawGetTextEncoding.restype = ctypes.c_char_p
+
+    library.DrawGetTextInterlineSpacing.argtypes = [ctypes.c_void_p]
+    library.DrawGetTextInterlineSpacing.restype = ctypes.c_double
+
+    library.DrawGetTextInterwordSpacing.argtypes = [ctypes.c_void_p]
+    library.DrawGetTextInterwordSpacing.restype = ctypes.c_double
+
+    library.DrawGetTextKerning.argtypes = [ctypes.c_void_p]
+    library.DrawGetTextKerning.restype = ctypes.c_double
+
+    library.DrawGetTextUnderColor.argtypes = [ctypes.c_void_p,
+                                              ctypes.c_void_p]
+
+    library.DrawSetGravity.argtypes = [ctypes.c_void_p,
+                                       ctypes.c_int]
+
+    library.DrawGetGravity.argtypes = [ctypes.c_void_p]
+    library.DrawGetGravity.restype = ctypes.c_int
+
+    library.MagickAnnotateImage.argtypes = [ctypes.c_void_p,
+                                            ctypes.c_void_p,
+                                            ctypes.c_double,
+                                            ctypes.c_double,
+                                            ctypes.c_double,
+                                            ctypes.c_char_p]
+    library.MagickAnnotateImage.restype = ctypes.c_int
+
+    library.ClearDrawingWand.argtypes = [ctypes.c_void_p]
+
+    library.MagickDrawImage.argtypes = [ctypes.c_void_p,
+                                        ctypes.c_void_p]
+    library.MagickDrawImage.restype = ctypes.c_int
+
+    library.DrawLine.argtypes = [ctypes.c_void_p,
+                                 ctypes.c_double,
+                                 ctypes.c_double,
+                                 ctypes.c_double,
+                                 ctypes.c_double]
+
+    library.DrawAnnotation.argtypes = [ctypes.c_void_p,
+                                       ctypes.c_double,
+                                       ctypes.c_double,
+                                       ctypes.POINTER(ctypes.c_ubyte)]
+
+    library.MagickNormalizeImage.argtypes = [ctypes.c_void_p]
+
+    library.MagickNormalizeImageChannel.argtypes = [ctypes.c_void_p,
+                                                    ctypes.c_int]
+
+    library.MagickQueryFontMetrics.argtypes = [ctypes.c_void_p,
+                                               ctypes.c_void_p,
+                                               ctypes.c_char_p]
+    library.MagickQueryFontMetrics.restype = ctypes.POINTER(ctypes.c_double)
+
+    library.MagickQueryMultilineFontMetrics.argtypes = [ctypes.c_void_p,
+                                                        ctypes.c_void_p,
+                                                        ctypes.c_char_p]
+    library.MagickQueryMultilineFontMetrics.restype = ctypes.POINTER(
+        ctypes.c_double
+    )
 except AttributeError:
     raise ImportError('MagickWand shared library not found or incompatible')
 
