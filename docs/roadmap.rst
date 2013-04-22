@@ -22,6 +22,20 @@ Sequences (:issue:`34`, :issue:`39`, :issue:`66`)
 
    The branch name for it will be :branch:`sequence`.
 
+   Issues to be resolved:
+
+   :issue:`34`
+      Add sequences API
+
+   :issue:`39`
+      Sequences API
+
+   :issue:`66`
+      Sequence improved API
+
+   :issue:`103`
+      Animated GIF image may generate multiple files when it's saved
+
 EXIF (:issue:`56`, :issue:`25`)
    ImageMagick itself can read/write EXIF through :c:func:`GetMagickInfo`
    function.  Wand 0.3 will make a binding for it.
