@@ -106,7 +106,7 @@ CLI (:program:`covert` command) to Wand compiler (:issue:`100`)
 
    This feature is to make these CLI codes possible to be used with Wand.
 
-Supporting :meth:`__array_interface__` for NumPy
+Supporting :meth:`__array_interface__` for NumPy (:issue:`65`)
    It makes :func:`numpy.asarray()` able to take :class:`~wand.image.Image`
    object to deal with its pixels as matrix.
 
