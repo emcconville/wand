@@ -108,6 +108,7 @@ def insert_first():
         for i, instance in enumerate(instances):
             assert instance.index == 1 + i
             assert instance == imga.sequence[1 + i]
+    assert 0
 
 
 @tests.test

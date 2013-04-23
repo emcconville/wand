@@ -117,6 +117,7 @@ class Sequence(ImageProperty, collections.MutableSequence):
             raise TypeError('image must be an instance of wand.image.'
                             'BaseImage, not ' + repr(image))
         if index == 0:
+            print 'A: index =', repr(index)
             tmp_idx = self.current_index
             try:
                 library.MagickSetFirstIterator(self.image.wand)
@@ -124,9 +125,11 @@ class Sequence(ImageProperty, collections.MutableSequence):
             finally:
                 self.current_index = tmp_idx
         else:
+            print 'B: index =', repr(index)
             with self.index_context(index - 1):
                 library.MagickAddImage(self.image.wand, image.wand)
         instances = self.instances
+        print 'self.instances =', repr(instances)
         if index < len(instances):  # reallocate
             for instance in instances[index:]:
                 if instance is not None:
