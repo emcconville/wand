@@ -228,7 +228,7 @@ class SingleImage(BaseImage):
         cls = type(self)
         if self.index is None or getattr(self, 'c_resource', None) is None:
             return '<{0}.{1}: (closed)>'.format(cls.__module__, cls.__name__)
-        return '<{0}.{1}: ({2}x{3}) [{4}]>'.format(
+        return '<{0}.{1}: ({2}x{3}) [{4}] at 0x{5:x}>'.format(
             cls.__module__, cls.__name__,
-            self.width, self.height, self.index
+            self.width, self.height, self.index, id(self)
         )
