@@ -103,7 +103,7 @@ def insert_first():
             imga.sequence.insert(0, imgg)
             assert imga.sequence[0] == imgg.sequence[0], \
                    ('imga.sequence = ' + repr(list(imga.sequence)) +
-                    ', imgg.sequence[0] = ' + repr(imgg.sequence[0]))
+                    ', imgg.sequence = ' + repr(list(imgg.sequence)))
         assert len(imga.sequence) == 5
         for i, instance in enumerate(instances):
             assert instance.index == 1 + i
