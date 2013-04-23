@@ -129,12 +129,14 @@ class Sequence(ImageProperty, collections.MutableSequence):
             with self.index_context(index - 1):
                 library.MagickAddImage(self.image.wand, image.wand)
         instances = self.instances
-        print 'self.instances =', repr(instances)
+        print '1: self.instances =', repr(instances)
         if index < len(instances):  # reallocate
             for instance in instances[index:]:
                 if instance is not None:
                     instance.index += 1
+            print '2: self.instances =', repr(instances)
             instances.insert(index, None)
+            print '3: self.instances =', repr(instances)
 
     def append(self, image):
         if not isinstance(image, BaseImage):
