@@ -131,23 +131,25 @@ def extend_sequence():
         assert len(a.sequence) == 8
 
 
-@tests.test
-def equals():
-    functions = [
-        lambda i: i,  # identity
-        hash,
-        lambda i: i.signature
-    ]
-    with Image(filename=asset('apple.ico')) as a:
-        with Image(filename=asset('apple.ico')) as b:
-            for f in functions:
-                assert f(a) == f(b)
-                assert f(a.sequence[b.sequence.current_index]) != \
-                       f(b.sequence[0])
-                assert f(a.sequence[0]) == f(b.sequence[0])
-                assert f(a) != f(b.sequence[1])
-                assert f(a.sequence[0]) != f(b.sequence[1])
-                assert f(a.sequence[1]) == f(b.sequence[1])
+cmp_funcs = {
+    'equals': lambda i: i,  # identity
+    'hash_equals': hash,
+    'signature_equals': lambda i: i.signature
+}
+
+for cmp_name in cmp_funcs:
+    def _equals_test(f=cmp_funcs[cmp_name]):
+        with Image(filename=asset('apple.ico')) as a:
+            with Image(filename=asset('apple.ico')) as b:
+                    assert f(a) == f(b)
+                    assert f(a.sequence[b.sequence.current_index]) != \
+                           f(b.sequence[0])
+                    assert f(a.sequence[0]) == f(b.sequence[0])
+                    assert f(a) != f(b.sequence[1])
+                    assert f(a.sequence[0]) != f(b.sequence[1])
+                    assert f(a.sequence[1]) == f(b.sequence[1])
+    _equals_test.__name__ = cmp_name
+    globals()[cmp_name] = tests.test(_equals_test)
 
 
 @tests.test
