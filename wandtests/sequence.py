@@ -99,6 +99,7 @@ def insert_first():
     with Image(filename=asset('apple.ico')) as imga:
         instances = list(imga.sequence)
         with Image(filename=asset('google.ico')) as imgg:
+            print 'imga.sequence = ' + repr(list(imga.sequence))
             imga.sequence.insert(0, imgg)
             assert len(imga.sequence) == 5
             assert imga.sequence[0] == imgg.sequence[0], \

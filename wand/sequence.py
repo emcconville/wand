@@ -119,6 +119,7 @@ class Sequence(ImageProperty, collections.MutableSequence):
             raise TypeError('image must be an instance of wand.image.'
                             'BaseImage, not ' + repr(image))
         if index == 0:
+            print 'A: index =', repr(index)
             tmp_idx = self.current_index
             self_wand = self.image.wand
             wand = image.wand
@@ -146,13 +147,16 @@ class Sequence(ImageProperty, collections.MutableSequence):
             finally:
                 self.current_index = tmp_idx
         else:
+            print 'B: index =', repr(index)
             with self.index_context(index - 1):
                 library.MagickAddImage(self.image.wand, image.wand)
         if index < len(instances):  # reallocate
             for instance in instances[index:]:
                 if instance is not None:
                     instance.index += 1
+            print '2: self.instances =', repr(instances)
             instances.insert(index, None)
+            print '3: self.instances =', repr(instances)
 
     def append(self, image):
         if not isinstance(image, BaseImage):
@@ -244,7 +248,7 @@ class SingleImage(BaseImage):
         cls = type(self)
         if self.index is None or getattr(self, 'c_resource', None) is None:
             return '<{0}.{1}: (closed)>'.format(cls.__module__, cls.__name__)
-        return '<{0}.{1}: ({2}x{3}) [{4}]>'.format(
+        return '<{0}.{1}: ({2}x{3}) [{4}] at 0x{5:x}>'.format(
             cls.__module__, cls.__name__,
-            self.width, self.height, self.index
+            self.width, self.height, self.index, id(self)
         )
