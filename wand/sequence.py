@@ -9,6 +9,7 @@ import numbers
 
 from .api import library
 from .image import BaseImage, ClosedImageError, ImageProperty
+from .version import MAGICK_VERSION_INFO
 
 
 class Sequence(ImageProperty, collections.MutableSequence):
@@ -113,20 +114,40 @@ class Sequence(ImageProperty, collections.MutableSequence):
 
     def insert(self, index, image):
         index = self.validate_position(index)
+        instances = self.instances
         if not isinstance(image, BaseImage):
             raise TypeError('image must be an instance of wand.image.'
                             'BaseImage, not ' + repr(image))
         if index == 0:
             tmp_idx = self.current_index
+            self_wand = self.image.wand
+            wand = image.wand
             try:
-                library.MagickSetFirstIterator(self.image.wand)
-                library.MagickAddImage(self.image.wand, image.wand)
+                # Prepending image into the list using MagickSetFirstIterator()
+                # and MagickAddImage() had not worked properly, but was fixed
+                # since 6.7.6-0 (rev7106).
+                if MAGICK_VERSION_INFO >= (6, 7, 6, 0):
+                    library.MagickSetFirstIterator(self_wand)
+                    library.MagickAddImage(self_wand, wand)
+                else:
+                    self.current_index = 0
+                    with self.image.clone() as clone:
+                        i = len(clone.sequence) - 1
+                        while i > 0:
+                            del clone.sequence[i]
+                            i -= 1
+                        library.MagickAddImage(self_wand, clone.wand)
+                    self.current_index = 0
+                    library.MagickAddImage(self_wand, wand)
+                    self.current_index = 0
+                    library.MagickRemoveImage(self_wand)
+                    instances[0].index = None
+                    instances[0] = None
             finally:
                 self.current_index = tmp_idx
         else:
             with self.index_context(index - 1):
                 library.MagickAddImage(self.image.wand, image.wand)
-        instances = self.instances
         if index < len(instances):  # reallocate
             for instance in instances[index:]:
                 if instance is not None:

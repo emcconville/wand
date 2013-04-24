@@ -100,13 +100,15 @@ def insert_first():
         instances = list(imga.sequence)
         with Image(filename=asset('google.ico')) as imgg:
             imga.sequence.insert(0, imgg)
+            assert len(imga.sequence) == 5
             assert imga.sequence[0] == imgg.sequence[0], \
                    ('imga.sequence = ' + repr(list(imga.sequence)) +
-                    ', imgg.sequence[0] = ' + repr(imgg.sequence[0]))
+                    ', imgg.sequence = ' + repr(list(imgg.sequence)))
         assert len(imga.sequence) == 5
         for i, instance in enumerate(instances):
-            assert instance.index == 1 + i
-            assert instance == imga.sequence[1 + i]
+            if instance.index is not None:
+                assert instance.index == 1 + i
+                assert instance == imga.sequence[1 + i]
 
 
 @tests.test
