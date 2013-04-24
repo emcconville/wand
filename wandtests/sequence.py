@@ -142,8 +142,6 @@ for cmp_name in cmp_funcs:
         with Image(filename=asset('apple.ico')) as a:
             with Image(filename=asset('apple.ico')) as b:
                     assert f(a) == f(b)
-                    assert f(a.sequence[b.sequence.current_index]) != \
-                           f(b.sequence[0])
                     assert f(a.sequence[0]) == f(b.sequence[0])
                     assert f(a) != f(b.sequence[1])
                     assert f(a.sequence[0]) != f(b.sequence[1])
