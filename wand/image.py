@@ -788,7 +788,11 @@ class Image(Resource):
     @property
     def orientation(self):
         """(:class:`basestring`) The image orientation.  It's a string from
-        :const:`ORIENTATION_TYPES` list.  It also can be set."""
+        :const:`ORIENTATION_TYPES` list.  It also can be set.
+
+        .. versionadded:: 0.3.0
+        
+        """
         orientation_index = library.MagickGetImageOrientation(self.wand)
         return ORIENTATION_TYPES[orientation_index]
 
