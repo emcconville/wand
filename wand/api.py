@@ -272,6 +272,11 @@ try:
     library.MagickGetImageHeight.argtypes = [ctypes.c_void_p]
     library.MagickGetImageHeight.restype = ctypes.c_size_t
 
+    library.MagickGetImageOrientation.argtypes = [ctypes.c_void_p]
+    library.MagickGetImageOrientation.restype = ctypes.c_int
+
+    library.MagickSetImageOrientation.argtypes = [ctypes.c_void_p, ctypes.c_int]
+
     library.MagickGetImageUnits.argtypes = [ctypes.c_void_p]
 
     library.MagickSetImageUnits.argtypes = [ctypes.c_void_p, ctypes.c_int]
