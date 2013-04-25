@@ -1147,3 +1147,19 @@ def flop():
             assert flopped[-1, 0] == img[0, 0]
             assert flopped[0, -1] == img[-1, -1]
             assert flopped[-1, -1] == img[0, -1]
+
+
+@tests.test
+def get_orientation():
+    with Image(filename=asset('sasha.jpg')) as img:
+        assert img.orientation == 'undefined'
+
+    with Image(filename=asset('beach.jpg')) as img:
+        assert img.orientation == 'top_left'
+
+
+@tests.test
+def set_orientation():
+    with Image(filename=asset('beach.jpg')) as img:
+        img.orientation = 'bottom_right'
+        assert img.orientation == 'bottom_right'
