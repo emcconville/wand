@@ -25,7 +25,7 @@ from .font import Font
 
 __all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COMPOSITE_OPERATORS',
            'EVALUATE_OPS', 'FILTER_TYPES', 'GRAVITY_TYPES', 'IMAGE_TYPES',
-           'UNIT_TYPES',
+           'ORIENTATION_TYPES', 'UNIT_TYPES',
            'ChannelDepthDict', 'ChannelImageDict', 'ClosedImageError',
            'Image', 'ImageProperty', 'Iterator', 'Metadata', 'OptionDict')
 
@@ -325,6 +325,13 @@ UNIT_TYPES = 'undefined', 'pixelsperinch', 'pixelspercentimeter'
 GRAVITY_TYPES = ('forget', 'north_west', 'north', 'north_east', 'west',
                  'center', 'east', 'south_west', 'south', 'south_east',
                  'static')
+
+#: (:class:`tuple`) The list of :attr:`~Image.orientation` types.
+#:
+#: .. versionadded:: 0.3.0
+ORIENTATION_TYPES = ('undefined', 'top_left', 'top_right', 'bottom_right',
+                     'bottom_left', 'left_top', 'right_top', 'right_bottom',
+                     'left_bottom')
 
 #: (:class:`collections.Set`) The set of available :attr:`~Image.options`.
 #:
@@ -777,6 +784,27 @@ class Image(Resource):
         if height is not None and not isinstance(height, numbers.Integral):
             raise TypeError('height must be a integral, not ' + repr(height))
         library.MagickSetSize(self.wand, self.width, height)
+
+    @property
+    def orientation(self):
+        """(:class:`basestring`) The image orientation.  It's a string from
+        :const:`ORIENTATION_TYPES` list.  It also can be set.
+
+        .. versionadded:: 0.3.0
+        
+        """
+        orientation_index = library.MagickGetImageOrientation(self.wand)
+        return ORIENTATION_TYPES[orientation_index]
+
+    @orientation.setter
+    def orientation(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError('expected a string, not ' + repr(value))
+        elif value not in ORIENTATION_TYPES:
+            raise ValueError('expected a string from ORIENTATION_TYPES, not '
+                             + repr(value))
+        index = ORIENTATION_TYPES.index(value)
+        library.MagickSetImageOrientation(self.wand, index)
 
     @property
     def font_color(self):

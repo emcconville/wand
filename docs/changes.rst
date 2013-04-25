@@ -67,6 +67,8 @@ To be released.
   [:issue:`88` by Bear Dong]
 - Added :meth:`Image.flip() <wand.image.Image.flip>` method.
 - Added :meth:`Image.flop() <wand.image.Image.flop>` method.
+- Added :attr:`Image.orientation <wand.image.Image.orientation>` property.
+  [:commit:`88574468a38015669dae903185fb328abdd717c0` by Taeho Kim]
 
 __ http://en.wikipedia.org/wiki/Seam_carving
 
