@@ -672,6 +672,25 @@ class Image(Resource):
             return self[:, idx]
         raise TypeError('unsupported index type: ' + repr(idx))
 
+    def recolor(self, grayscale=True, color_func=None, **kwargs):
+        if not color_func:
+            return
+        if grayscale:
+            self.type = 'grayscale'
+        iterator = library.NewPixelIterator(self.wand)
+        library.PixelSetFirstIteratorRow(iterator)
+        struct_size = ctypes.sizeof(MagickPixelPacket)
+        for y in xrange(self.height):
+            width = ctypes.c_size_t()
+            pixels = library.PixelGetNextIteratorRow(iterator, ctypes.byref(width))
+            for x in xrange(width.value):
+                pc = pixels[x]
+                packet_buffer = ctypes.create_string_buffer(struct_size)
+                library.PixelGetMagickColor(pc, packet_buffer)
+                color = Color(raw=packet_buffer)
+                library.PixelSetColor(pc, color_func(x, y, color, **kwargs))
+            library.PixelSyncIterator(iterator)
+
     def __eq__(self, other):
         if isinstance(other, type(self)):
             return self.signature == other.signature

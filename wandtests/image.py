@@ -616,6 +616,17 @@ def resize():
             c.resize(width=100)
             assert c.size == (100, 599)
 
+def dummy_color_func(x, y, color, **kwargs):
+    return color.string
+
+@tests.test
+def test_recolor():
+    """Test recolor image for example: Pop Art"""
+    with Image(filename=asset('mona-lisa.jpg')) as img:
+        with img.clone() as a:
+            a.recolor(color_func=dummy_color_func)
+            a.save(filename="mona-lisa_recolor.jpg")
+
 @tests.test
 def test_gif():
     """Test the gif image resize/crop/rotate"""
