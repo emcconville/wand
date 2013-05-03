@@ -672,11 +672,9 @@ class Image(Resource):
             return self[:, idx]
         raise TypeError('unsupported index type: ' + repr(idx))
 
-    def recolor(self, grayscale=True, color_func=None, **kwargs):
+    def recolor(self, color_func=None, **kwargs):
         if not color_func:
             return
-        if grayscale:
-            self.type = 'grayscale'
         iterator = library.NewPixelIterator(self.wand)
         library.PixelSetFirstIteratorRow(iterator)
         struct_size = ctypes.sizeof(MagickPixelPacket)
