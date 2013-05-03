@@ -616,8 +616,8 @@ def resize():
             c.resize(width=100)
             assert c.size == (100, 599)
 
-def dummy_color_func(x, y, color, **kwargs):
-    return color.string
+def dummy_color_func(x, y, color):
+    return color
 
 @tests.test
 def test_recolor():

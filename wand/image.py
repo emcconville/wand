@@ -672,12 +672,13 @@ class Image(Resource):
             return self[:, idx]
         raise TypeError('unsupported index type: ' + repr(idx))
 
-    def recolor(self, color_func=None, **kwargs):
-        if not color_func:
-            return
+    def recolor(self, color_func):
+        if not color_func or not callable(color_func):
+            raise TypeError('color_func must be a function return a Color object')
         iterator = library.NewPixelIterator(self.wand)
         library.PixelSetFirstIteratorRow(iterator)
         struct_size = ctypes.sizeof(MagickPixelPacket)
+        check_return_type = False
         for y in xrange(self.height):
             width = ctypes.c_size_t()
             pixels = library.PixelGetNextIteratorRow(iterator, ctypes.byref(width))
@@ -686,7 +687,12 @@ class Image(Resource):
                 packet_buffer = ctypes.create_string_buffer(struct_size)
                 library.PixelGetMagickColor(pc, packet_buffer)
                 color = Color(raw=packet_buffer)
-                library.PixelSetColor(pc, color_func(x, y, color, **kwargs))
+                new_color = color_func(x, y, color)
+                if not check_return_type:
+                    check_return_type = True
+                    if not isinstance(new_color, Color):
+                        raise TypeError('color_func result must be a wand.color.Color, not ' + repr(new_color))
+                library.PixelSetColor(pc, new_color.string)
             library.PixelSyncIterator(iterator)
 
     def __eq__(self, other):
