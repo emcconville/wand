@@ -673,6 +673,12 @@ class Image(Resource):
         raise TypeError('unsupported index type: ' + repr(idx))
 
     def recolor(self, color_func):
+        """recolor every pixel in the image with color_func.
+        The color_func returns a wand.color.Color like this:
+
+            def color_func(x, y, color):
+                return color
+        """
         if not callable(color_func):
             raise TypeError('color_func must be a function return a Color object')
         iterator = library.NewPixelIterator(self.wand)
