@@ -623,9 +623,8 @@ def dummy_color_func(x, y, color):
 def test_recolor():
     """Test recolor image for example: Pop Art"""
     with Image(filename=asset('mona-lisa.jpg')) as img:
-        with img.clone() as a:
-            a.recolor(color_func=dummy_color_func)
-            a.save(filename="mona-lisa_recolor.jpg")
+        a = img.recolor(color_func=dummy_color_func)
+        a.save(filename="mona-lisa_recolor.jpg")
 
 @tests.test
 def test_gif():
