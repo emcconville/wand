@@ -672,6 +672,38 @@ class Image(Resource):
             return self[:, idx]
         raise TypeError('unsupported index type: ' + repr(idx))
 
+    def recolor(self, color_func):
+        """recolor every pixel in the image with color_func.
+        The color_func returns a wand.color.Color like this:
+
+            def color_func(x, y, color):
+                return color
+        """
+        if not callable(color_func):
+            raise TypeError('color_func must be a function return a Color object')
+        img = self.clone()
+        iter0 = library.NewPixelIterator(self.wand)
+        iter1 = library.NewPixelIterator(img.wand)
+        struct_size = ctypes.sizeof(MagickPixelPacket)
+        check_return_type = False
+        for y in xrange(self.height):
+            width = ctypes.c_size_t()
+            pixels0 = library.PixelGetNextIteratorRow(iter0, ctypes.byref(width))
+            pixels1 = library.PixelGetNextIteratorRow(iter1, ctypes.byref(width))
+            for x in xrange(width.value):
+                pc = pixels0[x]
+                packet_buffer = ctypes.create_string_buffer(struct_size)
+                library.PixelGetMagickColor(pc, packet_buffer)
+                color = Color(raw=packet_buffer)
+                new_color = color_func(x, y, color)
+                if not check_return_type:
+                    check_return_type = True
+                    if not isinstance(new_color, Color):
+                        raise TypeError('color_func result must be a wand.color.Color, not ' + repr(new_color))
+                library.PixelSetColor(pixels1[x], new_color.string)
+            library.PixelSyncIterator(iter1)
+        return img
+
     def __eq__(self, other):
         if isinstance(other, type(self)):
             return self.signature == other.signature
