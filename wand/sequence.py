@@ -12,8 +12,17 @@ from .api import library
 from .image import BaseImage, ImageProperty
 from .version import MAGICK_VERSION_INFO
 
+__all__ = 'Sequence', 'SingleImage'
+
 
 class Sequence(ImageProperty, collections.MutableSequence):
+    """The list-like object that contains every :class:`SingleImage`
+    in the :class:`~wand.image.Image` container.  It implements
+    :class:`collections.Sequence` prototocol.
+
+    .. versionadded:: 0.3.0
+
+    """
 
     def __init__(self, image):
         super(Sequence, self).__init__(image)
@@ -239,6 +248,12 @@ class Sequence(ImageProperty, collections.MutableSequence):
 
 
 class SingleImage(BaseImage):
+    """Each single image in :class:`~wand.image.Image` container.
+    For example, it can be a frame of GIF animation.
+
+    .. versionadded:: 0.3.0
+
+    """
 
     @property
     def sequence(self):

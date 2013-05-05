@@ -334,6 +334,14 @@ OPTIONS = frozenset(['fill'])
 
 
 class BaseImage(Resource):
+    """The abstract base of :class:`Image` (container) and
+    :class:`~wand.sequence.SingleImage`.  That means the most of
+    operations, defined in this abstract classs, are possible for
+    both :class:`Image` and :class:`~wand.sequence.SingleImage`.
+
+    .. versionadded:: 0.3.0
+
+    """
 
     #: (:class:`OptionDict`) The mapping of internal option settings.
     #:
