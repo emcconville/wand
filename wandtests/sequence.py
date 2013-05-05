@@ -2,7 +2,7 @@ from attest import assert_hook
 
 from attest import Tests, raises
 
-from wand.image import ClosedImageError, Image
+from wand.image import Image
 from .image import asset
 
 
@@ -78,13 +78,19 @@ def append():
             imga.sequence.append(imgg)
             assert imga.sequence[4] == imgg.sequence[0]
         assert len(imga.sequence) == 5
+    with Image(filename=asset('apple.ico')) as imga:
+        with Image(filename=asset('github.ico')) as imgg:
+            imga.sequence.append(imgg.sequence[1])
+            assert imga.sequence[4] == imgg.sequence[1]
+        assert len(imga.sequence) == 5
 
 
 @tests.test
 def insert():
     with Image(filename=asset('apple.ico')) as imga:
         instances = [imga.sequence[i] for i in xrange(2, 4)]
-        with Image(filename=asset('google.ico')) as imgg:
+        assert len(imga.sequence) == 4
+        with Image(filename=asset('github.ico')) as imgg:
             imga.sequence.insert(2, imgg)
             assert imga.sequence[2] == imgg.sequence[0]
         assert len(imga.sequence) == 5
@@ -95,7 +101,8 @@ def insert():
 @tests.test
 def insert_first():
     with Image(filename=asset('apple.ico')) as imga:
-        with Image(filename=asset('google.ico')) as imgg:
+        assert len(imga.sequence) == 4
+        with Image(filename=asset('github.ico')) as imgg:
             imga.sequence.insert(0, imgg)
             assert len(imga.sequence) == 5
             assert imga.sequence[0] == imgg.sequence[0], \

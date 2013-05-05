@@ -8,7 +8,7 @@ import functools
 import numbers
 
 from .api import library
-from .image import BaseImage, ClosedImageError, ImageProperty
+from .image import BaseImage, ImageProperty
 from .version import MAGICK_VERSION_INFO
 
 
@@ -119,7 +119,7 @@ class Sequence(ImageProperty, collections.MutableSequence):
         if index == 0:
             tmp_idx = self.current_index
             self_wand = self.image.wand
-            wand = image.wand
+            wand = image.sequence[0].wand
             try:
                 # Prepending image into the list using MagickSetFirstIterator()
                 # and MagickAddImage() had not worked properly, but was fixed
@@ -143,7 +143,7 @@ class Sequence(ImageProperty, collections.MutableSequence):
                 self.current_index = tmp_idx
         else:
             with self.index_context(index - 1):
-                library.MagickAddImage(self.image.wand, image.wand)
+                library.MagickAddImage(self.image.wand, image.sequence[0].wand)
         self.instances.insert(index, None)
 
     def append(self, image):
@@ -173,12 +173,21 @@ class Sequence(ImageProperty, collections.MutableSequence):
                             'images must consist of only instances of '
                             'wand.image.BaseImage, not ' + repr(image)
                         )
-                    library.MagickAddImage(wand, image.wand)
+                    else:
+                        library.MagickAddImage(wand, image.sequence[0].wand)
+            if offset is not None:
+                self.instances[offset:offset] = [None] * length
         finally:
             self.current_index = tmp_idx
+        offset = -1 if offset is None else offset
+        self.instances[offset:offset] = [None] * len(images)
 
 
 class SingleImage(BaseImage):
+
+    @property
+    def sequence(self):
+        return self,
 
     def __repr__(self):
         cls = type(self)

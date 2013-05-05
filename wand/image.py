@@ -340,6 +340,12 @@ class BaseImage(Resource):
     #: .. versionadded:: 0.3.0
     options = None
 
+    #: (:class:`collections.Sequence`) The list of
+    #: :class:`~wand.sequence.SingleImage`\ s that the image contains.
+    #:
+    #: .. versionadded:: 0.3.0
+    sequence = None
+
     c_is_resource = library.IsMagickWand
     c_destroy_resource = library.DestroyMagickWand
     c_get_exception = library.MagickGetException
