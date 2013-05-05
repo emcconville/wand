@@ -1,10 +1,11 @@
 """:mod:`wand.sequence` --- Sequences
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+.. versionadded:: 0.3.0
+
 """
 import collections
 import contextlib
-import functools
 import numbers
 
 from .api import library
@@ -159,13 +160,22 @@ class Sequence(ImageProperty, collections.MutableSequence):
             self.current_index = tmp_idx
         self.instances.append(None)
 
-    def extend(self, images):
+    def extend(self, images, offset=None):
         tmp_idx = self.current_index
         wand = self.image.wand
+        length = 0
         try:
-            library.MagickSetLastIterator(self.image.wand)
+            if offset is None:
+                library.MagickSetLastIterator(self.image.wand)
+            else:
+                if offset == 0:
+                    images = iter(images)
+                    self.insert(0, next(images))
+                    offset += 1
+                self.current_index = offset - 1
             if isinstance(images, type(self)):
                 library.MagickAddImage(wand, images.image.wand)
+                length = len(images)
             else:
                 for image in images:
                     if not isinstance(image, BaseImage):
@@ -175,12 +185,12 @@ class Sequence(ImageProperty, collections.MutableSequence):
                         )
                     else:
                         library.MagickAddImage(wand, image.sequence[0].wand)
-            if offset is not None:
-                self.instances[offset:offset] = [None] * length
+                        self.current_index += 1
+                        length += 1
         finally:
             self.current_index = tmp_idx
         offset = -1 if offset is None else offset
-        self.instances[offset:offset] = [None] * len(images)
+        self.instances[offset:offset] = [None] * length
 
 
 class SingleImage(BaseImage):

@@ -9,6 +9,11 @@ from .image import asset
 tests = Tests()
 
 
+def expire(image):
+    """Expire image's sequence cache."""
+    image.sequence.instances = [None] * len(image.sequence)
+
+
 @tests.test
 def length():
     with Image(filename=asset('apple.ico')) as img:
@@ -42,6 +47,8 @@ def setitem():
             imga.sequence[2] = imgg
         assert len(imga.sequence) == 4
         assert imga.sequence[2].size == (16, 16)
+        expire(imga)
+        assert imga.sequence[2].size == (16, 16)
 
 
 @tests.test
@@ -50,6 +57,9 @@ def delitem():
         detached = img.sequence[0]
         del img.sequence[0]
         assert len(img.sequence) == 3
+        assert img.sequence[0] is not detached
+        assert img.sequence[0].size == (16, 16)
+        expire(img)
         assert img.sequence[0] is not detached
         assert img.sequence[0].size == (16, 16)
 
@@ -72,15 +82,21 @@ def append():
         with Image(filename=asset('google.ico')) as imgg:
             imga.sequence.append(imgg)
             assert imga.sequence[4] == imgg.sequence[0]
+            expire(imga)
+            assert imga.sequence[4] == imgg.sequence[0]
         assert len(imga.sequence) == 5
     with Image(filename=asset('apple.ico')) as imga:
         with Image(filename=asset('github.ico')) as imgg:
             imga.sequence.append(imgg)
             assert imga.sequence[4] == imgg.sequence[0]
+            expire(imga)
+            assert imga.sequence[4] == imgg.sequence[0]
         assert len(imga.sequence) == 5
     with Image(filename=asset('apple.ico')) as imga:
         with Image(filename=asset('github.ico')) as imgg:
             imga.sequence.append(imgg.sequence[1])
+            assert imga.sequence[4] == imgg.sequence[1]
+            expire(imga)
             assert imga.sequence[4] == imgg.sequence[1]
         assert len(imga.sequence) == 5
 
@@ -93,7 +109,11 @@ def insert():
         with Image(filename=asset('github.ico')) as imgg:
             imga.sequence.insert(2, imgg)
             assert imga.sequence[2] == imgg.sequence[0]
-        assert len(imga.sequence) == 5
+            assert len(imga.sequence) == 5
+            for i, instance in enumerate(instances):
+                assert instance == imga.sequence[3 + i]
+            expire(imga)
+            assert imga.sequence[2] == imgg.sequence[0]
         for i, instance in enumerate(instances):
             assert instance == imga.sequence[3 + i]
 
@@ -104,31 +124,90 @@ def insert_first():
         assert len(imga.sequence) == 4
         with Image(filename=asset('github.ico')) as imgg:
             imga.sequence.insert(0, imgg)
-            assert len(imga.sequence) == 5
-            assert imga.sequence[0] == imgg.sequence[0], \
-                   ('imga.sequence = ' + repr(list(imga.sequence)) +
-                    ', imgg.sequence = ' + repr(list(imgg.sequence)))
+            assert imga.sequence[0] == imgg.sequence[0]
+            expire(imga)
+            assert imga.sequence[0] == imgg.sequence[0]
         assert len(imga.sequence) == 5
 
 
 @tests.test
 def extend():
     with Image(filename=asset('apple.ico')) as a:
-        with Image(filename=asset('apple.ico')) as b:
-            a.sequence.extend(list(b.sequence))
-            for i in xrange(4):
-                assert a.sequence[4 + i] == b.sequence[i]
-        assert len(a.sequence) == 8
+        length = len(a.sequence)
+        with Image(filename=asset('github.ico')) as b:
+            a.sequence.extend(list(b.sequence)[::-1])
+            assert a.sequence[length] == b.sequence[1]
+            assert a.sequence[length + 1] == b.sequence[0]
+            expire(a)
+            assert a.sequence[length] == b.sequence[1]
+            assert a.sequence[length + 1] == b.sequence[0]
+        assert len(a.sequence) == 6
 
 
 @tests.test
 def extend_sequence():
     with Image(filename=asset('apple.ico')) as a:
-        with Image(filename=asset('apple.ico')) as b:
+        length = len(a.sequence)
+        with Image(filename=asset('github.ico')) as b:
             a.sequence.extend(b.sequence)
-            for i in xrange(4):
-                assert a.sequence[4 + i] == b.sequence[i]
-        assert len(a.sequence) == 8
+            for i in xrange(2):
+                assert a.sequence[length + i] == b.sequence[i]
+            expire(a)
+            for i in xrange(2):
+                assert a.sequence[length + i] == b.sequence[i]
+        assert len(a.sequence) == 6
+
+
+@tests.test
+def extend_offset():
+    with Image(filename=asset('apple.ico')) as a:
+        instances = list(a.sequence)
+        with Image(filename=asset('github.ico')) as b:
+            a.sequence.extend(list(b.sequence)[::-1], 2)
+            instances[2:2] = list(b.sequence)[::-1]
+            assert list(a.sequence) == instances
+            expire(a)
+            assert list(a.sequence) == instances
+        assert len(a.sequence) == 6
+
+
+@tests.test
+def extend_offset_sequence():
+    with Image(filename=asset('apple.ico')) as a:
+        instances = list(a.sequence)
+        with Image(filename=asset('github.ico')) as b:
+            a.sequence.extend(b.sequence, 2)
+            instances[2:2] = list(b.sequence)
+            assert list(a.sequence) == instances
+            expire(a)
+            assert list(a.sequence) == instances
+        assert len(a.sequence) == 6
+
+
+@tests.test
+def extend_first():
+    with Image(filename=asset('apple.ico')) as a:
+        instances = list(a.sequence)
+        with Image(filename=asset('github.ico')) as b:
+            a.sequence.extend(list(b.sequence)[::-1], 0)
+            instances[:0] = list(b.sequence)[::-1]
+            assert list(a.sequence) == instances
+            expire(a)
+            assert list(a.sequence) == instances
+        assert len(a.sequence) == 6
+
+
+@tests.test
+def extend_first_sequence():
+    with Image(filename=asset('apple.ico')) as a:
+        instances = list(a.sequence)
+        with Image(filename=asset('github.ico')) as b:
+            a.sequence.extend(b.sequence, 0)
+            instances[:0] = list(b.sequence)
+            assert list(a.sequence) == instances
+            expire(a)
+            assert list(a.sequence) == instances
+        assert len(a.sequence) == 6
 
 
 cmp_funcs = {
