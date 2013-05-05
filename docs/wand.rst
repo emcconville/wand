@@ -9,6 +9,7 @@
       wand/color
       wand/font
       wand/drawing
+      wand/sequence
       wand/resource
       wand/exceptions
       wand/api
