@@ -184,7 +184,7 @@ class SingleImage(BaseImage):
         cls = type(self)
         if getattr(self, 'c_resource', None) is None:
             return '<{0}.{1}: (closed)>'.format(cls.__module__, cls.__name__)
-        return '<{0}.{1}: ({2}x{3})>'.format(
+        return '<{0}.{1}: {2} ({3}x{4})>'.format(
             cls.__module__, cls.__name__,
-            self.width, self.height
+            self.signature[:7], self.width, self.height
         )
