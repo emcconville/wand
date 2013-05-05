@@ -64,6 +64,51 @@ def delitem():
         assert img.sequence[0].size == (16, 16)
 
 
+slices = {
+    'to_end': slice(2, None, None),
+    'from_first': slice(None, 2, None),
+    'from_back': slice(-2, None, None),
+    'to_back': slice(None, -2, None),
+    'middle': slice(1, 3, None),
+    'from_overflow': slice(10, None, None),
+    'to_overflow': slice(None, 10, None)
+}
+
+for slice_name in slices:
+    def _getitem_slice_test(slice_=slices[slice_name]):
+        with Image(filename=asset('apple.ico')) as img:
+            assert list(img.sequence[slice_]) == list(img.sequence)[slice_]
+    _getitem_slice_test.__name__ = 'getitem_slice_' + slice_name
+
+    def _setitem_slice_test(slice_=slices[slice_name]):
+        with Image(filename=asset('apple.ico')) as imga:
+            instances = list(imga.sequence)
+            print map(hash, instances)
+            with Image(filename=asset('github.ico')) as imgg:
+                instances[slice_] = imgg.sequence
+                imga.sequence[slice_] = imgg.sequence
+                assert instances == list(imga.sequence)
+                expire(imga)
+                assert instances == list(imga.sequence)
+    _setitem_slice_test.__name__ = 'setitem_slice_' + slice_name
+
+    def _delitem_slice_test(slice_=slices[slice_name]):
+        with Image(filename=asset('apple.ico')) as img:
+            instances = list(img.sequence)
+            del instances[slice_]
+            del img.sequence[slice_]
+            assert list(img.sequence) == instances
+            expire(img)
+            assert list(img.sequence) == instances
+    _delitem_slice_test.__name__ = 'delitem_slice_' + slice_name
+
+    globals().update({
+        'getitem_slice_' + slice_name: tests.test(_getitem_slice_test),
+        'setitem_slice_' + slice_name: tests.test(_setitem_slice_test),
+        'delitem_slice_' + slice_name: tests.test(_delitem_slice_test)
+    })
+
+
 @tests.test
 def iterator():
     with Image(filename=asset('apple.ico')) as img:

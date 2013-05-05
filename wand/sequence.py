@@ -74,7 +74,34 @@ class Sequence(ImageProperty, collections.MutableSequence):
             index += length
         return index
 
+    def validate_slice(self, slice_, as_range=False):
+        if not (slice_.step is None or slice_.step == 1):
+            raise ValueError('slicing with step is unsupported')
+        length = len(self)
+        if slice_.start is None:
+            start = 0
+        elif slice_.start < 0:
+            start = length + slice_.start
+        else:
+            start = slice_.start
+        start = min(length, start)
+        if slice_.stop is None:
+            stop = 0
+        elif slice_.stop < 0:
+            stop = length + slice_.stop
+        else:
+            stop = slice_.stop
+        stop = min(length, stop or length)
+        return xrange(start, stop) if as_range else slice(start, stop, None)
+
     def __getitem__(self, index):
+        if isinstance(index, slice):
+            slice_ = self.validate_slice(index)
+            instances = self.instances[slice_]
+            for i, instance in enumerate(instances):
+                if instance is None:
+                    instances[i] = self[slice_.start + i]
+            return instances
         index = self.validate_position(index)
         instances = self.instances
         instances_length = len(instances)
@@ -99,25 +126,43 @@ class Sequence(ImageProperty, collections.MutableSequence):
         return instance
 
     def __setitem__(self, index, image):
-        if not isinstance(image, BaseImage):
-            raise TypeError('image must be an instance of wand.image.'
-                            'BaseImage, not ' + repr(image))
-        with self.index_context(index) as index:
-            library.MagickRemoveImage(self.image.wand)
-            library.MagickAddImage(self.image.wand, image.wand)
+        if isinstance(index, slice):
+            tmp_idx = self.current_index
+            slice_ = self.validate_slice(index)
+            print slice_, len(self)
+            del self[slice_]
+            print slice_, len(self)
+            self.extend(image, offset=slice_.start)
+            self.current_index = tmp_idx
+        else:
+            if not isinstance(image, BaseImage):
+                raise TypeError('image must be an instance of wand.image.'
+                                'BaseImage, not ' + repr(image))
+            with self.index_context(index) as index:
+                library.MagickRemoveImage(self.image.wand)
+                library.MagickAddImage(self.image.wand, image.wand)
 
     def __delitem__(self, index):
-        with self.index_context(index) as index:
-            library.MagickRemoveImage(self.image.wand)
-            del self.instances[index]
+        if isinstance(index, slice):
+            range_ = self.validate_slice(index, as_range=True)
+            for i in reversed(range_):
+                del self[i]
+        else:
+            with self.index_context(index) as index:
+                library.MagickRemoveImage(self.image.wand)
+                del self.instances[index]
 
     def insert(self, index, image):
-        index = self.validate_position(index)
-        instances = self.instances
+        try:
+            index = self.validate_position(index)
+        except IndexError:
+            index = len(self)
         if not isinstance(image, BaseImage):
             raise TypeError('image must be an instance of wand.image.'
                             'BaseImage, not ' + repr(image))
-        if index == 0:
+        if not self:
+            library.MagickAddImage(self.image.wand, image.wand)
+        elif index == 0:
             tmp_idx = self.current_index
             self_wand = self.image.wand
             wand = image.sequence[0].wand
