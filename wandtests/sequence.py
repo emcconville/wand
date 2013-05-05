@@ -38,14 +38,10 @@ def getitem():
 @tests.test
 def setitem():
     with Image(filename=asset('apple.ico')) as imga:
-        detached = imga.sequence[2]
         with Image(filename=asset('google.ico')) as imgg:
             imga.sequence[2] = imgg
         assert len(imga.sequence) == 4
-        assert imga.sequence[2] is not detached
         assert imga.sequence[2].size == (16, 16)
-        with raises(ClosedImageError):
-            detached.wand
 
 
 @tests.test
@@ -56,8 +52,6 @@ def delitem():
         assert len(img.sequence) == 3
         assert img.sequence[0] is not detached
         assert img.sequence[0].size == (16, 16)
-        with raises(ClosedImageError):
-            detached.wand
 
 
 @tests.test
@@ -79,6 +73,11 @@ def append():
             imga.sequence.append(imgg)
             assert imga.sequence[4] == imgg.sequence[0]
         assert len(imga.sequence) == 5
+    with Image(filename=asset('apple.ico')) as imga:
+        with Image(filename=asset('github.ico')) as imgg:
+            imga.sequence.append(imgg)
+            assert imga.sequence[4] == imgg.sequence[0]
+        assert len(imga.sequence) == 5
 
 
 @tests.test
@@ -90,14 +89,12 @@ def insert():
             assert imga.sequence[2] == imgg.sequence[0]
         assert len(imga.sequence) == 5
         for i, instance in enumerate(instances):
-            assert instance.index == 3 + i
             assert instance == imga.sequence[3 + i]
 
 
 @tests.test
 def insert_first():
     with Image(filename=asset('apple.ico')) as imga:
-        instances = list(imga.sequence)
         with Image(filename=asset('google.ico')) as imgg:
             imga.sequence.insert(0, imgg)
             assert len(imga.sequence) == 5
@@ -105,10 +102,6 @@ def insert_first():
                    ('imga.sequence = ' + repr(list(imga.sequence)) +
                     ', imgg.sequence = ' + repr(list(imgg.sequence)))
         assert len(imga.sequence) == 5
-        for i, instance in enumerate(instances):
-            if instance.index is not None:
-                assert instance.index == 1 + i
-                assert instance == imga.sequence[1 + i]
 
 
 @tests.test
@@ -154,5 +147,7 @@ for cmp_name in cmp_funcs:
 def clone():
     with Image(filename=asset('apple.ico')) as img:
         with img.sequence[2].clone() as single:
+            assert single.wand != img.wand
             assert len(single.sequence) == 1
+            assert len(list(single.sequence)) == 1
             assert single.size == img.sequence[2].size

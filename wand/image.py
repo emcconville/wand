@@ -391,17 +391,6 @@ class BaseImage(Resource):
         """
         return Image(image=self)
 
-    def clone_wand(self):
-        """Clones the image and returns internal pointer to it.
-        It's only for internal use.
-
-        .. note::
-
-           To contributors: it has to be implemented in subclass.
-
-        """
-        raise NotImplementedError('it has to be implemented')
-
     def __len__(self):
         return self.height
 
@@ -1559,7 +1548,7 @@ class Image(BaseImage):
                 elif format:
                     raise TypeError('format option cannot be used with image '
                                     'nor filename')
-                wand = image.clone_wand()
+                wand = library.CloneMagickWand(image.wand)
                 super(Image, self).__init__(wand)
             else:
                 if file is not None:
@@ -1657,9 +1646,6 @@ class Image(BaseImage):
 
         """
         library.ClearMagickWand(self.wand)
-
-    def clone_wand(self):
-        return library.CloneMagickWand(self.wand)
 
     @property
     def format(self):

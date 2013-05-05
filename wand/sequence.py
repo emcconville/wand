@@ -79,12 +79,21 @@ class Sequence(ImageProperty, collections.MutableSequence):
         instances_length = len(instances)
         if index < instances_length:
             instance = instances[index]
-            if instance is not None and instance.index is not None:
+            if instance is not None:
                 return instance
         else:
             number_to_extend = index - instances_length + 1
             instances.extend(None for _ in xrange(number_to_extend))
-        instance = SingleImage(self.image.wand, index)
+        wand = self.image.wand
+        tmp_idx = library.MagickGetIteratorIndex(wand)
+        library.MagickSetIteratorIndex(wand, index)
+        image = library.GetImageFromMagickWand(wand)
+        exc = library.AcquireExceptionInfo()
+        single_image = library.CloneImages(image, str(index), exc)
+        library.DestroyExceptionInfo(exc)
+        single_wand = library.NewMagickWandFromImage(single_image)
+        library.MagickSetIteratorIndex(wand, tmp_idx)
+        instance = SingleImage(single_wand)
         self.instances[index] = instance
         return instance
 
@@ -95,22 +104,11 @@ class Sequence(ImageProperty, collections.MutableSequence):
         with self.index_context(index) as index:
             library.MagickRemoveImage(self.image.wand)
             library.MagickAddImage(self.image.wand, image.wand)
-            instances = self.instances
-            if index < len(instances):  # detach
-                instance = instances[index]
-                instance.index = None
-                instance.c_resource = None
-                instances[index] = None
 
     def __delitem__(self, index):
         with self.index_context(index) as index:
             library.MagickRemoveImage(self.image.wand)
-            instances = self.instances
-            if index < len(instances):  # detach
-                instance = instances[index]
-                instance.index = None
-                instance.c_resource = None
-                del instances[index]
+            del self.instances[index]
 
     def insert(self, index, image):
         index = self.validate_position(index)
@@ -141,18 +139,12 @@ class Sequence(ImageProperty, collections.MutableSequence):
                     library.MagickAddImage(self_wand, wand)
                     self.current_index = 0
                     library.MagickRemoveImage(self_wand)
-                    instances[0].index = None
-                    instances[0] = None
             finally:
                 self.current_index = tmp_idx
         else:
             with self.index_context(index - 1):
                 library.MagickAddImage(self.image.wand, image.wand)
-        if index < len(instances):  # reallocate
-            for instance in instances[index:]:
-                if instance is not None:
-                    instance.index += 1
-            instances.insert(index, None)
+        self.instances.insert(index, None)
 
     def append(self, image):
         if not isinstance(image, BaseImage):
@@ -162,13 +154,10 @@ class Sequence(ImageProperty, collections.MutableSequence):
         tmp_idx = self.current_index
         try:
             library.MagickSetLastIterator(wand)
-            if isinstance(image, SingleImage):
-                with image.clone() as cloned:
-                    library.MagickAddImage(wand, cloned.wand)
-            else:
-                library.MagickAddImage(wand, image.wand)
+            library.MagickAddImage(wand, image.sequence[0].wand)
         finally:
             self.current_index = tmp_idx
+        self.instances.append(None)
 
     def extend(self, images):
         tmp_idx = self.current_index
@@ -179,72 +168,23 @@ class Sequence(ImageProperty, collections.MutableSequence):
                 library.MagickAddImage(wand, images.image.wand)
             else:
                 for image in images:
-                    if isinstance(image, SingleImage):
-                        with image.clone() as cloned:
-                            library.MagickAddImage(wand, cloned.wand)
-                    elif not isinstance(image, BaseImage):
+                    if not isinstance(image, BaseImage):
                         raise TypeError(
                             'images must consist of only instances of '
                             'wand.image.BaseImage, not ' + repr(image)
                         )
-                    else:
-                        library.MagickAddImage(wand, image.wand)
+                    library.MagickAddImage(wand, image.wand)
         finally:
             self.current_index = tmp_idx
 
 
 class SingleImage(BaseImage):
 
-    def __init__(self, wand, index):
-        self.index = index
-        super(SingleImage, self).__init__(wand)
-
-    def __getattribute__(self, name):
-        this = super(SingleImage, self)
-        if name.startswith('c_') or name in ('resource', 'wand', 'index'):
-            return this.__getattribute__(name)
-        wand = self.wand
-        tmp_idx = library.MagickGetIteratorIndex(wand)
-        library.MagickSetIteratorIndex(wand, self.index)
-        value = this.__getattribute__(name)
-        library.MagickSetIteratorIndex(wand, tmp_idx)
-        if callable(value):
-            @functools.wraps(value)
-            def patched(*args, **kwargs):
-                tmp_idx = library.MagickGetIteratorIndex(wand)
-                library.MagickSetIteratorIndex(wand, self.index)
-                result = value(*args, **kwargs)
-                library.MagickSetIteratorIndex(wand, tmp_idx)
-                return result
-            return patched
-        return value
-
-    @property
-    def wand(self):
-        if self.index is None:
-            raise ClosedImageError(repr(self) + ' is detached')
-        return super(SingleImage, self).wand
-
-    @wand.setter
-    def wand(self, wand):
-        self.resource = wand
-
-    @wand.deleter
-    def wand(self):
-        del self.resource
-
-    def clone_wand(self):
-        image = library.GetImageFromMagickWand(self.wand)
-        exc = library.AcquireExceptionInfo()
-        cloned = library.CloneImages(image, str(self.index), exc)
-        library.DestroyExceptionInfo(exc)
-        return library.NewMagickWandFromImage(cloned)
-
     def __repr__(self):
         cls = type(self)
-        if self.index is None or getattr(self, 'c_resource', None) is None:
+        if getattr(self, 'c_resource', None) is None:
             return '<{0}.{1}: (closed)>'.format(cls.__module__, cls.__name__)
-        return '<{0}.{1}: ({2}x{3}) [{4}] at 0x{5:x}>'.format(
+        return '<{0}.{1}: ({2}x{3})>'.format(
             cls.__module__, cls.__name__,
-            self.width, self.height, self.index, id(self)
+            self.width, self.height
         )
