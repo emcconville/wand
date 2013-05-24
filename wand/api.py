@@ -249,7 +249,8 @@ try:
 
     library.MagickWriteImageFile.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 
-    library.MagickWriteImages.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
+    library.MagickWriteImages.argtypes = [ctypes.c_void_p, ctypes.c_char_p,
+                                          ctypes.c_int]
 
     library.MagickWriteImagesFile.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 

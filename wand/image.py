@@ -1802,7 +1802,7 @@ class Image(Resource):
                 raise TypeError('filename must be a string, not ' +
                                 repr(filename))
             if self.mimetype == 'image/gif':
-                r = library.MagickWriteImages(self.wand, filename)
+                r = library.MagickWriteImages(self.wand, filename, True)
             else:
                 r = library.MagickWriteImage(self.wand, filename)
             if not r:
