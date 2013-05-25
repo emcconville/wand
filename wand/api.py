@@ -64,6 +64,9 @@ def find_library(suffix=''):
             libwand = ctypes.util.find_library('CORE_RL_wand_' + suffix)
         else:
             libwand = ctypes.util.find_library('MagickWand' + suffix)
+            if not libwand:
+                if system == 'Darwin':
+                    libwand = '/opt/local/lib/libMagickWand.dylib'
     if system == 'Windows':
         # On Windows, the API is split between two libs. On other platforms,
         # it's all contained in one.
