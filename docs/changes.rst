@@ -71,9 +71,11 @@ To be released.
 - Added :meth:`Image.transparent_color() <wand.image.Image.transparent_color>`
   method.  [:issue:`98` by Lionel Koenig]
 - Started supporting resizing and cropping of GIF images.
-  [:issue:`88` by Bear Dong]
+  [:issue:`88` by Bear Dong, :issue:`112` by Taeho Kim]
 - Added :meth:`Image.flip() <wand.image.Image.flip>` method.
 - Added :meth:`Image.flop() <wand.image.Image.flop>` method.
+- Added :attr:`Image.orientation <wand.image.Image.orientation>` property.
+  [:commit:`88574468a38015669dae903185fb328abdd717c0` by Taeho Kim]
 
 __ http://en.wikipedia.org/wiki/Seam_carving
 
