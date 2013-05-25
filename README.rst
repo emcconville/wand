@@ -58,6 +58,9 @@ Mailing list
 List archive
    http://librelist.com/browser/wand/
 
+Quora topic (Q&A)
+   https://www.quora.com/Wand-ImageMagick-binding
+
 IRC
    `irc://irc.freenode.net/wand <http://webchat.freenode.net/?channels=wand>`_
 
