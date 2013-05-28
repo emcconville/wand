@@ -4,7 +4,7 @@ Wand Changelog
 Version 0.2.4
 -------------
 
-Reserved version, but maybe not released.
+Released on May 28, 2013.
 
 - Fix :exc:`~exceptions.NameError` in :attr:`Resource.resource
   <wand.resource.Resource.resource>` setter.
