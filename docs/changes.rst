@@ -10,6 +10,8 @@ Reserved version, but maybe not released.
   <wand.resource.Resource.resource>` setter.
   [:issue:`89` forwareded from Debian bug report `#699064`__
   by Jakub Wilk]
+- Fix the problem of library loading for Mac with Homebrew and Arch Linux.
+  [:issue:`102` by Roel Gerrits, :issue:`44`]
 
 __ http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=699064
 
