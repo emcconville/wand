@@ -7,7 +7,7 @@ install:
 - pip install Attest coverage coveralls
 script:
 - python -mwand.version --verbose
-- coverage run -m attest.run wandtests.tests
+- coverage run --source=wand -m attest.run wandtests.tests
 after_success:
 - coveralls
 notifications:
