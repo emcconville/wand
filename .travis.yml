@@ -11,7 +11,7 @@ script:
 notifications:
   irc:
     channels:
-    - "irc://ocarina.irc.ozinger.org:8080#hongminhee"
+    - "ircs://ssl.ozinger.org:16667#hongminhee"
     - "irc.freenode.net#wand"
     on_success: change
     on_failure: always
