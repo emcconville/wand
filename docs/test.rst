@@ -82,3 +82,19 @@ You can see the detail of the current status from the following URL:
 http://travis-ci.org/dahlia/wand
 
 .. _Travis CI: http://travis-ci.org/
+
+
+Code Coverage
+-------------
+
+.. image:: https://coveralls.io/repos/dahlia/wand/badge.png
+  :alt: Coverage Status
+  :target: https://coveralls.io/r/dahlia/wand
+
+Coveralls_ support tracking Wand's test coverage.  The above banner image
+shows the current status of Wand coverage.  You can see the details of the
+current status from the following URL:
+
+https://coveralls.io/r/dahlia/wand
+
+.. _Coveralls: https://coveralls.io/

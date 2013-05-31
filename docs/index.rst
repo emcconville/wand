@@ -121,6 +121,10 @@ Check out :doc:`changes` also.
    :alt: Build Status
    :target: http://travis-ci.org/dahlia/wand
 
+.. image:: https://coveralls.io/repos/dahlia/wand/badge.png
+  :alt: Coverage Status
+  :target: https://coveralls.io/r/dahlia/wand
+
 .. _Hong Minhee: http://dahlia.kr/
 .. _StyleShare: https://stylesha.re/
 .. _contributors: https://github.com/dahlia/wand/graphs/contributors
