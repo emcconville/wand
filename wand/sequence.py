@@ -180,12 +180,8 @@ class Sequence(ImageProperty, collections.MutableSequence):
                     library.MagickAddImage(self_wand, wand)
                 else:
                     self.current_index = 0
-                    with self.image.clone() as clone:
-                        i = len(clone.sequence) - 1
-                        while i > 0:
-                            del clone.sequence[i]
-                            i -= 1
-                        library.MagickAddImage(self_wand, clone.wand)
+                    library.MagickAddImage(self_wand,
+                                           self.image.sequence[0].wand)
                     self.current_index = 0
                     library.MagickAddImage(self_wand, wand)
                     self.current_index = 0
