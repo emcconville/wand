@@ -1,26 +1,16 @@
-import os
-
 from py.path import local
 from pytest import fixture, skip
 
 
 def pytest_addoption(parser):
-    if os.environ.get('CI'):
-        parser.addoption('--skip-slow', action='store_true',
-                         help='Skip slow tests')
-    else:
-        parser.addoption('--run-slow', action='store_true',
-                         help='Run slow tests')
+    parser.addoption('--skip-slow', action='store_true',
+                     help='Skip slow tests')
 
 
 def pytest_runtest_setup(item):
     if 'slow' in item.keywords:
-        if os.environ.get('CI'):
-            if item.config.getoption('--skip-slow'):
-                skip('skipped; --skip-slow option is used')
-        else:
-            if not item.config.getoption('--run-slow'):
-                skip('need --run-slow option to run')
+        if item.config.getoption('--skip-slow'):
+            skip('skipped; --skip-slow option is used')
 
 
 @fixture

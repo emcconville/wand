@@ -25,12 +25,12 @@ It provides more options:
 Skipping tests
 --------------
 
-There are some time-consuming tests.  By default these tests are skipped
-unless you give ``--run-slow`` option:
+There are some time-consuming tests.  You can skip these tests using
+``--skip-slow`` option:
 
 .. sourcecode:: console
 
-   $ py.test --run-slow
+   $ py.test --skip-slow
 
 You can run only tests you want using ``-k`` option.
 
