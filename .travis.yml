@@ -4,10 +4,12 @@ python:
 - 2.7
 - pypy
 install:
-- pip install "pytest>=2.3.0"
+- pip install pytest pytest-cov pytest-capturelog coveralls
 script:
 - python -mwand.version --verbose
-- py.test --durations=20
+- py.test --cov wand --durations=20
+after_success:
+- coveralls
 notifications:
   irc:
     channels:
