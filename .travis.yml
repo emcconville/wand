@@ -7,7 +7,7 @@ install:
 - pip install "pytest>=2.3.0"
 script:
 - python -mwand.version --verbose
-- py.test
+- py.test --durations=20
 notifications:
   irc:
     channels:
