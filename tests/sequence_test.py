@@ -184,16 +184,18 @@ def test_extend_sequence(fx_asset):
         assert len(a.sequence) == 6
 
 
-def test_extend_offset(fx_asset):
+@mark.parametrize('how_many', xrange(2, 5))
+def test_extend_offset(fx_asset, how_many):
     with Image(filename=str(fx_asset.join('apple.ico'))) as a:
         instances = list(a.sequence)
         with Image(filename=str(fx_asset.join('github.ico'))) as b:
-            a.sequence.extend(list(b.sequence)[::-1], 2)
-            instances[2:2] = list(b.sequence)[::-1]
+            added = list(b.sequence)[::-1] + [b.sequence[0]] * (how_many - 2)
+            a.sequence.extend(added, 2)
+            instances[2:2] = added
             assert list(a.sequence) == instances
             expire(a)
             assert list(a.sequence) == instances
-        assert len(a.sequence) == 6
+        assert len(a.sequence) == 4 + how_many
 
 
 def test_extend_offset_sequence(fx_asset):

@@ -223,6 +223,7 @@ class Sequence(ImageProperty, collections.MutableSequence):
                 library.MagickAddImage(wand, images.image.wand)
                 length = len(images)
             else:
+                delta = 1 if MAGICK_VERSION_INFO >= (6, 7, 6, 0) else 2
                 for image in images:
                     if not isinstance(image, BaseImage):
                         raise TypeError(
@@ -231,10 +232,11 @@ class Sequence(ImageProperty, collections.MutableSequence):
                         )
                     else:
                         library.MagickAddImage(wand, image.sequence[0].wand)
+                        self.instances = []
                         if offset is None:
                             library.MagickSetLastIterator(self.image.wand)
                         else:
-                            self.current_index += 1
+                            self.current_index += delta
                         length += 1
         finally:
             self.current_index = tmp_idx
