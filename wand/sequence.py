@@ -231,12 +231,18 @@ class Sequence(ImageProperty, collections.MutableSequence):
                         )
                     else:
                         library.MagickAddImage(wand, image.sequence[0].wand)
-                        self.current_index += 1
+                        if offset is None:
+                            library.MagickSetLastIterator(self.image.wand)
+                        else:
+                            self.current_index += 1
                         length += 1
         finally:
             self.current_index = tmp_idx
-        offset = -1 if offset is None else offset
-        self.instances[offset:offset] = [None] * length
+        null_list = [None] * length
+        if offset is None:
+            self.instances[offset:] = null_list
+        else:
+            self.instances[offset:offset] = null_list
 
 
 class SingleImage(BaseImage):
