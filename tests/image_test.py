@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from attest import assert_hook
-
 import functools
 import os
 import os.path
@@ -12,7 +10,7 @@ except ImportError:
     import StringIO
 import warnings
 
-from attest import Tests, raises
+from pytest import mark, raises
 
 from wand.image import ClosedImageError, Image
 from wand.color import Color
@@ -20,22 +18,12 @@ from wand.exceptions import MissingDelegateError
 from wand.font import Font
 
 
-skip_slow_tests = bool(os.environ.get('WANDTESTS_SKIP_SLOW_TESTS'))
-
-tests = Tests()
-
-
-def asset(*path):
-    return os.path.join(os.path.dirname(__file__), 'assets', *path)
-
-@tests.test
-def empty_image():
+def test_empty_image():
     with Image() as img:
         assert img.size == (0,0)
 
 
-@tests.test
-def blank_image():
+def test_blank_image():
     gray = Color('#ccc')
     transparent = Color('transparent')
     with raises(TypeError):
@@ -48,43 +36,39 @@ def blank_image():
         assert img.size == (20, 10)
         assert img[10, 5] == gray
 
-@tests.test
-def clear_image():
+
+def test_clear_image(fx_asset):
     with Image() as img:
-        img.read(filename=asset('mona-lisa.jpg'))
+        img.read(filename=str(fx_asset.join('mona-lisa.jpg')))
         assert img.size == (402,599)
         img.clear()
         assert img.size == (0,0)
-        img.read(filename=asset('beach.jpg'))
+        img.read(filename=str(fx_asset.join('beach.jpg')))
         assert img.size == (800,600)
 
 
-@tests.test
-def read_from_file():
+def test_read_from_file(fx_asset):
     with Image() as img:
-        img.read(filename=asset('mona-lisa.jpg'))
+        img.read(filename=str(fx_asset.join('mona-lisa.jpg')))
         assert img.width == 402
         img.clear()
-        with open(asset('mona-lisa.jpg'), 'rb') as f:
+        with fx_asset.join('mona-lisa.jpg').open('rb') as f:
             img.read(file=f)
             assert img.width == 402
             img.clear()
-        with open(asset('mona-lisa.jpg'), 'rb') as f:
-            blob = f.read()
-            img.read(blob=blob)
-            assert img.width == 402
+        blob = fx_asset.join('mona-lisa.jpg').read('rb')
+        img.read(blob=blob)
+        assert img.width == 402
 
 
-@tests.test
-def new_from_file():
+def test_new_from_file(fx_asset):
     """Opens an image from the file object."""
-    with open(asset('mona-lisa.jpg'), 'rb') as f:
+    with fx_asset.join('mona-lisa.jpg').open('rb') as f:
         with Image(file=f) as img:
             assert img.width == 402
     with raises(ClosedImageError):
         img.wand
-    with open(asset('mona-lisa.jpg'), 'rb') as f:
-        strio = StringIO.StringIO(f.read())
+    strio = StringIO.StringIO(fx_asset.join('mona-lisa.jpg').read('rb'))
     with Image(file=strio) as img:
         assert img.width == 402
     strio.close()
@@ -94,44 +78,38 @@ def new_from_file():
         Image(file='not file object')
 
 
-@tests.test
-def new_from_filename():
+def test_new_from_filename(fx_asset):
     """Opens an image through its filename."""
-    with Image(filename=asset('mona-lisa.jpg')) as img:
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         assert img.width == 402
     with raises(ClosedImageError):
         img.wand
     with raises(IOError):
-        Image(filename=asset('not-exists.jpg'))
+        Image(filename=str(fx_asset.join('not-exists.jpg')))
 
 
-@tests.test
-def new_from_blob():
+def test_new_from_blob(fx_asset):
     """Opens an image from blob."""
-    with open(asset('mona-lisa.jpg'), 'rb') as f:
-        blob = f.read()
+    blob = fx_asset.join('mona-lisa.jpg').read('rb')
     with Image(blob=blob) as img:
         assert img.width == 402
     with raises(ClosedImageError):
         img.wand
 
 
-@tests.test
-def new_with_format():
-    with open(asset('google.ico'), 'rb') as f:
-        blob = f.read()
+def test_new_with_format(fx_asset):
+    blob = fx_asset.join('google.ico').read('rb')
     with raises(Exception):
         Image(blob=blob)
     with Image(blob=blob, format='ico') as img:
         assert img.size == (16, 16)
 
 
-@tests.test
-def clone():
+def test_clone(fx_asset):
     """Clones the existing image."""
     funcs = (lambda img: Image(image=img),
              lambda img: img.clone())
-    with Image(filename=asset('mona-lisa.jpg')) as img:
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         for func in funcs:
             with func(img) as cloned:
                 assert img.wand is not cloned.wand
@@ -142,11 +120,10 @@ def clone():
         img.wand
 
 
-@tests.test
-def save_to_filename():
+def test_save_to_filename(fx_asset):
     """Saves an image to the filename."""
     savefile = os.path.join(tempfile.mkdtemp(), 'savetest.jpg')
-    with Image(filename=asset('mona-lisa.jpg')) as orig:
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as orig:
         orig.save(filename=savefile)
         with raises(IOError):
             orig.save(filename=os.path.join(savefile, 'invalid.jpg'))
@@ -158,12 +135,11 @@ def save_to_filename():
     os.remove(savefile)
 
 
-@tests.test
-def save_to_file():
+def test_save_to_file(fx_asset):
     """Saves an image to the Python file object."""
     buffer = StringIO.StringIO()
     with tempfile.TemporaryFile() as savefile:
-        with Image(filename=asset('mona-lisa.jpg')) as orig:
+        with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as orig:
             orig.save(file=savefile)
             orig.save(file=buffer)
             with raises(TypeError):
@@ -179,21 +155,19 @@ def save_to_file():
     buffer.close()
 
 
-@tests.test
-def save_error():
+def test_save_error(fx_asset):
     filename = os.path.join(tempfile.mkdtemp(), 'savetest.jpg')
     fileobj = StringIO.StringIO()
-    with Image(filename=asset('mona-lisa.jpg')) as orig:
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as orig:
         with raises(TypeError):
             orig.save()
         with raises(TypeError):
             orig.save(filename=filename, file=fileobj)
 
 
-@tests.test
-def make_blob():
+def test_make_blob(fx_asset):
     """Makes a blob string."""
-    with Image(filename=asset('mona-lisa.jpg')) as img:
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         with Image(blob=img.make_blob('png')) as img2:
             assert img2.size == (402, 599)
             assert img2.format == 'PNG'
@@ -217,98 +191,88 @@ def make_blob():
         assert img.format == 'PNG'
 
 
-@tests.test
-def size():
+def test_size(fx_asset):
     """Gets the image size."""
-    with Image(filename=asset('mona-lisa.jpg')) as img:
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         assert img.size == (402, 599)
         assert img.width == 402
         assert img.height == 599
         assert len(img) == 599
 
 
-@tests.test
-def get_resolution():
+def test_get_resolution(fx_asset):
     """Gets image resolution."""
-    with Image(filename=asset('mona-lisa.jpg')) as img:
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         assert img.resolution == (72, 72)
 
 
-@tests.test
-def set_resolution_01():
+def test_set_resolution_01(fx_asset):
     """Sets image resolution."""
-    with Image(filename=asset('mona-lisa.jpg')) as img:
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         img.resolution = (100, 100)
         assert img.resolution == (100, 100)
 
 
-@tests.test
-def set_resolution_02():
+def test_set_resolution_02(fx_asset):
     """Sets image resolution with integer as parameter."""
-    with Image(filename=asset('mona-lisa.jpg')) as img:
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         img.resolution = 100
         assert img.resolution == (100, 100)
 
 
-@tests.test
-def set_resolution_03():
+def test_set_resolution_03(fx_asset):
     """Sets image resolution on constructor"""
-    with Image(filename=asset('sample.pdf'), resolution=(100,100)) as img:
+    with Image(filename=str(fx_asset.join('sample.pdf')),
+               resolution=(100,100)) as img:
         assert img.resolution == (100, 100)
 
 
-@tests.test
-def set_resolution_04():
+def test_set_resolution_04(fx_asset):
     """Sets image resolution on constructor with integer as parameter."""
-    with Image(filename=asset('sample.pdf'), resolution=100) as img:
+    with Image(filename=str(fx_asset.join('sample.pdf')),
+               resolution=100) as img:
         assert img.resolution == (100, 100)
 
 
-@tests.test
-def get_units():
+def test_get_units(fx_asset):
     """Gets the image resolution units."""
-    with Image(filename=asset('beach.jpg')) as img:
+    with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
         assert img.units == "pixelsperinch"
-    with Image(filename=asset('sasha.jpg')) as img:
+    with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
         assert img.units == "undefined"
 
 
-@tests.test
-def set_units():
+def test_set_units(fx_asset):
     """Sets the image resolution units."""
-    with Image(filename=asset('watermark.png')) as img:
+    with Image(filename=str(fx_asset.join('watermark.png'))) as img:
         img.units="pixelspercentimeter"
         assert img.units == "pixelspercentimeter"
 
 
-@tests.test
-def get_depth():
+def test_get_depth(fx_asset):
     """Gets the image depth"""
-    with Image(filename=asset('mona-lisa.jpg')) as img:
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         assert img.depth == 8
 
 
-@tests.test
-def set_depth():
+def test_set_depth(fx_asset):
     """Sets the image depth"""
-    with Image(filename=asset('mona-lisa.jpg')) as img:
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         img.depth = 16
         assert img.depth == 16
 
 
-@tests.test
-def get_format():
+def test_get_format(fx_asset):
     """Gets the image format."""
-    with Image(filename=asset('mona-lisa.jpg')) as img:
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         assert img.format == 'JPEG'
-    with Image(filename=asset('croptest.png')) as img:
+    with Image(filename=str(fx_asset.join('croptest.png'))) as img:
         assert img.format == 'PNG'
 
 
-@tests.test
-def set_format():
+def test_set_format(fx_asset):
     """Sets the image format."""
-    with Image(filename=asset('mona-lisa.jpg')) as img:
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         img.format = 'png'
         assert img.format == 'PNG'
         strio = StringIO.StringIO()
@@ -322,34 +286,30 @@ def set_format():
             img.format = 123
 
 
-@tests.test
-def get_type():
+def test_get_type(fx_asset):
     """Gets the image type."""
-    with Image(filename=asset('mona-lisa.jpg')) as img:
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         assert img.type == "truecolor"
         img.alpha_channel = True
         assert img.type == "truecolormatte"
 
 
-@tests.test
-def set_type():
+def test_set_type(fx_asset):
     """Sets the image type."""
-    with Image(filename=asset('mona-lisa.jpg')) as img:
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         img.type = "grayscale"
         assert img.type == "grayscale"
 
 
-@tests.test
-def get_compression():
+def test_get_compression(fx_asset):
     """Gets the image compression quality."""
-    with Image(filename=asset('mona-lisa.jpg')) as img:
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         assert img.compression_quality == 80
 
 
-@tests.test
-def set_compression():
+def test_set_compression(fx_asset):
     """Sets the image compression quality."""
-    with Image(filename=asset('mona-lisa.jpg')) as img:
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         img.compression_quality = 50
         assert img.compression_quality == 50
         strio = StringIO.StringIO()
@@ -361,10 +321,9 @@ def set_compression():
             img.compression_quality = 'high'
 
 
-@tests.test
-def strip():
+def test_strip(fx_asset):
     """Strips the image of all profiles and comments."""
-    with Image(filename=asset('beach.jpg')) as img:
+    with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
         strio = StringIO.StringIO()
         img.save(file=strio)
         len_unstripped = strio.tell()
@@ -375,16 +334,15 @@ def strip():
         assert len_unstripped > len_stripped
 
 
-@tests.test
-def trim():
+def test_trim(fx_asset):
     """Remove transparent area around image."""
-    with Image(filename=asset('trimtest.png')) as img:
+    with Image(filename=str(fx_asset.join('trimtest.png'))) as img:
         oldx, oldy = img.size
         img.trim()
         newx, newy = img.size
         assert newx < oldx
         assert newy < oldy
-    with Image(filename=asset('trim-color-test.png')) as img:
+    with Image(filename=str(fx_asset.join('trim-color-test.png'))) as img:
         assert img.size == (100, 100)
         with Color('blue') as blue:
             img.trim(blue)
@@ -394,19 +352,17 @@ def trim():
                     green)
 
 
-@tests.test
-def get_mimetype():
+def test_get_mimetype(fx_asset):
     """Gets mimetypes of the image."""
-    with Image(filename=asset('mona-lisa.jpg')) as img:
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         assert img.mimetype in ('image/jpeg', 'image/x-jpeg')
-    with Image(filename=asset('croptest.png')) as img:
+    with Image(filename=str(fx_asset.join('croptest.png'))) as img:
         assert img.mimetype in ('image/png', 'image/x-png')
 
 
-@tests.test
-def convert():
+def test_convert(fx_asset):
     """Converts the image format."""
-    with Image(filename=asset('mona-lisa.jpg')) as img:
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         with img.convert('png') as converted:
             assert converted.format == 'PNG'
             strio = StringIO.StringIO()
@@ -420,12 +376,12 @@ def convert():
             img.convert(123)
 
 
-@tests.test_if(not skip_slow_tests)
-def iterate():
+@mark.slow
+def test_iterate(fx_asset):
     """Uses iterator."""
     with Color('#000') as black:
         with Color('transparent') as transparent:
-            with Image(filename=asset('croptest.png')) as img:
+            with Image(filename=str(fx_asset.join('croptest.png'))) as img:
                 for i, row in enumerate(img):
                     assert len(row) == 300
                     if i % 3:
@@ -444,18 +400,16 @@ def iterate():
                 assert i == 299
 
 
-@tests.test
-def slice_clone():
+def test_slice_clone(fx_asset):
     """Clones using slicing."""
-    with Image(filename=asset('mona-lisa.jpg')) as img:
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         with img[:,:] as cloned:
             assert img.size == cloned.size
 
 
-@tests.test
-def slice_invalid_types():
+def test_slice_invalid_types(fx_asset):
     """Slicing with invalid types should throw exceptions."""
-    with Image(filename=asset('mona-lisa.jpg')) as img:
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         with raises(TypeError):
             img['12']
         with raises(TypeError):
@@ -480,17 +434,16 @@ def slice_invalid_types():
             img['1', 0]
         with raises(TypeError):
             img[1, '0']
-    with Image(filename=asset('croptest.png')) as img:
+    with Image(filename=str(fx_asset.join('croptest.png'))) as img:
         with raises(IndexError):
             img[300, 300]
         with raises(IndexError):
             img[-301, -301]
 
 
-@tests.test
-def index_pixel():
+def test_index_pixel(fx_asset):
     """Gets a pixel."""
-    with Image(filename=asset('croptest.png')) as img:
+    with Image(filename=str(fx_asset.join('croptest.png'))) as img:
         assert img[0, 0] == Color('transparent')
         assert img[99, 99] == Color('transparent')
         assert img[100, 100] == Color('black')
@@ -499,12 +452,11 @@ def index_pixel():
         assert img[-201, -201] == Color('transparent')
 
 
-@tests.test
-def index_row():
+def test_index_row(fx_asset):
     """Gets a row."""
     with Color('transparent') as transparent:
         with Color('black') as black:
-            with Image(filename=asset('croptest.png')) as img:
+            with Image(filename=str(fx_asset.join('croptest.png'))) as img:
                 for c in img[0]:
                     assert c == transparent
                 for c in img[99]:
@@ -528,10 +480,9 @@ def index_row():
                     assert c == transparent
 
 
-@tests.test
-def slice_crop():
+def test_slice_crop(fx_asset):
     """Crops using slicing."""
-    with Image(filename=asset('croptest.png')) as img:
+    with Image(filename=str(fx_asset.join('croptest.png'))) as img:
         with img[100:200, 100:200] as cropped:
             assert cropped.size == (100, 100)
             with Color('#000') as black:
@@ -551,10 +502,10 @@ def slice_crop():
             img[290:310, 290:310]
 
 
-@tests.test_if(not skip_slow_tests)
-def crop():
+@mark.slow
+def test_crop(fx_asset):
     """Crops in-place."""
-    with Image(filename=asset('croptest.png')) as img:
+    with Image(filename=str(fx_asset.join('croptest.png'))) as img:
         with img.clone() as cropped:
             assert cropped.size == img.size
             cropped.crop(100, 100, 200, 200)
@@ -591,20 +542,18 @@ def crop():
             img.crop(290, 290, width=0, height=0)
 
 
-@tests.test
-def crop_error():
+def test_crop_error(fx_asset):
     """Crop errors."""
-    with Image(filename=asset('croptest.png')) as img:
+    with Image(filename=str(fx_asset.join('croptest.png'))) as img:
         with raises(TypeError):
             img.crop(right=1, width=2)
         with raises(TypeError):
             img.crop(bottom=1, height=2)
 
 
-@tests.test
-def resize():
+def test_resize(fx_asset):
     """Resizes the image."""
-    with Image(filename=asset('mona-lisa.jpg')) as img:
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         with img.clone() as a:
             assert a.size == (402, 599)
             a.resize(100, 100)
@@ -618,12 +567,11 @@ def resize():
             c.resize(width=100)
             assert c.size == (100, 599)
 
-@tests.test
-def test_gif():
+def test_gif(fx_asset):
     """Test the gif image resize/crop/rotate"""
     tmpdir = tempfile.mkdtemp()
     filename = functools.partial(os.path.join, tmpdir)
-    with Image(filename=asset('nocomments.gif')) as img:
+    with Image(filename=str(fx_asset.join('nocomments.gif'))) as img:
         assert img.frame_num == 46
         with img.clone() as a:
             assert a.size == (350, 197)
@@ -657,10 +605,10 @@ def test_gif():
             assert e.frame_num == 46
     shutil.rmtree(tmpdir)
 
-@tests.test
-def resize_errors():
+
+def test_resize_errors(fx_asset):
     """Resizing errors."""
-    with Image(filename=asset('mona-lisa.jpg')) as img:
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         with raises(TypeError):
             img.resize(width='100')
         with raises(TypeError):
@@ -674,10 +622,10 @@ def resize_errors():
         with raises(ValueError):
             img.resize(height=-5)
 
-@tests.test
-def transform():
+
+def test_transform(fx_asset):
     """Transforms (crops and resizes with geometry strings) the image."""
-    with Image(filename=asset('beach.jpg')) as img:
+    with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
         with img.clone() as a:
             assert a.size == (800, 600)
             a.transform(resize='200%')
@@ -735,10 +683,10 @@ def transform():
             n.transform('300x300', '200%')
             assert n.size == (600, 600)
 
-@tests.test
-def transform_errors():
+
+def test_transform_errors(fx_asset):
     """Tests errors raised by invalid parameters for transform."""
-    with Image(filename=asset('mona-lisa.jpg')) as img:
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         with raises(TypeError):
             img.transform(crop=500)
         with raises(TypeError):
@@ -750,10 +698,11 @@ def transform_errors():
         with raises(ValueError):
             img.transform(resize=u'⚠ ')
 
-@tests.test_if(not skip_slow_tests)
-def rotate():
+
+@mark.slow
+def rotate(fx_asset):
     """Rotates an image."""
-    with Image(filename=asset('rotatetest.gif')) as img:
+    with Image(filename=str(fx_asset.join('rotatetest.gif'))) as img:
         assert 150 == img.width
         assert 100 == img.height
         with img.clone() as cloned:
@@ -787,10 +736,9 @@ def rotate():
                     assert black == cloned[85, 88] == cloned[52, 120]
 
 
-@tests.test
-def transparent_color():
+def test_transparent_color(fx_asset):
     """TransparentPaint test"""
-    with Image(filename=asset('rotatetest.gif')) as img:
+    with Image(filename=str(fx_asset.join('rotatetest.gif'))) as img:
         img.alpha_channel = True
         with Color('white') as white:
             img.transparent_color(white, 0.0, 2, 0)
@@ -798,27 +746,25 @@ def transparent_color():
             assert img[0, 50].alpha == 1.0
 
 
-@tests.test
-def signature():
+def test_signature(fx_asset):
     """Gets the image signature."""
-    with Image(filename=asset('mona-lisa.jpg')) as img:
-        with open(asset('mona-lisa.jpg'), 'rb') as f:
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+        with fx_asset.join('mona-lisa.jpg').open('rb') as f:
             with Image(file=f) as same:
                 assert img.signature == same.signature
         with img.convert('png') as same:
             assert img.signature == same.signature
-        with Image(filename=asset('beach.jpg')) as diff:
+        with Image(filename=str(fx_asset.join('beach.jpg'))) as diff:
             assert img.signature != diff.signature
 
 
-@tests.test
-def equal():
+def test_equal(fx_asset):
     """Equals (``==``) and not equals (``!=``) operators."""
-    with Image(filename=asset('mona-lisa.jpg')) as a:
-        with Image(filename=asset('mona-lisa.jpg')) as a2:
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as a:
+        with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as a2:
             assert a == a2
             assert not (a != a2)
-        with Image(filename=asset('sasha.jpg')) as b:
+        with Image(filename=str(fx_asset.join('sasha.jpg'))) as b:
             assert a != b
             assert not (a == b)
         with a.convert('png') as a3:
@@ -826,53 +772,47 @@ def equal():
             assert not (a != a3)
 
 
-@tests.test
-def object_hash():
+def test_object_hash(fx_asset):
     """Gets :func:`hash()` of the image."""
-    with Image(filename=asset('mona-lisa.jpg')) as img:
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         a = hash(img)
         img.format = 'png'
         b = hash(img)
         assert a == b
 
 
-@tests.test
-def get_alpha_channel():
+def test_get_alpha_channel(fx_asset):
     """Checks if image has alpha channel."""
-    with Image(filename=asset('watermark.png')) as img:
+    with Image(filename=str(fx_asset.join('watermark.png'))) as img:
         assert img.alpha_channel == True
-    with Image(filename=asset('mona-lisa.jpg')) as img:
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         assert img.alpha_channel == False
 
 
-@tests.test
-def set_alpha_channel():
+def test_set_alpha_channel(fx_asset):
     """Sets alpha channel to off."""
-    with Image(filename=asset('watermark.png')) as img:
+    with Image(filename=str(fx_asset.join('watermark.png'))) as img:
         assert img.alpha_channel == True
         img.alpha_channel = False
         assert img.alpha_channel == False
 
 
-@tests.test
-def get_background_color():
+def test_get_background_color(fx_asset):
     """Gets the background color."""
-    with Image(filename=asset('mona-lisa.jpg')) as img:
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         assert Color('white') == img.background_color
 
 
-@tests.test
-def set_background_color():
+def test_set_background_color(fx_asset):
     """Sets the background color."""
-    with Image(filename=asset('croptest.png')) as img:
+    with Image(filename=str(fx_asset.join('croptest.png'))) as img:
         with Color('transparent') as color:
             img.background_color = color
             assert img.background_color == color
 
 
-@tests.test
-def transparentize():
-    with Image(filename=asset('croptest.png')) as im:
+def test_transparentize(fx_asset):
+    with Image(filename=str(fx_asset.join('croptest.png'))) as im:
         with Color('transparent') as transparent:
             with Color('black') as black:
                 assert im[99, 100] == transparent
@@ -884,11 +824,10 @@ def transparentize():
                     assert 0.69 < c.alpha < 0.71
 
 
-@tests.test
-def watermark():
+def test_watermark(fx_asset):
     """Adds  watermark to an image."""
-    with Image(filename=asset('beach.jpg')) as img:
-        with Image(filename=asset('watermark.png')) as wm:
+    with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
+        with Image(filename=str(fx_asset.join('watermark.png'))) as wm:
             a = img[70, 83]
             b = img[70, 84]
             c = img[623, 282]
@@ -900,22 +839,20 @@ def watermark():
             assert img[622, 281] != d
 
 
-@tests.test
-def reset_coords():
+def test_reset_coords(fx_asset):
     """Reset the coordinate frame so to the upper-left corner of
     the image is (0, 0) again.
 
     """
-    with Image(filename=asset('sasha.jpg')) as img:
+    with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
             img.rotate(45, reset_coords=True)
             img.crop(0, 0, 170, 170)
             assert img[85, 85] == Color('transparent')
 
 
-@tests.test
-def metadata():
+def test_metadata(fx_asset):
     """Test metadata api"""
-    with Image(filename=asset('beach.jpg')) as img:
+    with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
         assert 52 <= len(img.metadata) <= 55
         assert 'exif:ApertureValue' in img.metadata
         assert 'exif:UnknownValue' not in img.metadata
@@ -923,9 +860,8 @@ def metadata():
         assert img.metadata.get('exif:UnknownValue', "IDK") == "IDK"
 
 
-@tests.test
-def channel_depths():
-    with Image(filename=asset('beach.jpg')) as i:
+def test_channel_depths(fx_asset):
+    with Image(filename=str(fx_asset.join('beach.jpg'))) as i:
         assert dict(i.channel_depths) == {
             'blue': 8, 'gray': 8, 'true_alpha': 1, 'opacity': 1,
             'undefined': 1, 'composite_channels': 8, 'index': 1,
@@ -934,7 +870,7 @@ def channel_depths():
             'all_channels': 8, 'green': 8, 'magenta': 8, 'red': 8,
             'gray_channels': 1
         }
-    with Image(filename=asset('google.ico')) as i:
+    with Image(filename=str(fx_asset.join('google.ico'))) as i:
         assert dict(i.channel_depths) == {
             'blue': 8, 'gray': 8, 'true_alpha': 1, 'opacity': 1,
             'undefined': 1, 'composite_channels': 8, 'index': 1,
@@ -944,21 +880,19 @@ def channel_depths():
         }
 
 
-@tests.test
-def channel_images():
-    with Image(filename=asset('sasha.jpg')) as i:
+def test_channel_images(fx_asset):
+    with Image(filename=str(fx_asset.join('sasha.jpg'))) as i:
         i.format = 'png'
         for name in 'opacity', 'alpha', 'true_alpha':
-            expected_path = asset('channel_images', name + '.png')
+            expected_path = str(fx_asset.join('channel_images', name + '.png'))
             with Image(filename=expected_path) as expected:
                 assert i.channel_images[name] == expected
 
 
-@tests.test
-def composite():
-    with Image(filename=asset('beach.jpg')) as orig:
+def test_composite(fx_asset):
+    with Image(filename=str(fx_asset.join('beach.jpg'))) as orig:
         with orig.clone() as img:
-            with Image(filename=asset('watermark.png')) as fg:
+            with Image(filename=str(fx_asset.join('watermark.png'))) as fg:
                 img.composite(fg, 5, 10)
             # These pixels should not be changed:
             assert img[0, 0] == orig[0, 0]
@@ -975,9 +909,8 @@ def composite():
             assert img[130, 100].blue <= 1
 
 
-@tests.test
-def composite_channel():
-    with Image(filename=asset('beach.jpg')) as orig:
+def test_composite_channel(fx_asset):
+    with Image(filename=str(fx_asset.join('beach.jpg'))) as orig:
         w, h = orig.size
         left = w / 4
         top = h / 4
@@ -1008,15 +941,14 @@ def composite_channel():
                         assert ic.blue == oc.blue
 
 
-@tests.test
-def liquid_rescale():
+def test_liquid_rescale(fx_asset):
     def assert_equal_except_alpha(a, b):
         with a:
             with b:
                 assert (a.red == b.red and
                         a.green == b.green and
                         a.blue == b.blue)
-    with Image(filename=asset('beach.jpg')) as orig:
+    with Image(filename=str(fx_asset.join('beach.jpg'))) as orig:
         with orig.clone() as img:
             try:
                 img.liquid_rescale(600, 600)
@@ -1029,9 +961,8 @@ def liquid_rescale():
                         assert_equal_except_alpha(img[x, y], img[x, y])
 
 
-@tests.test
-def border():
-    with Image(filename=asset('sasha.jpg')) as img:
+def test_border(fx_asset):
+    with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
         left_top = img[0, 0]
         left_bottom = img[0, -1]
         right_top = img[-1, 0]
@@ -1047,11 +978,10 @@ def border():
             assert img[-3, -6] == right_bottom
 
 
-@tests.test
-def caption():
+def test_caption(fx_asset):
     with Image(width=144, height=192, background=Color('#1e50a2')) as img:
         font = Font(
-            path=asset('League_Gothic.otf'),
+            path=str(fx_asset.join('League_Gothic.otf')),
             color=Color("gold"),
             size=12,
             antialias=False
@@ -1065,11 +995,10 @@ def caption():
         )
 
 
-@tests.test
-def setfont():
+def test_setfont(fx_asset):
     with Image(width=144, height=192, background=Color('#1e50a2')) as img:
         font = Font(
-            path=asset('League_Gothic.otf'),
+            path=str(fx_asset.join('League_Gothic.otf')),
             color=Color('gold'),
             size=12,
             antialias=False
@@ -1082,16 +1011,14 @@ def setfont():
         assert img.font == font
 
 
-@tests.test
-def setgravity():
+def test_setgravity():
     with Image(width=144, height=192, background=Color('#1e50a2')) as img:
         img.gravity = 'center'
         assert img.gravity == 'center'
 
 
-@tests.test
-def normalize_default():
-    with Image(filename=asset('gray_range.jpg')) as img:
+def test_normalize_default(fx_asset):
+    with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
         left_top = img[0, 0]
         left_bottom = img[0, -1]
         right_top = img[-1, 0]
@@ -1107,9 +1034,8 @@ def normalize_default():
         assert img[-1, -1] == black
 
 
-@tests.test
-def normalize_channel():
-    with Image(filename=asset('gray_range.jpg')) as img:
+def test_normalize_channel(fx_asset):
+    with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
         left_top = img[0, 0]
         left_bottom = img[0, -1]
         right_top = img[-1, 0]
@@ -1132,9 +1058,8 @@ def normalize_channel():
             assert getattr(img[-1, -1], c) == getattr(right_bottom, c)
 
 
-@tests.test
-def flip():
-    with Image(filename=asset('beach.jpg')) as img:
+def test_flip(fx_asset):
+    with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
         with img.clone() as flipped:
             flipped.flip()
             assert flipped[0, 0] == img[0, -1]
@@ -1143,9 +1068,8 @@ def flip():
             assert flipped[-1, -1] == img[-1, 0]
 
 
-@tests.test
-def flop():
-    with Image(filename=asset('beach.jpg')) as img:
+def test_flop(fx_asset):
+    with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
         with img.clone() as flopped:
             flopped.flop()
             assert flopped[0, 0] == img[-1, 0]
@@ -1154,17 +1078,15 @@ def flop():
             assert flopped[-1, -1] == img[0, -1]
 
 
-@tests.test
-def get_orientation():
-    with Image(filename=asset('sasha.jpg')) as img:
+def test_get_orientation(fx_asset):
+    with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
         assert img.orientation == 'undefined'
 
-    with Image(filename=asset('beach.jpg')) as img:
+    with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
         assert img.orientation == 'top_left'
 
 
-@tests.test
-def set_orientation():
-    with Image(filename=asset('beach.jpg')) as img:
+def test_set_orientation(fx_asset):
+    with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
         img.orientation = 'bottom_right'
         assert img.orientation == 'bottom_right'

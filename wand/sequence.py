@@ -106,11 +106,7 @@ class Sequence(ImageProperty, collections.MutableSequence):
     def __getitem__(self, index):
         if isinstance(index, slice):
             slice_ = self.validate_slice(index)
-            instances = self.instances[slice_]
-            for i, instance in enumerate(instances):
-                if instance is None:
-                    instances[i] = self[slice_.start + i]
-            return instances
+            return [self[i] for i in xrange(slice_.start, slice_.stop)]
         index = self.validate_position(index)
         instances = self.instances
         instances_length = len(instances)

@@ -8,35 +8,35 @@ Wand has unit tests and regression tests.  It can be run using
 
    $ python setup.py test
 
-It uses Attest_ as its testing library.  The above command will automatically
-install Attest as well if it's not installed yet.
+It uses pytest_ as its testing library.  The above command will automatically
+install pytest as well if it's not installed yet.
 
-.. _Attest: http://packages.python.org/Attest/
+Or you can manually install pytest and then use :program:`py.test` command.
+It provides more options:
+
+.. sourcecode:: console
+
+   $ pip install pytest
+   $ py.test
+
+.. _pytest: http://pytest.org/
 
 
 Skipping tests
 --------------
 
-There are some time-consuming tests.  If :envvar:`WANDTESTS_SKIP_SLOW_TESTS`
-environment variable is defined it skips too slow tests:
+There are some time-consuming tests.  By default these tests are skipped
+unless you give ``--run-slow`` option:
 
 .. sourcecode:: console
 
-   $ WANDTESTS_SKIP_SLOW_TESTS=1 python setup.py test
+   $ py.test --run-slow
 
-If there's :envvar:`WANDTESTS_SKIP` environment variable it skips
-specified modules:
-
-.. sourcecode:: console
-
-   $ WANDTESTS_SKIP="color image" python setup.py test
-
-Or you can test only specified modules using :envvar:`WANDTESTS_ONLY`
-environment variable:
+You can run only tests you want using ``-k`` option.
 
 .. sourcecode:: console
 
-   $ WANDTESTS_ONLY="color resource" python setup.py test
+   $ py.test -k image
 
 
 Using tox_
@@ -60,7 +60,7 @@ on multiple Python interpreters:
    $ tox
    GLOB sdist-make: /Users/dahlia/Desktop/wand/setup.py
    py26 create: /Users/dahlia/Desktop/wand/.tox/py26
-   py26 installdeps: Attest
+   py26 installdeps: pytest
    py26 sdist-inst: /Users/dahlia/Desktop/wand/.tox/dist/Wand-0.2.2.zip
    py26 runtests: commands[0]
    ...

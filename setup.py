@@ -13,6 +13,25 @@ def readme():
         return f.read()
 
 
+try:
+    from setuptools.command.test import test
+except ImportError:
+    cmdclass = {}
+else:
+    class pytest(test):
+
+        def finalize_options(self):
+            test.finalize_options(self)
+            self.test_args = []
+            self.test_suite = True
+
+        def run_tests(self):
+            from pytest import main
+            errno = main(self.test_args)
+            raise SystemExit(errno)
+    cmdclass = {'test': pytest}
+
+
 setup(
     name='Wand',
     packages=['wand'],
@@ -26,9 +45,7 @@ setup(
     maintainer='Hong Minhee',
     maintainer_email='minhee@dahlia.kr',
     url='http://wand-py.org/',
-    tests_require=['Attest'],
-    test_loader='attest:auto_reporter.test_loader',
-    test_suite='wandtests.tests',
+    tests_require=['pytest >= 2.3.0'],
     extras_require={'doc': ['Sphinx >=1.0']},
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -42,4 +59,5 @@ setup(
         'Programming Language :: Python :: Implementation :: Stackless',
         'Topic :: Multimedia :: Graphics'
       ],
+    cmdclass=cmdclass
 )

@@ -4,12 +4,10 @@ python:
 - 2.7
 - pypy
 install:
-- pip install Attest coverage coveralls
+- pip install "pytest>=2.3.0"
 script:
 - python -mwand.version --verbose
-- coverage run --source=wand -m attest.run wandtests.tests
-after_success:
-- coveralls
+- py.test
 notifications:
   irc:
     channels:

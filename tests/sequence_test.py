@@ -1,12 +1,6 @@
-from attest import assert_hook
-
-from attest import Tests, raises
+from pytest import mark, raises
 
 from wand.image import Image
-from .image import asset
-
-
-tests = Tests()
 
 
 def expire(image):
@@ -14,15 +8,13 @@ def expire(image):
     image.sequence.instances = [None] * len(image.sequence)
 
 
-@tests.test
-def length():
-    with Image(filename=asset('apple.ico')) as img:
+def test_length(fx_asset):
+    with Image(filename=str(fx_asset.join('apple.ico'))) as img:
         assert len(img.sequence) == 4
 
 
-@tests.test
-def getitem():
-    with Image(filename=asset('apple.ico')) as img:
+def test_getitem(fx_asset):
+    with Image(filename=str(fx_asset.join('apple.ico'))) as img:
         size = img.size
         assert size == img.sequence[img.sequence.current_index].size
         assert img.sequence[0].size == (32, 32)
@@ -40,10 +32,9 @@ def getitem():
         assert img.size == size
 
 
-@tests.test
-def setitem():
-    with Image(filename=asset('apple.ico')) as imga:
-        with Image(filename=asset('google.ico')) as imgg:
+def test_setitem(fx_asset):
+    with Image(filename=str(fx_asset.join('apple.ico'))) as imga:
+        with Image(filename=str(fx_asset.join('google.ico'))) as imgg:
             imga.sequence[2] = imgg
         assert len(imga.sequence) == 4
         assert imga.sequence[2].size == (16, 16)
@@ -51,9 +42,8 @@ def setitem():
         assert imga.sequence[2].size == (16, 16)
 
 
-@tests.test
-def delitem():
-    with Image(filename=asset('apple.ico')) as img:
+def test_delitem(fx_asset):
+    with Image(filename=str(fx_asset.join('apple.ico'))) as img:
         detached = img.sequence[0]
         del img.sequence[0]
         assert len(img.sequence) == 3
@@ -74,44 +64,40 @@ slices = {
     'to_overflow': slice(None, 10, None)
 }
 
-for slice_name in slices:
-    def _getitem_slice_test(slice_=slices[slice_name]):
-        with Image(filename=asset('apple.ico')) as img:
-            assert list(img.sequence[slice_]) == list(img.sequence)[slice_]
-    _getitem_slice_test.__name__ = 'getitem_slice_' + slice_name
 
-    def _setitem_slice_test(slice_=slices[slice_name]):
-        with Image(filename=asset('apple.ico')) as imga:
-            instances = list(imga.sequence)
-            print map(hash, instances)
-            with Image(filename=asset('github.ico')) as imgg:
-                instances[slice_] = imgg.sequence
-                imga.sequence[slice_] = imgg.sequence
-                assert instances == list(imga.sequence)
-                expire(imga)
-                assert instances == list(imga.sequence)
-    _setitem_slice_test.__name__ = 'setitem_slice_' + slice_name
-
-    def _delitem_slice_test(slice_=slices[slice_name]):
-        with Image(filename=asset('apple.ico')) as img:
-            instances = list(img.sequence)
-            del instances[slice_]
-            del img.sequence[slice_]
-            assert list(img.sequence) == instances
-            expire(img)
-            assert list(img.sequence) == instances
-    _delitem_slice_test.__name__ = 'delitem_slice_' + slice_name
-
-    globals().update({
-        'getitem_slice_' + slice_name: tests.test(_getitem_slice_test),
-        'setitem_slice_' + slice_name: tests.test(_setitem_slice_test),
-        'delitem_slice_' + slice_name: tests.test(_delitem_slice_test)
-    })
+@mark.parametrize(('slice_name', 'slice_'), slices.items())
+def test_getitem_slice(slice_name, slice_, fx_asset):
+    print 1, slice_
+    with Image(filename=str(fx_asset.join('apple.ico'))) as img:
+        assert list(img.sequence[slice_]) == list(img.sequence)[slice_]
 
 
-@tests.test
-def iterator():
-    with Image(filename=asset('apple.ico')) as img:
+@mark.parametrize(('slice_name', 'slice_'), slices.items())
+def test_setitem_slice(slice_name, slice_, fx_asset):
+    with Image(filename=str(fx_asset.join('apple.ico'))) as imga:
+        instances = list(imga.sequence)
+        print map(hash, instances)
+        with Image(filename=str(fx_asset.join('github.ico'))) as imgg:
+            instances[slice_] = imgg.sequence
+            imga.sequence[slice_] = imgg.sequence
+            assert instances == list(imga.sequence)
+            expire(imga)
+            assert instances == list(imga.sequence)
+
+
+@mark.parametrize(('slice_name', 'slice_'), slices.items())
+def test_delitem_slice(slice_name, slice_, fx_asset):
+    with Image(filename=str(fx_asset.join('apple.ico'))) as img:
+        instances = list(img.sequence)
+        del instances[slice_]
+        del img.sequence[slice_]
+        assert list(img.sequence) == instances
+        expire(img)
+        assert list(img.sequence) == instances
+
+
+def test_iterator(fx_asset):
+    with Image(filename=str(fx_asset.join('apple.ico'))) as img:
         container_size = img.sequence[img.sequence.current_index].size
         actual = []
         expected = [(32, 32), (16, 16), (32, 32), (16, 16)]
@@ -121,24 +107,23 @@ def iterator():
         assert actual == expected
 
 
-@tests.test
-def append():
-    with Image(filename=asset('apple.ico')) as imga:
-        with Image(filename=asset('google.ico')) as imgg:
+def test_append(fx_asset):
+    with Image(filename=str(fx_asset.join('apple.ico'))) as imga:
+        with Image(filename=str(fx_asset.join('google.ico'))) as imgg:
             imga.sequence.append(imgg)
             assert imga.sequence[4] == imgg.sequence[0]
             expire(imga)
             assert imga.sequence[4] == imgg.sequence[0]
         assert len(imga.sequence) == 5
-    with Image(filename=asset('apple.ico')) as imga:
-        with Image(filename=asset('github.ico')) as imgg:
+    with Image(filename=str(fx_asset.join('apple.ico'))) as imga:
+        with Image(filename=str(fx_asset.join('github.ico'))) as imgg:
             imga.sequence.append(imgg)
             assert imga.sequence[4] == imgg.sequence[0]
             expire(imga)
             assert imga.sequence[4] == imgg.sequence[0]
         assert len(imga.sequence) == 5
-    with Image(filename=asset('apple.ico')) as imga:
-        with Image(filename=asset('github.ico')) as imgg:
+    with Image(filename=str(fx_asset.join('apple.ico'))) as imga:
+        with Image(filename=str(fx_asset.join('github.ico'))) as imgg:
             imga.sequence.append(imgg.sequence[1])
             assert imga.sequence[4] == imgg.sequence[1]
             expire(imga)
@@ -146,12 +131,11 @@ def append():
         assert len(imga.sequence) == 5
 
 
-@tests.test
-def insert():
-    with Image(filename=asset('apple.ico')) as imga:
+def test_insert(fx_asset):
+    with Image(filename=str(fx_asset.join('apple.ico'))) as imga:
         instances = [imga.sequence[i] for i in xrange(2, 4)]
         assert len(imga.sequence) == 4
-        with Image(filename=asset('github.ico')) as imgg:
+        with Image(filename=str(fx_asset.join('github.ico'))) as imgg:
             imga.sequence.insert(2, imgg)
             assert imga.sequence[2] == imgg.sequence[0]
             assert len(imga.sequence) == 5
@@ -163,11 +147,10 @@ def insert():
             assert instance == imga.sequence[3 + i]
 
 
-@tests.test
-def insert_first():
-    with Image(filename=asset('apple.ico')) as imga:
+def test_insert_first(fx_asset):
+    with Image(filename=str(fx_asset.join('apple.ico'))) as imga:
         assert len(imga.sequence) == 4
-        with Image(filename=asset('github.ico')) as imgg:
+        with Image(filename=str(fx_asset.join('github.ico'))) as imgg:
             imga.sequence.insert(0, imgg)
             assert imga.sequence[0] == imgg.sequence[0]
             expire(imga)
@@ -175,11 +158,10 @@ def insert_first():
         assert len(imga.sequence) == 5
 
 
-@tests.test
-def extend():
-    with Image(filename=asset('apple.ico')) as a:
+def test_extend(fx_asset):
+    with Image(filename=str(fx_asset.join('apple.ico'))) as a:
         length = len(a.sequence)
-        with Image(filename=asset('github.ico')) as b:
+        with Image(filename=str(fx_asset.join('github.ico'))) as b:
             a.sequence.extend(list(b.sequence)[::-1])
             assert a.sequence[length] == b.sequence[1]
             assert a.sequence[length + 1] == b.sequence[0]
@@ -189,11 +171,10 @@ def extend():
         assert len(a.sequence) == 6
 
 
-@tests.test
-def extend_sequence():
-    with Image(filename=asset('apple.ico')) as a:
+def test_extend_sequence(fx_asset):
+    with Image(filename=str(fx_asset.join('apple.ico'))) as a:
         length = len(a.sequence)
-        with Image(filename=asset('github.ico')) as b:
+        with Image(filename=str(fx_asset.join('github.ico'))) as b:
             a.sequence.extend(b.sequence)
             for i in xrange(2):
                 assert a.sequence[length + i] == b.sequence[i]
@@ -203,11 +184,10 @@ def extend_sequence():
         assert len(a.sequence) == 6
 
 
-@tests.test
-def extend_offset():
-    with Image(filename=asset('apple.ico')) as a:
+def test_extend_offset(fx_asset):
+    with Image(filename=str(fx_asset.join('apple.ico'))) as a:
         instances = list(a.sequence)
-        with Image(filename=asset('github.ico')) as b:
+        with Image(filename=str(fx_asset.join('github.ico'))) as b:
             a.sequence.extend(list(b.sequence)[::-1], 2)
             instances[2:2] = list(b.sequence)[::-1]
             assert list(a.sequence) == instances
@@ -216,11 +196,10 @@ def extend_offset():
         assert len(a.sequence) == 6
 
 
-@tests.test
-def extend_offset_sequence():
-    with Image(filename=asset('apple.ico')) as a:
+def test_extend_offset_sequence(fx_asset):
+    with Image(filename=str(fx_asset.join('apple.ico'))) as a:
         instances = list(a.sequence)
-        with Image(filename=asset('github.ico')) as b:
+        with Image(filename=str(fx_asset.join('github.ico'))) as b:
             a.sequence.extend(b.sequence, 2)
             instances[2:2] = list(b.sequence)
             assert list(a.sequence) == instances
@@ -229,11 +208,10 @@ def extend_offset_sequence():
         assert len(a.sequence) == 6
 
 
-@tests.test
-def extend_first():
-    with Image(filename=asset('apple.ico')) as a:
+def test_extend_first(fx_asset):
+    with Image(filename=str(fx_asset.join('apple.ico'))) as a:
         instances = list(a.sequence)
-        with Image(filename=asset('github.ico')) as b:
+        with Image(filename=str(fx_asset.join('github.ico'))) as b:
             a.sequence.extend(list(b.sequence)[::-1], 0)
             instances[:0] = list(b.sequence)[::-1]
             assert list(a.sequence) == instances
@@ -242,11 +220,10 @@ def extend_first():
         assert len(a.sequence) == 6
 
 
-@tests.test
-def extend_first_sequence():
-    with Image(filename=asset('apple.ico')) as a:
+def test_extend_first_sequence(fx_asset):
+    with Image(filename=str(fx_asset.join('apple.ico'))) as a:
         instances = list(a.sequence)
-        with Image(filename=asset('github.ico')) as b:
+        with Image(filename=str(fx_asset.join('github.ico'))) as b:
             a.sequence.extend(b.sequence, 0)
             instances[:0] = list(b.sequence)
             assert list(a.sequence) == instances
@@ -255,28 +232,23 @@ def extend_first_sequence():
         assert len(a.sequence) == 6
 
 
-cmp_funcs = {
-    'equals': lambda i: i,  # identity
-    'hash_equals': hash,
-    'signature_equals': lambda i: i.signature
-}
-
-for cmp_name in cmp_funcs:
-    def _equals_test(f=cmp_funcs[cmp_name]):
-        with Image(filename=asset('apple.ico')) as a:
-            with Image(filename=asset('apple.ico')) as b:
-                    assert f(a) == f(b)
-                    assert f(a.sequence[0]) == f(b.sequence[0])
-                    assert f(a) != f(b.sequence[1])
-                    assert f(a.sequence[0]) != f(b.sequence[1])
-                    assert f(a.sequence[1]) == f(b.sequence[1])
-    _equals_test.__name__ = cmp_name
-    globals()[cmp_name] = tests.test(_equals_test)
+@mark.parametrize(('cmp_name', 'f'), [
+    ('equals', lambda i: i),  # identity
+    ('hash_equals', hash),
+    ('signature_equals', lambda i: i.signature)
+])
+def test_equals(cmp_name, f, fx_asset):
+    with Image(filename=str(fx_asset.join('apple.ico'))) as a:
+        with Image(filename=str(fx_asset.join('apple.ico'))) as b:
+                assert f(a) == f(b)
+                assert f(a.sequence[0]) == f(b.sequence[0])
+                assert f(a) != f(b.sequence[1])
+                assert f(a.sequence[0]) != f(b.sequence[1])
+                assert f(a.sequence[1]) == f(b.sequence[1])
 
 
-@tests.test
-def clone():
-    with Image(filename=asset('apple.ico')) as img:
+def test_clone(fx_asset):
+    with Image(filename=str(fx_asset.join('apple.ico'))) as img:
         with img.sequence[2].clone() as single:
             assert single.wand != img.wand
             assert len(single.sequence) == 1
