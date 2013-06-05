@@ -4,14 +4,16 @@ python:
 - 2.7
 - pypy
 install:
-- pip install Attest
+- pip install Attest coverage coveralls
 script:
 - python -mwand.version --verbose
-- python -mattest.run wandtests.tests
+- coverage run --source=wand -m attest.run wandtests.tests
+after_success:
+- coveralls
 notifications:
   irc:
     channels:
-    - "irc://ocarina.irc.ozinger.org:8080#hongminhee"
+    - "ircs://ssl.ozinger.org:16667#hongminhee"
     - "irc.freenode.net#wand"
     on_success: change
     on_failure: always

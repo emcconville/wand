@@ -83,12 +83,14 @@ __ http://en.wikipedia.org/wiki/Seam_carving
 Version 0.2.4
 -------------
 
-Reserved version, but maybe not released.
+Released on May 28, 2013.
 
 - Fix :exc:`~exceptions.NameError` in :attr:`Resource.resource
   <wand.resource.Resource.resource>` setter.
   [:issue:`89` forwareded from Debian bug report `#699064`__
   by Jakub Wilk]
+- Fix the problem of library loading for Mac with Homebrew and Arch Linux.
+  [:issue:`102` by Roel Gerrits, :issue:`44`]
 
 __ http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=699064
 

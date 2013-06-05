@@ -70,3 +70,10 @@ Continuous Integration (Travis CI)
    .. image:: https://secure.travis-ci.org/dahlia/wand.png?branch=master
       :alt: Build Status
       :target: http://travis-ci.org/dahlia/wand
+
+Code Coverage
+   https://coveralls.io/r/dahlia/wand
+
+   .. image:: https://coveralls.io/repos/dahlia/wand/badge.png
+      :alt: Coverage Status
+      :target: https://coveralls.io/r/dahlia/wand
