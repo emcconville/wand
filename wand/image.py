@@ -1854,13 +1854,17 @@ class Image(Resource):
         if not result:
             self.raise_exception()
 
-    def trim(self, color=None):
+    def trim(self, color=None, fuzz=0):
         """Remove solid border from image. Uses top left pixel as a guide
         by default, or you can also specify the ``color`` to remove.
 
         :param color: the border color to remove.
                       if it's omitted top left pixel is used by default
         :type color: :class:`~wand.color.Color`
+
+        :param fuzz: Defines how much tolerance is acceptable to consider
+                     two colors as the same.
+        :type fuzz: :class:`numbers.Integral`
 
         .. versionadded:: 0.2.1
 
@@ -1871,7 +1875,7 @@ class Image(Resource):
         """
         with color or self[0, 0] as color:
             self.border(color, 1, 1)
-        result = library.MagickTrimImage(self.wand)
+        result = library.MagickTrimImage(self.wand, fuzz)
         if not result:
             self.raise_exception()
 

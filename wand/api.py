@@ -450,7 +450,8 @@ try:
 
     library.MagickStripImage.argtypes = [ctypes.c_void_p]
 
-    library.MagickTrimImage.argtypes = [ctypes.c_void_p]
+    library.MagickTrimImage.argtypes = [ctypes.c_void_p,
+                                        ctypes.c_double]
 
     library.MagickGetSize.argtypes = [ctypes.c_void_p,
                                       ctypes.POINTER(ctypes.c_uint),
