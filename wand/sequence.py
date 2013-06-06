@@ -134,9 +134,7 @@ class Sequence(ImageProperty, collections.MutableSequence):
         if isinstance(index, slice):
             tmp_idx = self.current_index
             slice_ = self.validate_slice(index)
-            print slice_, len(self)
             del self[slice_]
-            print slice_, len(self)
             self.extend(image, offset=slice_.start)
             self.current_index = tmp_idx
         else:
