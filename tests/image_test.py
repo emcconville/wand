@@ -1023,15 +1023,18 @@ def test_normalize_default(fx_asset):
         left_bottom = img[0, -1]
         right_top = img[-1, 0]
         right_bottom = img[-1, -1]
+        print(left_top, left_bottom, right_top, right_bottom)
         img.normalize()
+        print(img[0,0], img[0,-1], img[-1,0], img[-1,-1])
         assert img[0, 0] != left_top
         assert img[0, -1] != left_bottom
         assert img[-1, 0] != right_top
         assert img[-1, -1] != right_bottom
-        black = Color('#000')
-        white = Color('#FFFFFF')
-        assert img[0, 0] == white
-        assert img[-1, -1] == black
+        with img[0, 0] as left_top:
+            assert left_top.red == left_top.green == left_top.blue == 1
+        with img[-1, -1] as right_bottom:
+            assert (right_bottom.red == right_bottom.green
+                                     == right_bottom.blue == 0)
 
 
 def test_normalize_channel(fx_asset):
