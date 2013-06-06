@@ -171,7 +171,7 @@ def test_make_blob(fx_asset):
         assert img.format == 'JPEG'
         with raises(TypeError):
             img.make_blob(123)
-    svg = '''
+    svg = b'''
     <svg width="100px" height="100px">
     <circle cx="100" cy="50" r="40" stroke="black" stroke-width="2" fill="red"/>
     </svg>
