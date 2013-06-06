@@ -382,6 +382,13 @@ def trim():
         newx, newy = img.size
         assert newx < oldx
         assert newy < oldy
+    with Image(filename=asset('trimtest.png')) as img:
+        img.trim()
+        trimx, trimy = img.size
+        img.trim(fuzz=10000)
+        fuzzx, fuzzy = img.size
+        assert fuzzx < trimx
+        assert fuzzy < trimy
     with Image(filename=asset('trim-color-test.png')) as img:
         assert img.size == (100, 100)
         with Color('blue') as blue:
