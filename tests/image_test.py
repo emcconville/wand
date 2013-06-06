@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
 import functools
+import io
 import os
 import os.path
 import shutil
 import tempfile
-try:
-    import cStringIO as StringIO
-except ImportError:
-    import StringIO
 import warnings
 
 from pytest import mark, raises
@@ -68,7 +65,7 @@ def test_new_from_file(fx_asset):
             assert img.width == 402
     with raises(ClosedImageError):
         img.wand
-    strio = StringIO.StringIO(fx_asset.join('mona-lisa.jpg').read('rb'))
+    strio = io.BytesIO(fx_asset.join('mona-lisa.jpg').read('rb'))
     with Image(file=strio) as img:
         assert img.width == 402
     strio.close()
@@ -137,7 +134,7 @@ def test_save_to_filename(fx_asset):
 
 def test_save_to_file(fx_asset):
     """Saves an image to the Python file object."""
-    buffer = StringIO.StringIO()
+    buffer = io.BytesIO()
     with tempfile.TemporaryFile() as savefile:
         with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as orig:
             orig.save(file=savefile)
@@ -157,7 +154,7 @@ def test_save_to_file(fx_asset):
 
 def test_save_error(fx_asset):
     filename = os.path.join(tempfile.mkdtemp(), 'savetest.jpg')
-    fileobj = StringIO.StringIO()
+    fileobj = io.BytesIO()
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as orig:
         with raises(TypeError):
             orig.save()
@@ -275,7 +272,7 @@ def test_set_format(fx_asset):
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         img.format = 'png'
         assert img.format == 'PNG'
-        strio = StringIO.StringIO()
+        strio = io.BytesIO()
         img.save(file=strio)
         strio.seek(0)
         with Image(file=strio) as png:
@@ -312,7 +309,7 @@ def test_set_compression(fx_asset):
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         img.compression_quality = 50
         assert img.compression_quality == 50
-        strio = StringIO.StringIO()
+        strio = io.BytesIO()
         img.save(file=strio)
         strio.seek(0)
         with Image(file=strio) as jpg:
@@ -324,7 +321,7 @@ def test_set_compression(fx_asset):
 def test_strip(fx_asset):
     """Strips the image of all profiles and comments."""
     with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
-        strio = StringIO.StringIO()
+        strio = io.BytesIO()
         img.save(file=strio)
         len_unstripped = strio.tell()
         strio.truncate(0)
@@ -365,7 +362,7 @@ def test_convert(fx_asset):
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         with img.convert('png') as converted:
             assert converted.format == 'PNG'
-            strio = StringIO.StringIO()
+            strio = io.BytesIO()
             converted.save(file=strio)
             strio.seek(0)
             with Image(file=strio) as png:
@@ -912,10 +909,10 @@ def test_composite(fx_asset):
 def test_composite_channel(fx_asset):
     with Image(filename=str(fx_asset.join('beach.jpg'))) as orig:
         w, h = orig.size
-        left = w / 4
-        top = h / 4
+        left = w // 4
+        top = h // 4
         right = left * 3 - 1
-        bottom = h / 4 * 3 - 1
+        bottom = h // 4 * 3 - 1
         # List of (x, y) points that shouldn't be changed:
         outer_points = [
             (0, 0), (0, h - 1), (w - 1, 0), (w - 1, h - 1),
@@ -926,9 +923,10 @@ def test_composite_channel(fx_asset):
         ]
         with orig.clone() as img:
             with Color('black') as color:
-                with Image(width=w / 2, height=h / 2, background=color) as cimg:
+                with Image(width=w // 2, height=h // 2,
+                           background=color) as cimg:
                     img.composite_channel('red', cimg, 'copy_red',
-                                          w / 4, h / 4)
+                                          w // 4, h // 4)
             # These points should be not changed:
             for point in outer_points:
                 assert orig[point] == img[point]

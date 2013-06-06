@@ -13,11 +13,12 @@ error happened)::
 import collections
 import ctypes
 import numbers
-import types
 import weakref
 
+from . import compat
 from .api import MagickPixelPacket, libc, libmagick, library
 from .color import Color
+from .compat import binary, binary_type, file_types, string_type, text, xrange
 from .exceptions import WandException
 from .resource import DestroyedResourceError, Resource
 from .font import Font
@@ -419,7 +420,7 @@ class BaseImage(Resource):
         return Iterator(image=self)
 
     def __getitem__(self, idx):
-        if (not isinstance(idx, basestring) and
+        if (not isinstance(idx, string_type) and
             isinstance(idx, collections.Iterable)):
             idx = tuple(idx)
             d = len(idx)
@@ -507,9 +508,9 @@ class BaseImage(Resource):
 
     @gravity.setter
     def gravity(self, value):
-        if not isinstance(value, basestring):
+        if not isinstance(value, string_type):
             raise TypeError('expected a string, not ' + repr(value))
-        elif value not in GRAVITY_TYPES:
+        if value not in GRAVITY_TYPES:
             raise ValueError('expected a string from GRAVITY_TYPES, not '
                              + repr(value))
         library.MagickSetGravity(self.wand, GRAVITY_TYPES.index(value))
@@ -520,12 +521,11 @@ class BaseImage(Resource):
         It also can be set.
 
         """
-        return library.MagickGetFont(self.wand)
+        return text(library.MagickGetFont(self.wand))
 
     @font_path.setter
     def font_path(self, font):
-        if not isinstance(font, basestring):
-            raise TypeError('expected a string, not ' + repr(font))
+        font = binary(font)
         if library.MagickSetFont(self.wand, font) == False:
             raise ValueError('font is invalid')
 
@@ -558,7 +558,7 @@ class BaseImage(Resource):
     def font(self):
         """(:class:`wand.font.Font`) The current font options."""
         return Font(
-            path=self.font_path,
+            path=text(self.font_path),
             size=self.font_size,
             color=self.font_color,
             antialias=self.font_antialias
@@ -604,13 +604,13 @@ class BaseImage(Resource):
         
         """
         orientation_index = library.MagickGetImageOrientation(self.wand)
-        return ORIENTATION_TYPES[orientation_index]
+        return ORIENTATION_TYPES[text(orientation_index)]
 
     @orientation.setter
     def orientation(self, value):
-        if not isinstance(value, basestring):
+        if not isinstance(value, string_type):
             raise TypeError('expected a string, not ' + repr(value))
-        elif value not in ORIENTATION_TYPES:
+        if value not in ORIENTATION_TYPES:
             raise ValueError('expected a string from ORIENTATION_TYPES, not '
                              + repr(value))
         index = ORIENTATION_TYPES.index(value)
@@ -659,7 +659,7 @@ class BaseImage(Resource):
             raise TypeError('height must be an integer, not ' + repr(height))
         elif font is not None and not isinstance(font, Font):
             raise TypeError('font must be a wand.font.Font, not ' + repr(font))
-        elif gravity is not None and gravity not in GRAVITY_TYPES:
+        elif gravity is not None and compat.text(gravity) not in GRAVITY_TYPES:
             raise ValueError('invalid gravity value')
         if width is None:
             width = self.width - left
@@ -672,7 +672,7 @@ class BaseImage(Resource):
             with Color('transparent') as background_color:
                 library.MagickSetBackgroundColor(textboard.wand,
                                                  background_color.resource)
-            textboard.read(filename='caption:' + text)
+            textboard.read(filename=b'caption:' + text.encode('utf-8'))
             self.composite(textboard, left, top)
 
 
@@ -715,11 +715,11 @@ class BaseImage(Resource):
     def units(self):
         """(:class:`basestring`) The resolution units of this image."""
         r = library.MagickGetImageUnits(self.wand)
-        return UNIT_TYPES[r]
+        return UNIT_TYPES[text(r)]
 
     @units.setter
     def units(self, units):
-        if not isinstance(units, basestring) or units not in UNIT_TYPES:
+        if not isinstance(units, string_type) or units not in UNIT_TYPES:
             raise TypeError('Unit value must be a string from wand.images.'
                             'UNIT_TYPES, not ' + repr(units))
         r = library.MagickSetImageUnits(self.wand, UNIT_TYPES.index(units))
@@ -755,11 +755,11 @@ class BaseImage(Resource):
         image_type_index = library.MagickGetImageType(self.wand)
         if not image_type_index:
             self.raise_exception()
-        return IMAGE_TYPES[image_type_index]
+        return IMAGE_TYPES[text(image_type_index)]
 
     @type.setter
     def type(self, image_type):
-        if not isinstance(image_type, basestring) \
+        if not isinstance(image_type, string_type) \
             or image_type not in IMAGE_TYPES:
             raise TypeError('Type value must be a string from IMAGE_TYPES'
                             ', not ' + repr(image_type))
@@ -802,7 +802,7 @@ class BaseImage(Resource):
 
         """
         signature = library.MagickGetImageSignature(self.wand)
-        return signature.value
+        return text(signature.value)
 
     @property
     def alpha_channel(self):
@@ -1040,10 +1040,10 @@ class BaseImage(Resource):
                              repr(height))
         elif not isinstance(blur, numbers.Real):
             raise TypeError('blur must be numbers.Real , not ' + repr(blur))
-        elif not isinstance(filter, (basestring, numbers.Integral)):
+        elif not isinstance(filter, (string_type, numbers.Integral)):
             raise TypeError('filter must be one string defined in wand.image.'
                             'FILTER_TYPES or an integer, not ' + repr(filter))
-        if isinstance(filter, basestring):
+        if isinstance(filter, string_type):
             try:
                 filter = FILTER_TYPES.index(filter)
             except IndexError:
@@ -1059,7 +1059,7 @@ class BaseImage(Resource):
             library.MagickSetLastIterator(self.wand)
             n = library.MagickGetIteratorIndex(self.wand)
             library.MagickResetIterator(self.wand)
-            for i in xrange(0, n + 1):
+            for i in xrange(n + 1):
                 library.MagickSetIteratorIndex(self.wand, i)
                 library.MagickResizeImage(self.wand, width, height,
                                           filter, blur)
@@ -1168,18 +1168,18 @@ class BaseImage(Resource):
         # Check that the values given are the correct types.  ctypes will do
         # this automatically, but we can make the error message more friendly
         # here.
-        if not isinstance(crop, basestring):
+        if not isinstance(crop, string_type):
             raise TypeError("crop must be a string, not " + repr(crop))
-        if not isinstance(resize, basestring):
+        if not isinstance(resize, string_type):
             raise TypeError("resize must be a string, not " + repr(resize))
         # Also verify that only ASCII characters are included
         try:
-            crop.encode('ascii')
+            crop = crop.encode('ascii')
         except UnicodeEncodeError:
             raise ValueError('crop must only contain ascii-encodable ' +
                              'characters.')
         try:
-            resize.encode('ascii')
+            resize = resize.encode('ascii')
         except UnicodeEncodeError:
             raise ValueError('resize must only contain ascii-encodable ' +
                              'characters.')
@@ -1418,10 +1418,10 @@ class BaseImage(Resource):
         .. versionadded:: 0.3.0
 
         """
-        if not isinstance(channel, basestring):
+        if not isinstance(channel, string_type):
             raise TypeError('channel must be a string, not ' +
                             repr(channel))
-        elif not isinstance(operator, basestring):
+        elif not isinstance(operator, string_type):
             raise TypeError('operator must be a string, not ' +
                             repr(operator))
         elif not isinstance(left, numbers.Integral):
@@ -1577,7 +1577,7 @@ class Image(BaseImage):
                  for b in open_args[:i] + open_args[i + 1:]):
             raise TypeError('parameters are exclusive each other; use only '
                             'one at once')
-        elif not (format is None or isinstance(format, basestring)):
+        elif not (format is None or isinstance(format, string_type)):
             raise TypeError('format must be a string, not ' + repr(format))
         with self.allocate():
             if image is None:
@@ -1595,15 +1595,17 @@ class Image(BaseImage):
                 wand = library.CloneMagickWand(image.wand)
                 super(Image, self).__init__(wand)
             else:
+                if format:
+                    format = binary(format)
                 if file is not None:
                     if format:
                         library.MagickSetFilename(self.wand,
-                                                  'buffer.' + format)
+                                                  b'buffer.' + format)
                     self.read(file=file, resolution=resolution)
                 if blob is not None:
                     if format:
                         library.MagickSetFilename(self.wand,
-                                                  'buffer.' + format)
+                                                  b'buffer.' + format)
                     self.read(blob=blob, resolution=resolution)
                 elif filename is not None:
                     if format:
@@ -1645,7 +1647,7 @@ class Image(BaseImage):
                 raise TypeError('resolution must be a (x, y) pair or an '
                                 'integer of the same x/y')
         if file is not None:
-            if (isinstance(file, types.FileType) and
+            if (isinstance(file, file_types) and
                 hasattr(libc, 'fdopen')):
                 fd = libc.fdopen(file.fileno(), file.mode)
                 r = library.MagickReadImageFile(self.wand, fd)
@@ -1660,13 +1662,11 @@ class Image(BaseImage):
             if not isinstance(blob, collections.Iterable):
                 raise TypeError('blob must be iterable, not ' +
                                 repr(blob))
-            if not isinstance(blob, basestring):
-                blob = ''.join(blob)
-            elif not isinstance(blob, str):
-                blob = str(blob)
+            if not isinstance(blob, binary_type):
+                blob = b''.join(blob)
             r = library.MagickReadImageBlob(self.wand, blob, len(blob))
         elif filename is not None:
-            r = library.MagickReadImage(self.wand, filename)
+            r = library.MagickReadImage(self.wand, binary(filename))
         if not r:
             self.raise_exception()
 
@@ -1716,19 +1716,20 @@ class Image(BaseImage):
         """
         fmt = library.MagickGetImageFormat(self.wand)
         if bool(fmt):
-            return fmt.value
+            return text(fmt.value)
         self.raise_exception()
 
     @format.setter
     def format(self, fmt):
-        if not isinstance(fmt, basestring):
+        if not isinstance(fmt, string_type):
             raise TypeError("format must be a string like 'png' or 'jpeg'"
                             ', not ' + repr(fmt))
         fmt = fmt.strip()
-        r = library.MagickSetImageFormat(self.wand, fmt.upper())
+        r = library.MagickSetImageFormat(self.wand, binary(fmt.upper()))
         if not r:
             raise ValueError(repr(fmt) + ' is unsupported format')
-        r = library.MagickSetFilename(self.wand, 'buffer.' + fmt.lower())
+        r = library.MagickSetFilename(self.wand,
+                                      b'buffer.' + binary(fmt.lower()))
         if not r:
             self.raise_exception()
 
@@ -1740,11 +1741,11 @@ class Image(BaseImage):
         .. versionadded:: 0.1.7
 
         """
-        rp = libmagick.MagickToMime(self.format)
+        rp = libmagick.MagickToMime(binary(self.format))
         if not bool(rp):
             self.raise_exception()
         mimetype = rp.value
-        return mimetype
+        return text(mimetype)
 
     def blank(self, width, height, background=None):
         """Creates blank image.
@@ -1820,7 +1821,7 @@ class Image(BaseImage):
         elif file is not None and filename is not None:
             raise TypeError('expected only one argument; but two passed')
         elif file is not None:
-            if isinstance(file, types.FileType) and hasattr(libc, 'fdopen'):
+            if isinstance(file, file_types) and hasattr(libc, 'fdopen'):
                 fd = libc.fdopen(file.fileno(), file.mode)
                 r = library.MagickWriteImageFile(self.wand, fd)
                 if not r:
@@ -1832,9 +1833,10 @@ class Image(BaseImage):
                                     repr(file))
                 file.write(self.make_blob())
         else:
-            if not isinstance(filename, basestring):
+            if not isinstance(filename, string_type):
                 raise TypeError('filename must be a string, not ' +
                                 repr(filename))
+            filename = binary(filename)
             if self.mimetype == 'image/gif':
                 r = library.MagickWriteImages(self.wand, filename, True)
             else:
@@ -2033,7 +2035,7 @@ class Iterator(Resource, collections.Iterator):
             if not library.PixelSetIteratorRow(self.resource, y - 1):
                 self.raise_exception()
 
-    def next(self, x=None):
+    def __next__(self, x=None):
         if self.cursor >= self.height:
             self.destroy()
             raise StopIteration()
@@ -2054,6 +2056,8 @@ class Iterator(Resource, collections.Iterator):
         packet_buffer = ctypes.create_string_buffer(struct_size)
         get_color(pixels[x], packet_buffer)
         return Color(raw=packet_buffer)
+
+    next = __next__  # Python 2 compatibility
 
     def clone(self):
         """Clones the same iterator.
@@ -2110,23 +2114,23 @@ class OptionDict(ImageProperty, collections.MutableMapping):
         return len(OPTIONS)
 
     def __getitem__(self, key):
-        if not isinstance(key, basestring):
+        if not isinstance(key, string_type):
             raise TypeError('option name must be a string, not ' + repr(key))
         if key not in OPTIONS:
             raise ValueError('invalid option: ' + repr(key))
         image = self.image
-        return library.MagickGetOption(image.wand, key)
+        return text(library.MagickGetOption(image.wand, binary(key)))
 
     def __setitem__(self, key, value):
-        if not isinstance(key, basestring):
+        if not isinstance(key, string_type):
             raise TypeError('option name must be a string, not ' + repr(key))
-        if not isinstance(value, basestring):
+        if not isinstance(value, string_type):
             raise TypeError('option value must be a string, not ' +
                             repr(value))
         if key not in OPTIONS:
             raise ValueError('invalid option: ' + repr(key))
         image = self.image
-        library.MagickSetOption(image.wand, key, value)
+        library.MagickSetOption(image.wand, binary(key), binary(value))
 
     def __delitem__(self, key):
         self[key] = ''
@@ -2162,18 +2166,18 @@ class Metadata(ImageProperty, collections.Mapping):
         :rtype: :class:`str`
         """
         image = self.image
-        if not isinstance(k, basestring):
+        if not isinstance(k, string_type):
             raise TypeError('k must be a string, not ' + repr(format))
-        v = library.MagickGetImageProperty(image.wand, k)
+        v = library.MagickGetImageProperty(image.wand, binary(k))
         if bool(v) is False:
             raise KeyError(k)
         value = v.value
-        return value
+        return text(value)
 
     def __iter__(self):
         image = self.image
         num = ctypes.c_size_t()
-        props_p = library.MagickGetImageProperties(image.wand, '', num)
+        props_p = library.MagickGetImageProperties(image.wand, b'', num)
         props = [props_p[i] for i in xrange(num.value)]
         library.MagickRelinquishMemory(props_p)
         return iter(props)
@@ -2181,7 +2185,7 @@ class Metadata(ImageProperty, collections.Mapping):
     def __len__(self):
         image = self.image
         num = ctypes.c_size_t()
-        props_p = library.MagickGetImageProperties(image.wand, '', num)
+        props_p = library.MagickGetImageProperties(image.wand, b'', num)
         library.MagickRelinquishMemory(props_p)
         return num.value
 

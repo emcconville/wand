@@ -9,6 +9,7 @@ import contextlib
 import numbers
 
 from .api import library
+from .compat import binary, xrange
 from .image import BaseImage, ImageProperty
 from .version import MAGICK_VERSION_INFO
 
@@ -55,7 +56,7 @@ class Sequence(ImageProperty, collections.MutableSequence):
         used for :keyword:`with` statement e.g.::
 
             with image.sequence.index_context(3):
-                print image.size
+                print(image.size)
 
         .. note::
 
@@ -122,7 +123,7 @@ class Sequence(ImageProperty, collections.MutableSequence):
         library.MagickSetIteratorIndex(wand, index)
         image = library.GetImageFromMagickWand(wand)
         exc = library.AcquireExceptionInfo()
-        single_image = library.CloneImages(image, str(index), exc)
+        single_image = library.CloneImages(image, binary(str(index)), exc)
         library.DestroyExceptionInfo(exc)
         single_wand = library.NewMagickWandFromImage(single_image)
         library.MagickSetIteratorIndex(wand, tmp_idx)
