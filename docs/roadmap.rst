@@ -4,6 +4,11 @@ Roadmap
 Version 0.3
 -----------
 
+Python 3 compatibility
+   Wand 0.3 will be the first version that supports Python 3.
+
+   It has been developed in the branch :branch:`python3`.
+
 Drawing (:issue:`64`)
    Wand 0.3 will provide drawing facilities of ImageMagick.
 
@@ -67,11 +72,6 @@ Channels
 
 Version 0.4
 -----------
-
-Python 3 compatibility
-   Wand 0.4 will be the first version that supports Python 3.
-
-   The branch name for it will be :branch:`python3`.
 
 Jython compatibility (:issue:`9`)
    Wand 0.4 will support Jython 2.7+.  Jython 2.7 is (June 2012) currently
