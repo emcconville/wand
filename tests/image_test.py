@@ -684,6 +684,7 @@ def test_transform(fx_asset):
 
 def test_transform_errors(fx_asset):
     """Tests errors raised by invalid parameters for transform."""
+    unichar = b'\xe2\x9a\xa0'.decode('utf-8')
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         with raises(TypeError):
             img.transform(crop=500)
@@ -692,9 +693,9 @@ def test_transform_errors(fx_asset):
         with raises(TypeError):
             img.transform(500, 500)
         with raises(ValueError):
-            img.transform(crop=u'⚠ ')
+            img.transform(crop=unichar)
         with raises(ValueError):
-            img.transform(resize=u'⚠ ')
+            img.transform(resize=unichar)
 
 
 @mark.slow
