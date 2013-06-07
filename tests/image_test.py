@@ -572,37 +572,42 @@ def test_gif(fx_asset):
     tmpdir = tempfile.mkdtemp()
     filename = functools.partial(os.path.join, tmpdir)
     with Image(filename=str(fx_asset.join('nocomments.gif'))) as img:
-        assert img.frame_num == 46
+        assert len(img.sequence) == 46
         with img.clone() as a:
             assert a.size == (350, 197)
             a.resize(175, 98)
-            a.save(filename=filename("175_98.gif"))
-            assert a.frame_num == 46
+            a.save(filename=filename('175_98.gif'))
+        with Image(filename=filename('175_98.gif')) as a:
+            assert len(a.sequence) == 46
             assert a.size == (175, 98)
         with img.clone() as b:
             assert b.size == (350, 197)
             b.resize(height=100)
-            b.save(filename=filename("350_100.gif"))
-            assert b.frame_num == 46
+            b.save(filename=filename('350_100.gif'))
+        with Image(filename=filename('350_100.gif')) as b:
+            assert len(b.sequence) == 46
             assert b.size == (350, 100)
         with img.clone() as c:
             assert c.size == (350, 197)
             c.resize(width=100)
-            c.save(filename=filename("100_197.gif"))
-            assert c.frame_num == 46
+            c.save(filename=filename('100_197.gif'))
+        with Image(filename=filename('100_197.gif')) as c:
+            assert len(c.sequence) == 46
             assert c.size == (100, 197)
         with img.clone() as d:
             assert d.size == (350, 197)
             d.crop(50, 50, 200, 150)
-            d.save(filename=filename("50_50_200_150.gif"))
-            assert d.frame_num == 46
+            d.save(filename=filename('50_50_200_150.gif'))
+        with Image(filename=filename('50_50_200_150.gif')) as d:
+            assert len(d.sequence) == 46
             assert d.size == (150, 100)
         with img.clone() as e:
             assert e.size == (350, 197)
             e.rotate(90)
-            e.save(filename=filename("rotate_90.gif"))
+            e.save(filename=filename('rotate_90.gif'))
+        with Image(filename=filename('rotate_90.gif')) as e:
             assert e.size == (197, 350)
-            assert e.frame_num == 46
+            assert len(e.sequence) == 46
     shutil.rmtree(tmpdir)
 
 
