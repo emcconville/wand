@@ -565,6 +565,8 @@ def test_resize(fx_asset):
             c.resize(width=100)
             assert c.size == (100, 599)
 
+
+@mark.slow
 def test_gif(fx_asset):
     """Test the gif image resize/crop/rotate"""
     tmpdir = tempfile.mkdtemp()
