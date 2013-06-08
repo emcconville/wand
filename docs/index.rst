@@ -44,6 +44,7 @@ Requirements
 - Python 2.6 or higher
 
   - CPython 2.6 or higher
+  - CPython 3.2 or higher
   - PyPy 1.5 or higher
 
 - MagickWand library

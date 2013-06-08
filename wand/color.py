@@ -7,6 +7,7 @@
 import ctypes
 
 from .api import MagickPixelPacket, library
+from .compat import binary, text
 from .resource import Resource
 from .version import QUANTUM_DEPTH
 
@@ -72,7 +73,7 @@ class Color(Resource):
             raise TypeError('expected one argument')
         elif raw is None:
             pixel = library.NewPixelWand()
-            library.PixelSetColor(pixel, string)
+            library.PixelSetColor(pixel, binary(string))
             raw = ctypes.create_string_buffer(
                 ctypes.sizeof(MagickPixelPacket)
             )
@@ -101,7 +102,7 @@ class Color(Resource):
         """(:class:`basestring`) The string representation of the color."""
         with self:
             color_string = library.PixelGetColorAsString(self.resource)
-            return color_string.value
+            return text(color_string.value)
 
     @staticmethod
     def c_equals(a, b):

@@ -67,7 +67,7 @@ def test_raises_exceptions(recwarn, code):
         res.raise_exception()
     except exceptions.WandException as e:
         assert not e.__class__.__name__.endswith('Warning')
-        assert e.message == 'Dummy exception'
+        assert str(e) == 'Dummy exception'
     else:
         w = recwarn.pop()
         assert w.category.__name__.endswith('Warning')

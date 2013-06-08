@@ -13,6 +13,7 @@ Version 0.3.0
 
 To be released.
 
+- Now also works on Python 2.6, 2.7, and 3.2 or higher.
 - Added :mod:`wand.drawing` module.  [:issue:`64` by Adrian Jung]
 - Added :meth:`Drawing.get_font_metrics()
   <wand.drawing.Drawing.get_font_metrics>` method.

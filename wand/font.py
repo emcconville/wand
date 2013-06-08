@@ -37,6 +37,7 @@ name is a very complicated problem to achieve.
 import numbers
 
 from .color import Color
+from .compat import string_type, text
 
 __all__ = 'Font',
 
@@ -49,7 +50,7 @@ class Font(tuple):
     """
 
     def __new__(cls, path, size, color=None, antialias=True):
-        if not isinstance(path, basestring):
+        if not isinstance(path, string_type):
             raise TypeError('path must be a string, not ' + repr(path))
         if not isinstance(size, numbers.Real):
             raise TypeError('size must be a real number, not ' + repr(size))
@@ -58,6 +59,7 @@ class Font(tuple):
         elif not isinstance(color, Color):
             raise TypeError('color must be an instance of wand.color.Color, '
                             'not ' + repr(color))
+        path = text(path)
         return tuple.__new__(cls, (path, size, color, bool(antialias)))
 
     @property

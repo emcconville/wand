@@ -7,6 +7,7 @@ Wand_
 
 Wand is a ``ctypes``-based simple ImageMagick_ binding for Python.
 It doesn't cover all functionalities of MagickWand API currently.
+It works on Python 2.6, 2.7, 3.2, 3.3, and PyPy.
 
 You can install the package from PyPI_ by using ``pip`` or
 ``easy_install``:

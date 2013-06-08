@@ -12,6 +12,7 @@ import numbers
 
 from .api import library, MagickPixelPacket
 from .color import Color
+from .compat import binary, string_type, text, text_type, xrange
 from .image import Image
 from .resource import Resource
 
@@ -111,13 +112,13 @@ class Drawing(Resource):
     @property
     def font(self):
         """(:class:`basestring`) The current font name.  It also can be set."""
-        return library.DrawGetFont(self.resource)
+        return text(library.DrawGetFont(self.resource))
 
     @font.setter
     def font(self, font):
-        if not isinstance(font, basestring):
+        if not isinstance(font, string_type):
             raise TypeError('expected a string, not ' + repr(font))
-        library.DrawSetFont(self.resource, font)
+        library.DrawSetFont(self.resource, binary(font))
 
     @property
     def font_size(self):
@@ -163,11 +164,11 @@ class Drawing(Resource):
         text_alignment_index = library.DrawGetTextAlignment(self.resource)
         if not text_alignment_index:
             self.raise_exception()
-        return TEXT_ALIGN_TYPES[text_alignment_index]
+        return text(TEXT_ALIGN_TYPES[text_alignment_index])
 
     @text_alignment.setter
     def text_alignment(self, align):
-        if not isinstance(align, basestring):
+        if not isinstance(align, string_type):
             raise TypeError('expected a string, not ' + repr(align))
         elif align not in TEXT_ALIGN_TYPES:
             raise ValueError('expected a string from TEXT_ALIGN_TYPES, not ' +
@@ -198,11 +199,11 @@ class Drawing(Resource):
         text_decoration_index = library.DrawGetTextDecoration(self.resource)
         if not text_decoration_index:
             self.raise_exception()
-        return TEXT_DECORATION_TYPES[text_decoration_index]
+        return text(TEXT_DECORATION_TYPES[text_decoration_index])
 
     @text_decoration.setter
     def text_decoration(self, decoration):
-        if not isinstance(decoration, basestring):
+        if not isinstance(decoration, string_type):
             raise TypeError('expected a string, not ' + repr(decoration))
         elif decoration not in TEXT_DECORATION_TYPES:
             raise ValueError('expected a string from TEXT_DECORATION_TYPES, '
@@ -216,16 +217,18 @@ class Drawing(Resource):
         Although it also can be set, but it's not encorouged.
 
         """
-        return library.DrawGetTextEncoding(self.resource)
+        return text(library.DrawGetTextEncoding(self.resource))
 
     @text_encoding.setter
     def text_encoding(self, encoding):
-        if encoding is not None and not isinstance(encoding, basestring):
+        if encoding is not None and not isinstance(encoding, string_type):
             raise TypeError('expected a string, not ' + repr(encoding))
         elif encoding is None:
             # encoding specify an empty string to set text encoding
             # to system's default.
-            encoding = ''
+            encoding = b''
+        else:
+            encoding = binary(encoding)
         library.DrawSetTextEncoding(self.resource, encoding)
 
     @property
@@ -301,11 +304,11 @@ class Drawing(Resource):
         gravity_index = library.DrawGetGravity(self.resource)
         if not gravity_index:
             self.raise_exception()
-        return GRAVITY_TYPES[gravity_index]
+        return text(GRAVITY_TYPES[gravity_index])
 
     @gravity.setter
     def gravity(self, value):
-        if not isinstance(value, basestring):
+        if not isinstance(value, string_type):
             raise TypeError('expected a string, not ' + repr(value))
         elif value not in GRAVITY_TYPES:
             raise ValueError('expected a string from GRAVITY_TYPES, not '
@@ -372,12 +375,15 @@ class Drawing(Resource):
         elif not isinstance(y, numbers.Integral) or y < 0:
             exc = ValueError if y < 0 else TypeError
             raise exc('y must be a natural number, not ' + repr(y))
-        elif not isinstance(body, basestring):
+        elif not isinstance(body, string_type):
             raise TypeError('body must be a string, not ' + repr(body))
         elif not body:
             raise ValueError('body string cannot be empty')
-        if self.text_encoding and isinstance(body, unicode):
-            body = body.encode(self.text_encoding)
+        if isinstance(body, text_type):
+            if self.text_encoding:
+                body = body.encode(self.text_encoding)
+            else:
+                body = binary(body)
         body_p = ctypes.create_string_buffer(body)
         library.DrawAnnotation(
             self.resource, x, y,
@@ -398,12 +404,17 @@ class Drawing(Resource):
         if not isinstance(image, Image):
             raise TypeError('image must be a wand.image.Image instance, not '
                             + repr(image))
-        if not isinstance(text, basestring):
+        if not isinstance(text, string_type):
             raise TypeError('text must be a string, not ' + repr(text))
         if multiline:
             font_metrics_f = library.MagickQueryMultilineFontMetrics
         else:
             font_metrics_f = library.MagickQueryFontMetrics
+        if isinstance(text, text_type):
+            if self.text_encoding:
+                text = text.encode(self.text_encoding)
+            else:
+                text = binary(text)
         result = font_metrics_f(image.wand, self.resource, text)
         args = (result[i] for i in xrange(13))
         return FontMetrics(*args)

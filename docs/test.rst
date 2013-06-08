@@ -65,6 +65,12 @@ on multiple Python interpreters:
    py26 runtests: commands[0]
    ...
 
+You can use a double ``--`` to pass options to pytest:
+
+.. sourcecode:: console
+
+   $ tox -- -k sequence
+
 .. _tox: http://tox.testrun.org/
 
 

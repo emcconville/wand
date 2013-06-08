@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
 import functools
+import io
 import os
 import os.path
 import shutil
 import tempfile
-try:
-    import cStringIO as StringIO
-except ImportError:
-    import StringIO
 import warnings
 
 from pytest import mark, raises
@@ -68,7 +65,7 @@ def test_new_from_file(fx_asset):
             assert img.width == 402
     with raises(ClosedImageError):
         img.wand
-    strio = StringIO.StringIO(fx_asset.join('mona-lisa.jpg').read('rb'))
+    strio = io.BytesIO(fx_asset.join('mona-lisa.jpg').read('rb'))
     with Image(file=strio) as img:
         assert img.width == 402
     strio.close()
@@ -137,7 +134,7 @@ def test_save_to_filename(fx_asset):
 
 def test_save_to_file(fx_asset):
     """Saves an image to the Python file object."""
-    buffer = StringIO.StringIO()
+    buffer = io.BytesIO()
     with tempfile.TemporaryFile() as savefile:
         with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as orig:
             orig.save(file=savefile)
@@ -157,7 +154,7 @@ def test_save_to_file(fx_asset):
 
 def test_save_error(fx_asset):
     filename = os.path.join(tempfile.mkdtemp(), 'savetest.jpg')
-    fileobj = StringIO.StringIO()
+    fileobj = io.BytesIO()
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as orig:
         with raises(TypeError):
             orig.save()
@@ -174,7 +171,7 @@ def test_make_blob(fx_asset):
         assert img.format == 'JPEG'
         with raises(TypeError):
             img.make_blob(123)
-    svg = '''
+    svg = b'''
     <svg width="100px" height="100px">
     <circle cx="100" cy="50" r="40" stroke="black" stroke-width="2" fill="red"/>
     </svg>
@@ -275,7 +272,7 @@ def test_set_format(fx_asset):
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         img.format = 'png'
         assert img.format == 'PNG'
-        strio = StringIO.StringIO()
+        strio = io.BytesIO()
         img.save(file=strio)
         strio.seek(0)
         with Image(file=strio) as png:
@@ -312,7 +309,7 @@ def test_set_compression(fx_asset):
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         img.compression_quality = 50
         assert img.compression_quality == 50
-        strio = StringIO.StringIO()
+        strio = io.BytesIO()
         img.save(file=strio)
         strio.seek(0)
         with Image(file=strio) as jpg:
@@ -324,10 +321,11 @@ def test_set_compression(fx_asset):
 def test_strip(fx_asset):
     """Strips the image of all profiles and comments."""
     with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
-        strio = StringIO.StringIO()
+        strio = io.BytesIO()
         img.save(file=strio)
         len_unstripped = strio.tell()
-        strio.truncate(0)
+        strio.close()
+        strio = io.BytesIO()
         img.strip()
         img.save(file=strio)
         len_stripped = strio.tell()
@@ -365,7 +363,7 @@ def test_convert(fx_asset):
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         with img.convert('png') as converted:
             assert converted.format == 'PNG'
-            strio = StringIO.StringIO()
+            strio = io.BytesIO()
             converted.save(file=strio)
             strio.seek(0)
             with Image(file=strio) as png:
@@ -567,6 +565,8 @@ def test_resize(fx_asset):
             c.resize(width=100)
             assert c.size == (100, 599)
 
+
+@mark.slow
 def test_gif(fx_asset):
     """Test the gif image resize/crop/rotate"""
     tmpdir = tempfile.mkdtemp()
@@ -691,6 +691,7 @@ def test_transform(fx_asset):
 
 def test_transform_errors(fx_asset):
     """Tests errors raised by invalid parameters for transform."""
+    unichar = b'\xe2\x9a\xa0'.decode('utf-8')
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         with raises(TypeError):
             img.transform(crop=500)
@@ -699,9 +700,9 @@ def test_transform_errors(fx_asset):
         with raises(TypeError):
             img.transform(500, 500)
         with raises(ValueError):
-            img.transform(crop=u'⚠ ')
+            img.transform(crop=unichar)
         with raises(ValueError):
-            img.transform(resize=u'⚠ ')
+            img.transform(resize=unichar)
 
 
 @mark.slow
@@ -917,10 +918,10 @@ def test_composite(fx_asset):
 def test_composite_channel(fx_asset):
     with Image(filename=str(fx_asset.join('beach.jpg'))) as orig:
         w, h = orig.size
-        left = w / 4
-        top = h / 4
+        left = w // 4
+        top = h // 4
         right = left * 3 - 1
-        bottom = h / 4 * 3 - 1
+        bottom = h // 4 * 3 - 1
         # List of (x, y) points that shouldn't be changed:
         outer_points = [
             (0, 0), (0, h - 1), (w - 1, 0), (w - 1, h - 1),
@@ -931,9 +932,10 @@ def test_composite_channel(fx_asset):
         ]
         with orig.clone() as img:
             with Color('black') as color:
-                with Image(width=w / 2, height=h / 2, background=color) as cimg:
+                with Image(width=w // 2, height=h // 2,
+                           background=color) as cimg:
                     img.composite_channel('red', cimg, 'copy_red',
-                                          w / 4, h / 4)
+                                          w // 4, h // 4)
             # These points should be not changed:
             for point in outer_points:
                 assert orig[point] == img[point]
@@ -1028,15 +1030,18 @@ def test_normalize_default(fx_asset):
         left_bottom = img[0, -1]
         right_top = img[-1, 0]
         right_bottom = img[-1, -1]
+        print(left_top, left_bottom, right_top, right_bottom)
         img.normalize()
+        print(img[0,0], img[0,-1], img[-1,0], img[-1,-1])
         assert img[0, 0] != left_top
         assert img[0, -1] != left_bottom
         assert img[-1, 0] != right_top
         assert img[-1, -1] != right_bottom
-        black = Color('#000')
-        white = Color('#FFFFFF')
-        assert img[0, 0] == white
-        assert img[-1, -1] == black
+        with img[0, 0] as left_top:
+            assert left_top.red == left_top.green == left_top.blue == 1
+        with img[-1, -1] as right_bottom:
+            assert (right_bottom.red == right_bottom.green
+                                     == right_bottom.blue == 0)
 
 
 def test_normalize_channel(fx_asset):

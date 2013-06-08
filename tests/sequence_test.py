@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from pytest import mark, raises
 
 from wand.image import Image
@@ -67,7 +69,7 @@ slices = {
 
 @mark.parametrize(('slice_name', 'slice_'), slices.items())
 def test_getitem_slice(slice_name, slice_, fx_asset):
-    print 1, slice_
+    print(1, slice_)
     with Image(filename=str(fx_asset.join('apple.ico'))) as img:
         assert list(img.sequence[slice_]) == list(img.sequence)[slice_]
 
@@ -76,7 +78,7 @@ def test_getitem_slice(slice_name, slice_, fx_asset):
 def test_setitem_slice(slice_name, slice_, fx_asset):
     with Image(filename=str(fx_asset.join('apple.ico'))) as imga:
         instances = list(imga.sequence)
-        print map(hash, instances)
+        print(map(hash, instances))
         with Image(filename=str(fx_asset.join('github.ico'))) as imgg:
             instances[slice_] = imgg.sequence
             imga.sequence[slice_] = imgg.sequence
@@ -133,7 +135,7 @@ def test_append(fx_asset):
 
 def test_insert(fx_asset):
     with Image(filename=str(fx_asset.join('apple.ico'))) as imga:
-        instances = [imga.sequence[i] for i in xrange(2, 4)]
+        instances = [imga.sequence[i] for i in range(2, 4)]
         assert len(imga.sequence) == 4
         with Image(filename=str(fx_asset.join('github.ico'))) as imgg:
             imga.sequence.insert(2, imgg)
@@ -176,15 +178,15 @@ def test_extend_sequence(fx_asset):
         length = len(a.sequence)
         with Image(filename=str(fx_asset.join('github.ico'))) as b:
             a.sequence.extend(b.sequence)
-            for i in xrange(2):
+            for i in range(2):
                 assert a.sequence[length + i] == b.sequence[i]
             expire(a)
-            for i in xrange(2):
+            for i in range(2):
                 assert a.sequence[length + i] == b.sequence[i]
         assert len(a.sequence) == 6
 
 
-@mark.parametrize('how_many', xrange(2, 5))
+@mark.parametrize('how_many', range(2, 5))
 def test_extend_offset(fx_asset, how_many):
     with Image(filename=str(fx_asset.join('apple.ico'))) as a:
         instances = list(a.sequence)

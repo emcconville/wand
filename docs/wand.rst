@@ -13,6 +13,7 @@
       wand/resource
       wand/exceptions
       wand/api
+      wand/compat
       wand/display
       wand/version
 

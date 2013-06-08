@@ -6,9 +6,9 @@ You can find the current version in the command line interface:
 .. sourcecode:: console
 
    $ python -m wand.version
-   0.2.2
+   0.0.0
    $ python -m wand.version --verbose
-   Wand 0.2.2
+   Wand 0.0.0
    ImageMagick 6.7.7-6 2012-06-03 Q16 http://www.imagemagick.org
 
 .. versionadded:: 0.2.0
@@ -19,6 +19,8 @@ You can find the current version in the command line interface:
    version for CLI.
 
 """
+from __future__ import print_function
+
 import ctypes
 import datetime
 import re
@@ -28,6 +30,7 @@ try:
     from .api import libmagick
 except ImportError:
     libmagick = None
+from .compat import text
 
 
 __all__ = ('VERSION', 'VERSION_INFO', 'MAGICK_VERSION',
@@ -58,7 +61,9 @@ if libmagick:
     #:    'ImageMagick 6.7.7-6 2012-06-03 Q16 http://www.imagemagick.org'
     #:
     #: .. versionadded:: 0.2.1
-    MAGICK_VERSION = libmagick.GetMagickVersion(ctypes.byref(c_magick_version))
+    MAGICK_VERSION = text(
+        libmagick.GetMagickVersion(ctypes.byref(c_magick_version))
+    )
 
     #: (:class:`numbers.Integral`) The version number of the linked
     #: ImageMagick library.
@@ -79,7 +84,7 @@ if libmagick:
     #: function.
     #:
     #: .. versionadded:: 0.2.1
-    MAGICK_RELEASE_DATE_STRING = libmagick.GetMagickReleaseDate()
+    MAGICK_RELEASE_DATE_STRING = text(libmagick.GetMagickReleaseDate())
 
     #: (:class:`basestring`) The date string e.g. ``'2012-06-03'`` of
     #: :const:`MAGICK_RELEASE_DATE_STRING`.  This value is the exactly same
@@ -99,18 +104,18 @@ if libmagick:
 
     del c_magick_version, _match, c_quantum_depth
 
-__doc__ = __doc__.replace('0.2.2', VERSION)
+__doc__ = __doc__.replace('0.0.0', VERSION)
 del libmagick
 
 
 if __name__ == '__main__':
     options = frozenset(sys.argv[1:])
     if '-v' in options or '--verbose' in options:
-        print 'Wand', VERSION
+        print('Wand', VERSION)
         try:
-            print MAGICK_VERSION
+            print(MAGICK_VERSION)
         except NameError:
             pass
     else:
-        print VERSION
+        print(VERSION)
 
