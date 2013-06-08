@@ -1175,7 +1175,23 @@ class BaseImage(Resource):
         except UnicodeEncodeError:
             raise ValueError('resize must only contain ascii-encodable ' +
                              'characters.')
-        new_wand = library.MagickTransformImage(self.wand, crop, resize)
+        if self.mimetype == 'image/gif':  # FIXME
+            new_wand = library.MagickCoalesceImages(self.wand)
+            length = len(self.sequence)
+            for i in xrange(length):
+                library.MagickSetIteratorIndex(new_wand, i)
+                if i:
+                    library.MagickAddImage(
+                        new_wand,
+                        library.MagickTransformImage(new_wand, crop, resize)
+                    )
+                else:
+                    new_wand = library.MagickTransformImage(new_wand,
+                                                            crop,
+                                                            resize)
+            # FIXME: set the same delay
+        else:
+            new_wand = library.MagickTransformImage(self.wand, crop, resize)
         if not new_wand:
             self.raise_exception()
         self.wand = new_wand

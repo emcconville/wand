@@ -644,6 +644,25 @@ def test_transform(args, kwargs, expected_size, fx_asset):
         assert img.size == expected_size
 
 
+def test_transform_gif(tmpdir, fx_asset):
+    filename = str(tmpdir.join('test_transform_gif.gif'))
+    with Image(filename=str(fx_asset.join('nocomments.gif'))) as img:
+        assert len(img.sequence) == 46
+        assert img.size == (350, 197)
+        img.transform(resize='175x98!')
+        assert len(img.sequence) == 46
+        assert img.size == (175, 98)
+        for single in img.sequence:
+            assert single.size == (175, 98)
+        img.save(filename=filename)
+    with Image(filename=filename) as gif:
+        assert len(gif.sequence) == 46
+        assert gif.size == (175, 98)
+        for single in gif.sequence:
+            assert single.size == (175, 98)
+    tmpdir.remove()
+
+
 def test_transform_errors(fx_asset):
     """Tests errors raised by invalid parameters for transform."""
     unichar = b'\xe2\x9a\xa0'.decode('utf-8')
