@@ -706,7 +706,7 @@ def test_transform_errors(fx_asset):
 
 
 @mark.slow
-def rotate(fx_asset):
+def test_rotate(fx_asset):
     """Rotates an image."""
     with Image(filename=str(fx_asset.join('rotatetest.gif'))) as img:
         assert 150 == img.width
