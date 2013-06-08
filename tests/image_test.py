@@ -500,7 +500,6 @@ def test_slice_crop(fx_asset):
             img[290:310, 290:310]
 
 
-@mark.slow
 def test_crop(fx_asset):
     """Crops in-place."""
     with Image(filename=str(fx_asset.join('croptest.png'))) as img:
