@@ -539,6 +539,18 @@ def test_crop(fx_asset):
             img.crop(290, 290, width=0, height=0)
 
 
+def test_crop_gif(tmpdir, fx_asset):
+    with Image(filename=str(fx_asset.join('nocomments.gif'))) as img:
+        with img.clone() as d:
+            assert d.size == (350, 197)
+            d.crop(50, 50, 200, 150)
+            d.save(filename=str(tmpdir.join('50_50_200_150.gif')))
+        with Image(filename=str(tmpdir.join('50_50_200_150.gif'))) as d:
+            assert len(d.sequence) == 46
+            assert d.size == (150, 100)
+    tmpdir.remove()
+
+
 def test_crop_error(fx_asset):
     """Crop errors."""
     with Image(filename=str(fx_asset.join('croptest.png'))) as img:
@@ -566,48 +578,31 @@ def test_resize(fx_asset):
 
 
 @mark.slow
-def test_gif(fx_asset):
-    """Test the gif image resize/crop/rotate"""
-    tmpdir = tempfile.mkdtemp()
-    filename = functools.partial(os.path.join, tmpdir)
+def test_resize_gif(tmpdir, fx_asset):
     with Image(filename=str(fx_asset.join('nocomments.gif'))) as img:
         assert len(img.sequence) == 46
         with img.clone() as a:
             assert a.size == (350, 197)
             a.resize(175, 98)
-            a.save(filename=filename('175_98.gif'))
-        with Image(filename=filename('175_98.gif')) as a:
+            a.save(filename=str(tmpdir.join('175_98.gif')))
+        with Image(filename=str(tmpdir.join('175_98.gif'))) as a:
             assert len(a.sequence) == 46
             assert a.size == (175, 98)
         with img.clone() as b:
             assert b.size == (350, 197)
             b.resize(height=100)
-            b.save(filename=filename('350_100.gif'))
-        with Image(filename=filename('350_100.gif')) as b:
+            b.save(filename=str(tmpdir.join('350_100.gif')))
+        with Image(filename=str(tmpdir.join('350_100.gif'))) as b:
             assert len(b.sequence) == 46
             assert b.size == (350, 100)
         with img.clone() as c:
             assert c.size == (350, 197)
             c.resize(width=100)
-            c.save(filename=filename('100_197.gif'))
-        with Image(filename=filename('100_197.gif')) as c:
+            c.save(filename=str(tmpdir.join('100_197.gif')))
+        with Image(filename=str(tmpdir.join('100_197.gif'))) as c:
             assert len(c.sequence) == 46
             assert c.size == (100, 197)
-        with img.clone() as d:
-            assert d.size == (350, 197)
-            d.crop(50, 50, 200, 150)
-            d.save(filename=filename('50_50_200_150.gif'))
-        with Image(filename=filename('50_50_200_150.gif')) as d:
-            assert len(d.sequence) == 46
-            assert d.size == (150, 100)
-        with img.clone() as e:
-            assert e.size == (350, 197)
-            e.rotate(90)
-            e.save(filename=filename('rotate_90.gif'))
-        with Image(filename=filename('rotate_90.gif')) as e:
-            assert e.size == (197, 350)
-            assert len(e.sequence) == 46
-    shutil.rmtree(tmpdir)
+    tmpdir.remove()
 
 
 def test_resize_errors(fx_asset):
@@ -739,6 +734,19 @@ def test_rotate(fx_asset):
                 with Color('black') as black:
                     assert black == cloned[2, 70] == cloned[35, 37]
                     assert black == cloned[85, 88] == cloned[52, 120]
+
+
+@mark.slow
+def test_rotate_gif(tmpdir, fx_asset):
+    with Image(filename=str(fx_asset.join('nocomments.gif'))) as img:
+        with img.clone() as e:
+            assert e.size == (350, 197)
+            e.rotate(90)
+            e.save(filename=str(tmpdir.join('rotate_90.gif')))
+        with Image(filename=str(tmpdir.join('rotate_90.gif'))) as e:
+            assert e.size == (197, 350)
+            assert len(e.sequence) == 46
+    tmpdir.remove()
 
 
 def test_transparent_color(fx_asset):
