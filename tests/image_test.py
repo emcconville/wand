@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-import functools
 import io
 import os
 import os.path
-import shutil
 import tempfile
 import warnings
 
