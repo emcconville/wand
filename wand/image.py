@@ -969,7 +969,7 @@ class BaseImage(Resource):
         elif left == top == 0 and width == self.width and height == self.height:
             return
         # FIXME: it should be cleaned up when "sequences" branch is merged
-        if self.mimetype == 'image/gif':
+        if isinstance(self, Image) and self.mimetype == 'image/gif':
             self.wand = library.MagickCoalesceImages(self.wand)
             library.MagickSetLastIterator(self.wand)
             n = library.MagickGetIteratorIndex(self.wand)
@@ -1054,7 +1054,7 @@ class BaseImage(Resource):
             raise ValueError(repr(filter) + ' is an invalid filter type')
         blur = ctypes.c_double(float(blur))
         # FIXME: it should be cleaned up when "sequences" branch is merged
-        if self.mimetype == 'image/gif':
+        if isinstance(self, Image) and self.mimetype == 'image/gif':
             self.wand = library.MagickCoalesceImages(self.wand)
             library.MagickSetLastIterator(self.wand)
             n = library.MagickGetIteratorIndex(self.wand)
@@ -1175,7 +1175,7 @@ class BaseImage(Resource):
         except UnicodeEncodeError:
             raise ValueError('resize must only contain ascii-encodable ' +
                              'characters.')
-        if self.mimetype == 'image/gif':  # FIXME
+        if isinstance(self, Image) and self.mimetype == 'image/gif':  # FIXME
             new_wand = library.MagickCoalesceImages(self.wand)
             length = len(self.sequence)
             for i in xrange(length):
