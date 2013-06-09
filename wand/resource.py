@@ -11,7 +11,7 @@ import logging
 import warnings
 
 from .api import library
-from .exceptions import TYPE_MAP
+from .exceptions import TYPE_MAP, WandException
 
 
 __all__ = ('genesis', 'terminus', 'increment_refcount', 'decrement_refcount',
@@ -235,9 +235,12 @@ class Resource(object):
             pass
 
 
-class DestroyedResourceError(ReferenceError, AttributeError):
+class DestroyedResourceError(WandException, ReferenceError, AttributeError):
     """An error that rises when some code tries access to an already
     destroyed resource.
 
-    """
+    .. versionchanged:: 0.3.0
 
+       It becomes a subtype of :exc:`wand.exceptions.WandException`.
+
+    """

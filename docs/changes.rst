@@ -77,6 +77,8 @@ To be released.
 - Added :meth:`Image.flop() <wand.image.Image.flop>` method.
 - Added :attr:`Image.orientation <wand.image.Image.orientation>` property.
   [:commit:`88574468a38015669dae903185fb328abdd717c0` by Taeho Kim]
+- :exc:`wand.resource.DestroyedResourceError` becomes a subtype of
+   :exc:`wand.exceptions.WandException`.
 
 __ http://en.wikipedia.org/wiki/Seam_carving
 
