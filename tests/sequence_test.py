@@ -236,6 +236,13 @@ def test_extend_first_sequence(fx_asset):
         assert len(a.sequence) == 6
 
 
+def test_container(fx_asset):
+    with Image(filename=str(fx_asset.join('apple.ico'))) as img:
+        for single in img.sequence:
+            assert single.container is img
+    
+
+
 @mark.parametrize(('cmp_name', 'f'), [
     ('equals', lambda i: i),  # identity
     ('hash_equals', hash),

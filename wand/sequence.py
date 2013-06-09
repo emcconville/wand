@@ -127,7 +127,7 @@ class Sequence(ImageProperty, collections.MutableSequence):
         library.DestroyExceptionInfo(exc)
         single_wand = library.NewMagickWandFromImage(single_image)
         library.MagickSetIteratorIndex(wand, tmp_idx)
-        instance = SingleImage(single_wand)
+        instance = SingleImage(single_wand, self.image)
         self.instances[index] = instance
         return instance
 
@@ -253,6 +253,13 @@ class SingleImage(BaseImage):
     .. versionadded:: 0.3.0
 
     """
+
+    #: (:class:`wand.image.Image`) The container image.
+    container = None
+
+    def __init__(self, wand, container):
+        super(SingleImage, self).__init__(wand)
+        self.container = container
 
     @property
     def sequence(self):
