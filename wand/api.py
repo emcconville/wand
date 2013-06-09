@@ -469,6 +469,9 @@ try:
 
     library.MagickRemoveImage.argtypes = [ctypes.c_void_p]
 
+    library.GetNextImageInList.argtypes = [ctypes.c_void_p]
+    library.GetNextImageInList.restype = ctypes.c_void_p
+
     library.NewMagickWandFromImage.argtypes = [ctypes.c_void_p]
     library.NewMagickWandFromImage.restype = ctypes.c_void_p
 

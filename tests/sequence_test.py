@@ -7,7 +7,7 @@ from wand.image import Image
 
 def expire(image):
     """Expire image's sequence cache."""
-    image.sequence.instances = [None] * len(image.sequence)
+    image.sequence.instances = []
 
 
 def test_length(fx_asset):
@@ -47,13 +47,21 @@ def test_setitem(fx_asset):
 def test_delitem(fx_asset):
     with Image(filename=str(fx_asset.join('apple.ico'))) as img:
         detached = img.sequence[0]
+        print("detached: %r" % detached)
+        print('a', img.sequence.instances)
         del img.sequence[0]
         assert len(img.sequence) == 3
         assert img.sequence[0] is not detached
         assert img.sequence[0].size == (16, 16)
+        print('b', img.sequence.instances)
         expire(img)
+        print('c', img.sequence.instances)
+        print([s.size for s in img.sequence])
+        assert len(img.sequence) == 3
         assert img.sequence[0] is not detached
         assert img.sequence[0].size == (16, 16)
+        assert img.sequence[1].size == (32, 32)
+        assert img.sequence[2].size == (16, 16)
 
 
 slices = {
@@ -265,3 +273,20 @@ def test_clone(fx_asset):
             assert len(single.sequence) == 1
             assert len(list(single.sequence)) == 1
             assert single.size == img.sequence[2].size
+
+
+def test_changes_reflected_back(fx_asset):
+    """Changes on each single image should be reflected back to
+    the container image.
+
+    """
+    with Image(filename=str(fx_asset.join('apple.ico'))) as img:
+        with img.sequence[3] as single:
+            single.resize(32, 32)
+            assert single.size == (32, 32)
+            img.sequence.instances[3] = None  # to make new instance
+            uncommitted = img.sequence[3]
+            assert uncommitted.size == (16, 16)
+        img.sequence.instances[3] = None
+        with img.sequence[3] as committed:
+            assert committed.size == (32, 32)

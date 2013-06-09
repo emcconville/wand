@@ -113,7 +113,8 @@ class Sequence(ImageProperty, collections.MutableSequence):
         instances_length = len(instances)
         if index < instances_length:
             instance = instances[index]
-            if instance is not None:
+            if (instance is not None and
+                getattr(instance, 'c_resource', None) is not None):
                 return instance
         else:
             number_to_extend = index - instances_length + 1
@@ -127,7 +128,7 @@ class Sequence(ImageProperty, collections.MutableSequence):
         library.DestroyExceptionInfo(exc)
         single_wand = library.NewMagickWandFromImage(single_image)
         library.MagickSetIteratorIndex(wand, tmp_idx)
-        instance = SingleImage(single_wand, self.image)
+        instance = SingleImage(single_wand, self.image, image)
         self.instances[index] = instance
         return instance
 
@@ -250,6 +251,10 @@ class SingleImage(BaseImage):
     """Each single image in :class:`~wand.image.Image` container.
     For example, it can be a frame of GIF animation.
 
+    Note that all changes on single images are invinsilble to their
+    containers until they are :meth:`~wand.image.BaseImage.close`\ d
+    (:meth:`~wand.resource.Resource.destroy`\ ed).
+
     .. versionadded:: 0.3.0
 
     """
@@ -257,13 +262,28 @@ class SingleImage(BaseImage):
     #: (:class:`wand.image.Image`) The container image.
     container = None
 
-    def __init__(self, wand, container):
+    def __init__(self, wand, container, c_original_resource):
         super(SingleImage, self).__init__(wand)
         self.container = container
+        self.c_original_resource = c_original_resource
 
     @property
     def sequence(self):
         return self,
+
+    def destroy(self):
+        if self.dirty:
+            wand = self.container.wand
+            library.MagickResetIterator(wand)
+            image = library.GetImageFromMagickWand(wand)
+            i = 0
+            while self.c_original_resource != image and image:
+                image = library.GetNextImageInList(image)
+                i += 1
+            assert image
+            assert self.c_original_resource == image
+            self.container.sequence[i] = self
+        super(SingleImage, self).destroy()
 
     def __repr__(self):
         cls = type(self)
