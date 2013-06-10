@@ -342,7 +342,7 @@ ORIENTATION_TYPES = ('undefined', 'top_left', 'top_right', 'bottom_right',
 OPTIONS = frozenset(['fill'])
 
 
-def maniplative(function):
+def manipulative(function):
     """Mark the operation manipulating itself instead of returning new one."""
     @functools.wraps(function)
     def wrapped(self, *args, **kwargs):
@@ -522,7 +522,7 @@ class BaseImage(Resource):
         return GRAVITY_TYPES[gravity_index]
 
     @gravity.setter
-    @maniplative
+    @manipulative
     def gravity(self, value):
         if not isinstance(value, string_type):
             raise TypeError('expected a string, not ' + repr(value))
@@ -540,7 +540,7 @@ class BaseImage(Resource):
         return text(library.MagickGetFont(self.wand))
 
     @font_path.setter
-    @maniplative
+    @manipulative
     def font_path(self, font):
         font = binary(font)
         if library.MagickSetFont(self.wand, font) == False:
@@ -552,7 +552,7 @@ class BaseImage(Resource):
         return library.MagickGetPointsize(self.wand)
 
     @font_size.setter
-    @maniplative
+    @manipulative
     def font_size(self, size):
         if not isinstance(size, numbers.Real):
             raise TypeError('expected a numbers.Real, but got ' + repr(size))
@@ -566,7 +566,7 @@ class BaseImage(Resource):
         return bool(library.MagickGetAntialias(self.wand))
 
     @font_antialias.setter
-    @maniplative
+    @manipulative
     def font_antialias(self, antialias):
         if not isinstance(antialias, bool):
             raise TypeError('font_antialias must be a bool, not ' +
@@ -584,7 +584,7 @@ class BaseImage(Resource):
         )
 
     @font.setter
-    @maniplative
+    @manipulative
     def font(self, font):
         if not isinstance(font, Font):
             raise TypeError('font must be a wand.font.Font, not ' + repr(font))
@@ -599,7 +599,7 @@ class BaseImage(Resource):
         return library.MagickGetImageWidth(self.wand)
 
     @width.setter
-    @maniplative
+    @manipulative
     def width(self, width):
         if width is not None and not isinstance(width, numbers.Integral):
             raise TypeError('width must be a integral, not ' + repr(width))
@@ -611,7 +611,7 @@ class BaseImage(Resource):
         return library.MagickGetImageHeight(self.wand)
 
     @height.setter
-    @maniplative
+    @manipulative
     def height(self, height):
         if height is not None and not isinstance(height, numbers.Integral):
             raise TypeError('height must be a integral, not ' + repr(height))
@@ -629,7 +629,7 @@ class BaseImage(Resource):
         return ORIENTATION_TYPES[text(orientation_index)]
 
     @orientation.setter
-    @maniplative
+    @manipulative
     def orientation(self, value):
         if not isinstance(value, string_type):
             raise TypeError('expected a string, not ' + repr(value))
@@ -644,14 +644,14 @@ class BaseImage(Resource):
         return Color(self.options['fill'])
 
     @font_color.setter
-    @maniplative
+    @manipulative
     def font_color(self, color):
         if not isinstance(color, Color):
             raise TypeError('font_color must be a wand.color.Color, not ' +
                             repr(color))
         self.options['fill'] = color.string
 
-    @maniplative
+    @manipulative
     def caption(self, text, left=0, top=0, width=None, height=None, font=None,
                 gravity=None):
         """Writes a caption ``text`` into the position.
@@ -716,7 +716,7 @@ class BaseImage(Resource):
         return int(x.value), int(y.value)
 
     @resolution.setter
-    @maniplative
+    @manipulative
     def resolution(self, geometry):
         if isinstance(geometry, collections.Sequence):
             x, y = geometry
@@ -744,7 +744,7 @@ class BaseImage(Resource):
         return UNIT_TYPES[text(r)]
 
     @units.setter
-    @maniplative
+    @manipulative
     def units(self, units):
         if not isinstance(units, string_type) or units not in UNIT_TYPES:
             raise TypeError('Unit value must be a string from wand.images.'
@@ -763,7 +763,7 @@ class BaseImage(Resource):
         return library.MagickGetImageDepth(self.wand)
 
     @depth.setter
-    @maniplative
+    @manipulative
     def depth(self, depth):
         r = library.MagickSetImageDepth(self.wand, depth)
         if not r:
@@ -786,7 +786,7 @@ class BaseImage(Resource):
         return IMAGE_TYPES[text(image_type_index)]
 
     @type.setter
-    @maniplative
+    @manipulative
     def type(self, image_type):
         if not isinstance(image_type, string_type) \
             or image_type not in IMAGE_TYPES:
@@ -807,7 +807,7 @@ class BaseImage(Resource):
         return library.MagickGetImageCompressionQuality(self.wand)
 
     @compression_quality.setter
-    @maniplative
+    @manipulative
     def compression_quality(self, quality):
         """Set compression quality for the image.
 
@@ -850,7 +850,7 @@ class BaseImage(Resource):
         return bool(library.MagickGetImageAlphaChannel(self.wand))
 
     @alpha_channel.setter
-    @maniplative
+    @manipulative
     def alpha_channel(self, alpha):
         if alpha == True:
             act = ALPHA_CHANNEL_TYPES.index('activate')
@@ -882,7 +882,7 @@ class BaseImage(Resource):
         self.raise_exception()
 
     @background_color.setter
-    @maniplative
+    @manipulative
     def background_color(self, color):
         if not isinstance(color, Color):
             raise TypeError('color must be a wand.color.Color object, not ' +
@@ -905,7 +905,7 @@ class BaseImage(Resource):
         library.MagickGetQuantumRange(ctypes.byref(result))
         return result.value
 
-    @maniplative
+    @manipulative
     def crop(self, left=0, top=0, right=None, bottom=None,
              width=None, height=None, reset_coords=True):
         """Crops the image in-place.
@@ -1027,7 +1027,7 @@ class BaseImage(Resource):
         """
         library.MagickResetImagePage(self.wand, None)
 
-    @maniplative
+    @manipulative
     def resize(self, width=None, height=None, filter='undefined', blur=1):
         """Resizes the image.
 
@@ -1105,7 +1105,7 @@ class BaseImage(Resource):
             if not r:
                 self.raise_exception()
 
-    @maniplative
+    @manipulative
     def transform(self, crop='', resize=''):
         """Transforms the image using :c:func:`MagickTransformImage`,
         which is a convenience function accepting geometry strings to
@@ -1231,7 +1231,7 @@ class BaseImage(Resource):
             self.raise_exception()
         self.wand = new_wand
 
-    @maniplative
+    @manipulative
     def liquid_rescale(self, width, height, delta_x=0, rigidity=0):
         """Rescales the image with `seam carving`_, also known as
         image retargeting, content-aware resizing, or liquid rescaling.
@@ -1276,7 +1276,7 @@ class BaseImage(Resource):
                                          float(delta_x), float(rigidity))
         self.raise_exception()
 
-    @maniplative
+    @manipulative
     def rotate(self, degree, background=None, reset_coords=True):
         """Rotates the image right.  It takes a ``background`` color
         for ``degree`` that isn't a multiple of 90.
@@ -1328,7 +1328,7 @@ class BaseImage(Resource):
                 if reset_coords:
                     self.reset_coords()
 
-    @maniplative
+    @manipulative
     def flip(self):
         """Creates a vertical mirror image by reflecting the pixels around
         the central x-axis.  It manipulates the image in place.
@@ -1340,7 +1340,7 @@ class BaseImage(Resource):
         if not result:
             self.raise_exception()
 
-    @maniplative
+    @manipulative
     def flop(self):
         """Creates a horizontal mirror image by reflecting the pixels around
         the central y-axis.  It manipulates the image in place.
@@ -1352,7 +1352,7 @@ class BaseImage(Resource):
         if not result:
             self.raise_exception()
 
-    @maniplative
+    @manipulative
     def transparentize(self, transparency):
         """Makes the image transparent by subtracting some percentage of
         the black color channel.  The ``transparency`` parameter specifies the
@@ -1384,7 +1384,7 @@ class BaseImage(Resource):
                                                t)
             self.raise_exception()
 
-    @maniplative
+    @manipulative
     def transparent_color(self, color, alpha, fuzz=0, invert=False):
         """Makes the color ``color`` a transparent color with a tolerance of
         fuzz. The ``alpha`` parameter specify the transparency level and the
@@ -1421,7 +1421,7 @@ class BaseImage(Resource):
                                             alpha, fuzz, invert)
         self.raise_exception()
 
-    @maniplative
+    @manipulative
     def composite(self, image, left, top):
         """Places the supplied ``image`` over the current image, with the top
         left corner of ``image`` at coordinates ``left``, ``top`` of the
@@ -1446,7 +1446,7 @@ class BaseImage(Resource):
                                      int(left), int(top))
         self.raise_exception()
 
-    @maniplative
+    @manipulative
     def composite_channel(self, channel, image, operator, left=0, top=0):
         """Composite two images using the particular ``channel``.
 
@@ -1494,7 +1494,7 @@ class BaseImage(Resource):
                                             op, int(left), int(top))
         self.raise_exception()
 
-    @maniplative
+    @manipulative
     def watermark(self, image, transparency=0.0, left=0, top=0):
         """Transparentized the supplied ``image`` and places it over the
         current image, with the top left corner of ``image`` at coordinates
