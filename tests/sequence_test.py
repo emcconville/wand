@@ -254,7 +254,19 @@ def test_container(fx_asset):
     with Image(filename=str(fx_asset.join('apple.ico'))) as img:
         for single in img.sequence:
             assert single.container is img
-    
+
+
+def test_index(fx_asset):
+    with Image(filename=str(fx_asset.join('nocomments.gif'))) as img:
+        for i, single in enumerate(img.sequence):
+            assert single.index == i
+        del img.sequence[0]
+        for i, single in enumerate(img.sequence):
+            assert single.index == i
+    with Image(filename=str(fx_asset.join('nocomments.gif'))) as img:
+        del img.sequence[2]
+        for i, single in enumerate(img.sequence):
+            assert single.index == i
 
 
 @mark.parametrize(('cmp_name', 'f'), [

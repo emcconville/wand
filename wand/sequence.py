@@ -272,18 +272,26 @@ class SingleImage(BaseImage):
     def sequence(self):
         return self,
 
+    @property
+    def index(self):
+        """(:class:`numbers.Integral`) The index of the single image in
+        the :attr:`container` image.
+
+        """
+        wand = self.container.wand
+        library.MagickResetIterator(wand)
+        image = library.GetImageFromMagickWand(wand)
+        i = 0
+        while self.c_original_resource != image and image:
+            image = library.GetNextImageInList(image)
+            i += 1
+        assert image
+        assert self.c_original_resource == image
+        return i
+
     def destroy(self):
         if self.dirty:
-            wand = self.container.wand
-            library.MagickResetIterator(wand)
-            image = library.GetImageFromMagickWand(wand)
-            i = 0
-            while self.c_original_resource != image and image:
-                image = library.GetNextImageInList(image)
-                i += 1
-            assert image
-            assert self.c_original_resource == image
-            self.container.sequence[i] = self
+            self.container.sequence[self.index] = self
         super(SingleImage, self).destroy()
 
     def __repr__(self):
