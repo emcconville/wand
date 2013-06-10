@@ -64,6 +64,12 @@ def test_delitem(fx_asset):
         assert img.sequence[2].size == (16, 16)
 
 
+def test_delitem_not_loaded(fx_asset):
+    with Image(filename=str(fx_asset.join('apple.ico'))) as img:
+        del img.sequence[1]
+        assert len(img.sequence) == 3
+
+
 slices = {
     'to_end': slice(2, None, None),
     'from_first': slice(None, 2, None),

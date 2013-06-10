@@ -155,7 +155,8 @@ class Sequence(ImageProperty, collections.MutableSequence):
         else:
             with self.index_context(index) as index:
                 library.MagickRemoveImage(self.image.wand)
-                del self.instances[index]
+                if index < len(self.instances):
+                    del self.instances[index]
 
     def insert(self, index, image):
         try:
