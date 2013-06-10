@@ -472,6 +472,11 @@ try:
     library.GetNextImageInList.argtypes = [ctypes.c_void_p]
     library.GetNextImageInList.restype = ctypes.c_void_p
 
+    library.MagickGetImageDelay.argtypes = [ctypes.c_void_p]
+    library.MagickGetImageDelay.restype = ctypes.c_ssize_t
+
+    library.MagickSetImageDelay.argtypes = [ctypes.c_void_p, ctypes.c_ssize_t]
+
     library.NewMagickWandFromImage.argtypes = [ctypes.c_void_p]
     library.NewMagickWandFromImage.restype = ctypes.c_void_p
 

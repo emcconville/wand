@@ -267,6 +267,7 @@ class SingleImage(BaseImage):
         super(SingleImage, self).__init__(wand)
         self.container = container
         self.c_original_resource = c_original_resource
+        self._delay = None
 
     @property
     def sequence(self):
@@ -289,9 +290,34 @@ class SingleImage(BaseImage):
         assert self.c_original_resource == image
         return i
 
+    @property
+    def delay(self):
+        """(:class:`numbers.Integral`) The delay to pause before display
+        the next image (in the :attr:`~wand.image.BaseImage.sequence` of
+        its :attr:`container`).  It's hundredths of a second.
+
+        """
+        if self._delay is None:
+            container = self.container
+            with container.sequence.index_context(self.index):
+                self._delay = library.MagickGetImageDelay(container.wand)
+        return self._delay
+
+    @delay.setter
+    def delay(self, delay):
+        if not isinstance(delay, numbers.Integral):
+            raise TypeError('delay must be an integer, not ' + repr(delay))
+        elif delay < 0:
+            raise ValueError('delay cannot be less than zero')
+        self._delay = delay
+
     def destroy(self):
         if self.dirty:
             self.container.sequence[self.index] = self
+        if self._delay is not None:
+            container = self.container
+            with container.sequence.index_context(self.index):
+                library.MagickSetImageDelay(container.wand, self._delay)
         super(SingleImage, self).destroy()
 
     def __repr__(self):

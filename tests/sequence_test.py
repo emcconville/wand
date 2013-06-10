@@ -2,6 +2,7 @@ from __future__ import print_function
 
 from pytest import mark, raises
 
+from wand.api import library
 from wand.image import Image
 
 
@@ -308,3 +309,20 @@ def test_changes_reflected_back(fx_asset):
         img.sequence.instances[3] = None
         with img.sequence[3] as committed:
             assert committed.size == (32, 32)
+
+
+def test_delay(fx_asset):
+    with Image(filename=str(fx_asset.join('nocomments-delay-100.gif'))) as img:
+        for s in img.sequence:
+            assert s.delay == 100
+
+
+def test_set_delay(fx_asset):
+    with Image(filename=str(fx_asset.join('nocomments.gif'))) as img:
+        with img.sequence[2] as frame:
+            assert frame.delay == 0
+            frame.delay = 10
+            with img.sequence.index_context(2):
+                assert library.MagickGetImageDelay(img.wand) == 0
+        with img.sequence.index_context(2):
+            assert library.MagickGetImageDelay(img.wand) == 10
