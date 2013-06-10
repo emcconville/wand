@@ -1224,7 +1224,7 @@ class BaseImage(Resource):
                     new_wand = library.MagickTransformImage(new_wand,
                                                             crop,
                                                             resize)
-            # FIXME: set the same delay
+            self.sequence.instances = []
         else:
             new_wand = library.MagickTransformImage(self.wand, crop, resize)
         if not new_wand:
