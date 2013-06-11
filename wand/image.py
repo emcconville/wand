@@ -510,6 +510,25 @@ class BaseImage(Resource):
         return hash(self.signature)
 
     @property
+    def animation(self):
+        """(:class:`bool`) Whether the image is animation or not.
+        It doesn't only mean that the image has two or more images (frames),
+        but all frames are even the same size.  It's about image format,
+        not content.  It's :const:`False` even if :mimetype:`image/ico`
+        consits of two or more images of the same size.
+
+        For example, it's :const:`False` for :mimetype:`image/jpeg`,
+        :mimetype:`image/gif`, :mimetype:`image/ico`.
+
+        If :mimetype:`image/gif` has two or more frames, it's :const:`True`.
+        If :mimetype:`image/gif` has only one frame, it's :const:`False`.
+
+        .. versionadded:: 0.3.0
+
+        """
+        return False
+
+    @property
     def gravity(self):
         """(:class:`basestring`) The text placement gravity used when
         annotating with text.  It's a string from :const:`GRAVITY_TYPES`
@@ -1012,8 +1031,7 @@ class BaseImage(Resource):
             raise ValueError('image width cannot be zero')
         elif left == top == 0 and width == self.width and height == self.height:
             return
-        # FIXME: it should be cleaned up when "sequences" branch is merged
-        if isinstance(self, Image) and self.mimetype == 'image/gif':
+        if self.animation:
             self.wand = library.MagickCoalesceImages(self.wand)
             library.MagickSetLastIterator(self.wand)
             n = library.MagickGetIteratorIndex(self.wand)
@@ -1098,8 +1116,7 @@ class BaseImage(Resource):
               not (0 <= filter < len(FILTER_TYPES))):
             raise ValueError(repr(filter) + ' is an invalid filter type')
         blur = ctypes.c_double(float(blur))
-        # FIXME: it should be cleaned up when "sequences" branch is merged
-        if isinstance(self, Image) and self.mimetype == 'image/gif':
+        if self.animation:
             self.wand = library.MagickCoalesceImages(self.wand)
             library.MagickSetLastIterator(self.wand)
             n = library.MagickGetIteratorIndex(self.wand)
@@ -1221,7 +1238,7 @@ class BaseImage(Resource):
         except UnicodeEncodeError:
             raise ValueError('resize must only contain ascii-encodable ' +
                              'characters.')
-        if isinstance(self, Image) and self.mimetype == 'image/gif':  # FIXME
+        if self.animation:
             new_wand = library.MagickCoalesceImages(self.wand)
             length = len(self.sequence)
             for i in xrange(length):
@@ -1317,8 +1334,7 @@ class BaseImage(Resource):
             raise TypeError('degree must be a numbers.Real value, not ' +
                             repr(degree))
         with background:
-            # FIXME: it should be cleaned up when "sequences" branch is merged
-            if self.mimetype == 'image/gif':
+            if self.animation:
                 self.wand = library.MagickCoalesceImages(self.wand)
                 library.MagickSetLastIterator(self.wand)
                 n = library.MagickGetIteratorIndex(self.wand)
@@ -1810,6 +1826,10 @@ class Image(BaseImage):
         mimetype = rp.value
         return text(mimetype)
 
+    @property
+    def animation(self):
+        return self.mimetype == 'image/gif' and len(self.sequence) > 1
+
     def blank(self, width, height, background=None):
         """Creates blank image.
 
@@ -1900,7 +1920,7 @@ class Image(BaseImage):
                 raise TypeError('filename must be a string, not ' +
                                 repr(filename))
             filename = binary(filename)
-            if self.mimetype == 'image/gif':
+            if len(self.sequence) > 1:
                 r = library.MagickWriteImages(self.wand, filename, True)
             else:
                 r = library.MagickWriteImage(self.wand, filename)
@@ -1933,8 +1953,9 @@ class Image(BaseImage):
         library.MagickResetIterator(self.wand)
         length = ctypes.c_size_t()
         blob_p = None
-        if self.mimetype == 'image/gif':
-            blob_p = library.MagickGetImagesBlob(self.wand, ctypes.byref(length))
+        if len(self.sequence) > 1:
+            blob_p = library.MagickGetImagesBlob(self.wand,
+                                                 ctypes.byref(length))
         else:
             blob_p = library.MagickGetImageBlob(self.wand, ctypes.byref(length))
         if blob_p and length.value:
