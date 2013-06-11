@@ -135,6 +135,11 @@ class Color(Resource):
     def __ne__(self, other):
         return not (self == other)
 
+    def __hash__(self):
+        if self.alpha:
+            return hash(self.string)
+        return hash(None)
+
     @property
     def red(self):
         """(:class:`numbers.Real`) Red, from 0.0 to 1.0."""
