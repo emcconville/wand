@@ -83,6 +83,8 @@ To be released.
   dictionaries, or an element of sets.  [:issue:`114` by klutzy]
 - :class:`~wand.color.Color` has :attr:`~wand.color.Color.normalized_string`
   property.
+- :class:`~wand.image.Image` has :attr:`~wand.image.Image.histogram`
+  dictionary.
 
 __ http://en.wikipedia.org/wiki/Seam_carving
 

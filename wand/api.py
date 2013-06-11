@@ -422,6 +422,9 @@ try:
     library.PixelGetAlphaQuantum.argtypes = [ctypes.c_void_p]
     library.PixelGetAlphaQuantum.restype = ctypes.c_size_t
 
+    library.PixelGetColorCount.argtypes = [ctypes.c_void_p]
+    library.PixelGetColorCount.restype = ctypes.c_size_t
+
     library.MagickGetQuantumRange.argtypes = [ctypes.POINTER(ctypes.c_size_t)]
 
     library.MagickSetIteratorIndex.argtypes = [ctypes.c_void_p,
@@ -551,6 +554,10 @@ try:
     library.MagickSetAntialias.argtypes = [ctypes.c_void_p,
                                            ctypes.c_int]
     library.MagickSetAntialias.restype = ctypes.c_int
+
+    library.MagickGetImageHistogram.argtypes = [ctypes.c_void_p,
+                                                ctypes.POINTER(ctypes.c_size_t)]
+    library.MagickGetImageHistogram.restype = ctypes.POINTER(ctypes.c_void_p)
 
     # These functions are const so it's okay for them to be c_char_p
     libmagick.GetMagickVersion.argtypes = [ctypes.POINTER(ctypes.c_size_t)]

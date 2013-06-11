@@ -1114,3 +1114,22 @@ def test_set_orientation(fx_asset):
     with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
         img.orientation = 'bottom_right'
         assert img.orientation == 'bottom_right'
+
+
+def test_histogram(fx_asset):
+    with Image(filename=str(fx_asset.join('trim-color-test.png'))) as a:
+        h = a.histogram
+        assert len(h) == 2
+        assert frozenset(h) == frozenset([
+            Color('srgb(0,255,0'),
+            Color('srgb(0,0,255')
+        ])
+        assert dict(h) == {
+            Color('srgb(0,255,0'): 5000,
+            Color('srgb(0,0,255'): 5000,
+        }
+        assert Color('white') not in h
+        assert Color('srgb(0,255,0)') in h
+        assert Color('srgb(0,0,255)') in h
+        assert h[Color('srgb(0,255,0)')] == 5000
+        assert h[Color('srgb(0,0,255)')] == 5000

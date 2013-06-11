@@ -29,8 +29,8 @@ __all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COMPOSITE_OPERATORS',
            'EVALUATE_OPS', 'FILTER_TYPES', 'GRAVITY_TYPES', 'IMAGE_TYPES',
            'ORIENTATION_TYPES', 'UNIT_TYPES',
            'BaseImage', 'ChannelDepthDict', 'ChannelImageDict',
-           'ClosedImageError', 'Image', 'ImageProperty', 'Iterator',
-           'Metadata', 'OptionDict', 'manipulative')
+           'ClosedImageError', 'HistogramDict', 'Image', 'ImageProperty',
+           'Iterator', 'Metadata', 'OptionDict', 'manipulative')
 
 
 #: (:class:`tuple`) The list of filter types.
@@ -904,6 +904,17 @@ class BaseImage(Resource):
         result = ctypes.c_size_t()
         library.MagickGetQuantumRange(ctypes.byref(result))
         return result.value
+
+    @property
+    def histogram(self):
+        """(:class:`HistogramDict`) The mapping that represents the histogram.
+        Keys are :class:`~wand.color.Color` objects, and values are
+        the number of pixels.
+
+        .. versionadded:: 0.3.0
+
+        """
+        return HistogramDict(self)
 
     @manipulative
     def crop(self, left=0, top=0, right=None, bottom=None,
@@ -2302,6 +2313,51 @@ class ChannelDepthDict(ImageProperty, collections.Mapping):
         c = CHANNELS[channel]
         depth = library.MagickGetImageChannelDepth(self.image.wand, c)
         return int(depth)
+
+
+class HistogramDict(collections.Mapping):
+    """Specialized mapping object to represent color histogram.
+    Keys are colors, and values are the number of pixels.
+
+    :param image: the image to get its histogram
+    :type image: :class:`BaseImage`
+
+    .. versionadded:: 0.3.0
+
+    """
+
+    def __init__(self, image):
+        self.size = ctypes.c_size_t()
+        self.pixels = library.MagickGetImageHistogram(
+            image.wand,
+            ctypes.byref(self.size)
+        )
+        self.counts = None
+
+    def __len__(self):
+        if self.counts is None:
+            return self.size.value
+        return len(self.counts)
+
+    def __iter__(self):
+        if self.counts is None:
+            pixels = self.pixels
+            string = library.PixelGetColorAsString
+            return (Color(string(pixels[i]).value)
+                    for i in xrange(self.size.value))
+        return iter(Color(string=c) for c in self.counts)
+
+    def __getitem__(self, color):
+        if self.counts is None:
+            string = library.PixelGetColorAsNormalizedString
+            pixels = self.pixels
+            count = library.PixelGetColorCount
+            self.counts = dict(
+                (text(string(pixels[i]).value), count(pixels[i]))
+                for i in xrange(self.size.value)
+            )
+            del self.size, self.pixels
+        return self.counts[color.normalized_string]
 
 
 class ClosedImageError(DestroyedResourceError):
