@@ -47,6 +47,10 @@ class Color(Resource):
           CMYK, or CMYKA color models may also be specified. These topics
           are briefly described in the sections below.
 
+    .. versionchanged:: 0.3.0
+
+       :class:`Color` objects become hashable.
+
     .. _ImageMagick Color Names: http://www.imagemagick.org/script/color.php
 
     .. describe:: == (other)
@@ -104,6 +108,19 @@ class Color(Resource):
             color_string = library.PixelGetColorAsString(self.resource)
             return text(color_string.value)
 
+    @property
+    def normalized_string(self):
+        """(:class:`basestring`) The normalized string representation of
+        the color.  The same color is always represented to the same
+        string.
+
+        .. versionadded:: 0.3.0
+
+        """
+        with self:
+            string = library.PixelGetColorAsNormalizedString(self.resource)
+            return text(string.value)
+
     @staticmethod
     def c_equals(a, b):
         """Raw level version of equality test function for two pixels.
@@ -137,7 +154,7 @@ class Color(Resource):
 
     def __hash__(self):
         if self.alpha:
-            return hash(self.string)
+            return hash(self.normalized_string)
         return hash(None)
 
     @property

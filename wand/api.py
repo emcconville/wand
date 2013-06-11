@@ -395,6 +395,9 @@ try:
     library.PixelGetColorAsString.argtypes = [ctypes.c_void_p]
     library.PixelGetColorAsString.restype = c_magick_char_p
 
+    library.PixelGetColorAsNormalizedString.argtypes = [ctypes.c_void_p]
+    library.PixelGetColorAsNormalizedString.restype = c_magick_char_p
+
     library.PixelGetRed.argtypes = [ctypes.c_void_p]
     library.PixelGetRed.restype = ctypes.c_double
 
