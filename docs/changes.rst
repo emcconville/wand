@@ -78,7 +78,7 @@ To be released.
 - Added :attr:`Image.orientation <wand.image.Image.orientation>` property.
   [:commit:`88574468a38015669dae903185fb328abdd717c0` by Taeho Kim]
 - :exc:`wand.resource.DestroyedResourceError` becomes a subtype of
-   :exc:`wand.exceptions.WandException`.
+  :exc:`wand.exceptions.WandException`.
 - :class:`~wand.color.Color` is now hashable, so can be used as a key of
   dictionaries, or an element of sets.  [:issue:`114` by klutzy]
 - :class:`~wand.color.Color` has :attr:`~wand.color.Color.normalized_string`
