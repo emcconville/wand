@@ -37,6 +37,9 @@ class Color(Resource):
                    doc also
     :type string: :class:`basestring`
 
+    .. versionchanged:: 0.3.0
+       :class:`Color` objects become hashable.
+
     .. seealso::
 
        `ImageMagick Color Names`_
@@ -46,10 +49,6 @@ class Color(Resource):
           a channel in an RGB or RGBA color model. HSL, HSLA, HSB, HSBA,
           CMYK, or CMYKA color models may also be specified. These topics
           are briefly described in the sections below.
-
-    .. versionchanged:: 0.3.0
-
-       :class:`Color` objects become hashable.
 
     .. _ImageMagick Color Names: http://www.imagemagick.org/script/color.php
 

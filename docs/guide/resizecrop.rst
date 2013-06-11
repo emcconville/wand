@@ -5,7 +5,7 @@ Creating thumbnails (by resizing images) and cropping are most frequent works
 about images. This guide explains ways to deal with sizes of images.
 
 Above all, to get the current size of the image check
-:attr:`~wand.image.Image.width` and :attr:`~wand.image.Image.height`
+:attr:`~wand.image.BaseImage.width` and :attr:`~wand.image.BaseImage.height`
 properties:
 
 .. sourcecode:: pycon
@@ -23,8 +23,8 @@ properties:
    >>> height
    48
 
-If you want the pair of (:attr:`~wand.image.Image.width`,
-:attr:`~wand.image.Image.height`), check :attr:`~wand.image.Image.size`
+If you want the pair of (:attr:`~wand.image.BaseImage.width`,
+:attr:`~wand.image.BaseImage.height`), check :attr:`~wand.image.BaseImage.size`
 property also.
 
 .. note::
@@ -49,8 +49,8 @@ algorithms.
 
    __ http://www.dylanbeattie.net/magick/filters/result.html
 
-:meth:`Image.resize() <wand.image.Image.resize>` method takes ``width`` and
-``height`` of a desired size, optional ``filter`` (``'undefined'`` by
+:meth:`Image.resize() <wand.image.BaseImage.resize>` method takes ``width``
+and ``height`` of a desired size, optional ``filter`` (``'undefined'`` by
 default which means IM will try to guess best one to use) and optional
 ``blur`` (default is 1). It returns nothing but resizes itself in-place.
 
@@ -66,8 +66,8 @@ default which means IM will try to guess best one to use) and optional
 Crop images
 -----------
 
-To extract a sub-rectangle from an image,
-use the :meth:`~wand.image.Image.crop()` method. It crops the image in-place.
+To extract a sub-rectangle from an image, use the
+:meth:`~wand.image.BaseImage.crop()` method.  It crops the image in-place.
 Its parameters are ``left``, ``top``, ``right``, ``bottom`` in order.
 
 .. sourcecode:: pycon
@@ -169,7 +169,7 @@ See the following examples:
 +------------------------------------+----------------------------------+
 
 You can easily rescale images with seam carving using Wand:
-use :meth:`Image.liquid_rescale() <wand.image.Image.liquid_rescale>`
+use :meth:`Image.liquid_rescale() <wand.image.BaseImage.liquid_rescale>`
 method:
 
 >>> img.size

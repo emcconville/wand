@@ -240,7 +240,6 @@ class DestroyedResourceError(WandException, ReferenceError, AttributeError):
     destroyed resource.
 
     .. versionchanged:: 0.3.0
-
        It becomes a subtype of :exc:`wand.exceptions.WandException`.
 
     """

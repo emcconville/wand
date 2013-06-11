@@ -1961,11 +1961,10 @@ class Image(BaseImage):
                       if it's omitted top left pixel is used by default
         :type color: :class:`~wand.color.Color`
 
-        .. versionadded:: 0.2.1
-
         .. versionadded:: 0.3.0
-
            Optional ``color`` parameter.
+
+        .. versionadded:: 0.2.1
 
         """
         with color or self[0, 0] as color:

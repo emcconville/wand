@@ -18,7 +18,7 @@ To be released.
 - Added :meth:`Drawing.get_font_metrics()
   <wand.drawing.Drawing.get_font_metrics>` method.
   [:issue:`69`, :issue:`71` by Cha, Hojeong]
-- Added :meth:`Image.caption() <wand.image.Image.caption>` method.
+- Added :meth:`Image.caption() <wand.image.BaseImage.caption>` method.
   [:issue:`74` by Cha, Hojeong]
 - Added optional ``color`` parameter to :meth:`Image.border()
   <wand.image.Image.border>` method.
@@ -27,7 +27,7 @@ To be released.
 - Added ``resolution`` parameter to :meth:`Image.read() <wand.image.Image.read>`
   method and the constructor of :class:`~wand.image.Image`.
   [:issue:`75` by Andrey Antukh]
-- Added :meth:`Image.liquid_rescale() <wand.image.Image.liquid_rescale>`
+- Added :meth:`Image.liquid_rescale() <wand.image.BaseImage.liquid_rescale>`
   method which does `seam carving`__.  See also :ref:`seam-carving`.
 - Added :attr:`Image.metadata <wand.image.Image.metadata>` immutable mapping
   attribute and :class:`~wand.image.Metadata` mapping type for it.
@@ -38,13 +38,13 @@ To be released.
 - Added :attr:`Image.channel_depths <wand.image.Image.channel_depths>`
   immutable mapping attribute and :class:`~wand.image.ChannelDepthDict`
   mapping for it.
-- Added :meth:`Image.composite_channel() <wand.image.Image.composite_channel>`
-  method.
-- Added :meth:`Image.read() <wand.image.read>` method.
+- Added :meth:`Image.composite_channel()
+  <wand.image.BaseImage.composite_channel>` method.
+- Added :meth:`Image.read() <wand.image.Image.read>` method.
   [:issue:`58` by Piotr Florczyk]
-- Added :attr:`Image.resolution <wand.image.Image.resolution>` property.
+- Added :attr:`Image.resolution <wand.image.BaseImage.resolution>` property.
   [:issue:`58` by Piotr Florczyk]
-- Added :meth:`Image.blank() <wand.image.blank>` method.
+- Added :meth:`Image.blank() <wand.image.Image.blank>` method.
   [:issue:`60` by Piotr Florczyk]
 - Fixed several memory leaks.  [:issue:`62` by Mitch Lindgren]
 - Added :class:`~wand.image.ImageProperty` mixin class to maintain
@@ -69,13 +69,14 @@ To be released.
 
 - Added :meth:`Image.normalize() <wand.image.Image.normalize>` method.
   [:issue:`95` by Michael Curry]
-- Added :meth:`Image.transparent_color() <wand.image.Image.transparent_color>`
-  method.  [:issue:`98` by Lionel Koenig]
+- Added :meth:`Image.transparent_color()
+  <wand.image.BaseImage.transparent_color>` method.
+  [:issue:`98` by Lionel Koenig]
 - Started supporting resizing and cropping of GIF images.
   [:issue:`88` by Bear Dong, :issue:`112` by Taeho Kim]
-- Added :meth:`Image.flip() <wand.image.Image.flip>` method.
-- Added :meth:`Image.flop() <wand.image.Image.flop>` method.
-- Added :attr:`Image.orientation <wand.image.Image.orientation>` property.
+- Added :meth:`Image.flip() <wand.image.BaseImage.flip>` method.
+- Added :meth:`Image.flop() <wand.image.BaseImage.flop>` method.
+- Added :attr:`Image.orientation <wand.image.BaseImage.orientation>` property.
   [:commit:`88574468a38015669dae903185fb328abdd717c0` by Taeho Kim]
 - :exc:`wand.resource.DestroyedResourceError` becomes a subtype of
   :exc:`wand.exceptions.WandException`.
@@ -83,7 +84,7 @@ To be released.
   dictionaries, or an element of sets.  [:issue:`114` by klutzy]
 - :class:`~wand.color.Color` has :attr:`~wand.color.Color.normalized_string`
   property.
-- :class:`~wand.image.Image` has :attr:`~wand.image.Image.histogram`
+- :class:`~wand.image.Image` has :attr:`~wand.image.BaseImage.histogram`
   dictionary.
 
 __ http://en.wikipedia.org/wiki/Seam_carving
