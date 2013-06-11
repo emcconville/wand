@@ -15,6 +15,8 @@ Transformation
 Rotation
 --------
 
+.. versionadded:: 0.1.8
+
 :class:`~wand.image.Image` object provides a simple method to rotate images:
 :meth:`~wand.image.BaseImage.rotate()`.  It takes a ``degree`` which can be 0
 to 359.  (Actually you can pass 360, 361, or more but it will be the same to
@@ -58,6 +60,8 @@ The generated image :file:`transform-rotated-135.jpg` looks like:
 
 Flip and flop
 -------------
+
+.. versionadded:: 0.3.0
 
 You can make a mirror image by reflecting the pixels around the central
 x- or y-axis.  For example, where the given image :file:`transform.jpg`:

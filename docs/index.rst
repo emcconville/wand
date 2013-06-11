@@ -68,6 +68,7 @@ User's guide
    guide/draw
    guide/colorspace
    guide/exif
+   guide/sequence
    guide/resource
    test
    roadmap
