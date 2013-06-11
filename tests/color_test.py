@@ -16,6 +16,16 @@ def test_not_equals():
     assert Color('rgba(0, 0, 0, 1)') != Color('rgba(1, 1, 1, 1)')
 
 
+def test_hash():
+    """Hash test."""
+    assert hash(Color('#fff')) == hash(Color('#ffffff')) == \
+        hash(Color('white'))
+    assert hash(Color('#000')) == hash(Color('#000000')) == \
+        hash(Color('black'))
+    assert hash(Color('rgba(0, 0, 0, 0))')) == hash(Color('rgba(0, 0, 0, 0))'))
+    assert hash(Color('rgba(0, 0, 0, 0))')) == hash(Color('rgba(1, 1, 1, 0))'))
+
+
 def test_red():
     assert Color('black').red == 0
     assert Color('red').red == 1
