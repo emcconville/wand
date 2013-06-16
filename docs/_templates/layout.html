@@ -1,16 +1,49 @@
 {% extends '!layout.html' %}
-{% block sidebarlogo %}
-  <!-- pagename: {{ pagename|pprint }} -->
-  {% if pagename == 'index' %}
-    <iframe
-      src="http://ghbtns.com/github-btn.html?user=dahlia&repo=wand{{- '' -}}
-           &type=watch&count=true&size=large"
-      allowtransparency="true" frameborder="0" scrolling="0"
-      width="170px" height="30px">
-      {{- '' -}}
-    </iframe>
-    <hr class="github-line" />
-  {% else %}
-    {{ super() }}
-  {% endif %}
+
+{% macro sidebar_overridden() %}
+  <div class="sphinxsidebar">
+    <div class="sphinxsidebarwrapper">
+      {%- if pagename == 'index' -%}
+        <iframe
+          src="http://ghbtns.com/github-btn.html?user=dahlia&repo=wand{{- '' -}}
+               &type=watch&count=true&size=large"
+          allowtransparency="true" frameborder="0" scrolling="0"
+          width="170px" height="30px">
+          {{- '' -}}
+        </iframe>
+        <hr class="github-line" />
+      {%- else -%}
+        <p class="logo"><a href="{{ pathto(master_doc) }}">
+          <img class="logo" src="{{ pathto('_static/' + logo, 1) }}"
+               alt="Logo"/></a></p>
+      {%- endif -%}
+      {%- if sidebars != None %}
+        {#- new style sidebar: explicitly include/exclude templates #}
+        {%- for sidebartemplate in sidebars %}
+        {%- include sidebartemplate %}
+        {%- endfor %}
+      {%- else %}
+        {#- old style sidebars: using blocks -- should be deprecated #}
+        {%- block sidebartoc %}
+        {%- include "localtoc.html" %}
+        {%- endblock %}
+        {%- block sidebarrel %}
+        {%- include "relations.html" %}
+        {%- endblock %}
+        {%- block sidebarsourcelink %}
+        {%- include "sourcelink.html" %}
+        {%- endblock %}
+        {%- if customsidebar %}
+        {%- include customsidebar %}
+        {%- endif %}
+        {%- block sidebarsearch %}
+        {%- include "searchbox.html" %}
+        {%- endblock %}
+      {%- endif %}
+    </div>
+  </div>
+{% endmacro %}
+
+{% block sidebar2 %}
+  {{- sidebar_overridden() -}}
 {% endblock %}
