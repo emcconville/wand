@@ -86,8 +86,11 @@ References
    wand
 
 
+Troubleshooting
+---------------
+
 Mailing list
-------------
+''''''''''''
 
 Wand has the list for users.  If you want to subscribe the list, just send a
 mail to:
@@ -98,6 +101,17 @@ The `list archive`_ provided by Librelist_ is synchronized every hour.
 
 .. _list archive: http://librelist.com/browser/wand/
 .. _Librelist: http://librelist.com/
+
+
+
+Quora
+'''''
+
+There's a Quora topic for Wand: `Wand (ImageMagick binding)`__.  Be free
+to add questions to the topic, though it's suitable for higher-level questions
+rather than troubleshooting.
+
+__ https://www.quora.com/Wand-ImageMagick-binding
 
 
 Open source
