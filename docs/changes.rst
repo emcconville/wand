@@ -20,8 +20,8 @@ To be released.
   [:issue:`69`, :issue:`71` by Cha, Hojeong]
 - Added :meth:`Image.caption() <wand.image.BaseImage.caption>` method.
   [:issue:`74` by Cha, Hojeong]
-- Added optional ``color`` parameter to :meth:`Image.border()
-  <wand.image.Image.border>` method.
+- Added optional ``color`` parameter to :meth:`Image.trim()
+  <wand.image.Image.trim>` method.
 - Added :meth:`Image.border() <wand.image.Image.border>` method.
   [:commit:`2496d37f75d75e9425f95dde07033217dc8afefc` by Jae-Myoung Yu]
 - Added ``resolution`` parameter to :meth:`Image.read() <wand.image.Image.read>`
@@ -86,6 +86,8 @@ To be released.
   property.
 - :class:`~wand.image.Image` has :attr:`~wand.image.BaseImage.histogram`
   dictionary.
+- Added optional ``fuzz`` parameter to :meth:`Image.trim()
+  <wand.image.Image.trim>` method.  [:issue:`113` by Evaldo Junior]
 
 __ http://en.wikipedia.org/wiki/Seam_carving
 
