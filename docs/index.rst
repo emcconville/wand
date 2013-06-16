@@ -20,10 +20,10 @@ You can install it from PyPI_ (and it requires MagickWand library):
 .. sourcecode:: bash
 
    $ apt-get install libmagickwand-dev
-   $ easy_install Wand
+   $ pip install Wand
 
 .. _ImageMagick: http://www.imagemagick.org/
-.. _PyPI: http://pypi.python.org/pypi/Wand
+.. _PyPI: https://pypi.python.org/pypi/Wand
 
 
 Why just another binding?
