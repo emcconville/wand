@@ -1,13 +1,6 @@
 Wand Changelog
 ==============
 
-Branch :branch:`sequence`
--------------------------
-
-This branch implements API for sequences.  See Michael Elovskikh's proposal
-and discussions about it: :issue:`34`.
-
-
 Version 0.3.0
 -------------
 
