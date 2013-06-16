@@ -1,49 +1,24 @@
 {% extends 'flask/layout.html' %}
 
-{% macro sidebar_overridden() %}
-  <div class="sphinxsidebar">
-    <div class="sphinxsidebarwrapper">
-      {%- if pagename == 'index' -%}
-        <iframe
-          src="http://ghbtns.com/github-btn.html?user=dahlia&repo=wand{{- '' -}}
-               &type=watch&count=true&size=large"
-          allowtransparency="true" frameborder="0" scrolling="0"
-          width="170px" height="30px">
-          {{- '' -}}
-        </iframe>
-        <hr class="github-line" />
-      {%- else -%}
-        <p class="logo"><a href="{{ pathto(master_doc) }}">
-          <img class="logo" src="{{ pathto('_static/' + logo, 1) }}"
-               alt="Logo"/></a></p>
-      {%- endif -%}
-      {%- if sidebars != None %}
-        {#- new style sidebar: explicitly include/exclude templates #}
-        {%- for sidebartemplate in sidebars %}
-        {%- include sidebartemplate %}
-        {%- endfor %}
-      {%- else %}
-        {#- old style sidebars: using blocks -- should be deprecated #}
-        {%- block sidebartoc %}
-        {%- include "localtoc.html" %}
-        {%- endblock %}
-        {%- block sidebarrel %}
-        {%- include "relations.html" %}
-        {%- endblock %}
-        {%- block sidebarsourcelink %}
-        {%- include "sourcelink.html" %}
-        {%- endblock %}
-        {%- if customsidebar %}
-        {%- include customsidebar %}
-        {%- endif %}
-        {%- block sidebarsearch %}
-        {%- include "searchbox.html" %}
-        {%- endblock %}
-      {%- endif %}
-    </div>
-  </div>
-{% endmacro %}
-
-{% block sidebar2 %}
-  {{- sidebar_overridden() -}}
-{% endblock %}
+{%- block footer %}
+  {{ super() }}
+  {% if pagename == 'index' %}
+    <script>
+// <![CDATA
+// I initially tried ovrridding sidebarlogo block in Sphinx templates
+// (IMBO it's the ordinary way to do such of this work), but it didn't work.
+// http://librelist.com/browser/readthedocs/2013/5/27/overriding-sidebar-logo-block-doesnt-seem-to-work/
+// I could not find why ReadTheDocs.org ignores it, or how they hacked
+// the default theme, so I finally gave up.
+$('.sphinxsidebar p.logo').replaceWith(
+  '<iframe src="http://ghbtns.com/github-btn.html?user=dahlia&repo=wand' +
+  '&type=watch&count=true&size=large" allowtransparency="true" ' +
+  'frameborder="0" scrolling="0" width="170px" height="30px"></iframe>' +
+  '<iframe style="border: 0; margin: 20px 0; padding: 0;" ' +
+  'src="https://www.gittip.com/dahlia/widget.html ' +
+  'width="48pt" height="22pt"></iframe>'
+);
+// ]]>
+    </script>
+  {% endif %}
+{%- endblock %}
