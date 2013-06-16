@@ -1,10 +1,17 @@
 Wand Changelog
 ==============
 
+.. _changelog-0.3.0:
+
 Version 0.3.0
 -------------
 
 To be released.
+
+.. seealso::
+
+   :doc:`whatsnew/0.3`
+      This guide introduces what's new in Wand 0.3.
 
 - Now also works on Python 2.6, 2.7, and 3.2 or higher.
 - Added :mod:`wand.drawing` module.  [:issue:`64` by Adrian Jung]

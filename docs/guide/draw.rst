@@ -20,6 +20,8 @@ It's also callable and takes an :class:`~wand.image.Image` object::
             draw(image)
 
 
+.. _draw-lines:
+
 Lines
 -----
 
@@ -46,6 +48,8 @@ a red diagonal line into the ``image``::
         draw.line((0, 0), image.size)
         draw(image)
 
+
+.. _draw-texts:
 
 Texts
 -----

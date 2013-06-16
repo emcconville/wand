@@ -60,6 +60,7 @@ User's guide
 .. toctree::
    :maxdepth: 2
 
+   whatsnew/0.3
    guide/install
    guide/read
    guide/write
