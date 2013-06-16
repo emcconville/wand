@@ -63,6 +63,19 @@ Drawing
 Wand 0.3 provides basic facilities to draw :ref:`draw-lines` or
 :ref:`draw-texts`.
 
+The following example code writes "Wand" to the transparent background
+using :meth:`~wand.image.BaseImage.caption()` method:
+
+>>> from wand.font import Font
+>>> font = Font(path='tests/assets/League_Gothic.otf', size=64)
+>>> with Image(width=300, height=150) as image:
+...     image.caption('Wand', left=5, top=5, width=490, height=140, font=font)
+...     image.save(filename='caption-result.png')
+...
+
+.. image:: ../_images/caption-result.png
+   :alt: caption-result.png
+
 Adrian Jung and did the most of work for this (:issue:`64`).
 Cha, Hojeong added higher-level APIs on this and more text drawing APIs
 (:issue:`69`, :issue:`71`, :issue:`74`).

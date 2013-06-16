@@ -675,6 +675,8 @@ class BaseImage(Resource):
                 gravity=None):
         """Writes a caption ``text`` into the position.
 
+        :param text: text to write
+        :type text: :class:`basestring`
         :param left: x offset in pixels
         :type left: :class:`numbers.Integral`
         :param right: y offset in pixels
@@ -691,6 +693,8 @@ class BaseImage(Resource):
                         uses the current :attr:`gravity` setting of the image
                         by default
         :type gravity: :class:`basestring`
+
+        .. versionadded:: 0.3.0
 
         """
         if not isinstance(left, numbers.Integral):
