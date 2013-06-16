@@ -456,7 +456,8 @@ try:
 
     library.MagickStripImage.argtypes = [ctypes.c_void_p]
 
-    library.MagickTrimImage.argtypes = [ctypes.c_void_p]
+    library.MagickTrimImage.argtypes = [ctypes.c_void_p,
+                                        ctypes.c_double]
 
     library.MagickGetNumberImages.argtypes = [ctypes.c_void_p]
     library.MagickGetNumberImages.restype = ctypes.c_size_t

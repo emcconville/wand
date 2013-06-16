@@ -338,6 +338,19 @@ def test_trim(fx_asset):
         newx, newy = img.size
         assert newx < oldx
         assert newy < oldy
+
+
+def test_trim_fuzz(fx_asset):
+    with Image(filename=str(fx_asset.join('trimtest.png'))) as img:
+        img.trim()
+        trimx, trimy = img.size
+        img.trim(fuzz=10000)
+        fuzzx, fuzzy = img.size
+        assert fuzzx < trimx
+        assert fuzzy < trimy
+
+
+def test_trim_color(fx_asset):
     with Image(filename=str(fx_asset.join('trim-color-test.png'))) as img:
         assert img.size == (100, 100)
         with Color('blue') as blue:
