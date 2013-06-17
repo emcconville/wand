@@ -1,6 +1,14 @@
 Wand Changelog
 ==============
 
+Version 0.3.1
+-------------
+
+To be released.
+
+- Fix :exc:`~exceptions.ImportError` on Windows.
+
+
 .. _changelog-0.3.0:
 
 Version 0.3.0

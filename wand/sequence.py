@@ -8,7 +8,7 @@ import collections
 import contextlib
 import numbers
 
-from .api import library
+from .api import libmagick, library
 from .compat import binary, xrange
 from .image import BaseImage, ImageProperty
 from .version import MAGICK_VERSION_INFO
@@ -123,9 +123,9 @@ class Sequence(ImageProperty, collections.MutableSequence):
         tmp_idx = library.MagickGetIteratorIndex(wand)
         library.MagickSetIteratorIndex(wand, index)
         image = library.GetImageFromMagickWand(wand)
-        exc = library.AcquireExceptionInfo()
-        single_image = library.CloneImages(image, binary(str(index)), exc)
-        library.DestroyExceptionInfo(exc)
+        exc = libmagick.AcquireExceptionInfo()
+        single_image = libmagick.CloneImages(image, binary(str(index)), exc)
+        libmagick.DestroyExceptionInfo(exc)
         single_wand = library.NewMagickWandFromImage(single_image)
         library.MagickSetIteratorIndex(wand, tmp_idx)
         instance = SingleImage(single_wand, self.image, image)
@@ -284,7 +284,7 @@ class SingleImage(BaseImage):
         image = library.GetImageFromMagickWand(wand)
         i = 0
         while self.c_original_resource != image and image:
-            image = library.GetNextImageInList(image)
+            image = libmagick.GetNextImageInList(image)
             i += 1
         assert image
         assert self.c_original_resource == image

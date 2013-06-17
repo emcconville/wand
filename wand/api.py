@@ -476,8 +476,8 @@ try:
 
     library.MagickRemoveImage.argtypes = [ctypes.c_void_p]
 
-    library.GetNextImageInList.argtypes = [ctypes.c_void_p]
-    library.GetNextImageInList.restype = ctypes.c_void_p
+    libmagick.GetNextImageInList.argtypes = [ctypes.c_void_p]
+    libmagick.GetNextImageInList.restype = ctypes.c_void_p
 
     library.MagickGetImageDelay.argtypes = [ctypes.c_void_p]
     library.MagickGetImageDelay.restype = ctypes.c_ssize_t
@@ -490,15 +490,15 @@ try:
     library.GetImageFromMagickWand.argtypes = [ctypes.c_void_p]
     library.GetImageFromMagickWand.restype = ctypes.c_void_p
 
-    library.CloneImages.argtypes = [ctypes.c_void_p, ctypes.c_char_p,
-                                    ctypes.c_void_p]
-    library.CloneImages.restype = ctypes.c_void_p
+    libmagick.CloneImages.argtypes = [ctypes.c_void_p, ctypes.c_char_p,
+                                      ctypes.c_void_p]
+    libmagick.CloneImages.restype = ctypes.c_void_p
 
-    library.AcquireExceptionInfo.argtypes = []
-    library.AcquireExceptionInfo.restype = ctypes.c_void_p
+    libmagick.AcquireExceptionInfo.argtypes = []
+    libmagick.AcquireExceptionInfo.restype = ctypes.c_void_p
 
-    library.DestroyExceptionInfo.argtypes = [ctypes.c_void_p]
-    library.DestroyExceptionInfo.restype = ctypes.c_void_p
+    libmagick.DestroyExceptionInfo.argtypes = [ctypes.c_void_p]
+    libmagick.DestroyExceptionInfo.restype = ctypes.c_void_p
 
     library.MagickGetSize.argtypes = [ctypes.c_void_p,
                                       ctypes.POINTER(ctypes.c_uint),
