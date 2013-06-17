@@ -63,7 +63,7 @@ def display(image, server_name=':0'):
     else:
         library.MagickDisplayImage.argtypes = [ctypes.c_void_p,
                                                ctypes.c_char_p]
-        library.MagickDisplayImage(image.wand, str(server_name))
+        library.MagickDisplayImage(image.wand, str(server_name).encode())
 
 
 if __name__ == '__main__':
