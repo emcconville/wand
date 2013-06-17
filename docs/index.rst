@@ -7,7 +7,7 @@ Wand is a :mod:`ctypes`-based simple ImageMagick_ binding for Python. ::
     from wand.display import display
 
     with Image(filename='mona-lisa.png') as img:
-        print img.size
+        print(img.size)
         for r in 1, 2, 3:
             with img.clone() as i:
                 i.resize(int(i.width * r * 0.25), int(i.height * r * 0.25))

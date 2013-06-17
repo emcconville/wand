@@ -97,7 +97,7 @@ an image by ``[left:right, top:bottom]`` with maintaining the original:
    >>> img.size
    (300, 300)
    >>> with img[10:50, 20:100] as cropped:
-   ...     print cropped.size
+   ...     print(cropped.size)
    ...
    (40, 80)
    >>> img.size

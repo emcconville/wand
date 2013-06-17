@@ -23,11 +23,12 @@ The most frequently used way is just to open an image by its filename.
 :class:`~wand.image.Image`'s constructor can take the parameter named
 ``filename``::
 
+    from __future__ import print_function
     from wand.image import Image
 
     with Image(filename='pikachu.png') as img:
-        print 'width =', img.width
-        print 'height =', img.height
+        print('width =', img.width)
+        print('height =', img.height)
 
 .. note::
 
@@ -50,14 +51,15 @@ contained in :class:`~StringIO.StringIO`, read by :func:`urllib2.urlopen()`),
 it can be read by :class:`~wand.image.Image` constructor's ``file`` parameter.
 It takes all file-like objects which implements :meth:`~file.read()` method::
 
+    from __future__ import print_function
     from urllib2 import urlopen
     from wand.image import Image
 
     response = urlopen('https://stylesha.re/minhee/29998/images/100x100')
     try:
         with Image(file=response) as img:
-            print 'format =', img.format
-            print 'size =', img.size
+            print('format =', img.format)
+            print('size =', img.size)
     finally:
         response.close()
 
@@ -74,14 +76,15 @@ Read a blob
 If you have just a binary string (:class:`str`) of the image, you can pass
 it into :class:`~wand.image.Image` constructor's ``blob`` parameter to read::
 
+    from __future__ import print_function
     from wand.image import Image
 
     with open('pikachu.png') as f:
         image_binary = f.read()
 
     with Image(blob=image_binary) as img:
-        print 'width =', img.width
-        print 'height =', img.height
+        print('width =', img.width)
+        print('height =', img.height)
 
 It is a way of the lowest level to read an image. There will probably not be
 many cases to use it.
@@ -124,7 +127,7 @@ give the hint which indicates file format of an image to read --- optional
     from wand.image import Image
 
     with Image(blob=image_binary, format='ico') as image:
-        print image.format
+        print(image.format)
 
 .. versionadded:: 0.2.1
    The ``format`` parameter to :class:`~wand.image.Image` constructor.
