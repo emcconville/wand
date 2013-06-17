@@ -65,6 +65,15 @@ MacPorts
 
       $ sudo port install imagemagick
 
+   If your Python in not installed using MacPorts, you have to export
+   :envvar:`MAGICK_HOME` path as well.  Because Python that is not installed
+   using MacPorts doesn't look up :file:`/opt/local`, the default path prefix
+   of MacPorts packages.
+
+   .. sourcecode:: console
+
+      $ export MAGICK_HOME=/opt/local
+
 .. _Homebrew: http://mxcl.github.com/homebrew/
 .. _MacPorts: http://www.macports.org/
 
