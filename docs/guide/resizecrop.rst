@@ -115,21 +115,21 @@ For example, if you want to crop your image to 300x300 pixels
 and then scale it by 2x for a final size of 600x600 pixels,
 you can call::
 
-   img.transform('300x300', '200%')
+    img.transform('300x300', '200%')
 
-Other example calls: ::
+Other example calls::
 
-   # crop top left corner
-   img.transform('50%')
+    # crop top left corner
+    img.transform('50%')
 
-   # scale height to 100px and preserve aspect ratio
-   img.transform(resize='x100')
+    # scale height to 100px and preserve aspect ratio
+    img.transform(resize='x100')
 
-   # if larger than 640x480, fit within box, preserving aspect ratio
-   img.transform(resize='640x480>')
+    # if larger than 640x480, fit within box, preserving aspect ratio
+    img.transform(resize='640x480>')
 
-   # crop a 320x320 square starting at 160x160 from the top left
-   img.transform(crop='320+160+160')
+    # crop a 320x320 square starting at 160x160 from the top left
+    img.transform(crop='320+160+160')
 
 .. seealso::
 
@@ -140,6 +140,7 @@ Other example calls: ::
      geometry strings.
 
   __ http://www.imagemagick.org/script/command-line-processing.php#geometry
+
 
 .. _seam-carving:
 
