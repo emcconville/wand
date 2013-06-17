@@ -6,7 +6,7 @@ Wand Changelog
 Version 0.3.0
 -------------
 
-To be released.
+Released on June 17, 2013.
 
 .. seealso::
 
