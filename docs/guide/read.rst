@@ -142,7 +142,7 @@ To open an empty image, you have to set its width and height::
 
     from wand.image import Image
 
-    with Image(width=200, height=100, background=bg) as img:
+    with Image(width=200, height=100) as img:
         img.save(filename='200x100-transparent.png')
 
 Its background color will be transparent by default.  You can set ``background``
