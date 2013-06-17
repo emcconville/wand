@@ -157,27 +157,42 @@ to extend it.
 In short: you can magickally resize images without distortion!
 See the following examples:
 
-+------------------------------------+----------------------------------+
-| Original                           | Resized                          |
-+------------------------------------+----------------------------------+
-| .. image:: ../_static/original.jpg | .. image:: ../_static/resize.jpg |
-|    :width: 187                     |    :width: 140                   |
-+------------------------------------+----------------------------------+
-| Cropped                            | **Seam carving**                 |
-+------------------------------------+----------------------------------+
-| .. image:: ../_static/crop.jpg     | .. image:: ../_static/liquid.jpg |
-|    :width: 140                     |    :width: 140                   |
-+------------------------------------+----------------------------------+
++-------------------------------------+---------------------------------------+
+| Original                            | Resized                               |
++-------------------------------------+---------------------------------------+
+| .. image:: ../_images/seam.jpg      | .. image:: ../_images/seam-resize.jpg |
+|    :alt: seam.jpg                   |    :alt: seam-resize.jpg              |
++-------------------------------------+---------------------------------------+
+| Cropped                             | **Seam carving**                      |
++-------------------------------------+---------------------------------------+
+| .. image:: ../_images/seam-crop.jpg | .. image:: ../_images/seam-liquid.jpg |
+|    :alt: seam-crop.jpg              |    :alt: seam-liquid.jpg              |
++-------------------------------------+---------------------------------------+
 
 You can easily rescale images with seam carving using Wand:
 use :meth:`Image.liquid_rescale() <wand.image.BaseImage.liquid_rescale>`
 method:
 
->>> img.size
-(375, 485)
->>> img.liquid_rescale(281, 485)
->>> img.size
-(281, 485)
+>>> image = Image(filename='seam.jpg')
+>>> image.size
+(320, 234)
+>>> with image.clone() as resize:
+...     resize.resize(234, 234)
+...     resize.save(filename='seam-resize.jpg')
+...     resize.size
+...
+(234, 234)
+>>> with image[:234, :] as crop:
+...     crop.save(filename='seam-crop.jpg')
+...     crop.size
+...
+(234, 234)
+>>> with image.clone() as liquid:
+...     liquid.liquid_rescale(234, 234)
+...     liquid.save(filename='seam-liquid.jpg')
+...     liquid.size
+...
+(234, 234)
 
 .. note::
 
@@ -189,5 +204,15 @@ method:
 
    `Seam carving`_ --- Wikipedia
       The article which explains what seam carving is on Wikipedia.
+
+.. note::
+
+   The image :file:`seam.jpg` used in the above example is taken by
+   `D. Sharon Pruitt`_ and licensed under `CC-BY-2.0`_.
+   It can be found the `original photography from Flickr`__.
+
+   .. _D. Sharon Pruitt: http://www.pinksherbet.com/
+   .. _CC-BY-2.0: http://creativecommons.org/licenses/by/2.0/
+   __ http://www.flickr.com/photos/pinksherbet/2443468531/
 
 .. _Seam carving: http://en.wikipedia.org/wiki/Seam_carving
