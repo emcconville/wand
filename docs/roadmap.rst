@@ -4,12 +4,8 @@ Roadmap
 Version 0.4
 -----------
 
-Jython compatibility (:issue:`9`)
-   Wand 0.4 will support Jython 2.7+.  Jython 2.7 is (June 2012) currently
-   under alpha release, and Wand has been tested on it and fixed incompatible
-   things.
-
-   It has been developed in the branch :branch:`jython`.
+CFFI
+   Wand 0.4 will move to CFFI from ctypes.
 
 Image layers (:issue:`22`)
    Wand 0.4 will be able to deal with layers of an image.
@@ -19,11 +15,6 @@ Image layers (:issue:`22`)
 
 Very future versions
 --------------------
-
-Animations (:issue:`1`)
-   Wand will finally support animations like GIF and SWF in the future.
-
-   Its branch name will be :branch:`animation`.
 
 PIL compatibility layer
    PIL has very long history and the most of Python projects still
