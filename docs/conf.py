@@ -46,6 +46,22 @@ if os.environ.get('READTHEDOCS', 0):
     sys.modules['wand.version'].MAGICK_RELEASE_DATE = \
     sys.modules['wand.version'].QUANTUM_DEPTH = None
 
+    html_context = {}
+
+    class PathList(list):
+        """Fake list to ignore ReadTheDocs.org's hack."""
+
+        def insert(self, index, value):
+            if index == 0:
+                index = 1
+                html_context['rtd_hack_template_path'] = value
+            super(PathList, self).insert(index, value)
+
+        def __reduce__(self):
+            return list, (list(self),)
+else:
+    PathList = list
+
 # -- General configuration -----------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -57,7 +73,7 @@ extensions = ['sphinx.ext.autodoc', 'sphinx.ext.intersphinx',
               'sphinx.ext.extlinks', 'sphinx.ext.todo']
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = PathList(['_templates'])
 
 # The suffix of source filenames.
 source_suffix = '.rst'
@@ -151,7 +167,7 @@ html_logo = '_static/wand.png'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = PathList(['_static'])
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
@@ -274,4 +290,3 @@ except ImportError, e:
     html_theme_options = {}
     html_logo = None
     html_style = None
-
