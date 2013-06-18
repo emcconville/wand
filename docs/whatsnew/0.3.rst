@@ -24,7 +24,7 @@ Sequence
 --------
 
 Wand now adds supports to sequential images like animated :mimetype:`image/gif`
-images and :mimetype:`image/gif` images that contains multiple icons.
+images and :mimetype:`image/ico` images that contains multiple icons.
 To distinguish between each single image and the container image,
 newly introduced class :class:`~wand.sequence.SingleImage` has been added.
 The most of operations and properties are commonly available for both types,
