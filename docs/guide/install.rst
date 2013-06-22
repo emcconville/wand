@@ -105,12 +105,12 @@ Windows 32-bit
 Windows 64-bit
    ImageMagick-6.7.7-6-Q16-windows-x64-dll.exe__
 
-.. image:: ../_static/windows-setup.png
+.. image:: ../_images/windows-setup.png
 
 Note that you have to check :guilabel:`Install development headers and
 libraries for C and C++` to make Wand able to link to it.
 
-.. image:: ../_static/windows-envvar.png
+.. image:: ../_images/windows-envvar.png
    :width: 465
    :height: 315
 
