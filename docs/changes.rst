@@ -4,7 +4,7 @@ Wand Changelog
 Version 0.3.1
 -------------
 
-To be released.
+Released on June 23, 2013.
 
 - Fix :exc:`~exceptions.ImportError` on Windows.
 
