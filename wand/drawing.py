@@ -15,6 +15,7 @@ from .color import Color
 from .compat import binary, string_type, text, text_type, xrange
 from .image import Image
 from .resource import Resource
+from .exceptions import WandLibraryVersionError
 
 __all__ = ('FONT_METRICS_ATTRIBUTES', 'TEXT_ALIGN_TYPES',
            'TEXT_DECORATION_TYPES', 'GRAVITY_TYPES', 'Drawing', 'FontMetrics')
@@ -237,10 +238,14 @@ class Drawing(Resource):
         It also can be set.
 
         """
+        if library.DrawGetTextInterlineSpacing is None:
+            raise WandLibraryVersionError('The installed version of ImageMagick does not support this feature')
         return library.DrawGetTextInterlineSpacing(self.resource)
 
     @text_interline_spacing.setter
     def text_interline_spacing(self, spacing):
+        if library.DrawSetTextInterlineSpacing is None:
+            raise WandLibraryVersionError('The installed version of ImageMagick does not support this feature')
         if not isinstance(spacing, numbers.Real):
             raise TypeError('expeted a numbers.Real, but got ' + repr(spacing))
         library.DrawSetTextInterlineSpacing(self.resource, spacing)

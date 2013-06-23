@@ -29,6 +29,9 @@ class WandError(WandException):
 class WandFatalError(WandException):
     """Base class for Wand-related fatal errors."""
 
+class WandLibraryVersionError(WandException):
+    """Base class for Wand-related ImageMagick version errors."""
+
 
 #: (:class:`list`) A list of error/warning domains, these descriptions and
 #: codes. The form of elements is like: (domain name, description, codes).
