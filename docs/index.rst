@@ -103,6 +103,18 @@ The `list archive`_ provided by Librelist_ is synchronized every hour.
 .. _Librelist: http://librelist.com/
 
 
+Stack Overflow
+''''''''''''''
+
+There's a Stack Overflow tag for Wand:
+
+http://stackoverflow.com/questions/tagged/wand
+
+Freely ask questions about Wand including troubleshooting.  Thanks for
+sindikat_'s contribution.
+
+.. _sindikat: http://stackoverflow.com/users/596361/sindikat
+
 
 Quora
 '''''
