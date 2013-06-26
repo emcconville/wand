@@ -10,8 +10,8 @@ import io
 import sys
 import types
 
-__all__ = ('PY3', 'binary', 'binary_type', 'file_types', 'string_type',
-           'text', 'text_type', 'xrange')
+__all__ = ('PY3', 'binary', 'binary_type', 'encode_filename', 'file_types',
+           'string_type', 'text', 'text_type', 'xrange')
 
 
 #: (:class:`bool`) Whether it is Python 3.x or not.
@@ -74,3 +74,13 @@ xrange = range if PY3 else xrange
 #: (:class:`type`, :class:`tuple`) Types for file objects that have
 #: ``fileno()``.
 file_types = io.RawIOBase if PY3 else (io.RawIOBase, types.FileType)
+
+
+def encode_filename(filename):
+    """If ``filename`` is a :data:`text_type`, encode it to
+    :data:`binary_type` according to filesystem's default encoding.
+
+    """
+    if isinstance(filename, text_type):
+        return filename.encode(sys.getfilesystemencoding())
+    return filename

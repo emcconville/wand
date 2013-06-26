@@ -19,7 +19,8 @@ import weakref
 from . import compat
 from .api import MagickPixelPacket, libc, libmagick, library
 from .color import Color
-from .compat import binary, binary_type, file_types, string_type, text, xrange
+from .compat import (binary, binary_type, encode_filename, file_types,
+                     string_type, text, xrange)
 from .exceptions import WandException
 from .resource import DestroyedResourceError, Resource
 from .font import Font
@@ -1749,7 +1750,8 @@ class Image(BaseImage):
                 blob = b''.join(blob)
             r = library.MagickReadImageBlob(self.wand, blob, len(blob))
         elif filename is not None:
-            r = library.MagickReadImage(self.wand, binary(filename))
+            filename = encode_filename(filename)
+            r = library.MagickReadImage(self.wand, filename)
         if not r:
             self.raise_exception()
 
@@ -1923,7 +1925,7 @@ class Image(BaseImage):
             if not isinstance(filename, string_type):
                 raise TypeError('filename must be a string, not ' +
                                 repr(filename))
-            filename = binary(filename)
+            filename = encode_filename(filename)
             if len(self.sequence) > 1:
                 r = library.MagickWriteImages(self.wand, filename, True)
             else:

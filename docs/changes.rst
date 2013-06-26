@@ -1,6 +1,14 @@
 Wand Changelog
 ==============
 
+Version 0.3.2
+-------------
+
+To be released.
+
+- Fix incorrect encoding of filenames.  [:issue:`122`]
+
+
 Version 0.3.1
 -------------
 

@@ -2,6 +2,7 @@
 import io
 import os
 import os.path
+import shutil
 import tempfile
 import warnings
 
@@ -9,6 +10,7 @@ from pytest import mark, raises
 
 from wand.image import ClosedImageError, Image
 from wand.color import Color
+from wand.compat import PY3, text, text_type
 from wand.exceptions import MissingDelegateError
 from wand.font import Font
 
@@ -42,7 +44,7 @@ def test_clear_image(fx_asset):
         assert img.size == (800,600)
 
 
-def test_read_from_file(fx_asset):
+def test_read_from_filename(fx_asset):
     with Image() as img:
         img.read(filename=str(fx_asset.join('mona-lisa.jpg')))
         assert img.width == 402
@@ -53,6 +55,18 @@ def test_read_from_file(fx_asset):
             img.clear()
         blob = fx_asset.join('mona-lisa.jpg').read('rb')
         img.read(blob=blob)
+        assert img.width == 402
+
+
+def test_read_from_unicode_filename(fx_asset, tmpdir):
+    """https://github.com/dahlia/wand/issues/122"""
+    filename = '모나리자.jpg'
+    if not PY3:
+        filename = filename.decode('utf-8')
+    path = os.path.join(text_type(tmpdir), filename)  # workaround py.path bug
+    shutil.copyfile(str(fx_asset.join('mona-lisa.jpg')), path)
+    with Image() as img:
+        img.read(filename=text(path))
         assert img.width == 402
 
 
@@ -81,6 +95,17 @@ def test_new_from_filename(fx_asset):
         img.wand
     with raises(IOError):
         Image(filename=str(fx_asset.join('not-exists.jpg')))
+
+
+def test_new_from_unicode_filename(fx_asset, tmpdir):
+    """https://github.com/dahlia/wand/issues/122"""
+    filename = '모나리자.jpg'
+    if not PY3:
+        filename = filename.decode('utf-8')
+    path = os.path.join(text_type(tmpdir), filename)  # workaround py.path bug
+    shutil.copyfile(str(fx_asset.join('mona-lisa.jpg')), path)
+    with Image(filename=text(path)) as img:
+        assert img.width == 402
 
 
 def test_new_from_blob(fx_asset):
@@ -128,6 +153,17 @@ def test_save_to_filename(fx_asset):
     with Image(filename=savefile) as saved:
         assert saved.size == (402, 599)
     os.remove(savefile)
+
+
+def test_save_to_unicode_filename(fx_asset, tmpdir):
+    filename = '모나리자.jpg'
+    if not PY3:
+        filename = filename.decode('utf-8')
+    path = os.path.join(text_type(tmpdir), filename)  # workaround py.path bug
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as orig:
+        orig.save(filename=path)
+    with Image(filename=path) as img:
+        assert img.width == 402
 
 
 def test_save_to_file(fx_asset):
