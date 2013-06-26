@@ -2259,7 +2259,7 @@ class Metadata(ImageProperty, collections.Mapping):
         """
         image = self.image
         if not isinstance(k, string_type):
-            raise TypeError('k must be a string, not ' + repr(format))
+            raise TypeError('k must be a string, not ' + repr(k))
         v = library.MagickGetImageProperty(image.wand, binary(k))
         if bool(v) is False:
             raise KeyError(k)
@@ -2270,7 +2270,7 @@ class Metadata(ImageProperty, collections.Mapping):
         image = self.image
         num = ctypes.c_size_t()
         props_p = library.MagickGetImageProperties(image.wand, b'', num)
-        props = [props_p[i] for i in xrange(num.value)]
+        props = [text(props_p[i]) for i in xrange(num.value)]
         library.MagickRelinquishMemory(props_p)
         return iter(props)
 

@@ -10,7 +10,7 @@ from pytest import mark, raises
 
 from wand.image import ClosedImageError, Image
 from wand.color import Color
-from wand.compat import PY3, text, text_type
+from wand.compat import PY3, text, text_type, string_type
 from wand.exceptions import MissingDelegateError
 from wand.font import Font
 
@@ -923,6 +923,8 @@ def test_metadata(fx_asset):
     """Test metadata api"""
     with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
         assert 52 <= len(img.metadata) <= 55
+        for key in img.metadata:
+            assert isinstance(key, string_type)
         assert 'exif:ApertureValue' in img.metadata
         assert 'exif:UnknownValue' not in img.metadata
         assert img.metadata['exif:ApertureValue'] == '192/32'
