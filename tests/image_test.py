@@ -1089,14 +1089,16 @@ def test_setgravity():
         assert img.gravity == 'center'
 
 
-def test_normalize_default(fx_asset):
+def test_normalize_default(display, fx_asset):
     with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
+        display(img)
         left_top = img[0, 0]
         left_bottom = img[0, -1]
         right_top = img[-1, 0]
         right_bottom = img[-1, -1]
         print(left_top, left_bottom, right_top, right_bottom)
         img.normalize()
+        display(img)
         print(img[0,0], img[0,-1], img[-1,0], img[-1,-1])
         assert img[0, 0] != left_top
         assert img[0, -1] != left_bottom
