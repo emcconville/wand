@@ -30,7 +30,11 @@ class WandFatalError(WandException):
     """Base class for Wand-related fatal errors."""
 
 class WandLibraryVersionError(WandException):
-    """Base class for Wand-related ImageMagick version errors."""
+    """Base class for Wand-related ImageMagick version errors.
+
+    .. versionadded:: 0.3.2
+
+    """
 
 
 #: (:class:`list`) A list of error/warning domains, these descriptions and

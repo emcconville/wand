@@ -9,6 +9,16 @@ To be released.
 - Fix incorrect encoding of filenames.  [:issue:`122`]
 - Fix key type of :attr:`Image.metadata <wand.image.Image.metadata>`
   dictionary to :class:`str` from :class:`bytes` in Python 3.
+- Fixed CentOS compatibility [:issue:`116`, :issue:`124` by Pierre Vanliefland]
+
+  - Made :c:func:`DrawSetTextInterlineSpacing()` and
+    :c:func:`DrawGetTextInterlineSpacing()` optional.
+  - Added exception in drawing API when trying to use
+    :c:func:`DrawSetTextInterlineSpacing()` and
+    :c:func:`DrawGetTextInterlineSpacing()` functions when they are not
+    available.
+  - Added :exc:`~wand.exceptions.WandLibraryVersionError` class for
+    library versions issues.
 
 
 Version 0.3.1
