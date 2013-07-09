@@ -609,8 +609,11 @@ try:
     library.DrawSetTextEncoding.argtypes = [ctypes.c_void_p,
                                             ctypes.c_char_p]
 
-    library.DrawSetTextInterlineSpacing.argtypes = [ctypes.c_void_p,
-                                                    ctypes.c_double]
+    try:
+        library.DrawSetTextInterlineSpacing.argtypes = [ctypes.c_void_p,
+                                                        ctypes.c_double]
+    except AttributeError:
+        library.DrawSetTextInterlineSpacing = None
 
     library.DrawSetTextInterwordSpacing.argtypes = [ctypes.c_void_p,
                                                     ctypes.c_double]
@@ -642,8 +645,11 @@ try:
     library.DrawGetTextEncoding.argtypes = [ctypes.c_void_p]
     library.DrawGetTextEncoding.restype = ctypes.c_char_p
 
-    library.DrawGetTextInterlineSpacing.argtypes = [ctypes.c_void_p]
-    library.DrawGetTextInterlineSpacing.restype = ctypes.c_double
+    try:
+        library.DrawGetTextInterlineSpacing.argtypes = [ctypes.c_void_p]
+        library.DrawGetTextInterlineSpacing.restype = ctypes.c_double
+    except AttributeError:
+        library.DrawGetTextInterlineSpacing = None
 
     library.DrawGetTextInterwordSpacing.argtypes = [ctypes.c_void_p]
     library.DrawGetTextInterwordSpacing.restype = ctypes.c_double
