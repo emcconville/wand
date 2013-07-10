@@ -4,10 +4,10 @@ Wand Changelog
 Version 0.3.2
 -------------
 
-To be released.
+Released on July 11, 2013.
 
-- Fix incorrect encoding of filenames.  [:issue:`122`]
-- Fix key type of :attr:`Image.metadata <wand.image.Image.metadata>`
+- Fixed incorrect encoding of filenames.  [:issue:`122`]
+- Fixed key type of :attr:`Image.metadata <wand.image.Image.metadata>`
   dictionary to :class:`str` from :class:`bytes` in Python 3.
 - Fixed CentOS compatibility [:issue:`116`, :issue:`124` by Pierre Vanliefland]
 
@@ -26,7 +26,7 @@ Version 0.3.1
 
 Released on June 23, 2013.
 
-- Fix :exc:`~exceptions.ImportError` on Windows.
+- Fixed :exc:`~exceptions.ImportError` on Windows.
 
 
 .. _changelog-0.3.0:
