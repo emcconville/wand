@@ -58,6 +58,7 @@ Mailing list
 
 List archive
    http://librelist.com/browser/wand/
+   http://dir.gmane.org/gmane.comp.python.wand
 
 Stack Overflow tag (Q&A)
    http://stackoverflow.com/questions/tagged/wand
