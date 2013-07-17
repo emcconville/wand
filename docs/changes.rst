@@ -1,6 +1,15 @@
 Wand Changelog
 ==============
 
+Version 0.3.3
+-------------
+
+To be released.
+
+- Fixed broken :func:`~wand.display.display()` on Python 3.
+  [:issue:`126`]
+
+
 Version 0.3.2
 -------------
 
