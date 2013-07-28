@@ -1913,6 +1913,7 @@ class Image(BaseImage):
             if isinstance(file, file_types) and hasattr(libc, 'fdopen'):
                 fd = libc.fdopen(file.fileno(), file.mode)
                 r = library.MagickWriteImageFile(self.wand, fd)
+                libc.fflush(fd)
                 if not r:
                     self.raise_exception()
             else:
