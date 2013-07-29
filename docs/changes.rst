@@ -6,6 +6,8 @@ Version 0.3.3
 
 To be released.
 
+- Add :attr:`Drawing.stroke_color <wand.drawing.Drawing.stroke_color>`.
+  [:issue:`129` by Zeray Rice]
 - Fixed a bug that :meth:`Image.save() <wand.image.Image.save>` to stream
   truncates data.  [:issue:`128` by Michael Allen]
 - Fixed broken :func:`~wand.display.display()` on Python 3.
