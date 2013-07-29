@@ -597,6 +597,9 @@ try:
     library.DrawSetFillColor.argtypes = [ctypes.c_void_p,
                                          ctypes.c_void_p]
 
+    library.DrawSetStrokeColor.argtypes = [ctypes.c_void_p, 
+                                           ctypes.c_void_p]
+
     library.DrawSetTextAlignment.argtypes = [ctypes.c_void_p,
                                              ctypes.c_int]
 
@@ -626,6 +629,9 @@ try:
 
     library.DrawGetFillColor.argtypes = [ctypes.c_void_p,
                                          ctypes.c_void_p]
+
+    library.DrawGetStrokeColor.argtypes = [ctypes.c_void_p, 
+                                           ctypes.c_void_p]
 
     library.DrawGetFont.argtypes = [ctypes.c_void_p]
     library.DrawGetFont.restype = ctypes.c_char_p

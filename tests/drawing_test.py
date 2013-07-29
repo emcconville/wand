@@ -32,6 +32,11 @@ def test_set_get_fill_color(fx_wand):
         fx_wand.fill_color = black
     assert fx_wand.fill_color == Color('#333333')
 
+def test_set_get_stroke_color(fx_wand):
+    with Color('#333333') as black:
+        fx_wand.stroke_color = black
+    assert fx_wand.stroke_color == Color('#333333')
+
 
 def test_set_get_text_alignment(fx_wand):
     fx_wand.text_alignment = 'center'

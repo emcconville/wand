@@ -156,6 +156,27 @@ class Drawing(Resource):
             library.DrawSetFillColor(self.resource, color.resource)
 
     @property
+    def stroke_color(self):
+        """(:class:`~wand.color.Color`) The current color of stroke.
+        It also can be set.
+        
+        """
+        pixel = library.NewPixelWand()
+        library.DrawGetStrokeColor(self.resource, pixel)
+        size = ctypes.sizeof(MagickPixelPacket)
+        buffer = ctypes.create_string_buffer(size)
+        library.PixelGetMagickColor(pixel, buffer)
+        return Color(raw=buffer)
+
+    @stroke_color.setter
+    def stroke_color(self, color):
+        if not isinstance(color, Color):
+            raise TypeError('color must be a wand.color.Color object, not ' + 
+                            repr(color))
+        with color:
+            library.DrawSetStrokeColor(self.resource, color.resource)
+
+    @property
     def text_alignment(self):
         """(:class:`basestring`) The current text alignment setting.
         It's a string value from :const:`TEXT_ALIGN_TYPES` list.
