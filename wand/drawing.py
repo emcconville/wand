@@ -133,7 +133,7 @@ class Drawing(Resource):
         elif size < 0.0:
             raise ValueError('cannot be less then 0.0, but got ' + repr(size))
         library.DrawSetFontSize(self.resource, size)
-
+    
     @property
     def fill_color(self):
         """(:class:`~wand.color.Color`) The current color to fill.
@@ -175,6 +175,18 @@ class Drawing(Resource):
                             repr(color))
         with color:
             library.DrawSetStrokeColor(self.resource, color.resource)
+
+    @property
+    def stroke_width(self):
+        return library.DrawGetStrokeWidth(self.resource)
+
+    @stroke_width.setter
+    def stroke_width(self, width):
+        if not isinstance(width, numbers.Real):
+           raise TypeError('expected a numbers.Real, but got ' + repr(width)) 
+        elif width < 0.0:
+           raise ValueError('cannot be less then 0.0, but got ' + repr(width))
+        library.DrawSetStrokeWidth(self.resource, width)
 
     @property
     def text_alignment(self):
