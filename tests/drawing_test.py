@@ -37,6 +37,9 @@ def test_set_get_stroke_color(fx_wand):
         fx_wand.stroke_color = black
     assert fx_wand.stroke_color == Color('#333333')
 
+def test_set_get_stroke_width(fx_wand):
+    fx_wand.stroke_width = 5
+    assert fx_wand.stroke_width == 5
 
 def test_set_get_text_alignment(fx_wand):
     fx_wand.text_alignment = 'center'

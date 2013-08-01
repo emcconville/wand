@@ -178,6 +178,7 @@ class Drawing(Resource):
 
     @property
     def stroke_width(self):
+        """(:class:`numbers.Real`) The stroke width.  It also can be set."""
         return library.DrawGetStrokeWidth(self.resource)
 
     @stroke_width.setter
