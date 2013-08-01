@@ -133,7 +133,7 @@ class Drawing(Resource):
         elif size < 0.0:
             raise ValueError('cannot be less then 0.0, but got ' + repr(size))
         library.DrawSetFontSize(self.resource, size)
-    
+
     @property
     def fill_color(self):
         """(:class:`~wand.color.Color`) The current color to fill.
