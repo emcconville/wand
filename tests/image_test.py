@@ -1186,3 +1186,14 @@ def test_histogram(fx_asset):
         assert Color('srgb(0,0,255)') in h
         assert h[Color('srgb(0,255,0)')] == 5000
         assert h[Color('srgb(0,0,255)')] == 5000
+
+
+def test_gaussian_blur(fx_asset, display):
+    with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
+        before = img[100, 100]
+        img.gaussian_blur(30, 10)
+        after = img[100, 100]
+        assert before != after
+        assert 0.84 <= after.red <= 0.85
+        assert 0.74 <= after.green <= 0.75
+        assert 0.655 <= after.blue < 0.67

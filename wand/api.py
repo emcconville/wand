@@ -459,6 +459,10 @@ try:
     library.MagickTrimImage.argtypes = [ctypes.c_void_p,
                                         ctypes.c_double]
 
+    library.MagickGaussianBlurImage.argtypes = [ctypes.c_void_p,
+                                                ctypes.c_double,
+                                                ctypes.c_double]
+
     library.MagickGetNumberImages.argtypes = [ctypes.c_void_p]
     library.MagickGetNumberImages.restype = ctypes.c_size_t
 
