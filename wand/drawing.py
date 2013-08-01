@@ -177,6 +177,19 @@ class Drawing(Resource):
             library.DrawSetStrokeColor(self.resource, color.resource)
 
     @property
+    def stroke_width(self):
+        """(:class:`numbers.Real`) The stroke width.  It also can be set."""
+        return library.DrawGetStrokeWidth(self.resource)
+
+    @stroke_width.setter
+    def stroke_width(self, width):
+        if not isinstance(width, numbers.Real):
+           raise TypeError('expected a numbers.Real, but got ' + repr(width)) 
+        elif width < 0.0:
+           raise ValueError('cannot be less then 0.0, but got ' + repr(width))
+        library.DrawSetStrokeWidth(self.resource, width)
+
+    @property
     def text_alignment(self):
         """(:class:`basestring`) The current text alignment setting.
         It's a string value from :const:`TEXT_ALIGN_TYPES` list.
