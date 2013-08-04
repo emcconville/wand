@@ -1,4 +1,3 @@
-import gc
 import platform
 import time
 
@@ -101,9 +100,8 @@ def test_string():
 
 def color_memory_leak():
     for i in xrange(5000):
-        orange = Color('orange')
-        del orange
-    gc.collect()
+        with Color('orange'):
+            pass
     time.sleep(0.02)
 
 
