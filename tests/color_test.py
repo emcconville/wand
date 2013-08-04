@@ -2,9 +2,11 @@ import platform
 import time
 
 from memory_profiler import memory_usage
+from pytest import mark
 
 from wand.color import Color
 from wand.compat import xrange
+from wand.version import MAGICK_VERSION_INFO
 
 
 def test_equals():
@@ -105,6 +107,7 @@ def color_memory_leak():
     time.sleep(0.02)
 
 
+@mark.skipif('MAGICK_VERSION_INFO <= (6, 6, 9, 7)')
 def test_memory_leak():
     """https://github.com/dahlia/wand/pull/127"""
     consumes = memory_usage((color_memory_leak, (), {}))
