@@ -4,7 +4,7 @@ Wand Changelog
 Version 0.3.3
 -------------
 
-To be released.
+Released on August 4, 2013.  It's author's birthday.
 
 - Added :meth:`Image.gaussian_blur() <wand.image.Image.gaussian_blur>` method.
 - Added :attr:`Drawing.stroke_color <wand.drawing.Drawing.stroke_color>`
