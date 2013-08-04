@@ -11,6 +11,8 @@ To be released.
   property.  [:issue:`129` by Zeray Rice]
 - Added :attr:`Drawing.stroke_width <wand.drawing.Drawing.stroke_width>`
   property.  [:issue:`130` by Zeray Rice]
+- Fixed a memory leak of :class:`~wand.color.Color` class.
+  [:issue:`127` by Wieland Morgenstern]
 - Fixed a bug that :meth:`Image.save() <wand.image.Image.save>` to stream
   truncates data.  [:issue:`128` by Michael Allen]
 - Fixed broken :func:`~wand.display.display()` on Python 3.
