@@ -45,7 +45,11 @@ setup(
     maintainer='Hong Minhee',
     maintainer_email='minhee@dahlia.kr',
     url='http://wand-py.org/',
-    tests_require=['pytest >= 2.3.0'],
+    tests_require=[
+        'pytest >= 2.3.0',
+        'memory_profiler >= 0.27',
+        'psutil >= 1.0.1'
+    ],
     extras_require={'doc': ['Sphinx >=1.0']},
     classifiers=[
         'Development Status :: 5 - Production/Stable',

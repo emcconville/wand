@@ -1,4 +1,9 @@
+import time
+
+from memory_profiler import memory_usage
+
 from wand.color import Color
+from wand.compat import xrange
 
 
 def test_equals():
@@ -90,3 +95,16 @@ def test_alpha_int8():
 def test_string():
     assert Color('black').string in ('rgb(0,0,0)', 'srgb(0,0,0)')
     assert str(Color('black')) in ('rgb(0,0,0)', 'srgb(0,0,0)')
+
+
+def color_memory_leak():
+    for i in xrange(5000):
+        orange = Color('orange')
+        del orange
+    time.sleep(0.02)
+
+
+def test_memory_leak():
+    """https://github.com/dahlia/wand/pull/127"""
+    consumes = memory_usage((color_memory_leak, (), {}))
+    assert consumes[-1] - consumes[0] <= 1.0
