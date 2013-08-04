@@ -74,15 +74,17 @@ class Color(Resource):
         if (string is None and raw is None or
             string is not None and raw is not None):
             raise TypeError('expected one argument')
-        elif raw is None:
-            pixel = library.NewPixelWand()
-            library.PixelSetColor(pixel, binary(string))
-            raw = ctypes.create_string_buffer(
+
+        self.allocated = 0
+        if raw is None:
+            self.raw = ctypes.create_string_buffer(
                 ctypes.sizeof(MagickPixelPacket)
             )
-            library.PixelGetMagickColor(pixel, raw)
-        self.raw = raw
-        self.allocated = 0
+            with self:
+                library.PixelSetColor(self.resource, binary(string))
+                library.PixelGetMagickColor(self.resource, self.raw)
+        else:
+            self.raw = raw
 
     def __getinitargs__(self):
         return self.string, None
