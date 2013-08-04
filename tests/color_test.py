@@ -109,5 +109,5 @@ def test_memory_leak():
     """https://github.com/dahlia/wand/pull/127"""
     consumes = memory_usage((color_memory_leak, (), {}))
     vm = platform.python_implementation()
-    minimum = 10.0 if vm == 'PyPy' else 1.0  # FIXME
+    minimum = 15.0 if vm == 'PyPy' else 1.0  # FIXME
     assert consumes[-1] - consumes[0] <= minimum
