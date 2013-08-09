@@ -1539,6 +1539,11 @@ class BaseImage(Resource):
         :param hue: percentage of hue rotation
         :type hue: :class:`numbers.Real`
 
+        :raises exceptions.ValueError:
+           when one or more arguments are invalid
+        
+        .. versionadded:: 
+
         """
         if not isinstance(brightness, numbers.Real):
             raise TypeError('brightness has to be a numbers.Real, not ' +
