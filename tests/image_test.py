@@ -1197,3 +1197,13 @@ def test_gaussian_blur(fx_asset, display):
         assert 0.84 <= after.red <= 0.85
         assert 0.74 <= after.green <= 0.75
         assert 0.655 <= after.blue < 0.67
+
+def test_modulate(fx_asset, display):
+    with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
+        before = img[100,100]
+        img.modulate(120, 120, 120)
+        after = img[100,100]
+        assert before != after
+        assert 0.98 <= after.red <= 0.99
+        assert 0.98 <= after.green <= 0.99
+        assert 0.96 <= after.blue <= 0.97
