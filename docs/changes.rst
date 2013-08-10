@@ -8,6 +8,8 @@ To be released
 
 - Added :meth:`Image.modulate() <wand.image.BaseImage.modulate>` method.
   [:issue:`134` by Dan P. Smith]
+- Added :meth:`Image.unsharp_mask() <wand.image.BaseImage.unsharp_mask>`
+  method.  [:issue:`136` by Volodymyr Kuznetsov]
 - Added ``'jpeg:sampling-factor'`` option to :attr:`Image.options
   <wand.image.BaseImage.options>` dictionary (and :const:`~wand.image.OPTIONS`
   constant).  [:issue:`137` by Volodymyr Kuznetsov]

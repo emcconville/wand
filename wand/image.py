@@ -1618,6 +1618,8 @@ class BaseImage(Resource):
                           the diffence amount
         :type threshold: :class:`numbers.Real`
 
+        .. versionadded:: 0.3.4
+
         """
         if not isinstance(radius, numbers.Real):
             raise TypeError('radius has to be a numbers.Real, not ' +
