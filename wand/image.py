@@ -298,6 +298,8 @@ EVALUATE_OPS = ('undefined', 'add', 'and', 'divide', 'leftshift', 'max',
 #:       Describes the ImageMagick color management operations
 #:
 #:    __ http://www.imagemagick.org/script/color-management.php
+#:
+#: .. versionadded:: 0.3.4
 COLORSPACE_TYPES = ('undefined', 'rgb', 'gray', 'transparent', 'ohta', 'lab',
                     'xyz', 'ycbcr', 'ycc', 'yiq', 'ypbpr', 'yuv', 'cmyk',
                     'srgb', 'hsb', 'hsl', 'hwb', 'rec601luma', 'rec601ycbcr',
