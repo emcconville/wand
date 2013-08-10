@@ -26,9 +26,9 @@ from .resource import DestroyedResourceError, Resource
 from .font import Font
 
 
-__all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COMPOSITE_OPERATORS',
-           'EVALUATE_OPS', 'FILTER_TYPES', 'GRAVITY_TYPES', 'IMAGE_TYPES',
-           'ORIENTATION_TYPES', 'UNIT_TYPES',
+__all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COLORSPACE_TYPES',
+           'COMPOSITE_OPERATORS', 'EVALUATE_OPS', 'FILTER_TYPES',
+           'GRAVITY_TYPES', 'IMAGE_TYPES', 'ORIENTATION_TYPES', 'UNIT_TYPES',
            'BaseImage', 'ChannelDepthDict', 'ChannelImageDict',
            'ClosedImageError', 'HistogramDict', 'Image', 'ImageProperty',
            'Iterator', 'Metadata', 'OptionDict', 'manipulative')
@@ -254,6 +254,56 @@ EVALUATE_OPS = ('undefined', 'add', 'and', 'divide', 'leftshift', 'max',
                 'laplaciannoise', 'multiplicativenoise', 'poissonnoise',
                 'uniformnoise', 'cosine', 'sine', 'addmodulus', 'mean',
                 'abs', 'exponential', 'median', 'sum')
+
+#: (:class:`tuple`) The list of colorspaces.
+#:
+#: - ``'undefined'``
+#: - ``'rgb'``
+#: - ``'gray'``
+#: - ``'transparent'``
+#: - ``'ohta'``
+#: - ``'lab'``
+#: - ``'xyz'``
+#: - ``'ycbcr'``
+#: - ``'ycc'``
+#: - ``'yiq'``
+#: - ``'ypbpr'``
+#: - ``'yuv'``
+#: - ``'cmyk'``
+#: - ``'srgb'``
+#: - ``'hsb'``
+#: - ``'hsl'``
+#: - ``'hwb'``
+#: - ``'rec601luma'``
+#: - ``'rec601ycbcr'``
+#: - ``'rec709luma'``
+#: - ``'rec709ycbcr'``
+#: - ``'log'``
+#: - ``'cmy'``
+#: - ``'luv'``
+#: - ``'hcl'``
+#: - ``'lch'``
+#: - ``'lms'``
+#: - ``'lchab'``
+#: - ``'lchuv'``
+#: - ``'scrgb'``
+#: - ``'hsi'``
+#: - ``'hsv'``
+#: - ``'hclp'``
+#: - ``'ydbdr'``
+#:
+#: .. seealso::
+#:
+#:    `ImageMagick Color Management`__
+#:       Describes the ImageMagick color management operations
+#:
+#:    __ http://www.imagemagick.org/script/color-management.php
+COLORSPACE_TYPES = ('undefined', 'rgb', 'gray', 'transparent', 'ohta', 'lab',
+                    'xyz', 'ycbcr', 'ycc', 'yiq', 'ypbpr', 'yuv', 'cmyk',
+                    'srgb', 'hsb', 'hsl', 'hwb', 'rec601luma', 'rec601ycbcr',
+                    'rec709luma', 'rec709ycbcr', 'log', 'cmy', 'luv', 'hcl',
+                    'lch', 'lms', 'lchab', 'lchuv', 'scrgb', 'hsi', 'hsv',
+                    'hclp', 'ydbdr')
 
 #: (:class:`tuple`) The list of alpha channel types
 #:
@@ -780,6 +830,34 @@ class BaseImage(Resource):
             raise TypeError('Unit value must be a string from wand.images.'
                             'UNIT_TYPES, not ' + repr(units))
         r = library.MagickSetImageUnits(self.wand, UNIT_TYPES.index(units))
+        if not r:
+            self.raise_exception()
+
+    @property
+    def colorspace(self):
+        """(:class:`basestring`) The image colorspace.
+
+        Defines image colorspace as in :const:`COLORSPACE_TYPES` enumeration.
+
+        It may raise :exc:`ValueError` when the colorspace is unknown.
+
+        .. versionadded:: 0.3.4
+
+        """
+        colorspace_type_index = library.MagickGetImageColorspace(self.wand)
+        if not colorspace_type_index:
+            self.raise_exception()
+        return COLORSPACE_TYPES[text(colorspace_type_index)]
+
+    @colorspace.setter
+    @manipulative
+    def colorspace(self, colorspace_type):
+        if not isinstance(colorspace_type, string_type) \
+            or colorspace_type not in COLORSPACE_TYPES:
+            raise TypeError('Colorspace value must be a string from '
+                            'COLORSPACE_TYPES, not ' + repr(colorspace_type))
+        r = library.MagickSetImageColorspace(self.wand,
+                                    COLORSPACE_TYPES.index(colorspace_type))
         if not r:
             self.raise_exception()
 
