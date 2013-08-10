@@ -1552,6 +1552,44 @@ class BaseImage(Resource):
             self.raise_exception()
 
     @manipulative
+    def unsharp_mask(self, radius, sigma, amount, threshold):
+        """Sharpens the image using unsharp mask filter. We convolve the image
+        with a Gaussian operator of the given ``radius`` and standard deviation
+        (``sigma``). For reasonable results, ``radius`` should be larger than
+        ``sigma``. Use a radius of 0 and :meth:`unsharp_mask()`` selects
+        a suitable radius for you.
+
+        :param radius: the radius of the Gaussian, in pixels,
+                       not counting the center pixel
+        :type radius: :class:`numbers.Real`
+        :param sigma: the standard deviation of the Gaussian, in pixels
+        :type sigma: :class:`numbers.Real`
+        :param amount: the percentage of the difference between the original
+                       and the blur image that is added back into the original
+        :type amount: :class:`numbers.Real`
+        :param threshold: the threshold in pixels needed to apply
+                          the diffence amount
+        :type threshold: :class:`numbers.Real`
+
+        """
+        if not isinstance(radius, numbers.Real):
+            raise TypeError('radius has to be a numbers.Real, not ' +
+                            repr(radius))
+        elif not isinstance(sigma, numbers.Real):
+            raise TypeError('sigma has to be a numbers.Real, not ' +
+                            repr(sigma))
+        elif not isinstance(amount, numbers.Real):
+            raise TypeError('amount has to be a numbers.Real, not ' +
+                            repr(amount))
+        elif not isinstance(threshold, numbers.Real):
+            raise TypeError('threshold has to be a numbers.Real, not ' +
+                            repr(threshold))
+        r = library.MagickUnsharpMaskImage(self.wand, radius, sigma,
+                                           amount, threshold)
+        if not r:
+            self.raise_exception()
+
+    @manipulative
     def watermark(self, image, transparency=0.0, left=0, top=0):
         """Transparentized the supplied ``image`` and places it over the
         current image, with the top left corner of ``image`` at coordinates
