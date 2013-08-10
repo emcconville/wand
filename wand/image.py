@@ -1556,8 +1556,12 @@ class BaseImage(Resource):
         elif not isinstance(hue, numbers.Real):
             raise TypeError('hue has to be a numbers.Real, not '+
                             repr(hue))
-
-        r = library.MagickModulateImage(self.wand, ctypes.c_double(brightness), ctypes.c_double(saturation), ctypes.c_double(hue))
+        r = library.MagickModulateImage(
+            self.wand,
+            ctypes.c_double(brightness),
+            ctypes.c_double(saturation),
+            ctypes.c_double(hue)
+        )
         if not r:
             self.raise_exception()
 
