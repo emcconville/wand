@@ -1527,6 +1527,41 @@ class BaseImage(Resource):
         self.raise_exception()
 
     @manipulative
+    def modulate(self, brightness=100.0, saturation=100.0, hue=100.0):
+        """Changes the brightness, saturation and hue of an image.
+        We modulate the image with the given ``brightness``, ``saturation``
+        and ``hue``.
+
+        :param brightness: percentage of brightness
+        :type brightness: :class:`numbers.Real`
+        :param saturation: percentage of saturation
+        :type saturation: :class:`numbers.Real`
+        :param hue: percentage of hue rotation
+        :type hue: :class:`numbers.Real`
+
+        :raises exceptions.ValueError:
+           when one or more arguments are invalid
+        
+        .. versionadded:: 
+
+        """
+        if not isinstance(brightness, numbers.Real):
+            raise TypeError('brightness has to be a numbers.Real, not ' +
+                            repr(brightness))
+
+        elif not isinstance(saturation, numbers.Real):
+            raise TypeError('saturation has to be a numbers.Real, not ' +
+                            repr(saturation))
+
+        elif not isinstance(hue, numbers.Real):
+            raise TypeError('hue has to be a numbers.Real, not '+
+                            repr(hue))
+
+        r = library.MagickModulateImage(self.wand, ctypes.c_double(brightness), ctypes.c_double(saturation), ctypes.c_double(hue))
+        if not r:
+            self.raise_exception()
+
+    @manipulative
     def gaussian_blur(self, radius, sigma):
         """Blurs the image.  We convolve the image with a gaussian operator
         of the given ``radius`` and standard deviation (``sigma``).
