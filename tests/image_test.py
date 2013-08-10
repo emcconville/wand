@@ -1204,7 +1204,6 @@ def test_unsharp_mask(fx_asset, display):
         before = img[100, 100]
         img.unsharp_mask(1.1, 1, 0.5, 0.001)
         after = img[100, 100]
-        print after
         assert before != after
         assert 0.89 <= after.red <= 0.90
         assert 0.82 <= after.green <= 0.83
