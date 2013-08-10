@@ -280,6 +280,19 @@ def test_set_units(fx_asset):
         assert img.units == "pixelspercentimeter"
 
 
+def test_get_colorspace(fx_asset):
+    """Gets the image colorspace"""
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+        assert img.colorspace == 'srgb'
+
+
+def test_set_colorspace(fx_asset):
+    """Sets the image colorspace"""
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+        img.colorspace = 'cmyk'
+        assert img.colorspace == 'cmyk'
+
+
 def test_get_depth(fx_asset):
     """Gets the image depth"""
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
