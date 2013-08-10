@@ -159,6 +159,8 @@ class Drawing(Resource):
     def stroke_color(self):
         """(:class:`~wand.color.Color`) The current color of stroke.
         It also can be set.
+
+        .. versionadded:: 0.3.3
         
         """
         pixel = library.NewPixelWand()
@@ -178,7 +180,11 @@ class Drawing(Resource):
 
     @property
     def stroke_width(self):
-        """(:class:`numbers.Real`) The stroke width.  It also can be set."""
+        """(:class:`numbers.Real`) The stroke width.  It also can be set.
+
+        .. versionadded:: 0.3.3
+
+        """
         return library.DrawGetStrokeWidth(self.resource)
 
     @stroke_width.setter

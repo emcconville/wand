@@ -1579,6 +1579,8 @@ class BaseImage(Resource):
         :param sigma: the standard deviation of the, in pixels
         :type sigma: :class:`numbers.Real`
 
+        .. versionadded:: 0.3.3
+
         """
         if not isinstance(radius, numbers.Real):
             raise TypeError('radius has to be a numbers.Real, not ' +

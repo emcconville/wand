@@ -15,7 +15,8 @@ Version 0.3.3
 
 Released on August 4, 2013.  It's author's birthday.
 
-- Added :meth:`Image.gaussian_blur() <wand.image.Image.gaussian_blur>` method.
+- Added :meth:`Image.gaussian_blur() <wand.image.BaseImage.gaussian_blur>`
+  method.
 - Added :attr:`Drawing.stroke_color <wand.drawing.Drawing.stroke_color>`
   property.  [:issue:`129` by Zeray Rice]
 - Added :attr:`Drawing.stroke_width <wand.drawing.Drawing.stroke_width>`
