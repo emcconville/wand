@@ -1197,3 +1197,15 @@ def test_gaussian_blur(fx_asset, display):
         assert 0.84 <= after.red <= 0.85
         assert 0.74 <= after.green <= 0.75
         assert 0.655 <= after.blue < 0.67
+
+
+def test_unsharp_mask(fx_asset, display):
+    with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
+        before = img[100, 100]
+        img.unsharp_mask(1.1, 1, 0.5, 0.001)
+        after = img[100, 100]
+        print after
+        assert before != after
+        assert 0.89 <= after.red <= 0.90
+        assert 0.82 <= after.green <= 0.83
+        assert 0.73 <= after.blue < 0.74
