@@ -1542,7 +1542,7 @@ class BaseImage(Resource):
         :raises exceptions.ValueError:
            when one or more arguments are invalid
         
-        .. versionadded:: 
+        .. versionadded:: 0.3.4
 
         """
         if not isinstance(brightness, numbers.Real):

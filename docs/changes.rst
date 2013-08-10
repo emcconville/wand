@@ -6,6 +6,9 @@ Version 0.3.4
 
 To be released
 
+- Added :meth:`Image.modulate() <wand.image.BaseImage.modulate>` method.
+  [:issue:`134` by Dan P. Smith]
+
 
 Version 0.3.3
 -------------
