@@ -283,7 +283,7 @@ def test_set_units(fx_asset):
 def test_get_colorspace(fx_asset):
     """Gets the image colorspace"""
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
-        assert img.colorspace == 'srgb'
+        assert img.colorspace.endswith('rgb')
 
 
 def test_set_colorspace(fx_asset):
