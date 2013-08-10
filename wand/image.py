@@ -340,7 +340,7 @@ ORIENTATION_TYPES = ('undefined', 'top_left', 'top_right', 'bottom_right',
 #: (:class:`collections.Set`) The set of available :attr:`~BaseImage.options`.
 #:
 #: .. versionadded:: 0.3.0
-OPTIONS = frozenset(['fill'])
+OPTIONS = frozenset(('fill', 'jpeg:sampling-factor'))
 
 
 def manipulative(function):
