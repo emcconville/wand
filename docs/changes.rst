@@ -8,6 +8,9 @@ To be released
 
 - Added :meth:`Image.modulate() <wand.image.BaseImage.modulate>` method.
   [:issue:`134` by Dan P. Smith]
+- Added ``'jpeg:sampling-factor'`` option to :attr:`Image.options
+  <wand.image.BaseImage.options>` dictionary (and :const:`~wand.image.OPTIONS`
+  constant).  [:issue:`137` by Volodymyr Kuznetsov]
 
 
 Version 0.3.3

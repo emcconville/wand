@@ -340,7 +340,10 @@ ORIENTATION_TYPES = ('undefined', 'top_left', 'top_right', 'bottom_right',
 #: (:class:`collections.Set`) The set of available :attr:`~BaseImage.options`.
 #:
 #: .. versionadded:: 0.3.0
-OPTIONS = frozenset(('fill', 'jpeg:sampling-factor'))
+#:
+#: .. versionchanged:: 0.3.4
+#:    Added ``'jpeg:sampling-factor'`` option.
+OPTIONS = frozenset(['fill', 'jpeg:sampling-factor'])
 
 
 def manipulative(function):
@@ -366,6 +369,9 @@ class BaseImage(Resource):
     #: (:class:`OptionDict`) The mapping of internal option settings.
     #:
     #: .. versionadded:: 0.3.0
+    #:
+    #: .. versionchanged:: 0.3.4
+    #:    Added ``'jpeg:sampling-factor'`` option.
     options = None
 
     #: (:class:`collections.Sequence`) The list of
