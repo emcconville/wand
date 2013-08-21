@@ -15,6 +15,8 @@ To be released
 - Added ``'jpeg:sampling-factor'`` option to :attr:`Image.options
   <wand.image.BaseImage.options>` dictionary (and :const:`~wand.image.OPTIONS`
   constant).  [:issue:`137` by Volodymyr Kuznetsov]
+- Fixed ImageMagick shared library resolution on Arch Linux.
+  [:issue:`139`, :issue:`140` by Sergey Tereschenko]
 
 
 Version 0.3.3
