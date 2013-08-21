@@ -84,7 +84,7 @@ def load_library():
 
     """
     tried_paths = []
-    for suffix in '', '-Q16', '-Q8', '-6.Q16':
+    for suffix in '', '-Q16', '-Q8', '-6.Q16', '-6.Q16HDRI':
         libwand_path, libmagick_path = find_library(suffix)
         if libwand_path is None or libmagick_path is None:
             continue
