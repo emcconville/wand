@@ -17,6 +17,8 @@ To be released
   constant).  [:issue:`137` by Volodymyr Kuznetsov]
 - Fixed ImageMagick shared library resolution on Arch Linux.
   [:issue:`139`, :issue:`140` by Sergey Tereschenko]
+- Added :meth:`Image.sample() <wand.image.BaseImage.sample>` method.
+  [:issue:`142` by Michael Allen]
 
 
 Version 0.3.3

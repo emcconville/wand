@@ -1226,7 +1226,8 @@ class BaseImage(Resource):
                 
     @manipulative
     def sample(self, width=None, height=None):
-        """Resizes the image by sampling the pixels.
+        """Resizes the image by sampling the pixels.  It's basically quicker
+        than :meth:`resize()` except less quality as a tradeoff.
 
         :param width: the width in the scaled image. default is the original
                       width
@@ -1234,6 +1235,9 @@ class BaseImage(Resource):
         :param height: the height in the scaled image. default is the original
                        height
         :type height: :class:`numbers.Integral`
+
+        .. versionadded:: 0.3.4
+
         """
         if width is None:
             width = self.width
