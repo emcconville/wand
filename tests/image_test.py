@@ -624,25 +624,33 @@ def test_crop_error(fx_asset):
             img.crop(bottom=1, height=2)
 
 
-def test_resize(fx_asset):
-    """Resizes the image."""
+@mark.parametrize(('method'), [
+    ('resize'),
+    ('sample'),
+])
+def test_resize_and_sample(method, fx_asset):
+    """Resizes/Samples the image."""
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         with img.clone() as a:
             assert a.size == (402, 599)
-            a.resize(100, 100)
+            getattr(a, method)(100, 100)
             assert a.size == (100, 100)
         with img.clone() as b:
             assert b.size == (402, 599)
-            b.resize(height=100)
+            getattr(b, method)(height=100)
             assert b.size == (402, 100)
         with img.clone() as c:
             assert c.size == (402, 599)
-            c.resize(width=100)
+            getattr(c, method)(width=100)
             assert c.size == (100, 599)
 
 
 @mark.slow
-def test_resize_gif(tmpdir, fx_asset):
+@mark.parametrize(('method'), [
+    ('resize'),
+    ('sample'),
+])
+def test_resize_and_sample_gif(method, tmpdir, fx_asset):
     with Image(filename=str(fx_asset.join('nocomments-delay-100.gif'))) as img:
         assert len(img.sequence) == 46
         with img.clone() as a:
@@ -650,7 +658,7 @@ def test_resize_gif(tmpdir, fx_asset):
             assert a.sequence[0].delay == 100
             for s in a.sequence:
                 assert s.delay == 100
-            a.resize(175, 98)
+            getattr(a, method)(175, 98)
             a.save(filename=str(tmpdir.join('175_98.gif')))
         with Image(filename=str(tmpdir.join('175_98.gif'))) as a:
             assert len(a.sequence) == 46
@@ -661,7 +669,7 @@ def test_resize_gif(tmpdir, fx_asset):
             assert b.size == (350, 197)
             for s in b.sequence:
                 assert s.delay == 100
-            b.resize(height=100)
+            getattr(b, method)(height=100)
             b.save(filename=str(tmpdir.join('350_100.gif')))
         with Image(filename=str(tmpdir.join('350_100.gif'))) as b:
             assert len(b.sequence) == 46
@@ -672,7 +680,7 @@ def test_resize_gif(tmpdir, fx_asset):
             assert c.size == (350, 197)
             for s in c.sequence:
                 assert s.delay == 100
-            c.resize(width=100)
+            getattr(c, method)(width=100)
             c.save(filename=str(tmpdir.join('100_197.gif')))
         with Image(filename=str(tmpdir.join('100_197.gif'))) as c:
             assert len(c.sequence) == 46
@@ -682,21 +690,25 @@ def test_resize_gif(tmpdir, fx_asset):
     tmpdir.remove()
 
 
-def test_resize_errors(fx_asset):
-    """Resizing errors."""
+@mark.parametrize(('method'), [
+    ('resize'),
+    ('sample'),
+])
+def test_resize_and_sample_errors(method, fx_asset):
+    """Resizing/Sampling errors."""
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         with raises(TypeError):
-            img.resize(width='100')
+            getattr(img, method)(width='100')
         with raises(TypeError):
-            img.resize(height='100')
+            getattr(img, method)(height='100')
         with raises(ValueError):
-            img.resize(width=0)
+            getattr(img, method)(width=0)
         with raises(ValueError):
-            img.resize(height=0)
+            getattr(img, method)(height=0)
         with raises(ValueError):
-            img.resize(width=-5)
+            getattr(img, method)(width=-5)
         with raises(ValueError):
-            img.resize(height=-5)
+            getattr(img, method)(height=-5)
 
 
 @mark.parametrize(('args', 'kwargs', 'expected_size'), [
