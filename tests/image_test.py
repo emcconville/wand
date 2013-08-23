@@ -686,6 +686,79 @@ def test_resize_errors(fx_asset):
             img.resize(height=-5)
 
 
+def test_sample(fx_asset):
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+        with img.clone() as a:
+            assert a.size == (402, 599)
+            a.sample(100, 100)
+            assert a.size == (100, 100)
+        with img.clone() as b:
+            assert b.size == (402, 599)
+            b.sample(height=100)
+            assert b.size == (402, 100)
+        with img.clone() as c:
+            assert c.size == (402, 599)
+            c.sample(width=100)
+            assert c.size == (100, 599)
+
+
+@mark.slow            
+def test_sample_gif(tmpdir, fx_asset):
+    with Image(filename=str(fx_asset.join('nocomments-delay-100.gif'))) as img:
+        assert len(img.sequence) == 46
+        with img.clone() as a:
+            assert a.size == (350, 197)
+            assert a.sequence[0].delay == 100
+            for s in a.sequence:
+                assert s.delay == 100
+            a.sample(175, 98)
+            a.save(filename=str(tmpdir.join('175_98.gif')))
+        with Image(filename=str(tmpdir.join('175_98.gif'))) as a:
+            assert len(a.sequence) == 46
+            assert a.size == (175, 98)
+            for s in a.sequence:
+                assert s.delay == 100
+        with img.clone() as b:
+            assert b.size == (350, 197)
+            for s in b.sequence:
+                assert s.delay == 100
+            b.sample(height=100)
+            b.save(filename=str(tmpdir.join('350_100.gif')))
+        with Image(filename=str(tmpdir.join('350_100.gif'))) as b:
+            assert len(b.sequence) == 46
+            assert b.size == (350, 100)
+            for s in b.sequence:
+                assert s.delay == 100
+        with img.clone() as c:
+            assert c.size == (350, 197)
+            for s in c.sequence:
+                assert s.delay == 100
+            c.sample(width=100)
+            c.save(filename=str(tmpdir.join('100_197.gif')))
+        with Image(filename=str(tmpdir.join('100_197.gif'))) as c:
+            assert len(c.sequence) == 46
+            assert c.size == (100, 197)
+            for s in c.sequence:
+                assert s.delay == 100
+    tmpdir.remove()
+
+
+def test_sample_errors(fx_asset):
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+        with raises(TypeError):
+            img.sample(width='100')
+        with raises(TypeError):
+            img.sample(height='100')
+        with raises(ValueError):
+            img.sample(width=0)
+        with raises(ValueError):
+            img.sample(height=0)
+        with raises(ValueError):
+            img.sample(width=-5)
+        with raises(ValueError):
+            img.sample(height=-5)
+
+
 @mark.parametrize(('args', 'kwargs', 'expected_size'), [
     ((), {'resize': '200%'}, (1600, 1200)),
     ((), {'resize': '200%x100%'}, (1600, 600)),
