@@ -63,6 +63,25 @@ default which means IM will try to guess best one to use) and optional
    (50, 60)
 
 
+Sample images
+-------------
+
+Although :meth:`Image.resize() <wand.image.BaseImage.resize>` provides
+many ``filter`` options, it's relatively slow.  If speed is important for
+the job, you'd better use :meth:`Image.sample() <wand.image.BaseImage.sample>`
+instead.  It works in similar way to :meth:`Image.resize()
+<wand.image.BaseImage.resize>` except it doesn't provide ``filter`` and
+``blur`` options:
+
+.. sourcecode:: pycon
+
+   >>> img.size
+   (500, 600)
+   >>> img.sample(50, 60)
+   >>> img.size
+   (50, 60)
+
+
 Crop images
 -----------
 

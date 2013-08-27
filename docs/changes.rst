@@ -1,12 +1,33 @@
 Wand Changelog
 ==============
 
+Version 0.3.4
+-------------
+
+To be released
+
+- Added :meth:`Image.modulate() <wand.image.BaseImage.modulate>` method.
+  [:issue:`134` by Dan P. Smith]
+- Added :attr:`Image.colorspace <wand.image.BaseImage.colorspace>` property.
+  [:issue:`135` by Volodymyr Kuznetsov]
+- Added :meth:`Image.unsharp_mask() <wand.image.BaseImage.unsharp_mask>`
+  method.  [:issue:`136` by Volodymyr Kuznetsov]
+- Added ``'jpeg:sampling-factor'`` option to :attr:`Image.options
+  <wand.image.BaseImage.options>` dictionary (and :const:`~wand.image.OPTIONS`
+  constant).  [:issue:`137` by Volodymyr Kuznetsov]
+- Fixed ImageMagick shared library resolution on Arch Linux.
+  [:issue:`139`, :issue:`140` by Sergey Tereschenko]
+- Added :meth:`Image.sample() <wand.image.BaseImage.sample>` method.
+  [:issue:`142` by Michael Allen]
+
+
 Version 0.3.3
 -------------
 
 Released on August 4, 2013.  It's author's birthday.
 
-- Added :meth:`Image.gaussian_blur() <wand.image.Image.gaussian_blur>` method.
+- Added :meth:`Image.gaussian_blur() <wand.image.BaseImage.gaussian_blur>`
+  method.
 - Added :attr:`Drawing.stroke_color <wand.drawing.Drawing.stroke_color>`
   property.  [:issue:`129` by Zeray Rice]
 - Added :attr:`Drawing.stroke_width <wand.drawing.Drawing.stroke_width>`

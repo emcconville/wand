@@ -84,7 +84,7 @@ def load_library():
 
     """
     tried_paths = []
-    for suffix in '', '-Q16', '-Q8', '-6.Q16':
+    for suffix in '', '-Q16', '-Q8', '-6.Q16', '-6.Q16HDRI':
         libwand_path, libmagick_path = find_library(suffix)
         if libwand_path is None or libmagick_path is None:
             continue
@@ -282,6 +282,11 @@ try:
 
     library.MagickSetImageUnits.argtypes = [ctypes.c_void_p, ctypes.c_int]
 
+    library.MagickGetImageColorspace.argtypes = [ctypes.c_void_p]
+    library.MagickGetImageColorspace.restype = ctypes.c_int
+
+    library.MagickSetImageColorspace.argtypes = [ctypes.c_void_p, ctypes.c_int]
+
     library.MagickGetImageDepth.argtypes = [ctypes.c_void_p]
     library.MagickGetImageDepth.restype = ctypes.c_size_t
 
@@ -304,6 +309,9 @@ try:
 
     library.MagickResetImagePage.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
 
+    library.MagickSampleImage.argtypes = [ctypes.c_void_p, ctypes.c_size_t,
+                                          ctypes.c_size_t]
+                                          
     library.MagickResizeImage.argtypes = [ctypes.c_void_p, ctypes.c_size_t,
                                           ctypes.c_size_t, ctypes.c_int,
                                           ctypes.c_double]
@@ -462,6 +470,12 @@ try:
     library.MagickGaussianBlurImage.argtypes = [ctypes.c_void_p,
                                                 ctypes.c_double,
                                                 ctypes.c_double]
+
+    library.MagickUnsharpMaskImage.argtypes = [ctypes.c_void_p,
+                                               ctypes.c_double,
+                                               ctypes.c_double,
+                                               ctypes.c_double,
+                                               ctypes.c_double]
 
     library.MagickGetNumberImages.argtypes = [ctypes.c_void_p]
     library.MagickGetNumberImages.restype = ctypes.c_size_t

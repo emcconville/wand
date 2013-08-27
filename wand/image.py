@@ -26,9 +26,9 @@ from .resource import DestroyedResourceError, Resource
 from .font import Font
 
 
-__all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COMPOSITE_OPERATORS',
-           'EVALUATE_OPS', 'FILTER_TYPES', 'GRAVITY_TYPES', 'IMAGE_TYPES',
-           'ORIENTATION_TYPES', 'UNIT_TYPES',
+__all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COLORSPACE_TYPES',
+           'COMPOSITE_OPERATORS', 'EVALUATE_OPS', 'FILTER_TYPES',
+           'GRAVITY_TYPES', 'IMAGE_TYPES', 'ORIENTATION_TYPES', 'UNIT_TYPES',
            'BaseImage', 'ChannelDepthDict', 'ChannelImageDict',
            'ClosedImageError', 'HistogramDict', 'Image', 'ImageProperty',
            'Iterator', 'Metadata', 'OptionDict', 'manipulative')
@@ -255,6 +255,58 @@ EVALUATE_OPS = ('undefined', 'add', 'and', 'divide', 'leftshift', 'max',
                 'uniformnoise', 'cosine', 'sine', 'addmodulus', 'mean',
                 'abs', 'exponential', 'median', 'sum')
 
+#: (:class:`tuple`) The list of colorspaces.
+#:
+#: - ``'undefined'``
+#: - ``'rgb'``
+#: - ``'gray'``
+#: - ``'transparent'``
+#: - ``'ohta'``
+#: - ``'lab'``
+#: - ``'xyz'``
+#: - ``'ycbcr'``
+#: - ``'ycc'``
+#: - ``'yiq'``
+#: - ``'ypbpr'``
+#: - ``'yuv'``
+#: - ``'cmyk'``
+#: - ``'srgb'``
+#: - ``'hsb'``
+#: - ``'hsl'``
+#: - ``'hwb'``
+#: - ``'rec601luma'``
+#: - ``'rec601ycbcr'``
+#: - ``'rec709luma'``
+#: - ``'rec709ycbcr'``
+#: - ``'log'``
+#: - ``'cmy'``
+#: - ``'luv'``
+#: - ``'hcl'``
+#: - ``'lch'``
+#: - ``'lms'``
+#: - ``'lchab'``
+#: - ``'lchuv'``
+#: - ``'scrgb'``
+#: - ``'hsi'``
+#: - ``'hsv'``
+#: - ``'hclp'``
+#: - ``'ydbdr'``
+#:
+#: .. seealso::
+#:
+#:    `ImageMagick Color Management`__
+#:       Describes the ImageMagick color management operations
+#:
+#:    __ http://www.imagemagick.org/script/color-management.php
+#:
+#: .. versionadded:: 0.3.4
+COLORSPACE_TYPES = ('undefined', 'rgb', 'gray', 'transparent', 'ohta', 'lab',
+                    'xyz', 'ycbcr', 'ycc', 'yiq', 'ypbpr', 'yuv', 'cmyk',
+                    'srgb', 'hsb', 'hsl', 'hwb', 'rec601luma', 'rec601ycbcr',
+                    'rec709luma', 'rec709ycbcr', 'log', 'cmy', 'luv', 'hcl',
+                    'lch', 'lms', 'lchab', 'lchuv', 'scrgb', 'hsi', 'hsv',
+                    'hclp', 'ydbdr')
+
 #: (:class:`tuple`) The list of alpha channel types
 #:
 #: - ``'undefined'``
@@ -340,7 +392,10 @@ ORIENTATION_TYPES = ('undefined', 'top_left', 'top_right', 'bottom_right',
 #: (:class:`collections.Set`) The set of available :attr:`~BaseImage.options`.
 #:
 #: .. versionadded:: 0.3.0
-OPTIONS = frozenset(['fill'])
+#:
+#: .. versionchanged:: 0.3.4
+#:    Added ``'jpeg:sampling-factor'`` option.
+OPTIONS = frozenset(['fill', 'jpeg:sampling-factor'])
 
 
 def manipulative(function):
@@ -366,6 +421,9 @@ class BaseImage(Resource):
     #: (:class:`OptionDict`) The mapping of internal option settings.
     #:
     #: .. versionadded:: 0.3.0
+    #:
+    #: .. versionchanged:: 0.3.4
+    #:    Added ``'jpeg:sampling-factor'`` option.
     options = None
 
     #: (:class:`collections.Sequence`) The list of
@@ -778,6 +836,34 @@ class BaseImage(Resource):
             self.raise_exception()
 
     @property
+    def colorspace(self):
+        """(:class:`basestring`) The image colorspace.
+
+        Defines image colorspace as in :const:`COLORSPACE_TYPES` enumeration.
+
+        It may raise :exc:`ValueError` when the colorspace is unknown.
+
+        .. versionadded:: 0.3.4
+
+        """
+        colorspace_type_index = library.MagickGetImageColorspace(self.wand)
+        if not colorspace_type_index:
+            self.raise_exception()
+        return COLORSPACE_TYPES[text(colorspace_type_index)]
+
+    @colorspace.setter
+    @manipulative
+    def colorspace(self, colorspace_type):
+        if not isinstance(colorspace_type, string_type) \
+            or colorspace_type not in COLORSPACE_TYPES:
+            raise TypeError('Colorspace value must be a string from '
+                            'COLORSPACE_TYPES, not ' + repr(colorspace_type))
+        r = library.MagickSetImageColorspace(self.wand,
+                                    COLORSPACE_TYPES.index(colorspace_type))
+        if not r:
+            self.raise_exception()
+
+    @property
     def depth(self):
         """(:class:`numbers.Integral`) The depth of this image.
 
@@ -1134,6 +1220,52 @@ class BaseImage(Resource):
         else:
             r = library.MagickResizeImage(self.wand, width, height,
                                           filter, blur)
+            library.MagickSetSize(self.wand, width, height)
+            if not r:
+                self.raise_exception()
+                
+    @manipulative
+    def sample(self, width=None, height=None):
+        """Resizes the image by sampling the pixels.  It's basically quicker
+        than :meth:`resize()` except less quality as a tradeoff.
+
+        :param width: the width in the scaled image. default is the original
+                      width
+        :type width: :class:`numbers.Integral`
+        :param height: the height in the scaled image. default is the original
+                       height
+        :type height: :class:`numbers.Integral`
+
+        .. versionadded:: 0.3.4
+
+        """
+        if width is None:
+            width = self.width
+        if height is None:
+            height = self.height
+        if not isinstance(width, numbers.Integral):
+            raise TypeError('width must be a natural number, not ' +
+                            repr(width))
+        elif not isinstance(height, numbers.Integral):
+            raise TypeError('height must be a natural number, not ' +
+                            repr(height))
+        elif width < 1:
+            raise ValueError('width must be a natural number, not ' +
+                             repr(width))
+        elif height < 1:
+            raise ValueError('height must be a natural number, not ' +
+                             repr(height))
+        if self.animation:
+            self.wand = library.MagickCoalesceImages(self.wand)
+            library.MagickSetLastIterator(self.wand)
+            n = library.MagickGetIteratorIndex(self.wand)
+            library.MagickResetIterator(self.wand)
+            for i in xrange(n + 1):
+                library.MagickSetIteratorIndex(self.wand, i)
+                library.MagickSampleImage(self.wand, width, height)
+            library.MagickSetSize(self.wand, width, height)
+        else:
+            r = library.MagickSampleImage(self.wand, width, height)
             library.MagickSetSize(self.wand, width, height)
             if not r:
                 self.raise_exception()
@@ -1527,6 +1659,45 @@ class BaseImage(Resource):
         self.raise_exception()
 
     @manipulative
+    def modulate(self, brightness=100.0, saturation=100.0, hue=100.0):
+        """Changes the brightness, saturation and hue of an image.
+        We modulate the image with the given ``brightness``, ``saturation``
+        and ``hue``.
+
+        :param brightness: percentage of brightness
+        :type brightness: :class:`numbers.Real`
+        :param saturation: percentage of saturation
+        :type saturation: :class:`numbers.Real`
+        :param hue: percentage of hue rotation
+        :type hue: :class:`numbers.Real`
+
+        :raises exceptions.ValueError:
+           when one or more arguments are invalid
+        
+        .. versionadded:: 0.3.4
+
+        """
+        if not isinstance(brightness, numbers.Real):
+            raise TypeError('brightness has to be a numbers.Real, not ' +
+                            repr(brightness))
+
+        elif not isinstance(saturation, numbers.Real):
+            raise TypeError('saturation has to be a numbers.Real, not ' +
+                            repr(saturation))
+
+        elif not isinstance(hue, numbers.Real):
+            raise TypeError('hue has to be a numbers.Real, not '+
+                            repr(hue))
+        r = library.MagickModulateImage(
+            self.wand,
+            ctypes.c_double(brightness),
+            ctypes.c_double(saturation),
+            ctypes.c_double(hue)
+        )
+        if not r:
+            self.raise_exception()
+
+    @manipulative
     def gaussian_blur(self, radius, sigma):
         """Blurs the image.  We convolve the image with a gaussian operator
         of the given ``radius`` and standard deviation (``sigma``).
@@ -1540,6 +1711,8 @@ class BaseImage(Resource):
         :param sigma: the standard deviation of the, in pixels
         :type sigma: :class:`numbers.Real`
 
+        .. versionadded:: 0.3.3
+
         """
         if not isinstance(radius, numbers.Real):
             raise TypeError('radius has to be a numbers.Real, not ' +
@@ -1548,6 +1721,46 @@ class BaseImage(Resource):
             raise TypeError('sigma has to be a numbers.Real, not ' +
                             repr(sigma))
         r = library.MagickGaussianBlurImage(self.wand, radius, sigma)
+        if not r:
+            self.raise_exception()
+
+    @manipulative
+    def unsharp_mask(self, radius, sigma, amount, threshold):
+        """Sharpens the image using unsharp mask filter. We convolve the image
+        with a Gaussian operator of the given ``radius`` and standard deviation
+        (``sigma``). For reasonable results, ``radius`` should be larger than
+        ``sigma``. Use a radius of 0 and :meth:`unsharp_mask()`` selects
+        a suitable radius for you.
+
+        :param radius: the radius of the Gaussian, in pixels,
+                       not counting the center pixel
+        :type radius: :class:`numbers.Real`
+        :param sigma: the standard deviation of the Gaussian, in pixels
+        :type sigma: :class:`numbers.Real`
+        :param amount: the percentage of the difference between the original
+                       and the blur image that is added back into the original
+        :type amount: :class:`numbers.Real`
+        :param threshold: the threshold in pixels needed to apply
+                          the diffence amount
+        :type threshold: :class:`numbers.Real`
+
+        .. versionadded:: 0.3.4
+
+        """
+        if not isinstance(radius, numbers.Real):
+            raise TypeError('radius has to be a numbers.Real, not ' +
+                            repr(radius))
+        elif not isinstance(sigma, numbers.Real):
+            raise TypeError('sigma has to be a numbers.Real, not ' +
+                            repr(sigma))
+        elif not isinstance(amount, numbers.Real):
+            raise TypeError('amount has to be a numbers.Real, not ' +
+                            repr(amount))
+        elif not isinstance(threshold, numbers.Real):
+            raise TypeError('threshold has to be a numbers.Real, not ' +
+                            repr(threshold))
+        r = library.MagickUnsharpMaskImage(self.wand, radius, sigma,
+                                           amount, threshold)
         if not r:
             self.raise_exception()
 
@@ -1937,7 +2150,10 @@ class Image(BaseImage):
         elif file is not None:
             if isinstance(file, file_types) and hasattr(libc, 'fdopen'):
                 fd = libc.fdopen(file.fileno(), file.mode)
-                r = library.MagickWriteImageFile(self.wand, fd)
+                if len(self.sequence) > 1:
+                    r = library.MagickWriteImagesFile(self.wand, fd)
+                else:
+                    r = library.MagickWriteImageFile(self.wand, fd)
                 libc.fflush(fd)
                 if not r:
                     self.raise_exception()
