@@ -184,6 +184,20 @@ def test_save_to_file(fx_asset):
         with Image(file=buffer) as saved:
             assert saved.size == (402, 599)
     buffer.close()
+    
+    
+def test_save_full_animated_gif_to_file(fx_asset):
+    """Save all frames of an animated to a Python file object."""
+    temp_filename = os.path.join(tempfile.mkdtemp(), 'savetest.gif')
+    orig_filename = str(fx_asset.join('nocomments.gif'))
+    with open(temp_filename, 'w+b') as fp:
+        with Image(filename= orig_filename) as orig:
+            orig.save(file= fp)
+    assert os.path.isfile(temp_filename)
+    with Image(filename= orig_filename) as orig:
+        with Image(filename= temp_filename) as temp:
+            assert len(orig.sequence) == len(temp.sequence)
+    os.remove(temp_filename)
 
 
 def test_save_error(fx_asset):

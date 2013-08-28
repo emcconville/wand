@@ -2150,7 +2150,10 @@ class Image(BaseImage):
         elif file is not None:
             if isinstance(file, file_types) and hasattr(libc, 'fdopen'):
                 fd = libc.fdopen(file.fileno(), file.mode)
-                r = library.MagickWriteImageFile(self.wand, fd)
+                if len(self.sequence) > 1:
+                    r = library.MagickWriteImagesFile(self.wand, fd)
+                else:
+                    r = library.MagickWriteImageFile(self.wand, fd)
                 libc.fflush(fd)
                 if not r:
                     self.raise_exception()
