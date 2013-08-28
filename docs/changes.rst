@@ -19,6 +19,9 @@ To be released
   [:issue:`139`, :issue:`140` by Sergey Tereschenko]
 - Added :meth:`Image.sample() <wand.image.BaseImage.sample>` method.
   [:issue:`142` by Michael Allen]
+- Fixed a bug that :meth:`Image.save() <wand.image.Image.save>` preserves
+  only one frame of the given animation when file-like object is passed.
+  [:issue:`143`, :issue:`145` by Michael Allen]
 
 
 Version 0.3.3
