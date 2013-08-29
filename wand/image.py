@@ -2029,11 +2029,9 @@ class Image(BaseImage):
         if not result:
             self.raise_exception()
 
-    def border(image, color, width, height):
+    def border(self, color, width, height):
         """Surrounds the image with a border.
 
-        :param image: the wand image
-        :type image: :class:`Image`
         :param bordercolor: the border color pixel wand
         :type image: :class:`~wand.color.Color`
         :param width: the border width
@@ -2048,10 +2046,10 @@ class Image(BaseImage):
             raise TypeError('color must be a wand.color.Color object, not ' +
                             repr(color))
         with color:
-            result = library.MagickBorderImage(image.wand, color.resource,
+            result = library.MagickBorderImage(self.wand, color.resource,
                                                width, height)
         if not result:
-            image.raise_exception()
+            self.raise_exception()
 
     def normalize(self, channel=None):
         """Normalize color channels.
