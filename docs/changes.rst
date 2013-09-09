@@ -22,6 +22,8 @@ To be released
 - Fixed a bug that :meth:`Image.save() <wand.image.Image.save>` preserves
   only one frame of the given animation when file-like object is passed.
   [:issue:`143`, :issue:`145` by Michael Allen]
+- Fixed searching of ImageMagick shared library with HDR support enabled.
+  [:issue:`148`, :issue:`149` by Lipin Dmitriy]
 
 
 Version 0.3.3
