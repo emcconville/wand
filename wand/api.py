@@ -86,7 +86,7 @@ def load_library():
     """
     tried_paths = []
     versions = ('', '-Q16', '-Q8', '-6.Q16', )
-    options = ('HDRI', )
+    options = ('', 'HDRI', )
     combinations = itertools.product(versions, options)
     for suffix in (version + option for version, option in combinations):
         libwand_path, libmagick_path = find_library(suffix)
