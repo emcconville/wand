@@ -2148,7 +2148,11 @@ class Image(BaseImage):
         elif file is not None and filename is not None:
             raise TypeError('expected only one argument; but two passed')
         elif file is not None:
-            if isinstance(file, file_types) and hasattr(libc, 'fdopen'):
+            if isinstance(file, string_type):
+                raise TypeError('file must be a writable file object, '
+                                'but {0!r} is a string; did you want '
+                                '.save(filename={0!r})?'.format(file))
+            elif isinstance(file, file_types) and hasattr(libc, 'fdopen'):
                 fd = libc.fdopen(file.fileno(), file.mode)
                 if len(self.sequence) > 1:
                     r = library.MagickWriteImagesFile(self.wand, fd)
