@@ -8,6 +8,7 @@
 """
 import ctypes
 import ctypes.util
+import itertools
 import os
 import os.path
 import sys
@@ -84,7 +85,10 @@ def load_library():
 
     """
     tried_paths = []
-    for suffix in '', '-Q16', '-Q8', '-6.Q16':
+    versions = ('', '-Q16', '-Q8', '-6.Q16', )
+    options = ('HDRI', )
+    combinations = itertools.product(versions, options)
+    for suffix in (version + option for version, option in combinations):
         libwand_path, libmagick_path = find_library(suffix)
         if libwand_path is None or libmagick_path is None:
             continue
