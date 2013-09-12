@@ -4,9 +4,10 @@ Wand Changelog
 Version 0.3.5
 -------------
 
-To be released.
+Released on September 13, 2013.
 
 - Fix segmentation fault on :meth:`Image.save() <wand.image.save>` method.
+  [:issue:`150`]
 
 
 Version 0.3.4
