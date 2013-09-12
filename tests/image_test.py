@@ -1258,3 +1258,15 @@ def test_unsharp_mask(fx_asset, display):
         assert 0.89 <= after.red <= 0.90
         assert 0.82 <= after.green <= 0.83
         assert 0.73 <= after.blue < 0.74
+
+
+def test_issue_150(fx_asset, tmpdir):
+    """Should not be terminated with segmentation fault.
+
+    https://github.com/dahlia/wand/issues/150
+
+    """
+    with Image(filename=str(fx_asset.join('tiger_hd-1920x1080.jpg'))) as img:
+        img.format = 'pjpeg'
+        with open(str(tmpdir.join('out.jpg')), 'wb') as f:
+            img.save(file=f)

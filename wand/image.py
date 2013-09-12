@@ -2158,9 +2158,9 @@ class Image(BaseImage):
                     r = library.MagickWriteImagesFile(self.wand, fd)
                 else:
                     r = library.MagickWriteImageFile(self.wand, fd)
-                libc.fflush(fd)
                 if not r:
                     self.raise_exception()
+                file.flush()
             else:
                 if not callable(getattr(file, 'write', None)):
                     raise TypeError('file must be a writable file object, '

@@ -6,6 +6,8 @@ Version 0.3.5
 
 To be released.
 
+- Fix segmentation fault on :meth:`Image.save() <wand.image.save>` method.
+
 
 Version 0.3.4
 -------------
