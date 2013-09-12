@@ -758,6 +758,7 @@ else:
         libc = ctypes.cdll.LoadLibrary('libc.so.6')
     libc.fdopen.argtypes = [ctypes.c_int, ctypes.c_char_p]
     libc.fdopen.restype = ctypes.c_void_p
+    libc.fflush.argtypes = [ctypes.c_void_p]
 
 libc.free.argtypes = [ctypes.c_void_p]
 
