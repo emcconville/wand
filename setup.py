@@ -47,6 +47,7 @@ setup(
     url='http://wand-py.org/',
     tests_require=[
         'pytest >= 2.3.0',
+        'pytest-xdist >= 1.8',
         'memory_profiler >= 0.27',
         'psutil >= 1.0.1'
     ],
