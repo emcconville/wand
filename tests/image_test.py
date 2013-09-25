@@ -1270,3 +1270,17 @@ def test_issue_150(fx_asset, tmpdir):
         img.format = 'pjpeg'
         with open(str(tmpdir.join('out.jpg')), 'wb') as f:
             img.save(file=f)
+
+
+@mark.slow
+def test_quantize(fx_asset):
+    number_colors = 64
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+        colors = set([color for row in img for color in row])
+        assert len(colors) > number_colors
+
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+        img.quantize(number_colors, 'undefined', 0, True, True)
+        colors = set([color for row in img for color in row])
+        assert colors
+        assert len(colors) <= number_colors

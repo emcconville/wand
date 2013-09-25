@@ -741,6 +741,12 @@ try:
     library.MagickQueryMultilineFontMetrics.restype = ctypes.POINTER(
         ctypes.c_double
     )
+    library.MagickQuantizeImage.argtypes = [ctypes.c_void_p,
+                                            ctypes.c_int,
+                                            ctypes.c_int,
+                                            ctypes.c_int,
+                                            ctypes.c_bool,
+                                            ctypes.c_bool]
 except AttributeError:
     raise ImportError('MagickWand shared library not found or incompatible')
 
