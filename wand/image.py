@@ -2311,6 +2311,20 @@ class BaseImage(Resource):
         if not r:
             self.raise_exception()
 
+    @manipulative
+    def transform_colorspace(self, colorspace_type):
+        """ Transform image's colorspace.
+        :param colorspace_type: colorspace_type. available value can be found
+                                in the :const:`COLORSPACE_TYPES`
+        :type colorspace_type: :class:`basestring`"""
+        if not isinstance(colorspace_type, string_type) \
+            or colorspace_type not in COLORSPACE_TYPES:
+            raise TypeError('Colorspace value must be a string from '
+                            'COLORSPACE_TYPES, not ' + repr(colorspace_type))
+        r = library.MagickTransformImageColorspace(self.wand, COLORSPACE_TYPES.index(colorspace_type))
+        if not r:
+            self.raise_exception()
+
     def __repr__(self):
         cls = type(self)
         if getattr(self, 'c_resource', None) is None:
