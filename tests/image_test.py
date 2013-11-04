@@ -1284,3 +1284,9 @@ def test_quantize(fx_asset):
         colors = set([color for row in img for color in row])
         assert colors
         assert len(colors) <= number_colors
+
+
+def test_transform_colorspace(fx_asset):
+    with Image(filename=str(fx_asset.join('cmyk.jpg'))) as img:
+        img.transform_colorspace('srgb')
+        assert img.colorspace == 'srgb'
