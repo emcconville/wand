@@ -27,8 +27,13 @@ def pytest_addoption(parser):
 
 def pytest_runtest_setup(item):
     if 'slow' in item.keywords:
-        if item.config.getoption('--skip-slow'):
-            skip('skipped; --skip-slow option is used')
+        try:
+            skip_value = item.config.getoption('--skip-slow')
+        except ValueError:
+            pass
+        else:
+            if skip_value:
+                skip('skipped; --skip-slow option is used')
 
 
 @mark.tryfirst
