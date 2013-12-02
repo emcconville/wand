@@ -6,6 +6,10 @@ Version 0.3.6
 
 To be released.
 
+- Fix :exc:`UnicodeEncodeError` when :meth:`Drawing.text()
+  <wand.drawing.Drawing.text>` method gives Unicode ``text`` argument
+  in Python 2.  [:issue:`163`]
+
 
 Version 0.3.5
 -------------
