@@ -425,10 +425,12 @@ class Drawing(Resource):
         elif not body:
             raise ValueError('body string cannot be empty')
         if isinstance(body, text_type):
-            if self.text_encoding:
-                body = body.encode(self.text_encoding)
-            else:
-                body = binary(body)
+            # According to ImageMagick C API docs, we can use only UTF-8
+            # at this time, so we do hardcoding here.
+            # http://imagemagick.org/api/drawing-wand.php#DrawSetTextEncoding
+            if not self.text_encoding:
+                self.text_encoding = 'UTF-8'
+            body = body.encode(self.text_encoding)
         body_p = ctypes.create_string_buffer(body)
         library.DrawAnnotation(
             self.resource, x, y,

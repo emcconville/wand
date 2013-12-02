@@ -155,3 +155,15 @@ def test_get_font_metrics_test(fx_asset):
             assert m1.text_width < m2.text_width
             assert m2.text_width > m3.text_width
             assert m2.text_height < m3.text_height
+
+
+def test_regression_issue_163(tmpdir):
+    """https://github.com/dahlia/wand/issues/163"""
+    unicode_char = b'\xce\xa6'.decode('utf-8')
+    with Drawing() as draw:
+        with Image(width=500, height=500) as image:
+            draw.font_size = 20
+            draw.gravity = 'south_west'
+            draw.text(0, 0, unicode_char)
+            draw(image)
+            image.save(filename=str(tmpdir.join('out.jpg')))
