@@ -1257,7 +1257,7 @@ def test_unsharp_mask(fx_asset, display):
         assert before != after
         assert 0.89 <= after.red <= 0.90
         assert 0.82 <= after.green <= 0.83
-        assert 0.73 <= after.blue < 0.74
+        assert 0.72 <= after.blue < 0.74
 
 
 def test_issue_150(fx_asset, tmpdir):
