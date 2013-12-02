@@ -1,6 +1,12 @@
 Wand Changelog
 ==============
 
+Version 0.3.6
+-------------
+
+To be released.
+
+
 Version 0.3.5
 -------------
 
