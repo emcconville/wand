@@ -10,7 +10,7 @@ from pytest import mark, raises
 
 from wand.image import ClosedImageError, Image
 from wand.color import Color
-from wand.compat import PY3, text, text_type, string_type
+from wand.compat import PY3, string_type, text, text_type
 from wand.exceptions import MissingDelegateError
 from wand.font import Font
 

@@ -720,6 +720,12 @@ try:
                                  ctypes.c_double,
                                  ctypes.c_double]
 
+    library.DrawRectangle.argtypes = [ctypes.c_void_p,
+                                      ctypes.c_double,
+                                      ctypes.c_double,
+                                      ctypes.c_double,
+                                      ctypes.c_double]
+
     library.DrawAnnotation.argtypes = [ctypes.c_void_p,
                                        ctypes.c_double,
                                        ctypes.c_double,

@@ -1,7 +1,10 @@
-from pytest import fixture
+import itertools
+
+from pytest import fixture, mark
 
 from wand.image import Image
 from wand.color import Color
+from wand.compat import nested
 from wand.api import library
 from wand.drawing import Drawing
 
@@ -116,6 +119,27 @@ def test_draw_line(fx_wand):
         assert img[6,5] == Color('#333333')
         assert img[7,5] == Color('#333333')
         assert img[8,5] == Color('#ccc')
+
+
+@mark.parametrize('kwargs', itertools.product(
+    [('right', 40), ('width', 30)],
+    [('bottom', 40), ('height', 30)]
+))
+def test_draw_rectangle(kwargs, display, fx_wand):
+    with nested(Color('#fff'),
+                Color('#333'),
+                Color('#ccc')) as (white, black, gray):
+        with Image(width=50, height=50, background=white) as img:
+            fx_wand.stroke_width = 2
+            fx_wand.fill_color = black
+            fx_wand.stroke_color = gray
+            fx_wand.rectangle(left=10, top=10, **dict(kwargs))
+            fx_wand.draw(img)
+            display(img)
+            assert img[7, 7] == img[7, 42] == img[42, 7] == \
+                   img[42, 42] == img[0, 0] == img[49, 49] == white
+            assert img[12, 12] == img[12, 38] == img[38, 12] == \
+                   img[38, 38] == black
 
 
 def test_draw_text(fx_asset):

@@ -6,12 +6,13 @@ multiple Python versions (2.6, 2.7, 3.2, 3.3) and VM implementations
 (CPython, PyPy).
 
 """
+import contextlib
 import io
 import sys
 import types
 
 __all__ = ('PY3', 'binary', 'binary_type', 'encode_filename', 'file_types',
-           'string_type', 'text', 'text_type', 'xrange')
+           'nested', 'string_type', 'text', 'text_type', 'xrange')
 
 
 #: (:class:`bool`) Whether it is Python 3.x or not.
@@ -84,3 +85,36 @@ def encode_filename(filename):
     if isinstance(filename, text_type):
         return filename.encode(sys.getfilesystemencoding())
     return filename
+
+
+try:
+    nested = contextlib.nested
+except AttributeError:
+    # http://hg.python.org/cpython/file/v2.7.6/Lib/contextlib.py#l88
+    @contextlib.contextmanager
+    def nested(*managers):
+        exits = []
+        vars = []
+        exc = (None, None, None)
+        try:
+            for mgr in managers:
+                exit = mgr.__exit__
+                enter = mgr.__enter__
+                vars.append(enter())
+                exits.append(exit)
+            yield vars
+        except:
+            exc = sys.exc_info()
+        finally:
+            while exits:
+                exit = exits.pop()
+                try:
+                    if exit(*exc):
+                        exc = (None, None, None)
+                except:
+                    exc = sys.exc_info()
+            if exc != (None, None, None):
+                # PEP 3109
+                e = exc[0](exc[1])
+                e.__traceback__ = e[2]
+                raise e

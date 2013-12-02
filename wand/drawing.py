@@ -403,6 +403,96 @@ class Drawing(Resource):
                          int(start_x), int(start_y),
                          int(end_x), int(end_y))
 
+    def rectangle(self, left=None, top=None, right=None, bottom=None,
+                  width=None, height=None):
+        """Draws a rectangle using the current :attr:`stoke_color`,
+        :attr:`stroke_width`, and :attr:`fill_color`.
+
+        .. sourcecode:: text
+
+           +--------------------------------------------------+
+           |              ^                         ^         |
+           |              |                         |         |
+           |             top                        |         |
+           |              |                         |         |
+           |              v                         |         |
+           | <-- left --> +-------------------+  bottom       |
+           |              |             ^     |     |         |
+           |              | <-- width --|---> |     |         |
+           |              |           height  |     |         |
+           |              |             |     |     |         |
+           |              |             v     |     |         |
+           |              +-------------------+     v         |
+           | <--------------- right ---------->               |
+           +--------------------------------------------------+
+
+        :param left: x-offset of the rectangle to draw
+        :type left: :class:`numbers.Real`
+        :param top: y-offset of the rectangle to draw
+        :type top: :class:`numbers.Real`
+        :param right: second x-offset of the rectangle to draw.
+                      this parameter and ``width`` parameter are exclusive
+                      each other
+        :type right: :class:`numbers.Real`
+        :param bottom: second y-offset of the rectangle to draw.
+                       this parameter and ``height`` parameter are exclusive
+                       each other
+        :type bottom: :class:`numbers.Real`
+        :param width: the :attr:`width` of the rectangle to draw.
+                      this parameter and ``right`` parameter are exclusive
+                      each other
+        :type width: :class:`numbers.Real`
+        :param height: the :attr:`height` of the rectangle to draw.
+                       this parameter and ``bottom`` parameter are exclusive
+                       each other
+        :type height: :class:`numbers.Real`
+
+        .. versionadded:: 0.3.6
+
+        """
+        if left is None:
+            raise TypeError('left is missing')
+        elif top is None:
+            raise TypeError('top is missing')
+        elif right is None and width is None:
+            raise TypeError('right/width is missing')
+        elif bottom is None and height is None:
+            raise TypeError('bottom/height is missing')
+        elif not (right is None or width is None):
+            raise TypeError('parameters right and width are exclusive each '
+                            'other; use one at a time')
+        elif not (bottom is None or height is None):
+            raise TypeError('parameters bottom and height are exclusive each '
+                            'other; use one at a time')
+        elif not isinstance(left, numbers.Real):
+            raise TypeError('left must be numbers.Real, not ' + repr(left))
+        elif not isinstance(top, numbers.Real):
+            raise TypeError('top must be numbers.Real, not ' + repr(top))
+        elif not (right is None or isinstance(right, numbers.Real)):
+            raise TypeError('right must be numbers.Real, not ' + repr(right))
+        elif not (bottom is None or isinstance(bottom , numbers.Real)):
+            raise TypeError('bottom must be numbers.Real, not ' + repr(bottom))
+        elif not (width is None or isinstance(width, numbers.Real)):
+            raise TypeError('width must be numbers.Real, not ' + repr(width))
+        elif not (height is None or isinstance(height, numbers.Real)):
+            raise TypeError('height must be numbers.Real, not ' + repr(height))
+        if right is None:
+            if width < 0:
+                raise ValueError('width must be positive, not ' + repr(width))
+            right = left + width
+        elif right < left:
+            raise ValueError('right must be more than left ({0!r}), '
+                             'not {1!r})'.format(left, right))
+        if bottom is None:
+            if height < 0:
+                raise ValueError('height must be positive, not ' + repr(height))
+            bottom = top + height
+        elif bottom < top:
+            raise ValueError('bottom must be more than top ({0!r}), '
+                             'not {1!r})'.format(top, bottom))
+        library.DrawRectangle(self.resource, left, top, right, bottom)
+        self.raise_exception()
+
     def text(self, x, y, body):
         """Writes a text ``body`` into (``x``, ``y``).
 
