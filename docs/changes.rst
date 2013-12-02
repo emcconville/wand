@@ -7,7 +7,7 @@ Version 0.3.6
 To be released.
 
 - Added :meth:`Drawing.rectangle() <wand.drawing.Drawing.rectangle>` method.
-  [:issue:`159`]
+  :ref:`Now you can draw rectangles. <draw-rectangles>` [:issue:`159`]
 - Added :func:`contextlib.nested()` function to :meth:`wand.compat` module.
 - Fixed :exc:`UnicodeEncodeError` when :meth:`Drawing.text()
   <wand.drawing.Drawing.text>` method gives Unicode ``text`` argument

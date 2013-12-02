@@ -49,6 +49,33 @@ a red diagonal line into the ``image``::
         draw(image)
 
 
+.. _draw-rectangles:
+
+Rectangles
+----------
+
+.. versionadded:: 0.3.6
+
+If you want to draw rectangles use :meth:`~wand.drawing.Drawing.rectangle()`
+method.  It takes ``left``/``top`` coordinate, and ``right``/``bottom``
+coordinate, or ``width`` and ``height``.  For example, the following code
+draws a square on the ``image``::
+
+    draw.rectangle(left=10, top=10, right=40, bottom=40)
+    draw(image)
+
+Or using ``width`` and ``height`` instead of ``right`` and ``bottom``::
+
+    draw.rectangle(left=10, top=10, width=30, height=30)
+    draw(image)
+
+Note that the stoke and the fill are determined by the following properties:
+
+- :attr:`~wand.drawing.Drawing.stroke_color`
+- :attr:`~wand.drawing.Drawing.stroke_width`
+- :attr:`~wand.drawing.Drawing.fill_color`
+
+
 .. _draw-texts:
 
 Texts
