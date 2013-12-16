@@ -701,7 +701,7 @@ class BaseImage(Resource):
         :const:`ORIENTATION_TYPES` list.  It also can be set.
 
         .. versionadded:: 0.3.0
-        
+
         """
         orientation_index = library.MagickGetImageOrientation(self.wand)
         return ORIENTATION_TYPES[text(orientation_index)]
@@ -1223,7 +1223,7 @@ class BaseImage(Resource):
             library.MagickSetSize(self.wand, width, height)
             if not r:
                 self.raise_exception()
-                
+
     @manipulative
     def sample(self, width=None, height=None):
         """Resizes the image by sampling the pixels.  It's basically quicker
@@ -1673,7 +1673,7 @@ class BaseImage(Resource):
 
         :raises exceptions.ValueError:
            when one or more arguments are invalid
-        
+
         .. versionadded:: 0.3.4
 
         """
@@ -1958,6 +1958,7 @@ class Image(BaseImage):
         .. versionadded:: 0.3.0
 
         """
+        r = None
         # Resolution must be set after image reading.
         if resolution is not None:
             if (isinstance(resolution, collections.Sequence) and
