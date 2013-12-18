@@ -11,8 +11,9 @@ import ctypes.util
 import itertools
 import os
 import os.path
-import sys
 import platform
+import sys
+import traceback
 
 __all__ = ('MagickPixelPacket', 'c_magick_char_p', 'library', 'libc',
            'libmagick', 'load_library')
@@ -748,7 +749,9 @@ try:
         ctypes.c_double
     )
 except AttributeError:
-    raise ImportError('MagickWand shared library not found or incompatible')
+    raise ImportError('MagickWand shared library not found or incompatible\n'
+                      'Original exception was raised in:\n' +
+                      traceback.format_exc())
 
 #: (:class:`ctypes.CDLL`) The C standard library.
 libc = None
