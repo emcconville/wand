@@ -455,6 +455,15 @@ try:
                                              ctypes.c_int, ctypes.c_ssize_t,
                                              ctypes.c_ssize_t]
 
+    library.MagickLevelImage.argtypes = [ctypes.c_void_p, ctypes.c_double, 
+                                         ctypes.c_double,
+                                             ctypes.c_double]
+
+    library.MagickLevelImageChannel.argtypes = [ctypes.c_void_p, ctypes.c_int,
+                                             ctypes.c_double, ctypes.c_double,
+                                             ctypes.c_double]
+
+
     library.MagickCompositeImageChannel.argtypes = [
         ctypes.c_void_p, ctypes.c_int, ctypes.c_void_p,
         ctypes.c_int, ctypes.c_ssize_t, ctypes.c_ssize_t

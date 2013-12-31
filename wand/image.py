@@ -2014,6 +2014,14 @@ class Image(BaseImage):
 
         """
         library.ClearMagickWand(self.wand)
+    
+    def level(self, black, gamma, white, channel=None):
+        if(channel==None):
+            r = library.MagickLevelImage(self.wand, black, gamma, white)
+        else:
+            r = library.MagickLevelImageChannel(self.wand, CHANNELS[channel], black, gamma, white)
+        if not r:
+            self.raise_exception()
 
     @property
     def format(self):
