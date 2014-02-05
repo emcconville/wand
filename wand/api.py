@@ -291,6 +291,8 @@ try:
     library.MagickGetImageColorspace.restype = ctypes.c_int
 
     library.MagickSetImageColorspace.argtypes = [ctypes.c_void_p, ctypes.c_int]
+    library.MagickTransformImageColorspace.argtypes = [ctypes.c_void_p, ctypes.c_int]
+
 
     library.MagickGetImageDepth.argtypes = [ctypes.c_void_p]
     library.MagickGetImageDepth.restype = ctypes.c_size_t
@@ -748,6 +750,12 @@ try:
     library.MagickQueryMultilineFontMetrics.restype = ctypes.POINTER(
         ctypes.c_double
     )
+    library.MagickQuantizeImage.argtypes = [ctypes.c_void_p,
+                                            ctypes.c_int,
+                                            ctypes.c_int,
+                                            ctypes.c_int,
+                                            ctypes.c_bool,
+                                            ctypes.c_bool]
 except AttributeError:
     raise ImportError('MagickWand shared library not found or incompatible\n'
                       'Original exception was raised in:\n' +
