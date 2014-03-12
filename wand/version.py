@@ -104,7 +104,9 @@ if libmagick:
 
     del c_magick_version, _match, c_quantum_depth
 
-__doc__ = __doc__.replace('0.0.0', VERSION)
+if __doc__ is not None:
+    __doc__ = __doc__.replace('0.0.0', VERSION)
+    
 del libmagick
 
 
