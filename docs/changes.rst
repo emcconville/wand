@@ -4,7 +4,7 @@ Wand Changelog
 Version 0.3.6
 -------------
 
-To be released.
+Released on March 23, 2014.
 
 - Added :meth:`Drawing.rectangle() <wand.drawing.Drawing.rectangle>` method.
   :ref:`Now you can draw rectangles. <draw-rectangles>` [:issue:`159`]
