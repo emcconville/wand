@@ -6,7 +6,7 @@ from pytest import mark
 
 from wand.color import Color
 from wand.compat import xrange
-from wand.version import MAGICK_VERSION_INFO
+from wand.version import MAGICK_VERSION_INFO  # noqa
 
 
 def test_equals():

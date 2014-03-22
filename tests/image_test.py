@@ -1233,7 +1233,7 @@ def test_gaussian_blur(fx_asset, display):
         img.gaussian_blur(30, 10)
         after = img[100, 100]
         assert before != after
-        assert 0.84 <= after.red <= 0.85
+        assert 0.84 <= after.red <= 0.851
         assert 0.74 <= after.green <= 0.75
         assert 0.655 <= after.blue < 0.67
 
