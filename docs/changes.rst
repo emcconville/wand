@@ -8,7 +8,9 @@ To be released.
 
 - Added :meth:`Drawing.rectangle() <wand.drawing.Drawing.rectangle>` method.
   :ref:`Now you can draw rectangles. <draw-rectangles>` [:issue:`159`]
-- Added :func:`contextlib.nested()` function to :meth:`wand.compat` module.
+- Added :attr:`Image.compression <wand.image.Image.compression>` property.
+  [:issue:`171`]
+- Added :func:`contextlib.nested()` function to :mod:`wand.compat` module.
 - Fixed :exc:`UnicodeEncodeError` when :meth:`Drawing.text()
   <wand.drawing.Drawing.text>` method gives Unicode ``text`` argument
   in Python 2.  [:issue:`163`]

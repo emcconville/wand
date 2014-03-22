@@ -397,6 +397,20 @@ ORIENTATION_TYPES = ('undefined', 'top_left', 'top_right', 'bottom_right',
 #:    Added ``'jpeg:sampling-factor'`` option.
 OPTIONS = frozenset(['fill', 'jpeg:sampling-factor'])
 
+#: (:class:`tuple`) The list of :attr:`Image.compression` types.
+#:
+#: .. versionadded:: 0.3.6
+COMPRESSION_TYPES = (
+    'undefined', 'b44a', 'b44', 'bzip', 'dxt1', 'dxt3', 'dxt5', 'fax',
+    'group4',
+    'jbig1',        # ISO/IEC std 11544 / ITU-T rec T.82
+    'jbig2',        # ISO/IEC std 14492 / ITU-T rec T.88
+    'jpeg2000',     # ISO/IEC std 15444-1
+    'jpeg', 'losslessjpeg',
+    'lzma',         # Lempel-Ziv-Markov chain algorithm
+    'lzw', 'no', 'piz', 'pxr24', 'rle', 'zip', 'zips'
+)
+
 
 def manipulative(function):
     """Mark the operation manipulating itself instead of returning new one."""
@@ -704,7 +718,7 @@ class BaseImage(Resource):
 
         """
         orientation_index = library.MagickGetImageOrientation(self.wand)
-        return ORIENTATION_TYPES[text(orientation_index)]
+        return ORIENTATION_TYPES[orientation_index]
 
     @orientation.setter
     @manipulative
@@ -2074,6 +2088,32 @@ class Image(BaseImage):
     @property
     def animation(self):
         return self.mimetype == 'image/gif' and len(self.sequence) > 1
+
+    @property
+    def compression(self):
+        """(:class:`basestring`) The type of image compression.
+        It's a string from :const:`COMPRESSION_TYPES` list.
+        It also can be set.
+
+        .. versionadded:: 0.3.6
+
+        """
+        print(1)
+        compression_index = libmagick.MagickGetImageCompression(self.wand)
+        print(2)
+        return COMPRESSION_TYPES[compression_index]
+
+    @compression.setter
+    def compression(self, value):
+        if not isinstance(value, string_type):
+            raise TypeError('expected a string, not ' + repr(value))
+        if value not in COMPRESSION_TYPES:
+            raise ValueError('expected a string from COMPRESSION_TYPES, not '
+                             + repr(value))
+        library.MagickSetImageCompression(
+            self.wand,
+            COMPRESSION_TYPES.index(value)
+        )
 
     def blank(self, width, height, background=None):
         """Creates blank image.

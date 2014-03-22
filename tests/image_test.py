@@ -1260,6 +1260,11 @@ def test_unsharp_mask(fx_asset, display):
         assert 0.72 <= after.blue < 0.74
 
 
+def test_compression(fx_asset):
+    with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
+        assert img.compression == 'group4'
+
+
 def test_issue_150(fx_asset, tmpdir):
     """Should not be terminated with segmentation fault.
 
