@@ -12,6 +12,8 @@ To be released.
 - Fixed :exc:`UnicodeEncodeError` when :meth:`Drawing.text()
   <wand.drawing.Drawing.text>` method gives Unicode ``text`` argument
   in Python 2.  [:issue:`163`]
+- Now it now allows to use Wand when Python is invoked with the ``-OO`` flag.
+  [:issue:`169` by Samuel Maudo]
 
 
 Version 0.3.5
