@@ -2098,9 +2098,7 @@ class Image(BaseImage):
         .. versionadded:: 0.3.6
 
         """
-        print(1)
         compression_index = libmagick.MagickGetImageCompression(self.wand)
-        print(2)
         return COMPRESSION_TYPES[compression_index]
 
     @compression.setter
