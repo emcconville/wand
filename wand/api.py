@@ -737,6 +737,12 @@ try:
                                        ctypes.c_double,
                                        ctypes.POINTER(ctypes.c_ubyte)]
 
+    library.MagickNegateImage.argtypes = [ctypes.c_void_p, ctypes.c_int]
+
+    library.MagickNegateImageChannel.argtypes = [ctypes.c_void_p,
+                                                 ctypes.c_int,
+                                                 ctypes.c_int]
+
     library.MagickNormalizeImage.argtypes = [ctypes.c_void_p]
 
     library.MagickNormalizeImageChannel.argtypes = [ctypes.c_void_p,
