@@ -1704,9 +1704,9 @@ class BaseImage(Resource):
                             repr(hue))
         r = library.MagickModulateImage(
             self.wand,
-            ctypes.c_double(brightness),
-            ctypes.c_double(saturation),
-            ctypes.c_double(hue)
+            brightness,
+            saturation,
+            hue
         )
         if not r:
             self.raise_exception()
