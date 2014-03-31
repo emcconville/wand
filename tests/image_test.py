@@ -1128,6 +1128,24 @@ def test_setgravity():
         assert img.gravity == 'center'
 
 
+def test_negate_default(display, fx_asset):
+    def test(c1, c2):
+        assert c1.red_int8 + c2.red_int8 == 255 and \
+               c1.green_int8 + c2.green_int8 == 255 and \
+               c1.blue_int8 + c2.blue_int8 == 255
+    with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
+        display(img)
+        left_top = img[0, 0]
+        left_bottom = img[0, -1]
+        right_top = img[-1, 0]
+        right_bottom = img[-1, -1]
+        img.negate()
+        test(left_top, img[0, 0])
+        test(left_bottom, img[0, -1])
+        test(right_top, img[-1, 0])
+        test(right_bottom, img[-1, -1])
+
+
 def test_normalize_default(display, fx_asset):
     with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
         display(img)
