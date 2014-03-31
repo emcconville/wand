@@ -2312,6 +2312,29 @@ class Image(BaseImage):
         if not result:
             self.raise_exception()
 
+    def negate(self, grayscale=False, channel=None):
+        """Negate the colors in the reference image.
+
+        :param grayscale: if set, only negate grayscale pixels within the image.
+        :type grayscale: :class:`bool`
+        :param channel: the channel type.  available values can be found
+                        in the :const:`CHANNELS` mapping.  If ``None``,
+                        negate all channels.
+        :type channel: :class:`basestring`
+
+        """
+        if channel:
+            try:
+                ch_const = CHANNELS[channel]
+            except KeyError:
+                raise ValueError(repr(channel) + ' is an invalid channel type'
+                                 '; see wand.image.CHANNELS dictionary')
+            r = library.MagickNegateImageChannel(self.wand, ch_const, grayscale)
+        else:
+            r = library.MagickNegateImage(self.wand, grayscale)
+        if not r:
+            self.raise_exception()
+
     def normalize(self, channel=None):
         """Normalize color channels.
 
