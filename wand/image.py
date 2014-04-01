@@ -1020,7 +1020,7 @@ class BaseImage(Resource):
     @property
     def quantum_range(self):
         """(:class:`int`) The maxumim value of a color channel that is
-        supported by the imagemgick library.
+        supported by the imagemagick library.
 
         .. versionadded:: 0.2.0
 
