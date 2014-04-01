@@ -1,6 +1,15 @@
 Wand Changelog
 ==============
 
+Version 0.3.8
+-------------
+
+To be released.
+
+- Added :meth:`Image.negate() <wand.image.BaseImage.negate>` method.
+  [:issue:`174` by Park Joon-Kyu]
+
+
 Version 0.3.7
 -------------
 

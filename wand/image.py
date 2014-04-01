@@ -1721,6 +1721,8 @@ class BaseImage(Resource):
                         negate all channels.
         :type channel: :class:`basestring`
 
+        .. versionadded:: 0.3.8
+
         """
         if channel:
             try:
