@@ -321,7 +321,7 @@ try:
 
     library.MagickSampleImage.argtypes = [ctypes.c_void_p, ctypes.c_size_t,
                                           ctypes.c_size_t]
-                                          
+
     library.MagickResizeImage.argtypes = [ctypes.c_void_p, ctypes.c_size_t,
                                           ctypes.c_size_t, ctypes.c_int,
                                           ctypes.c_double]
@@ -625,10 +625,10 @@ try:
     library.DrawSetFillColor.argtypes = [ctypes.c_void_p,
                                          ctypes.c_void_p]
 
-    library.DrawSetStrokeColor.argtypes = [ctypes.c_void_p, 
+    library.DrawSetStrokeColor.argtypes = [ctypes.c_void_p,
                                            ctypes.c_void_p]
 
-    library.DrawSetStrokeWidth.argtypes = [ctypes.c_void_p, 
+    library.DrawSetStrokeWidth.argtypes = [ctypes.c_void_p,
                                            ctypes.c_double]
 
     library.DrawSetTextAlignment.argtypes = [ctypes.c_void_p,
@@ -661,7 +661,7 @@ try:
     library.DrawGetFillColor.argtypes = [ctypes.c_void_p,
                                          ctypes.c_void_p]
 
-    library.DrawGetStrokeColor.argtypes = [ctypes.c_void_p, 
+    library.DrawGetStrokeColor.argtypes = [ctypes.c_void_p,
                                            ctypes.c_void_p]
 
     library.DrawGetStrokeWidth.argtypes = [ctypes.c_void_p]
@@ -753,6 +753,11 @@ try:
     library.MagickQueryMultilineFontMetrics.restype = ctypes.POINTER(
         ctypes.c_double
     )
+
+    library.MagickModulateImage.argtypes = [ctypes.c_void_p,
+                                            ctypes.c_double,
+                                            ctypes.c_double,
+                                            ctypes.c_double]
 except AttributeError:
     raise ImportError('MagickWand shared library not found or incompatible\n'
                       'Original exception was raised in:\n' +
