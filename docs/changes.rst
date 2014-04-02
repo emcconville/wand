@@ -8,6 +8,9 @@ To be released.
 
 - Added :meth:`Image.negate() <wand.image.BaseImage.negate>` method.
   [:issue:`174` by Park Joon-Kyu]
+- Fixed a segmentation fault on :meth:`Image.modulate()
+  <wand.image.BaseImage.modulate>` method.
+  [:issue:`173` by Ted Fung, :issue:`158`]
 
 
 Version 0.3.7
