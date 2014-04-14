@@ -16,7 +16,7 @@ To be released.
 Version 0.3.7
 -------------
 
-Released on Match 25, 2014.
+Released on March 25, 2014.
 
 - A hotfix of debug prints made at 0.3.6.
 
