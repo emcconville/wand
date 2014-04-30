@@ -752,8 +752,8 @@ class BaseImage(Resource):
         :type text: :class:`basestring`
         :param left: x offset in pixels
         :type left: :class:`numbers.Integral`
-        :param right: y offset in pixels
-        :type right: :class:`numbers.Integral`
+        :param top: y offset in pixels
+        :type top: :class:`numbers.Integral`
         :param width: width of caption in pixels.
                       default is :attr:`width` of the image
         :type width: :class:`numbers.Integral`
