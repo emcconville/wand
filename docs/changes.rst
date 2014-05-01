@@ -11,6 +11,8 @@ To be released.
 - Fixed a segmentation fault on :meth:`Image.modulate()
   <wand.image.BaseImage.modulate>` method.
   [:issue:`173` by Ted Fung, :issue:`158`]
+- Added suggestion to install freetype also if Homebrew is used.
+  [:issue:`141`]
 
 
 Version 0.3.7
