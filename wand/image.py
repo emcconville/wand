@@ -598,6 +598,9 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.3.0
 
+        .. versionchanged:: 0.3.8
+           Became to accept :mimetype:`image/x-gif` as well.
+
         """
         return False
 

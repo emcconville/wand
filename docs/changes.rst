@@ -13,6 +13,8 @@ To be released.
   [:issue:`173` by Ted Fung, :issue:`158`]
 - Added suggestion to install freetype also if Homebrew is used.
   [:issue:`141`]
+- Now :mimetype:`image/x-gif` also is determined as :attr:`animation`.
+  [:issue:`181` by Juan-Pablo Scaletti]
 
 
 Version 0.3.7
