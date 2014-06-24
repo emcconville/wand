@@ -154,7 +154,7 @@ Check out :doc:`changes` also.
   :alt: Coverage Status
   :target: https://coveralls.io/r/dahlia/wand
 
-.. _Hong Minhee: http://dahlia.kr/
+.. _Hong Minhee: http://hongminhee.org/
 .. _StyleShare: https://stylesha.re/
 .. _contributors: https://github.com/dahlia/wand/graphs/contributors
 .. _MIT license: http://minhee.mit-license.org/
