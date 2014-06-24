@@ -142,10 +142,12 @@ except (OSError, IOError):
     elif sys.platform == 'win32':
         msg += '#install-imagemagick-on-windows'
     elif sys.platform == 'darwin':
-        for pkgmgr in 'brew', 'port':
+        mac_pkgmgrs = {'brew': 'brew install freetype imagemagick',
+                       'port': 'port install imagemagick'}
+        for pkgmgr in mac_pkgmgrs:
             with os.popen('which ' + pkgmgr) as f:
                 if f.read().strip():
-                    msg = pkgmgr + ' install imagemagick'
+                    msg = mac_pkgmgrs[pkgmgr]
                     break
         else:
             msg += '#install-imagemagick-on-mac'
@@ -321,7 +323,7 @@ try:
 
     library.MagickSampleImage.argtypes = [ctypes.c_void_p, ctypes.c_size_t,
                                           ctypes.c_size_t]
-                                          
+
     library.MagickResizeImage.argtypes = [ctypes.c_void_p, ctypes.c_size_t,
                                           ctypes.c_size_t, ctypes.c_int,
                                           ctypes.c_double]
@@ -625,10 +627,10 @@ try:
     library.DrawSetFillColor.argtypes = [ctypes.c_void_p,
                                          ctypes.c_void_p]
 
-    library.DrawSetStrokeColor.argtypes = [ctypes.c_void_p, 
+    library.DrawSetStrokeColor.argtypes = [ctypes.c_void_p,
                                            ctypes.c_void_p]
 
-    library.DrawSetStrokeWidth.argtypes = [ctypes.c_void_p, 
+    library.DrawSetStrokeWidth.argtypes = [ctypes.c_void_p,
                                            ctypes.c_double]
 
     library.DrawSetTextAlignment.argtypes = [ctypes.c_void_p,
@@ -661,7 +663,7 @@ try:
     library.DrawGetFillColor.argtypes = [ctypes.c_void_p,
                                          ctypes.c_void_p]
 
-    library.DrawGetStrokeColor.argtypes = [ctypes.c_void_p, 
+    library.DrawGetStrokeColor.argtypes = [ctypes.c_void_p,
                                            ctypes.c_void_p]
 
     library.DrawGetStrokeWidth.argtypes = [ctypes.c_void_p]
@@ -737,6 +739,12 @@ try:
                                        ctypes.c_double,
                                        ctypes.POINTER(ctypes.c_ubyte)]
 
+    library.MagickNegateImage.argtypes = [ctypes.c_void_p, ctypes.c_int]
+
+    library.MagickNegateImageChannel.argtypes = [ctypes.c_void_p,
+                                                 ctypes.c_int,
+                                                 ctypes.c_int]
+
     library.MagickNormalizeImage.argtypes = [ctypes.c_void_p]
 
     library.MagickNormalizeImageChannel.argtypes = [ctypes.c_void_p,
@@ -753,6 +761,11 @@ try:
     library.MagickQueryMultilineFontMetrics.restype = ctypes.POINTER(
         ctypes.c_double
     )
+
+    library.MagickModulateImage.argtypes = [ctypes.c_void_p,
+                                            ctypes.c_double,
+                                            ctypes.c_double,
+                                            ctypes.c_double]
 except AttributeError:
     raise ImportError('MagickWand shared library not found or incompatible\n'
                       'Original exception was raised in:\n' +

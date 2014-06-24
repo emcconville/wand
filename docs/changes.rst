@@ -1,6 +1,30 @@
 Wand Changelog
 ==============
 
+Version 0.3.8
+-------------
+
+To be released.
+
+- Added :meth:`Image.negate() <wand.image.BaseImage.negate>` method.
+  [:issue:`174` by Park Joon-Kyu]
+- Fixed a segmentation fault on :meth:`Image.modulate()
+  <wand.image.BaseImage.modulate>` method.
+  [:issue:`173` by Ted Fung, :issue:`158`]
+- Added suggestion to install freetype also if Homebrew is used.
+  [:issue:`141`]
+- Now :mimetype:`image/x-gif` also is determined as :attr:`animation`.
+  [:issue:`181` by Juan-Pablo Scaletti]
+
+
+Version 0.3.7
+-------------
+
+Released on March 25, 2014.
+
+- A hotfix of debug prints made at 0.3.6.
+
+
 Version 0.3.6
 -------------
 

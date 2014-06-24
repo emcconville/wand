@@ -598,6 +598,9 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.3.0
 
+        .. versionchanged:: 0.3.8
+           Became to accept :mimetype:`image/x-gif` as well.
+
         """
         return False
 
@@ -752,8 +755,8 @@ class BaseImage(Resource):
         :type text: :class:`basestring`
         :param left: x offset in pixels
         :type left: :class:`numbers.Integral`
-        :param right: y offset in pixels
-        :type right: :class:`numbers.Integral`
+        :param top: y offset in pixels
+        :type top: :class:`numbers.Integral`
         :param width: width of caption in pixels.
                       default is :attr:`width` of the image
         :type width: :class:`numbers.Integral`
@@ -1704,10 +1707,35 @@ class BaseImage(Resource):
                             repr(hue))
         r = library.MagickModulateImage(
             self.wand,
-            ctypes.c_double(brightness),
-            ctypes.c_double(saturation),
-            ctypes.c_double(hue)
+            brightness,
+            saturation,
+            hue
         )
+        if not r:
+            self.raise_exception()
+
+    def negate(self, grayscale=False, channel=None):
+        """Negate the colors in the reference image.
+
+        :param grayscale: if set, only negate grayscale pixels within the image.
+        :type grayscale: :class:`bool`
+        :param channel: the channel type.  available values can be found
+                        in the :const:`CHANNELS` mapping.  If ``None``,
+                        negate all channels.
+        :type channel: :class:`basestring`
+
+        .. versionadded:: 0.3.8
+
+        """
+        if channel:
+            try:
+                ch_const = CHANNELS[channel]
+            except KeyError:
+                raise ValueError(repr(channel) + ' is an invalid channel type'
+                                 '; see wand.image.CHANNELS dictionary')
+            r = library.MagickNegateImageChannel(self.wand, ch_const, grayscale)
+        else:
+            r = library.MagickNegateImage(self.wand, grayscale)
         if not r:
             self.raise_exception()
 
@@ -2087,7 +2115,8 @@ class Image(BaseImage):
 
     @property
     def animation(self):
-        return self.mimetype == 'image/gif' and len(self.sequence) > 1
+        return (self.mimetype in ('image/gif', 'image/x-gif')
+                and len(self.sequence) > 1)
 
     @property
     def compression(self):
@@ -2098,9 +2127,7 @@ class Image(BaseImage):
         .. versionadded:: 0.3.6
 
         """
-        print(1)
         compression_index = libmagick.MagickGetImageCompression(self.wand)
-        print(2)
         return COMPRESSION_TYPES[compression_index]
 
     @compression.setter
