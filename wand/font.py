@@ -69,7 +69,7 @@ class Font(tuple):
 
     @property
     def size(self):
-        """(:class:`numbers.Real`) The font size."""
+        """(:class:`numbers.Real`) The font size in pixels."""
         return self[1]
 
     @property
