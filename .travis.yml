@@ -4,9 +4,7 @@ python:
 - 2.7
 - 3.2
 - 3.3
-# FIXME: uncomment the following line when Travis CI supports Python 3.4
-#        https://github.com/travis-ci/travis-ci/issues/1989
-#- 3.4
+- 3.4
 - pypy
 env:
 - secure: "EhG2uSD2m1eGxuL2HeQewJJx7MVL4WpjrxyfiUBEgsApemD1yKJPjUnLwAyd\nbPi5HJx5ySm1TTRSvj6/yP85YLYTaJHA8OabKk7p0wFW294qcrYIDGovU7NL\n3YOqZmqN+S3XOBGFCOnByxE+pcxxWW/3/I09EgeW7D6tBPh67G0="

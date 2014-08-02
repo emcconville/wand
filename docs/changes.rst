@@ -4,7 +4,7 @@ Wand Changelog
 Version 0.3.8
 -------------
 
-To be released.
+Released on August 3, 2014.
 
 - Fixed a bug that transparent background becomes filled with white
   when SVG is converted to other bitmap image format like PNG.  [:issue:`184`]
