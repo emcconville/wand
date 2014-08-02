@@ -1961,6 +1961,11 @@ class Image(BaseImage):
             else:
                 if format:
                     format = binary(format)
+                with Color('transparent') as bg:  # FIXME: parameterize this
+                    result = library.MagickSetBackgroundColor(self.wand,
+                                                              bg.resource)
+                    if not result:
+                        self.raise_exception()
                 if file is not None:
                     if format:
                         library.MagickSetFilename(self.wand,

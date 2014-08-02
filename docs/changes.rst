@@ -6,6 +6,8 @@ Version 0.3.8
 
 To be released.
 
+- Fixed a bug that transparent background becomes filled with white
+  when SVG is converted to other bitmap image format like PNG.  [:issue:`184`]
 - Added :meth:`Image.negate() <wand.image.BaseImage.negate>` method.
   [:issue:`174` by Park Joon-Kyu]
 - Fixed a segmentation fault on :meth:`Image.modulate()

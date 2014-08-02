@@ -908,13 +908,13 @@ def test_set_alpha_channel(fx_asset):
 def test_get_background_color(fx_asset):
     """Gets the background color."""
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
-        assert Color('white') == img.background_color
+        assert Color('transparent') == img.background_color
 
 
 def test_set_background_color(fx_asset):
     """Sets the background color."""
     with Image(filename=str(fx_asset.join('croptest.png'))) as img:
-        with Color('transparent') as color:
+        with Color('red') as color:
             img.background_color = color
             assert img.background_color == color
 
