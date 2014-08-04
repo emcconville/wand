@@ -395,6 +395,9 @@ ORIENTATION_TYPES = ('undefined', 'top_left', 'top_right', 'bottom_right',
 #:
 #: .. versionchanged:: 0.3.4
 #:    Added ``'jpeg:sampling-factor'`` option.
+#:
+#: .. versionchanged:: 0.3.9
+#:    Added ``'pdf:use-cropbox'`` option.
 OPTIONS = frozenset(['fill', 'jpeg:sampling-factor', 'pdf:use-cropbox'])
 
 #: (:class:`tuple`) The list of :attr:`Image.compression` types.
@@ -438,6 +441,9 @@ class BaseImage(Resource):
     #:
     #: .. versionchanged:: 0.3.4
     #:    Added ``'jpeg:sampling-factor'`` option.
+    #:
+    #: .. versionchanged:: 0.3.9
+    #:    Added ``'pdf:use-cropbox'`` option.
     options = None
 
     #: (:class:`collections.Sequence`) The list of

@@ -6,6 +6,10 @@ Version 0.3.9
 
 To be released.
 
+- Added ``'pdf:use-cropbox'`` option to :attr:`Image.options
+  <wand.image.BaseImage.options>` dictionary (and :const:`~wand.image.OPTIONS`
+  constant).  [:issue:`185` by Christoph Neuroth]
+
 
 Version 0.3.8
 -------------
