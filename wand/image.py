@@ -395,7 +395,7 @@ ORIENTATION_TYPES = ('undefined', 'top_left', 'top_right', 'bottom_right',
 #:
 #: .. versionchanged:: 0.3.4
 #:    Added ``'jpeg:sampling-factor'`` option.
-OPTIONS = frozenset(['fill', 'jpeg:sampling-factor'])
+OPTIONS = frozenset(['fill', 'jpeg:sampling-factor', 'pdf:use-cropbox'])
 
 #: (:class:`tuple`) The list of :attr:`Image.compression` types.
 #:
