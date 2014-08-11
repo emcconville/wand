@@ -2214,7 +2214,7 @@ class Image(BaseImage):
         :param file: a file object to write to
         :type file: file object
         :param filename: a filename string to write to
-        :type filename: :class:`basename`
+        :type filename: :class:`basestring`
 
         .. versionadded:: 0.1.5
            The ``file`` parameter.
