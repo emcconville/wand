@@ -9,6 +9,8 @@ To be released.
 - Added ``'pdf:use-cropbox'`` option to :attr:`Image.options
   <wand.image.BaseImage.options>` dictionary (and :const:`~wand.image.OPTIONS`
   constant).  [:issue:`185` by Christoph Neuroth]
+- Fixed a bug that exception message was :class:`bytes` instead of
+  :class:`str` on Python 3.
 
 
 Version 0.3.8
