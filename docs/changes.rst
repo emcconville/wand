@@ -1,6 +1,9 @@
 Wand Changelog
 ==============
 
+0.3 series
+~~~~~~~~~~
+
 Version 0.3.9
 -------------
 
@@ -228,6 +231,9 @@ Released on June 17, 2013.
 __ http://en.wikipedia.org/wiki/Seam_carving
 
 
+0.2 series
+~~~~~~~~~~
+
 Version 0.2.4
 -------------
 
@@ -342,6 +348,9 @@ Released on June 20, 2012.  Alpha version.
 - Now the current version can be found from the command line interface:
   ``python -m wand.version``.
 
+
+0.1 series
+~~~~~~~~~~
 
 Version 0.1.10
 --------------
