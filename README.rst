@@ -40,6 +40,10 @@ Recent version
 Development version
    http://docs.wand-py.org/en/latest/
 
+   .. image:: https://readthedocs.org/projects/wand/badge/
+      :alt: Documentation Status
+      :target: http://docs.wand-py.org/en/latest/
+
 
 Community
 ---------
@@ -52,6 +56,10 @@ GitHub
 
 Package Index (Cheeseshop)
    https://pypi.python.org/pypi/Wand
+
+   .. image:: https://badge.fury.io/py/Wand.svg?
+      :alt: Latest PyPI version
+      :target: https://pypi.python.org/pypi/Wand
 
 Mailing list
    wand@librelist.com
@@ -70,15 +78,15 @@ IRC
    `irc://irc.freenode.net/wand <http://webchat.freenode.net/?channels=wand>`_
 
 Continuous Integration (Travis CI)
-   http://travis-ci.org/dahlia/wand
+   https://travis-ci.org/dahlia/wand
 
-   .. image:: https://secure.travis-ci.org/dahlia/wand.png?branch=master
+   .. image:: https://secure.travis-ci.org/dahlia/wand.svg?branch=master
       :alt: Build Status
-      :target: http://travis-ci.org/dahlia/wand
+      :target: https://travis-ci.org/dahlia/wand
 
 Code Coverage
    https://coveralls.io/r/dahlia/wand
 
-   .. image:: https://coveralls.io/repos/dahlia/wand/badge.png
+   .. image:: https://img.shields.io/coveralls/dahlia/wand.svg
       :alt: Coverage Status
       :target: https://coveralls.io/r/dahlia/wand

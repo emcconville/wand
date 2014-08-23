@@ -1,6 +1,22 @@
 Wand
 ====
 
+.. image:: https://badge.fury.io/py/Wand.svg?
+   :alt: Latest PyPI version
+   :target: https://pypi.python.org/pypi/Wand
+
+.. image:: https://readthedocs.org/projects/wand/badge/
+   :alt: Documentation Status
+   :target: http://docs.wand-py.org/en/latest/
+
+.. image:: https://secure.travis-ci.org/dahlia/wand.svg?branch=master
+   :alt: Build Status
+   :target: https://travis-ci.org/dahlia/wand
+
+.. image:: https://img.shields.io/coveralls/dahlia/wand.svg
+   :alt: Coverage Status
+   :target: https://coveralls.io/r/dahlia/wand
+
 Wand is a :mod:`ctypes`-based simple ImageMagick_ binding for Python. ::
 
     from wand.image import Image
@@ -145,14 +161,6 @@ We discuss about Wand's development on IRC.  Come #wand channel on
 freenode network.
 
 Check out :doc:`changes` also.
-
-.. image:: https://secure.travis-ci.org/dahlia/wand.png?branch=master
-   :alt: Build Status
-   :target: http://travis-ci.org/dahlia/wand
-
-.. image:: https://coveralls.io/repos/dahlia/wand/badge.png
-  :alt: Coverage Status
-  :target: https://coveralls.io/r/dahlia/wand
 
 .. _Hong Minhee: http://hongminhee.org/
 .. _StyleShare: https://stylesha.re/
