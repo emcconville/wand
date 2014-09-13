@@ -14,6 +14,9 @@ To be released.
   constant).  [:issue:`185` by Christoph Neuroth]
 - Fixed a bug that exception message was :class:`bytes` instead of
   :class:`str` on Python 3.
+- The ``size`` parameter of :class:`~wand.font.Font` class becomes optional.
+  Its default value is 0, which means *autosized*.
+  [:issue:`191` by Cha, Hojeong]
 
 
 Version 0.3.8
