@@ -120,6 +120,53 @@ def test_draw_line(fx_wand):
         assert img[7,5] == Color('#333333')
         assert img[8,5] == Color('#ccc')
 
+def test_draw_polygon(fx_wand):
+    with nested(Color('#fff'),
+                Color('#f00'),
+                Color('#00f')) as (white, red, blue):
+        with Image(width=50, height=50, background=white) as img:
+            with Drawing() as draw:
+                draw.fill_color = blue
+                draw.stroke_color = red
+                draw.polygon([(10,10),
+                              (40,25),
+                              (10,40)])
+                draw.draw(img)
+                assert img[10,25] == red
+                assert img[25,25] == blue
+                assert img[35,15] == img[35,35] == white
+
+def test_draw_polyline(fx_wand):
+    with nested(Color('#fff'),
+                Color('#f00'),
+                Color('#00f')) as (white, red, blue):
+        with Image(width=50, height=50, background=white) as img:
+            with Drawing() as draw:
+                draw.fill_color = blue
+                draw.stroke_color = red
+                draw.polyline([(10,10),
+                              (40,25),
+                              (10,40)])
+                draw.draw(img)
+                assert img[10,25] == img[25,25] == blue
+                assert img[35,15] == img[35,35] == white
+
+def test_draw_bezier(fx_wand):
+    with nested(Color('#fff'),
+                Color('#f00'),
+                Color('#00f')) as (white, red, blue):
+        with Image(width=50, height=50, background=white) as img:
+            with Drawing() as draw:
+                draw.fill_color = blue
+                draw.stroke_color = red
+                draw.bezier([(10,10),
+                             (10,40),
+                             (40,10),
+                             (40,40)])
+                draw.draw(img)
+                assert img[10,10] == img[25,25] == img[40,40] == red
+                assert img[34,32] == img[15,18] == blue
+                assert img[34,38] == img[15,12] == white
 
 @mark.parametrize('kwargs', itertools.product(
     [('right', 40), ('width', 30)],

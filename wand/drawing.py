@@ -10,7 +10,7 @@ import collections
 import ctypes
 import numbers
 
-from .api import library, MagickPixelPacket
+from .api import library, MagickPixelPacket, PointInfo
 from .color import Color
 from .compat import binary, string_type, text, text_type, xrange
 from .image import Image
@@ -493,6 +493,70 @@ class Drawing(Resource):
         library.DrawRectangle(self.resource, left, top, right, bottom)
         self.raise_exception()
 
+    def polygon(self, points=None):
+        """Draws a polygon using the current :attr:`stoke_color`,
+        :attr:`stroke_width`, and :attr:`fill_color`, using the specified
+        array of coordinates.
+
+        Example polygon on ``image`` ::
+
+            with Drawing() as draw:
+                points = [(40,10), (20,50), (90,10), (70,40)]
+                draw.polygon(points)
+                draw.draw(image)
+
+        :param points: list of x,y tuples
+        :type points: :class:`list`
+        """
+
+        (points_l, points_p) = _list_to_point_info(points)
+        library.DrawPolygon(self.resource, points_l,
+          ctypes.cast(points_p,ctypes.POINTER(PointInfo)))
+
+    def polyline(self, points=None):
+        """Draws a polyline using the current :attr:`stoke_color`,
+        :attr:`stroke_width`, and :attr:`fill_color`, using the specified
+        array of coordinates.
+
+        Identical to :class:`~wand.drawing.Drawing.polygon`, but without closed
+        stroke line.
+
+        :param points: list of x,y tuples
+        :type points: :class:`list`
+        """
+
+        (points_l, points_p) = _list_to_point_info(points)
+        library.DrawPolyline(self.resource, points_l,
+          ctypes.cast(points_p,ctypes.POINTER(PointInfo)))
+
+    def bezier(self, points=None):
+        """Draws a bezier curve through a set of points on the image, using
+        the specified array of coordinates.
+
+        At least four points should be given to complete a bezier path.
+        The first & forth point being the start & end point, and the second
+        & third point controlling the direction & curve.
+
+        Example bezier on ``image`` ::
+
+            with Drawing() as draw:
+                points = [(40,10), # Start point
+                          (20,50), # First control
+                          (90,10), # Second control
+                          (70,40)] # End point
+                draw.stroke_color = Color('#000')
+                draw.fill_color = Color('#fff')
+                draw.bezier(points)
+                draw.draw(image)
+
+        :param points: list of x,y tuples
+        :type points: :class:`list`
+        """
+
+        (points_l, points_p) = _list_to_point_info(points)
+        library.DrawBezier(self.resource, points_l,
+          ctypes.cast(points_p,ctypes.POINTER(PointInfo)))
+
     def text(self, x, y, body):
         """Writes a text ``body`` into (``x``, ``y``).
 
@@ -558,3 +622,24 @@ class Drawing(Resource):
 
     def __call__(self, image):
         return self.draw(image)
+
+def _list_to_point_info(points):
+    """
+    Helper method to convert a list of tuples to ``const * PointInfo``
+
+    :param points: a list of tuples
+    :type points: `list`
+    :returns: (point_length, point_info)
+    """
+    if not isinstance(points, list):
+        raise TypeError('points must be a list, not ' + repr(points))
+    point_length = len(points)
+    tuple_size = 2
+    point_info_size = point_length * tuple_size
+    # Allocate sequence of memory
+    point_info = (ctypes.c_double * point_info_size)()
+    for double_index in xrange(0, point_info_size):
+        tuple_index = double_index // tuple_size
+        tuple_offset = double_index % tuple_size
+        point_info[double_index] = ctypes.c_double(points[tuple_index][tuple_offset])
+    return (point_length, point_info)
