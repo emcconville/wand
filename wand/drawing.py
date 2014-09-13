@@ -505,6 +505,8 @@ class Drawing(Resource):
                 draw.polygon(points)
                 draw.draw(image)
 
+        .. versionadded::0.3.9
+
         :param points: list of x,y tuples
         :type points: :class:`list`
         """
@@ -523,6 +525,8 @@ class Drawing(Resource):
 
         :param points: list of x,y tuples
         :type points: :class:`list`
+
+        .. versionadded::0.3.9
         """
 
         (points_l, points_p) = _list_to_point_info(points)
@@ -551,6 +555,8 @@ class Drawing(Resource):
 
         :param points: list of x,y tuples
         :type points: :class:`list`
+
+        .. versionadded::0.3.9
         """
 
         (points_l, points_p) = _list_to_point_info(points)
@@ -629,7 +635,11 @@ def _list_to_point_info(points):
 
     :param points: a list of tuples
     :type points: `list`
-    :returns: (point_length, point_info)
+    :returns: tuple of point length and c_double array
+    :rtype: `tuple`
+    :raises: `TypeError`
+
+    .. versionadded::0.3.9
     """
     if not isinstance(points, list):
         raise TypeError('points must be a list, not ' + repr(points))
