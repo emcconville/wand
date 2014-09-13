@@ -15,8 +15,8 @@ import platform
 import sys
 import traceback
 
-__all__ = ('MagickPixelPacket', 'c_magick_char_p', 'library', 'libc',
-           'libmagick', 'load_library')
+__all__ = ('MagickPixelPacket', 'PointInfo', 'c_magick_char_p', 'library',
+           'libc', 'libmagick', 'load_library')
 
 
 class c_magick_char_p(ctypes.c_char_p):
@@ -128,6 +128,11 @@ class MagickPixelPacket(ctypes.Structure):
                 ('blue', ctypes.c_double),
                 ('opacity', ctypes.c_double),
                 ('index', ctypes.c_double)]
+
+class PointInfo(ctypes.Structure):
+
+    _fields_ = [('x', ctypes.c_double),
+                ('y', ctypes.c_double)]
 
 
 # Preserve the module itself even if it fails to import
@@ -733,6 +738,18 @@ try:
                                       ctypes.c_double,
                                       ctypes.c_double,
                                       ctypes.c_double]
+
+    library.DrawBezier.argtypes = [ctypes.c_void_p,
+                                   ctypes.c_ulong,
+                                   ctypes.POINTER(PointInfo)]
+
+    library.DrawPolygon.argtypes = [ctypes.c_void_p,
+                                    ctypes.c_ulong,
+                                    ctypes.POINTER(PointInfo)]
+
+    library.DrawPolyline.argtypes = [ctypes.c_void_p,
+                                    ctypes.c_ulong,
+                                    ctypes.POINTER(PointInfo)]
 
     library.DrawAnnotation.argtypes = [ctypes.c_void_p,
                                        ctypes.c_double,
