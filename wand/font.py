@@ -44,12 +44,12 @@ __all__ = 'Font',
 
 class Font(tuple):
     """Font struct which is a subtype of :class:`tuple`.  Its constructor
-    takes :attr:`path`, :attr:`size`, :attr:`color` (black by default), and
-    :attr:`antialias` (``True`` by default).
+    takes :attr:`path`, :attr:`size` (0 by default), :attr:`color`
+    (black by default), and :attr:`antialias` (``True`` by default).
 
     """
 
-    def __new__(cls, path, size, color=None, antialias=True):
+    def __new__(cls, path, size=0, color=None, antialias=True):
         if not isinstance(path, string_type):
             raise TypeError('path must be a string, not ' + repr(path))
         if not isinstance(size, numbers.Real):
