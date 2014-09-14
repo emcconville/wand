@@ -25,7 +25,7 @@ It's also callable and takes an :class:`~wand.image.Image` object::
 Bezier
 ------
 
-.. versionadded:: 0.3.9
+.. versionadded:: 0.4.0
 
 You can draw bezier curves using :meth:`~wand.drawing.Drawing.bezier()` method.
 This method requires at lest four points to determine a bezier curve. Given
@@ -84,7 +84,7 @@ a red diagonal line into the ``image``::
 Polygon
 -------
 
-.. versionadded:: 0.3.9
+.. versionadded:: 0.4.0
 
 Complex shapes can be created with the :meth:`~wand.drawing.Drawing.polygon()`
 method. You can draw a polygon by given this method a list of points. Stroke
@@ -108,7 +108,7 @@ Control the fill & stroke with the following properties:
 Polyline
 -------
 
-.. versionadded:: 0.3.9
+.. versionadded:: 0.4.0
 
 Identical to :meth:`~wand.drawing.Drawing.polygon()`, except
 :meth:`~wand.drawing.Drawing.polyline()` will not close the stroke line
