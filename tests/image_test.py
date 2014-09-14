@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
+import codecs
 import io
 import os
 import os.path
 import shutil
+import sys
 import tempfile
 import warnings
 
@@ -13,6 +15,23 @@ from wand.color import Color
 from wand.compat import PY3, string_type, text, text_type
 from wand.exceptions import MissingDelegateError
 from wand.font import Font
+
+
+try:
+    filesystem_encoding = sys.getfilesystemencoding()
+except RuntimeError:
+    unicode_filesystem_encoding = False
+else:
+    try:
+        codec_info = codecs.lookup(filesystem_encoding)
+    except LookupError:
+        unicode_filesystem_encoding = False
+    else:
+        unicode_filesystem_encoding = codec_info.name in (
+            'utf-8', 'utf-16', 'utf-16-be', 'utf-16-le',
+            'utf-32', 'utf-32-be', 'utf-32-le',
+            'mbcs'  # for Windows
+        )
 
 
 def test_empty_image():
@@ -58,6 +77,8 @@ def test_read_from_filename(fx_asset):
         assert img.width == 402
 
 
+@mark.skipif(not unicode_filesystem_encoding,
+             reason='Unicode filesystem encoding needed')
 def test_read_from_unicode_filename(fx_asset, tmpdir):
     """https://github.com/dahlia/wand/issues/122"""
     filename = '모나리자.jpg'
@@ -97,6 +118,8 @@ def test_new_from_filename(fx_asset):
         Image(filename=str(fx_asset.join('not-exists.jpg')))
 
 
+@mark.skipif(not unicode_filesystem_encoding,
+             reason='Unicode filesystem encoding needed')
 def test_new_from_unicode_filename(fx_asset, tmpdir):
     """https://github.com/dahlia/wand/issues/122"""
     filename = '모나리자.jpg'
@@ -155,6 +178,8 @@ def test_save_to_filename(fx_asset):
     os.remove(savefile)
 
 
+@mark.skipif(not unicode_filesystem_encoding,
+             reason='Unicode filesystem encoding needed')
 def test_save_to_unicode_filename(fx_asset, tmpdir):
     filename = '모나리자.jpg'
     if not PY3:
