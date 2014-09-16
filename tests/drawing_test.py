@@ -1,6 +1,6 @@
 import itertools
 
-from pytest import fixture, mark
+from pytest import fixture, mark, raises
 
 from wand.image import Image
 from wand.color import Color
@@ -34,6 +34,18 @@ def test_set_get_fill_color(fx_wand):
     with Color('#333333') as black:
         fx_wand.fill_color = black
     assert fx_wand.fill_color == Color('#333333')
+
+def test_set_get_fill_rule(fx_wand):
+    valid = 'evenodd'
+    notvalid = 'error'
+    invalid = (1,2)
+    fx_wand.fill_rule = valid
+    assert fx_wand.fill_rule == valid
+    with raises(ValueError):
+        fx_wand.fill_rule = notvalid
+    with raises(TypeError):
+        fx_wand.fill_rule = invalid
+    fx_wand.fill_rule = 'undefined' # reset
 
 def test_set_get_stroke_color(fx_wand):
     with Color('#333333') as black:

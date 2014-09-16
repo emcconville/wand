@@ -632,6 +632,9 @@ try:
     library.DrawSetFillColor.argtypes = [ctypes.c_void_p,
                                          ctypes.c_void_p]
 
+    library.DrawSetFillRule.argtypes = [ctypes.c_void_p,
+                                        ctypes.c_uint]
+
     library.DrawSetStrokeColor.argtypes = [ctypes.c_void_p,
                                            ctypes.c_void_p]
 
@@ -667,6 +670,8 @@ try:
 
     library.DrawGetFillColor.argtypes = [ctypes.c_void_p,
                                          ctypes.c_void_p]
+    library.DrawGetFillRule.argtypes = [ctypes.c_void_p]
+    library.DrawGetFillRule.restype =   ctypes.c_uint
 
     library.DrawGetStrokeColor.argtypes = [ctypes.c_void_p,
                                            ctypes.c_void_p]

@@ -17,7 +17,7 @@ from .image import Image
 from .resource import Resource
 from .exceptions import WandLibraryVersionError
 
-__all__ = ('FONT_METRICS_ATTRIBUTES', 'TEXT_ALIGN_TYPES',
+__all__ = ('FONT_METRICS_ATTRIBUTES', 'TEXT_ALIGN_TYPES', 'FILL_RULE_TYPES',
            'TEXT_DECORATION_TYPES', 'GRAVITY_TYPES', 'Drawing', 'FontMetrics')
 
 
@@ -55,6 +55,13 @@ TEXT_DECORATION_TYPES = ('undefined', 'no', 'underline', 'overline',
 GRAVITY_TYPES = ('forget', 'north_west', 'north', 'north_east', 'west',
                  'center', 'east', 'south_west', 'south', 'south_east',
                  'static')
+
+#: (:class:`collections.Sequance`) The list of fill-rule types.
+#:
+#: - ``'undefined'``
+#: - ``'evenodd'``
+#: - ``'nonzero'``
+FILL_RULE_TYPES = ('undefined', 'evenodd', 'nonzero')
 
 #: (:class:`collections.Sequence`) The attribute names of font metrics.
 FONT_METRICS_ATTRIBUTES = ('character_width', 'character_height', 'ascender',
@@ -154,6 +161,28 @@ class Drawing(Resource):
                             repr(color))
         with color:
             library.DrawSetFillColor(self.resource, color.resource)
+
+    @property
+    def fill_rule(self):
+        """(:class:`basestring`) The current fill rule. It can also be set.
+        It's a string value from :const:`FILL_RULE_TYPES` list.
+
+        .. versionadded:: 0.4.0
+        """
+        fill_rule_index = library.DrawGetFillRule(self.resource)
+        if fill_rule_index not in FILL_RULE_TYPES:
+            self.raise_exception()
+        return text(FILL_RULE_TYPES[fill_rule_index])
+
+    @fill_rule.setter
+    def fill_rule(self, fill_rule):
+        if not isinstance(fill_rule, string_type):
+            raise TypeError('expected a string, not ' + repr(fill_rule))
+        elif fill_rule not in FILL_RULE_TYPES:
+            raise ValueError('expected a string from FILE_RULE_TYPES, not' +
+                             repr(fill_rule))
+        library.DrawSetFillRule(self.resource,
+                                FILL_RULE_TYPES.index(fill_rule))
 
     @property
     def stroke_color(self):
