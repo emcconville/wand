@@ -119,7 +119,7 @@ An example of a half-partial ellipse::
 
     draw.ellipse((50, 50), # Origin (center) point
                  (40, 20), # 80px wide, and 40px tall
-                 (90,-90)) # Draw half of ellipse fro bottom to top
+                 (90,-90)) # Draw half of ellipse from bottom to top
 
 .. image:: ../_images/draw-ellipse-part.gif
    :alt: draw-ellipse-part.gif
@@ -172,7 +172,7 @@ The following example will use this method draw a math function across a given
         draw.point(x, y)
     draw(image)
 
-.. image:: ../_images/draw-point-path.gif
+.. image:: ../_images/draw-point-math.gif
    :alt: draw-point-math.gif
 
 Color of the point can be defined by setting the following property
