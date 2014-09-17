@@ -20,6 +20,27 @@ It's also callable and takes an :class:`~wand.image.Image` object::
             draw(image)
 
 
+.. _draw-arc:
+
+Arc
+---
+
+.. versionadded:: 0.4.0
+
+Arcs can be drawn by using :meth:`~wand.drawing.Drawing.arc()` method. You'll
+need two pairs of (x, y) coordinates to map out the minimum bounding rectangle,
+and the starting & ending degree.
+
+An example::
+
+    with Drawing() as draw:
+        draw.arc((25, 25), # Stating point
+                 (75, 75), # Ending point
+                 (45,-45)) # From bottom left around to top left
+
+.. image:: ../_images/draw-arc.gif
+   :alt: draw-arc.gif
+
 .. _draw-bezier:
 
 Bezier
@@ -36,18 +57,72 @@ controls.
 For example::
 
     with Drawing() as draw:
-        points = [(40,10), # Start point
-                  (20,50), # First control
-                  (90,10), # Second control
-                  (70,40)] # End point
+        points = [(10,50), # Start point
+                  (50,10), # First control
+                  (50,90), # Second control
+                  (90,50)] # End point
         draw.bezier(points)
         with Image(width=100, height=100, background=Color("#fff")) as image:
             draw(image)
+
+.. image:: ../_images/draw-bezier.gif
+   :alt: draw-bezier.gif
 
 Control width & color of curve with the drawing properties:
 
 - :attr:`~wand.drawing.Drawing.stroke_color`
 - :attr:`~wand.drawing.Drawing.stroke_width`
+
+
+.. _draw-circle:
+
+Circle
+------
+
+.. versionadded:: 0.4.0
+
+You can draw circles using :meth:`~wand.drawing.Drawing.circle()` method.
+It simply takes two (x, y) coordinates for center ``origin`` and outer
+``perimeter``. For example, the following code draws a circle in the middle of
+the ``image``::
+
+    center = (image.width / 2, image.height / 2)
+    perimeter = (image.width / 4, image.height / 4)
+    draw.circle(center, perimeter)
+
+.. image:: ../_images/draw-circle.gif
+   :alt: draw-circle.gif
+
+
+.. _draw-ellipse:
+
+Ellipse
+-------
+
+.. versionadded:: 0.4.0
+
+Ellipse can be drawn by using the :meth:`~wand.drawing.Drawing.ellipse()` method.
+Like drawing circles, the ellipse requires a ``origin`` point, however, a pair
+of (x, y) ``radius`` are used in relationship to the ``origin`` coordinate. By
+default a complete "closed" ellipse is drawn. To draw a partial ellipse, provide
+a pair of starting & ending degrees as the third parameter.
+
+An example of a full ellipse::
+
+    draw.ellipse((50, 50), # Origin (center) point
+                 (40, 20)) # 80px wide, and 40px tall
+
+.. image:: ../_images/draw-ellipse-full.gif
+   :alt: draw-ellipse-full.gif
+
+An example of a half-partial ellipse::
+
+    draw.ellipse((50, 50), # Origin (center) point
+                 (40, 20), # 80px wide, and 40px tall
+                 (90,-90)) # Draw half of ellipse fro bottom to top
+
+.. image:: ../_images/draw-ellipse-part.gif
+   :alt: draw-ellipse-part.gif
 
 
 .. _draw-lines:
@@ -79,6 +154,32 @@ a red diagonal line into the ``image``::
         draw(image)
 
 
+.. _draw-point:
+
+Point
+-----
+
+.. versionadded:: 0.4.0
+
+You can draw points by using :meth:`~wand.drawing.Drawing.point()` method.
+It simply takes two ``x``, ``y`` arguments for the point coordinate.
+
+The following example will use this method draw a math function across a given
+``image``::
+
+    for x in xrange(0,image.width):
+        y = math.tan(x) * 4 + (image.height / 2)
+        draw.point(x, y)
+    draw(image)
+
+.. image:: ../_images/draw-point-path.gif
+   :alt: draw-point-math.gif
+
+Color of the point can be defined by setting the following property
+
+- :attr:`~wand.drawing.Drawing.fill_color`
+
+
 .. _draw-polygon:
 
 Polygon
@@ -95,6 +196,9 @@ For example, the following code will draw a triangle into the ``image``::
     points = [(25, 25), (75, 50), (25, 75)]
     draw.polygon(points)
     draw(image)
+
+.. image:: ../_images/draw-polygon.gif
+   :alt: draw-polygon.gif
 
 Control the fill & stroke with the following properties:
 
@@ -119,6 +223,9 @@ For example, the following code will draw a two line path on the ``image``::
     points = [(25, 25), (75, 50), (25, 75)]
     draw.polyline(points)
     draw(image)
+
+.. image:: ../_images/draw-polyline.gif
+   :alt: draw-polyline.gif
 
 Control the fill & stroke with the following properties:
 

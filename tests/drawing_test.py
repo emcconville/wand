@@ -118,6 +118,44 @@ def test_clear_drawing_wand(fx_wand):
     fx_wand.clear()
     assert fx_wand.text_kerning == 0
 
+def test_draw_arc(fx_asset):
+    with nested(Color('#fff'),
+                Color('#f00'),
+                Color('#000')) as (white, red, black):
+        with Image(width=50, height=50, background=white) as img:
+            with Drawing() as draw:
+                draw.fill_color = red
+                draw.stroke_color = black
+                draw.arc((10, 10), # Start
+                         (40, 40), # End
+                         (-90, 90)) # Degree
+                draw.draw(img)
+                assert img[20,25] == white
+                assert img[30,25] == red
+                assert img[40,25] == black
+
+def test_draw_circle(fx_asset):
+    with nested(Color('#fff'),
+                Color('#000')) as (white, black):
+        with Image(width=50, height=50, background=white) as img:
+            with Drawing() as draw:
+                draw.fill_color = black
+                draw.circle((25, 25), # Origin
+                            (40, 40)) # Perimeter
+                draw.draw(img)
+                assert img[5,5] == img[45,45] == white
+                assert img[25,25] == black
+
+def test_draw_ellipse(fx_wand):
+    gray, red = Color('#ccc'), Color('#f00')
+    with Image(width=50, height=50, background=gray) as img:
+        with Drawing() as draw:
+            draw.fill_color = red
+            draw.ellipse((25,25), # origin
+                         (20,10)) # radius
+            draw.draw(img)
+            assert img[25,10] == gray
+            assert img[45,25] == red
 
 def test_draw_line(fx_wand):
     gray = Color('#ccc')

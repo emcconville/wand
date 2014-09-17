@@ -415,6 +415,74 @@ class Drawing(Resource):
         if not res:
             self.raise_exception()
 
+    def arc(self, start, end, degree):
+        """Draws a arc using the current :attr:`stroke_color`,
+        :attr:`stroke_width`, and :attr:`fill_color`.
+
+        :param start: (:class:`~numbers.Real`, :class:`numbers.Real`)
+                      pair which represents starting x and y of the arc
+        :type start: :class:`~numbers.Sequence`
+        :param end: (:class:`~numbers.Real`, :class:`numbers.Real`)
+                      pair which represents ending x and y of the arc
+        :type end: :class:`~numbers.Sequence`
+        :param degree: (:class:`~numbers.Real`, :class:`numbers.Real`)
+                      pair which represents starting degree, and ending degree
+        :type degree: :class:`~numbers.Sequence`
+
+        .. versionadded:: 0.4.0
+        """
+
+        start_x, start_y = start
+        end_x, end_y = end
+        degree_start, degree_end = degree
+        library.DrawArc(self.resource,
+                        float(start_x), float(start_y),
+                        float(end_x), float(end_y),
+                        float(degree_start), float(degree_end))
+
+    def circle(self, origin, perimeter):
+        """Draws a circle from ``origin`` to ``perimeter``
+
+        :param origin: (:class:`~numbers.Real`, :class:`numbers.Real`)
+                       pair which represents origin x and y of circle
+        :type origin: :class:`numbers.Sequence`
+        :param perimeter: (:class:`~numbers.Real`, :class:`numbers.Real`)
+                       pair which represents perimeter x and y of circle
+        :type perimeter: :class:`numbers.Sequence`
+
+        .. versionadded:: 0.4.0
+        """
+
+        origin_x, origin_y = origin
+        perimeter_x, perimeter_y = perimeter
+        library.DrawCircle(self.resource,
+                           float(origin_x), float(origin_y), # origin
+                           float(perimeter_x), float(perimeter_y)) # perimeter
+
+    def ellipse(self, origin, radius, rotation=(0,360)):
+        """Draws a ellipse at ``origin`` with independent x & y ``radius``.
+        Ellipse can be partial by setting start & end ``rotation``.
+
+        :param origin: (:class:`~numbers.Real`, :class:`numbers.Real`)
+                       pair which represents origin x and y of circle
+        :type origin: :class:`numbers.Sequence`
+        :param radius: (:class:`~numbers.Real`, :class:`numbers.Real`)
+                       pair which represents radius x and radius y of circle
+        :type radius: :class:`numbers.Sequence`
+        :param rotation: (:class:`~numbers.Real`, :class:`numbers.Real`)
+                       pair which represents start and end of ellipse. Default (0,360) 
+        :type rotation: :class:`numbers.Sequence`
+
+        .. versionadded:: 0.4.0
+        """
+        origin_x, origin_y = origin
+        radius_x, radius_y = radius
+        rotation_start, rotation_end = rotation
+        library.DrawEllipse(self.resource,
+                            float(origin_x), float(origin_y), # origin
+                            float(radius_x), float(radius_y), # radius
+                            float(rotation_start), float(rotation_end))
+
     def line(self, start, end):
         """Draws a line ``start`` to ``end``.
 
@@ -431,6 +499,20 @@ class Drawing(Resource):
         library.DrawLine(self.resource,
                          int(start_x), int(start_y),
                          int(end_x), int(end_y))
+
+    def point(self,x,y):
+        """Draws a point at given ``x`` and ``y``
+
+        :param x: :class:`~numbers.Real` x of point
+        :type x: :class:`~numbers.Real`
+        :param y: :class:`~numbers.Real` y of point
+        :type y: :class:`~numbers.Real`
+
+        .. versionadded:: 0.4.0
+        """
+        library.DrawPoint(self.resource,
+                          float(x),
+                          float(y))
 
     def rectangle(self, left=None, top=None, right=None, bottom=None,
                   width=None, height=None):

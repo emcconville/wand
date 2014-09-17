@@ -732,21 +732,46 @@ try:
                                         ctypes.c_void_p]
     library.MagickDrawImage.restype = ctypes.c_int
 
+    library.DrawAnnotation.argtypes = [ctypes.c_void_p,
+                                       ctypes.c_double,
+                                       ctypes.c_double,
+                                       ctypes.POINTER(ctypes.c_ubyte)]
+
+    library.DrawArc.argtypes = [ctypes.c_void_p, # wand
+                                ctypes.c_double, # sx
+                                ctypes.c_double, # sy
+                                ctypes.c_double, # ex
+                                ctypes.c_double, # ey
+                                ctypes.c_double, # sd
+                                ctypes.c_double] # ed
+
+    library.DrawBezier.argtypes = [ctypes.c_void_p,
+                                   ctypes.c_ulong,
+                                   ctypes.POINTER(PointInfo)]
+
+    library.DrawCircle.argtypes = [ctypes.c_void_p, # wand
+                                   ctypes.c_double, # ox
+                                   ctypes.c_double, # oy
+                                   ctypes.c_double, # px
+                                   ctypes.c_double] # py
+
+    library.DrawEllipse.argtypes = [ctypes.c_void_p, # wand
+                                    ctypes.c_double, # ox
+                                    ctypes.c_double, # oy
+                                    ctypes.c_double, # rx
+                                    ctypes.c_double, # ry
+                                    ctypes.c_double, # start
+                                    ctypes.c_double] # end
+
     library.DrawLine.argtypes = [ctypes.c_void_p,
                                  ctypes.c_double,
                                  ctypes.c_double,
                                  ctypes.c_double,
                                  ctypes.c_double]
 
-    library.DrawRectangle.argtypes = [ctypes.c_void_p,
-                                      ctypes.c_double,
-                                      ctypes.c_double,
-                                      ctypes.c_double,
-                                      ctypes.c_double]
-
-    library.DrawBezier.argtypes = [ctypes.c_void_p,
-                                   ctypes.c_ulong,
-                                   ctypes.POINTER(PointInfo)]
+    library.DrawPoint.argtypes = [ctypes.c_void_p, # wand
+                                  ctypes.c_double, # x
+                                  ctypes.c_double] # y
 
     library.DrawPolygon.argtypes = [ctypes.c_void_p,
                                     ctypes.c_ulong,
@@ -756,10 +781,11 @@ try:
                                     ctypes.c_ulong,
                                     ctypes.POINTER(PointInfo)]
 
-    library.DrawAnnotation.argtypes = [ctypes.c_void_p,
-                                       ctypes.c_double,
-                                       ctypes.c_double,
-                                       ctypes.POINTER(ctypes.c_ubyte)]
+    library.DrawRectangle.argtypes = [ctypes.c_void_p,
+                                      ctypes.c_double,
+                                      ctypes.c_double,
+                                      ctypes.c_double,
+                                      ctypes.c_double]
 
     library.MagickNegateImage.argtypes = [ctypes.c_void_p, ctypes.c_int]
 
