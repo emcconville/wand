@@ -769,6 +769,106 @@ try:
                                  ctypes.c_double,
                                  ctypes.c_double]
 
+    library.DrawPathClose.argtypes = [ctypes.c_void_p] # wand
+
+    library.DrawPathCurveToAbsolute.argtypes = [ctypes.c_void_p, # wand
+                                                ctypes.c_double, # x1
+                                                ctypes.c_double, # y1
+                                                ctypes.c_double, # x2
+                                                ctypes.c_double, # y2
+                                                ctypes.c_double, # x
+                                                ctypes.c_double] # y
+
+    library.DrawPathCurveToRelative.argtypes = [ctypes.c_void_p, # wand
+                                                ctypes.c_double, # x1
+                                                ctypes.c_double, # y1
+                                                ctypes.c_double, # x2
+                                                ctypes.c_double, # y2
+                                                ctypes.c_double, # x
+                                                ctypes.c_double] # y
+
+    library.DrawPathCurveToQuadraticBezierAbsolute.argtypes = [ctypes.c_void_p, # wand
+                                                      ctypes.c_double, # x1
+                                                      ctypes.c_double, # y1
+                                                      ctypes.c_double, # x
+                                                      ctypes.c_double] # y
+
+    library.DrawPathCurveToQuadraticBezierRelative.argtypes = [ctypes.c_void_p, # wand
+                                                      ctypes.c_double, # x1
+                                                      ctypes.c_double, # y1
+                                                      ctypes.c_double, # x
+                                                      ctypes.c_double] # y
+
+    library.DrawPathCurveToQuadraticBezierSmoothAbsolute.argtypes = [ctypes.c_void_p, # wand
+                                                      ctypes.c_double, # x
+                                                      ctypes.c_double] # y
+
+    library.DrawPathCurveToQuadraticBezierSmoothRelative.argtypes = [ctypes.c_void_p, # wand
+                                                      ctypes.c_double, # x
+                                                      ctypes.c_double] # y
+
+    library.DrawPathCurveToSmoothAbsolute.argtypes = [ctypes.c_void_p, # wand
+                                                      ctypes.c_double, # x2
+                                                      ctypes.c_double, # y2
+                                                      ctypes.c_double, # x
+                                                      ctypes.c_double] # y
+
+    library.DrawPathCurveToSmoothRelative.argtypes = [ctypes.c_void_p, # wand
+                                                      ctypes.c_double, # x2
+                                                      ctypes.c_double, # y2
+                                                      ctypes.c_double, # x
+                                                      ctypes.c_double] # y
+
+    library.DrawPathEllipticArcAbsolute.argtypes = [ctypes.c_void_p, # wand
+                                                    ctypes.c_double, # rx
+                                                    ctypes.c_double, # ry
+                                                    ctypes.c_double, # rotation
+                                                    ctypes.c_uint, # arc_flag
+                                                    ctypes.c_uint, # sweep_flag
+                                                    ctypes.c_double, # x
+                                                    ctypes.c_double] # y
+
+    library.DrawPathEllipticArcRelative.argtypes = [ctypes.c_void_p, # wand
+                                                    ctypes.c_double, # rx
+                                                    ctypes.c_double, # ry
+                                                    ctypes.c_double, # rotation
+                                                    ctypes.c_uint, # arc_flag
+                                                    ctypes.c_uint, # sweep_flag
+                                                    ctypes.c_double, # x
+                                                    ctypes.c_double] # y
+
+    library.DrawPathFinish.argtypes = [ctypes.c_void_p] # wand
+
+    library.DrawPathLineToAbsolute.argtypes = [ctypes.c_void_p, # wand
+                                               ctypes.c_double, # x
+                                               ctypes.c_double] # y
+
+    library.DrawPathLineToRelative.argtypes = [ctypes.c_void_p, # wand
+                                               ctypes.c_double, # x
+                                               ctypes.c_double] # y
+
+    library.DrawPathLineToHorizontalAbsolute.argtypes = [ctypes.c_void_p, # wand
+                                                         ctypes.c_double] # x
+
+    library.DrawPathLineToHorizontalRelative.argtypes = [ctypes.c_void_p, # wand
+                                                         ctypes.c_double] # x
+
+    library.DrawPathLineToVerticalAbsolute.argtypes = [ctypes.c_void_p, # wand
+                                                       ctypes.c_double] # y
+
+    library.DrawPathLineToVerticalRelative.argtypes = [ctypes.c_void_p, # wand
+                                                       ctypes.c_double] # y
+
+    library.DrawPathMoveToAbsolute.argtypes = [ctypes.c_void_p, # wand
+                                               ctypes.c_double, # x
+                                               ctypes.c_double] # y
+
+    library.DrawPathMoveToRelative.argtypes = [ctypes.c_void_p, # wand
+                                               ctypes.c_double, # x
+                                               ctypes.c_double] # y
+
+    library.DrawPathStart.argtypes = [ctypes.c_void_p] # wand
+
     library.DrawPoint.argtypes = [ctypes.c_void_p, # wand
                                   ctypes.c_double, # x
                                   ctypes.c_double] # y

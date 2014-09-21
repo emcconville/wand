@@ -500,6 +500,277 @@ class Drawing(Resource):
                          int(start_x), int(start_y),
                          int(end_x), int(end_y))
 
+    def path_close(self):
+        """Adds a path element to the current path which closes
+        the current subpath by drawing a straight line from the current point
+        to the current subpath's most recent starting point.
+
+        .. versionadded:: 0.4.0
+        """
+        library.DrawPathClose(self.resource)
+        return self
+
+    def path_curve(self, to=None, controls=None, smooth=False, relative=False):
+        """Draws a cubic Bezier curve from the current point to given ``to``
+        (x,y) coordinate using ``controls`` points at the beginning & end of the
+        curve. If ``smooth`` is set to True, only one ``controls`` is expected
+        and the previous control is used, else two pair of coordinates are
+        expected to define the control points. The ``to`` coordinate then
+        becomes the new current point.
+
+        :param to: (:class:`~numbers.Real`, :class:`numbers.Real`)
+                      pair which represents coordinates to draw to.
+        :type to: :class:`numbers.Sequence`
+        :param controls: (:class:`~numbers.Real`, :class:`numbers.Real`)
+                      coordinate to used to influence curve
+        :type controls: :class:`numbers.Sequence`
+        :param smooth: :class:`bool` assume last defined control coordinate
+        :type large_arc: :class:`bool
+        :param relative: :class:`bool`
+                    treat given coordinates as relative to current point
+        :type relative: :class:`bool`
+
+        .. versionadded:: 0.4.0
+        """
+        if to is None:
+            raise TypeError('to is missing')
+        if controls is None:
+            raise TypeError('controls is missing')
+        x, y = to
+        if smooth:
+            x2, y2 = controls
+        else:
+            (x1, y1), (x2, y2) = controls
+
+        if smooth:
+            if relative:
+                library.DrawPathCurveToSmoothRelative(self.resource,
+                                                      x2, y2, x, y)
+            else :
+                library.DrawPathCurveToSmoothAbsolute(self.resource,
+                                                      x2, y2, x, y)
+        else:
+            if relative:
+                library.DrawPathCurveToRelative(self.resource,
+                                                x1, y1, x2, y2, x, y)
+            else :
+                library.DrawPathCurveToAbsolute(self.resource,
+                                                x1, y1, x2, y2, x, y)
+        return self
+
+    def path_curve_to_quadratic_bezier(self, to=None, control=None,
+                                    smooth=False, relative=False):
+        """Draws a quadratic Bezier curve from the current point to given
+        ``to`` coordinate. The control point is assumed to be the reflection of
+        the control point on the previous command if ``smooth`` is True, else a
+        pair of ``control`` coordinates must be given. Each` coordinates can be
+        relative, or absolute, to the current point by setting the ``relative``
+        flag. The ``to`` coordinate then becomes the new current point, and the
+        ``control`` coordinate will be assumed when called again when ``smooth``
+        is set to true.
+
+        :param to: (:class:`~numbers.Real`, :class:`numbers.Real`)
+                      pair which represents coordinates to draw to.
+        :type to: :class:`numbers.Sequence`
+        :param control: (:class:`~numbers.Real`, :class:`numbers.Real`)
+                      coordinate to used to influence curve
+        :type control: :class:`numbers.Sequence`
+        :param smooth: :class:`bool` assume last defined control coordinate
+        :type large_arc: :class:`bool
+        :param relative: :class:`bool`
+                    treat given coordinates as relative to current point
+        :type relative: :class:`bool`
+
+        .. versionadded:: 0.4.0
+        """
+        if to is None:
+            raise TypeError('to is missing')
+        x, y = to
+
+        if smooth:
+            if relative:
+                library.DrawPathCurveToQuadraticBezierSmoothRelative(self.resource,
+                                                                     float(x),
+                                                                     float(y))
+            else:
+                library.DrawPathCurveToQuadraticBezierSmoothAbsolute(self.resource,
+                                                                     float(x),
+                                                                     float(y))
+        else:
+            if control is None:
+                raise TypeError('control is missing')
+            x1, y1 = control
+            if relative:
+                library.DrawPathCurveToQuadraticBezierRelative(self.resource,
+                                                               float(x1), float(y1),
+                                                               float(x), float(y))
+            else:
+                library.DrawPathCurveToQuadraticBezierAbsolute(self.resource,
+                                                               float(x1), float(y1),
+                                                               float(x), float(y))
+        return self
+
+    def path_elliptic_arc(self, to=None, radius=None, rotation=0.0,
+                          large_arc=False, clockwise=False, relative=False):
+        """Draws an elliptical arc from the current point to given ``to``
+        coordinates. The ``to`` coordinates can be relative, or absolute, to the
+        current point by setting the ``relative`` flag. The size and orientation
+        of the ellipse are defined by two radii (rx, ry) in ``radius`` and an
+        ``rotation`` parameters, which indicates how the ellipse as a whole is
+        rotated relative to the current coordinate system. The center of the
+        ellipse is calculated automagically to satisfy the constraints imposed
+        by the other parameters. ``large_arc`` and ``clockwise`` contribute to
+        the automatic calculations and help determine how the arc is drawn.
+        If ``large_arc`` is True then draw the larger of the available arcs.
+        If ``clockwise`` is true, then draw the arc matching a clock-wise
+        rotation.
+
+        :param to: (:class:`~numbers.Real`, :class:`numbers.Real`)
+                      pair which represents coordinates to draw to.
+        :type to: :class:`numbers.Sequence`
+        :param radius: (:class:`~numbers.Real`, :class:`numbers.Real`)
+                      pair which represents the radii of the ellipse to draw
+        :type radius: :class:`numbers.Sequence`
+        :param rotate: :class:`~numbers.Real` degree to rotate ellipse on x-axis
+        :type rotate: :class:`~numbers.Real`
+        :param large_arc: :class:`bool` draw largest available arc
+        :type large_arc: :class:`bool
+        :param clockwise: :class:`bool`
+                    draw arc path clockwise from start to target
+        :type clockwise: :class:`bool
+        :param relative: :class:`bool`
+                    treat given coordinates as relative to current point
+        :type relative: :class:`bool`
+
+        .. versionadded:: 0.4.0
+        """
+        if to is None:
+            raise TypeError('to is missing')
+        if radius is None:
+            raise TypeError('radius is missing')
+        x, y = to
+        rx, ry = radius
+        if relative:
+            library.DrawPathEllipticArcRelative(self.resource, float(rx), float(ry),
+                                                float(rotation), bool(large_arc),
+                                                bool(clockwise), float(x), float(y))
+        else:
+            library.DrawPathEllipticArcAbsolute(self.resource, float(rx), float(ry),
+                                                float(rotation), bool(large_arc),
+                                                bool(clockwise), float(x), float(y))
+        return self
+
+    def path_finish(self):
+        """Terminates the current path.
+
+        .. versionadded:: 0.4.0"""
+        library.DrawPathFinish(self.resource)
+        return self
+
+    def path_line(self, to=None, relative=False):
+        """Draws a line path from the current point to the given ``to``
+        coordinate. The ``to`` coordinates can be relative, or absolute, to the
+        current point by setting the ``relative`` flag. The coordinate then
+        becomes the new current point.
+
+        :param to: (:class:`~numbers.Real`, :class:`numbers.Real`)
+                      pair which represents coordinates to draw to.
+        :type to: :class:`numbers.Sequence`
+        :param relative: :class:`bool`
+                    treat given coordinates as relative to current point
+        :type relative: :class:`bool`
+
+        .. versionadded:: 0.4.0
+        """
+        if to is None:
+            raise TypeError('to is missing')
+        x, y = to
+        if relative:
+            library.DrawPathLineToRelative(self.resource, float(x), float(y))
+        else:
+            library.DrawPathLineToAbsolute(self.resource, float(x), float(y))
+        return self
+
+    def path_horizontal_line(self, x=None, relative=False):
+        """Draws a horizontal line path from the current point to the target
+        point. Given ``x`` parameter can be relative, or absolute, to the
+        current point by setting the ``relative`` flag. The target point then
+        becomes the new current point.
+
+        :param x: :class:`~numbers.Real`
+                      x-axis point to draw to.
+        :type to: :class:`numbers.Sequence`
+        :param relative: :class:`bool`
+                    treat given point as relative to current point
+        :type relative: :class:`bool`
+
+        .. versionadded:: 0.4.0
+        """
+        if x is None:
+            raise TypeError('x is missing')
+        if relative:
+            library.DrawPathLineToHorizontalRelative(self.resource, float(x))
+        else:
+            library.DrawPathLineToHorizontalAbsolute(self.resource, float(x))
+        return self
+
+    def path_vertical_line(self, y=None, relative=False):
+        """Draws a vertical line path from the current point to the target point.
+        Given ``y`` parameter can be relative, or absolute, to the current point
+        by setting the ``relative`` flag. The target point then becomes the new
+        current point.
+
+        :param y: :class:`~numbers.Real`
+                      y-axis point to draw to.
+        :type to: :class:`numbers.Sequence`
+        :param relative: :class:`bool`
+                    treat given point as relative to current point
+        :type relative: :class:`bool`
+
+        .. versionadded:: 0.4.0
+        """
+        if y is None:
+            raise TypeError('y is missing')
+        if relative:
+            library.DrawPathLineToVerticalRelative(self.resource, float(y))
+        else:
+            library.DrawPathLineToVerticalAbsolute(self.resource, float(y))
+        return self
+
+    def path_move(self, to=None, relative=False):
+        """Starts a new sub-path at the given coordinates. Given ``to`` parameter
+        can be relative, or absolute, by setting the ``relative`` flag.
+
+        :param to: (:class:`~numbers.Real`, :class:`numbers.Real`)
+                      pair which represents coordinates to draw to.
+        :type to: :class:`numbers.Sequence`
+        :param relative: :class:`bool`
+                    treat given coordinates as relative to current point
+        :type relative: :class:`bool`
+
+        .. versionadded:: 0.4.0
+        """
+        if to is None:
+            raise TypeError('to is missing')
+        x, y = to
+        if relative:
+            library.DrawPathMoveToRelative(self.resource, float(x), float(y))
+        else:
+            library.DrawPathMoveToAbsolute(self.resource, float(x), float(y))
+        return self
+
+    def path_start(self):
+        """Declares the start of a path drawing list which is terminated by a
+        matching :meth:`path_finish()` command. All other `path_*` commands
+        must be enclosed between a :meth:`path_start()` and a
+        :meth:`path_finish()` command. This is because path drawing commands
+        are subordinate commands and they do not function by themselves.
+
+        .. versionadded:: 0.4.0
+        """
+        library.DrawPathStart(self.resource)
+        return self
+
     def point(self,x,y):
         """Draws a point at given ``x`` and ``y``
 

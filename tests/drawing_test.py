@@ -170,6 +170,15 @@ def test_draw_line(fx_wand):
         assert img[7,5] == Color('#333333')
         assert img[8,5] == Color('#ccc')
 
+def test_draw_point():
+    with nested(Color('#fff'), Color('#000')) as (white, black):
+        with Image(width=5, height=5, background=white) as img:
+            with Drawing() as draw:
+                draw.stroke_color = black
+                draw.point(2,2)
+                draw.draw(img)
+                assert img[2,2] == black
+
 def test_draw_polygon(fx_wand):
     with nested(Color('#fff'),
                 Color('#f00'),
@@ -217,6 +226,136 @@ def test_draw_bezier(fx_wand):
                 assert img[10,10] == img[25,25] == img[40,40] == red
                 assert img[34,32] == img[15,18] == blue
                 assert img[34,38] == img[15,12] == white
+
+def test_path_curve():
+    with nested(Color('#fff'),
+                Color('#f00'),
+                Color('#00f')) as (white, red, blue):
+        with Image(width=50, height=50, background=white) as img:
+            with Drawing() as draw:
+                draw.fill_color = blue
+                draw.stroke_color = red
+                draw = (draw.path_start()
+                        .path_move(to=(0,25), relative=True)
+                        .path_curve(to=(25,25), controls=((0, 0), (25, 0)))
+                        .path_curve(to=(25,0), controls=((0, 25), (25, 25)), relative=True)
+                        .path_finish())
+                draw.draw(img)
+                assert img[25,25] == red
+                assert img[35,35] == img[35,35] == blue
+                assert img[35,15] == img[15,35] == white
+
+def test_path_curve_user_error():
+    with Drawing() as draw:
+        with raises(TypeError):
+            draw.path_curve(to=(5,7))
+        with raises(TypeError):
+            draw.path_curve(controls=(5,7))
+
+def test_path_curve_to_quadratic_bezier():
+    with nested(Color('#fff'),
+                Color('#f00'),
+                Color('#00f')) as (white, red, blue):
+        with Image(width=50, height=50, background=white) as img:
+            with Drawing() as draw:
+                draw.fill_color = blue
+                draw.stroke_color = red
+                draw = (draw.path_start()
+                        .path_move(to=(0, 25), relative=True)
+                        .path_curve_to_quadratic_bezier(to=(50, 25), control=(25, 50))
+                        .path_curve_to_quadratic_bezier(to=(-20, -20), control=(-25, 0), relative=True)
+                        .path_finish())
+                draw.draw(img)
+                assert img[30,5] == red
+
+def test_path_curve_to_quadratic_bezier_smooth():
+    with nested(Color('#fff'),
+                Color('#f00'),
+                Color('#00f')) as (white, red, blue):
+        with Image(width=50, height=50, background=white) as img:
+            with Drawing() as draw:
+                draw.fill_color = blue
+                draw.stroke_color = red
+                draw = (draw.path_start()
+                        .path_curve_to_quadratic_bezier(to=(25, 25), control=(25, 25))
+                        .path_curve_to_quadratic_bezier(to=( 10, -10), smooth=True, relative=True)
+                        .path_curve_to_quadratic_bezier(to=( 35, 35), smooth=True, relative=False)
+                        .path_curve_to_quadratic_bezier(to=(-10, -10), smooth=True, relative=True)
+                        .path_finish())
+                draw.draw(img)
+                assert img[25,25] == red
+                assert img[30,30] == blue
+
+def test_path_curve_quadratic_bezier_user_error():
+    with Drawing() as draw:
+        with raises(TypeError):
+            draw.path_curve_to_quadratic_bezier()
+        with raises(TypeError):
+            draw.path_curve_to_quadratic_bezier(to=(5,6))
+
+def test_draw_path_elliptic_arc():
+    with nested(Color('#fff'),
+                Color('#f00'),
+                Color('#00f')) as (white, red, blue):
+        with Image(width=50, height=50, background=white) as img:
+            with Drawing() as draw:
+                draw.fill_color = blue
+                draw.stroke_color = red
+                draw = (draw.path_start()
+                        .path_move(to=(25,0))
+                        .path_elliptic_arc(to=(25, 50), radius=(15, 25))
+                        .path_elliptic_arc(to=(0,-15), radius=(5, 5), clockwise=False, relative=True)
+                        .path_close()
+                        .path_finish())
+                draw.draw(img)
+                assert img[25,35] == img[25,20] == red
+                assert img[15,25] == img[30,45] == blue
+
+
+def test_draw_path_elliptic_arc_user_error():
+    with Drawing() as draw:
+        with raises(TypeError):
+            draw.path_elliptic_arc(to=(5,7))
+        with raises(TypeError):
+            draw.path_elliptic_arc(radius=(5,7))
+
+def test_draw_path_line():
+    with nested(Color('#fff'),
+                Color('#f00'),
+                Color('#00f')) as (white, red, blue):
+        with Image(width=50, height=50, background=white) as img:
+            with Drawing() as draw:
+                draw.fill_color = blue
+                draw.stroke_color = red
+                draw = (draw.path_start()
+                        .path_move(to=( 5, 5))
+                        .path_move(to=( 5, 5), relative=True)
+                        .path_line(to=(40, 40))
+                        .path_line(to=( 0,-10), relative=True)
+                        .path_horizontal_line(x=45)
+                        .path_vertical_line(y=25)
+                        .path_horizontal_line(x=-5, relative=True)
+                        .path_vertical_line(y=-5, relative=True)
+                        .path_finish())
+                draw.draw(img)
+                assert img[40,40] == img[40,30] == red
+                assert img[45,25] == img[40,20] == red
+
+def test_draw_path_line_user_error():
+    with Drawing() as draw:
+        # Test missing value
+        with raises(TypeError):
+            draw.path_line()
+        with raises(TypeError):
+            draw.path_horizontal_line()
+        with raises(TypeError):
+            draw.path_vertical_line()
+
+def test_draw_move_user_error():
+    with Drawing() as draw:
+        # Test missing value
+        with raises(TypeError):
+            draw.path_move()
 
 @mark.parametrize('kwargs', itertools.product(
     [('right', 40), ('width', 30)],
