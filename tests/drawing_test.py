@@ -35,6 +35,18 @@ def test_set_get_fill_color(fx_wand):
         fx_wand.fill_color = black
     assert fx_wand.fill_color == Color('#333333')
 
+def test_set_get_fill_color_user_error(fx_wand):
+    with raises(TypeError):
+        fx_wand.fill_color = "green"
+
+def test_set_get_fill_opacity(fx_wand):
+    fx_wand.fill_opacity = 1.0;
+    assert fx_wand.fill_opacity == 1.0
+
+def test_set_get_fill_opacity_user_error(fx_wand):
+    with raises(TypeError):
+        fx_wand.fill_opacity = "1.5";
+
 def test_set_get_fill_rule(fx_wand):
     valid = 'evenodd'
     notvalid = 'error'
@@ -47,14 +59,73 @@ def test_set_get_fill_rule(fx_wand):
         fx_wand.fill_rule = invalid
     fx_wand.fill_rule = 'undefined' # reset
 
+def test_set_get_stroke_antialias(fx_wand):
+    fx_wand.stroke_antialias = False
+    assert fx_wand.stroke_antialias == False
+
 def test_set_get_stroke_color(fx_wand):
     with Color('#333333') as black:
         fx_wand.stroke_color = black
     assert fx_wand.stroke_color == Color('#333333')
 
+def test_set_get_stroke_color_user_error(fx_wand):
+    with raises(TypeError):
+        fx_wand.stroke_color = '#333333'
+
+def test_set_get_stroke_dash_array(fx_wand):
+    dash_array = [2, 1, 4, 1]
+    fx_wand.stroke_dash_array = dash_array
+    assert fx_wand.stroke_dash_array == dash_array
+
+def test_set_get_stroke_dash_offset(fx_wand):
+    fx_wand.stroke_dash_offset = 0.5
+    assert fx_wand.stroke_dash_offset == 0.5
+
+def test_set_get_stroke_line_cap(fx_wand):
+    fx_wand.stroke_line_cap = 'round'
+    assert fx_wand.stroke_line_cap == 'round'
+
+def test_set_get_stroke_line_cap_user_error(fx_wand):
+    with raises(TypeError):
+        fx_wand.stroke_line_cap = 0x74321870
+    with raises(ValueError):
+        fx_wand.stroke_line_cap = 'apples'
+
+def test_set_get_stroke_line_join(fx_wand):
+    fx_wand.stroke_line_join = 'miter'
+    assert fx_wand.stroke_line_join == 'miter'
+
+def test_set_get_stroke_line_join_user_error(fx_wand):
+    with raises(TypeError):
+        fx_wand.stroke_line_join = 0x74321870
+    with raises(ValueError):
+        fx_wand.stroke_line_join = 'apples'
+
+def test_set_get_stroke_miter_limit(fx_wand):
+    fx_wand.stroke_miter_limit = 5
+    assert fx_wand.stroke_miter_limit == 5
+
+def test_set_get_stroke_miter_limit_user_error(fx_wand):
+    with raises(TypeError):
+        fx_wand.stroke_miter_limit = "5"
+
+def test_set_get_stroke_opacity(fx_wand):
+    fx_wand.stroke_opacity = 1.0
+    assert fx_wand.stroke_opacity == 1.0
+
+def test_set_get_stroke_opacity_user_error(fx_wand):
+    with raises(TypeError):
+        fx_wand.stroke_opacity = "1.0"
+
 def test_set_get_stroke_width(fx_wand):
     fx_wand.stroke_width = 5
     assert fx_wand.stroke_width == 5
+
+def test_set_get_stroke_width_user_error(fx_wand):
+    with raises(TypeError):
+        fx_wand.stroke_width = '0.1234'
+    with raises(ValueError):
+        fx_wand.stroke_width = -1.5
 
 def test_set_get_text_alignment(fx_wand):
     fx_wand.text_alignment = 'center'
@@ -146,6 +217,25 @@ def test_draw_circle(fx_asset):
                 assert img[5,5] == img[45,45] == white
                 assert img[25,25] == black
 
+def test_draw_color():
+    with nested(Color('#fff'),
+                Color('#000')) as (white, black):
+        with Image(width=50, height=50, background=white) as img:
+            with Drawing() as draw:
+                draw.fill_color = black
+                draw.color(25,25,'floodfill')
+                draw.draw(img)
+                assert img[25,25] == black
+
+def test_draw_color_user_error():
+    with Drawing() as draw:
+        with raises(TypeError):
+            draw.color()
+        with raises(TypeError):
+            draw.color(1, 2, 4)
+        with raises(ValueError):
+            draw.color(1, 2, 'apples')
+
 def test_draw_ellipse(fx_wand):
     gray, red = Color('#ccc'), Color('#f00')
     with Image(width=50, height=50, background=gray) as img:
@@ -169,6 +259,25 @@ def test_draw_line(fx_wand):
         assert img[6,5] == Color('#333333')
         assert img[7,5] == Color('#333333')
         assert img[8,5] == Color('#ccc')
+
+def test_draw_matte():
+    with nested(Color('#fff'),
+                Color('transparent')) as (white, transparent):
+        with Image(width=50, height=50, background=white) as img:
+            with Drawing() as draw:
+                draw.fill_opacity = 0
+                draw.matte(25,25,'floodfill')
+                draw.draw(img)
+                assert img[25,25] == transparent
+
+def test_draw_matte_user_error():
+    with Drawing() as draw:
+        with raises(TypeError):
+            draw.matte()
+        with raises(TypeError):
+            draw.matte(1, 2, 4)
+        with raises(ValueError):
+            draw.matte(1, 2, 'apples')
 
 def test_draw_point():
     with nested(Color('#fff'), Color('#000')) as (white, black):
@@ -377,6 +486,38 @@ def test_draw_rectangle(kwargs, display, fx_wand):
             assert img[12, 12] == img[12, 38] == img[38, 12] == \
                    img[38, 38] == black
 
+def test_draw_rotate():
+    with nested(Color('#fff'),
+                Color('#000')) as (white, black):
+        with Image(width=50, height=50, background=white) as img:
+            with Drawing() as draw:
+                draw.stroke_color = black
+                draw.rotate(45)
+                draw.line((3, 3), (35, 35))
+                draw.draw(img)
+                assert img[0,49] == black
+
+def test_draw_skew():
+    with nested(Color('#fff'),
+                Color('#000')) as (white, black):
+        with Image(width=50, height=50, background=white) as img:
+            with Drawing() as draw:
+                draw.stroke_color = black
+                draw.skew(x=11,y=-24)
+                draw.line((3, 3), (35, 35))
+                draw.draw(img)
+                assert img[43,42] == black
+
+def test_draw_translate():
+    with nested(Color('#fff'),
+                Color('#000')) as (white, black):
+        with Image(width=50, height=50, background=white) as img:
+            with Drawing() as draw:
+                draw.stroke_color = black
+                draw.translate(x=5, y=5)
+                draw.line((3, 3), (35, 35))
+                draw.draw(img)
+                assert img[40,40] == black
 
 def test_draw_text(fx_asset):
     with Color('#fff') as white:

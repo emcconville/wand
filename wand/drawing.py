@@ -56,7 +56,7 @@ GRAVITY_TYPES = ('forget', 'north_west', 'north', 'north_east', 'west',
                  'center', 'east', 'south_west', 'south', 'south_east',
                  'static')
 
-#: (:class:`collections.Sequance`) The list of fill-rule types.
+#: (:class:`collections.Sequence`) The list of fill-rule types.
 #:
 #: - ``'undefined'``
 #: - ``'evenodd'``
@@ -71,6 +71,34 @@ FONT_METRICS_ATTRIBUTES = ('character_width', 'character_height', 'ascender',
 
 #: The tuple subtype which consists of font metrics data.
 FontMetrics = collections.namedtuple('FontMetrics', FONT_METRICS_ATTRIBUTES)
+
+#: (:class:`collections.Sequence`) The list of LineCap types
+#:
+#: - ``'undefined;``
+#: - ``'butt'``
+#: - ``'round'``
+#: - ``'square'``
+LINE_CAP_TYPES = ('undefined', 'butt', 'round', 'square')
+
+#: (:class:`collections.Sequence`) The list of LineJoin types
+#:
+#: - ``'undefined'``
+#: - ``'miter'``
+#: - ``'round'``
+#: - ``'bevel'``
+LINE_JOIN_TYPES = ('undefined', 'miter', 'round', 'bevel')
+
+
+#: (:class:`collections.Sequence`) The list of paint method types.
+#:
+#: - ``'undefined'``
+#: - ``'point'``
+#: - ``'replace'``
+#: - ``'floodfill'``
+#: - ``'filltoborder'``
+#: - ``'reset'``
+PAINT_METHOD_TYPES = ('undefined', 'point', 'replace',
+                      'floodfill', 'filltoborder', 'reset')
 
 
 class Drawing(Resource):
@@ -163,6 +191,22 @@ class Drawing(Resource):
             library.DrawSetFillColor(self.resource, color.resource)
 
     @property
+    def fill_opacity(self):
+        """(:class:`~numbers.Real`) The current fill opacity.
+        It also can be set.
+
+        .. versionadded:: 0.4.0
+        """
+        return library.DrawGetFillOpacity(self.resource)
+
+    @fill_opacity.setter
+    def fill_opacity(self, opacity):
+        if not isinstance(opacity, numbers.Real):
+            raise TypeError('opacity must be a double, not ' +
+                            repr(opacity))
+        library.DrawSetFillOpacity(self.resource, opacity)
+
+    @property
     def fill_rule(self):
         """(:class:`basestring`) The current fill rule. It can also be set.
         It's a string value from :const:`FILL_RULE_TYPES` list.
@@ -183,6 +227,25 @@ class Drawing(Resource):
                              repr(fill_rule))
         library.DrawSetFillRule(self.resource,
                                 FILL_RULE_TYPES.index(fill_rule))
+
+    @property
+    def stroke_antialias(self):
+        """(`bool`) Controls whether stroked outlines are antialiased.
+        Stroked outlines are antialiased by default. When antialiasing is
+        disabled stroked pixels are thresholded to determine if the stroke color
+        or underlying canvas color should be used.
+
+        It also can be set.
+
+        .. versionadded:: 0.4.0
+
+        """
+        stroke_antialias = library.DrawGetStrokeAntialias(self.resource)
+        return bool(stroke_antialias)
+
+    @stroke_antialias.setter
+    def stroke_antialias(self, stroke_antialias):
+        library.DrawSetStrokeAntialias(self.resource, bool(stroke_antialias))
 
     @property
     def stroke_color(self):
@@ -206,6 +269,110 @@ class Drawing(Resource):
                             repr(color))
         with color:
             library.DrawSetStrokeColor(self.resource, color.resource)
+
+    @property
+    def stroke_dash_array(self):
+        """(:class:`numbers.Real`) An array representing the pattern of dashes
+        and gaps used to stroke paths.
+        It also can be set.
+
+        .. versionadded:: 0.4.0"""
+        number_elements = ctypes.c_size_t(0)
+        dash_array = library.DrawGetStrokeDashArray(self.resource,
+                                                    ctypes.byref(number_elements))
+        return [float(dash_array[i]) for i in xrange(number_elements.value)]
+
+    @stroke_dash_array.setter
+    def stroke_dash_array(self, dash_array):
+        dash_array_l = len(dash_array)
+        dash_array_p = (ctypes.c_double * dash_array_l)(*dash_array)
+        library.DrawSetStrokeDashArray(self.resource, dash_array_l, dash_array_p)
+
+    @property
+    def stroke_dash_offset(self):
+        """(:class:`numbers.Real`) The stroke dash offset. It also can be set.
+
+        .. versionadded:: 0.4.0
+        """
+        return library.DrawGetStrokeDashOffset(self.resource)
+
+    @stroke_dash_offset.setter
+    def stroke_dash_offset(self, offset):
+        library.DrawSetStrokeDashOffset(self.resource, float(offset))
+
+    @property
+    def stroke_line_cap(self):
+        """(:class:`basestring`) The stroke line cap. It also can be set.
+
+        .. versionadded:: 0.4.0
+        """
+        line_cap_index = library.DrawGetStrokeLineCap(self.resource)
+        if line_cap_index not in LINE_CAP_TYPES:
+            self.raise_exception()
+        return text(LINE_CAP_TYPES[line_cap_index])
+
+    @stroke_line_cap.setter
+    def stroke_line_cap(self, line_cap):
+        if not isinstance(line_cap, string_type):
+            raise TypeError('expected a string, not ' + repr(line_cap))
+        elif line_cap not in LINE_CAP_TYPES:
+            raise ValueError('expected a string from LINE_CAP_TYPES, not' +
+                             repr(line_cap))
+        library.DrawSetStrokeLineCap(self.resource,
+                                LINE_CAP_TYPES.index(line_cap))
+
+    @property
+    def stroke_line_join(self):
+        """(:class:`basestring`) The stroke line join. It also can be set.
+
+        .. versionadded:: 0.4.0
+        """
+        line_join_index = library.DrawGetStrokeLineJoin(self.resource)
+        if line_join_index not in LINE_JOIN_TYPES:
+            self.raise_exception()
+        return text(LINE_JOIN_TYPES[line_join_index])
+
+    @stroke_line_join.setter
+    def stroke_line_join(self, line_join):
+        if not isinstance(line_join, string_type):
+            raise TypeError('expected a string, not ' + repr(line_join))
+        elif line_join not in LINE_JOIN_TYPES:
+            raise ValueError('expected a string from LINE_JOIN_TYPES, not' +
+                             repr(line_join))
+        library.DrawSetStrokeLineJoin(self.resource,
+                                LINE_JOIN_TYPES.index(line_join))
+
+    @property
+    def stroke_miter_limit(self):
+        """(:class:`~numbers.Integral`) The current miter limit.
+        It also can be set.
+
+        .. versionadded:: 0.4.0
+        """
+        return library.DrawGetStrokeMiterLimit(self.resource)
+
+    @stroke_miter_limit.setter
+    def stroke_miter_limit(self, miter_limit):
+        if not isinstance(miter_limit, numbers.Integral):
+            raise TypeError('opacity must be a integer, not ' +
+                            repr(miter_limit))
+        library.DrawSetStrokeMiterLimit(self.resource, miter_limit)
+
+    @property
+    def stroke_opacity(self):
+        """(:class:`~numbers.Real`) The current stroke opacity.
+        It also can be set.
+
+        .. versionadded:: 0.4.0
+        """
+        return library.DrawGetStrokeOpacity(self.resource)
+
+    @stroke_opacity.setter
+    def stroke_opacity(self, opacity):
+        if not isinstance(opacity, numbers.Real):
+            raise TypeError('opacity must be a double, not ' +
+                            repr(opacity))
+        library.DrawSetStrokeOpacity(self.resource, opacity)
 
     @property
     def stroke_width(self):
@@ -459,6 +626,31 @@ class Drawing(Resource):
                            float(origin_x), float(origin_y), # origin
                            float(perimeter_x), float(perimeter_y)) # perimeter
 
+    def color(self, x=None, y=None, paint_method='undefined'):
+        """Draws a color on the image using current fill color, starting
+        at specified position & method.
+
+        Available methods are:
+
+        - ``'undefined'``
+        - ``'point'``
+        - ``'replace'``
+        - ``'floodfill'``
+        - ``'filltoborder'``
+        - ``'reset'``
+
+        .. versionadded:: 0.4.0
+        """
+        if x is None or y is None:
+            raise TypeError('Both x & y coordinates need to be defined')
+        if not isinstance(paint_method, string_type):
+            raise TypeError('expected a string, not ' + repr(paint_method))
+        elif paint_method not in PAINT_METHOD_TYPES:
+            raise ValueError('expected a string from PAINT_METHOD_TYPES, not ' +
+                             repr(paint_method))
+        library.DrawColor(self.resource, float(x), float(y),
+                          PAINT_METHOD_TYPES.index(paint_method))
+
     def ellipse(self, origin, radius, rotation=(0,360)):
         """Draws a ellipse at ``origin`` with independent x & y ``radius``.
         Ellipse can be partial by setting start & end ``rotation``.
@@ -499,6 +691,31 @@ class Drawing(Resource):
         library.DrawLine(self.resource,
                          int(start_x), int(start_y),
                          int(end_x), int(end_y))
+
+    def matte(self, x=None, y=None, paint_method='undefined'):
+        """Paints on the image's opacity channel in order to set effected pixels
+        to transparent.
+
+         To influence the opacity of pixels. The available methods are:
+
+        - ``'undefined'``
+        - ``'point'``
+        - ``'replace'``
+        - ``'floodfill'``
+        - ``'filltoborder'``
+        - ``'reset'``
+
+        .. versionadded:: 0.4.0
+        """
+        if x is None or y is None:
+            raise TypeError('Both x & y coordinates need to be defined')
+        if not isinstance(paint_method, string_type):
+            raise TypeError('expected a string, not ' + repr(paint_method))
+        elif paint_method not in PAINT_METHOD_TYPES:
+            raise ValueError('expected a string from PAINT_METHOD_TYPES, not ' +
+                             repr(paint_method))
+        library.DrawMatte(self.resource, float(x), float(y),
+                          PAINT_METHOD_TYPES.index(paint_method))
 
     def path_close(self):
         """Adds a path element to the current path which closes
@@ -875,6 +1092,15 @@ class Drawing(Resource):
         library.DrawRectangle(self.resource, left, top, right, bottom)
         self.raise_exception()
 
+    def rotate(self, degree):
+        """Applies the specified rotation to the current coordinate space.
+
+        :param degree: degree to rotate
+        :type degree: :class:`~numbers.Real`
+        .. versionadded:: 0.4.0
+        """
+        library.DrawRotate(self.resource, float(degree))
+
     def polygon(self, points=None):
         """Draws a polygon using the current :attr:`stoke_color`,
         :attr:`stroke_width`, and :attr:`fill_color`, using the specified
@@ -978,6 +1204,37 @@ class Drawing(Resource):
             self.resource, x, y,
             ctypes.cast(body_p,ctypes.POINTER(ctypes.c_ubyte))
         )
+
+    def skew(self, x=None, y=None):
+        """Skews the current coordinate system in the horizontal direction if
+        ``x`` is given, and vertical direction if ``y`` is given.
+
+        :param x: Skew horizontal direction
+        :type x: :class:`~numbers.Real`
+        :param y: Skew vertical direction
+        :type y: :class:`~numbers.Real`
+
+        .. versionadded:: 0.4.0
+        """
+        if x is not None:
+            library.DrawSkewX(self.resource, float(x))
+        if y is not None:
+            library.DrawSkewY(self.resource, float(y))
+
+    def translate(self, x=None, y=None):
+        """Applies a translation to the current coordinate system which moves
+        the coordinate system origin to the specified coordinate.
+
+        :param x: Skew horizontal direction
+        :type x: :class:`~numbers.Real`
+        :param y: Skew vertical direction
+        :type y: :class:`~numbers.Real`
+
+        .. versionadded:: 0.4.0
+        """
+        if x is None or y is None:
+            raise TypeError('Both x & y coordinates need to be defined')
+        library.DrawTranslate(self.resource, float(x), float(y))
 
     def get_font_metrics(self, image, text, multiline=False):
         """Queries font metrics from the given ``text``.

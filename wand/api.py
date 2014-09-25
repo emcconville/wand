@@ -632,11 +632,36 @@ try:
     library.DrawSetFillColor.argtypes = [ctypes.c_void_p,
                                          ctypes.c_void_p]
 
+    library.DrawSetFillOpacity.argtypes = [ctypes.c_void_p,
+                                           ctypes.c_double]
+
     library.DrawSetFillRule.argtypes = [ctypes.c_void_p,
                                         ctypes.c_uint]
 
+    library.DrawSetStrokeAntialias.argtypes = [ctypes.c_void_p, # wand
+                                               ctypes.c_int] # stroke_antialias
+
     library.DrawSetStrokeColor.argtypes = [ctypes.c_void_p,
                                            ctypes.c_void_p]
+
+    library.DrawSetStrokeDashArray.argtypes = [ctypes.c_void_p, # wand
+                                               ctypes.c_size_t, # number_elements
+                                               ctypes.POINTER(ctypes.c_double)]
+
+    library.DrawSetStrokeDashOffset.argtypes = [ctypes.c_void_p, # wand
+                                                ctypes.c_double] # dash_offset
+
+    library.DrawSetStrokeLineCap.argtypes = [ctypes.c_void_p, # wand
+                                             ctypes.c_int] # linecap
+
+    library.DrawSetStrokeLineJoin.argtypes = [ctypes.c_void_p, # wand
+                                              ctypes.c_int] # linejoin
+
+    library.DrawSetStrokeMiterLimit.argtypes = [ctypes.c_void_p, # wand
+                                                ctypes.c_size_t] # miterlimit
+
+    library.DrawSetStrokeOpacity.argtypes = [ctypes.c_void_p, # wand
+                                             ctypes.c_double] # stroke_opacity
 
     library.DrawSetStrokeWidth.argtypes = [ctypes.c_void_p,
                                            ctypes.c_double]
@@ -670,11 +695,37 @@ try:
 
     library.DrawGetFillColor.argtypes = [ctypes.c_void_p,
                                          ctypes.c_void_p]
+
+    library.DrawGetFillOpacity.argtypes = [ctypes.c_void_p]
+    library.DrawGetFillOpacity.restype = ctypes.c_double
+
     library.DrawGetFillRule.argtypes = [ctypes.c_void_p]
     library.DrawGetFillRule.restype =   ctypes.c_uint
 
+    library.DrawGetStrokeAntialias.argtypes = [ctypes.c_void_p]
+    library.DrawGetStrokeAntialias.restype = ctypes.c_int
+
     library.DrawGetStrokeColor.argtypes = [ctypes.c_void_p,
                                            ctypes.c_void_p]
+
+    library.DrawGetStrokeDashArray.argtypes = [ctypes.c_void_p,
+                                      ctypes.POINTER(ctypes.c_size_t)]
+    library.DrawGetStrokeDashArray.restype = ctypes.POINTER(ctypes.c_double)
+
+    library.DrawGetStrokeDashOffset.argtypes = [ctypes.c_void_p]
+    library.DrawGetStrokeDashOffset.restype = ctypes.c_double
+
+    library.DrawGetStrokeLineCap.argtypes = [ctypes.c_void_p]
+    library.DrawGetStrokeLineCap.restype = ctypes.c_int
+
+    library.DrawGetStrokeLineJoin.argtypes = [ctypes.c_void_p]
+    library.DrawGetStrokeLineJoin.restype = ctypes.c_int
+
+    library.DrawGetStrokeMiterLimit.argtypes = [ctypes.c_void_p]
+    library.DrawGetStrokeMiterLimit.restype = ctypes.c_size_t
+
+    library.DrawGetStrokeOpacity.argtypes = [ctypes.c_void_p]
+    library.DrawGetStrokeOpacity.restype = ctypes.c_double
 
     library.DrawGetStrokeWidth.argtypes = [ctypes.c_void_p]
     library.DrawGetStrokeWidth.restype = ctypes.c_double
@@ -755,6 +806,11 @@ try:
                                    ctypes.c_double, # px
                                    ctypes.c_double] # py
 
+    library.DrawColor.argtypes = [ctypes.c_void_p, # wand
+                                  ctypes.c_double, # x
+                                  ctypes.c_double, # y
+                                  ctypes.c_uint]   # PaintMethod
+
     library.DrawEllipse.argtypes = [ctypes.c_void_p, # wand
                                     ctypes.c_double, # ox
                                     ctypes.c_double, # oy
@@ -768,6 +824,11 @@ try:
                                  ctypes.c_double,
                                  ctypes.c_double,
                                  ctypes.c_double]
+
+    library.DrawMatte.argtypes = [ctypes.c_void_p, # wand
+                                  ctypes.c_double, # x
+                                  ctypes.c_double, # y
+                                  ctypes.c_uint]   # PaintMethod
 
     library.DrawPathClose.argtypes = [ctypes.c_void_p] # wand
 
@@ -881,11 +942,24 @@ try:
                                     ctypes.c_ulong,
                                     ctypes.POINTER(PointInfo)]
 
+    library.DrawRotate.argtypes = [ctypes.c_void_p, # wand
+                                   ctypes.c_double] # degree
+
     library.DrawRectangle.argtypes = [ctypes.c_void_p,
                                       ctypes.c_double,
                                       ctypes.c_double,
                                       ctypes.c_double,
                                       ctypes.c_double]
+
+    library.DrawSkewX.argtypes = [ctypes.c_void_p, # wand
+                                  ctypes.c_double] # degree
+
+    library.DrawSkewY.argtypes = [ctypes.c_void_p, # wand
+                                  ctypes.c_double] # degree
+
+    library.DrawTranslate.argtypes = [ctypes.c_void_p, #wand
+                                      ctypes.c_double, # x
+                                      ctypes.c_double] # y
 
     library.MagickNegateImage.argtypes = [ctypes.c_void_p, ctypes.c_int]
 
