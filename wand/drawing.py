@@ -230,7 +230,7 @@ class Drawing(Resource):
 
     @property
     def stroke_antialias(self):
-        """(`bool`) Controls whether stroked outlines are antialiased.
+        """(:class:`bool`) Controls whether stroked outlines are antialiased.
         Stroked outlines are antialiased by default. When antialiasing is
         disabled stroked pixels are thresholded to determine if the stroke color
         or underlying canvas color should be used.
@@ -272,7 +272,7 @@ class Drawing(Resource):
 
     @property
     def stroke_dash_array(self):
-        """(:class:`numbers.Real`) An array representing the pattern of dashes
+        """(:class:`~collections.Sequence`) - (:class:`numbers.Real`) An array representing the pattern of dashes
         and gaps used to stroke paths.
         It also can be set.
 
@@ -588,13 +588,13 @@ class Drawing(Resource):
 
         :param start: (:class:`~numbers.Real`, :class:`numbers.Real`)
                       pair which represents starting x and y of the arc
-        :type start: :class:`~numbers.Sequence`
+        :type start: :class:`~collections.Sequence`
         :param end: (:class:`~numbers.Real`, :class:`numbers.Real`)
                       pair which represents ending x and y of the arc
-        :type end: :class:`~numbers.Sequence`
+        :type end: :class:`~collections.Sequence`
         :param degree: (:class:`~numbers.Real`, :class:`numbers.Real`)
                       pair which represents starting degree, and ending degree
-        :type degree: :class:`~numbers.Sequence`
+        :type degree: :class:`~collections.Sequence`
 
         .. versionadded:: 0.4.0
         """
@@ -612,10 +612,10 @@ class Drawing(Resource):
 
         :param origin: (:class:`~numbers.Real`, :class:`numbers.Real`)
                        pair which represents origin x and y of circle
-        :type origin: :class:`numbers.Sequence`
+        :type origin: :class:`collections.Sequence`
         :param perimeter: (:class:`~numbers.Real`, :class:`numbers.Real`)
                        pair which represents perimeter x and y of circle
-        :type perimeter: :class:`numbers.Sequence`
+        :type perimeter: :class:`collections.Sequence`
 
         .. versionadded:: 0.4.0
         """
@@ -657,13 +657,13 @@ class Drawing(Resource):
 
         :param origin: (:class:`~numbers.Real`, :class:`numbers.Real`)
                        pair which represents origin x and y of circle
-        :type origin: :class:`numbers.Sequence`
+        :type origin: :class:`collections.Sequence`
         :param radius: (:class:`~numbers.Real`, :class:`numbers.Real`)
                        pair which represents radius x and radius y of circle
-        :type radius: :class:`numbers.Sequence`
+        :type radius: :class:`collections.Sequence`
         :param rotation: (:class:`~numbers.Real`, :class:`numbers.Real`)
                        pair which represents start and end of ellipse. Default (0,360) 
-        :type rotation: :class:`numbers.Sequence`
+        :type rotation: :class:`collections.Sequence`
 
         .. versionadded:: 0.4.0
         """
@@ -680,10 +680,10 @@ class Drawing(Resource):
 
         :param start: (:class:`~numbers.Integral`, :class:`numbers.Integral`)
                       pair which represents starting x and y of the line
-        :type start: :class:`numbers.Sequence`
+        :type start: :class:`collections.Sequence`
         :param end: (:class:`~numbers.Integral`, :class:`numbers.Integral`)
                     pair which represents ending x and y of the line
-        :type end: :class:`numbers.Sequence`
+        :type end: :class:`collections.Sequence`
 
         """
         start_x, start_y = start
@@ -737,12 +737,12 @@ class Drawing(Resource):
 
         :param to: (:class:`~numbers.Real`, :class:`numbers.Real`)
                       pair which represents coordinates to draw to.
-        :type to: :class:`numbers.Sequence`
+        :type to: :class:`collections.Sequence`
         :param controls: (:class:`~numbers.Real`, :class:`numbers.Real`)
                       coordinate to used to influence curve
-        :type controls: :class:`numbers.Sequence`
+        :type controls: :class:`collections.Sequence`
         :param smooth: :class:`bool` assume last defined control coordinate
-        :type large_arc: :class:`bool
+        :type smooth: :class:`bool`
         :param relative: :class:`bool`
                     treat given coordinates as relative to current point
         :type relative: :class:`bool`
@@ -788,12 +788,12 @@ class Drawing(Resource):
 
         :param to: (:class:`~numbers.Real`, :class:`numbers.Real`)
                       pair which represents coordinates to draw to.
-        :type to: :class:`numbers.Sequence`
+        :type to: :class:`collections.Sequence`
         :param control: (:class:`~numbers.Real`, :class:`numbers.Real`)
                       coordinate to used to influence curve
-        :type control: :class:`numbers.Sequence`
+        :type control: :class:`collections.Sequence`
         :param smooth: :class:`bool` assume last defined control coordinate
-        :type large_arc: :class:`bool
+        :type smooth: :class:`bool`
         :param relative: :class:`bool`
                     treat given coordinates as relative to current point
         :type relative: :class:`bool`
@@ -844,17 +844,17 @@ class Drawing(Resource):
 
         :param to: (:class:`~numbers.Real`, :class:`numbers.Real`)
                       pair which represents coordinates to draw to.
-        :type to: :class:`numbers.Sequence`
+        :type to: :class:`collections.Sequence`
         :param radius: (:class:`~numbers.Real`, :class:`numbers.Real`)
                       pair which represents the radii of the ellipse to draw
-        :type radius: :class:`numbers.Sequence`
+        :type radius: :class:`collections.Sequence`
         :param rotate: :class:`~numbers.Real` degree to rotate ellipse on x-axis
         :type rotate: :class:`~numbers.Real`
         :param large_arc: :class:`bool` draw largest available arc
-        :type large_arc: :class:`bool
+        :type large_arc: :class:`bool`
         :param clockwise: :class:`bool`
                     draw arc path clockwise from start to target
-        :type clockwise: :class:`bool
+        :type clockwise: :class:`bool`
         :param relative: :class:`bool`
                     treat given coordinates as relative to current point
         :type relative: :class:`bool`
@@ -892,7 +892,7 @@ class Drawing(Resource):
 
         :param to: (:class:`~numbers.Real`, :class:`numbers.Real`)
                       pair which represents coordinates to draw to.
-        :type to: :class:`numbers.Sequence`
+        :type to: :class:`collections.Sequence`
         :param relative: :class:`bool`
                     treat given coordinates as relative to current point
         :type relative: :class:`bool`
@@ -916,7 +916,7 @@ class Drawing(Resource):
 
         :param x: :class:`~numbers.Real`
                       x-axis point to draw to.
-        :type to: :class:`numbers.Sequence`
+        :type x: :class:`~numbers.Real`
         :param relative: :class:`bool`
                     treat given point as relative to current point
         :type relative: :class:`bool`
@@ -939,7 +939,7 @@ class Drawing(Resource):
 
         :param y: :class:`~numbers.Real`
                       y-axis point to draw to.
-        :type to: :class:`numbers.Sequence`
+        :type y: :class:`~numbers.Real`
         :param relative: :class:`bool`
                     treat given point as relative to current point
         :type relative: :class:`bool`
@@ -960,7 +960,7 @@ class Drawing(Resource):
 
         :param to: (:class:`~numbers.Real`, :class:`numbers.Real`)
                       pair which represents coordinates to draw to.
-        :type to: :class:`numbers.Sequence`
+        :type to: :class:`collections.Sequence`
         :param relative: :class:`bool`
                     treat given coordinates as relative to current point
         :type relative: :class:`bool`

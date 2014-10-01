@@ -28,15 +28,27 @@ Arc
 .. versionadded:: 0.4.0
 
 Arcs can be drawn by using :meth:`~wand.drawing.Drawing.arc()` method. You'll
-need two pairs of (x, y) coordinates to map out the minimum bounding rectangle,
-and the starting & ending degree.
+need to define three pairs of (x, y) coordinates. First & second pair of
+coordinates will be the minimum bounding rectangle, and the last pair define
+the starting & ending degree.
 
 An example::
 
+    from wand.image import Image
+    from wand.drawing import Drawing
+    from wand.color import Color
+    
     with Drawing() as draw:
-        draw.arc((25, 25), # Stating point
-                 (75, 75), # Ending point
-                 (45,-45)) # From bottom left around to top left
+        draw.stroke_color = Color('black')
+        draw.stroke_width = 2
+        draw.fill_color = Color('white')
+        draw.arc(( 25, 25), # Stating point
+                 ( 75, 75), # Ending point
+                 (135,-45)) # From bottom left around to top right
+        with Image(width=100, height=100, background=Color('lightblue')) as img:
+          draw.draw(img)
+          img.save(filename='draw-arc.gif')
+
 
 .. image:: ../_images/draw-arc.gif
    :alt: draw-arc.gif
@@ -49,20 +61,27 @@ Bezier
 .. versionadded:: 0.4.0
 
 You can draw bezier curves using :meth:`~wand.drawing.Drawing.bezier()` method.
-This method requires at lest four points to determine a bezier curve. Given
+This method requires at least four points to determine a bezier curve. Given
 as a list of (x, y) coordinates. The first & last pair of coordinates are
 treated as start & end, and the second & third pair of coordinates act as
 controls.
 
 For example::
 
+    from wand.image import Image
+    from wand.drawing import Drawing
+    from wand.color import Color
+    
     with Drawing() as draw:
+        draw.stroke_color = Color('black')
+        draw.stroke_width = 2
+        draw.fill_color = Color('white')
         points = [(10,50), # Start point
                   (50,10), # First control
                   (50,90), # Second control
                   (90,50)] # End point
         draw.bezier(points)
-        with Image(width=100, height=100, background=Color("#fff")) as image:
+        with Image(width=100, height=100, background=Color('lightblue')) as image:
             draw(image)
 
 .. image:: ../_images/draw-bezier.gif
@@ -82,13 +101,23 @@ Circle
 .. versionadded:: 0.4.0
 
 You can draw circles using :meth:`~wand.drawing.Drawing.circle()` method.
-It simply takes two (x, y) coordinates for center ``origin`` and outer
+Circles are drawn by defining two pairs of (x, y) coordinates. First coordinate
+for the center "``origin``" point, and a second pair for the outer
 ``perimeter``. For example, the following code draws a circle in the middle of
 the ``image``::
 
-    center = (image.width / 2, image.height / 2)
-    perimeter = (image.width / 4, image.height / 4)
-    draw.circle(center, perimeter)
+    from wand.image import Image
+    from wand.drawing import Drawing
+    from wand.color import Color
+    
+    with Drawing() as draw:
+        draw.stroke_color = Color('black')
+        draw.stroke_width = 2
+        draw.fill_color = Color('white')
+        draw.circle((50, 50), # Center point
+                    (25, 25)) # Perimeter point
+        with Image(width=100, height=100, background=Color('lightblue')) as image:
+            draw(image)
 
 .. image:: ../_images/draw-circle.gif
    :alt: draw-circle.gif
@@ -109,13 +138,24 @@ a pair of starting & ending degrees as the third parameter.
 
 An example of a full ellipse::
 
-    draw.ellipse((50, 50), # Origin (center) point
-                 (40, 20)) # 80px wide, and 40px tall
+    from wand.image import Image
+    from wand.drawing import Drawing
+    from wand.color import Color
+    
+    with Drawing() as draw:
+        draw.stroke_color = Color('black')
+        draw.stroke_width = 2
+        draw.fill_color = Color('white')
+        draw.ellipse((50, 50), # Origin (center) point
+                     (40, 20)) # 80px wide, and 40px tall
+        with Image(width=100, height=100, background=Color('lightblue')) as image:
+            draw(image)
 
 .. image:: ../_images/draw-ellipse-full.gif
    :alt: draw-ellipse-full.gif
 
-An example of a half-partial ellipse::
+Same example as above, but with a half-partial ellipse defined by the third
+parameter::
 
     draw.ellipse((50, 50), # Origin (center) point
                  (40, 20), # 80px wide, and 40px tall
@@ -154,6 +194,74 @@ a red diagonal line into the ``image``::
         draw(image)
 
 
+.. _draw-paths:
+
+Paths
+-----
+
+.. versionadded:: 0.4.0
+
+Paths can be drawn by using any collection of path functions between
+:meth:`~wand.drawing.Drawing.path_start()` and
+:meth:`~wand.drawing.Drawing.path_finish()` methods. The available path functions
+are:
+
+
+- :meth:`~wand.drawing.Drawing.path_close()` draws a path from last point to first.
+- :meth:`~wand.drawing.Drawing.path_curve()` draws a cubic bezier curve.
+- :meth:`~wand.drawing.Drawing.path_curve_to_quadratic_bezier()` draws a quadratic bezier curve.
+- :meth:`~wand.drawing.Drawing.path_elliptic_arc()` draws an elliptical arc.
+- :meth:`~wand.drawing.Drawing.path_horizontal_line()` draws a horizontal line.
+- :meth:`~wand.drawing.Drawing.path_line()` draws a line path.
+- :meth:`~wand.drawing.Drawing.path_move()` adjust current point without drawing.
+- :meth:`~wand.drawing.Drawing.path_vertical_line()` draws a vertical line.
+
+Each path method expects a destination point, and will draw from the current
+point to the new point. The destination point will become the new current point
+for the next applied path method. Destination points are given in the
+form of (``x``, ``y``) coordinates to the ``to`` parameter, and can by relative
+or absolute to the current point by setting the ``relative`` flag. The
+:meth:`~wand.drawing.Drawing.path_curve()` and
+:meth:`~wand.drawing.Drawing.path_curve_to_quadratic_bezier()` expect
+additional ``control`` points, and can complement previous drawn curves by
+setting a ``smooth`` flag. When the ``smooth`` flag is set to ``True`` the first
+control point is assumed to be the reflection of the last defined control point.
+
+For example::
+
+    from wand.image import Image
+    from wand.drawing import Drawing
+    from wand.color import Color
+    
+    with Drawing() as draw:
+        draw.stroke_width = 2
+        draw.stroke_color = Color('black')
+        draw.fill_color = Color('white')
+        draw.path_start()
+        # Start middle-left
+        draw.path_move(to=(10, 50))
+        # Curve accross top-left to center
+        draw.path_curve(to=(40, 0),
+                        controls=[(10, -40), (30,-40)],
+                        relative=True)
+        # Continue curve accross bottom-right
+        draw.path_curve(to=(40, 0),
+                        controls=(30, 40),
+                        smooth=True,
+                        relative=True)
+        # Line to top-right
+        draw.path_vertical_line(10)
+        # Diagonal line to bottom-left
+        draw.path_line(to=(10, 90))
+        # Close first & last points
+        draw.path_close()
+        draw.path_finish()
+        with Image(width=100, height=100, background=Color('lightblue')) as image:
+            draw(image)
+
+.. image:: ../_images/draw-path.gif
+   :alt: draw-path.gif
+
 .. _draw-point:
 
 Point
@@ -164,13 +272,20 @@ Point
 You can draw points by using :meth:`~wand.drawing.Drawing.point()` method.
 It simply takes two ``x``, ``y`` arguments for the point coordinate.
 
-The following example will use this method draw a math function across a given
+The following example will draw points following a math function across a given
 ``image``::
 
-    for x in xrange(0,image.width):
-        y = math.tan(x) * 4 + (image.height / 2)
-        draw.point(x, y)
-    draw(image)
+    from wand.image import Image
+    from wand.drawing import Drawing
+    from wand.color import Color
+    import math
+    
+    with Drawing() as draw:
+        for x in xrange(0, 100):
+            y = math.tan(x) * 4
+            draw.point(x, y + 50)
+        with Image(width=100, height=100, background=Color('lightblue')) as image:
+            draw(image)
 
 .. image:: ../_images/draw-point-math.gif
    :alt: draw-point-math.gif
@@ -193,9 +308,18 @@ line will automatically close between first & last point.
 
 For example, the following code will draw a triangle into the ``image``::
 
-    points = [(25, 25), (75, 50), (25, 75)]
-    draw.polygon(points)
-    draw(image)
+    from wand.image import Image
+    from wand.drawing import Drawing
+    from wand.color import Color
+
+    with Drawing() as draw:
+        draw.stroke_width = 2
+        draw.stroke_color = Color('black')
+        draw.fill_color = Color('white')
+        points = [(25, 25), (75, 50), (25, 75)]
+        draw.polygon(points)
+        with Image(width=100, height=100, background=Color('lightblue')) as image:
+            draw(image)
 
 .. image:: ../_images/draw-polygon.gif
    :alt: draw-polygon.gif
@@ -210,7 +334,7 @@ Control the fill & stroke with the following properties:
 .. _draw-polyline:
 
 Polyline
--------
+--------
 
 .. versionadded:: 0.4.0
 
@@ -220,9 +344,18 @@ between the first & last point.
 
 For example, the following code will draw a two line path on the ``image``::
 
-    points = [(25, 25), (75, 50), (25, 75)]
-    draw.polyline(points)
-    draw(image)
+    from wand.image import Image
+    from wand.drawing import Drawing
+    from wand.color import Color
+
+    with Drawing() as draw:
+        draw.stroke_width = 2
+        draw.stroke_color = Color('black')
+        draw.fill_color = Color('white')
+        points = [(25, 25), (75, 50), (25, 75)]
+        draw.polyline(points)
+        with Image(width=100, height=100, background=Color('lightblue')) as image:
+            draw(image)
 
 .. image:: ../_images/draw-polyline.gif
    :alt: draw-polyline.gif
