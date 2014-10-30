@@ -252,7 +252,7 @@ class SingleImage(BaseImage):
     """Each single image in :class:`~wand.image.Image` container.
     For example, it can be a frame of GIF animation.
 
-    Note that all changes on single images are invinsilble to their
+    Note that all changes on single images are invisible to their
     containers until they are :meth:`~wand.image.BaseImage.close`\ d
     (:meth:`~wand.resource.Resource.destroy`\ ed).
 
