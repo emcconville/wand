@@ -498,7 +498,7 @@ class Drawing(Resource):
 
         :param x: the left offset where to start writing a text
         :type x: :class:`numbers.Integral`
-        :param y: the top offset where to start writing a text
+        :param y: the baseline where to start writing text
         :type y: :class:`numbers.Integral`
         :param body: the body string to write
         :type body: :class:`basestring`
