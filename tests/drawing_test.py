@@ -35,14 +35,17 @@ def test_set_get_fill_color(fx_wand):
         fx_wand.fill_color = black
     assert fx_wand.fill_color == Color('#333333')
 
+
 def test_set_get_stroke_color(fx_wand):
     with Color('#333333') as black:
         fx_wand.stroke_color = black
     assert fx_wand.stroke_color == Color('#333333')
 
+
 def test_set_get_stroke_width(fx_wand):
     fx_wand.stroke_width = 5
     assert fx_wand.stroke_width == 5
+
 
 def test_set_get_text_alignment(fx_wand):
     fx_wand.text_alignment = 'center'
@@ -112,13 +115,13 @@ def test_draw_line(fx_wand):
     with Image(width=10, height=10, background=gray) as img:
         with Color('#333333') as black:
             fx_wand.fill_color = black
-        fx_wand.line((5,5), (7,5))
+        fx_wand.line((5, 5), (7, 5))
         fx_wand.draw(img)
-        assert img[4,5] == Color('#ccc')
-        assert img[5,5] == Color('#333333')
-        assert img[6,5] == Color('#333333')
-        assert img[7,5] == Color('#333333')
-        assert img[8,5] == Color('#ccc')
+        assert img[4, 5] == Color('#ccc')
+        assert img[5, 5] == Color('#333333')
+        assert img[6, 5] == Color('#333333')
+        assert img[7, 5] == Color('#333333')
+        assert img[8, 5] == Color('#ccc')
 
 
 @mark.parametrize('kwargs', itertools.product(
@@ -136,10 +139,10 @@ def test_draw_rectangle(kwargs, display, fx_wand):
             fx_wand.rectangle(left=10, top=10, **dict(kwargs))
             fx_wand.draw(img)
             display(img)
-            assert img[7, 7] == img[7, 42] == img[42, 7] == \
-                   img[42, 42] == img[0, 0] == img[49, 49] == white
-            assert img[12, 12] == img[12, 38] == img[38, 12] == \
-                   img[38, 38] == black
+            assert (img[7, 7] == img[7, 42] == img[42, 7] ==
+                    img[42, 42] == img[0, 0] == img[49, 49] == white)
+            assert (img[12, 12] == img[12, 38] == img[38, 12] ==
+                    img[38, 38] == black)
 
 
 def test_draw_text(fx_asset):
