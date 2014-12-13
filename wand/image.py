@@ -1870,7 +1870,7 @@ class Image(BaseImage):
                        default is transparent
     :type background: :class:`wand.color.Color`
     :param resolution: set a resolution value (dpi),
-        usefull for vectorial formats (like pdf)
+                       useful for vectorial formats (like pdf)
     :type resolution: :class:`collections.Sequence`,
                       :Class:`numbers.Integral`
 
@@ -1940,7 +1940,7 @@ class Image(BaseImage):
         open_args = image, blob, file, filename
         if (any(a is not None for a in new_args) and
             any(a is not None for a in open_args)):
-            raise TypeError('blank image parameters cant be used with image '
+            raise TypeError("blank image parameters can't be used with image "
                             'opening parameters')
         elif any(a is not None and b is not None
                  for i, a in enumerate(open_args)
@@ -2004,7 +2004,7 @@ class Image(BaseImage):
         :param filename: reads an image from the ``filename`` string
         :type filename: :class:`basestring`
         :param resolution: set a resolution value (DPI),
-                           usefull for vectorial formats (like PDF)
+                           useful for vectorial formats (like PDF)
         :type resolution: :class:`collections.Sequence`,
                           :class:`numbers.Integral`
 

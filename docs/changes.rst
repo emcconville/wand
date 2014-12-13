@@ -261,7 +261,7 @@ Released on January 25, 2013.
   <wand.image.Image.transparentize>` method (and :meth:`Image.watermark()
   <wand.image.Image.watermark>` method which internally uses it) didn't
   work.
-- Fixed segmentation fault occured when :attr:`Color.red
+- Fixed segmentation fault occurred when :attr:`Color.red
   <wand.color.Color.red>`, :attr:`Color.green <wand.color.Color.green>`,
   or :attr:`Color.blue <Wand.color.Color.blue>` is accessed.
 - Added :attr:`Color.alpha <wand.color.Color.alpha>` property.
