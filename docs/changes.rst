@@ -17,6 +17,9 @@ To be released.
 - The ``size`` parameter of :class:`~wand.font.Font` class becomes optional.
   Its default value is 0, which means *autosized*.
   [:issue:`191` by Cha, Hojeong]
+- Fixed a bug that :meth:`Image.read() <wand.image.Image.read>` had tried
+  using :c:func:`MagickReadImageFile()` even when the given file object
+  has no :attr:`mode` attribute.  [:issue:`205` by Stephen J. Fuhry]
 
 
 Version 0.3.8

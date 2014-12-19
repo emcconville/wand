@@ -2024,7 +2024,7 @@ class Image(BaseImage):
                                 'integer of the same x/y')
         if file is not None:
             if (isinstance(file, file_types) and
-                hasattr(libc, 'fdopen')):
+                hasattr(libc, 'fdopen') and hasattr(file, 'mode')):
                 fd = libc.fdopen(file.fileno(), file.mode)
                 r = library.MagickReadImageFile(self.wand, fd)
             elif not callable(getattr(file, 'read', None)):
