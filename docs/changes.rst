@@ -7,13 +7,19 @@ Wand Changelog
 Version 0.3.9
 -------------
 
-To be released.
+Released on December 20, 2014.
 
 - Added ``'pdf:use-cropbox'`` option to :attr:`Image.options
   <wand.image.BaseImage.options>` dictionary (and :const:`~wand.image.OPTIONS`
   constant).  [:issue:`185` by Christoph Neuroth]
 - Fixed a bug that exception message was :class:`bytes` instead of
   :class:`str` on Python 3.
+- The ``size`` parameter of :class:`~wand.font.Font` class becomes optional.
+  Its default value is 0, which means *autosized*.
+  [:issue:`191` by Cha, Hojeong]
+- Fixed a bug that :meth:`Image.read() <wand.image.Image.read>` had tried
+  using :c:func:`MagickReadImageFile()` even when the given file object
+  has no :attr:`mode` attribute.  [:issue:`205` by Stephen J. Fuhry]
 
 
 Version 0.3.8
@@ -258,7 +264,7 @@ Released on January 25, 2013.
   <wand.image.Image.transparentize>` method (and :meth:`Image.watermark()
   <wand.image.Image.watermark>` method which internally uses it) didn't
   work.
-- Fixed segmentation fault occured when :attr:`Color.red
+- Fixed segmentation fault occurred when :attr:`Color.red
   <wand.color.Color.red>`, :attr:`Color.green <wand.color.Color.green>`,
   or :attr:`Color.blue <Wand.color.Color.blue>` is accessed.
 - Added :attr:`Color.alpha <wand.color.Color.alpha>` property.

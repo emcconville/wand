@@ -18,7 +18,7 @@ Very future versions
 
 PIL compatibility layer
    PIL has very long history and the most of Python projects still
-   depend on it.  We will work on PIL compatiblity layer using Wand.
+   depend on it.  We will work on PIL compatibility layer using Wand.
    It will provide two ways to emulate PIL:
 
    - Module-level compatibility which can be used by changing

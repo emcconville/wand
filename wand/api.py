@@ -41,7 +41,7 @@ class c_magick_char_p(ctypes.c_char_p):
 
 def find_library(suffix=''):
     """Finds library path to try loading.  The result paths are not
-    guarenteed that they exist.
+    guaranteed that they exist.
 
     :param suffix: optional suffix e.g. ``'-Q16'``
     :type suffix: :class:`basestring`
