@@ -7,7 +7,7 @@ Wand Changelog
 Version 0.3.9
 -------------
 
-To be released.
+Released on December 20, 2014.
 
 - Added ``'pdf:use-cropbox'`` option to :attr:`Image.options
   <wand.image.BaseImage.options>` dictionary (and :const:`~wand.image.OPTIONS`
