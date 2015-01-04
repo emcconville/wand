@@ -9,6 +9,10 @@ Version 0.3.10
 
 To be released.
 
+- Error message of :exc:`~wand.exceptions.MissingDelegateError` raised by
+  :meth:`Image.liquid_rescale() <wand.image.BaseImage.liquid_rescale>`
+  became nicer.
+
 
 Version 0.3.9
 -------------

@@ -72,6 +72,14 @@ Homebrew
 
       $ brew install imagemagick
 
+   If :ref:`seam carving <seam-carving>` (:meth:`Image.liquid_rescale()
+   <wand.image.BaseImage.liquid_rescale>`) is needed you have install
+   liblqr_ as well:
+
+   .. sourcecode:: console
+
+      $ brew install imagemagick --with-liblqr
+
 MacPorts
    .. sourcecode:: console
 
@@ -88,7 +96,7 @@ MacPorts
 
 .. _Homebrew: http://mxcl.github.com/homebrew/
 .. _MacPorts: http://www.macports.org/
-
+.. _liblqr: http://liblqr.wikidot.com/
 
 .. _install-imagemagick-windows:
 

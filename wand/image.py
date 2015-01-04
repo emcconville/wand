@@ -21,7 +21,7 @@ from .api import MagickPixelPacket, libc, libmagick, library
 from .color import Color
 from .compat import (binary, binary_type, encode_filename, file_types,
                      string_type, text, xrange)
-from .exceptions import WandException
+from .exceptions import MissingDelegateError, WandException
 from .resource import DestroyedResourceError, Resource
 from .font import Font
 
@@ -1462,7 +1462,14 @@ class BaseImage(Resource):
             raise TypeError('rigidity must be a float, not ' + repr(rigidity))
         library.MagickLiquidRescaleImage(self.wand, int(width), int(height),
                                          float(delta_x), float(rigidity))
-        self.raise_exception()
+        try:
+            self.raise_exception()
+        except MissingDelegateError as e:
+            raise MissingDelegateError(
+                str(e) + '\n\nImageMagick in the system is likely to be '
+                'impossible to load liblqr.  You might not install liblqr, '
+                'or ImageMagick may not compiled with liblqr.'
+            )
 
     @manipulative
     def rotate(self, degree, background=None, reset_coords=True):
