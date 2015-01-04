@@ -4,6 +4,12 @@ Wand Changelog
 0.3 series
 ~~~~~~~~~~
 
+Version 0.3.10
+--------------
+
+To be released.
+
+
 Version 0.3.9
 -------------
 
