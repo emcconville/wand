@@ -1171,6 +1171,31 @@ def test_negate_default(display, fx_asset):
         test(right_bottom, img[-1, -1])
 
 
+def test_threshold(fx_asset):
+    with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
+        top = int(img.height * 0.25)
+        btm = int(img.height * 0.75)
+        print(img[0, top], img[0, btm])
+        img.threshold(0.5)
+        print(img[0, top], img[0, btm])
+        assert img[0, top] == Color('white')
+        assert img[0, btm] == Color('black')
+
+
+def test_threshold_channel(fx_asset):
+    with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
+        top = int(img.height * 0.25)
+        btm = int(img.height * 0.75)
+        print(img[0, top], img[0, btm])
+        img.threshold(0.0, 'red')
+        img.threshold(0.5, 'green')
+        img.threshold(1.0, 'blue')
+        print(img[0, top], img[0, btm])
+        # The top half of the image should be yellow, and the bottom half red.
+        assert img[0, top] == Color('yellow')
+        assert img[0, btm] == Color('red')
+
+
 def test_normalize_default(display, fx_asset):
     with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
         display(img)

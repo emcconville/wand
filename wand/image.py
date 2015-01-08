@@ -1720,6 +1720,42 @@ class BaseImage(Resource):
         if not r:
             self.raise_exception()
 
+    @manipulative
+    def threshold(self, threshold=0.5, channel=None):
+        """Changes the value of individual pixels based on the intensity
+        of each pixel compared to threshold. The result is a high-contrast,
+        two color image. It manipulates the image in place.
+
+        :param threshold: threshold as a factor of quantum
+        :type threshold: :class:`numbers.Real`
+        :param channel: the channel type.  available values can be found
+                        in the :const:`CHANNELS` mapping.  If ``None``,
+                        threshold all channels.
+        :type channel: :class:`basestring`
+
+        .. versionadded:: 0.3.10
+
+        """
+        if not isinstance(threshold, numbers.Real):
+            raise TypeError('threshold has to be a numbers.Real, not ' +
+                            repr(threshold))
+
+        if channel:
+            try:
+                ch_const = CHANNELS[channel]
+            except KeyError:
+                raise ValueError(repr(channel) + ' is an invalid channel type'
+                                 '; see wand.image.CHANNELS dictionary')
+            r = library.MagickThresholdImageChannel(
+                self.wand, ch_const,
+                threshold * self.quantum_range
+            )
+        else:
+            r = library.MagickThresholdImage(self.wand,
+                                             threshold * self.quantum_range)
+        if not r:
+            self.raise_exception()
+
     def negate(self, grayscale=False, channel=None):
         """Negate the colors in the reference image.
 

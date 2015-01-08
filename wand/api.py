@@ -762,6 +762,12 @@ try:
         ctypes.c_double
     )
 
+    library.MagickThresholdImage.argtypes = [ctypes.c_void_p, ctypes.c_double]
+
+    library.MagickThresholdImageChannel.argtypes = [ctypes.c_void_p,
+                                                    ctypes.c_int,
+                                                    ctypes.c_double]
+
     library.MagickModulateImage.argtypes = [ctypes.c_void_p,
                                             ctypes.c_double,
                                             ctypes.c_double,
