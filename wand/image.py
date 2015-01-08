@@ -1682,6 +1682,17 @@ class BaseImage(Resource):
         self.raise_exception()
 
     @manipulative
+    def equalize(self):
+        """Equalizes the image histogram
+
+        .. versionadded:: 0.3.10
+
+        """
+        result = library.MagickEqualizeImage(self.wand)
+        if not result:
+            self.raise_exception()
+
+    @manipulative
     def modulate(self, brightness=100.0, saturation=100.0, hue=100.0):
         """Changes the brightness, saturation and hue of an image.
         We modulate the image with the given ``brightness``, ``saturation``

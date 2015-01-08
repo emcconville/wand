@@ -750,6 +750,8 @@ try:
     library.MagickNormalizeImageChannel.argtypes = [ctypes.c_void_p,
                                                     ctypes.c_int]
 
+    library.MagickEqualizeImage.argtypes = [ctypes.c_void_p]
+
     library.MagickQueryFontMetrics.argtypes = [ctypes.c_void_p,
                                                ctypes.c_void_p,
                                                ctypes.c_char_p]
