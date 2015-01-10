@@ -1172,6 +1172,37 @@ def test_negate_default(display, fx_asset):
         test(right_bottom, img[-1, -1])
 
 
+def test_threshold(fx_asset):
+    with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
+        top = int(img.height * 0.25)
+        btm = int(img.height * 0.75)
+        print(img[0, top], img[0, btm])
+        img.threshold(0.5)
+        print(img[0, top], img[0, btm])
+        with img[0, top] as white:
+            assert white.red_int8 == white.green_int8 == white.blue_int8 == 255
+        with img[0, btm] as black:
+            assert black.red_int8 == black.green_int8 == black.blue_int8 == 0
+
+
+def test_threshold_channel(fx_asset):
+    with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
+        top = int(img.height * 0.25)
+        btm = int(img.height * 0.75)
+        print(img[0, top], img[0, btm])
+        img.threshold(0.0, 'red')
+        img.threshold(0.5, 'green')
+        img.threshold(1.0, 'blue')
+        print(img[0, top], img[0, btm])
+        # The top half of the image should be yellow, and the bottom half red.
+        with img[0, top] as yellow:
+            assert (yellow.red_int8 == yellow.green_int8 == 255 and
+                    yellow.blue_int8 == 0)
+        with img[0, btm] as red:
+            assert (red.red_int8 == 255 and
+                    red.green_int8 == red.blue_int8 == 0)
+
+
 def test_normalize_default(display, fx_asset):
     with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
         display(img)
@@ -1216,6 +1247,18 @@ def test_normalize_channel(fx_asset):
             assert getattr(img[0, -1], c) == getattr(left_bottom, c)
             assert getattr(img[-1, 0], c) == getattr(right_top, c)
             assert getattr(img[-1, -1], c) == getattr(right_bottom, c)
+
+
+def test_equalize(fx_asset):
+    with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
+        print(img[0, 0], img[0, -1])
+        img.equalize()
+        print(img[0, 0], img[0, -1])
+        # The top row should be nearly white, and the bottom nearly black.
+        with img[0, 0] as light:
+            assert light.red_int8 >= light.green_int8 >= light.blue_int8 >= 250
+        with img[0, -1] as dark:
+            assert dark.red_int8 <= dark.green_int8 <= dark.blue_int8 <= 5
 
 
 def test_flip(fx_asset):

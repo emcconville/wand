@@ -760,6 +760,8 @@ try:
     library.MagickNormalizeImageChannel.argtypes = [ctypes.c_void_p,
                                                     ctypes.c_int]
 
+    library.MagickEqualizeImage.argtypes = [ctypes.c_void_p]
+
     library.MagickQueryFontMetrics.argtypes = [ctypes.c_void_p,
                                                ctypes.c_void_p,
                                                ctypes.c_char_p]
@@ -771,6 +773,12 @@ try:
     library.MagickQueryMultilineFontMetrics.restype = ctypes.POINTER(
         ctypes.c_double
     )
+
+    library.MagickThresholdImage.argtypes = [ctypes.c_void_p, ctypes.c_double]
+
+    library.MagickThresholdImageChannel.argtypes = [ctypes.c_void_p,
+                                                    ctypes.c_int,
+                                                    ctypes.c_double]
 
     library.MagickModulateImage.argtypes = [ctypes.c_void_p,
                                             ctypes.c_double,
