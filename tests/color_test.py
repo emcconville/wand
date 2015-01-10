@@ -26,10 +26,10 @@ def test_not_equals():
 
 def test_hash():
     """Hash test."""
-    assert hash(Color('#fff')) == hash(Color('#ffffff')) == \
-        hash(Color('white'))
-    assert hash(Color('#000')) == hash(Color('#000000')) == \
-        hash(Color('black'))
+    assert (hash(Color('#fff')) == hash(Color('#ffffff')) ==
+            hash(Color('white')))
+    assert (hash(Color('#000')) == hash(Color('#000000')) ==
+            hash(Color('black')))
     assert hash(Color('rgba(0, 0, 0, 0))')) == hash(Color('rgba(0, 0, 0, 0))'))
     assert hash(Color('rgba(0, 0, 0, 0))')) == hash(Color('rgba(1, 1, 1, 0))'))
 

@@ -7,7 +7,6 @@ from wand.version import (MAGICK_VERSION, MAGICK_VERSION_INFO,
                           MAGICK_RELEASE_DATE_STRING, QUANTUM_DEPTH)
 
 
-
 def test_version():
     """Test version strings."""
     match = re.match('^ImageMagick\s+\d+\.\d+\.\d+(?:-\d+)?', MAGICK_VERSION)

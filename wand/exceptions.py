@@ -29,6 +29,7 @@ class WandError(WandException):
 class WandFatalError(WandException):
     """Base class for Wand-related fatal errors."""
 
+
 class WandLibraryVersionError(WandException):
     """Base class for Wand-related ImageMagick version errors.
 
@@ -108,4 +109,3 @@ for domain, description, bases, codes in DOMAIN_MAP:
             'wand_error_code': code
         })
 del name, base, suffix
-

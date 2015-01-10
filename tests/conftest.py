@@ -40,7 +40,7 @@ def pytest_runtest_setup(item):
 def pytest_runtest_makereport(item, call, __multicall__):
     """Copied from http://pytest.org/dev/example/simple.html#making-test-result-information-available-in-fixtures
 
-    """
+    """  # noqa
     # execute all other hooks to obtain the report object
     rep = __multicall__.execute()
     # set an report attribute for each phase of a call, which can
@@ -93,6 +93,7 @@ def display(request):
 
     """
     images = []
+
     @request.addfinalizer
     def finalize():
         if request.node.rep_call.passed:
@@ -122,6 +123,7 @@ def display(request):
             for _, __, format, blob in images:
                 with Image(blob=blob, format=format) as i:
                     display_fn(i)
+
     def log(image, label=None):
         back = inspect.currentframe().f_back
         line = '{0}:{1}'.format(back.f_code.co_filename, back.f_lineno)

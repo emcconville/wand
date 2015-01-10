@@ -114,7 +114,7 @@ class Sequence(ImageProperty, collections.MutableSequence):
         if index < instances_length:
             instance = instances[index]
             if (instance is not None and
-                getattr(instance, 'c_resource', None) is not None):
+                    getattr(instance, 'c_resource', None) is not None):
                 return instance
         else:
             number_to_extend = index - instances_length + 1

@@ -72,7 +72,7 @@ class Color(Resource):
 
     def __init__(self, string=None, raw=None):
         if (string is None and raw is None or
-            string is not None and raw is not None):
+                string is not None and raw is not None):
             raise TypeError('expected one argument')
 
         self.allocated = 0

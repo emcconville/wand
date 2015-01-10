@@ -50,21 +50,20 @@ def binary(string, var=None):
     raise TypeError('expected a string, not ' + repr(string))
 
 
-def text(string):
-    """Makes ``string`` to :class:`str` in Python 3.
-    Does nothing in Python 2.
-
-    :param string: a string to cast it to :data:`text_type`
-    :type string: :class:`bytes`, :class:`str`, :class:`unicode`
-
-    """
-    return string
-
-
 if PY3:
     def text(string):
         if isinstance(string, bytes):
             return string.decode('utf-8')
+        return string
+else:
+    def text(string):
+        """Makes ``string`` to :class:`str` in Python 3.
+        Does nothing in Python 2.
+
+        :param string: a string to cast it to :data:`text_type`
+        :type string: :class:`bytes`, :class:`str`, :class:`unicode`
+
+        """
         return string
 
 
