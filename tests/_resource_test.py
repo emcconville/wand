@@ -16,12 +16,15 @@ def test_refcount():
     genesis = resource.genesis
     terminus = resource.terminus
     called = {'genesis': False, 'terminus': False}
+
     def decorated_genesis():
         genesis()
         called['genesis'] = True
+
     def decorated_terminus():
         terminus()
         called['terminus'] = True
+
     resource.genesis = decorated_genesis
     resource.terminus = decorated_terminus
     assert not called['genesis']

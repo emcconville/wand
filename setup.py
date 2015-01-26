@@ -67,6 +67,6 @@ setup(
         'Programming Language :: Python :: Implementation :: PyPy',
         'Programming Language :: Python :: Implementation :: Stackless',
         'Topic :: Multimedia :: Graphics'
-      ],
+    ],
     cmdclass=cmdclass
 )

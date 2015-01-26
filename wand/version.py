@@ -106,7 +106,7 @@ if libmagick:
 
 if __doc__ is not None:
     __doc__ = __doc__.replace('0.0.0', VERSION)
-    
+
 del libmagick
 
 
@@ -120,4 +120,3 @@ if __name__ == '__main__':
             pass
     else:
         print(VERSION)
-

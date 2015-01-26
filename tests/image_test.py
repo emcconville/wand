@@ -36,7 +36,7 @@ else:
 
 def test_empty_image():
     with Image() as img:
-        assert img.size == (0,0)
+        assert img.size == (0, 0)
 
 
 def test_blank_image():
@@ -56,11 +56,11 @@ def test_blank_image():
 def test_clear_image(fx_asset):
     with Image() as img:
         img.read(filename=str(fx_asset.join('mona-lisa.jpg')))
-        assert img.size == (402,599)
+        assert img.size == (402, 599)
         img.clear()
-        assert img.size == (0,0)
+        assert img.size == (0, 0)
         img.read(filename=str(fx_asset.join('beach.jpg')))
-        assert img.size == (800,600)
+        assert img.size == (800, 600)
 
 
 def test_read_from_filename(fx_asset):
@@ -209,18 +209,18 @@ def test_save_to_file(fx_asset):
         with Image(file=buffer) as saved:
             assert saved.size == (402, 599)
     buffer.close()
-    
-    
+
+
 def test_save_full_animated_gif_to_file(fx_asset):
     """Save all frames of an animated to a Python file object."""
     temp_filename = os.path.join(tempfile.mkdtemp(), 'savetest.gif')
     orig_filename = str(fx_asset.join('nocomments.gif'))
     with open(temp_filename, 'w+b') as fp:
-        with Image(filename= orig_filename) as orig:
-            orig.save(file= fp)
+        with Image(filename=orig_filename) as orig:
+            orig.save(file=fp)
     assert os.path.isfile(temp_filename)
-    with Image(filename= orig_filename) as orig:
-        with Image(filename= temp_filename) as temp:
+    with Image(filename=orig_filename) as orig:
+        with Image(filename=temp_filename) as temp:
             assert len(orig.sequence) == len(temp.sequence)
     os.remove(temp_filename)
 
@@ -246,7 +246,8 @@ def test_make_blob(fx_asset):
             img.make_blob(123)
     svg = b'''
     <svg width="100px" height="100px">
-    <circle cx="100" cy="50" r="40" stroke="black" stroke-width="2" fill="red"/>
+        <circle cx="100" cy="50" r="40" stroke="black"
+         stroke-width="2" fill="red" />
     </svg>
     '''
     with Image(blob=svg, format='svg') as img:
@@ -293,7 +294,7 @@ def test_set_resolution_02(fx_asset):
 def test_set_resolution_03(fx_asset):
     """Sets image resolution on constructor"""
     with Image(filename=str(fx_asset.join('sample.pdf')),
-               resolution=(100,100)) as img:
+               resolution=(100, 100)) as img:
         assert img.resolution == (100, 100)
 
 
@@ -315,7 +316,7 @@ def test_get_units(fx_asset):
 def test_set_units(fx_asset):
     """Sets the image resolution units."""
     with Image(filename=str(fx_asset.join('watermark.png'))) as img:
-        img.units="pixelspercentimeter"
+        img.units = "pixelspercentimeter"
         assert img.units == "pixelspercentimeter"
 
 
@@ -482,11 +483,11 @@ def test_iterate(fx_asset):
                 for i, row in enumerate(img):
                     assert len(row) == 300
                     if i % 3:
-                        continue # avoid slowness
+                        continue  # avoid slowness
                     if 100 <= i < 200:
                         for x, color in enumerate(row):
                             if x % 3:
-                                continue # avoid slowness
+                                continue  # avoid slowness
                             if 100 <= x < 200:
                                 assert color == black
                             else:
@@ -500,7 +501,7 @@ def test_iterate(fx_asset):
 def test_slice_clone(fx_asset):
     """Clones using slicing."""
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
-        with img[:,:] as cloned:
+        with img[:, :] as cloned:
             assert img.size == cloned.size
 
 
@@ -917,17 +918,17 @@ def test_object_hash(fx_asset):
 def test_get_alpha_channel(fx_asset):
     """Checks if image has alpha channel."""
     with Image(filename=str(fx_asset.join('watermark.png'))) as img:
-        assert img.alpha_channel == True
+        assert img.alpha_channel is True
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
-        assert img.alpha_channel == False
+        assert img.alpha_channel is False
 
 
 def test_set_alpha_channel(fx_asset):
     """Sets alpha channel to off."""
     with Image(filename=str(fx_asset.join('watermark.png'))) as img:
-        assert img.alpha_channel == True
+        assert img.alpha_channel is True
         img.alpha_channel = False
-        assert img.alpha_channel == False
+        assert img.alpha_channel is False
 
 
 def test_get_background_color(fx_asset):
@@ -1033,7 +1034,7 @@ def test_composite(fx_asset):
             assert img[0, 0] == orig[0, 0]
             assert img[0, img.height - 1] == orig[0, orig.height - 1]
             assert img[img.width - 1, 0] == orig[orig.width - 1, 0]
-            assert (img[img.width - 1, img.height - 1] == 
+            assert (img[img.width - 1, img.height - 1] ==
                     orig[orig.width - 1, img.height - 1])
             # These pixels should be the almost black:
             assert img[70, 100].red <= 1
@@ -1155,9 +1156,9 @@ def test_setgravity():
 
 def test_negate_default(display, fx_asset):
     def test(c1, c2):
-        assert c1.red_int8 + c2.red_int8 == 255 and \
-               c1.green_int8 + c2.green_int8 == 255 and \
-               c1.blue_int8 + c2.blue_int8 == 255
+        assert (c1.red_int8 + c2.red_int8 == 255 and
+                c1.green_int8 + c2.green_int8 == 255 and
+                c1.blue_int8 + c2.blue_int8 == 255)
     with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
         display(img)
         left_top = img[0, 0]
@@ -1171,6 +1172,37 @@ def test_negate_default(display, fx_asset):
         test(right_bottom, img[-1, -1])
 
 
+def test_threshold(fx_asset):
+    with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
+        top = int(img.height * 0.25)
+        btm = int(img.height * 0.75)
+        print(img[0, top], img[0, btm])
+        img.threshold(0.5)
+        print(img[0, top], img[0, btm])
+        with img[0, top] as white:
+            assert white.red_int8 == white.green_int8 == white.blue_int8 == 255
+        with img[0, btm] as black:
+            assert black.red_int8 == black.green_int8 == black.blue_int8 == 0
+
+
+def test_threshold_channel(fx_asset):
+    with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
+        top = int(img.height * 0.25)
+        btm = int(img.height * 0.75)
+        print(img[0, top], img[0, btm])
+        img.threshold(0.0, 'red')
+        img.threshold(0.5, 'green')
+        img.threshold(1.0, 'blue')
+        print(img[0, top], img[0, btm])
+        # The top half of the image should be yellow, and the bottom half red.
+        with img[0, top] as yellow:
+            assert (yellow.red_int8 == yellow.green_int8 == 255 and
+                    yellow.blue_int8 == 0)
+        with img[0, btm] as red:
+            assert (red.red_int8 == 255 and
+                    red.green_int8 == red.blue_int8 == 0)
+
+
 def test_normalize_default(display, fx_asset):
     with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
         display(img)
@@ -1181,7 +1213,7 @@ def test_normalize_default(display, fx_asset):
         print(left_top, left_bottom, right_top, right_bottom)
         img.normalize()
         display(img)
-        print(img[0,0], img[0,-1], img[-1,0], img[-1,-1])
+        print(img[0, 0], img[0, -1], img[-1, 0], img[-1, -1])
         assert img[0, 0] != left_top
         assert img[0, -1] != left_bottom
         assert img[-1, 0] != right_top
@@ -1215,6 +1247,18 @@ def test_normalize_channel(fx_asset):
             assert getattr(img[0, -1], c) == getattr(left_bottom, c)
             assert getattr(img[-1, 0], c) == getattr(right_top, c)
             assert getattr(img[-1, -1], c) == getattr(right_bottom, c)
+
+
+def test_equalize(fx_asset):
+    with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
+        print(img[0, 0], img[0, -1])
+        img.equalize()
+        print(img[0, 0], img[0, -1])
+        # The top row should be nearly white, and the bottom nearly black.
+        with img[0, 0] as light:
+            assert light.red_int8 >= light.green_int8 >= light.blue_int8 >= 250
+        with img[0, -1] as dark:
+            assert dark.red_int8 <= dark.green_int8 <= dark.blue_int8 <= 5
 
 
 def test_flip(fx_asset):
@@ -1283,9 +1327,9 @@ def test_gaussian_blur(fx_asset, display):
 
 def test_modulate(fx_asset, display):
     with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
-        before = img[100,100]
+        before = img[100, 100]
         img.modulate(120, 120, 120)
-        after = img[100,100]
+        after = img[100, 100]
         assert before != after
         assert 0.98 <= after.red <= 0.99
         assert 0.98 <= after.green <= 0.99

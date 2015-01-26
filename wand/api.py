@@ -217,7 +217,8 @@ try:
     library.MagickGetImageSignature.argtypes = [ctypes.c_void_p]
     library.MagickGetImageSignature.restype = c_magick_char_p
 
-    library.MagickGetImageProperty.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
+    library.MagickGetImageProperty.argtypes = [ctypes.c_void_p,
+                                               ctypes.c_char_p]
     library.MagickGetImageProperty.restype = c_magick_char_p
 
     library.MagickGetImageProperties.argtypes = [
@@ -227,7 +228,8 @@ try:
     ]
     library.MagickGetImageProperties.restype = ctypes.POINTER(ctypes.c_char_p)
 
-    library.MagickSetImageProperty.argtypes = [ctypes.c_void_p, ctypes.c_char_p,
+    library.MagickSetImageProperty.argtypes = [ctypes.c_void_p,
+                                               ctypes.c_char_p,
                                                ctypes.c_char_p]
 
     library.MagickDeleteImageProperty.argtypes = [ctypes.c_void_p,
@@ -283,7 +285,8 @@ try:
     library.MagickGetImageOrientation.argtypes = [ctypes.c_void_p]
     library.MagickGetImageOrientation.restype = ctypes.c_int
 
-    library.MagickSetImageOrientation.argtypes = [ctypes.c_void_p, ctypes.c_int]
+    library.MagickSetImageOrientation.argtypes = [ctypes.c_void_p,
+                                                  ctypes.c_int]
 
     library.MagickGetImageUnits.argtypes = [ctypes.c_void_p]
 
@@ -297,7 +300,8 @@ try:
     library.MagickGetImageCompression.argtypes = [ctypes.c_void_p]
     library.MagickGetImageCompression.restype = ctypes.c_int
 
-    library.MagickSetImageCompression.argtypes = [ctypes.c_void_p, ctypes.c_int]
+    library.MagickSetImageCompression.argtypes = [ctypes.c_void_p,
+                                                  ctypes.c_int]
 
     library.MagickGetImageDepth.argtypes = [ctypes.c_void_p]
     library.MagickGetImageDepth.restype = ctypes.c_size_t
@@ -385,8 +389,10 @@ try:
 
     library.PixelSetIteratorRow.argtypes = [ctypes.c_void_p, ctypes.c_ssize_t]
 
-    library.PixelGetNextIteratorRow.argtypes = [ctypes.c_void_p,
-                                                ctypes.POINTER(ctypes.c_size_t)]
+    library.PixelGetNextIteratorRow.argtypes = [
+        ctypes.c_void_p,
+        ctypes.POINTER(ctypes.c_size_t)
+    ]
     library.PixelGetNextIteratorRow.restype = ctypes.POINTER(ctypes.c_void_p)
 
     library.NewPixelWand.argtypes = []
@@ -586,8 +592,10 @@ try:
                                            ctypes.c_int]
     library.MagickSetAntialias.restype = ctypes.c_int
 
-    library.MagickGetImageHistogram.argtypes = [ctypes.c_void_p,
-                                                ctypes.POINTER(ctypes.c_size_t)]
+    library.MagickGetImageHistogram.argtypes = [
+        ctypes.c_void_p,
+        ctypes.POINTER(ctypes.c_size_t)
+    ]
     library.MagickGetImageHistogram.restype = ctypes.POINTER(ctypes.c_void_p)
 
     # These functions are const so it's okay for them to be c_char_p
@@ -597,7 +605,9 @@ try:
     libmagick.GetMagickReleaseDate.argtypes = []
     libmagick.GetMagickReleaseDate.restype = ctypes.c_char_p
 
-    libmagick.GetMagickQuantumDepth.argtypes = [ctypes.POINTER(ctypes.c_size_t)]
+    libmagick.GetMagickQuantumDepth.argtypes = [
+        ctypes.POINTER(ctypes.c_size_t)
+    ]
     libmagick.GetMagickQuantumDepth.restype = ctypes.c_char_p
 
     library.NewDrawingWand.restype = ctypes.c_void_p
@@ -750,6 +760,8 @@ try:
     library.MagickNormalizeImageChannel.argtypes = [ctypes.c_void_p,
                                                     ctypes.c_int]
 
+    library.MagickEqualizeImage.argtypes = [ctypes.c_void_p]
+
     library.MagickQueryFontMetrics.argtypes = [ctypes.c_void_p,
                                                ctypes.c_void_p,
                                                ctypes.c_char_p]
@@ -761,6 +773,12 @@ try:
     library.MagickQueryMultilineFontMetrics.restype = ctypes.POINTER(
         ctypes.c_double
     )
+
+    library.MagickThresholdImage.argtypes = [ctypes.c_void_p, ctypes.c_double]
+
+    library.MagickThresholdImageChannel.argtypes = [ctypes.c_void_p,
+                                                    ctypes.c_int,
+                                                    ctypes.c_double]
 
     library.MagickModulateImage.argtypes = [ctypes.c_void_p,
                                             ctypes.c_double,
@@ -788,4 +806,3 @@ else:
     libc.fflush.argtypes = [ctypes.c_void_p]
 
 libc.free.argtypes = [ctypes.c_void_p]
-

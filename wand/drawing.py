@@ -161,7 +161,7 @@ class Drawing(Resource):
         It also can be set.
 
         .. versionadded:: 0.3.3
-        
+
         """
         pixel = library.NewPixelWand()
         library.DrawGetStrokeColor(self.resource, pixel)
@@ -173,7 +173,7 @@ class Drawing(Resource):
     @stroke_color.setter
     def stroke_color(self, color):
         if not isinstance(color, Color):
-            raise TypeError('color must be a wand.color.Color object, not ' + 
+            raise TypeError('color must be a wand.color.Color object, not ' +
                             repr(color))
         with color:
             library.DrawSetStrokeColor(self.resource, color.resource)
@@ -190,9 +190,9 @@ class Drawing(Resource):
     @stroke_width.setter
     def stroke_width(self, width):
         if not isinstance(width, numbers.Real):
-           raise TypeError('expected a numbers.Real, but got ' + repr(width)) 
+            raise TypeError('expected a numbers.Real, but got ' + repr(width))
         elif width < 0.0:
-           raise ValueError('cannot be less then 0.0, but got ' + repr(width))
+            raise ValueError('cannot be less then 0.0, but got ' + repr(width))
         library.DrawSetStrokeWidth(self.resource, width)
 
     @property
@@ -279,13 +279,17 @@ class Drawing(Resource):
 
         """
         if library.DrawGetTextInterlineSpacing is None:
-            raise WandLibraryVersionError('The installed version of ImageMagick does not support this feature')
+            raise WandLibraryVersionError('The installed version of '
+                                          'ImageMagick does not support '
+                                          'this feature')
         return library.DrawGetTextInterlineSpacing(self.resource)
 
     @text_interline_spacing.setter
     def text_interline_spacing(self, spacing):
         if library.DrawSetTextInterlineSpacing is None:
-            raise WandLibraryVersionError('The installed version of ImageMagick does not support this feature')
+            raise WandLibraryVersionError('The installed version of '
+                                          'ImageMagick does not support '
+                                          'this feature')
         if not isinstance(spacing, numbers.Real):
             raise TypeError('expeted a numbers.Real, but got ' + repr(spacing))
         library.DrawSetTextInterlineSpacing(self.resource, spacing)
@@ -470,7 +474,7 @@ class Drawing(Resource):
             raise TypeError('top must be numbers.Real, not ' + repr(top))
         elif not (right is None or isinstance(right, numbers.Real)):
             raise TypeError('right must be numbers.Real, not ' + repr(right))
-        elif not (bottom is None or isinstance(bottom , numbers.Real)):
+        elif not (bottom is None or isinstance(bottom, numbers.Real)):
             raise TypeError('bottom must be numbers.Real, not ' + repr(bottom))
         elif not (width is None or isinstance(width, numbers.Real)):
             raise TypeError('width must be numbers.Real, not ' + repr(width))
@@ -485,7 +489,8 @@ class Drawing(Resource):
                              'not {1!r})'.format(left, right))
         if bottom is None:
             if height < 0:
-                raise ValueError('height must be positive, not ' + repr(height))
+                raise ValueError('height must be positive, not ' +
+                                 repr(height))
             bottom = top + height
         elif bottom < top:
             raise ValueError('bottom must be more than top ({0!r}), '
@@ -498,7 +503,7 @@ class Drawing(Resource):
 
         :param x: the left offset where to start writing a text
         :type x: :class:`numbers.Integral`
-        :param y: the top offset where to start writing a text
+        :param y: the baseline where to start writing text
         :type y: :class:`numbers.Integral`
         :param body: the body string to write
         :type body: :class:`basestring`
@@ -524,7 +529,7 @@ class Drawing(Resource):
         body_p = ctypes.create_string_buffer(body)
         library.DrawAnnotation(
             self.resource, x, y,
-            ctypes.cast(body_p,ctypes.POINTER(ctypes.c_ubyte))
+            ctypes.cast(body_p, ctypes.POINTER(ctypes.c_ubyte))
         )
 
     def get_font_metrics(self, image, text, multiline=False):

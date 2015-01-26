@@ -76,4 +76,3 @@ if __name__ == '__main__':
             display(image)
     except BlobError:
         print>>sys.stderr, 'cannot read the file', path
-
