@@ -93,7 +93,7 @@ https://travis-ci.org/dahlia/wand
 Code Coverage
 -------------
 
-.. image:: https://img.shields.io/coveralls/dahlia/wand.svg
+.. image:: https://img.shields.io/coveralls/dahlia/wand.svg?style=flat
    :alt: Coverage Status
    :target: https://coveralls.io/r/dahlia/wand
 
