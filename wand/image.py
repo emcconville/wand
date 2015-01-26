@@ -27,7 +27,8 @@ from .font import Font
 
 
 __all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COLORSPACE_TYPES',
-           'COMPOSITE_OPERATORS', 'EVALUATE_OPS', 'FILTER_TYPES',
+           'COMPOSITE_OPERATORS', 'COMPRESSION_TYPES',
+           'EVALUATE_OPS', 'FILTER_TYPES',
            'GRAVITY_TYPES', 'IMAGE_TYPES', 'ORIENTATION_TYPES', 'UNIT_TYPES',
            'BaseImage', 'ChannelDepthDict', 'ChannelImageDict',
            'ClosedImageError', 'HistogramDict', 'Image', 'ImageProperty',
