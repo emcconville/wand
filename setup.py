@@ -41,9 +41,9 @@ setup(
     long_description=readme(),
     license='MIT License',
     author='Hong Minhee',
-    author_email='minhee@dahlia.kr',
+    author_email='hongminhee' '@' 'member.fsf.org',
     maintainer='Hong Minhee',
-    maintainer_email='minhee@dahlia.kr',
+    maintainer_email='hongminhee' '@' 'member.fsf.org',
     url='http://wand-py.org/',
     tests_require=[
         'pytest >= 2.3.0',
