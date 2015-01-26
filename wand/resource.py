@@ -210,7 +210,7 @@ class Resource(object):
         exc_cls = TYPE_MAP[severity.value]
         message = desc.value
         if not isinstance(message, string_type):
-            message = message.decode()
+            message = message.decode(errors='replace')
         return exc_cls(message)
 
     def raise_exception(self, stacklevel=1):
