@@ -478,7 +478,7 @@ class Drawing(Resource):
     @property
     def text_encoding(self):
         """(:class:`basestring`) The internally used text encoding setting.
-        Although it also can be set, but it's not encorouged.
+        Although it also can be set, but it's not encouraged.
 
         """
         return text(library.DrawGetTextEncoding(self.resource))
@@ -510,7 +510,7 @@ class Drawing(Resource):
         if library.DrawSetTextInterlineSpacing is None:
             raise WandLibraryVersionError('The installed version of ImageMagick does not support this feature')
         if not isinstance(spacing, numbers.Real):
-            raise TypeError('expeted a numbers.Real, but got ' + repr(spacing))
+            raise TypeError('expected a numbers.Real, but got ' + repr(spacing))
         library.DrawSetTextInterlineSpacing(self.resource, spacing)
 
     @property
@@ -538,7 +538,7 @@ class Drawing(Resource):
     @text_kerning.setter
     def text_kerning(self, kerning):
         if not isinstance(kerning, numbers.Real):
-            raise TypeError('expeted a numbers.Real, but got ' + repr(kerning))
+            raise TypeError('expected a numbers.Real, but got ' + repr(kerning))
         library.DrawSetTextKerning(self.resource, kerning)
 
     @property
@@ -561,6 +561,36 @@ class Drawing(Resource):
                             repr(color))
         with color:
             library.DrawSetTextUnderColor(self.resource, color.resource)
+
+    @property
+    def vector_graphics(self):
+      """(:class:`basestring`) The XML text of the Vector Graphics. It also
+      can be set. The drawing-wand XML is experimental, and subject to change.
+
+      Setting this property to None will reset all vector graphic properties to
+      the default state.
+
+      .. versionadded:: 0.4.0
+
+      """
+      vector_graphics_p = library.DrawGetVectorGraphics(self.resource)
+      vector_graphics = ctypes.create_string_buffer(vector_graphics_p)
+      xml = text(vector_graphics.value);
+      return "<drawing-wand>" + xml + "</drawing-wand>"
+
+    @vector_graphics.setter
+    def vector_graphics(self, vector_graphics):
+      if vector_graphics is not None and not isinstance(vector_graphics,
+                                                        string_type):
+          raise TypeError('expected a string, not ' + repr(vector_graphics))
+      elif vector_graphics is None:
+          # Reset all vector graphic properties on drawing wand.
+          library.DrawResetVectorGraphics(self.resource)
+      else:
+          vector_graphics = binary(vector_graphics)
+          okay = library.DrawSetVectorGraphics(self.resource, vector_graphics)
+          if okay == 0:
+            raise ValueError("Vector graphic not understood.")
 
     @property
     def gravity(self):

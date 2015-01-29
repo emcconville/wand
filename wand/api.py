@@ -696,6 +696,13 @@ try:
     library.DrawSetTextUnderColor.argtypes = [ctypes.c_void_p,
                                               ctypes.c_void_p]
 
+    library.DrawSetVectorGraphics.argtypes = [ctypes.c_void_p,
+                                              ctypes.c_char_p]
+
+    library.DrawSetVectorGraphics.restype = ctypes.c_int
+
+    library.DrawResetVectorGraphics.argtypes = [ctypes.c_void_p]
+
     library.DrawGetFillColor.argtypes = [ctypes.c_void_p,
                                          ctypes.c_void_p]
 
@@ -768,6 +775,9 @@ try:
 
     library.DrawGetTextUnderColor.argtypes = [ctypes.c_void_p,
                                               ctypes.c_void_p]
+
+    library.DrawGetVectorGraphics.argtypes = [ctypes.c_void_p]
+    library.DrawGetVectorGraphics.restype = ctypes.c_char_p
 
     library.DrawSetGravity.argtypes = [ctypes.c_void_p,
                                        ctypes.c_int]

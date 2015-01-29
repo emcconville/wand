@@ -170,6 +170,15 @@ def test_set_get_text_under_color(fx_wand):
         fx_wand.text_under_color = black
     assert fx_wand.text_under_color == Color('#333333')
 
+def test_set_get_vector_graphics(fx_wand):
+    fx_wand.stroke_width = 7
+    xml = fx_wand.vector_graphics
+    assert xml.index("<stroke-width>7</stroke-width>") > 0
+    fx_wand.vector_graphics = ('<drawing-wand><stroke-width>'
+                               '8</stroke-width></drawing-wand>')
+    xml = fx_wand.vector_graphics
+    assert xml.index("<stroke-width>8</stroke-width>") > 0
+
 
 def test_set_get_gravity(fx_wand):
     fx_wand.gravity = 'center'
