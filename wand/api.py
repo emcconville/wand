@@ -623,6 +623,16 @@ try:
     library.DrawClearException.argtypes = [ctypes.c_void_p]
     library.DrawClearException.restype = ctypes.c_int
 
+    library.DrawSetClipPath.argtypes = [ctypes.c_void_p, # wand
+                                        ctypes.c_char_p] # clip_mask
+    library.DrawSetClipPath.restype = ctypes.c_int
+
+    library.DrawSetClipRule.argtypes = [ctypes.c_void_p, # wand
+                                        ctypes.c_uint] # FillRule
+
+    library.DrawSetClipUnits.argtypes = [ctypes.c_void_p, # wand
+                                         ctypes.c_uint] # ClipPathUnits
+
     library.DrawSetFont.argtypes = [ctypes.c_void_p,
                                     ctypes.c_char_p]
 
@@ -702,6 +712,15 @@ try:
     library.DrawSetVectorGraphics.restype = ctypes.c_int
 
     library.DrawResetVectorGraphics.argtypes = [ctypes.c_void_p]
+
+    library.DrawGetClipPath.argtypes = [ctypes.c_void_p]
+    library.DrawGetClipPath.restype = ctypes.c_char_p
+
+    library.DrawGetClipRule.argtypes = [ctypes.c_void_p]
+    library.DrawGetClipRule.restype = ctypes.c_uint
+
+    library.DrawGetClipUnits.argtypes = [ctypes.c_void_p]
+    library.DrawGetClipUnits.restype = ctypes.c_uint
 
     library.DrawGetFillColor.argtypes = [ctypes.c_void_p,
                                          ctypes.c_void_p]

@@ -20,6 +20,18 @@ def test_is_drawing_wand(fx_wand):
     assert library.IsDrawingWand(fx_wand.resource)
 
 
+def test_set_get_clip_path(fx_wand):
+    fx_wand.clip_path = 'M10,10 15,15 10,15 Z'
+    assert fx_wand.clip_path == 'M10,10 15,15 10,15 Z'
+
+def test_set_get_clip_rule(fx_wand):
+    fx_wand.clip_rule = 'evenodd'
+    assert fx_wand.clip_rule == 'evenodd'
+
+def test_set_get_clip_units(fx_wand):
+    fx_wand.clip_units = 'object_bounding_box'
+    assert fx_wand.clip_units == 'object_bounding_box'
+
 def test_set_get_font(fx_wand, fx_asset):
     fx_wand.font = str(fx_asset.join('League_Gothic.otf'))
     assert fx_wand.font == str(fx_asset.join('League_Gothic.otf'))

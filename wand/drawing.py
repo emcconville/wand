@@ -17,10 +17,20 @@ from .image import Image
 from .resource import Resource
 from .exceptions import WandLibraryVersionError
 
-__all__ = ('FONT_METRICS_ATTRIBUTES', 'TEXT_ALIGN_TYPES', 'FILL_RULE_TYPES',
-           'TEXT_DECORATION_TYPES', 'TEXT_DIRECTION_TYPES', 'GRAVITY_TYPES',
-           'Drawing', 'FontMetrics')
+__all__ = ('CLIP_PATH_UNITS', 'FILL_RULE_TYPES', 'FONT_METRICS_ATTRIBUTES',
+           'GRAVITY_TYPES', 'LINE_CAP_TYPES', 'LINE_JOIN_TYPES',
+           'PAINT_METHOD_TYPES', 'TEXT_ALIGN_TYPES', 'TEXT_DECORATION_TYPES',
+           'TEXT_DIRECTION_TYPES','Drawing', 'FontMetrics')
 
+
+#: (:class:`collections.Sequence`) The list of clip path units
+#:
+#: - ``'undefined_path_units'``
+#: - ``'user_space'``
+#: - ``'user_space_on_use'``
+#: - ``'object_bounding_box'``
+CLIP_PATH_UNITS = ('undefined_path_units', 'user_space', 'user_space_on_use',
+                   'object_bounding_box')
 
 #: (:class:`collections.Sequence`) The list of text align types.
 #:
@@ -152,6 +162,63 @@ class Drawing(Resource):
 
         """
         return type(self)(drawing=self)
+
+    @property
+    def clip_path(self):
+      """(:class:`basestring`) The current clip path. It also can be set.
+
+      .. versionadded:: 0.4.0
+
+      """
+      return text(library.DrawGetClipPath(self.resource))
+
+    @clip_path.setter
+    def clip_path(self, path):
+      if not isinstance(path, string_type):
+        raise TypeError('expected a string, not ' + repr(path))
+      okay = library.DrawSetClipPath(self.resource, binary(path))
+      if okay == 0:
+        raise ValueError('Clip path not understood')
+
+    @property
+    def clip_rule(self):
+      """(:class:`basestring`) The current clip rule. It also can be set.
+      It's a string value from :const:`FILL_RULE_TYPES` list.
+
+      .. versionadded:: 0.4.0
+      """
+      clip_rule = library.DrawGetClipRule(self.resource)
+      return FILL_RULE_TYPES[clip_rule]
+
+    @clip_rule.setter
+    def clip_rule(self, clip_rule):
+        if not isinstance(clip_rule, string_type):
+            raise TypeError('expected a string, not ' + repr(clip_rule))
+        elif clip_rule not in FILL_RULE_TYPES:
+            raise ValueError('expected a string from FILE_RULE_TYPES, not' +
+                             repr(clip_rule))
+        library.DrawSetClipRule(self.resource,
+                                FILL_RULE_TYPES.index(clip_rule))
+
+    @property
+    def clip_units(self):
+      """(:class:`basestring`) The current clip units. It also can be set.
+      It's a string value from :const:`CLIP_PATH_UNITS` list.
+
+      .. versionadded:: 0.4.0
+      """
+      clip_unit = library.DrawGetClipUnits(self.resource)
+      return CLIP_PATH_UNITS[clip_unit]
+
+    @clip_units.setter
+    def clip_units(self, clip_unit):
+        if not isinstance(clip_unit, string_type):
+            raise TypeError('expected a string, not ' + repr(clip_unit))
+        elif clip_unit not in CLIP_PATH_UNITS:
+            raise ValueError('expected a string from CLIP_PATH_UNITS, not' +
+                             repr(clip_unit))
+        library.DrawSetClipUnits(self.resource,
+                                CLIP_PATH_UNITS.index(clip_unit))
 
     @property
     def font(self):
