@@ -18,7 +18,8 @@ from .resource import Resource
 from .exceptions import WandLibraryVersionError
 
 __all__ = ('FONT_METRICS_ATTRIBUTES', 'TEXT_ALIGN_TYPES', 'FILL_RULE_TYPES',
-           'TEXT_DECORATION_TYPES', 'GRAVITY_TYPES', 'Drawing', 'FontMetrics')
+           'TEXT_DECORATION_TYPES', 'TEXT_DIRECTION_TYPES', 'GRAVITY_TYPES',
+           'Drawing', 'FontMetrics')
 
 
 #: (:class:`collections.Sequence`) The list of text align types.
@@ -38,6 +39,13 @@ TEXT_ALIGN_TYPES = 'undefined', 'left', 'center', 'right'
 #: - ``'line_through'``
 TEXT_DECORATION_TYPES = ('undefined', 'no', 'underline', 'overline',
                          'line_through')
+
+#: (:class:`collections.Sequence`) The list of text direction types.
+#:
+#: - ``'undefined'``
+#: - ``'right_to_left'``
+#: - ``'left_to_right'``
+TEXT_DIRECTION_TYPES = ('undefined', 'right_to_left', 'left_to_right')
 
 #: (:class:`collections.Sequence`) The list of text gravity types.
 #:
@@ -447,6 +455,25 @@ class Drawing(Resource):
                              'not ' + repr(decoration))
         library.DrawSetTextDecoration(self.resource,
                                       TEXT_DECORATION_TYPES.index(decoration))
+
+    @property
+    def text_direction(self):
+      """(:class:`basestring`) The text direction setting. a string
+      from :const:`TEXT_DIRECTION_TYPES` list. It also can be set."""
+      text_direction_index = library.DrawGetTextDirection(self.resource)
+      if not text_direction_index:
+        self.raise_exception()
+      return text(TEXT_DIRECTION_TYPES[text_direction_index])
+
+    @text_direction.setter
+    def text_direction(self, direction):
+      if not isinstance(direction, string_type):
+        raise TypeError('expected a string, not ' + repr(direction))
+      elif direction not in TEXT_DIRECTION_TYPES:
+        raise ValueError('expected a string from TEXT_DIRECTION_TYPES, '
+                         'not ' + repr(direction))
+      library.DrawSetTextDirection(self.resource,
+                                   TEXT_DIRECTION_TYPES.index(direction))
 
     @property
     def text_encoding(self):

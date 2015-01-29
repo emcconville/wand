@@ -416,6 +416,7 @@ As the above code shows you can adjust several settings before writing texts:
 - :attr:`~wand.drawing.Drawing.text_alignment`
 - :attr:`~wand.drawing.Drawing.text_antialias`
 - :attr:`~wand.drawing.Drawing.text_decoration`
+- :attr:`~wand.drawing.Drawing.text_direction`
 - :attr:`~wand.drawing.Drawing.text_interline_spacing`
 - :attr:`~wand.drawing.Drawing.text_interword_spacing`
 - :attr:`~wand.drawing.Drawing.text_kerning`
