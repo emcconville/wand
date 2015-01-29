@@ -581,6 +581,17 @@ def test_get_font_metrics_test(fx_asset):
             assert m2.text_width > m3.text_width
             assert m2.text_height < m3.text_height
 
+def test_viewbox(fx_asset):
+  with Drawing() as draw:
+    with raises(TypeError):
+      draw.viewbox(None, None, None, None)
+    with raises(TypeError):
+      draw.viewbox(10, None, None, None)
+    with raises(TypeError):
+      draw.viewbox(10, 10, None, None)
+    with raises(TypeError):
+      draw.viewbox(10, 10, 100, None)
+    draw.viewbox(10, 10, 100, 100)
 
 def test_regression_issue_163(tmpdir):
     """https://github.com/dahlia/wand/issues/163"""

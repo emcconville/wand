@@ -347,8 +347,8 @@ class Drawing(Resource):
 
     @property
     def stroke_dash_array(self):
-        """(:class:`~collections.Sequence`) - (:class:`numbers.Real`) An array representing the pattern of dashes
-        and gaps used to stroke paths.
+        """(:class:`~collections.Sequence`) - (:class:`numbers.Real`) An array
+        representing the pattern of dashes & gaps used to stroke paths.
         It also can be set.
 
         .. versionadded:: 0.4.0"""
@@ -1388,6 +1388,33 @@ class Drawing(Resource):
         result = font_metrics_f(image.wand, self.resource, text)
         args = (result[i] for i in xrange(13))
         return FontMetrics(*args)
+
+    def viewbox(self, left, top, right, bottom):
+      """
+      Viewbox sets the overall canvas size to be recorded with the drawing
+      vector data. Usually this will be specified using the same size as the
+      canvas image. When the vector data is saved to SVG or MVG formats, the
+      viewbox is use to specify the size of the canvas image that a viewer will
+      render the vector data on.
+
+      :param left: the left most point of the viewbox.
+      :type left: :class:`~numbers.Integral`
+      :param top: the top most point of the viewbox.
+      :type top: :class:`~numbers.Integral`
+      :param right: the right most point of the viewbox.
+      :type right: :class:`~numbers.Integral`
+      :param bottom: the bottom most point of the viewbox.
+      :type bottom: :class:`~numbers.Integral`
+      """
+      if not isinstance(left, numbers.Integral):
+        raise TypeError('left must be an integer, not ' + repr(left))
+      if not isinstance(top, numbers.Integral):
+        raise TypeError('top must be an integer, not ' + repr(top))
+      if not isinstance(right, numbers.Integral):
+        raise TypeError('right must be an integer, not ' + repr(right))
+      if not isinstance(bottom, numbers.Integral):
+        raise TypeError('bottom must be an integer, not ' + repr(bottom))
+      library.DrawSetViewbox(self.resource, left, top, right, bottom)
 
     def __call__(self, image):
         return self.draw(image)

@@ -713,6 +713,12 @@ try:
 
     library.DrawResetVectorGraphics.argtypes = [ctypes.c_void_p]
 
+    library.DrawSetViewbox.argtypes = [ctypes.c_void_p, # wand
+                                       ctypes.c_ssize_t, # x1
+                                       ctypes.c_ssize_t, # y1
+                                       ctypes.c_ssize_t, # x2
+                                       ctypes.c_ssize_t] # y2
+
     library.DrawGetClipPath.argtypes = [ctypes.c_void_p]
     library.DrawGetClipPath.restype = ctypes.c_char_p
 
