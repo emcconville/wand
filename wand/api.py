@@ -623,6 +623,9 @@ try:
     library.DrawClearException.argtypes = [ctypes.c_void_p]
     library.DrawClearException.restype = ctypes.c_int
 
+    library.DrawComment.argtypes = [ctypes.c_void_p, # wand
+                                    ctypes.c_char_p] #comment
+
     library.DrawSetClipPath.argtypes = [ctypes.c_void_p, # wand
                                         ctypes.c_char_p] # clip_mask
     library.DrawSetClipPath.restype = ctypes.c_int

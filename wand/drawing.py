@@ -779,6 +779,22 @@ class Drawing(Resource):
         library.DrawColor(self.resource, float(x), float(y),
                           PAINT_METHOD_TYPES.index(paint_method))
 
+    def comment(self, message=None):
+        """Adds a comment to the vector stream.
+
+        :param message: the comment to set.
+        :type message: :class:`basestring`
+
+        .. versionadded:: 0.4.0
+        """
+        if message is not None and not isinstance(message, string_type):
+            raise TypeError('expected a string, not ' + repr(message))
+        elif message is None:
+            message = b''
+        else:
+            message = binary(message)
+        library.DrawComment(self.resource, message)
+
     def ellipse(self, origin, radius, rotation=(0,360)):
         """Draws a ellipse at ``origin`` with independent x & y ``radius``.
         Ellipse can be partial by setting start & end ``rotation``.

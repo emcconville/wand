@@ -245,6 +245,14 @@ def test_draw_circle(fx_asset):
                 assert img[5,5] == img[45,45] == white
                 assert img[25,25] == black
 
+def test_draw_comment():
+    comment = 'pikachu\'s\ ghost'
+    with nested(Image(width=1, height=1), Drawing()) as (img, draw):
+        draw.comment(comment)
+        draw(img)
+        blob = img.make_blob(format="svg")
+        assert blob.index(comment) > 0
+
 def test_draw_color():
     with nested(Color('#fff'),
                 Color('#000')) as (white, black):
