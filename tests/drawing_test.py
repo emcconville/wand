@@ -1,12 +1,13 @@
 import itertools
 
-from pytest import fixture, mark, raises
+from pytest import fixture, mark, raises, skip
 
 from wand.image import Image
 from wand.color import Color
 from wand.compat import nested
 from wand.api import library
 from wand.drawing import Drawing
+from wand.exceptions import WandLibraryVersionError
 
 
 @fixture
@@ -154,8 +155,11 @@ def test_set_get_text_decoration(fx_wand):
     assert fx_wand.text_decoration == 'underline'
 
 def test_set_get_text_direction(fx_wand):
-    fx_wand.text_direction = 'right_to_left'
-    assert fx_wand.text_direction == 'right_to_left'
+    try:
+        fx_wand.text_direction = 'right_to_left'
+        assert fx_wand.text_direction == 'right_to_left'
+    except WandLibraryVersionError:
+        skip("DrawGetTextDirection not supported by installed drawing library")
 
 def test_set_get_text_encoding(fx_wand):
     fx_wand.text_encoding = 'UTF-8'

@@ -685,8 +685,11 @@ try:
     library.DrawSetTextDecoration.argtypes = [ctypes.c_void_p,
                                               ctypes.c_int]
 
-    library.DrawSetTextDirection.argtypes = [ctypes.c_void_p,
-                                             ctypes.c_int]
+    try:
+        library.DrawSetTextDirection.argtypes = [ctypes.c_void_p,
+                                                 ctypes.c_int]
+    except AttributeError:
+        library.DrawSetTextDirection = None
 
     library.DrawSetTextEncoding.argtypes = [ctypes.c_void_p,
                                             ctypes.c_char_p]
@@ -780,8 +783,11 @@ try:
     library.DrawGetTextDecoration.argtypes = [ctypes.c_void_p]
     library.DrawGetTextDecoration.restype = ctypes.c_int
 
-    library.DrawGetTextDirection.argtypes = [ctypes.c_void_p]
-    library.DrawGetTextDirection.restype = ctypes.c_int
+    try:
+        library.DrawGetTextDirection.argtypes = [ctypes.c_void_p]
+        library.DrawGetTextDirection.restype = ctypes.c_int
+    except AttributeError:
+        library.DrawGetTextDirection = None
 
     library.DrawGetTextEncoding.argtypes = [ctypes.c_void_p]
     library.DrawGetTextEncoding.restype = ctypes.c_char_p

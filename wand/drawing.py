@@ -525,22 +525,26 @@ class Drawing(Resource):
 
     @property
     def text_direction(self):
-      """(:class:`basestring`) The text direction setting. a string
-      from :const:`TEXT_DIRECTION_TYPES` list. It also can be set."""
-      text_direction_index = library.DrawGetTextDirection(self.resource)
-      if not text_direction_index:
-        self.raise_exception()
-      return text(TEXT_DIRECTION_TYPES[text_direction_index])
+        """(:class:`basestring`) The text direction setting. a string
+        from :const:`TEXT_DIRECTION_TYPES` list. It also can be set."""
+        if library.DrawGetTextDirection is None:
+            raise WandLibraryVersionError('The installed version of ImageMagick does not support this feature')
+        text_direction_index = library.DrawGetTextDirection(self.resource)
+        if not text_direction_index:
+            self.raise_exception()
+        return text(TEXT_DIRECTION_TYPES[text_direction_index])
 
     @text_direction.setter
     def text_direction(self, direction):
-      if not isinstance(direction, string_type):
-        raise TypeError('expected a string, not ' + repr(direction))
-      elif direction not in TEXT_DIRECTION_TYPES:
-        raise ValueError('expected a string from TEXT_DIRECTION_TYPES, '
-                         'not ' + repr(direction))
-      library.DrawSetTextDirection(self.resource,
-                                   TEXT_DIRECTION_TYPES.index(direction))
+        if library.DrawGetTextDirection is None:
+            raise WandLibraryVersionError('The installed version of ImageMagick does not support this feature')
+        if not isinstance(direction, string_type):
+            raise TypeError('expected a string, not ' + repr(direction))
+        elif direction not in TEXT_DIRECTION_TYPES:
+            raise ValueError('expected a string from TEXT_DIRECTION_TYPES, '
+                             'not ' + repr(direction))
+        library.DrawSetTextDirection(self.resource,
+                                     TEXT_DIRECTION_TYPES.index(direction))
 
     @property
     def text_encoding(self):
