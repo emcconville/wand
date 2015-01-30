@@ -373,6 +373,7 @@ Rectangles
 ----------
 
 .. versionadded:: 0.3.6
+.. versionchanged:: 0.4.0
 
 If you want to draw rectangles use :meth:`~wand.drawing.Drawing.rectangle()`
 method.  It takes ``left``/``top`` coordinate, and ``right``/``bottom``
@@ -385,6 +386,18 @@ draws a square on the ``image``::
 Or using ``width`` and ``height`` instead of ``right`` and ``bottom``::
 
     draw.rectangle(left=10, top=10, width=30, height=30)
+    draw(image)
+
+Support for rounded corners was added in version 0.4.0. The ``radius`` argument
+sets corner rounding.
+
+    draw.rectangle(left=10, top=10, width=30, height=30, radius=5)
+    draw(image)
+
+Both horizontal & vertical can be set independently with
+``xradius`` & ``yradius`` respectively.
+
+    draw.rectangle(left=10, top=10, width=30, height=30, xradius=5, yradius=3)
     draw(image)
 
 Note that the stoke and the fill are determined by the following properties:

@@ -334,7 +334,7 @@ class Drawing(Resource):
 
     @font_weight.setter
     def font_weight(self, weight):
-        if not isinstance(weight, int):
+        if not isinstance(weight, numbers.Integral):
             raise TypeError('expected a integral, not ' + repr(weight))
         library.DrawSetFontWeight(self.resource, weight)
 
@@ -1345,7 +1345,8 @@ class Drawing(Resource):
         return bool(okay)
 
     def rectangle(self, left=None, top=None, right=None, bottom=None,
-                  width=None, height=None):
+                  width=None, height=None, radius=None, xradius=None,
+                  yradius=None):
         """Draws a rectangle using the current :attr:`stoke_color`,
         :attr:`stroke_width`, and :attr:`fill_color`.
 
@@ -1387,8 +1388,19 @@ class Drawing(Resource):
                        this parameter and ``bottom`` parameter are exclusive
                        each other
         :type height: :class:`numbers.Real`
+        :param radius: the corner rounding. this is a short-cut for setting
+                       both :attr:`xradius`, and :attr:`yradius`
+        :type radius: :class:`numbers.Real`
+        :param xradius: the :attr:`xradius` corner in horizontal direction.
+        :type xradius: :class:`numbers.Real`
+        :param yradius: the :attr:`yradius` corner in vertical direction.
+        :type yradius: :class:`numbers.Real`
 
         .. versionadded:: 0.3.6
+
+        .. versionchanged:: 0.4.0
+
+        Radius keywords added to create rounded rectangle.
 
         """
         if left is None:
@@ -1431,7 +1443,21 @@ class Drawing(Resource):
         elif bottom < top:
             raise ValueError('bottom must be more than top ({0!r}), '
                              'not {1!r})'.format(top, bottom))
-        library.DrawRectangle(self.resource, left, top, right, bottom)
+        if radius is not None:
+            xradius = yradius = radius
+        if xradius is not None or yradius is not None:
+            if xradius is None:
+                xradius = 0.0
+            if yradius is None:
+                yraduis = 0.0
+            if not isinstance(xradius, numbers.Real):
+                raise TypeError('xradius must be numbers.Real, not ' + repr(xradius))
+            if not isinstance(yradius, numbers.Real):
+                raise TypeError('yradius must be numbers.Real, not ' + repr(xradius))
+            library.DrawRoundRectangle(self.resource, left, top, right, bottom,
+                                       xradius, yradius)
+        else:
+            library.DrawRectangle(self.resource, left, top, right, bottom)
         self.raise_exception()
 
     def rotate(self, degree):

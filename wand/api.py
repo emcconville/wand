@@ -643,6 +643,11 @@ try:
                                           ctypes.c_char_p] # font_family
     library.DrawSetFontFamily.restype = ctypes.c_uint
 
+    library.DrawSetFontResolution.argtypes = [ctypes.c_void_p, #wand
+                                              ctypes.c_double, # x
+                                              ctypes.c_double] # y
+    library.DrawSetFontResolution.restype = ctypes.c_uint
+
     library.DrawSetFontSize.argtypes = [ctypes.c_void_p,
                                         ctypes.c_double]
 
@@ -791,8 +796,8 @@ try:
     library.DrawGetFontFamily.restype = ctypes.c_char_p
 
     library.DrawGetFontResolution.argtypes = [ctypes.c_void_p, #wand
-                                              ctypes.c_double, # x
-                                              ctypes.c_double] # y
+                               ctypes.POINTER(ctypes.c_double), # x
+                               ctypes.POINTER(ctypes.c_double)] # y
     library.DrawGetFontResolution.restype = ctypes.c_uint
 
     library.DrawGetFontSize.argtypes = [ctypes.c_void_p]
@@ -1030,6 +1035,14 @@ try:
                                       ctypes.c_double,
                                       ctypes.c_double,
                                       ctypes.c_double]
+
+    library.DrawRoundRectangle.argtypes = [ctypes.c_void_p, # wand
+                                           ctypes.c_double, # x1
+                                           ctypes.c_double, # y1
+                                           ctypes.c_double, # x2
+                                           ctypes.c_double, # y2
+                                           ctypes.c_double, # rx
+                                           ctypes.c_double] # ry
 
     library.DrawSkewX.argtypes = [ctypes.c_void_p, # wand
                                   ctypes.c_double] # degree

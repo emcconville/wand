@@ -261,12 +261,13 @@ def test_draw_circle(fx_asset):
                 assert img[25,25] == black
 
 def test_draw_comment():
-    comment = 'pikachu\'s\ ghost'
+    comment = 'pikachu\'s ghost'
+    expected = '#pikachu\'s ghost\n'
     with nested(Image(width=1, height=1), Drawing()) as (img, draw):
         draw.comment(comment)
         draw(img)
-        blob = img.make_blob(format="svg")
-        assert text(blob).index(comment) > 0
+        blob = img.make_blob(format="mvg")
+        assert expected == text(blob)
 
 def test_draw_color():
     with nested(Color('#fff'),
@@ -545,6 +546,27 @@ def test_draw_rectangle(kwargs, display, fx_wand):
                    img[42, 42] == img[0, 0] == img[49, 49] == white
             assert img[12, 12] == img[12, 38] == img[38, 12] == \
                    img[38, 38] == black
+
+@mark.parametrize('kwargs', itertools.product(
+    [('xradius', 10), ('yradius', 10)],
+    [('xradius', 20)],
+    [('yradius', 20)],
+    [('radius', 10)]
+))
+def test_draw_rectangle_with_radius(kwargs, display, fx_wand):
+    with nested(Color('#fff'),
+                Color('#333'),
+                Color('#ccc')) as (white, black, gray):
+        with Image(width=50, height=50, background=white) as img:
+            fx_wand.stroke_width = 2
+            fx_wand.fill_color = black
+            fx_wand.stroke_color = gray
+            fx_wand.rectangle(left=10, top=10,
+                              width=30, height=30, **dict(kwargs))
+            fx_wand.draw(img)
+            display(img)
+            assert img[10, 10] == img[40, 40] == white
+            assert img[26, 12] == img[26, 36] == black
 
 def test_draw_rotate():
     with nested(Color('#fff'),
