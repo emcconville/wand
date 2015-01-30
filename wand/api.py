@@ -1008,6 +1008,25 @@ try:
                                       ctypes.c_double, # x
                                       ctypes.c_double] # y
 
+### Drawing stack management ###
+    library.PushDrawingWand.argtypes = [ctypes.c_void_p]
+    library.PushDrawingWand.restype = ctypes.c_uint
+    library.DrawPushClipPath.argtypes = [ctypes.c_void_p, # wand
+                                         ctypes.c_char_p] # clip_mask_id
+    library.DrawPushDefs.argtypes = [ctypes.c_void_p]
+    library.DrawPushPattern.argtypes = [ctypes.c_void_p, # wand
+                                        ctypes.c_char_p, # clip_mask_id
+                                        ctypes.c_double, # x
+                                        ctypes.c_double, # y
+                                        ctypes.c_double, # width
+                                        ctypes.c_double] # height
+    library.DrawPushClipPath.restype = ctypes.c_uint
+    library.PopDrawingWand.argtypes = [ctypes.c_void_p]
+    library.PopDrawingWandrestype = ctypes.c_uint
+    library.DrawPopClipPath.argtypes = [ctypes.c_void_p]
+    library.DrawPopDefs.argtypes = [ctypes.c_void_p]
+    library.DrawPopPattern.argtypes = [ctypes.c_void_p]
+
     library.MagickNegateImage.argtypes = [ctypes.c_void_p, ctypes.c_int]
 
     library.MagickNegateImageChannel.argtypes = [ctypes.c_void_p,

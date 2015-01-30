@@ -1130,6 +1130,110 @@ class Drawing(Resource):
                           float(x),
                           float(y))
 
+    def pop(self):
+        """Pop destroys the current drawing wand and returns to the previously
+        pushed drawing wand. Multiple drawing wands may exist. It is an error to
+        attempt to pop more drawing wands than have been pushed, and it is
+        proper form to pop all drawing wands which have been pushed.
+
+        :returns: success of pop operation
+        :rtype: `bool`
+        .. versionadded:: 0.4.0
+        """
+        return bool(library.PopDrawingWand(self.resource))
+
+    def pop_clip_path(self):
+        """Terminates a clip path definition.
+
+        .. versionadded:: 0.4.0
+        """
+        library.DrawPopClipPath(self.resource)
+
+    def pop_defs(self):
+        """Terminates a definition list.
+
+        .. versionadded:: 0.4.0
+        """
+        library.DrawPopDefs(self.resource)
+
+    def pop_pattern(self):
+        """Terminates a pattern definition.
+
+        .. versionadded:: 0.4.0
+        """
+        library.DrawPopPattern(self.resource)
+
+    def push(self):
+        """Push clones the current drawing wand to create a new drawing wand.
+        The original drawing wand(s) may be returned to by invoking
+        :class:`Drawing.pop`. The drawing wands are stored on a drawing wand
+        stack. For every Pop there must have already been an equivalent Push.
+
+        :returns: success of push operation
+        :rtype: `bool`
+        .. versionadded:: 0.4.0
+        """
+        return bool(library.PushDrawingWand(self.resource))
+
+    def push_clip_path(self, clip_mask_id):
+        """Starts a clip path definition which is comprised of any number of
+        drawing commands and terminated by a :class:`Drawing.pop_clip_path`
+        command.
+
+        :param clip_mask_id: string identifier to associate with the clip path.
+        :type clip_mask_id: :class:`basestring`
+
+        .. versionadded:: 0.4.0
+        """
+        library.DrawPushClipPath(self.resource, binary(clip_mask_id))
+
+    def push_defs(self):
+        """Indicates that commands up to a terminating :class:`Drawing.pop_defs`
+        command create named elements (e.g. clip-paths, textures, etc.) which
+        may safely be processed earlier for the sake of efficiency.
+
+        .. versionadded:: 0.4.0
+        """
+        library.DrawPushDefs(self.resource)
+
+    def push_pattern(self, pattern_id, left, top, width, height):
+        """Indicates that subsequent commands up to a
+        :class:`Drawing.pop_pattern` command comprise the definition of a named
+        pattern. The pattern space is assigned top left corner coordinates, a
+        width and height, and becomes its own drawing space. Anything which can
+        be drawn may be used in a pattern definition. Named patterns may be used
+        as stroke or brush definitions.
+
+        :param pattern_id: a unique identifier for the pattern.
+        :type pattern_id: :class:`basestring`
+        :param left: x ordinate of top left corner.
+        :type left: :class:`numbers.Real`
+        :param top: y ordinate of top left corner.
+        :type top: :class:`numbers.Real`
+        :param width: width of pattern space.
+        :type width: :class:`numbers.Real`
+        :param height: height of pattern space.
+        :type height: :class:`numbers.Real`
+        :returns: success of push operation
+        :rtype: `bool`
+
+        .. versionadded:: 0.4.0
+        """
+        if not isinstance(pattern_id, string_type):
+            raise TypeError('pattern_id must be a string, not ' + repr(pattern_id))
+        elif not isinstance(left, numbers.Real):
+            raise TypeError('left must be numbers.Real, not ' + repr(left))
+        elif not isinstance(top, numbers.Real):
+            raise TypeError('top must be numbers.Real, not ' + repr(top))
+        elif not isinstance(width, numbers.Real):
+            raise TypeError('width must be numbers.Real, not ' + repr(width))
+        elif not isinstance(height, numbers.Real):
+            raise TypeError('height must be numbers.Real, not ' + repr(height))
+        okay = library.DrawPushPattern(self.resource, binary(pattern_id),
+                                       left, top,
+                                       width, height)
+        return bool(okay)
+
     def rectangle(self, left=None, top=None, right=None, bottom=None,
                   width=None, height=None):
         """Draws a rectangle using the current :attr:`stoke_color`,

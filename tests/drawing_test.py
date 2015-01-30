@@ -347,6 +347,15 @@ def test_draw_polyline(fx_wand):
                 assert img[10,25] == img[25,25] == blue
                 assert img[35,15] == img[35,35] == white
 
+def test_draw_push_pop():
+    with Drawing() as draw:
+        draw.stroke_width = 2
+        draw.push()
+        draw.stroke_width = 3
+        assert 3 == draw.stroke_width
+        draw.pop()
+        assert 2 == draw.stroke_width
+
 def test_draw_bezier(fx_wand):
     with nested(Color('#fff'),
                 Color('#f00'),
