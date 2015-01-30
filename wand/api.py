@@ -639,8 +639,21 @@ try:
     library.DrawSetFont.argtypes = [ctypes.c_void_p,
                                     ctypes.c_char_p]
 
+    library.DrawSetFontFamily.argtypes = [ctypes.c_void_p, # wand
+                                          ctypes.c_char_p] # font_family
+    library.DrawSetFontFamily.restype = ctypes.c_uint
+
     library.DrawSetFontSize.argtypes = [ctypes.c_void_p,
                                         ctypes.c_double]
+
+    library.DrawSetFontStretch.argtypes = [ctypes.c_void_p, # wand
+                                           ctypes.c_int] # font_stretch
+
+    library.DrawSetFontStyle.argtypes = [ctypes.c_void_p, # wand
+                                         ctypes.c_int] # style
+
+    library.DrawSetFontWeight.argtypes = [ctypes.c_void_p, # wand
+                                          ctypes.c_size_t] # font_weight
 
     library.DrawSetFillColor.argtypes = [ctypes.c_void_p,
                                          ctypes.c_void_p]
@@ -774,8 +787,25 @@ try:
     library.DrawGetFont.argtypes = [ctypes.c_void_p]
     library.DrawGetFont.restype = ctypes.c_char_p
 
+    library.DrawGetFontFamily.argtypes = [ctypes.c_void_p]
+    library.DrawGetFontFamily.restype = ctypes.c_char_p
+
+    library.DrawGetFontResolution.argtypes = [ctypes.c_void_p, #wand
+                                              ctypes.c_double, # x
+                                              ctypes.c_double] # y
+    library.DrawGetFontResolution.restype = ctypes.c_uint
+
     library.DrawGetFontSize.argtypes = [ctypes.c_void_p]
     library.DrawGetFontSize.restype = ctypes.c_double
+
+    library.DrawGetFontStyle.argtypes = [ctypes.c_void_p]
+    library.DrawGetFontStyle.restype = ctypes.c_int
+
+    library.DrawGetFontWeight.argtypes = [ctypes.c_void_p]
+    library.DrawGetFontWeight.restype = ctypes.c_size_t
+
+    library.DrawGetFontStretch.argtypes = [ctypes.c_void_p]
+    library.DrawGetFontStretch.restype = ctypes.c_int
 
     library.DrawGetTextAlignment.argtypes = [ctypes.c_void_p]
     library.DrawGetTextAlignment.restype = ctypes.c_int

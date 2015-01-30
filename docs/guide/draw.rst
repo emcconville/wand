@@ -411,7 +411,11 @@ coordinates to be drawn and a string to write::
 As the above code shows you can adjust several settings before writing texts:
 
 - :attr:`~wand.drawing.Drawing.font`
+- :attr:`~wand.drawing.Drawing.font_family`
 - :attr:`~wand.drawing.Drawing.font_size`
+- :attr:`~wand.drawing.Drawing.font_stretch`
+- :attr:`~wand.drawing.Drawing.font_style`
+- :attr:`~wand.drawing.Drawing.font_weight`
 - :attr:`~wand.drawing.Drawing.gravity`
 - :attr:`~wand.drawing.Drawing.text_alignment`
 - :attr:`~wand.drawing.Drawing.text_antialias`

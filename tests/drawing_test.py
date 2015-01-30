@@ -4,7 +4,7 @@ from pytest import fixture, mark, raises, skip
 
 from wand.image import Image
 from wand.color import Color
-from wand.compat import nested
+from wand.compat import nested, text
 from wand.api import library
 from wand.drawing import Drawing
 from wand.exceptions import WandLibraryVersionError
@@ -37,11 +37,26 @@ def test_set_get_font(fx_wand, fx_asset):
     fx_wand.font = str(fx_asset.join('League_Gothic.otf'))
     assert fx_wand.font == str(fx_asset.join('League_Gothic.otf'))
 
+def test_set_get_font_family(fx_wand):
+    assert fx_wand.font_family == None
+    fx_wand.font_family = 'sans-serif'
+    assert fx_wand.font_family == 'sans-serif'
 
 def test_set_get_font_size(fx_wand):
     fx_wand.font_size = 22.2
     assert fx_wand.font_size == 22.2
 
+def test_set_get_font_stretch(fx_wand):
+    fx_wand.font_stretch = 'condensed'
+    assert fx_wand.font_stretch == 'condensed'
+
+def test_set_get_font_style(fx_wand):
+    fx_wand.font_style = 'italic'
+    assert fx_wand.font_style == 'italic'
+
+def test_set_get_font_weight(fx_wand):
+    fx_wand.font_weight = 400 # Normal
+    assert fx_wand.font_weight == 400
 
 def test_set_get_fill_color(fx_wand):
     with Color('#333333') as black:
@@ -251,7 +266,7 @@ def test_draw_comment():
         draw.comment(comment)
         draw(img)
         blob = img.make_blob(format="svg")
-        assert blob.index(comment) > 0
+        assert text(blob).index(comment) > 0
 
 def test_draw_color():
     with nested(Color('#fff'),

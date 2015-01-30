@@ -19,7 +19,8 @@ from .exceptions import WandLibraryVersionError
 
 __all__ = ('CLIP_PATH_UNITS', 'FILL_RULE_TYPES', 'FONT_METRICS_ATTRIBUTES',
            'GRAVITY_TYPES', 'LINE_CAP_TYPES', 'LINE_JOIN_TYPES',
-           'PAINT_METHOD_TYPES', 'TEXT_ALIGN_TYPES', 'TEXT_DECORATION_TYPES',
+           'PAINT_METHOD_TYPES', 'STRETCH_TYPES', 'STYLE_TYPES',
+           'TEXT_ALIGN_TYPES', 'TEXT_DECORATION_TYPES',
            'TEXT_DIRECTION_TYPES','Drawing', 'FontMetrics')
 
 
@@ -89,6 +90,32 @@ FONT_METRICS_ATTRIBUTES = ('character_width', 'character_height', 'ascender',
 
 #: The tuple subtype which consists of font metrics data.
 FontMetrics = collections.namedtuple('FontMetrics', FONT_METRICS_ATTRIBUTES)
+
+#: (:class:`collections.Sequence`) The list of stretch types for fonts
+#:
+#: - ``'undefined;``
+#: - ``'normal'``
+#: - ``'ultra_condensed'``
+#: - ``'extra_condensed'``
+#: - ``'condensed'``
+#: - ``'semi_condensed'``
+#: - ``'semi_expanded'``
+#: - ``'expanded'``
+#: - ``'extra_expanded'``
+#: - ``'ultra_expanded'``
+#: - ``'any'``
+STRETCH_TYPES = ('undefined', 'normal', 'ultra_condensed', 'extra_condensed',
+                 'condensed', 'semi_condensed', 'semi_expanded', 'expanded',
+                 'extra_expanded', 'ultra_expanded', 'any')
+
+#: (:class:`collections.Sequence`) The list of style types for fonts
+#:
+#: - ``'undefined;``
+#: - ``'normal'``
+#: - ``'italic'``
+#: - ``'oblique'``
+#: - ``'any'``
+STYLE_TYPES = ('undefined', 'normal', 'italic', 'oblique', 'any')
 
 #: (:class:`collections.Sequence`) The list of LineCap types
 #:
@@ -232,6 +259,20 @@ class Drawing(Resource):
         library.DrawSetFont(self.resource, binary(font))
 
     @property
+    def font_family(self):
+        """(:class:`basestring`) The current font family. It also can be set.
+
+              .. versionadded:: 0.4.0
+        """
+        return text(library.DrawGetFontFamily(self.resource))
+
+    @font_family.setter
+    def font_family(self, family):
+        if not isinstance(family, string_type):
+            raise TypeError('expected a string, not ' + repr(family))
+        library.DrawSetFontFamily(self.resource, binary(family))
+
+    @property
     def font_size(self):
         """(:class:`numbers.Real`) The font size.  It also can be set."""
         return library.DrawGetFontSize(self.resource)
@@ -243,6 +284,59 @@ class Drawing(Resource):
         elif size < 0.0:
             raise ValueError('cannot be less then 0.0, but got ' + repr(size))
         library.DrawSetFontSize(self.resource, size)
+
+    @property
+    def font_stretch(self):
+        """(:class:`basestring`) The current font family. It also can be set.
+
+        .. versionadded:: 0.4.0
+        """
+        stretch_index = library.DrawGetFontStretch(self.resource)
+        return text(STRETCH_TYPES[stretch_index])
+
+    @font_stretch.setter
+    def font_stretch(self, stretch):
+        if not isinstance(stretch, string_type):
+            raise TypeError('expected a string, not ' + repr(stretch))
+        elif stretch not in STRETCH_TYPES:
+            raise ValueError('expected a string from STRETCH_TYPES, not' +
+                             repr(stretch))
+        library.DrawSetFontStretch(self.resource,
+                                   STRETCH_TYPES.index(stretch))
+
+    @property
+    def font_style(self):
+        """(:class:`basestring`) The current font style. It also can be set.
+
+        .. versionadded:: 0.4.0
+        """
+        style_index = library.DrawGetFontStyle(self.resource)
+        return text(STYLE_TYPES[style_index])
+
+    @font_style.setter
+    def font_style(self, style):
+        if not isinstance(style, string_type):
+            raise TypeError('expected a string, not ' + repr(style))
+        elif style not in STYLE_TYPES:
+            raise ValueError('expected a string from STYLE_TYPES, not' +
+                             repr(style))
+        library.DrawSetFontStyle(self.resource,
+                                 STYLE_TYPES.index(style))
+
+    @property
+    def font_weight(self):
+        """(:class:`~numbers.Integral`) The current font weight.
+        It also can be set.
+
+        .. versionadded:: 0.4.0
+        """
+        return library.DrawGetFontWeight(self.resource)
+
+    @font_weight.setter
+    def font_weight(self, weight):
+        if not isinstance(weight, int):
+            raise TypeError('expected a integral, not ' + repr(weight))
+        library.DrawSetFontWeight(self.resource, weight)
 
     @property
     def fill_color(self):
