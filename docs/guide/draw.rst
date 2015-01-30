@@ -425,6 +425,7 @@ As the above code shows you can adjust several settings before writing texts:
 
 - :attr:`~wand.drawing.Drawing.font`
 - :attr:`~wand.drawing.Drawing.font_family`
+- :attr:`~wand.drawing.Drawing.font_resolution`
 - :attr:`~wand.drawing.Drawing.font_size`
 - :attr:`~wand.drawing.Drawing.font_stretch`
 - :attr:`~wand.drawing.Drawing.font_style`

@@ -262,7 +262,7 @@ class Drawing(Resource):
     def font_family(self):
         """(:class:`basestring`) The current font family. It also can be set.
 
-              .. versionadded:: 0.4.0
+        .. versionadded:: 0.4.0
         """
         return text(library.DrawGetFontFamily(self.resource))
 
@@ -271,6 +271,27 @@ class Drawing(Resource):
         if not isinstance(family, string_type):
             raise TypeError('expected a string, not ' + repr(family))
         library.DrawSetFontFamily(self.resource, binary(family))
+
+    @property
+    def font_resolution(self):
+        """(:class:`~collections.Sequence`) The current font resolution. It also
+        can be set.
+
+        .. versionadded:: 0.4.0
+        """
+        x, y = ctypes.c_double(0.0), ctypes.c_double(0.0)
+        library.DrawGetFontResolution(self.resource,
+                                      ctypes.byref(x),
+                                      ctypes.byref(y))
+        return x.value, y.value
+
+    @font_resolution.setter
+    def font_resolution(self, resolution):
+        if not isinstance(resolution, collections.Sequence):
+            raise TypeError('expected sequence, not ' + repr(resolution))
+        if len(resolution) != 2:
+            raise ValueError('expected sequence of 2 floats')
+        library.DrawSetFontResolution(self.resource, *resolution)
 
     @property
     def font_size(self):
