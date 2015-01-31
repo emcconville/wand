@@ -95,6 +95,11 @@ def test_set_get_fill_rule(fx_wand):
         fx_wand.fill_rule = invalid
     fx_wand.fill_rule = 'undefined' # reset
 
+def test_set_get_opacity(fx_wand):
+    fx_wand.opacity = 0.3456
+    #assert 0.3456 == fx_wand.opacity
+    skip("DrawGetOpacity always returns 1.0")
+
 def test_set_get_stroke_antialias(fx_wand):
     fx_wand.stroke_antialias = False
     assert fx_wand.stroke_antialias == False

@@ -672,6 +672,8 @@ try:
     library.DrawSetFillRule.argtypes = [ctypes.c_void_p,
                                         ctypes.c_uint]
 
+    library.DrawSetOpacity.argtypes = [ctypes.c_void_p, ctypes.c_double]
+
     library.DrawSetStrokeAntialias.argtypes = [ctypes.c_void_p, # wand
                                                ctypes.c_int] # stroke_antialias
 
@@ -766,6 +768,9 @@ try:
 
     library.DrawGetFillRule.argtypes = [ctypes.c_void_p]
     library.DrawGetFillRule.restype =   ctypes.c_uint
+
+    library.DrawGetOpacity.argtypes = [ctypes.c_void_p]
+    library.DrawGetOpacity.restype = ctypes.c_double
 
     library.DrawGetStrokeAntialias.argtypes = [ctypes.c_void_p]
     library.DrawGetStrokeAntialias.restype = ctypes.c_int

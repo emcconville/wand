@@ -440,6 +440,21 @@ class Drawing(Resource):
                                 FILL_RULE_TYPES.index(fill_rule))
 
     @property
+    def opacity(self):
+        """(:class:`~numbers.Real`) returns the opacity used when drawing with
+        the fill or stroke color or texture. Fully opaque is 1.0. This method
+        only affects vector graphics, and is experimental. To set the opacity
+        of a drawing, use :attr:`Drawing.fill_opacity` & :attr:`Drawing.stroke_opacity`
+
+        .. versionadded:: 0.4.0
+        """
+        return library.DrawGetOpacity(self.resource)
+
+    @opacity.setter
+    def opacity(self, opaque):
+        library.DrawSetOpacity(self.resource, float(opaque))
+
+    @property
     def stroke_antialias(self):
         """(:class:`bool`) Controls whether stroked outlines are antialiased.
         Stroked outlines are antialiased by default. When antialiasing is
