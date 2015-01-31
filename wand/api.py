@@ -626,6 +626,9 @@ try:
     library.DrawComment.argtypes = [ctypes.c_void_p, # wand
                                     ctypes.c_char_p] #comment
 
+    library.DrawSetBorderColor.argtypes = [ctypes.c_void_p, # wand
+                                           ctypes.c_void_p] # PixelWand color
+
     library.DrawSetClipPath.argtypes = [ctypes.c_void_p, # wand
                                         ctypes.c_char_p] # clip_mask
     library.DrawSetClipPath.restype = ctypes.c_int
@@ -742,6 +745,9 @@ try:
                                        ctypes.c_ssize_t, # y1
                                        ctypes.c_ssize_t, # x2
                                        ctypes.c_ssize_t] # y2
+
+    library.DrawGetBorderColor.argtypes = [ctypes.c_void_p, # wand
+                                           ctypes.c_void_p] # PixelWand color
 
     library.DrawGetClipPath.argtypes = [ctypes.c_void_p]
     library.DrawGetClipPath.restype = ctypes.c_char_p

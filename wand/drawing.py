@@ -191,6 +191,27 @@ class Drawing(Resource):
         return type(self)(drawing=self)
 
     @property
+    def border_color(self):
+        """(:class:`~wand.color.Color`) the current border color. It also can
+        be set.
+
+        .. versionadded:: 0.4.0
+        """
+        pixelwand = library.NewPixelWand()
+        library.DrawGetBorderColor(self.resource, pixelwand)
+        size = ctypes.sizeof(MagickPixelPacket)
+        buffer = ctypes.create_string_buffer(size)
+        library.PixelGetMagickColor(pixelwand, buffer)
+        return Color(raw=buffer)
+
+    @border_color.setter
+    def border_color(self, border_color):
+        if not isinstance(border_color, Color):
+            raise ValueError('expected wand.color.Color, not ' + repr(border_color))
+        with border_color:
+            library.DrawSetBorderColor(self.resource, border_color.resource)
+
+    @property
     def clip_path(self):
       """(:class:`basestring`) The current clip path. It also can be set.
 
