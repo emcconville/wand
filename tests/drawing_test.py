@@ -218,8 +218,8 @@ def test_set_get_vector_graphics(fx_wand):
     fx_wand.stroke_width = 7
     xml = fx_wand.vector_graphics
     assert xml.index("<stroke-width>7</stroke-width>") > 0
-    fx_wand.vector_graphics = ('<drawing-wand><stroke-width>'
-                               '8</stroke-width></drawing-wand>')
+    fx_wand.vector_graphics = ('<wand><stroke-width>'
+                               '8</stroke-width></wand>')
     xml = fx_wand.vector_graphics
     assert xml.index("<stroke-width>8</stroke-width>") > 0
 
@@ -591,6 +591,20 @@ def test_draw_rotate():
                 draw.line((3, 3), (35, 35))
                 draw.draw(img)
                 assert img[0,49] == black
+
+def test_draw_scale(display, fx_wand):
+    with nested(Color("#fff"),
+                Color("#000")) as (white, black):
+        with Image(width=50, height=50, background=white) as img:
+            fx_wand.fill_color = black
+            fx_wand.scale(x=2.0, y=0.5)
+            fx_wand.rectangle(top=5, left=5, width=20, height=20)
+            fx_wand.draw(img)
+            display(img)
+            # if width was scaled up by 200%
+            assert img[45,10] == black
+            # if height was scaled down by 50%
+            assert img[20,20] == white
 
 def test_draw_skew():
     with nested(Color('#fff'),

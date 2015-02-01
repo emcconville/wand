@@ -798,7 +798,7 @@ class Drawing(Resource):
       vector_graphics_p = library.DrawGetVectorGraphics(self.resource)
       vector_graphics = ctypes.create_string_buffer(vector_graphics_p)
       xml = text(vector_graphics.value);
-      return "<drawing-wand>" + xml + "</drawing-wand>"
+      return "<wand>" + xml + "</wand>"
 
     @vector_graphics.setter
     def vector_graphics(self, vector_graphics):
@@ -1629,6 +1629,24 @@ class Drawing(Resource):
             self.resource, x, y,
             ctypes.cast(body_p,ctypes.POINTER(ctypes.c_ubyte))
         )
+
+    def scale(self, x=None, y=None):
+        """
+        Adjusts the scaling factor to apply in the horizontal and vertical
+        directions to the current coordinate space.
+
+        :param x: Horizontal scale factor
+        :type x: :class:`~numbers.Real`
+        :param y: Vertical scale factor
+        :type y: :class:`~numbers.Real`
+
+        .. versionadded:: 0.4.0
+        """
+        if not isinstance(x, numbers.Real):
+            raise('expecting numbers.Real, not ' + repr(x))
+        if not isinstance(y, numbers.Real):
+            raise('expecting numbers.Real, not ' + repr(y))
+        library.DrawScale(self.resource, x, y)
 
     def skew(self, x=None, y=None):
         """Skews the current coordinate system in the horizontal direction if

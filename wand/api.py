@@ -1055,6 +1055,10 @@ try:
                                            ctypes.c_double, # rx
                                            ctypes.c_double] # ry
 
+    library.DrawScale.argtypes = [ctypes.c_void_p, # wand
+                                  ctypes.c_double, # x
+                                  ctypes.c_double] # y
+
     library.DrawSkewX.argtypes = [ctypes.c_void_p, # wand
                                   ctypes.c_double] # degree
 
