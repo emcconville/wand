@@ -606,6 +606,42 @@ def test_draw_scale(display, fx_wand):
             # if height was scaled down by 50%
             assert img[20,20] == white
 
+def test_set_fill_pattern_url(display, fx_wand):
+    with nested(Color("#fff"),
+                Color("#0f0"),
+                Color("#000")) as (white, green, black):
+        with Image(width=50, height=50, background=white) as img:
+            with Drawing() as draw:
+                draw.push_pattern('green_circle',0 , 0, 10, 10)
+                draw.fill_color = green
+                draw.stroke_color = black
+                draw.circle(origin=(5, 5), perimeter=(5, 0))
+                draw.pop_pattern()
+                draw.set_fill_pattern_url('#green_circle')
+                draw.rectangle(top=5, left=5, width=40, height=40)
+                draw.draw(img)
+                display(img)
+                assert img[25,25] == green
+
+def test_set_stroke_pattern_url(display, fx_wand):
+    with nested(Color("#fff"),
+                Color("#0f0"),
+                Color("#000")) as (white, green, black):
+        with Image(width=50, height=50, background=white) as img:
+            with Drawing() as draw:
+                draw.push_pattern('green_ring',0 , 0, 6, 6)
+                draw.fill_color = green
+                draw.stroke_color = white
+                draw.circle(origin=(3, 3), perimeter=(3, 0))
+                draw.pop_pattern()
+                draw.set_stroke_pattern_url('#green_ring')
+                draw.stroke_width = 6
+                draw.rectangle(top=5, left=5, width=40, height=40)
+                draw.draw(img)
+                display(img)
+                assert img[45, 45] == green
+
+
 def test_draw_skew():
     with nested(Color('#fff'),
                 Color('#000')) as (white, black):

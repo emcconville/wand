@@ -1643,10 +1643,50 @@ class Drawing(Resource):
         .. versionadded:: 0.4.0
         """
         if not isinstance(x, numbers.Real):
-            raise('expecting numbers.Real, not ' + repr(x))
+            raise TypeError('expecting numbers.Real, not ' + repr(x))
         if not isinstance(y, numbers.Real):
-            raise('expecting numbers.Real, not ' + repr(y))
+            raise TypeError('expecting numbers.Real, not ' + repr(y))
         library.DrawScale(self.resource, x, y)
+
+    def set_fill_pattern_url(self, url):
+        """Sets the URL to use as a fill pattern for filling objects. Only local
+        URLs ("#identifier") are supported at this time. These local URLs are
+        normally created by defining a named fill pattern with
+        Drawing.push_pattern & Drawing.pop_pattern.
+
+        :param url: URL to use to obtain fill pattern.
+        :type url: :class:`basestring`
+
+        .. versionadded:: 0.4.0
+        """
+        if not isinstance(url, string_type):
+            raise TypeError('expecting basestring, not ' + repr(url))
+        if url[0] != '#':
+            raise ValueError('Value not a relative URL, expecting "#identifier"')
+        okay = library.DrawSetFillPatternURL(self.resource, binary(url))
+        if okay == 0:
+            # ThrowDrawException(DrawError,"URLNotFound",fill_url)
+            self.raise_exception()
+
+    def set_stroke_pattern_url(self, url):
+        """Sets the pattern used for stroking object outlines. Only local
+        URLs ("#identifier") are supported at this time. These local URLs are
+        normally created by defining a named stroke pattern with
+        Drawing.push_pattern & Drawing.pop_pattern.
+
+        :param url: URL to use to obtain stroke pattern.
+        :type url: :class:`basestring`
+
+        .. versionadded:: 0.4.0
+        """
+        if not isinstance(url, string_type):
+            raise TypeError('expecting basestring, not ' + repr(url))
+        if url[0] != '#':
+            raise ValueError('Value not a relative URL, expecting "#identifier"')
+        okay = library.DrawSetStrokePatternURL(self.resource, binary(url))
+        if okay == 0:
+            # ThrowDrawException(DrawError,"URLNotFound",fill_url)
+            self.raise_exception()
 
     def skew(self, x=None, y=None):
         """Skews the current coordinate system in the horizontal direction if

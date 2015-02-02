@@ -669,6 +669,10 @@ try:
     library.DrawSetFillOpacity.argtypes = [ctypes.c_void_p,
                                            ctypes.c_double]
 
+    library.DrawSetFillPatternURL.argtypes = [ctypes.c_void_p, # wand
+                                              ctypes.c_char_p] # fill_url
+    library.DrawSetFillPatternURL.restype = ctypes.c_uint
+
     library.DrawSetFillRule.argtypes = [ctypes.c_void_p,
                                         ctypes.c_uint]
 
@@ -698,6 +702,10 @@ try:
 
     library.DrawSetStrokeOpacity.argtypes = [ctypes.c_void_p, # wand
                                              ctypes.c_double] # stroke_opacity
+
+    library.DrawSetStrokePatternURL.argtypes = [ctypes.c_void_p, # wand
+                                              ctypes.c_char_p] # fill_url
+    library.DrawSetStrokePatternURL.restype = ctypes.c_uint
 
     library.DrawSetStrokeWidth.argtypes = [ctypes.c_void_p,
                                            ctypes.c_double]
