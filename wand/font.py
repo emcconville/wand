@@ -43,9 +43,20 @@ __all__ = 'Font',
 
 
 class Font(tuple):
-    """Font struct which is a subtype of :class:`tuple`.  Its constructor
-    takes :attr:`path`, :attr:`size` (0 by default), :attr:`color`
-    (black by default), and :attr:`antialias` (``True`` by default).
+    """Font struct which is a subtype of :class:`tuple`.
+
+    :param path: the path of the font file
+    :type path: :class:`str`, :class:`basestring`
+    :param size: the size of typeface.  0 by default which means *autosized*
+    :type size: :class:`numbers.Real`
+    :param color: the color of typeface.  black by default
+    :type color: :class:`~wand.color.Color`
+    :param antialias: whether to use antialiasing.  :const:`True` by default
+    :type antialias: :class:`bool`
+
+    .. versionchanged:: 0.3.9
+       The ``size`` parameter becomes optional.  Its default value is
+       0, which means *autosized*.
 
     """
 
