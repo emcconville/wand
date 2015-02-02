@@ -71,102 +71,14 @@ def test_set_get_fill_color(fx_wand):
         fx_wand.fill_color = black
     assert fx_wand.fill_color == Color('#333333')
 
-def test_set_get_fill_color_user_error(fx_wand):
-    with raises(TypeError):
-        fx_wand.fill_color = "green"
-
-def test_set_get_fill_opacity(fx_wand):
-    fx_wand.fill_opacity = 1.0;
-    assert fx_wand.fill_opacity == 1.0
-
-def test_set_get_fill_opacity_user_error(fx_wand):
-    with raises(TypeError):
-        fx_wand.fill_opacity = "1.5";
-
-def test_set_get_fill_rule(fx_wand):
-    valid = 'evenodd'
-    notvalid = 'error'
-    invalid = (1,2)
-    fx_wand.fill_rule = valid
-    assert fx_wand.fill_rule == valid
-    with raises(ValueError):
-        fx_wand.fill_rule = notvalid
-    with raises(TypeError):
-        fx_wand.fill_rule = invalid
-    fx_wand.fill_rule = 'undefined' # reset
-
-def test_set_get_opacity(fx_wand):
-    fx_wand.opacity = 0.3456
-    #assert 0.3456 == fx_wand.opacity
-    skip("DrawGetOpacity always returns 1.0")
-
-def test_set_get_stroke_antialias(fx_wand):
-    fx_wand.stroke_antialias = False
-    assert fx_wand.stroke_antialias == False
-
 def test_set_get_stroke_color(fx_wand):
     with Color('#333333') as black:
         fx_wand.stroke_color = black
     assert fx_wand.stroke_color == Color('#333333')
 
-def test_set_get_stroke_color_user_error(fx_wand):
-    with raises(TypeError):
-        fx_wand.stroke_color = '#333333'
-
-def test_set_get_stroke_dash_array(fx_wand):
-    dash_array = [2, 1, 4, 1]
-    fx_wand.stroke_dash_array = dash_array
-    assert fx_wand.stroke_dash_array == dash_array
-
-def test_set_get_stroke_dash_offset(fx_wand):
-    fx_wand.stroke_dash_offset = 0.5
-    assert fx_wand.stroke_dash_offset == 0.5
-
-def test_set_get_stroke_line_cap(fx_wand):
-    fx_wand.stroke_line_cap = 'round'
-    assert fx_wand.stroke_line_cap == 'round'
-
-def test_set_get_stroke_line_cap_user_error(fx_wand):
-    with raises(TypeError):
-        fx_wand.stroke_line_cap = 0x74321870
-    with raises(ValueError):
-        fx_wand.stroke_line_cap = 'apples'
-
-def test_set_get_stroke_line_join(fx_wand):
-    fx_wand.stroke_line_join = 'miter'
-    assert fx_wand.stroke_line_join == 'miter'
-
-def test_set_get_stroke_line_join_user_error(fx_wand):
-    with raises(TypeError):
-        fx_wand.stroke_line_join = 0x74321870
-    with raises(ValueError):
-        fx_wand.stroke_line_join = 'apples'
-
-def test_set_get_stroke_miter_limit(fx_wand):
-    fx_wand.stroke_miter_limit = 5
-    assert fx_wand.stroke_miter_limit == 5
-
-def test_set_get_stroke_miter_limit_user_error(fx_wand):
-    with raises(TypeError):
-        fx_wand.stroke_miter_limit = "5"
-
-def test_set_get_stroke_opacity(fx_wand):
-    fx_wand.stroke_opacity = 1.0
-    assert fx_wand.stroke_opacity == 1.0
-
-def test_set_get_stroke_opacity_user_error(fx_wand):
-    with raises(TypeError):
-        fx_wand.stroke_opacity = "1.0"
-
 def test_set_get_stroke_width(fx_wand):
     fx_wand.stroke_width = 5
     assert fx_wand.stroke_width == 5
-
-def test_set_get_stroke_width_user_error(fx_wand):
-    with raises(TypeError):
-        fx_wand.stroke_width = '0.1234'
-    with raises(ValueError):
-        fx_wand.stroke_width = -1.5
 
 def test_set_get_text_alignment(fx_wand):
     fx_wand.text_alignment = 'center'
@@ -735,3 +647,92 @@ def test_regression_issue_163(tmpdir):
             draw.text(0, 0, unicode_char)
             draw(image)
             image.save(filename=str(tmpdir.join('out.jpg')))
+
+# Fix Merge conflicts
+def test_set_get_fill_color_user_error(fx_wand):
+    with raises(TypeError):
+        fx_wand.fill_color = "green"
+
+def test_set_get_fill_opacity(fx_wand):
+    fx_wand.fill_opacity = 1.0;
+    assert fx_wand.fill_opacity == 1.0
+
+def test_set_get_fill_opacity_user_error(fx_wand):
+    with raises(TypeError):
+        fx_wand.fill_opacity = "1.5";
+
+def test_set_get_fill_rule(fx_wand):
+    valid = 'evenodd'
+    notvalid = 'error'
+    invalid = (1,2)
+    fx_wand.fill_rule = valid
+    assert fx_wand.fill_rule == valid
+    with raises(ValueError):
+        fx_wand.fill_rule = notvalid
+    with raises(TypeError):
+        fx_wand.fill_rule = invalid
+    fx_wand.fill_rule = 'undefined' # reset
+
+def test_set_get_opacity(fx_wand):
+    fx_wand.opacity = 0.3456
+    #assert 0.3456 == fx_wand.opacity
+    skip("DrawGetOpacity always returns 1.0")
+
+def test_set_get_stroke_antialias(fx_wand):
+    fx_wand.stroke_antialias = False
+    assert fx_wand.stroke_antialias == False
+
+def test_set_get_stroke_color_user_error(fx_wand):
+    with raises(TypeError):
+        fx_wand.stroke_color = '#333333'
+
+def test_set_get_stroke_dash_array(fx_wand):
+    dash_array = [2, 1, 4, 1]
+    fx_wand.stroke_dash_array = dash_array
+    assert fx_wand.stroke_dash_array == dash_array
+
+def test_set_get_stroke_dash_offset(fx_wand):
+    fx_wand.stroke_dash_offset = 0.5
+    assert fx_wand.stroke_dash_offset == 0.5
+
+def test_set_get_stroke_line_cap(fx_wand):
+    fx_wand.stroke_line_cap = 'round'
+    assert fx_wand.stroke_line_cap == 'round'
+
+def test_set_get_stroke_line_cap_user_error(fx_wand):
+    with raises(TypeError):
+        fx_wand.stroke_line_cap = 0x74321870
+    with raises(ValueError):
+        fx_wand.stroke_line_cap = 'apples'
+
+def test_set_get_stroke_line_join(fx_wand):
+    fx_wand.stroke_line_join = 'miter'
+    assert fx_wand.stroke_line_join == 'miter'
+
+def test_set_get_stroke_line_join_user_error(fx_wand):
+    with raises(TypeError):
+        fx_wand.stroke_line_join = 0x74321870
+    with raises(ValueError):
+        fx_wand.stroke_line_join = 'apples'
+
+def test_set_get_stroke_miter_limit(fx_wand):
+    fx_wand.stroke_miter_limit = 5
+    assert fx_wand.stroke_miter_limit == 5
+
+def test_set_get_stroke_miter_limit_user_error(fx_wand):
+    with raises(TypeError):
+        fx_wand.stroke_miter_limit = "5"
+
+def test_set_get_stroke_opacity(fx_wand):
+    fx_wand.stroke_opacity = 1.0
+    assert fx_wand.stroke_opacity == 1.0
+
+def test_set_get_stroke_opacity_user_error(fx_wand):
+    with raises(TypeError):
+        fx_wand.stroke_opacity = "1.0"
+
+def test_set_get_stroke_width_user_error(fx_wand):
+    with raises(TypeError):
+        fx_wand.stroke_width = '0.1234'
+    with raises(ValueError):
+        fx_wand.stroke_width = -1.5
