@@ -10,7 +10,7 @@ import collections
 import ctypes
 import numbers
 
-from .api import library, MagickPixelPacket, PointInfo
+from .api import library, MagickPixelPacket, PointInfo, AffineMatrix
 from .color import Color
 from .compat import binary, string_type, text, text_type, xrange
 from .image import Image, COMPOSITE_OPERATORS
@@ -860,6 +860,33 @@ class Drawing(Resource):
         res = library.MagickDrawImage(image.wand, self.resource)
         if not res:
             self.raise_exception()
+
+    def affine(self, matrix):
+        """Adjusts the current affine transformation matrix with the specified
+        affine transformation matrix. Note that the current affine transform is
+        adjusted rather than replaced.
+
+        .. sourcecode:: text
+
+                                              | sx  rx  0 |
+            | x', y', 1 |  =  | x, y, 1 |  *  | ry  sy  0 |
+                                              | tx  ty  1 |
+
+        :param matrix: a list of :class:`~numbers.Real` to define affine matrix.
+                       `[sx, rx, ry, sy, tx, ty]`
+        :type matrix: :class:`~collections.Sequence`
+
+        .. versionadded:: 0.4.0
+        """
+        if not isinstance(matrix, collections.Sequence) or len(matrix) != 6:
+            raise ValueError('matrix must be a list of size Real numbers')
+        for idx, val in enumerate(matrix):
+            if not isinstance(val, numbers.Real):
+                raise TypeError('expecting numbers.Real in position #' + repr(idx))
+        amx = AffineMatrix(sx = matrix[0], rx = matrix[1],
+                           ry = matrix[2], sy = matrix[3],
+                           tx = matrix[4], ty = matrix[5])
+        library.DrawAffine(self.resource, amx)
 
     def arc(self, start, end, degree):
         """Draws a arc using the current :attr:`stroke_color`,

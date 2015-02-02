@@ -15,8 +15,8 @@ import platform
 import sys
 import traceback
 
-__all__ = ('MagickPixelPacket', 'PointInfo', 'c_magick_char_p', 'library',
-           'libc', 'libmagick', 'load_library')
+__all__ = ('MagickPixelPacket', 'PointInfo', 'AffineMatrix', 'c_magick_char_p',
+           'library', 'libc', 'libmagick', 'load_library')
 
 
 class c_magick_char_p(ctypes.c_char_p):
@@ -133,6 +133,14 @@ class PointInfo(ctypes.Structure):
 
     _fields_ = [('x', ctypes.c_double),
                 ('y', ctypes.c_double)]
+
+class AffineMatrix(ctypes.Structure):
+    _fields_ = [('sx', ctypes.c_double),
+                ('rx', ctypes.c_double),
+                ('ry', ctypes.c_double),
+                ('sy', ctypes.c_double),
+                ('tx', ctypes.c_double),
+                ('ty', ctypes.c_double)]
 
 
 # Preserve the module itself even if it fails to import
@@ -622,6 +630,9 @@ try:
 
     library.DrawClearException.argtypes = [ctypes.c_void_p]
     library.DrawClearException.restype = ctypes.c_int
+
+    library.DrawAffine.argtypes = [ctypes.c_void_p, # Drawing wand
+                                   ctypes.POINTER(AffineMatrix)] # AffineMatrix
 
     library.DrawComment.argtypes = [ctypes.c_void_p, # wand
                                     ctypes.c_char_p] #comment

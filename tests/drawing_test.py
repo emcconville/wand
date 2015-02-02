@@ -676,7 +676,7 @@ def test_set_get_fill_rule(fx_wand):
 def test_set_get_opacity(fx_wand):
     fx_wand.opacity = 0.3456
     #assert 0.3456 == fx_wand.opacity
-    skip("DrawGetOpacity always returns 1.0")
+    skip('DrawGetOpacity always returns 1.0')
 
 def test_set_get_stroke_antialias(fx_wand):
     fx_wand.stroke_antialias = False
@@ -721,7 +721,7 @@ def test_set_get_stroke_miter_limit(fx_wand):
 
 def test_set_get_stroke_miter_limit_user_error(fx_wand):
     with raises(TypeError):
-        fx_wand.stroke_miter_limit = "5"
+        fx_wand.stroke_miter_limit = '5'
 
 def test_set_get_stroke_opacity(fx_wand):
     fx_wand.stroke_opacity = 1.0
@@ -729,10 +729,22 @@ def test_set_get_stroke_opacity(fx_wand):
 
 def test_set_get_stroke_opacity_user_error(fx_wand):
     with raises(TypeError):
-        fx_wand.stroke_opacity = "1.0"
+        fx_wand.stroke_opacity = '1.0'
 
 def test_set_get_stroke_width_user_error(fx_wand):
     with raises(TypeError):
         fx_wand.stroke_width = '0.1234'
     with raises(ValueError):
         fx_wand.stroke_width = -1.5
+
+def test_draw_affine(display, fx_wand):
+    with nested(Color('skyblue'),
+                Color('black')) as (skyblue, black):
+        with Image(width=100, height=100, background=skyblue) as img:
+            img.format = 'png'
+            fx_wand.affine([1.5, 0.5, 0, 1.5, 45, 25])
+            fx_wand.rectangle(top=5,left=5, width=25, height=25)
+            fx_wand.draw(img)
+            display(img)
+            assert img[25, 25] == skyblue
+            assert img[75, 75] == black
