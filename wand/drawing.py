@@ -13,7 +13,7 @@ import numbers
 from .api import library, MagickPixelPacket, PointInfo
 from .color import Color
 from .compat import binary, string_type, text, text_type, xrange
-from .image import Image
+from .image import Image, COMPOSITE_OPERATORS
 from .resource import Resource
 from .exceptions import WandLibraryVersionError
 
@@ -945,6 +945,49 @@ class Drawing(Resource):
         else:
             message = binary(message)
         library.DrawComment(self.resource, message)
+
+    def composite(self, operator, left, top, width, height, image):
+        """Composites an image onto the current image, using the specified
+        composition operator, specified position, and at the specified size.
+
+        :param operator: the operator that affects how the composite
+                         is applied to the image.  available values
+                         can be found in the :const:`COMPOSITE_OPERATORS`
+                         list
+        :param type: :const:`COMPOSITE_OPERATORS`
+        :param left: the column offset of the composited drawing source
+        :type left: :class:`numbers.Real`
+        :param top: the row offset of the composited drawing source
+        :type top: :class:`numbers.Real`
+        :param width: the total columns to include in the composited source
+        :type width: :class:`numbers.Real`
+        :param height: the total rows to include in the composited source
+        :type height: :class:`numbers.Real`
+
+        .. versionadded:: 0.4.0
+        """
+        if not isinstance(operator, string_type):
+            raise TypeError('operator must be a string, not ' +
+                            repr(operator))
+        elif not isinstance(left, numbers.Real):
+            raise TypeError('left must be an integer, not ' + repr(left))
+        elif not isinstance(top, numbers.Real):
+            raise TypeError('top must be an integer, not ' + repr(left))
+        elif not isinstance(width, numbers.Real):
+            raise TypeError('width must be an integer, not ' + repr(left))
+        elif not isinstance(height, numbers.Real):
+            raise TypeError('height must be an integer, not ' + repr(left))
+        try:
+            op =  COMPOSITE_OPERATORS.index(operator)
+        except IndexError:
+            raise IndexError(repr(operator) + ' is an invalid composite '
+                             'operator type; see wand.image.COMPOSITE_'
+                             'OPERATORS dictionary')
+        okay = library.DrawComposite(self.resource, op, left, top, width,
+                                     height, image.wand)
+        if okay == 0:
+            self.raise_exception()
+
 
     def ellipse(self, origin, radius, rotation=(0,360)):
         """Draws a ellipse at ``origin`` with independent x & y ``radius``.

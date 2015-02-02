@@ -245,6 +245,19 @@ def test_clear_drawing_wand(fx_wand):
     fx_wand.clear()
     assert fx_wand.text_kerning == 0
 
+def test_composite(fx_wand):
+    with nested(Color('#fff'),
+                Color('#000')) as (white, black):
+        with Image(width=50, height=50, background=white) as img:
+            fx_wand.fill_color = black
+            fx_wand.stroke_color = black
+            fx_wand.rectangle(25, 25, 49, 49)
+            fx_wand.draw(img)
+            fx_wand.composite("replace", 0, 0, 25, 25, img)
+            fx_wand.draw(img)
+            assert img[45,45] == img[20,20] == black
+            assert img[45,20] == img[20,45] == white
+
 def test_draw_arc(fx_asset):
     with nested(Color('#fff'),
                 Color('#f00'),

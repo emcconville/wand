@@ -626,6 +626,15 @@ try:
     library.DrawComment.argtypes = [ctypes.c_void_p, # wand
                                     ctypes.c_char_p] #comment
 
+    library.DrawComposite.argtypes = [ctypes.c_void_p, # DrawingWand wand
+                                      ctypes.c_int, # CompositeOperator
+                                      ctypes.c_double, # x
+                                      ctypes.c_double, # y
+                                      ctypes.c_double, # width
+                                      ctypes.c_double, # height
+                                      ctypes.c_void_p] # MagickWand wand
+    library.DrawComposite.restype = ctypes.c_uint
+
     library.DrawSetBorderColor.argtypes = [ctypes.c_void_p, # wand
                                            ctypes.c_void_p] # PixelWand color
 
