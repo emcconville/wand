@@ -26,8 +26,8 @@ def test_set_get_border_color(fx_wand):
         assert green == fx_wand.border_color
 
 def test_set_get_clip_path(fx_wand):
-    fx_wand.clip_path = 'M10,10 15,15 10,15 Z'
-    assert fx_wand.clip_path == 'M10,10 15,15 10,15 Z'
+    fx_wand.clip_path = 'path_id'
+    assert fx_wand.clip_path == 'path_id'
 
 def test_set_get_clip_rule(fx_wand):
     fx_wand.clip_rule = 'evenodd'
@@ -748,3 +748,25 @@ def test_draw_affine(display, fx_wand):
             display(img)
             assert img[25, 25] == skyblue
             assert img[75, 75] == black
+
+def test_draw_clip_path(display, fx_wand):
+    with nested(Color('skyblue'),
+                Color('orange')) as (skyblue, orange):
+        with Image(width=100, height=100, background=skyblue) as img:
+            fx_wand.push_defs()
+            fx_wand.push_clip_path("eyes_only")
+            fx_wand.push()
+            fx_wand.rectangle(top=0,left=0, width=50, height=50)
+            fx_wand.pop()
+            fx_wand.pop_clip_path()
+            fx_wand.pop_defs()
+
+            fx_wand.clip_path = "eyes_only"
+            fx_wand.clip_rule = "nonzero"
+            fx_wand.clip_path_units = "object_bounding_box"
+            fx_wand.fill_color = orange
+            fx_wand.rectangle(top=5, left=5, width=90, height=90)
+            fx_wand.draw(img)
+            display(img)
+            assert img[25, 25] == orange
+            assert img[75, 75] == skyblue
