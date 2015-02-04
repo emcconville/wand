@@ -47,8 +47,8 @@ def test_set_get_font_family(fx_wand):
     assert fx_wand.font_family == 'sans-serif'
 
 def test_set_get_font_resolution(fx_wand):
-    fx_wand.font_resolution = 78.0,78.0
-    assert 78.0, 78.0 == fx_wand.font_resolution
+    fx_wand.font_resolution = (78.0, 78.0)
+    assert fx_wand.font_resolution == (78.0, 78.0)
 
 def test_set_get_font_size(fx_wand):
     fx_wand.font_size = 22.2
