@@ -21,7 +21,7 @@ __all__ = ('CLIP_PATH_UNITS', 'FILL_RULE_TYPES', 'FONT_METRICS_ATTRIBUTES',
            'GRAVITY_TYPES', 'LINE_CAP_TYPES', 'LINE_JOIN_TYPES',
            'PAINT_METHOD_TYPES', 'STRETCH_TYPES', 'STYLE_TYPES',
            'TEXT_ALIGN_TYPES', 'TEXT_DECORATION_TYPES',
-           'TEXT_DIRECTION_TYPES','Drawing', 'FontMetrics')
+           'TEXT_DIRECTION_TYPES', 'Drawing', 'FontMetrics')
 
 
 #: (:class:`collections.Sequence`) The list of clip path units
@@ -207,36 +207,37 @@ class Drawing(Resource):
     @border_color.setter
     def border_color(self, border_color):
         if not isinstance(border_color, Color):
-            raise ValueError('expected wand.color.Color, not ' + repr(border_color))
+            raise ValueError('expected wand.color.Color, not ' +
+                             repr(border_color))
         with border_color:
             library.DrawSetBorderColor(self.resource, border_color.resource)
 
     @property
     def clip_path(self):
-      """(:class:`basestring`) The current clip path. It also can be set.
+        """(:class:`basestring`) The current clip path. It also can be set.
 
-      .. versionadded:: 0.4.0
+        .. versionadded:: 0.4.0
 
-      """
-      return text(library.DrawGetClipPath(self.resource))
+        """
+        return text(library.DrawGetClipPath(self.resource))
 
     @clip_path.setter
     def clip_path(self, path):
-      if not isinstance(path, string_type):
-        raise TypeError('expected a string, not ' + repr(path))
-      okay = library.DrawSetClipPath(self.resource, binary(path))
-      if okay == 0:
-        raise ValueError('Clip path not understood')
+        if not isinstance(path, string_type):
+            raise TypeError('expected a string, not ' + repr(path))
+        okay = library.DrawSetClipPath(self.resource, binary(path))
+        if okay == 0:
+            raise ValueError('Clip path not understood')
 
     @property
     def clip_rule(self):
-      """(:class:`basestring`) The current clip rule. It also can be set.
-      It's a string value from :const:`FILL_RULE_TYPES` list.
+        """(:class:`basestring`) The current clip rule. It also can be set.
+        It's a string value from :const:`FILL_RULE_TYPES` list.
 
-      .. versionadded:: 0.4.0
-      """
-      clip_rule = library.DrawGetClipRule(self.resource)
-      return FILL_RULE_TYPES[clip_rule]
+        .. versionadded:: 0.4.0
+        """
+        clip_rule = library.DrawGetClipRule(self.resource)
+        return FILL_RULE_TYPES[clip_rule]
 
     @clip_rule.setter
     def clip_rule(self, clip_rule):
@@ -250,13 +251,13 @@ class Drawing(Resource):
 
     @property
     def clip_units(self):
-      """(:class:`basestring`) The current clip units. It also can be set.
-      It's a string value from :const:`CLIP_PATH_UNITS` list.
+        """(:class:`basestring`) The current clip units. It also can be set.
+        It's a string value from :const:`CLIP_PATH_UNITS` list.
 
-      .. versionadded:: 0.4.0
-      """
-      clip_unit = library.DrawGetClipUnits(self.resource)
-      return CLIP_PATH_UNITS[clip_unit]
+        .. versionadded:: 0.4.0
+        """
+        clip_unit = library.DrawGetClipUnits(self.resource)
+        return CLIP_PATH_UNITS[clip_unit]
 
     @clip_units.setter
     def clip_units(self, clip_unit):
@@ -266,7 +267,7 @@ class Drawing(Resource):
             raise ValueError('expected a string from CLIP_PATH_UNITS, not' +
                              repr(clip_unit))
         library.DrawSetClipUnits(self.resource,
-                                CLIP_PATH_UNITS.index(clip_unit))
+                                 CLIP_PATH_UNITS.index(clip_unit))
 
     @property
     def font(self):
@@ -444,7 +445,8 @@ class Drawing(Resource):
         """(:class:`~numbers.Real`) returns the opacity used when drawing with
         the fill or stroke color or texture. Fully opaque is 1.0. This method
         only affects vector graphics, and is experimental. To set the opacity
-        of a drawing, use :attr:`Drawing.fill_opacity` & :attr:`Drawing.stroke_opacity`
+        of a drawing, use
+        :attr:`Drawing.fill_opacity` & :attr:`Drawing.stroke_opacity`
 
         .. versionadded:: 0.4.0
         """
@@ -458,8 +460,8 @@ class Drawing(Resource):
     def stroke_antialias(self):
         """(:class:`bool`) Controls whether stroked outlines are antialiased.
         Stroked outlines are antialiased by default. When antialiasing is
-        disabled stroked pixels are thresholded to determine if the stroke color
-        or underlying canvas color should be used.
+        disabled stroked pixels are thresholded to determine if the stroke
+        color or underlying canvas color should be used.
 
         It also can be set.
 
@@ -479,7 +481,7 @@ class Drawing(Resource):
         It also can be set.
 
         .. versionadded:: 0.3.3
-        
+
         """
         pixel = library.NewPixelWand()
         library.DrawGetStrokeColor(self.resource, pixel)
@@ -491,7 +493,7 @@ class Drawing(Resource):
     @stroke_color.setter
     def stroke_color(self, color):
         if not isinstance(color, Color):
-            raise TypeError('color must be a wand.color.Color object, not ' + 
+            raise TypeError('color must be a wand.color.Color object, not ' +
                             repr(color))
         with color:
             library.DrawSetStrokeColor(self.resource, color.resource)
@@ -512,7 +514,9 @@ class Drawing(Resource):
     def stroke_dash_array(self, dash_array):
         dash_array_l = len(dash_array)
         dash_array_p = (ctypes.c_double * dash_array_l)(*dash_array)
-        library.DrawSetStrokeDashArray(self.resource, dash_array_l, dash_array_p)
+        library.DrawSetStrokeDashArray(self.resource,
+                                       dash_array_l,
+                                       dash_array_p)
 
     @property
     def stroke_dash_offset(self):
@@ -545,7 +549,7 @@ class Drawing(Resource):
             raise ValueError('expected a string from LINE_CAP_TYPES, not' +
                              repr(line_cap))
         library.DrawSetStrokeLineCap(self.resource,
-                                LINE_CAP_TYPES.index(line_cap))
+                                     LINE_CAP_TYPES.index(line_cap))
 
     @property
     def stroke_line_join(self):
@@ -566,7 +570,7 @@ class Drawing(Resource):
             raise ValueError('expected a string from LINE_JOIN_TYPES, not' +
                              repr(line_join))
         library.DrawSetStrokeLineJoin(self.resource,
-                                LINE_JOIN_TYPES.index(line_join))
+                                      LINE_JOIN_TYPES.index(line_join))
 
     @property
     def stroke_miter_limit(self):
@@ -612,9 +616,9 @@ class Drawing(Resource):
     @stroke_width.setter
     def stroke_width(self, width):
         if not isinstance(width, numbers.Real):
-           raise TypeError('expected a numbers.Real, but got ' + repr(width)) 
+            raise TypeError('expected a numbers.Real, but got ' + repr(width))
         elif width < 0.0:
-           raise ValueError('cannot be less then 0.0, but got ' + repr(width))
+            raise ValueError('cannot be less then 0.0, but got ' + repr(width))
         library.DrawSetStrokeWidth(self.resource, width)
 
     @property
@@ -786,33 +790,33 @@ class Drawing(Resource):
 
     @property
     def vector_graphics(self):
-      """(:class:`basestring`) The XML text of the Vector Graphics. It also
-      can be set. The drawing-wand XML is experimental, and subject to change.
+        """(:class:`basestring`) The XML text of the Vector Graphics. It also
+        can be set. The drawing-wand XML is experimental, and subject to change.
 
-      Setting this property to None will reset all vector graphic properties to
-      the default state.
+        Setting this property to None will reset all vector graphic properties
+        to the default state.
 
-      .. versionadded:: 0.4.0
+        .. versionadded:: 0.4.0
 
-      """
-      vector_graphics_p = library.DrawGetVectorGraphics(self.resource)
-      vector_graphics = ctypes.create_string_buffer(vector_graphics_p)
-      xml = text(vector_graphics.value);
-      return "<wand>" + xml + "</wand>"
+        """
+        vector_graphics_p = library.DrawGetVectorGraphics(self.resource)
+        vector_graphics = ctypes.create_string_buffer(vector_graphics_p)
+        xml = text(vector_graphics.value)
+        return "<wand>" + xml + "</wand>"
 
     @vector_graphics.setter
     def vector_graphics(self, vector_graphics):
-      if vector_graphics is not None and not isinstance(vector_graphics,
-                                                        string_type):
-          raise TypeError('expected a string, not ' + repr(vector_graphics))
-      elif vector_graphics is None:
-          # Reset all vector graphic properties on drawing wand.
-          library.DrawResetVectorGraphics(self.resource)
-      else:
-          vector_graphics = binary(vector_graphics)
-          okay = library.DrawSetVectorGraphics(self.resource, vector_graphics)
-          if okay == 0:
-            raise ValueError("Vector graphic not understood.")
+        if vector_graphics is not None and not isinstance(vector_graphics,
+                                                          string_type):
+            raise TypeError('expected a string, not ' + repr(vector_graphics))
+        elif vector_graphics is None:
+            # Reset all vector graphic properties on drawing wand.
+            library.DrawResetVectorGraphics(self.resource)
+        else:
+            vector_graphics = binary(vector_graphics)
+            okay = library.DrawSetVectorGraphics(self.resource, vector_graphics)
+            if okay == 0:
+                raise ValueError("Vector graphic not understood.")
 
     @property
     def gravity(self):
@@ -882,10 +886,11 @@ class Drawing(Resource):
             raise ValueError('matrix must be a list of size Real numbers')
         for idx, val in enumerate(matrix):
             if not isinstance(val, numbers.Real):
-                raise TypeError('expecting numbers.Real in position #' + repr(idx))
-        amx = AffineMatrix(sx = matrix[0], rx = matrix[1],
-                           ry = matrix[2], sy = matrix[3],
-                           tx = matrix[4], ty = matrix[5])
+                raise TypeError('expecting numbers.Real in position #' +
+                                repr(idx))
+        amx = AffineMatrix(sx=matrix[0], rx=matrix[1],
+                           ry=matrix[2], sy=matrix[3],
+                           tx=matrix[4], ty=matrix[5])
         library.DrawAffine(self.resource, amx)
 
     def arc(self, start, end, degree):
@@ -929,8 +934,8 @@ class Drawing(Resource):
         origin_x, origin_y = origin
         perimeter_x, perimeter_y = perimeter
         library.DrawCircle(self.resource,
-                           float(origin_x), float(origin_y), # origin
-                           float(perimeter_x), float(perimeter_y)) # perimeter
+                           float(origin_x), float(origin_y),  # origin
+                           float(perimeter_x), float(perimeter_y))  # perimeter
 
     def color(self, x=None, y=None, paint_method='undefined'):
         """Draws a color on the image using current fill color, starting
@@ -1005,7 +1010,7 @@ class Drawing(Resource):
         elif not isinstance(height, numbers.Real):
             raise TypeError('height must be an integer, not ' + repr(left))
         try:
-            op =  COMPOSITE_OPERATORS.index(operator)
+            op = COMPOSITE_OPERATORS.index(operator)
         except IndexError:
             raise IndexError(repr(operator) + ' is an invalid composite '
                              'operator type; see wand.image.COMPOSITE_'
@@ -1015,8 +1020,7 @@ class Drawing(Resource):
         if okay == 0:
             self.raise_exception()
 
-
-    def ellipse(self, origin, radius, rotation=(0,360)):
+    def ellipse(self, origin, radius, rotation=(0, 360)):
         """Draws a ellipse at ``origin`` with independent x & y ``radius``.
         Ellipse can be partial by setting start & end ``rotation``.
 
@@ -1027,7 +1031,8 @@ class Drawing(Resource):
                        pair which represents radius x and radius y of circle
         :type radius: :class:`collections.Sequence`
         :param rotation: (:class:`~numbers.Real`, :class:`numbers.Real`)
-                       pair which represents start and end of ellipse. Default (0,360) 
+                         pair which represents start and end of ellipse.
+                         Default (0,360)
         :type rotation: :class:`collections.Sequence`
 
         .. versionadded:: 0.4.0
@@ -1036,8 +1041,8 @@ class Drawing(Resource):
         radius_x, radius_y = radius
         rotation_start, rotation_end = rotation
         library.DrawEllipse(self.resource,
-                            float(origin_x), float(origin_y), # origin
-                            float(radius_x), float(radius_y), # radius
+                            float(origin_x), float(origin_y),  # origin
+                            float(radius_x), float(radius_y),  # radius
                             float(rotation_start), float(rotation_end))
 
     def line(self, start, end):
@@ -1128,20 +1133,20 @@ class Drawing(Resource):
             if relative:
                 library.DrawPathCurveToSmoothRelative(self.resource,
                                                       x2, y2, x, y)
-            else :
+            else:
                 library.DrawPathCurveToSmoothAbsolute(self.resource,
                                                       x2, y2, x, y)
         else:
             if relative:
                 library.DrawPathCurveToRelative(self.resource,
                                                 x1, y1, x2, y2, x, y)
-            else :
+            else:
                 library.DrawPathCurveToAbsolute(self.resource,
                                                 x1, y1, x2, y2, x, y)
         return self
 
     def path_curve_to_quadratic_bezier(self, to=None, control=None,
-                                    smooth=False, relative=False):
+                                       smooth=False, relative=False):
         """Draws a quadratic Bezier curve from the current point to given
         ``to`` coordinate. The control point is assumed to be the reflection of
         the control point on the previous command if ``smooth`` is True, else a
@@ -1184,12 +1189,16 @@ class Drawing(Resource):
             x1, y1 = control
             if relative:
                 library.DrawPathCurveToQuadraticBezierRelative(self.resource,
-                                                               float(x1), float(y1),
-                                                               float(x), float(y))
+                                                               float(x1),
+                                                               float(y1),
+                                                               float(x),
+                                                               float(y))
             else:
                 library.DrawPathCurveToQuadraticBezierAbsolute(self.resource,
-                                                               float(x1), float(y1),
-                                                               float(x), float(y))
+                                                               float(x1),
+                                                               float(y1),
+                                                               float(x),
+                                                               float(y))
         return self
 
     def path_elliptic_arc(self, to=None, radius=None, rotation=0.0,
@@ -1233,13 +1242,19 @@ class Drawing(Resource):
         x, y = to
         rx, ry = radius
         if relative:
-            library.DrawPathEllipticArcRelative(self.resource, float(rx), float(ry),
-                                                float(rotation), bool(large_arc),
-                                                bool(clockwise), float(x), float(y))
+            library.DrawPathEllipticArcRelative(self.resource,
+                                                float(rx), float(ry),
+                                                float(rotation),
+                                                bool(large_arc),
+                                                bool(clockwise),
+                                                float(x), float(y))
         else:
-            library.DrawPathEllipticArcAbsolute(self.resource, float(rx), float(ry),
-                                                float(rotation), bool(large_arc),
-                                                bool(clockwise), float(x), float(y))
+            library.DrawPathEllipticArcAbsolute(self.resource,
+                                                float(rx), float(ry),
+                                                float(rotation),
+                                                bool(large_arc),
+                                                bool(clockwise),
+                                                float(x), float(y))
         return self
 
     def path_finish(self):
@@ -1297,10 +1312,10 @@ class Drawing(Resource):
         return self
 
     def path_vertical_line(self, y=None, relative=False):
-        """Draws a vertical line path from the current point to the target point.
-        Given ``y`` parameter can be relative, or absolute, to the current point
-        by setting the ``relative`` flag. The target point then becomes the new
-        current point.
+        """Draws a vertical line path from the current point to the target
+        point. Given ``y`` parameter can be relative, or absolute, to the
+        current point by setting the ``relative`` flag. The target point then
+        becomes the new current point.
 
         :param y: :class:`~numbers.Real`
                       y-axis point to draw to.
@@ -1320,8 +1335,9 @@ class Drawing(Resource):
         return self
 
     def path_move(self, to=None, relative=False):
-        """Starts a new sub-path at the given coordinates. Given ``to`` parameter
-        can be relative, or absolute, by setting the ``relative`` flag.
+        """Starts a new sub-path at the given coordinates. Given ``to``
+        parameter can be relative, or absolute, by setting the ``relative``
+        flag.
 
         :param to: (:class:`~numbers.Real`, :class:`numbers.Real`)
                       pair which represents coordinates to draw to.
@@ -1353,7 +1369,7 @@ class Drawing(Resource):
         library.DrawPathStart(self.resource)
         return self
 
-    def point(self,x,y):
+    def point(self, x, y):
         """Draws a point at given ``x`` and ``y``
 
         :param x: :class:`~numbers.Real` x of point
@@ -1369,8 +1385,8 @@ class Drawing(Resource):
 
     def pop(self):
         """Pop destroys the current drawing wand and returns to the previously
-        pushed drawing wand. Multiple drawing wands may exist. It is an error to
-        attempt to pop more drawing wands than have been pushed, and it is
+        pushed drawing wand. Multiple drawing wands may exist. It is an error
+        to attempt to pop more drawing wands than have been pushed, and it is
         proper form to pop all drawing wands which have been pushed.
 
         :returns: success of pop operation
@@ -1457,7 +1473,8 @@ class Drawing(Resource):
         .. versionadded:: 0.4.0
         """
         if not isinstance(pattern_id, string_type):
-            raise TypeError('pattern_id must be a string, not ' + repr(pattern_id))
+            raise TypeError('pattern_id must be a string, not ' +
+                            repr(pattern_id))
         elif not isinstance(left, numbers.Real):
             raise TypeError('left must be numbers.Real, not ' + repr(left))
         elif not isinstance(top, numbers.Real):
@@ -1550,7 +1567,7 @@ class Drawing(Resource):
             raise TypeError('top must be numbers.Real, not ' + repr(top))
         elif not (right is None or isinstance(right, numbers.Real)):
             raise TypeError('right must be numbers.Real, not ' + repr(right))
-        elif not (bottom is None or isinstance(bottom , numbers.Real)):
+        elif not (bottom is None or isinstance(bottom, numbers.Real)):
             raise TypeError('bottom must be numbers.Real, not ' + repr(bottom))
         elif not (width is None or isinstance(width, numbers.Real)):
             raise TypeError('width must be numbers.Real, not ' + repr(width))
@@ -1578,9 +1595,11 @@ class Drawing(Resource):
             if yradius is None:
                 yraduis = 0.0
             if not isinstance(xradius, numbers.Real):
-                raise TypeError('xradius must be numbers.Real, not ' + repr(xradius))
+                raise TypeError('xradius must be numbers.Real, not ' +
+                                repr(xradius))
             if not isinstance(yradius, numbers.Real):
-                raise TypeError('yradius must be numbers.Real, not ' + repr(xradius))
+                raise TypeError('yradius must be numbers.Real, not ' +
+                                repr(xradius))
             library.DrawRoundRectangle(self.resource, left, top, right, bottom,
                                        xradius, yradius)
         else:
@@ -1616,7 +1635,7 @@ class Drawing(Resource):
 
         (points_l, points_p) = _list_to_point_info(points)
         library.DrawPolygon(self.resource, points_l,
-          ctypes.cast(points_p,ctypes.POINTER(PointInfo)))
+                            ctypes.cast(points_p, ctypes.POINTER(PointInfo)))
 
     def polyline(self, points=None):
         """Draws a polyline using the current :attr:`stoke_color`,
@@ -1634,7 +1653,7 @@ class Drawing(Resource):
 
         (points_l, points_p) = _list_to_point_info(points)
         library.DrawPolyline(self.resource, points_l,
-          ctypes.cast(points_p,ctypes.POINTER(PointInfo)))
+                             ctypes.cast(points_p, ctypes.POINTER(PointInfo)))
 
     def bezier(self, points=None):
         """Draws a bezier curve through a set of points on the image, using
@@ -1664,7 +1683,7 @@ class Drawing(Resource):
 
         (points_l, points_p) = _list_to_point_info(points)
         library.DrawBezier(self.resource, points_l,
-          ctypes.cast(points_p,ctypes.POINTER(PointInfo)))
+                           ctypes.cast(points_p, ctypes.POINTER(PointInfo)))
 
     def text(self, x, y, body):
         """Writes a text ``body`` into (``x``, ``y``).
@@ -1697,7 +1716,7 @@ class Drawing(Resource):
         body_p = ctypes.create_string_buffer(body)
         library.DrawAnnotation(
             self.resource, x, y,
-            ctypes.cast(body_p,ctypes.POINTER(ctypes.c_ubyte))
+            ctypes.cast(body_p, ctypes.POINTER(ctypes.c_ubyte))
         )
 
     def scale(self, x=None, y=None):
@@ -1819,34 +1838,35 @@ class Drawing(Resource):
         return FontMetrics(*args)
 
     def viewbox(self, left, top, right, bottom):
-      """
-      Viewbox sets the overall canvas size to be recorded with the drawing
-      vector data. Usually this will be specified using the same size as the
-      canvas image. When the vector data is saved to SVG or MVG formats, the
-      viewbox is use to specify the size of the canvas image that a viewer will
-      render the vector data on.
+        """
+        Viewbox sets the overall canvas size to be recorded with the drawing
+        vector data. Usually this will be specified using the same size as the
+        canvas image. When the vector data is saved to SVG or MVG formats, the
+        viewbox is use to specify the size of the canvas image that a viewer
+        will render the vector data on.
 
-      :param left: the left most point of the viewbox.
-      :type left: :class:`~numbers.Integral`
-      :param top: the top most point of the viewbox.
-      :type top: :class:`~numbers.Integral`
-      :param right: the right most point of the viewbox.
-      :type right: :class:`~numbers.Integral`
-      :param bottom: the bottom most point of the viewbox.
-      :type bottom: :class:`~numbers.Integral`
-      """
-      if not isinstance(left, numbers.Integral):
-        raise TypeError('left must be an integer, not ' + repr(left))
-      if not isinstance(top, numbers.Integral):
-        raise TypeError('top must be an integer, not ' + repr(top))
-      if not isinstance(right, numbers.Integral):
-        raise TypeError('right must be an integer, not ' + repr(right))
-      if not isinstance(bottom, numbers.Integral):
-        raise TypeError('bottom must be an integer, not ' + repr(bottom))
-      library.DrawSetViewbox(self.resource, left, top, right, bottom)
+        :param left: the left most point of the viewbox.
+        :type left: :class:`~numbers.Integral`
+        :param top: the top most point of the viewbox.
+        :type top: :class:`~numbers.Integral`
+        :param right: the right most point of the viewbox.
+        :type right: :class:`~numbers.Integral`
+        :param bottom: the bottom most point of the viewbox.
+        :type bottom: :class:`~numbers.Integral`
+        """
+        if not isinstance(left, numbers.Integral):
+            raise TypeError('left must be an integer, not ' + repr(left))
+        if not isinstance(top, numbers.Integral):
+            raise TypeError('top must be an integer, not ' + repr(top))
+        if not isinstance(right, numbers.Integral):
+            raise TypeError('right must be an integer, not ' + repr(right))
+        if not isinstance(bottom, numbers.Integral):
+            raise TypeError('bottom must be an integer, not ' + repr(bottom))
+        library.DrawSetViewbox(self.resource, left, top, right, bottom)
 
     def __call__(self, image):
         return self.draw(image)
+
 
 def _list_to_point_info(points):
     """
