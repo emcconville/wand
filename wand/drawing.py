@@ -193,7 +193,9 @@ class Drawing(Resource):
     @property
     def border_color(self):
         """(:class:`~wand.color.Color`) the current border color. It also can
-        be set.
+        be set. This attribute controls the behavior of
+        :meth:`~wand.drawing.Drawing.color()` during ``'filltoborder'``
+        operation.
 
         .. versionadded:: 0.4.0
         """
@@ -941,7 +943,7 @@ class Drawing(Resource):
         """Draws a color on the image using current fill color, starting
         at specified position & method.
 
-        Available methods are:
+        Available methods in :class:`wand.drawing.PAINT_METHOD_TYPES`:
 
         - ``'undefined'``
         - ``'point'``
@@ -1391,6 +1393,7 @@ class Drawing(Resource):
 
         :returns: success of pop operation
         :rtype: `bool`
+
         .. versionadded:: 0.4.0
         """
         return bool(library.PopDrawingWand(self.resource))
@@ -1424,6 +1427,7 @@ class Drawing(Resource):
 
         :returns: success of push operation
         :rtype: `bool`
+
         .. versionadded:: 0.4.0
         """
         return bool(library.PushDrawingWand(self.resource))
@@ -1611,6 +1615,7 @@ class Drawing(Resource):
 
         :param degree: degree to rotate
         :type degree: :class:`~numbers.Real`
+
         .. versionadded:: 0.4.0
         """
         library.DrawRotate(self.resource, float(degree))

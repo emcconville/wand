@@ -37,17 +37,19 @@ An example::
     from wand.image import Image
     from wand.drawing import Drawing
     from wand.color import Color
-    
+
     with Drawing() as draw:
         draw.stroke_color = Color('black')
         draw.stroke_width = 2
         draw.fill_color = Color('white')
-        draw.arc(( 25, 25), # Stating point
-                 ( 75, 75), # Ending point
-                 (135,-45)) # From bottom left around to top right
-        with Image(width=100, height=100, background=Color('lightblue')) as img:
-          draw.draw(img)
-          img.save(filename='draw-arc.gif')
+        draw.arc(( 25, 25),  # Stating point
+                 ( 75, 75),  # Ending point
+                 (135,-45))  # From bottom left around to top right
+        with Image(width=100,
+                   height=100,
+                   background=Color('lightblue')) as img:
+            draw.draw(img)
+            img.save(filename='draw-arc.gif')
 
 
 .. image:: ../_images/draw-arc.gif
@@ -71,17 +73,19 @@ For example::
     from wand.image import Image
     from wand.drawing import Drawing
     from wand.color import Color
-    
+
     with Drawing() as draw:
         draw.stroke_color = Color('black')
         draw.stroke_width = 2
         draw.fill_color = Color('white')
-        points = [(10,50), # Start point
-                  (50,10), # First control
-                  (50,90), # Second control
-                  (90,50)] # End point
+        points = [(10,50),  # Start point
+                  (50,10),  # First control
+                  (50,90),  # Second control
+                  (90,50)]  # End point
         draw.bezier(points)
-        with Image(width=100, height=100, background=Color('lightblue')) as image:
+        with Image(width=100,
+                   height=100,
+                   background=Color('lightblue')) as image:
             draw(image)
 
 .. image:: ../_images/draw-bezier.gif
@@ -109,7 +113,7 @@ the ``image``::
     from wand.image import Image
     from wand.drawing import Drawing
     from wand.color import Color
-    
+
     with Drawing() as draw:
         draw.stroke_color = Color('black')
         draw.stroke_width = 2
@@ -121,6 +125,78 @@ the ``image``::
 
 .. image:: ../_images/draw-circle.gif
    :alt: draw-circle.gif
+
+
+.. _draw-color-and-matte:
+
+Color & Matte
+-------------
+
+.. versionadded:: 0.4.0
+
+You can draw with colors directly on the coordinate system of an image. Define
+which color to set by setting :attr:`~wand.drawing.Drawing.fill_color`.
+The behavior of :meth:`~wand.drawing.Drawing.color()` is controlled by setting
+one of :const:`~wand.drawing.PAINT_METHOD_TYPES` paint methods.
+
+ - ``'point'`` alters a single pixel.
+ - ``'replace'`` swaps on color for another. Threshold is influenced by :attr:`~wand.image.Image.fuzz`.
+ - ``'floodfill'`` fills area of a color influenced by :attr:`~wand.image.Image.fuzz`.
+ - ``'filltoborder'`` fills area of a color until border defined by :attr:`~wand.drawing.Drawing.border_color`.
+ - ``'reset'`` replaces the whole image to a single color.
+
+Example fill all to green boarder::
+
+    from wand.drawing import Drawing
+    from wand.color import Color
+
+    with Drawing() as draw:
+        draw.border_color = Color('green')
+        draw.fill_color = Color('blue')
+        draw.color(15, 25, 'filltoborder')
+
+The :meth:`~wand.drawing.Drawing.matte()` method is identical to the :meth:`~wand.drawing.Drawing.color()`
+method above, but alters the alpha channel of the color area selected. Colors
+can be manipulated, but not replaced.
+
+::
+
+    with Drawing() as draw:
+        draw.fill_color = None  # or Color('none')
+        draw.matte(15, 25, 'floodfill')
+
+
+.. _draw-composite:
+
+Composite
+---------
+
+.. versionadded:: 0.4.0
+
+Similar to :meth:`~wand.image.BaseImage.composite_channel()`, this
+:meth:`~wand.drawing.Drawing.composite()` method will render a given image on
+top of the drawing subject image following the
+:const:`~wand.image.COMPOSITE_OPERATORS` options. An compositing image must be
+given with a destination ``top``, ``left``, ``width``, and ``height`` values.
+
+::
+
+    from wand.image import Image, COMPOSITE_OPERATORS
+    from wand.drawing import Drawing
+    from wand.display import display
+
+    wizard = Image(filename='wizard:')
+    rose = Image(filename='rose:')
+
+    for o in COMPOSITE_OPERATORS:
+      w = wizard.clone()
+      r = rose.clone()
+      with Drawing() as draw:
+        draw.composite(operator=o, left=175, top=250,
+                       width=r.width, height=r.height, image=r)
+        draw(w)
+        display(w)
+
 
 
 .. _draw-ellipse:
@@ -327,8 +403,16 @@ For example, the following code will draw a triangle into the ``image``::
 Control the fill & stroke with the following properties:
 
 - :attr:`~wand.drawing.Drawing.stroke_color`
+- :attr:`~wand.drawing.Drawing.stroke_dash_array`
+- :attr:`~wand.drawing.Drawing.stroke_dash_offset`
+- :attr:`~wand.drawing.Drawing.stroke_line_cap`
+- :attr:`~wand.drawing.Drawing.stroke_line_join`
+- :attr:`~wand.drawing.Drawing.stroke_miter_limit`
+- :attr:`~wand.drawing.Drawing.stroke_opacity`
 - :attr:`~wand.drawing.Drawing.stroke_width`
 - :attr:`~wand.drawing.Drawing.fill_color`
+- :attr:`~wand.drawing.Drawing.fill_opacity`
+- :attr:`~wand.drawing.Drawing.fill_rule`
 
 
 .. _draw-polyline:
@@ -363,8 +447,63 @@ For example, the following code will draw a two line path on the ``image``::
 Control the fill & stroke with the following properties:
 
 - :attr:`~wand.drawing.Drawing.stroke_color`
+- :attr:`~wand.drawing.Drawing.stroke_dash_array`
+- :attr:`~wand.drawing.Drawing.stroke_dash_offset`
+- :attr:`~wand.drawing.Drawing.stroke_line_cap`
+- :attr:`~wand.drawing.Drawing.stroke_line_join`
+- :attr:`~wand.drawing.Drawing.stroke_miter_limit`
+- :attr:`~wand.drawing.Drawing.stroke_opacity`
 - :attr:`~wand.drawing.Drawing.stroke_width`
 - :attr:`~wand.drawing.Drawing.fill_color`
+- :attr:`~wand.drawing.Drawing.fill_opacity`
+- :attr:`~wand.drawing.Drawing.fill_rule`
+
+.. _draw-push-pop:
+
+Push & Pop
+----------
+
+When working with complex vector graphics, you can use ImageMagick's internal
+graphic-context stack to manage different styles & operations. The methods
+:meth:`~wand.drawing.Drawing.push()`, :meth:`~wand.drawing.Drawing.push_clip_path()`,
+:meth:`~wand.drawing.Drawing.push_defs()`, and :meth:`~wand.drawing.Drawing.push_pattern()`
+are used to mark the beginning of a sub-routine. The clip path & pattern methods
+take a name based identifier argument, and can be referenced at a latter point
+with :attr:`~wand.drawing.Drawing.clip_path`, or
+:meth:`~wand.drawing.Drawing.set_fill_pattern_url()` /
+:meth:`~wand.drawing.Drawing.set_stroke_pattern_url()`
+respectively. With stack management, :meth:`~wand.drawing.Drawing.pop()` is used
+to mark the end of a sub-routine, and return the graphical context to its
+pervious state before :meth:`~wand.drawing.Drawing.push()` was invoked.
+Methods :meth:`~wand.drawing.Drawing.pop_clip_path()`,
+:meth:`~wand.drawing.Drawing.pop_defs()`, and :meth:`~wand.drawing.Drawing.pop_pattern()`
+exist to match there pop counterparts.
+
+::
+
+    from wand.color import Color
+    from wand.image import Image
+    from wand.drawing import Drawing
+    from wand.compat import nested
+    from math import cos, pi, sin
+
+    with nested(Color('lightblue'),
+                Color('transparent'),
+                Drawing()) as (bg, fg, draw):
+        draw.stroke_width = 3
+        draw.fill_color = fg
+        for degree in range(0, 360, 15):
+            draw.push()  # Grow stack
+            draw.stroke_color = Color('hsl({0}%, 100%, 50%)'.format(degree * 100 / 360))
+            t = degree / 180.0 * pi
+            x = 35 * cos(t) + 50
+            y = 35 * sin(t) + 50
+            draw.line((50, 50), (x, y))
+            draw.pop()  # Restore stack
+        with Image(width=100, height=100, background=Color('lightblue')) as img:
+            draw(img)
+
+.. image:: ../_images/draw-push-pop.gif
 
 
 .. _draw-rectangles:
@@ -389,13 +528,13 @@ Or using ``width`` and ``height`` instead of ``right`` and ``bottom``::
     draw(image)
 
 Support for rounded corners was added in version 0.4.0. The ``radius`` argument
-sets corner rounding.
+sets corner rounding. ::
 
     draw.rectangle(left=10, top=10, width=30, height=30, radius=5)
     draw(image)
 
 Both horizontal & vertical can be set independently with
-``xradius`` & ``yradius`` respectively.
+``xradius`` & ``yradius`` respectively. ::
 
     draw.rectangle(left=10, top=10, width=30, height=30, xradius=5, yradius=3)
     draw(image)
@@ -403,8 +542,16 @@ Both horizontal & vertical can be set independently with
 Note that the stoke and the fill are determined by the following properties:
 
 - :attr:`~wand.drawing.Drawing.stroke_color`
+- :attr:`~wand.drawing.Drawing.stroke_dash_array`
+- :attr:`~wand.drawing.Drawing.stroke_dash_offset`
+- :attr:`~wand.drawing.Drawing.stroke_line_cap`
+- :attr:`~wand.drawing.Drawing.stroke_line_join`
+- :attr:`~wand.drawing.Drawing.stroke_miter_limit`
+- :attr:`~wand.drawing.Drawing.stroke_opacity`
 - :attr:`~wand.drawing.Drawing.stroke_width`
 - :attr:`~wand.drawing.Drawing.fill_color`
+- :attr:`~wand.drawing.Drawing.fill_opacity`
+- :attr:`~wand.drawing.Drawing.fill_rule`
 
 
 .. _draw-texts:
