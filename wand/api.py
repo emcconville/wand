@@ -780,7 +780,7 @@ try:
                                            ctypes.c_void_p] # PixelWand color
 
     library.DrawGetClipPath.argtypes = [ctypes.c_void_p]
-    library.DrawGetClipPath.restype = ctypes.c_char_p
+    library.DrawGetClipPath.restype = ctypes.c_void_p
 
     library.DrawGetClipRule.argtypes = [ctypes.c_void_p]
     library.DrawGetClipRule.restype = ctypes.c_uint
@@ -829,10 +829,10 @@ try:
     library.DrawGetStrokeWidth.restype = ctypes.c_double
 
     library.DrawGetFont.argtypes = [ctypes.c_void_p]
-    library.DrawGetFont.restype = ctypes.c_char_p
+    library.DrawGetFont.restype = ctypes.c_void_p
 
     library.DrawGetFontFamily.argtypes = [ctypes.c_void_p]
-    library.DrawGetFontFamily.restype = ctypes.c_char_p
+    library.DrawGetFontFamily.restype = ctypes.c_void_p
 
     library.DrawGetFontResolution.argtypes = [ctypes.c_void_p, #wand
                                ctypes.POINTER(ctypes.c_double), # x
@@ -867,7 +867,7 @@ try:
         library.DrawGetTextDirection = None
 
     library.DrawGetTextEncoding.argtypes = [ctypes.c_void_p]
-    library.DrawGetTextEncoding.restype = ctypes.c_char_p
+    library.DrawGetTextEncoding.restype = ctypes.c_void_p
 
     try:
         library.DrawGetTextInterlineSpacing.argtypes = [ctypes.c_void_p]
@@ -885,7 +885,7 @@ try:
                                               ctypes.c_void_p]
 
     library.DrawGetVectorGraphics.argtypes = [ctypes.c_void_p]
-    library.DrawGetVectorGraphics.restype = ctypes.c_char_p
+    library.DrawGetVectorGraphics.restype = ctypes.c_void_p
 
     library.DrawSetGravity.argtypes = [ctypes.c_void_p,
                                        ctypes.c_int]

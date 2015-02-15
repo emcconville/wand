@@ -10,7 +10,7 @@ import collections
 import ctypes
 import numbers
 
-from .api import library, MagickPixelPacket, PointInfo, AffineMatrix
+from .api import library, libc, MagickPixelPacket, PointInfo, AffineMatrix
 from .color import Color
 from .compat import binary, string_type, text, text_type, xrange
 from .image import Image, COMPOSITE_OPERATORS
@@ -146,6 +146,24 @@ PAINT_METHOD_TYPES = ('undefined', 'point', 'replace',
                       'floodfill', 'filltoborder', 'reset')
 
 
+def leaky_string(func):
+    """Decorator method to convert MagickWand's dynamically allocated
+    char buffers to python strings. Ensures any returned non-None pointer is
+    freed with libc's method.
+
+    .. versionadded:: 0.4.0
+    """
+    def wrapper(*args, **kwargs):
+        c_void_p = func(*args, **kwargs)
+        string = text('')
+        if c_void_p is not None:
+            c_void_p = ctypes.cast(c_void_p, ctypes.c_char_p)
+            string = text(c_void_p.value)
+            libc.free(c_void_p)
+        return string
+    return wrapper
+
+
 class Drawing(Resource):
     """Drawing object.  It maintains several vector drawing instructions
     and can get drawn into zero or more :class:`~wand.image.Image` objects
@@ -158,7 +176,7 @@ class Drawing(Resource):
             draw(image)
 
     :param drawing: an optional drawing object to clone.
-                    use :meth:`clone()` method rathan than this parameter
+                    use :meth:`clone()` method rather than this parameter
     :type drawing: :class:`Drawing`
 
     .. versionadded:: 0.3.0
@@ -215,13 +233,14 @@ class Drawing(Resource):
             library.DrawSetBorderColor(self.resource, border_color.resource)
 
     @property
+    @leaky_string
     def clip_path(self):
         """(:class:`basestring`) The current clip path. It also can be set.
 
         .. versionadded:: 0.4.0
 
         """
-        return text(library.DrawGetClipPath(self.resource))
+        return library.DrawGetClipPath(self.resource)
 
     @clip_path.setter
     def clip_path(self, path):
@@ -272,9 +291,10 @@ class Drawing(Resource):
                                  CLIP_PATH_UNITS.index(clip_unit))
 
     @property
+    @leaky_string
     def font(self):
         """(:class:`basestring`) The current font name.  It also can be set."""
-        return text(library.DrawGetFont(self.resource))
+        return library.DrawGetFont(self.resource)
 
     @font.setter
     def font(self, font):
@@ -283,12 +303,13 @@ class Drawing(Resource):
         library.DrawSetFont(self.resource, binary(font))
 
     @property
+    @leaky_string
     def font_family(self):
         """(:class:`basestring`) The current font family. It also can be set.
 
         .. versionadded:: 0.4.0
         """
-        return text(library.DrawGetFontFamily(self.resource))
+        return library.DrawGetFontFamily(self.resource)
 
     @font_family.setter
     def font_family(self, family):
@@ -506,11 +527,16 @@ class Drawing(Resource):
         representing the pattern of dashes & gaps used to stroke paths.
         It also can be set.
 
-        .. versionadded:: 0.4.0"""
+        .. versionadded:: 0.4.0
+        """
         number_elements = ctypes.c_size_t(0)
-        dash_array = library.DrawGetStrokeDashArray(self.resource,
-                                                    ctypes.byref(number_elements))
-        return [float(dash_array[i]) for i in xrange(number_elements.value)]
+        dash_array_p = library.DrawGetStrokeDashArray(self.resource,
+                                                      ctypes.byref(number_elements))
+        dash_array = []
+        if dash_array_p is not None:
+            dash_array = [float(dash_array_p[i]) for i in xrange(number_elements.value)]
+            libc.free(dash_array_p)
+        return dash_array
 
     @stroke_dash_array.setter
     def stroke_dash_array(self, dash_array):
@@ -704,12 +730,13 @@ class Drawing(Resource):
                                      TEXT_DIRECTION_TYPES.index(direction))
 
     @property
+    @leaky_string
     def text_encoding(self):
         """(:class:`basestring`) The internally used text encoding setting.
         Although it also can be set, but it's not encouraged.
 
         """
-        return text(library.DrawGetTextEncoding(self.resource))
+        return library.DrawGetTextEncoding(self.resource)
 
     @text_encoding.setter
     def text_encoding(self, encoding):
@@ -802,9 +829,13 @@ class Drawing(Resource):
 
         """
         vector_graphics_p = library.DrawGetVectorGraphics(self.resource)
-        vector_graphics = ctypes.create_string_buffer(vector_graphics_p)
-        xml = text(vector_graphics.value)
-        return "<wand>" + xml + "</wand>"
+        vector_graphics = ''
+
+        if vector_graphics_p is not None:
+            vector_graphics_p = ctypes.cast(vector_graphics_p, ctypes.c_char_p)
+            vector_graphics = text(vector_graphics_p.value)
+            libc.free(vector_graphics_p)
+        return '<wand>' + vector_graphics + '</wand>'
 
     @vector_graphics.setter
     def vector_graphics(self, vector_graphics):
