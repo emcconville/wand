@@ -1,0 +1,31 @@
+What's new in Wand 0.4?
+=======================
+
+This guide doesn't cover all changes in 0.4.  See also the full list of
+changes in :ref:`changelog-0.4.0`.
+
+
+Complete Drawing API
+--------------------
+
+Although Wand 0.3 introduced some basic facilities to draw :ref:`draw-lines`
+or :ref:`draw-texts`, these were incomplete.
+
+Since Wand 0.4 :mod:`wand.drawing` it became almost complete.  For more detail
+example, see the drawing guide:
+
+- :ref:`draw-arc`
+- :ref:`draw-bezier`
+- :ref:`draw-circle`
+- :ref:`draw-color-and-matte`
+- :ref:`draw-composite`
+- :ref:`draw-ellipse`
+- :ref:`draw-paths`
+- :ref:`draw-point`
+- :ref:`draw-polygon`
+- :ref:`draw-polyline`
+- :ref:`draw-push-pop`
+- :ref:`draw-rectangles`
+
+Eric McConville did whole of the work alone (:issue:`194`),
+huge thanks for his effort!

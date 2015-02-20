@@ -1,14 +1,14 @@
 Roadmap
 =======
 
-Version 0.4
+Version 0.5
 -----------
 
 CFFI
-   Wand 0.4 will move to CFFI from ctypes.
+   Wand 0.5 will move to CFFI from ctypes.
 
 Image layers (:issue:`22`)
-   Wand 0.4 will be able to deal with layers of an image.
+   Wand 0.5 will be able to deal with layers of an image.
 
    Its branch name will be :branch:`layer`.
 

@@ -140,9 +140,12 @@ The behavior of :meth:`~wand.drawing.Drawing.color()` is controlled by setting
 one of :const:`~wand.drawing.PAINT_METHOD_TYPES` paint methods.
 
  - ``'point'`` alters a single pixel.
- - ``'replace'`` swaps on color for another. Threshold is influenced by :attr:`~wand.image.Image.fuzz`.
- - ``'floodfill'`` fills area of a color influenced by :attr:`~wand.image.Image.fuzz`.
- - ``'filltoborder'`` fills area of a color until border defined by :attr:`~wand.drawing.Drawing.border_color`.
+ - ``'replace'`` swaps on color for another. Threshold is influenced by
+   :attr:`~wand.image.Image.fuzz`.
+ - ``'floodfill'`` fills area of a color influenced by
+   :attr:`~wand.image.Image.fuzz`.
+ - ``'filltoborder'`` fills area of a color until border defined by
+   :attr:`~wand.drawing.Drawing.border_color`.
  - ``'reset'`` replaces the whole image to a single color.
 
 Example fill all to green boarder::
@@ -155,7 +158,8 @@ Example fill all to green boarder::
         draw.fill_color = Color('blue')
         draw.color(15, 25, 'filltoborder')
 
-The :meth:`~wand.drawing.Drawing.matte()` method is identical to the :meth:`~wand.drawing.Drawing.color()`
+The :meth:`~wand.drawing.Drawing.matte()` method is identical to
+the :meth:`~wand.drawing.Drawing.color()`
 method above, but alters the alpha channel of the color area selected. Colors
 can be manipulated, but not replaced.
 
@@ -458,10 +462,13 @@ Control the fill & stroke with the following properties:
 - :attr:`~wand.drawing.Drawing.fill_opacity`
 - :attr:`~wand.drawing.Drawing.fill_rule`
 
+
 .. _draw-push-pop:
 
 Push & Pop
 ----------
+
+.. versionadded:: 0.4.0
 
 When working with complex vector graphics, you can use ImageMagick's internal
 graphic-context stack to manage different styles & operations. The methods

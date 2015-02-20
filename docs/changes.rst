@@ -1,17 +1,91 @@
 Wand Changelog
 ==============
 
-0.3 series
+0.4 series
 ~~~~~~~~~~
 
-Version 0.3.10
---------------
+Version 0.4.0
+-------------
 
 To be released.
+
+.. seealso::
+
+   :doc:`whatsnew/0.4`
+      This guide introduces what's new in Wand 0.4.
+
+- Complete :mod:`wand.drawing` API.  The whole work was done by Eric McConville.
+  Huge thanks for his effort!  [:issue:`194` by Eric McConville]
+
+  - Added :meth:`Drawing.arc() <wand.drawing.Drawing.arc>` method
+    (:ref:`draw-arc`).
+  - Added :meth:`:meth:`Drawing.bezier() <wand.drawing.Drawing.bezier>` method
+    (:ref:`draw-bezier`).
+  - Added :meth:`Drawing.circle() <wand.drawing.Drawing.circle>` method
+    (:ref:`draw-circle`).
+
+  - :ref:`draw-color-and-matte`
+
+    - Added :const:`wand.drawing.PAINT_METHOD_TYPES` constant.
+    - Added :meth:`Drawing.color() <wand.drawing.Drawing.color>` method.
+    - Added :meth:`Drawing matte() <wand.drawing.Drawing.matte>` method.
+
+  - Added :meth:`Drawing.composite() <wand.drawing.Drawing.composite>` method
+    (:ref:`draw-composite`).
+  - Added :meth:`Drawing.ellipse() <wand.drawing.Drawing.ellipse>` method
+    (:ref:`draw-ellipse`).
+
+  - :ref:`draw-paths`
+
+    - Added :meth:`~wand.drawing.Drawing.path_start()` method.
+    - Added :meth:`~wand.drawing.Drawing.path_finish()` method.
+    - Added :meth:`~wand.drawing.Drawing.path_close()` method.
+    - Added :meth:`~wand.drawing.Drawing.path_curve()` method.
+    - Added :meth:`~wand.drawing.Drawing.path_curve_to_quadratic_bezier()`
+      method.
+    - Added :meth:`~wand.drawing.Drawing.path_elliptic_arc()` method.
+    - Added :meth:`~wand.drawing.Drawing.path_horizontal_line()` method.
+    - Added :meth:`~wand.drawing.Drawing.path_line()` method.
+    - Added :meth:`~wand.drawing.Drawing.path_move()` method.
+    - Added :meth:`~wand.drawing.Drawing.path_vertical_line()` method.
+
+  - Added :meth:`Drawing.point() <wand.drawing.Drawing.point>` method
+    (:ref:`draw-point`).
+  - Added :meth:`Drawing.polygon() <wand.drawing.Drawing.polygon>` method
+    (:ref:`draw-polygon`).
+  - Added :meth:`Drawing.polyline() <wand.drawing.Drawing.polyline>` method
+    (:ref:`draw-polyline`).
+
+  - :ref:`draw-push-pop`
+
+    - Added :meth:`~wand.drawing.Drawing.push()` method.
+    - Added :meth:`~wand.drawing.Drawing.push_clip_path()` method.
+    - Added :meth:`~wand.drawing.Drawing.push_defs()` method.
+    - Added :meth:`~wand.drawing.Drawing.push_pattern()` method.
+    - Added :attr:`~wand.drawing.Drawing.clip_path` property.
+    - Added :meth:`~wand.drawing.Drawing.set_fill_pattern_url()` method.
+    - Added :meth:`~wand.drawing.Drawing.set_stroke_pattern_url()` method.
+    - Added :meth:`~wand.drawing.Drawing.pop()` method.
+
+  - Added :meth:`Drawing.rectangle() <wand.drawing.Drawing.rectangle>` method
+    (:ref:`draw-rectangles`).
+  - Added :attr:`~wand.drawing.Drawing.stroke_dash_array` property.
+  - Added :attr:`~wand.drawing.Drawing.stroke_dash_offset` property.
+  - Added :attr:`~wand.drawing.Drawing.stroke_line_cap` property.
+  - Added :attr:`~wand.drawing.Drawing.stroke_line_join` property.
+  - Added :attr:`~wand.drawing.Drawing.stroke_miter_limit` property.
+  - Added :attr:`~wand.drawing.Drawing.stroke_opacity` property.
+  - Added :attr:`~wand.drawing.Drawing.stroke_width` property.
+  - Added :attr:`~wand.drawing.Drawing.fill_opacity` property.
+  - Added :attr:`~wand.drawing.Drawing.fill_rule` property.
 
 - Error message of :exc:`~wand.exceptions.MissingDelegateError` raised by
   :meth:`Image.liquid_rescale() <wand.image.BaseImage.liquid_rescale>`
   became nicer.
+
+
+0.3 series
+~~~~~~~~~~
 
 
 Version 0.3.9

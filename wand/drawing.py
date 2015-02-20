@@ -530,11 +530,13 @@ class Drawing(Resource):
         .. versionadded:: 0.4.0
         """
         number_elements = ctypes.c_size_t(0)
-        dash_array_p = library.DrawGetStrokeDashArray(self.resource,
-                                                      ctypes.byref(number_elements))
+        dash_array_p = library.DrawGetStrokeDashArray(
+            self.resource, ctypes.byref(number_elements)
+        )
         dash_array = []
         if dash_array_p is not None:
-            dash_array = [float(dash_array_p[i]) for i in xrange(number_elements.value)]
+            dash_array = [float(dash_array_p[i])
+                          for i in xrange(number_elements.value)]
             libc.free(dash_array_p)
         return dash_array
 
@@ -711,7 +713,10 @@ class Drawing(Resource):
         """(:class:`basestring`) The text direction setting. a string
         from :const:`TEXT_DIRECTION_TYPES` list. It also can be set."""
         if library.DrawGetTextDirection is None:
-            raise WandLibraryVersionError('The installed version of ImageMagick does not support this feature')
+            raise WandLibraryVersionError(
+                'the installed version of ImageMagick does not support '
+                'this feature'
+            )
         text_direction_index = library.DrawGetTextDirection(self.resource)
         if not text_direction_index:
             self.raise_exception()
@@ -720,7 +725,10 @@ class Drawing(Resource):
     @text_direction.setter
     def text_direction(self, direction):
         if library.DrawGetTextDirection is None:
-            raise WandLibraryVersionError('The installed version of ImageMagick does not support this feature')
+            raise WandLibraryVersionError(
+                'The installed version of ImageMagick does not support '
+                'this feature'
+            )
         if not isinstance(direction, string_type):
             raise TypeError('expected a string, not ' + repr(direction))
         elif direction not in TEXT_DIRECTION_TYPES:
@@ -918,6 +926,7 @@ class Drawing(Resource):
         :type matrix: :class:`~collections.Sequence`
 
         .. versionadded:: 0.4.0
+
         """
         if not isinstance(matrix, collections.Sequence) or len(matrix) != 6:
             raise ValueError('matrix must be a list of size Real numbers')
@@ -945,8 +954,8 @@ class Drawing(Resource):
         :type degree: :class:`~collections.Sequence`
 
         .. versionadded:: 0.4.0
-        """
 
+        """
         start_x, start_y = start
         end_x, end_y = end
         degree_start, degree_end = degree
@@ -966,8 +975,8 @@ class Drawing(Resource):
         :type perimeter: :class:`collections.Sequence`
 
         .. versionadded:: 0.4.0
-        """
 
+        """
         origin_x, origin_y = origin
         perimeter_x, perimeter_y = perimeter
         library.DrawCircle(self.resource,
@@ -988,6 +997,7 @@ class Drawing(Resource):
         - ``'reset'``
 
         .. versionadded:: 0.4.0
+
         """
         if x is None or y is None:
             raise TypeError('Both x & y coordinates need to be defined')
@@ -1034,6 +1044,7 @@ class Drawing(Resource):
         :type height: :class:`numbers.Real`
 
         .. versionadded:: 0.4.0
+
         """
         if not isinstance(operator, string_type):
             raise TypeError('operator must be a string, not ' +
@@ -1073,6 +1084,7 @@ class Drawing(Resource):
         :type rotation: :class:`collections.Sequence`
 
         .. versionadded:: 0.4.0
+
         """
         origin_x, origin_y = origin
         radius_x, radius_y = radius
@@ -1113,6 +1125,7 @@ class Drawing(Resource):
         - ``'reset'``
 
         .. versionadded:: 0.4.0
+
         """
         if x is None or y is None:
             raise TypeError('Both x & y coordinates need to be defined')
@@ -1130,6 +1143,7 @@ class Drawing(Resource):
         to the current subpath's most recent starting point.
 
         .. versionadded:: 0.4.0
+
         """
         library.DrawPathClose(self.resource)
         return self
@@ -1155,6 +1169,7 @@ class Drawing(Resource):
         :type relative: :class:`bool`
 
         .. versionadded:: 0.4.0
+
         """
         if to is None:
             raise TypeError('to is missing')
@@ -1206,6 +1221,7 @@ class Drawing(Resource):
         :type relative: :class:`bool`
 
         .. versionadded:: 0.4.0
+
         """
         if to is None:
             raise TypeError('to is missing')
@@ -1213,13 +1229,13 @@ class Drawing(Resource):
 
         if smooth:
             if relative:
-                library.DrawPathCurveToQuadraticBezierSmoothRelative(self.resource,
-                                                                     float(x),
-                                                                     float(y))
+                library.DrawPathCurveToQuadraticBezierSmoothRelative(
+                    self.resource, float(x), float(y)
+                )
             else:
-                library.DrawPathCurveToQuadraticBezierSmoothAbsolute(self.resource,
-                                                                     float(x),
-                                                                     float(y))
+                library.DrawPathCurveToQuadraticBezierSmoothAbsolute(
+                    self.resource, float(x), float(y)
+                )
         else:
             if control is None:
                 raise TypeError('control is missing')
@@ -1271,6 +1287,7 @@ class Drawing(Resource):
         :type relative: :class:`bool`
 
         .. versionadded:: 0.4.0
+
         """
         if to is None:
             raise TypeError('to is missing')
@@ -1297,7 +1314,9 @@ class Drawing(Resource):
     def path_finish(self):
         """Terminates the current path.
 
-        .. versionadded:: 0.4.0"""
+        .. versionadded:: 0.4.0
+
+        """
         library.DrawPathFinish(self.resource)
         return self
 
@@ -1315,6 +1334,7 @@ class Drawing(Resource):
         :type relative: :class:`bool`
 
         .. versionadded:: 0.4.0
+
         """
         if to is None:
             raise TypeError('to is missing')
@@ -1339,6 +1359,7 @@ class Drawing(Resource):
         :type relative: :class:`bool`
 
         .. versionadded:: 0.4.0
+
         """
         if x is None:
             raise TypeError('x is missing')
@@ -1362,6 +1383,7 @@ class Drawing(Resource):
         :type relative: :class:`bool`
 
         .. versionadded:: 0.4.0
+
         """
         if y is None:
             raise TypeError('y is missing')
@@ -1384,6 +1406,7 @@ class Drawing(Resource):
         :type relative: :class:`bool`
 
         .. versionadded:: 0.4.0
+
         """
         if to is None:
             raise TypeError('to is missing')
@@ -1402,6 +1425,7 @@ class Drawing(Resource):
         are subordinate commands and they do not function by themselves.
 
         .. versionadded:: 0.4.0
+
         """
         library.DrawPathStart(self.resource)
         return self
@@ -1415,6 +1439,7 @@ class Drawing(Resource):
         :type y: :class:`~numbers.Real`
 
         .. versionadded:: 0.4.0
+
         """
         library.DrawPoint(self.resource,
                           float(x),
@@ -1430,6 +1455,7 @@ class Drawing(Resource):
         :rtype: `bool`
 
         .. versionadded:: 0.4.0
+
         """
         return bool(library.PopDrawingWand(self.resource))
 
@@ -1437,6 +1463,7 @@ class Drawing(Resource):
         """Terminates a clip path definition.
 
         .. versionadded:: 0.4.0
+
         """
         library.DrawPopClipPath(self.resource)
 
@@ -1444,6 +1471,7 @@ class Drawing(Resource):
         """Terminates a definition list.
 
         .. versionadded:: 0.4.0
+
         """
         library.DrawPopDefs(self.resource)
 
@@ -1451,6 +1479,7 @@ class Drawing(Resource):
         """Terminates a pattern definition.
 
         .. versionadded:: 0.4.0
+
         """
         library.DrawPopPattern(self.resource)
 
@@ -1464,6 +1493,7 @@ class Drawing(Resource):
         :rtype: `bool`
 
         .. versionadded:: 0.4.0
+
         """
         return bool(library.PushDrawingWand(self.resource))
 
@@ -1476,6 +1506,7 @@ class Drawing(Resource):
         :type clip_mask_id: :class:`basestring`
 
         .. versionadded:: 0.4.0
+
         """
         library.DrawPushClipPath(self.resource, binary(clip_mask_id))
 
@@ -1485,6 +1516,7 @@ class Drawing(Resource):
         may safely be processed earlier for the sake of efficiency.
 
         .. versionadded:: 0.4.0
+
         """
         library.DrawPushDefs(self.resource)
 
@@ -1510,6 +1542,7 @@ class Drawing(Resource):
         :rtype: `bool`
 
         .. versionadded:: 0.4.0
+
         """
         if not isinstance(pattern_id, string_type):
             raise TypeError('pattern_id must be a string, not ' +
@@ -1582,8 +1615,7 @@ class Drawing(Resource):
         .. versionadded:: 0.3.6
 
         .. versionchanged:: 0.4.0
-
-        Radius keywords added to create rounded rectangle.
+           Radius keywords added to create rounded rectangle.
 
         """
         if left is None:
@@ -1653,6 +1685,7 @@ class Drawing(Resource):
         :type degree: :class:`~numbers.Real`
 
         .. versionadded:: 0.4.0
+
         """
         library.DrawRotate(self.resource, float(degree))
 
@@ -1668,10 +1701,11 @@ class Drawing(Resource):
                 draw.polygon(points)
                 draw.draw(image)
 
-        .. versionadded:: 0.4.0
-
         :param points: list of x,y tuples
         :type points: :class:`list`
+
+        .. versionadded:: 0.4.0
+
         """
 
         (points_l, points_p) = _list_to_point_info(points)
@@ -1690,6 +1724,7 @@ class Drawing(Resource):
         :type points: :class:`list`
 
         .. versionadded:: 0.4.0
+
         """
 
         (points_l, points_p) = _list_to_point_info(points)
@@ -1720,6 +1755,7 @@ class Drawing(Resource):
         :type points: :class:`list`
 
         .. versionadded:: 0.4.0
+
         """
 
         (points_l, points_p) = _list_to_point_info(points)
@@ -1771,6 +1807,7 @@ class Drawing(Resource):
         :type y: :class:`~numbers.Real`
 
         .. versionadded:: 0.4.0
+
         """
         if not isinstance(x, numbers.Real):
             raise TypeError('expecting numbers.Real, not ' + repr(x))
@@ -1788,11 +1825,13 @@ class Drawing(Resource):
         :type url: :class:`basestring`
 
         .. versionadded:: 0.4.0
+
         """
         if not isinstance(url, string_type):
             raise TypeError('expecting basestring, not ' + repr(url))
         if url[0] != '#':
-            raise ValueError('Value not a relative URL, expecting "#identifier"')
+            raise ValueError('value not a relative URL, '
+                             'expecting "#identifier"')
         okay = library.DrawSetFillPatternURL(self.resource, binary(url))
         if okay == 0:
             # ThrowDrawException(DrawError,"URLNotFound",fill_url)
@@ -1808,11 +1847,13 @@ class Drawing(Resource):
         :type url: :class:`basestring`
 
         .. versionadded:: 0.4.0
+
         """
         if not isinstance(url, string_type):
             raise TypeError('expecting basestring, not ' + repr(url))
         if url[0] != '#':
-            raise ValueError('Value not a relative URL, expecting "#identifier"')
+            raise ValueError('value not a relative URL, '
+                             'expecting "#identifier"')
         okay = library.DrawSetStrokePatternURL(self.resource, binary(url))
         if okay == 0:
             # ThrowDrawException(DrawError,"URLNotFound",fill_url)
@@ -1828,6 +1869,7 @@ class Drawing(Resource):
         :type y: :class:`~numbers.Real`
 
         .. versionadded:: 0.4.0
+
         """
         if x is not None:
             library.DrawSkewX(self.resource, float(x))
@@ -1879,8 +1921,7 @@ class Drawing(Resource):
         return FontMetrics(*args)
 
     def viewbox(self, left, top, right, bottom):
-        """
-        Viewbox sets the overall canvas size to be recorded with the drawing
+        """Viewbox sets the overall canvas size to be recorded with the drawing
         vector data. Usually this will be specified using the same size as the
         canvas image. When the vector data is saved to SVG or MVG formats, the
         viewbox is use to specify the size of the canvas image that a viewer
@@ -1894,6 +1935,9 @@ class Drawing(Resource):
         :type right: :class:`~numbers.Integral`
         :param bottom: the bottom most point of the viewbox.
         :type bottom: :class:`~numbers.Integral`
+
+        .. versionadded:: 0.4.0
+
         """
         if not isinstance(left, numbers.Integral):
             raise TypeError('left must be an integer, not ' + repr(left))
@@ -1920,6 +1964,7 @@ def _list_to_point_info(points):
     :raises: `TypeError`
 
     .. versionadded:: 0.4.0
+
     """
     if not isinstance(points, list):
         raise TypeError('points must be a list, not ' + repr(points))
@@ -1931,5 +1976,7 @@ def _list_to_point_info(points):
     for double_index in xrange(0, point_info_size):
         tuple_index = double_index // tuple_size
         tuple_offset = double_index % tuple_size
-        point_info[double_index] = ctypes.c_double(points[tuple_index][tuple_offset])
+        point_info[double_index] = ctypes.c_double(
+            points[tuple_index][tuple_offset]
+        )
     return (point_length, point_info)
