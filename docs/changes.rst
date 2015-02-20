@@ -4,10 +4,12 @@ Wand Changelog
 0.4 series
 ~~~~~~~~~~
 
+.. _changelog-0.4.0:
+
 Version 0.4.0
 -------------
 
-To be released.
+Released on February 20, 2015.
 
 .. seealso::
 
@@ -19,7 +21,7 @@ To be released.
 
   - Added :meth:`Drawing.arc() <wand.drawing.Drawing.arc>` method
     (:ref:`draw-arc`).
-  - Added :meth:`:meth:`Drawing.bezier() <wand.drawing.Drawing.bezier>` method
+  - Added :meth:`Drawing.bezier() <wand.drawing.Drawing.bezier>` method
     (:ref:`draw-bezier`).
   - Added :meth:`Drawing.circle() <wand.drawing.Drawing.circle>` method
     (:ref:`draw-circle`).
