@@ -143,8 +143,12 @@ class AffineMatrix(ctypes.Structure):
                 ('ty', ctypes.c_double)]
 
 
-# Preserve the module itself even if it fails to import
-sys.modules['wand._api'] = sys.modules['wand.api']
+try:
+    # Preserve the module itself even if it fails to import
+    sys.modules['wand._api'] = sys.modules['wand.api']
+except KeyError:
+    # Loading the module locally or a non-standard setting
+    pass
 
 try:
     libraries = load_library()
