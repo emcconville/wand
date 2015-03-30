@@ -120,10 +120,10 @@ if libmagick:
     del c_magick_version, _match, c_quantum_depth
 
 
-
 def configure_options(pattern='*'):
     """
-    Queries ImageMagick library for configurations options given at compile-time.
+    Queries ImageMagick library for configurations options given at
+    compile-time.
 
     Example: Find where the ImageMagick documents are installed::
 
@@ -140,12 +140,12 @@ def configure_options(pattern='*'):
     if not isinstance(pattern, string_type):
         raise TypeError('pattern must be a string, not ' + repr(pattern))
     pattern_p = ctypes.create_string_buffer(binary(pattern))
-    number_configs = ctypes.c_size_t(0)
+    config_count = ctypes.c_size_t(0)
     configs = {}
     configs_p = library.MagickQueryConfigureOptions(pattern_p,
-                                                    ctypes.byref(number_configs))
+                                                    ctypes.byref(config_count))
     cursor = 0
-    while cursor < number_configs.value:
+    while cursor < config_count.value:
         config = configs_p[cursor].value
         value = library.MagickQueryConfigureOption(config)
         configs[text(config)] = text(value.value)
