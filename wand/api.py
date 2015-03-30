@@ -1139,10 +1139,25 @@ try:
 
     library.MagickEqualizeImage.argtypes = [ctypes.c_void_p]
 
+    library.MagickQueryConfigureOption.argtypes = [ctypes.c_char_p]
+    library.MagickQueryConfigureOption.restype = c_magick_char_p
+
+    library.MagickQueryConfigureOptions.argtypes = [ctypes.c_char_p,
+                                                    ctypes.POINTER(ctypes.c_size_t)]
+    library.MagickQueryConfigureOptions.restype = ctypes.POINTER(c_magick_char_p)
+
     library.MagickQueryFontMetrics.argtypes = [ctypes.c_void_p,
                                                ctypes.c_void_p,
                                                ctypes.c_char_p]
     library.MagickQueryFontMetrics.restype = ctypes.POINTER(ctypes.c_double)
+
+    library.MagickQueryFonts.argtypes = [ctypes.c_char_p,
+                                         ctypes.POINTER(ctypes.c_size_t)]
+    library.MagickQueryFonts.restype = ctypes.POINTER(c_magick_char_p)
+
+    library.MagickQueryFormats.argtypes = [ctypes.c_char_p,
+                                           ctypes.POINTER(ctypes.c_size_t)]
+    library.MagickQueryFormats.restype = ctypes.POINTER(c_magick_char_p)
 
     library.MagickQueryMultilineFontMetrics.argtypes = [ctypes.c_void_p,
                                                         ctypes.c_void_p,
