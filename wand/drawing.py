@@ -146,24 +146,6 @@ PAINT_METHOD_TYPES = ('undefined', 'point', 'replace',
                       'floodfill', 'filltoborder', 'reset')
 
 
-def leaky_string(func):
-    """Decorator method to convert MagickWand's dynamically allocated
-    char buffers to python strings. Ensures any returned non-None pointer is
-    freed with libc's method.
-
-    .. versionadded:: 0.4.0
-    """
-    def wrapper(*args, **kwargs):
-        c_void_p = func(*args, **kwargs)
-        string = text('')
-        if c_void_p is not None:
-            c_void_p = ctypes.cast(c_void_p, ctypes.c_char_p)
-            string = text(c_void_p.value)
-            libc.free(c_void_p)
-        return string
-    return wrapper
-
-
 class Drawing(Resource):
     """Drawing object.  It maintains several vector drawing instructions
     and can get drawn into zero or more :class:`~wand.image.Image` objects
@@ -233,14 +215,14 @@ class Drawing(Resource):
             library.DrawSetBorderColor(self.resource, border_color.resource)
 
     @property
-    @leaky_string
     def clip_path(self):
         """(:class:`basestring`) The current clip path. It also can be set.
 
         .. versionadded:: 0.4.0
 
         """
-        return library.DrawGetClipPath(self.resource)
+        clip_path_p = library.DrawGetClipPath(self.resource)
+        return text(clip_path_p.value)
 
     @clip_path.setter
     def clip_path(self, path):
@@ -291,10 +273,10 @@ class Drawing(Resource):
                                  CLIP_PATH_UNITS.index(clip_unit))
 
     @property
-    @leaky_string
     def font(self):
         """(:class:`basestring`) The current font name.  It also can be set."""
-        return library.DrawGetFont(self.resource)
+        font_p = library.DrawGetFont(self.resource)
+        return text(font_p.value)
 
     @font.setter
     def font(self, font):
@@ -303,13 +285,13 @@ class Drawing(Resource):
         library.DrawSetFont(self.resource, binary(font))
 
     @property
-    @leaky_string
     def font_family(self):
         """(:class:`basestring`) The current font family. It also can be set.
 
         .. versionadded:: 0.4.0
         """
-        return library.DrawGetFontFamily(self.resource)
+        font_family_p = library.DrawGetFontFamily(self.resource)
+        return text(font_family_p.value)
 
     @font_family.setter
     def font_family(self, family):
@@ -477,7 +459,7 @@ class Drawing(Resource):
 
     @opacity.setter
     def opacity(self, opaque):
-        library.DrawSetOpacity(self.resource, float(opaque))
+        library.DrawSetOpacity(self.resource, ctypes.c_double(opaque))
 
     @property
     def stroke_antialias(self):
@@ -537,7 +519,7 @@ class Drawing(Resource):
         if dash_array_p is not None:
             dash_array = [float(dash_array_p[i])
                           for i in xrange(number_elements.value)]
-            libc.free(dash_array_p)
+            library.MagickRelinquishMemory(dash_array_p)
         return dash_array
 
     @stroke_dash_array.setter
@@ -738,13 +720,13 @@ class Drawing(Resource):
                                      TEXT_DIRECTION_TYPES.index(direction))
 
     @property
-    @leaky_string
     def text_encoding(self):
         """(:class:`basestring`) The internally used text encoding setting.
         Although it also can be set, but it's not encouraged.
 
         """
-        return library.DrawGetTextEncoding(self.resource)
+        text_encoding_p = library.DrawGetTextEncoding(self.resource)
+        return text(text_encoding_p.value)
 
     @text_encoding.setter
     def text_encoding(self, encoding):
@@ -841,13 +823,7 @@ class Drawing(Resource):
 
         """
         vector_graphics_p = library.DrawGetVectorGraphics(self.resource)
-        vector_graphics = ''
-
-        if vector_graphics_p is not None:
-            vector_graphics_p = ctypes.cast(vector_graphics_p, ctypes.c_char_p)
-            vector_graphics = text(vector_graphics_p.value)
-            libc.free(vector_graphics_p)
-        return '<wand>' + vector_graphics + '</wand>'
+        return '<wand>' + text(vector_graphics_p.value) + '</wand>'
 
     @vector_graphics.setter
     def vector_graphics(self, vector_graphics):
