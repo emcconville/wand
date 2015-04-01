@@ -1181,10 +1181,22 @@ try:
                                            ctypes.c_int]
     library.MagickAppendImages.restype = ctypes.c_void_p
 
+    library.MagickTransposeImage.argtypes = [ctypes.c_void_p]
+    library.MagickTransverseImage.argtypes = [ctypes.c_void_p]
+
+
 except AttributeError:
     raise ImportError('MagickWand shared library not found or incompatible\n'
                       'Original exception was raised in:\n' +
                       traceback.format_exc())
+
+try:
+    library.MagickAutoOrientImage.argtypes = [ctypes.c_void_p]
+except AttributeError:
+    # MagickAutoOrientImage was added in 6.8.9+, we have a fallback function
+    # so we pass silently if we cant import it
+    pass
+
 
 #: (:class:`ctypes.CDLL`) The C standard library.
 libc = None
