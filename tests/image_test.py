@@ -1310,8 +1310,7 @@ def test_set_orientation(fx_asset):
 
 
 def test_auto_orientation(fx_asset):
-    with Image(filename=str(fx_asset.join('beach.jpg'))) as original:
-        with original.clone() as img:
+    with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
             # if orientation is undefined nothing should be changed
             before = img[100, 100]
             img.auto_orient()
@@ -1319,8 +1318,9 @@ def test_auto_orientation(fx_asset):
             assert before == after
             assert img.orientation == 'top_left'
 
+    with Image(filename=str(fx_asset.join('orientationtest.jpg'))) as original:
+        with original.clone() as img:
             # now we should get a flipped image
-            img.orientation = 'bottom_left'
             assert img.orientation == 'bottom_left'
             before = img[100, 100]
             img.auto_orient()
