@@ -35,7 +35,8 @@ def test_fonts():
     font_list = fonts()
     mark.skipif(not font_list, reason='Fonts not configured on system')
     first_font = font_list[0]
-    assert first_font in fonts('*{}*'.format(first_font[1:-1]))
+    first_font_part = first_font[1:-1]
+    assert first_font in fonts('*{0}*'.format(first_font_part))
 
 
 def test_formats():
