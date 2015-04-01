@@ -1310,14 +1310,14 @@ def test_transpose(fx_asset):
     with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
         with img.clone() as transposed:
             transposed.transpose()
-            assert transposed[100, 100] == Color('srgb(77, 124, 166)')
+            assert transposed[501, 501] == Color('srgb(205,196,179)')
 
 
 def test_transverse(fx_asset):
     with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
         with img.clone() as transversed:
             transversed.transverse()
-            assert transversed[100, 100] == Color('srgb(66,74,23)')
+            assert transversed[500, 500] == Color('srgb(96,136,185)')
 
 
 def test_get_orientation(fx_asset):
@@ -1346,6 +1346,7 @@ def test_auto_orientation(fx_asset):
 
             # now we should get a flipped image
             img.orientation = 'bottom_left'
+            assert img.orientation == 'bottom_left'
             before = img[100, 100]
             img.auto_orient()
             after = img[100, 100]
