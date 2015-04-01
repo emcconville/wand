@@ -10,7 +10,7 @@ import collections
 import ctypes
 import numbers
 
-from .api import library, libc, MagickPixelPacket, PointInfo, AffineMatrix
+from .api import library, MagickPixelPacket, PointInfo, AffineMatrix
 from .color import Color
 from .compat import binary, string_type, text, text_type, xrange
 from .image import Image, COMPOSITE_OPERATORS
@@ -219,7 +219,8 @@ class Drawing(Resource):
         """(:class:`basestring`) The current clip path. It also can be set.
 
         .. versionadded:: 0.4.0
-
+        .. versionchanged: 0.4.1
+           Safely release allocated memory with MagickRelinquishMemory instead of libc.free.
         """
         clip_path_p = library.DrawGetClipPath(self.resource)
         return text(clip_path_p.value)
@@ -274,7 +275,11 @@ class Drawing(Resource):
 
     @property
     def font(self):
-        """(:class:`basestring`) The current font name.  It also can be set."""
+        """(:class:`basestring`) The current font name.  It also can be set.
+
+        .. versionchanged: 0.4.1
+           Safely release allocated memory with MagickRelinquishMemory instead of libc.free.
+        """
         font_p = library.DrawGetFont(self.resource)
         return text(font_p.value)
 
@@ -289,6 +294,8 @@ class Drawing(Resource):
         """(:class:`basestring`) The current font family. It also can be set.
 
         .. versionadded:: 0.4.0
+        .. versionchanged: 0.4.1
+           Safely release allocated memory with MagickRelinquishMemory instead of libc.free.
         """
         font_family_p = library.DrawGetFontFamily(self.resource)
         return text(font_family_p.value)
@@ -510,6 +517,8 @@ class Drawing(Resource):
         It also can be set.
 
         .. versionadded:: 0.4.0
+        .. versionchanged: 0.4.1
+           Safely release allocated memory with MagickRelinquishMemory instead of libc.free.
         """
         number_elements = ctypes.c_size_t(0)
         dash_array_p = library.DrawGetStrokeDashArray(
@@ -724,6 +733,8 @@ class Drawing(Resource):
         """(:class:`basestring`) The internally used text encoding setting.
         Although it also can be set, but it's not encouraged.
 
+        .. versionchanged: 0.4.1
+           Safely release allocated memory with MagickRelinquishMemory instead of libc.free.
         """
         text_encoding_p = library.DrawGetTextEncoding(self.resource)
         return text(text_encoding_p.value)
@@ -820,7 +831,8 @@ class Drawing(Resource):
         to the default state.
 
         .. versionadded:: 0.4.0
-
+        .. versionchanged: 0.4.1
+           Safely release allocated memory with MagickRelinquishMemory instead of libc.free.
         """
         vector_graphics_p = library.DrawGetVectorGraphics(self.resource)
         return '<wand>' + text(vector_graphics_p.value) + '</wand>'
