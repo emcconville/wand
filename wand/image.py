@@ -2423,23 +2423,24 @@ class Image(BaseImage):
 
         orientation_type = ORIENTATION_TYPES[int(exif_orientation)]
 
-        if orientation_type in ('undefined', 'top_left'):
-            return
-        elif orientation_type == 'top_right':
-            self.flop()
-        elif orientation_type == 'bottom_right':
-            self.rotate(degree=180.0)
-        elif orientation_type == 'bottom_left':
-            self.flip()
-        elif orientation_type == 'left_top':
-            self.transpose()
-        elif orientation_type == 'right_top':
-            self.rotate(degree=90.0)
-        elif orientation_type == 'right_bottom':
-            self.transverse()
-        elif orientation_type == 'left_bottom':
-            self.rotate(degree=270.0)
+        fn_lookup = {
+            'undefined': None,
+            'top_left': None,
+            'top_right': self.flop,
+            'bottom_right': functools.partial(self.rotate, degree=180.0),
+            'bottom_left': self.flip,
+            'left_top': self.transpose,
+            'right_top': functools.partial(self.rotate, degree=90.0),
+            'right_bottom': self.transverse,
+            'left_bottom': functools.partial(self.rotate, degree=270.0)
+        }
 
+        fn = fn_lookup.get(orientation_type)
+
+        if not fn:
+            return
+
+        fn()
         self.orientation = 'top_left'
 
     @manipulative
