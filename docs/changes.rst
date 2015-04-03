@@ -9,12 +9,20 @@ Wand Changelog
 Version 0.4.1
 -------------
 
- - Added ``gravity`` options in :meth:`Image.crop() <wand.image.BaseImage.crop>` method.
-   [:issue:`222` by Eric McConville]
+- Added ``gravity`` options in :meth:`Image.crop() <wand.image.BaseImage.crop>` method.
+  [:issue:`222` by Eric McConville]
 - Additional IPython support. [:issue:`117`]
 
   - Render RGB :class:`Color <wand.color.Color>` preview.
   - Display each frame in image :class:`Sequence <wand.sequence.Sequence>`.
+
+- Additional query functions have been added to :mod:`wand.version` API. [:issue:`120`]
+
+  - Added :func:`configure_options() <wand.version.configure_options>` function.
+  - Added :func:`fonts() <wand.version.fonts>` function.
+  - Added :func:`formats() <wand.version.formats>` function.
+
+- Fixed Windows memory-deallocate errors on :mod:`wand.drawing` API. [:issue:`226` by Eric McConville]
 
 
 .. _changelog-0.4.0:
