@@ -42,7 +42,7 @@ def test_set_get_font(fx_wand, fx_asset):
     assert fx_wand.font == str(fx_asset.join('League_Gothic.otf'))
 
 def test_set_get_font_family(fx_wand):
-    assert fx_wand.font_family == ''
+    assert fx_wand.font_family is None
     fx_wand.font_family = 'sans-serif'
     assert fx_wand.font_family == 'sans-serif'
 
