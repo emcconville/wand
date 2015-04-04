@@ -1281,6 +1281,20 @@ def test_flop(fx_asset):
             assert flopped[-1, -1] == img[0, -1]
 
 
+def test_transpose(fx_asset):
+    with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
+        with img.clone() as transposed:
+            transposed.transpose()
+            assert transposed[501, 501] == Color('srgb(205,196,179)')
+
+
+def test_transverse(fx_asset):
+    with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
+        with img.clone() as transversed:
+            transversed.transverse()
+            assert transversed[500, 500] == Color('srgb(96,136,185)')
+
+
 def test_get_orientation(fx_asset):
     with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
         assert img.orientation == 'undefined'
@@ -1293,6 +1307,31 @@ def test_set_orientation(fx_asset):
     with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
         img.orientation = 'bottom_right'
         assert img.orientation == 'bottom_right'
+
+
+def test_auto_orientation(fx_asset):
+    with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
+            # if orientation is undefined nothing should be changed
+            before = img[100, 100]
+            img.auto_orient()
+            after = img[100, 100]
+            assert before == after
+            assert img.orientation == 'top_left'
+
+    with Image(filename=str(fx_asset.join('orientationtest.jpg'))) as original:
+        with original.clone() as img:
+            # now we should get a flipped image
+            assert img.orientation == 'bottom_left'
+            before = img[100, 100]
+            img.auto_orient()
+            after = img[100, 100]
+            assert before != after
+            assert img.orientation == 'top_left'
+
+            assert img[0, 0] == original[0, -1]
+            assert img[0, -1] == original[0, 0]
+            assert img[-1, 0] == original[-1, -1]
+            assert img[-1, -1] == original[-1, 0]
 
 
 def test_histogram(fx_asset):

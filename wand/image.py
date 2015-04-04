@@ -2388,6 +2388,77 @@ class Image(BaseImage):
         if not result:
             self.raise_exception()
 
+    @manipulative
+    def transpose(self):
+        """Creates a vertical mirror image by reflecting the pixels around
+        the central x-axis while rotating them 90-degrees.
+
+        .. versionadded:: 0.4.1
+        """
+        result = library.MagickTransposeImage(self.wand)
+        if not result:
+            self.raise_exception()
+
+    @manipulative
+    def transverse(self):
+        """Creates a horizontal mirror image by reflecting the pixels around
+        the central y-axis while rotating them 270-degrees.
+
+        .. versionadded:: 0.4.1
+        """
+        result = library.MagickTransverseImage(self.wand)
+        if not result:
+            self.raise_exception()
+
+    @manipulative
+    def _auto_orient(self):
+        """Fallback for :attr:`auto_orient()` method (which wraps :c:func:`MagickAutoOrientImage`),
+        fixes orientation by checking EXIF data.
+
+        .. versionadded:: 0.4.1
+        """
+        exif_orientation = self.metadata.get('exif:orientation')
+        if not exif_orientation:
+            return
+
+        orientation_type = ORIENTATION_TYPES[int(exif_orientation)]
+
+        fn_lookup = {
+            'undefined': None,
+            'top_left': None,
+            'top_right': self.flop,
+            'bottom_right': functools.partial(self.rotate, degree=180.0),
+            'bottom_left': self.flip,
+            'left_top': self.transpose,
+            'right_top': functools.partial(self.rotate, degree=90.0),
+            'right_bottom': self.transverse,
+            'left_bottom': functools.partial(self.rotate, degree=270.0)
+        }
+
+        fn = fn_lookup.get(orientation_type)
+
+        if not fn:
+            return
+
+        fn()
+        self.orientation = 'top_left'
+
+    @manipulative
+    def auto_orient(self):
+        """Adjusts an image so that its orientation is suitable
+        for viewing (i.e. top-left orientation). if available it uses :c:func:`MagickAutoOrientImage`
+        (was added in ImageMagick 6.8.9+) if you have an older magick library,
+        it will use :attr:`_auto_orient()` method for fallback
+
+        .. versionadded:: 0.4.1
+        """
+        try:
+            result = library.MagickAutoOrientImage(self.wand)
+            if not result:
+                self.raise_exception()
+        except AttributeError as e:
+            self._auto_orient()
+
     def border(self, color, width, height):
         """Surrounds the image with a border.
 
