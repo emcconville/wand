@@ -27,6 +27,13 @@ Version 0.4.1
 
 .. _changelog-0.4.0:
 
+Version 0.4.1
+-------------
+
+  - Added :meth:`Image.auto_orientation() <wand.image.auto_orientation>` that fixes orientation by checking EXIF tags
+  - Added :meth:`Image.transverse() <wand.image.transverse>` transverse (MagickTransverseImage)
+  - Added :meth:`Image.transpose() <wand.image.transpose>` transpose (MagickTransposeImage)
+
 Version 0.4.0
 -------------
 
