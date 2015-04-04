@@ -2393,7 +2393,7 @@ class Image(BaseImage):
         """Creates a vertical mirror image by reflecting the pixels around
         the central x-axis while rotating them 90-degrees.
 
-        .. versionadded:: 4.0.1
+        .. versionadded:: 0.4.1
         """
         result = library.MagickTransposeImage(self.wand)
         if not result:
@@ -2404,7 +2404,7 @@ class Image(BaseImage):
         """Creates a horizontal mirror image by reflecting the pixels around
         the central y-axis while rotating them 270-degrees.
 
-        .. versionadded:: 4.0.1
+        .. versionadded:: 0.4.1
         """
         result = library.MagickTransverseImage(self.wand)
         if not result:
@@ -2415,7 +2415,7 @@ class Image(BaseImage):
         """Fallback for :attr:`auto_orient()` method (which wraps :c:func:`MagickAutoOrientImage`),
         fixes orientation by checking EXIF data.
 
-        .. versionadded:: 4.0.1
+        .. versionadded:: 0.4.1
         """
         exif_orientation = self.metadata.get('exif:orientation')
         if not exif_orientation:
@@ -2450,7 +2450,7 @@ class Image(BaseImage):
         (was added in ImageMagick 6.8.9+) if you have an older magick library,
         it will use :attr:`_auto_orient()` method for fallback
 
-        .. versionadded:: 4.0.1
+        .. versionadded:: 0.4.1
         """
         try:
             result = library.MagickAutoOrientImage(self.wand)
