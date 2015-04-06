@@ -336,6 +336,34 @@ try:
 
     library.MagickFlopImage.argtypes = [ctypes.c_void_p]
 
+    library.MagickFrameImage.argtypes = [ctypes.c_void_p,   # wand
+                                         ctypes.c_void_p,   # matte_color
+                                         ctypes.c_size_t,   # width
+                                         ctypes.c_size_t,   # height
+                                         ctypes.c_ssize_t,  # inner_bevel
+                                         ctypes.c_ssize_t]  # outer_bevel
+
+    library.MagickFunctionImage.argtypes = [ctypes.c_void_p,  # wand
+                                            ctypes.c_int,     # MagickFunction
+                                            ctypes.c_size_t,  # number_arguments
+                                            ctypes.POINTER(ctypes.c_double)]  # arguments
+
+    library.MagickFunctionImageChannel.argtypes = [ctypes.c_void_p,  # wand
+                                                   ctypes.c_int,     # channel
+                                                   ctypes.c_int,     # MagickFunction
+                                                   ctypes.c_size_t,  # number_arguments
+                                                   ctypes.POINTER(ctypes.c_double)]  # arguments
+
+    library.MagickFxImage.argtypes = [ctypes.c_void_p,  # wand
+                                      ctypes.c_char_p]  # expression
+    library.MagickFxImage.restype = ctypes.c_void_p
+
+    library.MagickFxImageChannel.argtypes = [ctypes.c_void_p,  # wand
+                                             ctypes.c_int,     # channel
+                                             ctypes.c_char_p]  # expression
+    library.MagickFxImageChannel.restype = ctypes.c_void_p
+
+
     library.MagickResetImagePage.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
 
     library.MagickSampleImage.argtypes = [ctypes.c_void_p, ctypes.c_size_t,
