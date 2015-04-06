@@ -1306,6 +1306,25 @@ def test_flop(fx_asset):
             assert flopped[-1, -1] == img[0, -1]
 
 
+def test_frame(fx_asset):
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+        img.frame(width=4, height=4)
+        assert img[0, 0] == img[-1, -1]
+        assert img[-1, 0] == img[0, -1]
+    with Color('green') as green:
+        with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+            img.frame(matte=green, width=2, height=2)
+            assert img[0, 0] == green
+            assert img[-1, -1] == green
+
+
+def test_fx(fx_asset):
+    with Image(width=2, height=2, background=Color('black')) as xc1:
+        # NavyBlue == #000080
+        with xc1.fx('0.5019', channel='blue') as xc2:
+            assert abs(xc2[0, 0].blue - Color('navy').blue) < 0.0001
+
+
 def test_transpose(fx_asset):
     with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
         with img.clone() as transposed:

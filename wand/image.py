@@ -30,7 +30,7 @@ __all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COLORSPACE_TYPES',
            'COMPOSITE_OPERATORS', 'COMPRESSION_TYPES',
            'EVALUATE_OPS', 'FILTER_TYPES',
            'GRAVITY_TYPES', 'IMAGE_TYPES', 'ORIENTATION_TYPES', 'UNIT_TYPES',
-           'BaseImage', 'ChannelDepthDict', 'ChannelImageDict',
+           'FUNCTION_TYPES', 'BaseImage', 'ChannelDepthDict', 'ChannelImageDict',
            'ClosedImageError', 'HistogramDict', 'Image', 'ImageProperty',
            'Iterator', 'Metadata', 'OptionDict', 'manipulative')
 
@@ -414,6 +414,15 @@ COMPRESSION_TYPES = (
     'lzma',         # Lempel-Ziv-Markov chain algorithm
     'lzw', 'no', 'piz', 'pxr24', 'rle', 'zip', 'zips'
 )
+
+#: (:class:`tuple`) The list of :attr:`Image.function` types.
+#:
+#: - ``'undefined'``
+#: - ``'polynomial'``
+#: - ``'sinusoid'``
+#: - ``'arcsin'``
+#: - ``'arctan'``
+FUNCTION_TYPES = ('undefined', 'polynomial', 'sinusoid', 'arcsin', 'arctan')
 
 
 def manipulative(function):
@@ -1582,6 +1591,103 @@ class BaseImage(Resource):
         result = library.MagickFlopImage(self.wand)
         if not result:
             self.raise_exception()
+
+    @manipulative
+    def frame(self, matte=None, width=1, height=1, inner_bevel=0, outer_bevel=0):
+        """Creates a bordered frame around image. Inner & Outer bevel can simulate
+        a 3D effect.
+
+        :param matte: Color of the frame
+        :type matte: :class:`wand.color.Color`
+        :param width: Total size of frame on x-axis
+        :type width: :class:`numbers.Integral`
+        :param height: Total size of frame on y-axis
+        :type height: :class:`numbers.Integral`
+        :param inner_bevel: Inset shadow length
+        :type inner_bevel: :class:`numbers.Real`
+        :param outer_bevel: Outset highlight length
+        :type outer_bevel: :class:`numbers.Real`
+
+        .. versionadded:: 0.4.1
+        """
+        if matte is None:
+            matte = Color('gray')
+        if not isinstance(matte, Color):
+            raise TypeError('Expecting instance of Color for matte, not ' + repr(matte))
+        if not isinstance(width, numbers.Integral):
+            raise TypeError('Expecting integer for width, not ' + repr(width))
+        if not isinstance(height, numbers.Integral):
+            raise TypeError('Expecting integer for height, not ' + repr(height))
+        if not isinstance(inner_bevel, numbers.Real):
+            raise TypeError('Expecting real number, not ' + repr(inner_bevel))
+        if not isinstance(outer_bevel, numbers.Real):
+            raise TypeError('Expecting real number, not ' + repr(outer_bevel))
+        with matte:
+            library.MagickFrameImage(self.wand,
+                                     matte.resource,
+                                     width, height,
+                                     inner_bevel, outer_bevel)
+
+    @manipulative
+    def function(self, function, arguments, channel=None):
+        """Apply an arithmetic, relational, or logical expression to an image.
+
+        Defaults entire image, but can isolate affects to single color channel
+        by passing :const:`CHANNELS` value to ``channel`` parameter.
+
+        .. note:: Support for function methods added in the following versions
+                  :- ``'polynomial'`` >= 6.4.8-8
+                  :- ``'sinusoid'`` >= 6.4.8-8
+                  :- ``'arcsin'`` >= 6.5.3-1
+                  :- ``'arctan'`` >= 6.5.3-1
+
+        .. versionadded:: 0.4.1
+        """
+        if function not in FUNCTION_TYPES:
+            raise ValueError('expected string from FUNCTION_TYPES, not ' + repr(function))
+        if not isinstance(arguments, collections.Sequence):
+            raise TypeError('expecting sequence of arguments, not ' + repr(arguments))
+        argc = len(arguments)
+        argv = (ctypes.c_double * argc)(*arguments)
+        index = FUNCTION_TYPES.index(function)
+        if channel is None:
+            library.MagickFunctionImage(self.wand, index, argc, argv)
+        elif channel in CHANNELS:
+            library.MagickFunctionImageChannel(self.wand, CHANNELS[channel], index, argc, argv)
+        else:
+            raise ValueError('expected string from CHANNELS, not ' + repr(channel))
+
+    @manipulative
+    def fx(self, expression, channel=None):
+        """Manipulate each pixel on image by given expression.
+
+        FX will preserver current wand instance, and return a new instance of
+        :class:`wand.image.Image` containing affected pixels.
+
+        Defaults entire image, but can isolate affects to single color channel
+        by passing :const:`CHANNELS` value to ``channel`` parameter.
+
+
+        :param expression: The entire FX expression to apply
+        :type expression: :class:`basestring`
+        :param channel: Optional channel to target.
+        :type channel: :const:`CHANNELS`
+        :returns: :class:`wand.image.Image`
+
+        .. versionadded:: 0.4.1
+        """
+        if not isinstance(expression, basestring):
+            raise TypeError('expected basestring for expression, not' + repr(expression))
+        c_expression = binary(expression)
+        if channel is None:
+            new_wand = library.MagickFxImage(self.wand, c_expression)
+        elif channel in CHANNELS:
+            new_wand = library.MagickFxImageChannel(self.wand, CHANNELS[channel], c_expression)
+        else:
+            raise ValueError('expected string from CHANNELS, not ' + repr(channel))
+        if new_wand:
+            return Image(image=BaseImage(new_wand))
+        self.raise_exception()
 
     @manipulative
     def transparentize(self, transparency):
