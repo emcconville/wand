@@ -1636,11 +1636,22 @@ class BaseImage(Resource):
         by passing :const:`CHANNELS` value to ``channel`` parameter.
 
         .. note:: Support for function methods added in the following versions
-                  :- ``'polynomial'`` >= 6.4.8-8
-                  :- ``'sinusoid'`` >= 6.4.8-8
-                  :- ``'arcsin'`` >= 6.5.3-1
-                  :- ``'arctan'`` >= 6.5.3-1
+                  of ImageMagick.
 
+                  - ``'polynomial'`` >= 6.4.8-8
+                  - ``'sinusoid'`` >= 6.4.8-8
+                  - ``'arcsin'`` >= 6.5.3-1
+                  - ``'arctan'`` >= 6.5.3-1
+
+        :param function: A string listed in :const:`FUNCTION_TYPES`
+        :type function: :class:`basestring`
+        :param arguments: A sequence of doubles to apply against ``function``
+        :type arguments: :class:`collections.Sequence`
+        :param channel: Optional :const:`CHANNELS`, defaults all.
+        :type channel: :class:`basestring`
+        :raises exception.ValueError: When a ``function``, or ``channel`` is not
+                                      defined in there respected constant.
+        :raises exception.TypeError: If ``arguments`` is not a sequence.
         .. versionadded:: 0.4.1
         """
         if function not in FUNCTION_TYPES:
@@ -1659,20 +1670,24 @@ class BaseImage(Resource):
 
     @manipulative
     def fx(self, expression, channel=None):
-        """Manipulate each pixel on image by given expression.
+        """Manipulate each pixel of an image by given expression.
 
         FX will preserver current wand instance, and return a new instance of
-        :class:`wand.image.Image` containing affected pixels.
+        :class:`Image` containing affected pixels.
 
         Defaults entire image, but can isolate affects to single color channel
         by passing :const:`CHANNELS` value to ``channel`` parameter.
+
+        .. seealso:: The anatomy of FX expressions can be found at
+                     http://www.imagemagick.org/script/fx.php
 
 
         :param expression: The entire FX expression to apply
         :type expression: :class:`basestring`
         :param channel: Optional channel to target.
         :type channel: :const:`CHANNELS`
-        :returns: :class:`wand.image.Image`
+        :returns: A new instance of an image with expression applied
+        :rtype: :class:`Image`
 
         .. versionadded:: 0.4.1
         """
