@@ -1676,7 +1676,7 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.4.1
         """
-        if not isinstance(expression, basestring):
+        if not isinstance(expression, string_type):
             raise TypeError('expected basestring for expression, not' + repr(expression))
         c_expression = binary(expression)
         if channel is None:
