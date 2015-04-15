@@ -17,6 +17,11 @@ Version 0.4.1
 
 - Fixed Windows memory-deallocate errors on :mod:`wand.drawing` API. [:issue:`226` by Eric McConville]
 
+- Added :meth:`Image.matte() <wand.image.BaseImage.matte>` method for toggling image matte channel.
+- Added :attr:`Image.matte_color <wand.image.BaseImage.matte_color>` property.
+- Added :attr:`Image.virtual_pixel <wand.image.BaseImage.virtual_pixel>` property.
+- Added :meth:`Image.distort() <wand.image.BaseImage.distort>` method.
+
 
 .. _changelog-0.4.0:
 
