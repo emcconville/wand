@@ -1148,14 +1148,14 @@ class BaseImage(Resource):
             if gravity in ('north_west', 'north', 'north_east'):
                 top = 0
             elif gravity in ('west', 'center', 'east'):
-                top = self.height / 2 - height / 2
+                top = int(self.height / 2) - int(height / 2)
             elif gravity in ('south_west', 'south', 'south_east'):
                 top = self.height - height
             # Set `left` based on given gravity
             if gravity in ('north_west', 'west', 'south_west'):
                 left = 0
             elif gravity in ('north', 'center', 'south'):
-                left = self.width / 2 - width / 2
+                left = int(self.width / 2) - int(width / 2)
             elif gravity in ('north_east', 'east', 'south_east'):
                 left = self.width - width
 
