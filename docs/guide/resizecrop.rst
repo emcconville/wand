@@ -122,6 +122,17 @@ an image by ``[left:right, top:bottom]`` with maintaining the original:
    >>> img.size
    (300, 300)
 
+Specifying ``gravity`` along with ``width`` and ``height`` keyword
+arguments allows a simplified cropping alternative.
+
+.. sourcecode:: pyconn
+
+    >>> img.size
+    (300, 300)
+    >>> img.crop(width=40, height=80, gravity='center')
+    >>> img.size
+    (40, 80)
+
 
 Transform images
 ----------------

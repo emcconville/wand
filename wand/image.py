@@ -1118,7 +1118,7 @@ class BaseImage(Resource):
            operator.
 
         .. versionchanged:: 0.4.1
-           Added :attr:`gravity` options. Using ``gravity`` along with
+           Added ``gravity`` option. Using ``gravity`` along with
            ``width`` & ``height`` to auto-adjust ``left`` & ``top``
            attributes.
 

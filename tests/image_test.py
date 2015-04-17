@@ -664,6 +664,29 @@ def test_crop_error(fx_asset):
             img.crop(bottom=1, height=2)
 
 
+def test_crop_gravity(fx_asset):
+    with Image(filename=str(fx_asset.join('croptest.png'))) as img:
+        width = img.width / 3
+        height = img.height / 3
+        with img.clone() as center:
+            center.crop(width=width, height=height, gravity='center')
+            assert center[width/2, height/2] == Color('black')
+        with img.clone() as northwest:
+            northwest.crop(width=width, height=height, gravity='north_west')
+            assert northwest[width/2, height/2] == Color('transparent')
+        with img.clone() as southeast:
+            southeast.crop(width=width, height=height, gravity='south_east')
+            assert southeast[width/2, height/2] == Color('transparent')
+
+
+def test_crop_gravity_error(fx_asset):
+    with Image(filename=str(fx_asset.join('croptest.png'))) as img:
+        with raises(TypeError):
+            img.crop(gravity='center')
+        with raises(ValueError):
+            img.crop(width=1, height=1, gravity='nowhere')
+
+
 @mark.parametrize(('method'), [
     ('resize'),
     ('sample'),
