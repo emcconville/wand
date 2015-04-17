@@ -666,17 +666,19 @@ def test_crop_error(fx_asset):
 
 def test_crop_gravity(fx_asset):
     with Image(filename=str(fx_asset.join('croptest.png'))) as img:
-        width = img.width / 3
-        height = img.height / 3
+        width = int(img.width / 3)
+        height = int(img.height / 3)
+        mid_width = int(width / 2)
+        mid_height = int(height / 2)
         with img.clone() as center:
             center.crop(width=width, height=height, gravity='center')
-            assert center[width/2, height/2] == Color('black')
+            assert center[mid_width, mid_height] == Color('black')
         with img.clone() as northwest:
             northwest.crop(width=width, height=height, gravity='north_west')
-            assert northwest[width/2, height/2] == Color('transparent')
+            assert northwest[mid_width, mid_height] == Color('transparent')
         with img.clone() as southeast:
             southeast.crop(width=width, height=height, gravity='south_east')
-            assert southeast[width/2, height/2] == Color('transparent')
+            assert southeast[mid_width, mid_height] == Color('transparent')
 
 
 def test_crop_gravity_error(fx_asset):
