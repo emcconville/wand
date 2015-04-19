@@ -1053,7 +1053,8 @@ class BaseImage(Resource):
 
     @manipulative
     def crop(self, left=0, top=0, right=None, bottom=None,
-             width=None, height=None, reset_coords=True):
+             width=None, height=None, reset_coords=True,
+             gravity=None):
         """Crops the image in-place.
 
         .. sourcecode:: text
@@ -1103,6 +1104,11 @@ class BaseImage(Resource):
            will be relocated to the upper-left corner of the new image.
            By default is `True`.
         :type reset_coords: :class:`bool`
+        :param gravity: optional flag. If set, will calculate the :attr:`top`
+                        and :attr:`left` attributes. This requires both
+                        :attr:`width` and :attr:`height` parameters to be
+                        included.
+        :type gravity: :const:`GRAVITY_TYPES`
         :raises exceptions.ValueError:
            when one or more arguments are invalid
 
@@ -1110,6 +1116,11 @@ class BaseImage(Resource):
 
            If you want to crop the image but not in-place, use slicing
            operator.
+
+        .. versionchanged:: 0.4.1
+           Added ``gravity`` option. Using ``gravity`` along with
+           ``width`` & ``height`` to auto-adjust ``left`` & ``top``
+           attributes.
 
         .. versionchanged:: 0.1.8
            Made to raise :exc:`~exceptions.ValueError` instead of
@@ -1125,6 +1136,28 @@ class BaseImage(Resource):
         elif not (bottom is None or height is None):
             raise TypeError('parameters bottom and height are exclusive each '
                             'other; use one at a time')
+
+        # Define left & top if gravity is given.
+        if gravity:
+            if width is None or height is None:
+                raise TypeError('Both width and height must be defined with gravity')
+            if gravity not in GRAVITY_TYPES:
+                raise ValueError('expected a string from GRAVITY_TYPES, not '
+                                 + repr(gravity))
+            # Set `top` based on given gravity
+            if gravity in ('north_west', 'north', 'north_east'):
+                top = 0
+            elif gravity in ('west', 'center', 'east'):
+                top = int(self.height / 2) - int(height / 2)
+            elif gravity in ('south_west', 'south', 'south_east'):
+                top = self.height - height
+            # Set `left` based on given gravity
+            if gravity in ('north_west', 'west', 'south_west'):
+                left = 0
+            elif gravity in ('north', 'center', 'south'):
+                left = int(self.width / 2) - int(width / 2)
+            elif gravity in ('north_east', 'east', 'south_east'):
+                left = self.width - width
 
         def abs_(n, m, null=None):
             if n is None:

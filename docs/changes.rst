@@ -4,6 +4,16 @@ Wand Changelog
 0.4 series
 ~~~~~~~~~~
 
+.. _changelog-0.4.1:
+
+Version 0.4.1
+-------------
+
+ - Added ``gravity`` options in :meth:`Image.crop() <wand.image.BaseImage.crop>` method.
+   [:issue:`222` by Eric McConville]
+
+
+
 .. _changelog-0.4.0:
 
 Version 0.4.0
