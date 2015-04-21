@@ -107,8 +107,10 @@ Chroma Key with FX Expressions
 
 The :meth:`Image.fx() <wand.image.BaseImage.fx>` method is a powerful
 tool for evaluating an image's pixel data, and creating an image mask.
-Green screen, or Chroma-key compositing, is a common post-production
-task for manipulating image data, and can be done with FX expressions.
+Green screen, or Chroma-key composting, is a common post-production
+task for manipulating image data, and can be done with `FX expressions`__.
+
+  __ http://www.imagemagick.org/script/fx.php
 
 A transparent mask can be calculated by applying the following
 expression::
