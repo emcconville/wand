@@ -9,23 +9,17 @@ Wand Changelog
 Version 0.4.1
 -------------
 
+- Fixed Windows memory-deallocate errors on :mod:`wand.drawing` API. [:issue:`226` by Eric McConville]
+- Added :meth:`Image.auto_orientation() <wand.image.auto_orientation>` that fixes orientation by checking EXIF tags
+- Added :meth:`Image.transverse() <wand.image.transverse>` transverse (MagickTransverseImage)
+- Added :meth:`Image.transpose() <wand.image.transpose>` transpose (MagickTransposeImage)
+- Added ``gravity`` options in :meth:`Image.crop() <wand.image.BaseImage.crop>` method.
+   [:issue:`222` by Eric McConville]
 - Additional query functions have been added to :mod:`wand.version` API. [:issue:`120`]
 
   - Added :func:`configure_options() <wand.version.configure_options>` function.
   - Added :func:`fonts() <wand.version.fonts>` function.
   - Added :func:`formats() <wand.version.formats>` function.
-
-- Fixed Windows memory-deallocate errors on :mod:`wand.drawing` API. [:issue:`226` by Eric McConville]
-
-
-.. _changelog-0.4.0:
-
-Version 0.4.1
--------------
-
-  - Added :meth:`Image.auto_orientation() <wand.image.auto_orientation>` that fixes orientation by checking EXIF tags
-  - Added :meth:`Image.transverse() <wand.image.transverse>` transverse (MagickTransverseImage)
-  - Added :meth:`Image.transpose() <wand.image.transpose>` transpose (MagickTransposeImage)
 
 Version 0.4.0
 -------------
