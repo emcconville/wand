@@ -664,6 +664,21 @@ def test_crop_error(fx_asset):
             img.crop(bottom=1, height=2)
 
 
+def test_extent(fx_asset):
+    with Image(filename=str(fx_asset.join('croptest.png'))) as img:
+        with img.clone() as extended:
+            assert extended.size == img.size
+            extended.extent(width=500)
+            assert extended.width == 500
+            assert extended.height == img.height
+
+        with img.clone() as extended:
+            assert extended.size == img.size
+            extended.extent(height=500)
+            assert extended.width == img.width
+            assert extended.height == 500
+
+
 @mark.parametrize(('method'), [
     ('resize'),
     ('sample'),

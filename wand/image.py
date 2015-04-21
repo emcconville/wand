@@ -1165,6 +1165,38 @@ class BaseImage(Resource):
             if reset_coords:
                 self.reset_coords()
 
+    @manipulative
+    def extent(self, width=None, height=None, x=0, y=0):
+        """extends the image as defined by the geometry, gravity, and wand
+        background color. Set the (x,y) offset of the geometry to move the
+        original wand relative to the extended wand.
+
+        :param width: the :attr:`width` of the extended image.
+                      default is the :attr:`width` of the image.
+        :type width: :class:`numbers.Integral`
+        :param height: the :attr:`height` of the extended image.
+                       default is the :attr:`height` of the image.
+        :type height: :class:`numbers.Integral`
+        :param x: the :attr:`x` offset of the extended image.
+                      default is 0
+        :type x: :class:`numbers.Integral`
+        :param y: the :attr:`y` offset of the extended image.
+                       default is 0
+        :type y: :class:`numbers.Integral`
+        """
+        if width is None:
+            width = self.width
+        if height is None:
+            height = self.height
+        if width < 1:
+            raise ValueError('image width cannot be zero')
+        elif height < 1:
+            raise ValueError('image height cannot be zero')
+
+        result = library.MagickExtentImage(self.wand, width, height, x, y)
+        if not result:
+            self.raise_exception()
+
     def reset_coords(self):
         """Reset the coordinate frame of the image so to the upper-left corner
         is (0, 0) again (crop and rotate operations change it).
