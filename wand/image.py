@@ -1667,6 +1667,7 @@ class BaseImage(Resource):
             library.MagickFunctionImageChannel(self.wand, CHANNELS[channel], index, argc, argv)
         else:
             raise ValueError('expected string from CHANNELS, not ' + repr(channel))
+        self.raise_exception()
 
     @manipulative
     def fx(self, expression, channel=None):

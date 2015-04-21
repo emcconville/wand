@@ -13,7 +13,7 @@ from pytest import mark, raises
 from wand.image import ClosedImageError, Image
 from wand.color import Color
 from wand.compat import PY3, string_type, text, text_type
-from wand.exceptions import MissingDelegateError
+from wand.exceptions import OptionError, MissingDelegateError
 from wand.font import Font
 
 
@@ -1318,12 +1318,46 @@ def test_frame(fx_asset):
             assert img[-1, -1] == green
 
 
+def test_frame_error(fx_asset):
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+        with raises(TypeError):
+            img.frame(width='one')
+        with raises(TypeError):
+            img.frame(height=3.5)
+        with raises(TypeError):
+            img.frame(matte='green')
+        with raises(TypeError):
+            img.frame(inner_bevel=None)
+        with raises(TypeError):
+            img.frame(outer_bevel='large')
+
+
 def test_fx(fx_asset):
     with Image(width=2, height=2, background=Color('black')) as xc1:
         # NavyBlue == #000080
         with xc1.fx('0.5019', channel='blue') as xc2:
             assert abs(xc2[0, 0].blue - Color('navy').blue) < 0.0001
 
+    with Image(width=2, height=1, background=Color('white')) as xc1:
+        with xc1.fx('0') as xc2:
+            assert xc2[0, 0].red == 0
+
+
+def test_fx_error(fx_asset):
+    with Image() as empty_wand:
+        with raises(AttributeError):
+            with empty_wand.fx('8'):
+                pass
+    with Image(filename='rose:') as xc:
+        with raises(OptionError):
+            with xc.fx('/0'):
+                pass
+        with raises(TypeError):
+            with xc.fx(('p[0,0]',)):
+                pass
+        with raises(ValueError):
+            with xc.fx('p[0,0]', True):
+                pass
 
 def test_transpose(fx_asset):
     with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
