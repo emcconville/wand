@@ -6,6 +6,7 @@
 """
 import collections
 import contextlib
+import ctypes
 import numbers
 
 from .api import libmagick, library
@@ -246,6 +247,19 @@ class Sequence(ImageProperty, collections.MutableSequence):
             self.instances[offset:] = null_list
         else:
             self.instances[offset:offset] = null_list
+
+    def _repr_png_(self):
+        library.MagickResetIterator(self.image.wand)
+        repr_wand = library.MagickAppendImages(self.image.wand, 1)
+        length = ctypes.c_size_t()
+        blob_p = library.MagickGetImagesBlob(repr_wand,
+                                             ctypes.byref(length))
+        if blob_p and length.value:
+            blob = ctypes.string_at(blob_p, length.value)
+            library.MagickRelinquishMemory(blob_p)
+            return blob
+        else:
+            return None
 
 
 class SingleImage(BaseImage):

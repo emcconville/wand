@@ -1121,7 +1121,7 @@ try:
                                         ctypes.c_double] # height
     library.DrawPushClipPath.restype = ctypes.c_uint
     library.PopDrawingWand.argtypes = [ctypes.c_void_p]
-    library.PopDrawingWandrestype = ctypes.c_uint
+    library.PopDrawingWand.restype = ctypes.c_uint
     library.DrawPopClipPath.argtypes = [ctypes.c_void_p]
     library.DrawPopDefs.argtypes = [ctypes.c_void_p]
     library.DrawPopPattern.argtypes = [ctypes.c_void_p]
@@ -1161,6 +1161,11 @@ try:
                                             ctypes.c_double,
                                             ctypes.c_double,
                                             ctypes.c_double]
+
+    library.MagickAppendImages.argtypes = [ctypes.c_void_p,
+                                           ctypes.c_int]
+    library.MagickAppendImages.restype = ctypes.c_void_p
+
 except AttributeError:
     raise ImportError('MagickWand shared library not found or incompatible\n'
                       'Original exception was raised in:\n' +

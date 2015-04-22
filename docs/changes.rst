@@ -11,7 +11,10 @@ Version 0.4.1
 
  - Added ``gravity`` options in :meth:`Image.crop() <wand.image.BaseImage.crop>` method.
    [:issue:`222` by Eric McConville]
+- Additional IPython support. [:issue:`117`]
 
+  - Render RGB :class:`Color <wand.color.Color>` preview.
+  - Display each frame in image :class:`Sequence <wand.sequence.Sequence>`.
 
 
 .. _changelog-0.4.0:

@@ -273,6 +273,18 @@ class Color(Resource):
         c = type(self)
         return '{0}.{1}({2!r})'.format(c.__module__, c.__name__, self.string)
 
+    def _repr_html_(self):
+        html = """
+        <span style="background-color:#{red:02X}{green:02X}{blue:02X};
+                     display:inline-block;
+                     line-height:1em;
+                     width:1em;">&nbsp;</span>
+        <strong>#{red:02X}{green:02X}{blue:02X}</strong>
+        """
+        return html.format(red=self.red_int8,
+                           green=self.green_int8,
+                           blue=self.blue_int8)
+
 
 def scale_quantum_to_int8(quantum):
     """Straightforward port of :c:func:`ScaleQuantumToChar()` inline
