@@ -1332,6 +1332,27 @@ def test_frame_error(fx_asset):
             img.frame(outer_bevel='large')
 
 
+def test_function(fx_asset):
+    with Image(filename=str(fx_asset.join('croptest.png'))) as img:
+        img.function(function='polynomial',
+                     arguments=(4, -4, 1))
+        assert img[150, 150] == Color('white')
+        img.function(function='sinusoid',
+                     arguments=(1,),
+                     channel='red')
+        assert abs(img[150, 150].red - Color('#80FFFF').red) < 0.01
+
+
+def test_function_error(fx_asset):
+    with Image(filename=str(fx_asset.join('croptest.png'))) as img:
+        with raises(ValueError):
+            img.function('bad function', 1)
+        with raises(TypeError):
+            img.function('sinusoid', 1)
+        with raises(ValueError):
+            img.function('sinusoid', (1,), channel='bad channel')
+
+
 def test_fx(fx_asset):
     with Image(width=2, height=2, background=Color('black')) as xc1:
         # NavyBlue == #000080
