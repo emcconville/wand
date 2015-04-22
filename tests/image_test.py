@@ -678,6 +678,12 @@ def test_extent(fx_asset):
             assert extended.width == img.width
             assert extended.height == 500
 
+        with raises(ValueError):
+            img.extent(width=0)
+
+        with raises(ValueError):
+            img.extent(height=0)
+
 
 @mark.parametrize(('method'), [
     ('resize'),
