@@ -320,6 +320,21 @@ def test_set_units(fx_asset):
         assert img.units == "pixelspercentimeter"
 
 
+def test_get_virtual_pixel(fx_asset):
+    """Gets image virtual pixel"""
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+        assert img.virtual_pixel == "undefined"
+
+
+def test_set_virtual_pixel(fx_asset):
+    """Sets image virtual pixel"""
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+        img.virtual_pixel = "tile"
+        assert img.virtual_pixel == "tile"
+        with raises(ValueError):
+            img.virtual_pixel = "nothing"
+
+
 def test_get_colorspace(fx_asset):
     """Gets the image colorspace"""
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
@@ -689,6 +704,28 @@ def test_crop_gravity_error(fx_asset):
             img.crop(width=1, height=1, gravity='nowhere')
 
 
+@mark.slow
+def test_distort(fx_asset):
+    """Distort image."""
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+        with Color('skyblue') as color:
+            img.matte_color = color
+            img.virtual_pixel = 'tile'
+            img.distort('perspective', (0, 0, 20, 60, 90, 0,
+                                        70, 63, 0, 90, 5, 83,
+                                        90, 90, 85, 88))
+            assert img[img.width - 1, 0] == color
+
+
+def test_distort_error(fx_asset):
+    """Distort image with user error"""
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+        with raises(ValueError):
+            img.distort('mirror', (1,))
+        with raises(TypeError):
+            img.distort('perspective', 1)
+
+
 @mark.parametrize(('method'), [
     ('resize'),
     ('sample'),
@@ -969,6 +1006,22 @@ def test_set_background_color(fx_asset):
             img.background_color = color
             assert img.background_color == color
 
+
+def test_set_get_matte_color(fx_asset):
+    with Image(filename='rose:') as img:
+        with Color('navy') as color:
+            img.matte_color = color
+            assert img.matte_color == color
+            with raises(TypeError):
+                img.matte_color = False
+
+
+def test_set_matte(fx_asset):
+    with Image(filename='rose:') as img:
+        img.matte(True)
+        img.matte(False)
+        with raises(TypeError):
+            img.matte('true')
 
 def test_transparentize(fx_asset):
     with Image(filename=str(fx_asset.join('croptest.png'))) as im:

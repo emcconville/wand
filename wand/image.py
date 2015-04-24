@@ -425,6 +425,62 @@ COMPRESSION_TYPES = (
 FUNCTION_TYPES = ('undefined', 'polynomial', 'sinusoid', 'arcsin', 'arctan')
 
 
+#: (:class:`tuple`) The list of :method:`Image.distort` methods.
+#:
+#: - ``'undefined'``
+#: - ``'affine'``
+#: - ``'affine_projection'``
+#: - ``'scale_rotate_translate'``
+#: - ``'perspective'``
+#: - ``'perspective_projection'``
+#: - ``'bilinear_forward'``
+#: - ``'bilinear_reverse'``
+#: - ``'polynomial'``
+#: - ``'arc'``
+#: - ``'polar'``
+#: - ``'depolar'``
+#: - ``'cylinder_2_plane'``
+#: - ``'plane_2_cylinder'``
+#: - ``'barrel'``
+#: - ``'barrel_inverse'``
+#: - ``'shepards'``
+#: - ``'resize'``
+#: - ``'sentinel'``
+#:
+#: .. versionadded:: 0.4.1
+DISTORTION_METHODS = ('undefined', 'affine', 'affine_projection', 'scale_rotate_translate',
+                      'perspective', 'perspective_projection', 'bilinear_forward',
+                      'bilinear_reverse', 'polynomial', 'arc', 'polar', 'depolar',
+                      'cylinder_2_plane', 'plane_2_cylinder', 'barrel', 'barrel_inverse',
+                      'shepards', 'resize', 'sentinel')
+
+#: (:class:`tuple`) The list of :attr:`~BaseImage.virtual_pixel` types.
+#: - ``'undefined'``
+#: - ``'background'``
+#: - ``'constant'``
+#: - ``'dither'``
+#: - ``'edge'``
+#: - ``'mirror'``
+#: - ``'random'``
+#: - ``'tile'``
+#: - ``'transparent'``
+#: - ``'mask'``
+#: - ``'black'``
+#: - ``'gray'``
+#: - ``'white'``
+#: - ``'horizontal_tile'``
+#: - ``'vertical_tile'``
+#: - ``'horizontal_tile_edge'``
+#: - ``'vertical_tile_edge'``
+#: - ``'checker_tile'``
+#:
+#: .. versionadded:: 0.4.1
+VIRTUAL_PIXEL_METHOD = ('undefined', 'background', 'constant', 'dither',
+                        'edge', 'mirror', 'random', 'tile', 'transparent',
+                        'mask', 'black', 'gray', 'white', 'horizontal_tile',
+                        'vertical_tile', 'horizontal_tile_edge',
+                        'vertical_tile_edge', 'checker_tile')
+
 def manipulative(function):
     """Mark the operation manipulating itself instead of returning new one."""
     @functools.wraps(function)
@@ -868,6 +924,23 @@ class BaseImage(Resource):
             self.raise_exception()
 
     @property
+    def virtual_pixel(self):
+        """(:class:`basestring`) The virtual pixel of image.
+        This can also be set with a value from :const:`VIRTUAL_PIXEL_METHOD`
+        ... versionadded:: 0.4.1
+        """
+        method_index = library.MagickGetImageVirtualPixelMethod(self.wand)
+        return VIRTUAL_PIXEL_METHOD[method_index]
+
+    @virtual_pixel.setter
+    def virtual_pixel(self, method):
+        if method not in VIRTUAL_PIXEL_METHOD:
+            raise ValueError('expected method from VIRTUAL_PIXEL_METHOD,'
+                             ' not ' + repr(method))
+        library.MagickSetImageVirtualPixelMethod(self.wand,
+                                                 VIRTUAL_PIXEL_METHOD.index(method))
+
+    @property
     def colorspace(self):
         """(:class:`basestring`) The image colorspace.
 
@@ -1037,6 +1110,38 @@ class BaseImage(Resource):
             if not result:
                 self.raise_exception()
 
+    def matte(self, flag):
+        if flag is True:
+            flag = 1
+        elif flag is False:
+            flag = 0
+        else:
+            raise TypeError('matte must be bool, not ' + repr(flag))
+        library.MagickSetImageMatte(self.wand, flag)
+
+    @property
+    def matte_color(self):
+        pixel = library.NewPixelWand()
+        result = library.MagickGetImageMatteColor(self.wand, pixel)
+        if result:
+            size = ctypes.sizeof(MagickPixelPacket)
+            buffer = ctypes.create_string_buffer(size)
+            library.PixelGetMagickColor(pixel, buffer)
+            return Color(raw=buffer)
+        self.raise_exception()
+
+    @matte_color.setter
+    @manipulative
+    def matte_color(self, color):
+        if not isinstance(color, Color):
+            raise TypeError('color must be a wand.color.Color object, not ' +
+                            repr(color))
+        with color:
+            result = library.MagickSetImageMatteColor(self.wand,
+                                                      color.resource)
+            if not result:
+                self.raise_exception()
+
     @property
     def quantum_range(self):
         """(:class:`int`) The maxumim value of a color channel that is
@@ -1059,6 +1164,34 @@ class BaseImage(Resource):
 
         """
         return HistogramDict(self)
+
+    @manipulative
+    def distort(self, method, arguments, best_fit=False):
+        """Distorts an image using various distorting methods.
+
+        :param method: Distortion method name from :const:`DISTORTION_METHODS`
+        :type method: :class:`basestring`
+        :param arguments: List of distorting float arguments
+                          unique to distortion method
+        :type arguments: :class:`collections.Sequence`
+        :param best_fit: Attempt to resize resulting image fit distortion.
+                         Defaults False
+        :type best_fit: :class:`bool`
+
+        .. versionadded:: 0.4.1
+        """
+        if method not in DISTORTION_METHODS:
+            raise ValueError('expected string from DISTORTION_METHODS, not ' + repr(method))
+        if not isinstance(arguments, collections.Sequence):
+            raise TypeError('expected sequence of doubles, not ' + repr(arguments))
+        argc = len(arguments)
+        argv = (ctypes.c_double * argc)(*arguments)
+        library.MagickDistortImage(self.wand,
+                                   DISTORTION_METHODS.index(method),
+                                   argc, argv, bool(best_fit))
+        self.raise_exception()
+
+
 
     @manipulative
     def crop(self, left=0, top=0, right=None, bottom=None,

@@ -253,6 +253,14 @@ try:
     library.MagickSetImageBackgroundColor.argtypes = [ctypes.c_void_p,
                                                       ctypes.c_void_p]
 
+    library.MagickSetImageMatte.argtypes = [ctypes.c_void_p, ctypes.c_int]
+
+    library.MagickGetImageMatteColor.argtypes = [ctypes.c_void_p,
+                                                 ctypes.c_void_p]
+
+    library.MagickSetImageMatteColor.argtypes = [ctypes.c_void_p,
+                                                 ctypes.c_void_p]
+
     library.MagickGetImageAlphaChannel.argtypes = [ctypes.c_void_p]
     library.MagickGetImageAlphaChannel.restype = ctypes.c_size_t
 
@@ -304,6 +312,10 @@ try:
     library.MagickGetImageUnits.argtypes = [ctypes.c_void_p]
 
     library.MagickSetImageUnits.argtypes = [ctypes.c_void_p, ctypes.c_int]
+
+    library.MagickGetImageVirtualPixelMethod.argtypes = [ctypes.c_void_p]
+
+    library.MagickSetImageVirtualPixelMethod.argtypes = [ctypes.c_void_p, ctypes.c_int]
 
     library.MagickGetImageColorspace.argtypes = [ctypes.c_void_p]
     library.MagickGetImageColorspace.restype = ctypes.c_int
@@ -938,6 +950,14 @@ try:
                                             ctypes.c_double,
                                             ctypes.c_char_p]
     library.MagickAnnotateImage.restype = ctypes.c_int
+
+    library.MagickDistortImage.argtypes = [ctypes.c_void_p,  # wand
+                                           ctypes.c_int,     # method
+                                           ctypes.c_size_t,  # number_arguments
+                                           ctypes.POINTER(ctypes.c_double),  # arguments
+                                           ctypes.c_int]     # bestfit
+    library.MagickDistortImage.restype = ctypes.c_int
+
 
     library.ClearDrawingWand.argtypes = [ctypes.c_void_p]
 
