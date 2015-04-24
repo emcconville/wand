@@ -1177,12 +1177,11 @@ class BaseImage(Resource):
             raise TypeError('expected sequence of doubles, not ' + repr(arguments))
         argc = len(arguments)
         argv = (ctypes.c_double * argc)(*arguments)
-        ok = library.MagickDistortImage(self.wand,
-                                        DISTORTION_METHODS.index(method),
-                                        argc, argv, bool(best_fit))
-        if not ok:
-            self.raise_exception()
-        return ok
+        library.MagickDistortImage(self.wand,
+                                   DISTORTION_METHODS.index(method),
+                                   argc, argv, bool(best_fit))
+        self.raise_exception()
+
 
 
     @manipulative

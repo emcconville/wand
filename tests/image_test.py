@@ -691,6 +691,15 @@ def test_distort(fx_asset):
             assert img[img.width - 1, 0] == color
 
 
+def test_distort_error(fx_asset):
+    """Distort image with user error"""
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+        with raises(ValueError):
+            img.distort('mirror', (1,))
+        with raises(TypeError):
+            img.distort('perspective', 1)
+
+
 @mark.parametrize(('method'), [
     ('resize'),
     ('sample'),
