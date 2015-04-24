@@ -679,6 +679,7 @@ def test_crop_error(fx_asset):
             img.crop(bottom=1, height=2)
 
 
+@mark.slow
 def test_distort(fx_asset):
     """Distort image."""
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
