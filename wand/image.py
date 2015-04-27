@@ -1111,6 +1111,14 @@ class BaseImage(Resource):
                 self.raise_exception()
 
     def matte(self, flag):
+        """Sets the image matte channel.
+
+        :param flag: Matte channel enabled
+        :type flag: bool
+        :raises exceptions.TypeError: with invalid argument
+
+        .. versionadded:: 0.4.1
+        """
         if flag is True:
             flag = 1
         elif flag is False:
@@ -1121,13 +1129,18 @@ class BaseImage(Resource):
 
     @property
     def matte_color(self):
+        """(:class:`wand.color.Color`) The color value of the matte channel.
+        This can also be set.
+
+        ..versionadded:: 0.4.1
+        """
         pixel = library.NewPixelWand()
         result = library.MagickGetImageMatteColor(self.wand, pixel)
         if result:
-            size = ctypes.sizeof(MagickPixelPacket)
-            buffer = ctypes.create_string_buffer(size)
-            library.PixelGetMagickColor(pixel, buffer)
-            return Color(raw=buffer)
+            pixel_size = ctypes.sizeof(MagickPixelPacket)
+            pixel_buffer = ctypes.create_string_buffer(pixel_size)
+            library.PixelGetMagickColor(pixel, pixel_buffer)
+            return Color(raw=pixel_buffer)
         self.raise_exception()
 
     @matte_color.setter
