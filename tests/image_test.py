@@ -15,7 +15,7 @@ from wand.color import Color
 from wand.compat import PY3, string_type, text, text_type
 from wand.exceptions import MissingDelegateError
 from wand.font import Font
-
+from wand.version import QUANTUM_DEPTH
 
 try:
     filesystem_encoding = sys.getfilesystemencoding()
@@ -1248,6 +1248,37 @@ def test_normalize_channel(fx_asset):
             assert getattr(img[-1, 0], c) == getattr(right_top, c)
             assert getattr(img[-1, -1], c) == getattr(right_bottom, c)
 
+def test_level_default(fx_asset):
+    im_qr = pow(2, QUANTUM_DEPTH)
+    with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
+        # Adjust the levels to make this image entirely black
+        img.level(im_qr, 1.0, im_qr)
+        with img[0, 0] as dark:
+            assert dark.red_int8 <= dark.green_int8 <= dark.blue_int8 <= 0
+        with img[0, -1] as dark:
+            assert dark.red_int8 <= dark.green_int8 <= dark.blue_int8 <= 0
+    with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
+        # Adjust the levels to make this image entirely white
+        img.level(0, 1.0, 0)
+        with img[0, 0] as light:
+            assert light.red_int8 >= light.green_int8 >= light.blue_int8 >= 255
+        with img[0, -1] as light:
+            assert light.red_int8 >= light.green_int8 >= light.blue_int8 >= 255
+
+def test_level_channel(fx_asset):
+    im_qr = pow(2, QUANTUM_DEPTH)
+    for chan in ('red', 'green', 'blue'):
+        c = chan + '_int8'
+        with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
+            # Adjust each channel level to make it entirely black
+            img.level(im_qr, 1.0, im_qr, chan)
+            assert(getattr(img[0, 0], c) <= 0)
+            assert(getattr(img[0, -1], c) <= 0)
+        with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
+            # Adjust each channel level to make it entirely white
+            img.level(0, 1.0, 0, chan)
+            assert(getattr(img[0, 0], c) >= 255)
+            assert(getattr(img[0, -1], c) >= 255)
 
 def test_equalize(fx_asset):
     with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
