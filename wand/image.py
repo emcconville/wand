@@ -254,7 +254,7 @@ EVALUATE_OPS = ('undefined', 'add', 'and', 'divide', 'leftshift', 'max',
                 'thresholdwhite', 'gaussiannoise', 'impulsenoise',
                 'laplaciannoise', 'multiplicativenoise', 'poissonnoise',
                 'uniformnoise', 'cosine', 'sine', 'addmodulus', 'mean',
-                'abs', 'exponential', 'median', 'sum')
+                'abs', 'exponential', 'median', 'sum', 'rootmeansquare')
 
 #: (:class:`tuple`) The list of colorspaces.
 #:
@@ -1713,6 +1713,27 @@ class BaseImage(Resource):
                     self.raise_exception()
                 if reset_coords:
                     self.reset_coords()
+
+    @manipulative
+    def evaluate(self, operator=None, value=0.0, channel=None):
+        """Apply arithmetic, relational, or logical expression to an image.
+        .. versionadded:: 0.4.1
+        """
+        if operator not in EVALUATE_OPS:
+            raise ValueError('expected value from EVALUATE_OPS, not ' + repr(operator))
+        if not isinstance(value, numbers.Real):
+            raise TypeError('value must be real number, not ' + repr(value))
+        if channel:
+            if channel not in CHANNELS:
+                raise ValueError('expected value from CHANNELS, not ' + repr(channel))
+            library.MagickEvaluateImageChannel(self.wand,
+                                               CHANNELS[channel],
+                                               EVALUATE_OPS.index(operator),
+                                               value)
+        else:
+            library.MagickEvaluateImage(self.wand,
+                                        EVALUATE_OPS.index(operator), value)
+        self.raise_exception()
 
     @manipulative
     def flip(self):
