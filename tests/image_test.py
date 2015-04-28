@@ -1249,36 +1249,58 @@ def test_normalize_channel(fx_asset):
             assert getattr(img[-1, -1], c) == getattr(right_bottom, c)
 
 def test_level_default(fx_asset):
-    im_qr = pow(2, QUANTUM_DEPTH)
     with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
         # Adjust the levels to make this image entirely black
-        img.level(im_qr, 1.0, im_qr)
+        img.level(1, 1)
         with img[0, 0] as dark:
             assert dark.red_int8 <= dark.green_int8 <= dark.blue_int8 <= 0
         with img[0, -1] as dark:
             assert dark.red_int8 <= dark.green_int8 <= dark.blue_int8 <= 0
     with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
         # Adjust the levels to make this image entirely white
-        img.level(0, 1.0, 0)
+        img.level(0, 0)
         with img[0, 0] as light:
             assert light.red_int8 >= light.green_int8 >= light.blue_int8 >= 255
         with img[0, -1] as light:
             assert light.red_int8 >= light.green_int8 >= light.blue_int8 >= 255
+    with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
+        # Adjust the image's gamma to darken its midtones
+        img.level(0, 1, 0.5)
+        with img[0, len(img) // 2] as light:
+            assert light.red_int8 <= light.green_int8 <= light.blue_int8 <= 65
+            assert light.red_int8 >= light.green_int8 >= light.blue_int8 >= 60
+    with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
+        # Adjust the image's gamma to lighten its midtones
+        img.level(0, 1, 2.5)
+        with img[0, len(img) // 2] as light:
+            assert light.red_int8 <= light.green_int8 <= light.blue_int8 <= 195
+            assert light.red_int8 >= light.green_int8 >= light.blue_int8 >= 190
 
 def test_level_channel(fx_asset):
-    im_qr = pow(2, QUANTUM_DEPTH)
     for chan in ('red', 'green', 'blue'):
         c = chan + '_int8'
         with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
             # Adjust each channel level to make it entirely black
-            img.level(im_qr, 1.0, im_qr, chan)
+            img.level(1, 1, channel=chan)
             assert(getattr(img[0, 0], c) <= 0)
             assert(getattr(img[0, -1], c) <= 0)
         with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
             # Adjust each channel level to make it entirely white
-            img.level(0, 1.0, 0, chan)
+            img.level(0, 0, channel=chan)
             assert(getattr(img[0, 0], c) >= 255)
             assert(getattr(img[0, -1], c) >= 255)
+        with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
+            # Adjust each channel's gamma to darken its midtones
+            img.level(0, 1, 0.5, chan)
+            with img[0, len(img) // 2] as light:
+                assert(getattr(light, c) <= 65)
+                assert(getattr(light, c) >= 60)
+        with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
+            # Adjust each channel's gamma to lighten its midtones
+            img.level(0, 1, 2.5, chan)
+            with img[0, len(img) // 2] as light:
+                assert(getattr(light, c) >= 190)
+                assert(getattr(light, c) <= 195)
 
 def test_equalize(fx_asset):
     with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
