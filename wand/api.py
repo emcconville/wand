@@ -531,6 +531,14 @@ try:
                                                           ctypes.c_double,  # black
                                                           ctypes.c_double]  # white
 
+    library.MagickGammaImage.argtypes = [ctypes.c_void_p,
+                                         ctypes.c_double]
+
+    library.MagickGammaImageChannel.argtypes = [ctypes.c_void_p,
+                                                ctypes.c_int,
+                                                ctypes.c_double]
+
+
     library.MagickLinearStretchImage.argtypes = [ctypes.c_void_p,  # wand
                                                  ctypes.c_double,  # black
                                                  ctypes.c_double]  # white
