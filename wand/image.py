@@ -1205,7 +1205,6 @@ class BaseImage(Resource):
         self.raise_exception()
 
 
-
     @manipulative
     def crop(self, left=0, top=0, right=None, bottom=None,
              width=None, height=None, reset_coords=True,
@@ -2802,6 +2801,30 @@ class Image(BaseImage):
                                                width, height)
         if not result:
             self.raise_exception()
+
+    def contrast_stretch(self, black_point=0.0, white_point=1.0, channel=None):
+        contrast_range = float(self.width * self.height)
+        black_point *= contrast_range
+        white_point *= contrast_range
+        if channel in CHANNELS:
+            library.MagickContrastStretchImageChannel(self.wand,
+                                                      CHANNELS[channel],
+                                                      black_point,
+                                                      white_point)
+        elif channel is None:
+            library.MagickContrastStretchImage(self.wand,
+                                               black_point,
+                                               white_point)
+        else:
+            raise ValueError(repr(channel) + ' is an invalid channel type'
+                             '; see wand.image.CHANNELS dictionary')
+        self.raise_exception()
+
+    def linear_stretch(self, black_point=0.0, white_point=1.0):
+        quantum_range = self.quantum_range
+        library.MagickLinearStretchImage(self.wand,
+                                         quantum_range * black_point,
+                                         quantum_range * white_point)
 
     def normalize(self, channel=None):
         """Normalize color channels.

@@ -522,14 +522,14 @@ try:
                                                    ctypes.c_int,
                                                    ctypes.c_double]
 
-    library.MagickContrastImage.argtypes = [ctypes.c_void_p,  # wand
-                                            ctypes.c_double,  # black
-                                            ctypes.c_double]  # white
-
-    library.MagickContrastImageChannel.argtypes = [ctypes.c_void_p,  # wand
-                                                   ctypes.c_int,     # channel
+    library.MagickContrastStretchImage.argtypes = [ctypes.c_void_p,  # wand
                                                    ctypes.c_double,  # black
                                                    ctypes.c_double]  # white
+
+    library.MagickContrastStretchImageChannel.argtypes = [ctypes.c_void_p,  # wand
+                                                          ctypes.c_int,     # channel
+                                                          ctypes.c_double,  # black
+                                                          ctypes.c_double]  # white
 
     library.MagickLinearStretchImage.argtypes = [ctypes.c_void_p,  # wand
                                                  ctypes.c_double,  # black
