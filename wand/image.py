@@ -2835,14 +2835,14 @@ class Image(BaseImage):
         self.raise_exception()
 
     @manipulative
-    def gamma(self, gamma_point, channel=None):
+    def gamma(self, adjustment_value, channel=None):
         """Gamma correct image.
 
         Specific color channels can be correct individual. Typical values
         range between 0.8 and 2.3.
 
-        :param gamma_point: Value to adjust gamma level
-        :type gamma_point: :class:`numbers.Real`
+        :param adjustment_value: Value to adjust gamma level
+        :type adjustment_value: :class:`numbers.Real`
         :param channel: Optional channel to apply gamma correction
         :type channel: :class:`basestring`
         :raises: :exc:`TypeError` if ``gamma_point`` is not a :class:`numbers.Real`
@@ -2850,14 +2850,14 @@ class Image(BaseImage):
 
         .. versionadded::0.4.1
         """
-        if not isinstance(gamma_point, numbers.Real):
-            raise TypeError('expecting float, not ' + repr(gamma_point))
+        if not isinstance(adjustment_value, numbers.Real):
+            raise TypeError('expecting float, not ' + repr(adjustment_value))
         if channel in CHANNELS:
             library.MagickGammaImageChannel(self.wand,
                                             CHANNELS[channel],
-                                            gamma_point)
+                                            adjustment_value)
         elif channel is None:
-            library.MagickGammaImage(self.wand, gamma_point)
+            library.MagickGammaImage(self.wand, adjustment_value)
         else:
             raise ValueError(repr(channel) + ' is an invalid channel type'
                              '; see wand.image.CHANNELS dictionary')
