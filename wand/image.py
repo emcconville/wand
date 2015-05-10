@@ -1054,32 +1054,60 @@ class BaseImage(Resource):
     @property
     def alpha_channel(self):
         """(:class:`bool`) Get state of image alpha channel.
-        It can also be used to enable/disable alpha channel.
+        It can also be used to enable/disable alpha channel, but with different
+        behavior new, copied, or existing.
+
+        Behavior of setting :attr:`alpha_channel` is defined with the
+        following values:
+
+        - ``'activate'``, ``'on'``, or :class:`True` will enable an images
+           alpha channel. Existing alpha data is preserved.
+        - ``'deactivate'``, ``'off'``, or :class:`False` will disable an images
+           alpha channel. Any data on the alpha will be preserved.
+        - ``'associate'`` & ``'disassociate'`` toggle alpha channel flag in
+           certain image-file specifications.
+        - ``'set'`` enables and resets any data in an images alpha channel.
+        - ``'opaque'`` enables alpha/matte channel, and forces full opaque
+           image.
+        - ``'transparent'`` enables alpha/matte channel, and forces full
+           transparent image.
+        - ``'extract'`` copies data in alpha channel across all other channels,
+           and disables alpha channel.
+        - ``'copy'`` calculates the gray-scale of RGB channels,
+            and applies it to alpha channel.
+        - ``'shape'`` is identical to ``'copy'``, but will color the resulting
+           image with the value defined with :attr:`background_color`.
+        - ``'remove'`` will composite :attr:`background_color` value.
+        - ``'background'`` replaces full-transparent color with background
+           color.
+
 
         .. versionadded:: 0.2.1
 
-        .. todo::
-
-           Support other states than ``''activatealphachannel'``
-           or ``'deactivatealphachannel'``.
-
+        .. versionchanged:: 0.4.1
+           Support for additional setting values.
+           However :attr:`Image.alpha_channel` will continue to return
+           :class:`bool` if the current alpha/matte state is enabled.
         """
         return bool(library.MagickGetImageAlphaChannel(self.wand))
 
     @alpha_channel.setter
     @manipulative
-    def alpha_channel(self, alpha):
-        if alpha is True:
-            act = ALPHA_CHANNEL_TYPES.index('activate')
-        elif alpha is False:
-            act = ALPHA_CHANNEL_TYPES.index('deactivate')
+    def alpha_channel(self, alpha_type):
+        # Map common aliases for ``'deactivate'``
+        if alpha_type is False or alpha_type == 'off':
+            alpha_type = 'deactivate'
+        # Map common aliases for ``'activate'``
+        elif alpha_type is True or alpha_type == 'on':
+            alpha_type = 'activate'
+        if alpha_type in ALPHA_CHANNEL_TYPES:
+            alpha_index = ALPHA_CHANNEL_TYPES.index(alpha_type)
+            library.MagickSetImageAlphaChannel(self.wand,
+                                               alpha_index)
+            self.raise_exception()
         else:
-            raise TypeError('alpha_channel must be bool, not ' +
-                            repr(alpha))
-        r = library.MagickSetImageAlphaChannel(self.wand, act)
-        if r:
-            return r
-        self.raise_exception()
+            raise ValueError('expecting string from ALPHA_CHANNEL_TYPES, '
+                             'not ' + repr(alpha_type))
 
     @property
     def background_color(self):
@@ -1109,23 +1137,6 @@ class BaseImage(Resource):
                                                            color.resource)
             if not result:
                 self.raise_exception()
-
-    def matte(self, flag):
-        """Sets the image matte channel.
-
-        :param flag: Matte channel enabled
-        :type flag: bool
-        :raises exceptions.TypeError: with invalid argument
-
-        .. versionadded:: 0.4.1
-        """
-        if flag is True:
-            flag = 1
-        elif flag is False:
-            flag = 0
-        else:
-            raise TypeError('matte must be bool, not ' + repr(flag))
-        library.MagickSetImageMatte(self.wand, flag)
 
     @property
     def matte_color(self):
@@ -1798,6 +1809,7 @@ class BaseImage(Resource):
         :raises exception.ValueError: When a ``function``, or ``channel`` is not
                                       defined in there respected constant.
         :raises exception.TypeError: If ``arguments`` is not a sequence.
+
         .. versionadded:: 0.4.1
         """
         if function not in FUNCTION_TYPES:
