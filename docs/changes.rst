@@ -20,7 +20,7 @@ Version 0.4.1
 - Added :attr:`Image.matte_color <wand.image.BaseImage.matte_color>` property.
 - Added :attr:`Image.virtual_pixel <wand.image.BaseImage.virtual_pixel>` property.
 - Added :meth:`Image.distort() <wand.image.BaseImage.distort>` method.
-- Additional support for :class:`Image.alpha_channel() <wand.image.BaseImage.alpha_channel>`.
+- Additional support for :attr:`Image.alpha_channel <wand.image.BaseImage.alpha_channel>`.
 - Additional query functions have been added to :mod:`wand.version` API. [:issue:`120`]
 
   - Added :func:`configure_options() <wand.version.configure_options>` function.

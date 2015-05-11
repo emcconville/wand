@@ -1060,9 +1060,9 @@ class BaseImage(Resource):
         Behavior of setting :attr:`alpha_channel` is defined with the
         following values:
 
-        - ``'activate'``, ``'on'``, or :class:`True` will enable an images
+        - ``'activate'``, ``'on'``, or :const:`True` will enable an images
            alpha channel. Existing alpha data is preserved.
-        - ``'deactivate'``, ``'off'``, or :class:`False` will disable an images
+        - ``'deactivate'``, ``'off'``, or :const:`False` will disable an images
            alpha channel. Any data on the alpha will be preserved.
         - ``'associate'`` & ``'disassociate'`` toggle alpha channel flag in
            certain image-file specifications.
