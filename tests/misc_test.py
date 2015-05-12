@@ -1,11 +1,12 @@
 import datetime
 import numbers
 import re
+from py.test import mark
 
 from wand.version import (MAGICK_VERSION, MAGICK_VERSION_INFO,
                           MAGICK_VERSION_NUMBER, MAGICK_RELEASE_DATE,
-                          MAGICK_RELEASE_DATE_STRING, QUANTUM_DEPTH)
-
+                          MAGICK_RELEASE_DATE_STRING, QUANTUM_DEPTH,
+                          configure_options, fonts, formats)
 
 def test_version():
     """Test version strings."""
@@ -24,3 +25,20 @@ def test_version():
 def test_quantum_depth():
     """QUANTUM_DEPTH must be one of 8, 16, 32, or 64."""
     assert QUANTUM_DEPTH in (8, 16, 32, 64)
+
+
+def test_configure_options():
+    assert 'RELEASE_DATE' in configure_options('RELEASE_DATE')
+
+
+def test_fonts():
+    font_list = fonts()
+    mark.skipif(not font_list, reason='Fonts not configured on system')
+    first_font = font_list[0]
+    first_font_part = first_font[1:-1]
+    assert first_font in fonts('*{0}*'.format(first_font_part))
+
+
+def test_formats():
+    xc = 'XC'
+    assert formats(xc) == [xc]

@@ -253,6 +253,14 @@ try:
     library.MagickSetImageBackgroundColor.argtypes = [ctypes.c_void_p,
                                                       ctypes.c_void_p]
 
+    library.MagickSetImageMatte.argtypes = [ctypes.c_void_p, ctypes.c_int]
+
+    library.MagickGetImageMatteColor.argtypes = [ctypes.c_void_p,
+                                                 ctypes.c_void_p]
+
+    library.MagickSetImageMatteColor.argtypes = [ctypes.c_void_p,
+                                                 ctypes.c_void_p]
+
     library.MagickGetImageAlphaChannel.argtypes = [ctypes.c_void_p]
     library.MagickGetImageAlphaChannel.restype = ctypes.c_size_t
 
@@ -305,6 +313,10 @@ try:
 
     library.MagickSetImageUnits.argtypes = [ctypes.c_void_p, ctypes.c_int]
 
+    library.MagickGetImageVirtualPixelMethod.argtypes = [ctypes.c_void_p]
+
+    library.MagickSetImageVirtualPixelMethod.argtypes = [ctypes.c_void_p, ctypes.c_int]
+
     library.MagickGetImageColorspace.argtypes = [ctypes.c_void_p]
     library.MagickGetImageColorspace.restype = ctypes.c_int
 
@@ -335,6 +347,34 @@ try:
     library.MagickFlipImage.argtypes = [ctypes.c_void_p]
 
     library.MagickFlopImage.argtypes = [ctypes.c_void_p]
+
+    library.MagickFrameImage.argtypes = [ctypes.c_void_p,   # wand
+                                         ctypes.c_void_p,   # matte_color
+                                         ctypes.c_size_t,   # width
+                                         ctypes.c_size_t,   # height
+                                         ctypes.c_ssize_t,  # inner_bevel
+                                         ctypes.c_ssize_t]  # outer_bevel
+
+    library.MagickFunctionImage.argtypes = [ctypes.c_void_p,  # wand
+                                            ctypes.c_int,     # MagickFunction
+                                            ctypes.c_size_t,  # number_arguments
+                                            ctypes.POINTER(ctypes.c_double)]  # arguments
+
+    library.MagickFunctionImageChannel.argtypes = [ctypes.c_void_p,  # wand
+                                                   ctypes.c_int,     # channel
+                                                   ctypes.c_int,     # MagickFunction
+                                                   ctypes.c_size_t,  # number_arguments
+                                                   ctypes.POINTER(ctypes.c_double)]  # arguments
+
+    library.MagickFxImage.argtypes = [ctypes.c_void_p,  # wand
+                                      ctypes.c_char_p]  # expression
+    library.MagickFxImage.restype = ctypes.c_void_p
+
+    library.MagickFxImageChannel.argtypes = [ctypes.c_void_p,  # wand
+                                             ctypes.c_int,     # channel
+                                             ctypes.c_char_p]  # expression
+    library.MagickFxImageChannel.restype = ctypes.c_void_p
+
 
     library.MagickResetImagePage.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
 
@@ -790,7 +830,7 @@ try:
                                            ctypes.c_void_p] # PixelWand color
 
     library.DrawGetClipPath.argtypes = [ctypes.c_void_p]
-    library.DrawGetClipPath.restype = ctypes.c_void_p
+    library.DrawGetClipPath.restype = c_magick_char_p
 
     library.DrawGetClipRule.argtypes = [ctypes.c_void_p]
     library.DrawGetClipRule.restype = ctypes.c_uint
@@ -839,10 +879,10 @@ try:
     library.DrawGetStrokeWidth.restype = ctypes.c_double
 
     library.DrawGetFont.argtypes = [ctypes.c_void_p]
-    library.DrawGetFont.restype = ctypes.c_void_p
+    library.DrawGetFont.restype = c_magick_char_p
 
     library.DrawGetFontFamily.argtypes = [ctypes.c_void_p]
-    library.DrawGetFontFamily.restype = ctypes.c_void_p
+    library.DrawGetFontFamily.restype = c_magick_char_p
 
     library.DrawGetFontResolution.argtypes = [ctypes.c_void_p, #wand
                                ctypes.POINTER(ctypes.c_double), # x
@@ -877,7 +917,7 @@ try:
         library.DrawGetTextDirection = None
 
     library.DrawGetTextEncoding.argtypes = [ctypes.c_void_p]
-    library.DrawGetTextEncoding.restype = ctypes.c_void_p
+    library.DrawGetTextEncoding.restype = c_magick_char_p
 
     try:
         library.DrawGetTextInterlineSpacing.argtypes = [ctypes.c_void_p]
@@ -895,7 +935,7 @@ try:
                                               ctypes.c_void_p]
 
     library.DrawGetVectorGraphics.argtypes = [ctypes.c_void_p]
-    library.DrawGetVectorGraphics.restype = ctypes.c_void_p
+    library.DrawGetVectorGraphics.restype = c_magick_char_p
 
     library.DrawSetGravity.argtypes = [ctypes.c_void_p,
                                        ctypes.c_int]
@@ -910,6 +950,14 @@ try:
                                             ctypes.c_double,
                                             ctypes.c_char_p]
     library.MagickAnnotateImage.restype = ctypes.c_int
+
+    library.MagickDistortImage.argtypes = [ctypes.c_void_p,  # wand
+                                           ctypes.c_int,     # method
+                                           ctypes.c_size_t,  # number_arguments
+                                           ctypes.POINTER(ctypes.c_double),  # arguments
+                                           ctypes.c_int]     # bestfit
+    library.MagickDistortImage.restype = ctypes.c_int
+
 
     library.ClearDrawingWand.argtypes = [ctypes.c_void_p]
 
@@ -1139,10 +1187,25 @@ try:
 
     library.MagickEqualizeImage.argtypes = [ctypes.c_void_p]
 
+    library.MagickQueryConfigureOption.argtypes = [ctypes.c_char_p]
+    library.MagickQueryConfigureOption.restype = c_magick_char_p
+
+    library.MagickQueryConfigureOptions.argtypes = [ctypes.c_char_p,
+                                                    ctypes.POINTER(ctypes.c_size_t)]
+    library.MagickQueryConfigureOptions.restype = ctypes.POINTER(c_magick_char_p)
+
     library.MagickQueryFontMetrics.argtypes = [ctypes.c_void_p,
                                                ctypes.c_void_p,
                                                ctypes.c_char_p]
     library.MagickQueryFontMetrics.restype = ctypes.POINTER(ctypes.c_double)
+
+    library.MagickQueryFonts.argtypes = [ctypes.c_char_p,
+                                         ctypes.POINTER(ctypes.c_size_t)]
+    library.MagickQueryFonts.restype = ctypes.POINTER(c_magick_char_p)
+
+    library.MagickQueryFormats.argtypes = [ctypes.c_char_p,
+                                           ctypes.POINTER(ctypes.c_size_t)]
+    library.MagickQueryFormats.restype = ctypes.POINTER(c_magick_char_p)
 
     library.MagickQueryMultilineFontMetrics.argtypes = [ctypes.c_void_p,
                                                         ctypes.c_void_p,
@@ -1166,10 +1229,22 @@ try:
                                            ctypes.c_int]
     library.MagickAppendImages.restype = ctypes.c_void_p
 
+    library.MagickTransposeImage.argtypes = [ctypes.c_void_p]
+    library.MagickTransverseImage.argtypes = [ctypes.c_void_p]
+
+
 except AttributeError:
     raise ImportError('MagickWand shared library not found or incompatible\n'
                       'Original exception was raised in:\n' +
                       traceback.format_exc())
+
+try:
+    library.MagickAutoOrientImage.argtypes = [ctypes.c_void_p]
+except AttributeError:
+    # MagickAutoOrientImage was added in 6.8.9+, we have a fallback function
+    # so we pass silently if we cant import it
+    pass
+
 
 #: (:class:`ctypes.CDLL`) The C standard library.
 libc = None

@@ -30,7 +30,7 @@ __all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COLORSPACE_TYPES',
            'COMPOSITE_OPERATORS', 'COMPRESSION_TYPES',
            'EVALUATE_OPS', 'FILTER_TYPES',
            'GRAVITY_TYPES', 'IMAGE_TYPES', 'ORIENTATION_TYPES', 'UNIT_TYPES',
-           'BaseImage', 'ChannelDepthDict', 'ChannelImageDict',
+           'FUNCTION_TYPES', 'BaseImage', 'ChannelDepthDict', 'ChannelImageDict',
            'ClosedImageError', 'HistogramDict', 'Image', 'ImageProperty',
            'Iterator', 'Metadata', 'OptionDict', 'manipulative')
 
@@ -415,6 +415,71 @@ COMPRESSION_TYPES = (
     'lzw', 'no', 'piz', 'pxr24', 'rle', 'zip', 'zips'
 )
 
+#: (:class:`tuple`) The list of :attr:`Image.function` types.
+#:
+#: - ``'undefined'``
+#: - ``'polynomial'``
+#: - ``'sinusoid'``
+#: - ``'arcsin'``
+#: - ``'arctan'``
+FUNCTION_TYPES = ('undefined', 'polynomial', 'sinusoid', 'arcsin', 'arctan')
+
+
+#: (:class:`tuple`) The list of :method:`Image.distort` methods.
+#:
+#: - ``'undefined'``
+#: - ``'affine'``
+#: - ``'affine_projection'``
+#: - ``'scale_rotate_translate'``
+#: - ``'perspective'``
+#: - ``'perspective_projection'``
+#: - ``'bilinear_forward'``
+#: - ``'bilinear_reverse'``
+#: - ``'polynomial'``
+#: - ``'arc'``
+#: - ``'polar'``
+#: - ``'depolar'``
+#: - ``'cylinder_2_plane'``
+#: - ``'plane_2_cylinder'``
+#: - ``'barrel'``
+#: - ``'barrel_inverse'``
+#: - ``'shepards'``
+#: - ``'resize'``
+#: - ``'sentinel'``
+#:
+#: .. versionadded:: 0.4.1
+DISTORTION_METHODS = ('undefined', 'affine', 'affine_projection', 'scale_rotate_translate',
+                      'perspective', 'perspective_projection', 'bilinear_forward',
+                      'bilinear_reverse', 'polynomial', 'arc', 'polar', 'depolar',
+                      'cylinder_2_plane', 'plane_2_cylinder', 'barrel', 'barrel_inverse',
+                      'shepards', 'resize', 'sentinel')
+
+#: (:class:`tuple`) The list of :attr:`~BaseImage.virtual_pixel` types.
+#: - ``'undefined'``
+#: - ``'background'``
+#: - ``'constant'``
+#: - ``'dither'``
+#: - ``'edge'``
+#: - ``'mirror'``
+#: - ``'random'``
+#: - ``'tile'``
+#: - ``'transparent'``
+#: - ``'mask'``
+#: - ``'black'``
+#: - ``'gray'``
+#: - ``'white'``
+#: - ``'horizontal_tile'``
+#: - ``'vertical_tile'``
+#: - ``'horizontal_tile_edge'``
+#: - ``'vertical_tile_edge'``
+#: - ``'checker_tile'``
+#:
+#: .. versionadded:: 0.4.1
+VIRTUAL_PIXEL_METHOD = ('undefined', 'background', 'constant', 'dither',
+                        'edge', 'mirror', 'random', 'tile', 'transparent',
+                        'mask', 'black', 'gray', 'white', 'horizontal_tile',
+                        'vertical_tile', 'horizontal_tile_edge',
+                        'vertical_tile_edge', 'checker_tile')
 
 def manipulative(function):
     """Mark the operation manipulating itself instead of returning new one."""
@@ -859,6 +924,23 @@ class BaseImage(Resource):
             self.raise_exception()
 
     @property
+    def virtual_pixel(self):
+        """(:class:`basestring`) The virtual pixel of image.
+        This can also be set with a value from :const:`VIRTUAL_PIXEL_METHOD`
+        ... versionadded:: 0.4.1
+        """
+        method_index = library.MagickGetImageVirtualPixelMethod(self.wand)
+        return VIRTUAL_PIXEL_METHOD[method_index]
+
+    @virtual_pixel.setter
+    def virtual_pixel(self, method):
+        if method not in VIRTUAL_PIXEL_METHOD:
+            raise ValueError('expected method from VIRTUAL_PIXEL_METHOD,'
+                             ' not ' + repr(method))
+        library.MagickSetImageVirtualPixelMethod(self.wand,
+                                                 VIRTUAL_PIXEL_METHOD.index(method))
+
+    @property
     def colorspace(self):
         """(:class:`basestring`) The image colorspace.
 
@@ -972,32 +1054,60 @@ class BaseImage(Resource):
     @property
     def alpha_channel(self):
         """(:class:`bool`) Get state of image alpha channel.
-        It can also be used to enable/disable alpha channel.
+        It can also be used to enable/disable alpha channel, but with different
+        behavior new, copied, or existing.
+
+        Behavior of setting :attr:`alpha_channel` is defined with the
+        following values:
+
+        - ``'activate'``, ``'on'``, or :const:`True` will enable an images
+           alpha channel. Existing alpha data is preserved.
+        - ``'deactivate'``, ``'off'``, or :const:`False` will disable an images
+           alpha channel. Any data on the alpha will be preserved.
+        - ``'associate'`` & ``'disassociate'`` toggle alpha channel flag in
+           certain image-file specifications.
+        - ``'set'`` enables and resets any data in an images alpha channel.
+        - ``'opaque'`` enables alpha/matte channel, and forces full opaque
+           image.
+        - ``'transparent'`` enables alpha/matte channel, and forces full
+           transparent image.
+        - ``'extract'`` copies data in alpha channel across all other channels,
+           and disables alpha channel.
+        - ``'copy'`` calculates the gray-scale of RGB channels,
+            and applies it to alpha channel.
+        - ``'shape'`` is identical to ``'copy'``, but will color the resulting
+           image with the value defined with :attr:`background_color`.
+        - ``'remove'`` will composite :attr:`background_color` value.
+        - ``'background'`` replaces full-transparent color with background
+           color.
+
 
         .. versionadded:: 0.2.1
 
-        .. todo::
-
-           Support other states than ``''activatealphachannel'``
-           or ``'deactivatealphachannel'``.
-
+        .. versionchanged:: 0.4.1
+           Support for additional setting values.
+           However :attr:`Image.alpha_channel` will continue to return
+           :class:`bool` if the current alpha/matte state is enabled.
         """
         return bool(library.MagickGetImageAlphaChannel(self.wand))
 
     @alpha_channel.setter
     @manipulative
-    def alpha_channel(self, alpha):
-        if alpha is True:
-            act = ALPHA_CHANNEL_TYPES.index('activate')
-        elif alpha is False:
-            act = ALPHA_CHANNEL_TYPES.index('deactivate')
+    def alpha_channel(self, alpha_type):
+        # Map common aliases for ``'deactivate'``
+        if alpha_type is False or alpha_type == 'off':
+            alpha_type = 'deactivate'
+        # Map common aliases for ``'activate'``
+        elif alpha_type is True or alpha_type == 'on':
+            alpha_type = 'activate'
+        if alpha_type in ALPHA_CHANNEL_TYPES:
+            alpha_index = ALPHA_CHANNEL_TYPES.index(alpha_type)
+            library.MagickSetImageAlphaChannel(self.wand,
+                                               alpha_index)
+            self.raise_exception()
         else:
-            raise TypeError('alpha_channel must be bool, not ' +
-                            repr(alpha))
-        r = library.MagickSetImageAlphaChannel(self.wand, act)
-        if r:
-            return r
-        self.raise_exception()
+            raise ValueError('expecting string from ALPHA_CHANNEL_TYPES, '
+                             'not ' + repr(alpha_type))
 
     @property
     def background_color(self):
@@ -1029,6 +1139,34 @@ class BaseImage(Resource):
                 self.raise_exception()
 
     @property
+    def matte_color(self):
+        """(:class:`wand.color.Color`) The color value of the matte channel.
+        This can also be set.
+
+        ..versionadded:: 0.4.1
+        """
+        pixel = library.NewPixelWand()
+        result = library.MagickGetImageMatteColor(self.wand, pixel)
+        if result:
+            pixel_size = ctypes.sizeof(MagickPixelPacket)
+            pixel_buffer = ctypes.create_string_buffer(pixel_size)
+            library.PixelGetMagickColor(pixel, pixel_buffer)
+            return Color(raw=pixel_buffer)
+        self.raise_exception()
+
+    @matte_color.setter
+    @manipulative
+    def matte_color(self, color):
+        if not isinstance(color, Color):
+            raise TypeError('color must be a wand.color.Color object, not ' +
+                            repr(color))
+        with color:
+            result = library.MagickSetImageMatteColor(self.wand,
+                                                      color.resource)
+            if not result:
+                self.raise_exception()
+
+    @property
     def quantum_range(self):
         """(:class:`int`) The maxumim value of a color channel that is
         supported by the imagemagick library.
@@ -1050,6 +1188,34 @@ class BaseImage(Resource):
 
         """
         return HistogramDict(self)
+
+    @manipulative
+    def distort(self, method, arguments, best_fit=False):
+        """Distorts an image using various distorting methods.
+
+        :param method: Distortion method name from :const:`DISTORTION_METHODS`
+        :type method: :class:`basestring`
+        :param arguments: List of distorting float arguments
+                          unique to distortion method
+        :type arguments: :class:`collections.Sequence`
+        :param best_fit: Attempt to resize resulting image fit distortion.
+                         Defaults False
+        :type best_fit: :class:`bool`
+
+        .. versionadded:: 0.4.1
+        """
+        if method not in DISTORTION_METHODS:
+            raise ValueError('expected string from DISTORTION_METHODS, not ' + repr(method))
+        if not isinstance(arguments, collections.Sequence):
+            raise TypeError('expected sequence of doubles, not ' + repr(arguments))
+        argc = len(arguments)
+        argv = (ctypes.c_double * argc)(*arguments)
+        library.MagickDistortImage(self.wand,
+                                   DISTORTION_METHODS.index(method),
+                                   argc, argv, bool(best_fit))
+        self.raise_exception()
+
+
 
     @manipulative
     def crop(self, left=0, top=0, right=None, bottom=None,
@@ -1582,6 +1748,120 @@ class BaseImage(Resource):
         result = library.MagickFlopImage(self.wand)
         if not result:
             self.raise_exception()
+
+    @manipulative
+    def frame(self, matte=None, width=1, height=1, inner_bevel=0, outer_bevel=0):
+        """Creates a bordered frame around image. Inner & Outer bevel can simulate
+        a 3D effect.
+
+        :param matte: Color of the frame
+        :type matte: :class:`wand.color.Color`
+        :param width: Total size of frame on x-axis
+        :type width: :class:`numbers.Integral`
+        :param height: Total size of frame on y-axis
+        :type height: :class:`numbers.Integral`
+        :param inner_bevel: Inset shadow length
+        :type inner_bevel: :class:`numbers.Real`
+        :param outer_bevel: Outset highlight length
+        :type outer_bevel: :class:`numbers.Real`
+
+        .. versionadded:: 0.4.1
+        """
+        if matte is None:
+            matte = Color('gray')
+        if not isinstance(matte, Color):
+            raise TypeError('Expecting instance of Color for matte, not ' + repr(matte))
+        if not isinstance(width, numbers.Integral):
+            raise TypeError('Expecting integer for width, not ' + repr(width))
+        if not isinstance(height, numbers.Integral):
+            raise TypeError('Expecting integer for height, not ' + repr(height))
+        if not isinstance(inner_bevel, numbers.Real):
+            raise TypeError('Expecting real number, not ' + repr(inner_bevel))
+        if not isinstance(outer_bevel, numbers.Real):
+            raise TypeError('Expecting real number, not ' + repr(outer_bevel))
+        with matte:
+            library.MagickFrameImage(self.wand,
+                                     matte.resource,
+                                     width, height,
+                                     inner_bevel, outer_bevel)
+
+    @manipulative
+    def function(self, function, arguments, channel=None):
+        """Apply an arithmetic, relational, or logical expression to an image.
+
+        Defaults entire image, but can isolate affects to single color channel
+        by passing :const:`CHANNELS` value to ``channel`` parameter.
+
+        .. note:: Support for function methods added in the following versions
+                  of ImageMagick.
+
+                  - ``'polynomial'`` >= 6.4.8-8
+                  - ``'sinusoid'`` >= 6.4.8-8
+                  - ``'arcsin'`` >= 6.5.3-1
+                  - ``'arctan'`` >= 6.5.3-1
+
+        :param function: A string listed in :const:`FUNCTION_TYPES`
+        :type function: :class:`basestring`
+        :param arguments: A sequence of doubles to apply against ``function``
+        :type arguments: :class:`collections.Sequence`
+        :param channel: Optional :const:`CHANNELS`, defaults all.
+        :type channel: :class:`basestring`
+        :raises exception.ValueError: When a ``function``, or ``channel`` is not
+                                      defined in there respected constant.
+        :raises exception.TypeError: If ``arguments`` is not a sequence.
+
+        .. versionadded:: 0.4.1
+        """
+        if function not in FUNCTION_TYPES:
+            raise ValueError('expected string from FUNCTION_TYPES, not ' + repr(function))
+        if not isinstance(arguments, collections.Sequence):
+            raise TypeError('expecting sequence of arguments, not ' + repr(arguments))
+        argc = len(arguments)
+        argv = (ctypes.c_double * argc)(*arguments)
+        index = FUNCTION_TYPES.index(function)
+        if channel is None:
+            library.MagickFunctionImage(self.wand, index, argc, argv)
+        elif channel in CHANNELS:
+            library.MagickFunctionImageChannel(self.wand, CHANNELS[channel], index, argc, argv)
+        else:
+            raise ValueError('expected string from CHANNELS, not ' + repr(channel))
+        self.raise_exception()
+
+    @manipulative
+    def fx(self, expression, channel=None):
+        """Manipulate each pixel of an image by given expression.
+
+        FX will preserver current wand instance, and return a new instance of
+        :class:`Image` containing affected pixels.
+
+        Defaults entire image, but can isolate affects to single color channel
+        by passing :const:`CHANNELS` value to ``channel`` parameter.
+
+        .. seealso:: The anatomy of FX expressions can be found at
+                     http://www.imagemagick.org/script/fx.php
+
+
+        :param expression: The entire FX expression to apply
+        :type expression: :class:`basestring`
+        :param channel: Optional channel to target.
+        :type channel: :const:`CHANNELS`
+        :returns: A new instance of an image with expression applied
+        :rtype: :class:`Image`
+
+        .. versionadded:: 0.4.1
+        """
+        if not isinstance(expression, string_type):
+            raise TypeError('expected basestring for expression, not' + repr(expression))
+        c_expression = binary(expression)
+        if channel is None:
+            new_wand = library.MagickFxImage(self.wand, c_expression)
+        elif channel in CHANNELS:
+            new_wand = library.MagickFxImageChannel(self.wand, CHANNELS[channel], c_expression)
+        else:
+            raise ValueError('expected string from CHANNELS, not ' + repr(channel))
+        if new_wand:
+            return Image(image=BaseImage(new_wand))
+        self.raise_exception()
 
     @manipulative
     def transparentize(self, transparency):
@@ -2420,6 +2700,77 @@ class Image(BaseImage):
         result = library.MagickTrimImage(self.wand, fuzz)
         if not result:
             self.raise_exception()
+
+    @manipulative
+    def transpose(self):
+        """Creates a vertical mirror image by reflecting the pixels around
+        the central x-axis while rotating them 90-degrees.
+
+        .. versionadded:: 0.4.1
+        """
+        result = library.MagickTransposeImage(self.wand)
+        if not result:
+            self.raise_exception()
+
+    @manipulative
+    def transverse(self):
+        """Creates a horizontal mirror image by reflecting the pixels around
+        the central y-axis while rotating them 270-degrees.
+
+        .. versionadded:: 0.4.1
+        """
+        result = library.MagickTransverseImage(self.wand)
+        if not result:
+            self.raise_exception()
+
+    @manipulative
+    def _auto_orient(self):
+        """Fallback for :attr:`auto_orient()` method (which wraps :c:func:`MagickAutoOrientImage`),
+        fixes orientation by checking EXIF data.
+
+        .. versionadded:: 0.4.1
+        """
+        exif_orientation = self.metadata.get('exif:orientation')
+        if not exif_orientation:
+            return
+
+        orientation_type = ORIENTATION_TYPES[int(exif_orientation)]
+
+        fn_lookup = {
+            'undefined': None,
+            'top_left': None,
+            'top_right': self.flop,
+            'bottom_right': functools.partial(self.rotate, degree=180.0),
+            'bottom_left': self.flip,
+            'left_top': self.transpose,
+            'right_top': functools.partial(self.rotate, degree=90.0),
+            'right_bottom': self.transverse,
+            'left_bottom': functools.partial(self.rotate, degree=270.0)
+        }
+
+        fn = fn_lookup.get(orientation_type)
+
+        if not fn:
+            return
+
+        fn()
+        self.orientation = 'top_left'
+
+    @manipulative
+    def auto_orient(self):
+        """Adjusts an image so that its orientation is suitable
+        for viewing (i.e. top-left orientation). if available it uses :c:func:`MagickAutoOrientImage`
+        (was added in ImageMagick 6.8.9+) if you have an older magick library,
+        it will use :attr:`_auto_orient()` method for fallback
+
+        .. versionadded:: 0.4.1
+        """
+        try:
+            result = library.MagickAutoOrientImage(self.wand)
+            if not result:
+                self.raise_exception()
+        except AttributeError as e:
+            self._auto_orient()
 
     def border(self, color, width, height):
         """Surrounds the image with a border.

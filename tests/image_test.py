@@ -13,7 +13,7 @@ from pytest import mark, raises
 from wand.image import ClosedImageError, Image
 from wand.color import Color
 from wand.compat import PY3, string_type, text, text_type
-from wand.exceptions import MissingDelegateError
+from wand.exceptions import OptionError, MissingDelegateError
 from wand.font import Font
 
 
@@ -318,6 +318,21 @@ def test_set_units(fx_asset):
     with Image(filename=str(fx_asset.join('watermark.png'))) as img:
         img.units = "pixelspercentimeter"
         assert img.units == "pixelspercentimeter"
+
+
+def test_get_virtual_pixel(fx_asset):
+    """Gets image virtual pixel"""
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+        assert img.virtual_pixel == "undefined"
+
+
+def test_set_virtual_pixel(fx_asset):
+    """Sets image virtual pixel"""
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+        img.virtual_pixel = "tile"
+        assert img.virtual_pixel == "tile"
+        with raises(ValueError):
+            img.virtual_pixel = "nothing"
 
 
 def test_get_colorspace(fx_asset):
@@ -689,6 +704,28 @@ def test_crop_gravity_error(fx_asset):
             img.crop(width=1, height=1, gravity='nowhere')
 
 
+@mark.slow
+def test_distort(fx_asset):
+    """Distort image."""
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+        with Color('skyblue') as color:
+            img.matte_color = color
+            img.virtual_pixel = 'tile'
+            img.distort('perspective', (0, 0, 20, 60, 90, 0,
+                                        70, 63, 0, 90, 5, 83,
+                                        90, 90, 85, 88))
+            assert img[img.width - 1, 0] == color
+
+
+def test_distort_error(fx_asset):
+    """Distort image with user error"""
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+        with raises(ValueError):
+            img.distort('mirror', (1,))
+        with raises(TypeError):
+            img.distort('perspective', 1)
+
+
 @mark.parametrize(('method'), [
     ('resize'),
     ('sample'),
@@ -951,9 +988,14 @@ def test_get_alpha_channel(fx_asset):
 def test_set_alpha_channel(fx_asset):
     """Sets alpha channel to off."""
     with Image(filename=str(fx_asset.join('watermark.png'))) as img:
+        img.alpha_channel = 'on'
         assert img.alpha_channel is True
         img.alpha_channel = False
         assert img.alpha_channel is False
+        img.alpha_channel = 'opaque'
+        assert img[0, 0].alpha == 1.0
+        with raises(ValueError):
+            img.alpha_channel = 'watermark'
 
 
 def test_get_background_color(fx_asset):
@@ -968,6 +1010,15 @@ def test_set_background_color(fx_asset):
         with Color('red') as color:
             img.background_color = color
             assert img.background_color == color
+
+
+def test_set_get_matte_color(fx_asset):
+    with Image(filename='rose:') as img:
+        with Color('navy') as color:
+            img.matte_color = color
+            assert img.matte_color == color
+            with raises(TypeError):
+                img.matte_color = False
 
 
 def test_transparentize(fx_asset):
@@ -1306,6 +1357,94 @@ def test_flop(fx_asset):
             assert flopped[-1, -1] == img[0, -1]
 
 
+def test_frame(fx_asset):
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+        img.frame(width=4, height=4)
+        assert img[0, 0] == img[-1, -1]
+        assert img[-1, 0] == img[0, -1]
+    with Color('green') as green:
+        with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+            img.frame(matte=green, width=2, height=2)
+            assert img[0, 0] == green
+            assert img[-1, -1] == green
+
+
+def test_frame_error(fx_asset):
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+        with raises(TypeError):
+            img.frame(width='one')
+        with raises(TypeError):
+            img.frame(height=3.5)
+        with raises(TypeError):
+            img.frame(matte='green')
+        with raises(TypeError):
+            img.frame(inner_bevel=None)
+        with raises(TypeError):
+            img.frame(outer_bevel='large')
+
+
+def test_function(fx_asset):
+    with Image(filename=str(fx_asset.join('croptest.png'))) as img:
+        img.function(function='polynomial',
+                     arguments=(4, -4, 1))
+        assert img[150, 150] == Color('white')
+        img.function(function='sinusoid',
+                     arguments=(1,),
+                     channel='red')
+        assert abs(img[150, 150].red - Color('#80FFFF').red) < 0.01
+
+
+def test_function_error(fx_asset):
+    with Image(filename=str(fx_asset.join('croptest.png'))) as img:
+        with raises(ValueError):
+            img.function('bad function', 1)
+        with raises(TypeError):
+            img.function('sinusoid', 1)
+        with raises(ValueError):
+            img.function('sinusoid', (1,), channel='bad channel')
+
+
+def test_fx(fx_asset):
+    with Image(width=2, height=2, background=Color('black')) as xc1:
+        # NavyBlue == #000080
+        with xc1.fx('0.5019', channel='blue') as xc2:
+            assert abs(xc2[0, 0].blue - Color('navy').blue) < 0.0001
+
+    with Image(width=2, height=1, background=Color('white')) as xc1:
+        with xc1.fx('0') as xc2:
+            assert xc2[0, 0].red == 0
+
+
+def test_fx_error(fx_asset):
+    with Image() as empty_wand:
+        with raises(AttributeError):
+            with empty_wand.fx('8'):
+                pass
+    with Image(filename='rose:') as xc:
+        with raises(OptionError):
+            with xc.fx('/0'):
+                pass
+        with raises(TypeError):
+            with xc.fx(('p[0,0]',)):
+                pass
+        with raises(ValueError):
+            with xc.fx('p[0,0]', True):
+                pass
+
+def test_transpose(fx_asset):
+    with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
+        with img.clone() as transposed:
+            transposed.transpose()
+            assert transposed[501, 501] == Color('srgb(205,196,179)')
+
+
+def test_transverse(fx_asset):
+    with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
+        with img.clone() as transversed:
+            transversed.transverse()
+            assert transversed[500, 500] == Color('srgb(96,136,185)')
+
+
 def test_get_orientation(fx_asset):
     with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
         assert img.orientation == 'undefined'
@@ -1318,6 +1457,31 @@ def test_set_orientation(fx_asset):
     with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
         img.orientation = 'bottom_right'
         assert img.orientation == 'bottom_right'
+
+
+def test_auto_orientation(fx_asset):
+    with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
+            # if orientation is undefined nothing should be changed
+            before = img[100, 100]
+            img.auto_orient()
+            after = img[100, 100]
+            assert before == after
+            assert img.orientation == 'top_left'
+
+    with Image(filename=str(fx_asset.join('orientationtest.jpg'))) as original:
+        with original.clone() as img:
+            # now we should get a flipped image
+            assert img.orientation == 'bottom_left'
+            before = img[100, 100]
+            img.auto_orient()
+            after = img[100, 100]
+            assert before != after
+            assert img.orientation == 'top_left'
+
+            assert img[0, 0] == original[0, -1]
+            assert img[0, -1] == original[0, 0]
+            assert img[-1, 0] == original[-1, -1]
+            assert img[-1, -1] == original[-1, 0]
 
 
 def test_histogram(fx_asset):

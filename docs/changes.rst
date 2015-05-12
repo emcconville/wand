@@ -9,15 +9,31 @@ Wand Changelog
 Version 0.4.1
 -------------
 
- - Added ``gravity`` options in :meth:`Image.crop() <wand.image.BaseImage.crop>` method.
-   [:issue:`222` by Eric McConville]
+- Added :meth:`Image.auto_orient() <wand.image.Image.auto_orient>` that fixes orientation by checking EXIF tags
+- Added :meth:`Image.transverse() <wand.image.Image.transverse>` transverse (MagickTransverseImage)
+- Added :meth:`Image.transpose() <wand.image.Image.transpose>` transpose (MagickTransposeImage)
+- Added :meth:`Image.frame() <wand.image.BaseImage.frame>` method.
+- Added :meth:`Image.function() <wand.image.BaseImage.function>` method.
+- Added :meth:`Image.fx() <wand.image.BaseImage.fx>` expression method.
+- Added ``gravity`` options in :meth:`Image.crop() <wand.image.BaseImage.crop>` method.
+  [:issue:`222` by Eric McConville]
+- Added :attr:`Image.matte_color <wand.image.BaseImage.matte_color>` property.
+- Added :attr:`Image.virtual_pixel <wand.image.BaseImage.virtual_pixel>` property.
+- Added :meth:`Image.distort() <wand.image.BaseImage.distort>` method.
+- Additional support for :attr:`Image.alpha_channel <wand.image.BaseImage.alpha_channel>`.
+- Additional query functions have been added to :mod:`wand.version` API. [:issue:`120`]
+
+  - Added :func:`configure_options() <wand.version.configure_options>` function.
+  - Added :func:`fonts() <wand.version.fonts>` function.
+  - Added :func:`formats() <wand.version.formats>` function.
+
 - Additional IPython support. [:issue:`117`]
 
   - Render RGB :class:`Color <wand.color.Color>` preview.
   - Display each frame in image :class:`Sequence <wand.sequence.Sequence>`.
 
+- Fixed Windows memory-deallocate errors on :mod:`wand.drawing` API. [:issue:`226` by Eric McConville]
 
-.. _changelog-0.4.0:
 
 Version 0.4.0
 -------------
