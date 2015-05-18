@@ -32,6 +32,8 @@ Version 0.4.1
   - Render RGB :class:`Color <wand.color.Color>` preview.
   - Display each frame in image :class:`Sequence <wand.sequence.Sequence>`.
 
+- Fixed memory-leak when accessing images constructed in
+  :class:`Image.sequence[] <wand.sequence.Sequence>`. [:issue:`237` by Eric McConville]
 - Fixed Windows memory-deallocate errors on :mod:`wand.drawing` API. [:issue:`226` by Eric McConville]
 
 
