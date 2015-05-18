@@ -128,6 +128,7 @@ class Sequence(ImageProperty, collections.MutableSequence):
         single_image = libmagick.CloneImages(image, binary(str(index)), exc)
         libmagick.DestroyExceptionInfo(exc)
         single_wand = library.NewMagickWandFromImage(single_image)
+        single_image = libmagick.DestroyImage(single_image)
         library.MagickSetIteratorIndex(wand, tmp_idx)
         instance = SingleImage(single_wand, self.image, image)
         self.instances[index] = instance
