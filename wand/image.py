@@ -2803,13 +2803,19 @@ class Image(BaseImage):
             self.raise_exception()
 
     @manipulative
-    def contrast_stretch(self, black_point=0.0, white_point=1.0, channel=None):
+    def contrast_stretch(self, black_point=0.0, white_point=None, channel=None):
         """Enhance contrast of image by adjusting the span of the available
         colors.
 
+        If only ``black_point`` is given, match the CLI behavior by assuming the
+        ``white_point`` has the same delta percentage off the top. E.g. contrast
+        stretch of 15% is calculated as ``black_point`` = 0.15 and
+        ``white_point`` = 0.85.
+
         :param black_point: Black point between 0.0 and 1.0. Default 0.0
         :type black_point: :class:`numbers.Real`
-        :param white_point: White point between 0.0 and 1.0. Default 1.0
+        :param white_point: White point between 0.0 and 1.0. Default value of
+                            1.0 minus ``black_point``.
         :type white_point: :class:`numbers.Real`
         :param channel: Color channel to apply contrast stretch. Default all
         :type channel: :class:`basestring`
@@ -2818,6 +2824,10 @@ class Image(BaseImage):
         .. versionadded:: 0.4.1
         """
         contrast_range = float(self.width * self.height)
+        # If only black-point is given, match CLI behavior by
+        # calculating white point
+        if white_point is None:
+            white_point = 1.0 - black_point
         black_point *= contrast_range
         white_point *= contrast_range
         if channel in CHANNELS:
