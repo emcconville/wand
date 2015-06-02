@@ -2823,11 +2823,15 @@ class Image(BaseImage):
 
         .. versionadded:: 0.4.1
         """
-        contrast_range = float(self.width * self.height)
+        if not isinstance(black_point, numbers.Real):
+            raise TypeError('expecting float, not ' + repr(black_point))
+        if white_point is not None and not isinstance(white_point, numbers.Real):
+            raise TypeError('expecting float, not ' + repr(white_point))
         # If only black-point is given, match CLI behavior by
         # calculating white point
         if white_point is None:
             white_point = 1.0 - black_point
+        contrast_range = float(self.width * self.height)
         black_point *= contrast_range
         white_point *= contrast_range
         if channel in CHANNELS:
@@ -2884,10 +2888,14 @@ class Image(BaseImage):
 
         .. versionadded:: 0.4.1
         """
-        quantum_range = self.quantum_range
+        if not isinstance(black_point, numbers.Real):
+            raise TypeError('expecting float, not ' + repr(black_point))
+        if not isinstance(white_point, numbers.Real):
+            raise TypeError('expecting float, not ' + repr(white_point))
+        linear_range = float(self.width * self.height)
         library.MagickLinearStretchImage(self.wand,
-                                         quantum_range * black_point,
-                                         quantum_range * white_point)
+                                         linear_range * black_point,
+                                         linear_range * white_point)
 
     def normalize(self, channel=None):
         """Normalize color channels.
