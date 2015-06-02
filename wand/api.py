@@ -614,6 +614,9 @@ try:
     libmagick.DestroyExceptionInfo.argtypes = [ctypes.c_void_p]
     libmagick.DestroyExceptionInfo.restype = ctypes.c_void_p
 
+    libmagick.DestroyImage.argtypes = [ctypes.c_void_p]
+    libmagick.DestroyImage.restype = ctypes.c_void_p
+
     library.MagickGetSize.argtypes = [ctypes.c_void_p,
                                       ctypes.POINTER(ctypes.c_uint),
                                       ctypes.POINTER(ctypes.c_uint)]
