@@ -988,9 +988,14 @@ def test_get_alpha_channel(fx_asset):
 def test_set_alpha_channel(fx_asset):
     """Sets alpha channel to off."""
     with Image(filename=str(fx_asset.join('watermark.png'))) as img:
+        img.alpha_channel = 'on'
         assert img.alpha_channel is True
         img.alpha_channel = False
         assert img.alpha_channel is False
+        img.alpha_channel = 'opaque'
+        assert img[0, 0].alpha == 1.0
+        with raises(ValueError):
+            img.alpha_channel = 'watermark'
 
 
 def test_get_background_color(fx_asset):
@@ -1015,13 +1020,6 @@ def test_set_get_matte_color(fx_asset):
             with raises(TypeError):
                 img.matte_color = False
 
-
-def test_set_matte(fx_asset):
-    with Image(filename='rose:') as img:
-        img.matte(True)
-        img.matte(False)
-        with raises(TypeError):
-            img.matte('true')
 
 def test_transparentize(fx_asset):
     with Image(filename=str(fx_asset.join('croptest.png'))) as im:
