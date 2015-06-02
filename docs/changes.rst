@@ -20,6 +20,9 @@ Version 0.4.1
 - Added :attr:`Image.matte_color <wand.image.BaseImage.matte_color>` property.
 - Added :attr:`Image.virtual_pixel <wand.image.BaseImage.virtual_pixel>` property.
 - Added :meth:`Image.distort() <wand.image.BaseImage.distort>` method.
+- Added :meth:`Image.contrast_stretch() <wand.image.Image.contrast_stretch>` method.
+- Added :meth:`Image.gamma() <wand.image.Image.gamma>` method.
+- Added :meth:`Image.linear_stretch() <wand.image.Image.linear_stretch>` method.
 - Additional support for :attr:`Image.alpha_channel <wand.image.BaseImage.alpha_channel>`.
 - Additional query functions have been added to :mod:`wand.version` API. [:issue:`120`]
 

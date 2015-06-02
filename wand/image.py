@@ -2829,8 +2829,8 @@ class Image(BaseImage):
         :param white_point: White point between 0.0 and 1.0. Default value of
                             1.0 minus ``black_point``.
         :type white_point: :class:`numbers.Real`
-        :param channel: Color channel to apply contrast stretch. Default all
-        :type channel: :class:`basestring`
+        :param channel: Optional color channel to apply contrast stretch.
+        :type channel: :const:`CHANNELS`
         :raises: :exc:`ValueError` if ``channel`` is not in :const:`CHANNELS`
 
         .. versionadded:: 0.4.1
@@ -2874,7 +2874,7 @@ class Image(BaseImage):
         :raises: :exc:`TypeError` if ``gamma_point`` is not a :class:`numbers.Real`
         :raises: :exc:`ValueError` if ``channel`` is not in :const:`CHANNELS`
 
-        .. versionadded::0.4.1
+        .. versionadded:: 0.4.1
         """
         if not isinstance(adjustment_value, numbers.Real):
             raise TypeError('expecting float, not ' + repr(adjustment_value))
