@@ -1413,6 +1413,31 @@ def test_equalize(fx_asset):
             assert dark.red_int8 <= dark.green_int8 <= dark.blue_int8 <= 5
 
 
+def test_evaluate(fx_asset):
+    with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
+        with img.clone() as percent_img:
+            fifty_percent = percent_img.quantum_range * 0.5
+            percent_img.evaluate('set', fifty_percent)
+            with percent_img[10, 10] as gray:
+                assert abs(gray.red - Color('gray50').red) < 0.01
+        with img.clone() as literal_img:
+            literal_img.evaluate('divide', 2, channel='red')
+            with img[0, 0] as org_color:
+                expected_color = (img[0, 0].red_int8 * 0.5)
+                with literal_img[0, 0] as actual_color:
+                    assert abs(expected_color - actual_color.red_int8) < 1
+
+
+def test_evaluate_user_error(fx_asset):
+    with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
+        with raises(ValueError):
+            img.evaluate(operator='Nothing')
+        with raises(TypeError):
+            img.evaluate(operator='set', value='NaN')
+        with raises(ValueError):
+            img.evaluate(operator='set', value=1.0, channel='Not a channel')
+
+
 def test_flip(fx_asset):
     with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
         with img.clone() as flipped:

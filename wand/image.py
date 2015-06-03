@@ -1727,6 +1727,22 @@ class BaseImage(Resource):
     @manipulative
     def evaluate(self, operator=None, value=0.0, channel=None):
         """Apply arithmetic, relational, or logical expression to an image.
+
+        Percent values must be pre-calculated against image's Quantum Range::
+
+            fifty_percent = img.quantum_range * 0.5
+            img.evaluate(operator='set', value=fifty_percent)
+
+        :param operator: Type of operation to calculate
+        :type operator: :const:`EVALUATE_OPS`
+        :param value: Number to calculate with ``operator``
+        :type value: :class:`numbers.Real`
+        :param channel: Optional channel to apply operation on.
+        :type channel: :const:`CHANNELS`
+        :raises TypeError: When ``value`` is not numeric.
+        :raises ValueError: When ``operator``, or ``channel`` are not defined
+                            in constants.
+
         .. versionadded:: 0.4.1
         """
         if operator not in EVALUATE_OPS:
