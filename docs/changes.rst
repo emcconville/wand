@@ -12,6 +12,7 @@ Version 0.4.1
 - Added :meth:`Image.auto_orient() <wand.image.Image.auto_orient>` that fixes orientation by checking EXIF tags
 - Added :meth:`Image.transverse() <wand.image.Image.transverse>` transverse (MagickTransverseImage)
 - Added :meth:`Image.transpose() <wand.image.Image.transpose>` transpose (MagickTransposeImage)
+- Added :meth:`Image.evaluate() <wand.image.BaseImage.evaluate>` method.
 - Added :meth:`Image.frame() <wand.image.BaseImage.frame>` method.
 - Added :meth:`Image.function() <wand.image.BaseImage.function>` method.
 - Added :meth:`Image.fx() <wand.image.BaseImage.fx>` expression method.

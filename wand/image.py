@@ -1728,7 +1728,8 @@ class BaseImage(Resource):
     def evaluate(self, operator=None, value=0.0, channel=None):
         """Apply arithmetic, relational, or logical expression to an image.
 
-        Percent values must be pre-calculated against image's Quantum Range::
+        Percent values must be calculated against the quantum range of the
+        image::
 
             fifty_percent = img.quantum_range * 0.5
             img.evaluate(operator='set', value=fifty_percent)
