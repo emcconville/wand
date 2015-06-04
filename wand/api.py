@@ -513,10 +513,35 @@ try:
 
     library.MagickSetImageType.argtypes = [ctypes.c_void_p, ctypes.c_int]
 
+    library.MagickEvaluateImage.argtypes = [ctypes.c_void_p,
+                                            ctypes.c_int,
+                                            ctypes.c_double]
+
     library.MagickEvaluateImageChannel.argtypes = [ctypes.c_void_p,
                                                    ctypes.c_int,
                                                    ctypes.c_int,
                                                    ctypes.c_double]
+
+    library.MagickContrastStretchImage.argtypes = [ctypes.c_void_p,  # wand
+                                                   ctypes.c_double,  # black
+                                                   ctypes.c_double]  # white
+
+    library.MagickContrastStretchImageChannel.argtypes = [ctypes.c_void_p,  # wand
+                                                          ctypes.c_int,     # channel
+                                                          ctypes.c_double,  # black
+                                                          ctypes.c_double]  # white
+
+    library.MagickGammaImage.argtypes = [ctypes.c_void_p,
+                                         ctypes.c_double]
+
+    library.MagickGammaImageChannel.argtypes = [ctypes.c_void_p,
+                                                ctypes.c_int,
+                                                ctypes.c_double]
+
+
+    library.MagickLinearStretchImage.argtypes = [ctypes.c_void_p,  # wand
+                                                 ctypes.c_double,  # black
+                                                 ctypes.c_double]  # white
 
     library.MagickCompositeImage.argtypes = [ctypes.c_void_p, ctypes.c_void_p,
                                              ctypes.c_int, ctypes.c_ssize_t,

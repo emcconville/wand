@@ -12,6 +12,7 @@ Version 0.4.1
 - Added :meth:`Image.auto_orient() <wand.image.Image.auto_orient>` that fixes orientation by checking EXIF tags
 - Added :meth:`Image.transverse() <wand.image.Image.transverse>` transverse (MagickTransverseImage)
 - Added :meth:`Image.transpose() <wand.image.Image.transpose>` transpose (MagickTransposeImage)
+- Added :meth:`Image.evaluate() <wand.image.BaseImage.evaluate>` method.
 - Added :meth:`Image.frame() <wand.image.BaseImage.frame>` method.
 - Added :meth:`Image.function() <wand.image.BaseImage.function>` method.
 - Added :meth:`Image.fx() <wand.image.BaseImage.fx>` expression method.
@@ -20,6 +21,9 @@ Version 0.4.1
 - Added :attr:`Image.matte_color <wand.image.BaseImage.matte_color>` property.
 - Added :attr:`Image.virtual_pixel <wand.image.BaseImage.virtual_pixel>` property.
 - Added :meth:`Image.distort() <wand.image.BaseImage.distort>` method.
+- Added :meth:`Image.contrast_stretch() <wand.image.Image.contrast_stretch>` method.
+- Added :meth:`Image.gamma() <wand.image.Image.gamma>` method.
+- Added :meth:`Image.linear_stretch() <wand.image.Image.linear_stretch>` method.
 - Additional support for :attr:`Image.alpha_channel <wand.image.BaseImage.alpha_channel>`.
 - Additional query functions have been added to :mod:`wand.version` API. [:issue:`120`]
 

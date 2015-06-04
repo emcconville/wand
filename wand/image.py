@@ -254,7 +254,7 @@ EVALUATE_OPS = ('undefined', 'add', 'and', 'divide', 'leftshift', 'max',
                 'thresholdwhite', 'gaussiannoise', 'impulsenoise',
                 'laplaciannoise', 'multiplicativenoise', 'poissonnoise',
                 'uniformnoise', 'cosine', 'sine', 'addmodulus', 'mean',
-                'abs', 'exponential', 'median', 'sum')
+                'abs', 'exponential', 'median', 'sum', 'rootmeansquare')
 
 #: (:class:`tuple`) The list of colorspaces.
 #:
@@ -1216,7 +1216,6 @@ class BaseImage(Resource):
         self.raise_exception()
 
 
-
     @manipulative
     def crop(self, left=0, top=0, right=None, bottom=None,
              width=None, height=None, reset_coords=True,
@@ -1724,6 +1723,44 @@ class BaseImage(Resource):
                     self.raise_exception()
                 if reset_coords:
                     self.reset_coords()
+
+    @manipulative
+    def evaluate(self, operator=None, value=0.0, channel=None):
+        """Apply arithmetic, relational, or logical expression to an image.
+
+        Percent values must be calculated against the quantum range of the
+        image::
+
+            fifty_percent = img.quantum_range * 0.5
+            img.evaluate(operator='set', value=fifty_percent)
+
+        :param operator: Type of operation to calculate
+        :type operator: :const:`EVALUATE_OPS`
+        :param value: Number to calculate with ``operator``
+        :type value: :class:`numbers.Real`
+        :param channel: Optional channel to apply operation on.
+        :type channel: :const:`CHANNELS`
+        :raises TypeError: When ``value`` is not numeric.
+        :raises ValueError: When ``operator``, or ``channel`` are not defined
+                            in constants.
+
+        .. versionadded:: 0.4.1
+        """
+        if operator not in EVALUATE_OPS:
+            raise ValueError('expected value from EVALUATE_OPS, not ' + repr(operator))
+        if not isinstance(value, numbers.Real):
+            raise TypeError('value must be real number, not ' + repr(value))
+        if channel:
+            if channel not in CHANNELS:
+                raise ValueError('expected value from CHANNELS, not ' + repr(channel))
+            library.MagickEvaluateImageChannel(self.wand,
+                                               CHANNELS[channel],
+                                               EVALUATE_OPS.index(operator),
+                                               value)
+        else:
+            library.MagickEvaluateImage(self.wand,
+                                        EVALUATE_OPS.index(operator), value)
+        self.raise_exception()
 
     @manipulative
     def flip(self):
@@ -2793,6 +2830,101 @@ class Image(BaseImage):
                                                width, height)
         if not result:
             self.raise_exception()
+
+    @manipulative
+    def contrast_stretch(self, black_point=0.0, white_point=None, channel=None):
+        """Enhance contrast of image by adjusting the span of the available
+        colors.
+
+        If only ``black_point`` is given, match the CLI behavior by assuming the
+        ``white_point`` has the same delta percentage off the top. E.g. contrast
+        stretch of 15% is calculated as ``black_point`` = 0.15 and
+        ``white_point`` = 0.85.
+
+        :param black_point: Black point between 0.0 and 1.0. Default 0.0
+        :type black_point: :class:`numbers.Real`
+        :param white_point: White point between 0.0 and 1.0. Default value of
+                            1.0 minus ``black_point``.
+        :type white_point: :class:`numbers.Real`
+        :param channel: Optional color channel to apply contrast stretch.
+        :type channel: :const:`CHANNELS`
+        :raises: :exc:`ValueError` if ``channel`` is not in :const:`CHANNELS`
+
+        .. versionadded:: 0.4.1
+        """
+        if not isinstance(black_point, numbers.Real):
+            raise TypeError('expecting float, not ' + repr(black_point))
+        if white_point is not None and not isinstance(white_point, numbers.Real):
+            raise TypeError('expecting float, not ' + repr(white_point))
+        # If only black-point is given, match CLI behavior by
+        # calculating white point
+        if white_point is None:
+            white_point = 1.0 - black_point
+        contrast_range = float(self.width * self.height)
+        black_point *= contrast_range
+        white_point *= contrast_range
+        if channel in CHANNELS:
+            library.MagickContrastStretchImageChannel(self.wand,
+                                                      CHANNELS[channel],
+                                                      black_point,
+                                                      white_point)
+        elif channel is None:
+            library.MagickContrastStretchImage(self.wand,
+                                               black_point,
+                                               white_point)
+        else:
+            raise ValueError(repr(channel) + ' is an invalid channel type'
+                             '; see wand.image.CHANNELS dictionary')
+        self.raise_exception()
+
+    @manipulative
+    def gamma(self, adjustment_value, channel=None):
+        """Gamma correct image.
+
+        Specific color channels can be correct individual. Typical values
+        range between 0.8 and 2.3.
+
+        :param adjustment_value: Value to adjust gamma level
+        :type adjustment_value: :class:`numbers.Real`
+        :param channel: Optional channel to apply gamma correction
+        :type channel: :class:`basestring`
+        :raises: :exc:`TypeError` if ``gamma_point`` is not a :class:`numbers.Real`
+        :raises: :exc:`ValueError` if ``channel`` is not in :const:`CHANNELS`
+
+        .. versionadded:: 0.4.1
+        """
+        if not isinstance(adjustment_value, numbers.Real):
+            raise TypeError('expecting float, not ' + repr(adjustment_value))
+        if channel in CHANNELS:
+            library.MagickGammaImageChannel(self.wand,
+                                            CHANNELS[channel],
+                                            adjustment_value)
+        elif channel is None:
+            library.MagickGammaImage(self.wand, adjustment_value)
+        else:
+            raise ValueError(repr(channel) + ' is an invalid channel type'
+                             '; see wand.image.CHANNELS dictionary')
+        self.raise_exception()
+
+    @manipulative
+    def linear_stretch(self, black_point=0.0, white_point=1.0):
+        """Enhance saturation intensity of an image.
+
+        :param black_point: Black point between 0.0 and 1.0. Default 0.0
+        :type black_point: :class:`numbers.Real`
+        :param white_point: White point between 0.0 and 1.0. Default 1.0
+        :type white_point: :class:`numbers.Real`
+
+        .. versionadded:: 0.4.1
+        """
+        if not isinstance(black_point, numbers.Real):
+            raise TypeError('expecting float, not ' + repr(black_point))
+        if not isinstance(white_point, numbers.Real):
+            raise TypeError('expecting float, not ' + repr(white_point))
+        linear_range = float(self.width * self.height)
+        library.MagickLinearStretchImage(self.wand,
+                                         linear_range * black_point,
+                                         linear_range * white_point)
 
     def normalize(self, channel=None):
         """Normalize color channels.

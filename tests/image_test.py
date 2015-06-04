@@ -1279,6 +1279,82 @@ def test_threshold_channel(fx_asset):
                     red.green_int8 == red.blue_int8 == 0)
 
 
+def test_contrast_stretch(fx_asset):
+    with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
+        img.contrast_stretch(0.15)
+        with img[0, 10] as left_top:
+            assert left_top.red_int8 == 255
+        with img[0, 90] as left_bottom:
+            assert left_bottom.red_int8 == 0
+    with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
+        img.contrast_stretch(0.15, channel='red')
+        with img[0, 10] as left_top:
+            assert left_top.red_int8 == 255
+        with img[0, 90] as left_bottom:
+            assert left_bottom.red_int8 == 0
+
+
+def test_contrast_stretch_user_error(fx_asset):
+    with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
+        with raises(TypeError):
+            img.contrast_stretch('NaN')
+        with raises(TypeError):
+            img.contrast_stretch(0.1, 'NaN')
+        with raises(ValueError):
+            img.contrast_stretch(0.1, channel='Not a channel')
+
+
+def test_gamma(fx_asset):
+    # Value under 1.0 is darker, and above 1.0 is lighter
+    middle_point = 75, 50
+    with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
+        with img.clone() as lighter:
+            lighter.gamma(1.5)
+            assert img[middle_point].red < lighter[middle_point].red
+        with img.clone() as darker:
+            darker.gamma(0.5)
+            assert img[middle_point].red > darker[middle_point].red
+
+
+def test_gamma_channel(fx_asset):
+    # Value under 1.0 is darker, and above 1.0 is lighter
+    middle_point = 75, 50
+    with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
+        with img.clone() as lighter:
+            lighter.gamma(1.5, channel='red')
+            assert img[middle_point].red < lighter[middle_point].red
+        with img.clone() as darker:
+            darker.gamma(0.5, channel='red')
+            assert img[middle_point].red > darker[middle_point].red
+
+
+def test_gamma_user_error(fx_asset):
+    with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
+        with raises(TypeError):
+            img.gamma('NaN;')
+        with raises(ValueError):
+            img.gamma(0.0, 'no channel')
+
+
+def test_linear_stretch(fx_asset):
+    with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
+        img.linear_stretch(black_point=0.15,
+                           white_point=0.15)
+        with img[0, 10] as left_top:
+            assert left_top.red_int8 == 255
+        with img[0, 90] as left_bottom:
+            assert left_bottom.red_int8 == 0
+
+
+def test_linear_stretch_user_error(fx_asset):
+    with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
+        with raises(TypeError):
+            img.linear_stretch(white_point='NaN',
+                               black_point=0.5)
+        with raises(TypeError):
+            img.linear_stretch(white_point=0.5,
+                               black_point='NaN')
+
 def test_normalize_default(display, fx_asset):
     with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
         display(img)
@@ -1335,6 +1411,31 @@ def test_equalize(fx_asset):
             assert light.red_int8 >= light.green_int8 >= light.blue_int8 >= 250
         with img[0, -1] as dark:
             assert dark.red_int8 <= dark.green_int8 <= dark.blue_int8 <= 5
+
+
+def test_evaluate(fx_asset):
+    with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
+        with img.clone() as percent_img:
+            fifty_percent = percent_img.quantum_range * 0.5
+            percent_img.evaluate('set', fifty_percent)
+            with percent_img[10, 10] as gray:
+                assert abs(gray.red - Color('gray50').red) < 0.01
+        with img.clone() as literal_img:
+            literal_img.evaluate('divide', 2, channel='red')
+            with img[0, 0] as org_color:
+                expected_color = (img[0, 0].red_int8 * 0.5)
+                with literal_img[0, 0] as actual_color:
+                    assert abs(expected_color - actual_color.red_int8) < 1
+
+
+def test_evaluate_user_error(fx_asset):
+    with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
+        with raises(ValueError):
+            img.evaluate(operator='Nothing')
+        with raises(TypeError):
+            img.evaluate(operator='set', value='NaN')
+        with raises(ValueError):
+            img.evaluate(operator='set', value=1.0, channel='Not a channel')
 
 
 def test_flip(fx_asset):
