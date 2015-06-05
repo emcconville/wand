@@ -2477,10 +2477,12 @@ class Image(BaseImage):
         """
         library.ClearMagickWand(self.wand)
 
-    def level(self, black=0.0, white=1.0, gamma=1.0, channel=None):
+    def level(self, black=0.0, white=None, gamma=1.0, channel=None):
         """Adjusts the levels of an image by scaling the colors falling
         between specified black and white points to the full available
         quantum range.
+
+        If only ``black`` is given, ``white`` will be adjusted inward.
 
         :param black: Black point, as a percentage of the system's quantum
                       range. Defaults to 0.
@@ -2494,11 +2496,23 @@ class Image(BaseImage):
         :param channel: The channel type. Available values can be found
                         in the :const:`CHANNELS` mapping. If ``None``,
                         normalize all channels.
-        :type channel: :class:`basestring`
+        :type channel: :const:`CHANNELS`
 
         .. versionadded:: 0.4.1
 
         """
+        if not isinstance(black, numbers.Real):
+            raise TypeError('expecting real number, not' + repr(black))
+
+        # If white is not given, mimic CLI behavior by reducing top point
+        if white is None:
+            white = 1.0 - black
+
+        if not isinstance(white, numbers.Real):
+            raise TypeError('expecting real number, not' + repr(white))
+
+        if not isinstance(gamma, numbers.Real):
+            raise TypeError('expecting real number, not' + repr(gamma))
 
         bp = float(self.quantum_range * black)
         wp = float(self.quantum_range * white)
@@ -2508,12 +2522,11 @@ class Image(BaseImage):
             except KeyError:
                 raise ValueError(repr(channel) + ' is an invalid channel type'
                                  '; see wand.image.CHANNELS dictionary')
-            r = library.MagickLevelImageChannel(self.wand, ch_const, bp, gamma, wp)
+            library.MagickLevelImageChannel(self.wand, ch_const, bp, gamma, wp)
         else:
-            r = library.MagickLevelImage(self.wand, bp, gamma, wp)
+            library.MagickLevelImage(self.wand, bp, gamma, wp)
 
-        if not r:
-            self.raise_exception()
+        self.raise_exception()
 
     @property
     def format(self):

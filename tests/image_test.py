@@ -1417,7 +1417,7 @@ def test_level_default(fx_asset):
             assert light.red_int8 >= light.green_int8 >= light.blue_int8 >= 255
     with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
         # Adjust the image's gamma to darken its midtones
-        img.level(0, 1, 0.5)
+        img.level(gamma=0.5)
         with img[0, len(img) // 2] as light:
             assert light.red_int8 <= light.green_int8 <= light.blue_int8 <= 65
             assert light.red_int8 >= light.green_int8 >= light.blue_int8 >= 60
@@ -1443,7 +1443,7 @@ def test_level_channel(fx_asset):
             assert(getattr(img[0, -1], c) >= 255)
         with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
             # Adjust each channel's gamma to darken its midtones
-            img.level(0, 1, 0.5, chan)
+            img.level(gamma=0.5, channel=chan)
             with img[0, len(img) // 2] as light:
                 assert(getattr(light, c) <= 65)
                 assert(getattr(light, c) >= 60)
@@ -1453,6 +1453,18 @@ def test_level_channel(fx_asset):
             with img[0, len(img) // 2] as light:
                 assert(getattr(light, c) >= 190)
                 assert(getattr(light, c) <= 195)
+
+def test_level_user_error(fx_asset):
+    with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
+        with raises(TypeError):
+            img.level(black='NaN')
+        with raises(TypeError):
+            img.level(white='NaN')
+        with raises(TypeError):
+            img.level(gamma='NaN')
+        with raises(ValueError):
+            img.level(channel='404')
+
 
 def test_equalize(fx_asset):
     with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
