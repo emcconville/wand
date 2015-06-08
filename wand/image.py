@@ -2127,6 +2127,44 @@ class Image(BaseImage):
         """
         library.ClearMagickWand(self.wand)
 
+    def level(self, black=0.0, white=1.0, gamma=1.0, channel=None):
+        """Adjusts the levels of an image by scaling the colors falling
+        between specified black and white points to the full available
+        quantum range.
+
+        :param black: Black point, as a percentage of the system's quantum
+                      range. Defaults to 0.
+        :type black: :class:`numbers.Real`
+        :param white: White point, as a percentage of the system's quantum
+                      range. Defaults to 1.0.
+        :type white: :class:`numbers.Real`
+        :param gamma: Optional gamma adjustment. Values > 1.0 lighten the
+                      image's midtones while values < 1.0 darken them.
+        :type gamma: :class:`numbers.Real`
+        :param channel: The channel type. Available values can be found
+                        in the :const:`CHANNELS` mapping. If ``None``,
+                        normalize all channels.
+        :type channel: :class:`basestring`
+
+        .. versionadded:: 0.4.1
+
+        """
+
+        bp = float(self.quantum_range * black)
+        wp = float(self.quantum_range * white)
+        if channel:
+            try:
+                ch_const = CHANNELS[channel]
+            except KeyError:
+                raise ValueError(repr(channel) + ' is an invalid channel type'
+                                 '; see wand.image.CHANNELS dictionary')
+            r = library.MagickLevelImageChannel(self.wand, ch_const, bp, gamma, wp)
+        else:
+            r = library.MagickLevelImage(self.wand, bp, gamma, wp)
+
+        if not r:
+            self.raise_exception()
+
     @property
     def format(self):
         """(:class:`basestring`) The image format.
