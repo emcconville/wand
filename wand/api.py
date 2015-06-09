@@ -517,6 +517,17 @@ try:
                                             ctypes.c_int,
                                             ctypes.c_double]
 
+    library.MagickLevelImage.argtypes = [ctypes.c_void_p,
+                                         ctypes.c_double,
+                                         ctypes.c_double,
+                                         ctypes.c_double]
+
+    library.MagickLevelImageChannel.argtypes = [ctypes.c_void_p,
+                                                ctypes.c_int,
+                                                ctypes.c_double,
+                                                ctypes.c_double,
+                                                ctypes.c_double]
+
     library.MagickEvaluateImageChannel.argtypes = [ctypes.c_void_p,
                                                    ctypes.c_int,
                                                    ctypes.c_int,

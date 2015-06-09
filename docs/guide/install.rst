@@ -134,8 +134,8 @@ of ImageMagick (e.g. :file:`C:\\Program Files\\ImageMagick-6.7.7-Q16`).
 You can set it in :menuselection:`Computer --> Properties -->
 Advanced system settings --> Advanced --> Enviro&nment Variables...`.
 
-__ http://www.imagemagick.org/download/binaries/ImageMagick-6.9.0-4-Q16-x86-dll.exe
-__ http://www.imagemagick.org/download/binaries/ImageMagick-6.9.0-4-Q16-x64-dll.exe
+__ http://www.imagemagick.org/download/binaries/ImageMagick-6.9.1-1-Q16-x86-dll.exe
+__ http://www.imagemagick.org/download/binaries/ImageMagick-6.9.1-1-Q16-x64-dll.exe
 
 
 .. _install-wand-debian:

@@ -2477,6 +2477,57 @@ class Image(BaseImage):
         """
         library.ClearMagickWand(self.wand)
 
+    def level(self, black=0.0, white=None, gamma=1.0, channel=None):
+        """Adjusts the levels of an image by scaling the colors falling
+        between specified black and white points to the full available
+        quantum range.
+
+        If only ``black`` is given, ``white`` will be adjusted inward.
+
+        :param black: Black point, as a percentage of the system's quantum
+                      range. Defaults to 0.
+        :type black: :class:`numbers.Real`
+        :param white: White point, as a percentage of the system's quantum
+                      range. Defaults to 1.0.
+        :type white: :class:`numbers.Real`
+        :param gamma: Optional gamma adjustment. Values > 1.0 lighten the
+                      image's midtones while values < 1.0 darken them.
+        :type gamma: :class:`numbers.Real`
+        :param channel: The channel type. Available values can be found
+                        in the :const:`CHANNELS` mapping. If ``None``,
+                        normalize all channels.
+        :type channel: :const:`CHANNELS`
+
+        .. versionadded:: 0.4.1
+
+        """
+        if not isinstance(black, numbers.Real):
+            raise TypeError('expecting real number, not' + repr(black))
+
+        # If white is not given, mimic CLI behavior by reducing top point
+        if white is None:
+            white = 1.0 - black
+
+        if not isinstance(white, numbers.Real):
+            raise TypeError('expecting real number, not' + repr(white))
+
+        if not isinstance(gamma, numbers.Real):
+            raise TypeError('expecting real number, not' + repr(gamma))
+
+        bp = float(self.quantum_range * black)
+        wp = float(self.quantum_range * white)
+        if channel:
+            try:
+                ch_const = CHANNELS[channel]
+            except KeyError:
+                raise ValueError(repr(channel) + ' is an invalid channel type'
+                                 '; see wand.image.CHANNELS dictionary')
+            library.MagickLevelImageChannel(self.wand, ch_const, bp, gamma, wp)
+        else:
+            library.MagickLevelImage(self.wand, bp, gamma, wp)
+
+        self.raise_exception()
+
     @property
     def format(self):
         """(:class:`basestring`) The image format.
