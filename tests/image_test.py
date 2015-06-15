@@ -751,6 +751,63 @@ def test_resize_and_sample_errors(method, fx_asset):
             getattr(img, method)(height=-5)
 
 
+@mark.parametrize(( 'density', 'expected_size'), [
+    ((72,72), (800, 600)),
+    ((36,36), (400, 300)),
+    ((144,144), (1600, 1200)),
+    ((None,36), (800, 300)),
+    ((36,None), (400, 600)),
+])
+def test_resample(density, expected_size, fx_asset):
+    """Resample (Adjust nuber of pixels at the given density) the image."""
+    xr, yr = density
+    with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
+        img.units = "pixelspercentimeter"
+        assert img.resolution == (72, 72)
+        img.resample(xr, yr)
+        assert img.resolution == (xr == None and 72 or xr, yr == None and 72 or yr)
+        assert img.size == expected_size
+
+
+@mark.parametrize(( 'density', 'expected_size'), [
+    ((96,96), (350, 197)),
+    ((48,48), (175, 99)),
+    ((192,192), (700, 394)),
+    ((None,48), (350, 99)),
+    ((48,None), (175, 197)),
+])
+def test_resample_gif(density, expected_size, fx_asset):
+    """Resample (Adjust nuber of pixels at the given density) the image."""
+    xr, yr = density
+    with Image(filename=str(fx_asset.join('nocomments-delay-100.gif'))) as img:
+        img.units = "pixelspercentimeter"
+        assert len(img.sequence) == 46
+        img.resolution = (96, 96)
+        img.resample(xr, yr)
+        assert img.resolution == (xr == None and 96 or xr, yr == None and 96 or yr)
+        assert img.size == expected_size
+        for s in img.sequence:
+            #assert s.resolution == (xr == None and 96 or xr, yr == None and 96 or yr)
+            assert s.size == expected_size
+
+
+def test_resample_errors(fx_asset):
+    """Sampling errors."""
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+        with raises(TypeError):
+            img.resample(x_res='100')
+        with raises(TypeError):
+            img.resample(y_res='100')
+        with raises(ValueError):
+            img.resample(x_res=0)
+        with raises(ValueError):
+            img.resample(y_res=0)
+        with raises(ValueError):
+            img.resample(x_res=-5)
+        with raises(ValueError):
+            img.resample(y_res=-5)
+
+
 @mark.parametrize(('args', 'kwargs', 'expected_size'), [
     ((), {'resize': '200%'}, (1600, 1200)),
     ((), {'resize': '200%x100%'}, (1600, 600)),
