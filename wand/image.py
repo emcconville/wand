@@ -1312,15 +1312,11 @@ class BaseImage(Resource):
                 library.MagickSetIteratorIndex(self.wand, i)
                 library.MagickResampleImage(self.wand, x_res, y_res,
                                           filter, blur)
-            #You really need to do it?
-            #library.MagickSetResolution(self.wand, x_res, y_res)
             
         else:
             r = library.MagickResampleImage(self.wand, x_res, y_res,
                                           filter, blur)
-            #You really need to do it?
-            #library.MagickSetResolution(self.wand,  x_res, y_res)
-            
+
             if not r:
                 self.raise_exception()
                 
