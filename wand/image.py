@@ -1253,9 +1253,9 @@ class BaseImage(Resource):
                 
     @manipulative
     def resample(self, x_res=None, y_res=None, filter='undefined', blur=1):
-        """adjust the number of pixels in an image so that when displayed at the
-           given Resolution or Density the image will still look the same size in
-           real world terms.
+        """Adjust the number of pixels in an image so that when displayed at the
+        given Resolution or Density the image will still look the same size in
+        real world terms.
 
         :param x_res: the X resolution (density) in the scaled image. default is
                       the original resolution
