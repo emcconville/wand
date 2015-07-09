@@ -84,6 +84,7 @@ User's guide
    guide/transform
    guide/draw
    guide/colorspace
+   guide/colorenhancement
    guide/exif
    guide/sequence
    guide/resource
