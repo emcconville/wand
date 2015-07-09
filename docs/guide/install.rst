@@ -15,6 +15,7 @@ Wand is a Python binding of ImageMagick_, so you have to install it as well:
 - :ref:`Fedora/CentOS <install-imagemagick-redhat>`
 - :ref:`Mac <install-imagemagick-mac>`
 - :ref:`Windows <install-imagemagick-windows>`
+- :ref:`Explicitly link to specific ImageMagick <explicit-link>`
 
 Or you can simply install Wand and its entire dependencies using the package
 manager of your system (it's way convenient but the version might be outdated):
@@ -136,6 +137,20 @@ Advanced system settings --> Advanced --> Enviro&nment Variables...`.
 
 __ http://www.imagemagick.org/download/binaries/ImageMagick-6.9.1-1-Q16-x86-dll.exe
 __ http://www.imagemagick.org/download/binaries/ImageMagick-6.9.1-1-Q16-x64-dll.exe
+
+
+.. _explicit-link:
+
+Explicitly link to specific ImageMagick
+---------------------------------------
+
+Although Wand tries searching operating system's standard library paths for
+a ImageMagick installation, sometimes you need to explicitly specify
+the path of ImageMagick installation.
+
+In that case, you can give the path to Wand by setting :envvar:`MAGICK_HOME`.
+Wand respects :envvar:`MAGICK_HOME`, the environment variable which has been
+reserved by ImageMagick.
 
 
 .. _install-wand-debian:
