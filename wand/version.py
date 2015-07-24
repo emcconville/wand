@@ -106,8 +106,12 @@ if libmagick:
     #: string to the result of :c:func:`GetMagickReleaseDate` function.
     #:
     #: .. versionadded:: 0.2.1
-    MAGICK_RELEASE_DATE = datetime.date(
-        *map(int, MAGICK_RELEASE_DATE_STRING.split('-')))
+    try:
+        MAGICK_RELEASE_DATE = datetime.date(*tuple(
+           int(v) for v in MAGICK_RELEASE_DATE_STRING.split('-')
+        ))
+    except ValueError:
+        MAGICK_RELEASE_DATE = None
 
     c_quantum_depth = ctypes.c_size_t()
     libmagick.GetMagickQuantumDepth(ctypes.byref(c_quantum_depth))
