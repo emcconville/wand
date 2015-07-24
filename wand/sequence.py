@@ -114,7 +114,7 @@ class Sequence(ImageProperty, collections.MutableSequence):
         if index < instances_length:
             instance = instances[index]
             if (instance is not None and
-                getattr(instance, 'c_resource', None) is not None):
+                    getattr(instance, 'c_resource', None) is not None):
                 return instance
         else:
             number_to_extend = index - instances_length + 1
@@ -252,7 +252,7 @@ class SingleImage(BaseImage):
     """Each single image in :class:`~wand.image.Image` container.
     For example, it can be a frame of GIF animation.
 
-    Note that all changes on single images are invinsilble to their
+    Note that all changes on single images are invisible to their
     containers until they are :meth:`~wand.image.BaseImage.close`\ d
     (:meth:`~wand.resource.Resource.destroy`\ ed).
 

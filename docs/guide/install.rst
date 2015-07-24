@@ -38,6 +38,13 @@ easily installed using APT:
 
    $ sudo apt-get install libmagickwand-dev
 
+If you need SVG, WMF, OpenEXR, DjVu, and Graphviz support you have to install
+``libmagickcore5-extra`` as well:
+
+.. sourcecode:: console
+
+   $ sudo apt-get install libmagickcore5-extra
+
 
 .. _install-imagemagick-redhat:
 
@@ -65,6 +72,14 @@ Homebrew
 
       $ brew install imagemagick
 
+   If :ref:`seam carving <seam-carving>` (:meth:`Image.liquid_rescale()
+   <wand.image.BaseImage.liquid_rescale>`) is needed you have install
+   liblqr_ as well:
+
+   .. sourcecode:: console
+
+      $ brew install imagemagick --with-liblqr
+
 MacPorts
    .. sourcecode:: console
 
@@ -81,7 +96,7 @@ MacPorts
 
 .. _Homebrew: http://mxcl.github.com/homebrew/
 .. _MacPorts: http://www.macports.org/
-
+.. _liblqr: http://liblqr.wikidot.com/
 
 .. _install-imagemagick-windows:
 
@@ -100,10 +115,10 @@ http://www.imagemagick.org/download/binaries/
 Choose a binary for your architecture:
 
 Windows 32-bit
-   ImageMagick-6.7.7-6-Q16-windows-dll.exe__
+   ImageMagick-6.9.0-4-Q16-x86-dll.exe__
 
 Windows 64-bit
-   ImageMagick-6.7.7-6-Q16-windows-x64-dll.exe__
+   ImageMagick-6.9.0-4-Q16-x64-dll.exe__
 
 .. image:: ../_images/windows-setup.png
 
@@ -119,8 +134,8 @@ of ImageMagick (e.g. :file:`C:\\Program Files\\ImageMagick-6.7.7-Q16`).
 You can set it in :menuselection:`Computer --> Properties -->
 Advanced system settings --> Advanced --> Enviro&nment Variables...`.
 
-__ http://www.imagemagick.org/download/binaries/ImageMagick-6.7.7-6-Q16-windows-dll.exe
-__ http://www.imagemagick.org/download/binaries/ImageMagick-6.7.7-6-Q16-windows-x64-dll.exe
+__ http://www.imagemagick.org/download/binaries/ImageMagick-6.9.1-1-Q16-x86-dll.exe
+__ http://www.imagemagick.org/download/binaries/ImageMagick-6.9.1-1-Q16-x64-dll.exe
 
 
 .. _install-wand-debian:

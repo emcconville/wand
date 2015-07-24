@@ -1,6 +1,177 @@
 Wand Changelog
 ==============
 
+0.4 series
+~~~~~~~~~~
+
+.. _changelog-0.4.1:
+
+Version 0.4.1
+-------------
+
+- Additional query functions have been added to :mod:`wand.version` API. [:issue:`120`]
+
+  - Added :func:`configure_options() <wand.version.configure_options>` function.
+  - Added :func:`fonts() <wand.version.fonts>` function.
+  - Added :func:`formats() <wand.version.formats>` function.
+
+- Fixed Windows memory-deallocate errors on :mod:`wand.drawing` API. [:issue:`226` by Eric McConville]
+
+
+.. _changelog-0.4.0:
+
+Version 0.4.1
+-------------
+
+  - Added :meth:`Image.auto_orientation() <wand.image.auto_orientation>` that fixes orientation by checking EXIF tags
+  - Added :meth:`Image.transverse() <wand.image.transverse>` transverse (MagickTransverseImage)
+  - Added :meth:`Image.transpose() <wand.image.transpose>` transpose (MagickTransposeImage)
+
+Version 0.4.0
+-------------
+
+Released on February 20, 2015.
+
+.. seealso::
+
+   :doc:`whatsnew/0.4`
+      This guide introduces what's new in Wand 0.4.
+
+- Complete :mod:`wand.drawing` API.  The whole work was done by Eric McConville.
+  Huge thanks for his effort!  [:issue:`194` by Eric McConville]
+
+  - Added :meth:`Drawing.arc() <wand.drawing.Drawing.arc>` method
+    (:ref:`draw-arc`).
+  - Added :meth:`Drawing.bezier() <wand.drawing.Drawing.bezier>` method
+    (:ref:`draw-bezier`).
+  - Added :meth:`Drawing.circle() <wand.drawing.Drawing.circle>` method
+    (:ref:`draw-circle`).
+
+  - :ref:`draw-color-and-matte`
+
+    - Added :const:`wand.drawing.PAINT_METHOD_TYPES` constant.
+    - Added :meth:`Drawing.color() <wand.drawing.Drawing.color>` method.
+    - Added :meth:`Drawing matte() <wand.drawing.Drawing.matte>` method.
+
+  - Added :meth:`Drawing.composite() <wand.drawing.Drawing.composite>` method
+    (:ref:`draw-composite`).
+  - Added :meth:`Drawing.ellipse() <wand.drawing.Drawing.ellipse>` method
+    (:ref:`draw-ellipse`).
+
+  - :ref:`draw-paths`
+
+    - Added :meth:`~wand.drawing.Drawing.path_start()` method.
+    - Added :meth:`~wand.drawing.Drawing.path_finish()` method.
+    - Added :meth:`~wand.drawing.Drawing.path_close()` method.
+    - Added :meth:`~wand.drawing.Drawing.path_curve()` method.
+    - Added :meth:`~wand.drawing.Drawing.path_curve_to_quadratic_bezier()`
+      method.
+    - Added :meth:`~wand.drawing.Drawing.path_elliptic_arc()` method.
+    - Added :meth:`~wand.drawing.Drawing.path_horizontal_line()` method.
+    - Added :meth:`~wand.drawing.Drawing.path_line()` method.
+    - Added :meth:`~wand.drawing.Drawing.path_move()` method.
+    - Added :meth:`~wand.drawing.Drawing.path_vertical_line()` method.
+
+  - Added :meth:`Drawing.point() <wand.drawing.Drawing.point>` method
+    (:ref:`draw-point`).
+  - Added :meth:`Drawing.polygon() <wand.drawing.Drawing.polygon>` method
+    (:ref:`draw-polygon`).
+  - Added :meth:`Drawing.polyline() <wand.drawing.Drawing.polyline>` method
+    (:ref:`draw-polyline`).
+
+  - :ref:`draw-push-pop`
+
+    - Added :meth:`~wand.drawing.Drawing.push()` method.
+    - Added :meth:`~wand.drawing.Drawing.push_clip_path()` method.
+    - Added :meth:`~wand.drawing.Drawing.push_defs()` method.
+    - Added :meth:`~wand.drawing.Drawing.push_pattern()` method.
+    - Added :attr:`~wand.drawing.Drawing.clip_path` property.
+    - Added :meth:`~wand.drawing.Drawing.set_fill_pattern_url()` method.
+    - Added :meth:`~wand.drawing.Drawing.set_stroke_pattern_url()` method.
+    - Added :meth:`~wand.drawing.Drawing.pop()` method.
+
+  - Added :meth:`Drawing.rectangle() <wand.drawing.Drawing.rectangle>` method
+    (:ref:`draw-rectangles`).
+  - Added :attr:`~wand.drawing.Drawing.stroke_dash_array` property.
+  - Added :attr:`~wand.drawing.Drawing.stroke_dash_offset` property.
+  - Added :attr:`~wand.drawing.Drawing.stroke_line_cap` property.
+  - Added :attr:`~wand.drawing.Drawing.stroke_line_join` property.
+  - Added :attr:`~wand.drawing.Drawing.stroke_miter_limit` property.
+  - Added :attr:`~wand.drawing.Drawing.stroke_opacity` property.
+  - Added :attr:`~wand.drawing.Drawing.stroke_width` property.
+  - Added :attr:`~wand.drawing.Drawing.fill_opacity` property.
+  - Added :attr:`~wand.drawing.Drawing.fill_rule` property.
+
+- Error message of :exc:`~wand.exceptions.MissingDelegateError` raised by
+  :meth:`Image.liquid_rescale() <wand.image.BaseImage.liquid_rescale>`
+  became nicer.
+
+
+0.3 series
+~~~~~~~~~~
+
+
+Version 0.3.9
+-------------
+
+Released on December 20, 2014.
+
+- Added ``'pdf:use-cropbox'`` option to :attr:`Image.options
+  <wand.image.BaseImage.options>` dictionary (and :const:`~wand.image.OPTIONS`
+  constant).  [:issue:`185` by Christoph Neuroth]
+- Fixed a bug that exception message was :class:`bytes` instead of
+  :class:`str` on Python 3.
+- The ``size`` parameter of :class:`~wand.font.Font` class becomes optional.
+  Its default value is 0, which means *autosized*.
+  [:issue:`191` by Cha, Hojeong]
+- Fixed a bug that :meth:`Image.read() <wand.image.Image.read>` had tried
+  using :c:func:`MagickReadImageFile()` even when the given file object
+  has no :attr:`mode` attribute.  [:issue:`205` by Stephen J. Fuhry]
+
+
+Version 0.3.8
+-------------
+
+Released on August 3, 2014.
+
+- Fixed a bug that transparent background becomes filled with white
+  when SVG is converted to other bitmap image format like PNG.  [:issue:`184`]
+- Added :meth:`Image.negate() <wand.image.BaseImage.negate>` method.
+  [:issue:`174` by Park Joon-Kyu]
+- Fixed a segmentation fault on :meth:`Image.modulate()
+  <wand.image.BaseImage.modulate>` method.
+  [:issue:`173` by Ted Fung, :issue:`158`]
+- Added suggestion to install freetype also if Homebrew is used.
+  [:issue:`141`]
+- Now :mimetype:`image/x-gif` also is determined as :attr:`animation`.
+  [:issue:`181` by Juan-Pablo Scaletti]
+
+
+Version 0.3.7
+-------------
+
+Released on March 25, 2014.
+
+- A hotfix of debug prints made at 0.3.6.
+
+
+Version 0.3.6
+-------------
+
+Released on March 23, 2014.
+
+- Added :meth:`Drawing.rectangle() <wand.drawing.Drawing.rectangle>` method.
+  :ref:`Now you can draw rectangles. <draw-rectangles>` [:issue:`159`]
+- Added :attr:`Image.compression <wand.image.Image.compression>` property.
+  [:issue:`171`]
+- Added :func:`contextlib.nested()` function to :mod:`wand.compat` module.
+- Fixed :exc:`UnicodeEncodeError` when :meth:`Drawing.text()
+  <wand.drawing.Drawing.text>` method gives Unicode ``text`` argument
+  in Python 2.  [:issue:`163`]
+- Now it now allows to use Wand when Python is invoked with the ``-OO`` flag.
+  [:issue:`169` by Samuel Maudo]
+
+
 Version 0.3.5
 -------------
 
@@ -173,6 +344,9 @@ Released on June 17, 2013.
 __ http://en.wikipedia.org/wiki/Seam_carving
 
 
+0.2 series
+~~~~~~~~~~
+
 Version 0.2.4
 -------------
 
@@ -197,7 +371,7 @@ Released on January 25, 2013.
   <wand.image.Image.transparentize>` method (and :meth:`Image.watermark()
   <wand.image.Image.watermark>` method which internally uses it) didn't
   work.
-- Fixed segmentation fault occured when :attr:`Color.red
+- Fixed segmentation fault occurred when :attr:`Color.red
   <wand.color.Color.red>`, :attr:`Color.green <wand.color.Color.green>`,
   or :attr:`Color.blue <Wand.color.Color.blue>` is accessed.
 - Added :attr:`Color.alpha <wand.color.Color.alpha>` property.
@@ -287,6 +461,9 @@ Released on June 20, 2012.  Alpha version.
 - Now the current version can be found from the command line interface:
   ``python -m wand.version``.
 
+
+0.1 series
+~~~~~~~~~~
 
 Version 0.1.10
 --------------

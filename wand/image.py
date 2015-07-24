@@ -21,13 +21,14 @@ from .api import MagickPixelPacket, libc, libmagick, library
 from .color import Color
 from .compat import (binary, binary_type, encode_filename, file_types,
                      string_type, text, xrange)
-from .exceptions import WandException
+from .exceptions import MissingDelegateError, WandException
 from .resource import DestroyedResourceError, Resource
 from .font import Font
 
 
 __all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COLORSPACE_TYPES',
-           'COMPOSITE_OPERATORS', 'EVALUATE_OPS', 'FILTER_TYPES',
+           'COMPOSITE_OPERATORS', 'COMPRESSION_TYPES',
+           'EVALUATE_OPS', 'FILTER_TYPES',
            'GRAVITY_TYPES', 'IMAGE_TYPES', 'ORIENTATION_TYPES', 'UNIT_TYPES',
            'BaseImage', 'ChannelDepthDict', 'ChannelImageDict',
            'ClosedImageError', 'HistogramDict', 'Image', 'ImageProperty',
@@ -395,7 +396,24 @@ ORIENTATION_TYPES = ('undefined', 'top_left', 'top_right', 'bottom_right',
 #:
 #: .. versionchanged:: 0.3.4
 #:    Added ``'jpeg:sampling-factor'`` option.
-OPTIONS = frozenset(['fill', 'jpeg:sampling-factor'])
+#:
+#: .. versionchanged:: 0.3.9
+#:    Added ``'pdf:use-cropbox'`` option.
+OPTIONS = frozenset(['fill', 'jpeg:sampling-factor', 'pdf:use-cropbox'])
+
+#: (:class:`tuple`) The list of :attr:`Image.compression` types.
+#:
+#: .. versionadded:: 0.3.6
+COMPRESSION_TYPES = (
+    'undefined', 'b44a', 'b44', 'bzip', 'dxt1', 'dxt3', 'dxt5', 'fax',
+    'group4',
+    'jbig1',        # ISO/IEC std 11544 / ITU-T rec T.82
+    'jbig2',        # ISO/IEC std 14492 / ITU-T rec T.88
+    'jpeg2000',     # ISO/IEC std 15444-1
+    'jpeg', 'losslessjpeg',
+    'lzma',         # Lempel-Ziv-Markov chain algorithm
+    'lzw', 'no', 'piz', 'pxr24', 'rle', 'zip', 'zips'
+)
 
 
 def manipulative(function):
@@ -424,6 +442,9 @@ class BaseImage(Resource):
     #:
     #: .. versionchanged:: 0.3.4
     #:    Added ``'jpeg:sampling-factor'`` option.
+    #:
+    #: .. versionchanged:: 0.3.9
+    #:    Added ``'pdf:use-cropbox'`` option.
     options = None
 
     #: (:class:`collections.Sequence`) The list of
@@ -495,7 +516,7 @@ class BaseImage(Resource):
 
     def __getitem__(self, idx):
         if (not isinstance(idx, string_type) and
-            isinstance(idx, collections.Iterable)):
+                isinstance(idx, collections.Iterable)):
             idx = tuple(idx)
             d = len(idx)
             if not (1 <= d <= 2):
@@ -584,6 +605,9 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.3.0
 
+        .. versionchanged:: 0.3.8
+           Became to accept :mimetype:`image/x-gif` as well.
+
         """
         return False
 
@@ -621,7 +645,7 @@ class BaseImage(Resource):
     @manipulative
     def font_path(self, font):
         font = binary(font)
-        if library.MagickSetFont(self.wand, font) == False:
+        if library.MagickSetFont(self.wand, font) is False:
             raise ValueError('font is invalid')
 
     @property
@@ -636,7 +660,7 @@ class BaseImage(Resource):
             raise TypeError('expected a numbers.Real, but got ' + repr(size))
         elif size < 0.0:
             raise ValueError('cannot be less then 0.0, but got ' + repr(size))
-        elif library.MagickSetPointsize(self.wand, size) == False:
+        elif library.MagickSetPointsize(self.wand, size) is False:
             raise ValueError('unexpected error is occur')
 
     @property
@@ -704,7 +728,7 @@ class BaseImage(Resource):
 
         """
         orientation_index = library.MagickGetImageOrientation(self.wand)
-        return ORIENTATION_TYPES[text(orientation_index)]
+        return ORIENTATION_TYPES[orientation_index]
 
     @orientation.setter
     @manipulative
@@ -738,8 +762,8 @@ class BaseImage(Resource):
         :type text: :class:`basestring`
         :param left: x offset in pixels
         :type left: :class:`numbers.Integral`
-        :param right: y offset in pixels
-        :type right: :class:`numbers.Integral`
+        :param top: y offset in pixels
+        :type top: :class:`numbers.Integral`
         :param width: width of caption in pixels.
                       default is :attr:`width` of the image
         :type width: :class:`numbers.Integral`
@@ -781,7 +805,6 @@ class BaseImage(Resource):
                                                  background_color.resource)
             textboard.read(filename=b'caption:' + text.encode('utf-8'))
             self.composite(textboard, left, top)
-
 
     @property
     def resolution(self):
@@ -854,12 +877,14 @@ class BaseImage(Resource):
     @colorspace.setter
     @manipulative
     def colorspace(self, colorspace_type):
-        if not isinstance(colorspace_type, string_type) \
-            or colorspace_type not in COLORSPACE_TYPES:
+        if (not isinstance(colorspace_type, string_type) or
+                colorspace_type not in COLORSPACE_TYPES):
             raise TypeError('Colorspace value must be a string from '
                             'COLORSPACE_TYPES, not ' + repr(colorspace_type))
-        r = library.MagickSetImageColorspace(self.wand,
-                                    COLORSPACE_TYPES.index(colorspace_type))
+        r = library.MagickSetImageColorspace(
+            self.wand,
+            COLORSPACE_TYPES.index(colorspace_type)
+        )
         if not r:
             self.raise_exception()
 
@@ -898,8 +923,8 @@ class BaseImage(Resource):
     @type.setter
     @manipulative
     def type(self, image_type):
-        if not isinstance(image_type, string_type) \
-            or image_type not in IMAGE_TYPES:
+        if (not isinstance(image_type, string_type) or
+                image_type not in IMAGE_TYPES):
             raise TypeError('Type value must be a string from IMAGE_TYPES'
                             ', not ' + repr(image_type))
         r = library.MagickSetImageType(self.wand,
@@ -962,9 +987,9 @@ class BaseImage(Resource):
     @alpha_channel.setter
     @manipulative
     def alpha_channel(self, alpha):
-        if alpha == True:
+        if alpha is True:
             act = ALPHA_CHANNEL_TYPES.index('activate')
-        elif alpha == False:
+        elif alpha is False:
             act = ALPHA_CHANNEL_TYPES.index('deactivate')
         else:
             raise TypeError('alpha_channel must be bool, not ' +
@@ -1006,7 +1031,7 @@ class BaseImage(Resource):
     @property
     def quantum_range(self):
         """(:class:`int`) The maxumim value of a color channel that is
-        supported by the imagemgick library.
+        supported by the imagemagick library.
 
         .. versionadded:: 0.2.0
 
@@ -1100,6 +1125,7 @@ class BaseImage(Resource):
         elif not (bottom is None or height is None):
             raise TypeError('parameters bottom and height are exclusive each '
                             'other; use one at a time')
+
         def abs_(n, m, null=None):
             if n is None:
                 return m if null is None else null
@@ -1120,7 +1146,8 @@ class BaseImage(Resource):
             raise ValueError('image width cannot be zero')
         elif height < 1:
             raise ValueError('image width cannot be zero')
-        elif left == top == 0 and width == self.width and height == self.height:
+        elif (left == top == 0 and width == self.width and
+              height == self.height):
             return
         if self.animation:
             self.wand = library.MagickCoalesceImages(self.wand)
@@ -1356,7 +1383,7 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.2.2
 
-        """
+        """  # noqa
         # Check that the values given are the correct types.  ctypes will do
         # this automatically, but we can make the error message more friendly
         # here.
@@ -1439,7 +1466,14 @@ class BaseImage(Resource):
             raise TypeError('rigidity must be a float, not ' + repr(rigidity))
         library.MagickLiquidRescaleImage(self.wand, int(width), int(height),
                                          float(delta_x), float(rigidity))
-        self.raise_exception()
+        try:
+            self.raise_exception()
+        except MissingDelegateError as e:
+            raise MissingDelegateError(
+                str(e) + '\n\nImageMagick in the system is likely to be '
+                'impossible to load liblqr.  You might not install liblqr, '
+                'or ImageMagick may not compiled with liblqr.'
+            )
 
     @manipulative
     def rotate(self, degree, background=None, reset_coords=True):
@@ -1522,15 +1556,16 @@ class BaseImage(Resource):
         the black color channel.  The ``transparency`` parameter specifies the
         percentage.
 
-        :param transparency: the percentage fade that should be performed on the
-                             image, from 0.0 to 1.0
+        :param transparency: the percentage fade that should be performed on
+                             the image, from 0.0 to 1.0
         :type transparency: :class:`numbers.Real`
 
         .. versionadded:: 0.2.0
 
         """
         if transparency:
-            t = ctypes.c_double(float(self.quantum_range * float(transparency)))
+            t = ctypes.c_double(float(self.quantum_range *
+                                      float(transparency)))
             if t.value > self.quantum_range or t.value < 0:
                 raise ValueError('transparency must be a numbers.Real value ' +
                                  'between 0.0 and 1.0')
@@ -1565,8 +1600,8 @@ class BaseImage(Resource):
                      by a small amount. The fuzz member of image defines how
                      much tolerance is acceptable to consider two colors as the
                      same. For example, set fuzz to 10 and the color red at
-                     intensities of 100 and 102 respectively are now interpreted
-                     as the same color for the color.
+                     intensities of 100 and 102 respectively are now
+                     interpreted as the same color for the color.
         :type fuzz: :class:`numbers.Integral`
         :param invert: Boolean to tell to paint the inverse selection.
         :type invert: :class:`bool`
@@ -1649,7 +1684,7 @@ class BaseImage(Resource):
             raise ValueError(repr(channel) + ' is an invalid channel type'
                              '; see wand.image.CHANNELS dictionary')
         try:
-            op =  COMPOSITE_OPERATORS.index(operator)
+            op = COMPOSITE_OPERATORS.index(operator)
         except IndexError:
             raise IndexError(repr(operator) + ' is an invalid composite '
                              'operator type; see wand.image.COMPOSITE_'
@@ -1657,6 +1692,17 @@ class BaseImage(Resource):
         library.MagickCompositeImageChannel(self.wand, ch_const, image.wand,
                                             op, int(left), int(top))
         self.raise_exception()
+
+    @manipulative
+    def equalize(self):
+        """Equalizes the image histogram
+
+        .. versionadded:: 0.3.10
+
+        """
+        result = library.MagickEqualizeImage(self.wand)
+        if not result:
+            self.raise_exception()
 
     @manipulative
     def modulate(self, brightness=100.0, saturation=100.0, hue=100.0):
@@ -1686,14 +1732,75 @@ class BaseImage(Resource):
                             repr(saturation))
 
         elif not isinstance(hue, numbers.Real):
-            raise TypeError('hue has to be a numbers.Real, not '+
-                            repr(hue))
+            raise TypeError('hue has to be a numbers.Real, not ' + repr(hue))
         r = library.MagickModulateImage(
             self.wand,
-            ctypes.c_double(brightness),
-            ctypes.c_double(saturation),
-            ctypes.c_double(hue)
+            brightness,
+            saturation,
+            hue
         )
+        if not r:
+            self.raise_exception()
+
+    @manipulative
+    def threshold(self, threshold=0.5, channel=None):
+        """Changes the value of individual pixels based on the intensity
+        of each pixel compared to threshold. The result is a high-contrast,
+        two color image. It manipulates the image in place.
+
+        :param threshold: threshold as a factor of quantum
+        :type threshold: :class:`numbers.Real`
+        :param channel: the channel type.  available values can be found
+                        in the :const:`CHANNELS` mapping.  If ``None``,
+                        threshold all channels.
+        :type channel: :class:`basestring`
+
+        .. versionadded:: 0.3.10
+
+        """
+        if not isinstance(threshold, numbers.Real):
+            raise TypeError('threshold has to be a numbers.Real, not ' +
+                            repr(threshold))
+
+        if channel:
+            try:
+                ch_const = CHANNELS[channel]
+            except KeyError:
+                raise ValueError(repr(channel) + ' is an invalid channel type'
+                                 '; see wand.image.CHANNELS dictionary')
+            r = library.MagickThresholdImageChannel(
+                self.wand, ch_const,
+                threshold * self.quantum_range
+            )
+        else:
+            r = library.MagickThresholdImage(self.wand,
+                                             threshold * self.quantum_range)
+        if not r:
+            self.raise_exception()
+
+    def negate(self, grayscale=False, channel=None):
+        """Negate the colors in the reference image.
+
+        :param grayscale: if set, only negate grayscale pixels in the image.
+        :type grayscale: :class:`bool`
+        :param channel: the channel type.  available values can be found
+                        in the :const:`CHANNELS` mapping.  If ``None``,
+                        negate all channels.
+        :type channel: :class:`basestring`
+
+        .. versionadded:: 0.3.8
+
+        """
+        if channel:
+            try:
+                ch_const = CHANNELS[channel]
+            except KeyError:
+                raise ValueError(repr(channel) + ' is an invalid channel type'
+                                 '; see wand.image.CHANNELS dictionary')
+            r = library.MagickNegateImageChannel(self.wand, ch_const,
+                                                 grayscale)
+        else:
+            r = library.MagickNegateImage(self.wand, grayscale)
         if not r:
             self.raise_exception()
 
@@ -1822,7 +1929,7 @@ class Image(BaseImage):
                        default is transparent
     :type background: :class:`wand.color.Color`
     :param resolution: set a resolution value (dpi),
-        usefull for vectorial formats (like pdf)
+                       useful for vectorial formats (like pdf)
     :type resolution: :class:`collections.Sequence`,
                       :Class:`numbers.Integral`
 
@@ -1891,8 +1998,8 @@ class Image(BaseImage):
         new_args = width, height, background
         open_args = image, blob, file, filename
         if (any(a is not None for a in new_args) and
-            any(a is not None for a in open_args)):
-            raise TypeError('blank image parameters cant be used with image '
+                any(a is not None for a in open_args)):
+            raise TypeError("blank image parameters can't be used with image "
                             'opening parameters')
         elif any(a is not None and b is not None
                  for i, a in enumerate(open_args)
@@ -1919,6 +2026,11 @@ class Image(BaseImage):
             else:
                 if format:
                     format = binary(format)
+                with Color('transparent') as bg:  # FIXME: parameterize this
+                    result = library.MagickSetBackgroundColor(self.wand,
+                                                              bg.resource)
+                    if not result:
+                        self.raise_exception()
                 if file is not None:
                     if format:
                         library.MagickSetFilename(self.wand,
@@ -1951,7 +2063,7 @@ class Image(BaseImage):
         :param filename: reads an image from the ``filename`` string
         :type filename: :class:`basestring`
         :param resolution: set a resolution value (DPI),
-                           usefull for vectorial formats (like PDF)
+                           useful for vectorial formats (like PDF)
         :type resolution: :class:`collections.Sequence`,
                           :class:`numbers.Integral`
 
@@ -1962,7 +2074,7 @@ class Image(BaseImage):
         # Resolution must be set after image reading.
         if resolution is not None:
             if (isinstance(resolution, collections.Sequence) and
-                len(resolution) == 2):
+                    len(resolution) == 2):
                 library.MagickSetResolution(self.wand, *resolution)
             elif isinstance(resolution, numbers.Integral):
                 library.MagickSetResolution(self.wand, resolution, resolution)
@@ -1971,7 +2083,7 @@ class Image(BaseImage):
                                 'integer of the same x/y')
         if file is not None:
             if (isinstance(file, file_types) and
-                hasattr(libc, 'fdopen')):
+                    hasattr(libc, 'fdopen') and hasattr(file, 'mode')):
                 fd = libc.fdopen(file.fileno(), file.mode)
                 r = library.MagickReadImageFile(self.wand, fd)
             elif not callable(getattr(file, 'read', None)):
@@ -2014,6 +2126,44 @@ class Image(BaseImage):
 
         """
         library.ClearMagickWand(self.wand)
+
+    def level(self, black=0.0, white=1.0, gamma=1.0, channel=None):
+        """Adjusts the levels of an image by scaling the colors falling
+        between specified black and white points to the full available
+        quantum range.
+
+        :param black: Black point, as a percentage of the system's quantum
+                      range. Defaults to 0.
+        :type black: :class:`numbers.Real`
+        :param white: White point, as a percentage of the system's quantum
+                      range. Defaults to 1.0.
+        :type white: :class:`numbers.Real`
+        :param gamma: Optional gamma adjustment. Values > 1.0 lighten the
+                      image's midtones while values < 1.0 darken them.
+        :type gamma: :class:`numbers.Real`
+        :param channel: The channel type. Available values can be found
+                        in the :const:`CHANNELS` mapping. If ``None``,
+                        normalize all channels.
+        :type channel: :class:`basestring`
+
+        .. versionadded:: 0.4.1
+
+        """
+
+        bp = float(self.quantum_range * black)
+        wp = float(self.quantum_range * white)
+        if channel:
+            try:
+                ch_const = CHANNELS[channel]
+            except KeyError:
+                raise ValueError(repr(channel) + ' is an invalid channel type'
+                                 '; see wand.image.CHANNELS dictionary')
+            r = library.MagickLevelImageChannel(self.wand, ch_const, bp, gamma, wp)
+        else:
+            r = library.MagickLevelImage(self.wand, bp, gamma, wp)
+
+        if not r:
+            self.raise_exception()
 
     @property
     def format(self):
@@ -2073,7 +2223,32 @@ class Image(BaseImage):
 
     @property
     def animation(self):
-        return self.mimetype == 'image/gif' and len(self.sequence) > 1
+        return (self.mimetype in ('image/gif', 'image/x-gif')
+                and len(self.sequence) > 1)
+
+    @property
+    def compression(self):
+        """(:class:`basestring`) The type of image compression.
+        It's a string from :const:`COMPRESSION_TYPES` list.
+        It also can be set.
+
+        .. versionadded:: 0.3.6
+
+        """
+        compression_index = libmagick.MagickGetImageCompression(self.wand)
+        return COMPRESSION_TYPES[compression_index]
+
+    @compression.setter
+    def compression(self, value):
+        if not isinstance(value, string_type):
+            raise TypeError('expected a string, not ' + repr(value))
+        if value not in COMPRESSION_TYPES:
+            raise ValueError('expected a string from COMPRESSION_TYPES, not '
+                             + repr(value))
+        library.MagickSetImageCompression(
+            self.wand,
+            COMPRESSION_TYPES.index(value)
+        )
 
     def blank(self, width, height, background=None):
         """Creates blank image.
@@ -2104,7 +2279,7 @@ class Image(BaseImage):
             background = Color('transparent')
         with background:
             r = library.MagickNewImage(self.wand, width, height,
-                                   background.resource)
+                                       background.resource)
             if not r:
                 self.raise_exception()
         return self
@@ -2136,7 +2311,7 @@ class Image(BaseImage):
         :param file: a file object to write to
         :type file: file object
         :param filename: a filename string to write to
-        :type filename: :class:`basename`
+        :type filename: :class:`basestring`
 
         .. versionadded:: 0.1.5
            The ``file`` parameter.
@@ -2210,7 +2385,8 @@ class Image(BaseImage):
             blob_p = library.MagickGetImagesBlob(self.wand,
                                                  ctypes.byref(length))
         else:
-            blob_p = library.MagickGetImageBlob(self.wand, ctypes.byref(length))
+            blob_p = library.MagickGetImageBlob(self.wand,
+                                                ctypes.byref(length))
         if blob_p and length.value:
             blob = ctypes.string_at(blob_p, length.value)
             library.MagickRelinquishMemory(blob_p)
@@ -2249,6 +2425,77 @@ class Image(BaseImage):
         result = library.MagickTrimImage(self.wand, fuzz)
         if not result:
             self.raise_exception()
+
+    @manipulative
+    def transpose(self):
+        """Creates a vertical mirror image by reflecting the pixels around
+        the central x-axis while rotating them 90-degrees.
+
+        .. versionadded:: 0.4.1
+        """
+        result = library.MagickTransposeImage(self.wand)
+        if not result:
+            self.raise_exception()
+
+    @manipulative
+    def transverse(self):
+        """Creates a horizontal mirror image by reflecting the pixels around
+        the central y-axis while rotating them 270-degrees.
+
+        .. versionadded:: 0.4.1
+        """
+        result = library.MagickTransverseImage(self.wand)
+        if not result:
+            self.raise_exception()
+
+    @manipulative
+    def _auto_orient(self):
+        """Fallback for :attr:`auto_orient()` method (which wraps :c:func:`MagickAutoOrientImage`),
+        fixes orientation by checking EXIF data.
+
+        .. versionadded:: 0.4.1
+        """
+        exif_orientation = self.metadata.get('exif:orientation')
+        if not exif_orientation:
+            return
+
+        orientation_type = ORIENTATION_TYPES[int(exif_orientation)]
+
+        fn_lookup = {
+            'undefined': None,
+            'top_left': None,
+            'top_right': self.flop,
+            'bottom_right': functools.partial(self.rotate, degree=180.0),
+            'bottom_left': self.flip,
+            'left_top': self.transpose,
+            'right_top': functools.partial(self.rotate, degree=90.0),
+            'right_bottom': self.transverse,
+            'left_bottom': functools.partial(self.rotate, degree=270.0)
+        }
+
+        fn = fn_lookup.get(orientation_type)
+
+        if not fn:
+            return
+
+        fn()
+        self.orientation = 'top_left'
+
+    @manipulative
+    def auto_orient(self):
+        """Adjusts an image so that its orientation is suitable
+        for viewing (i.e. top-left orientation). if available it uses :c:func:`MagickAutoOrientImage`
+        (was added in ImageMagick 6.8.9+) if you have an older magick library,
+        it will use :attr:`_auto_orient()` method for fallback
+
+        .. versionadded:: 0.4.1
+        """
+        try:
+            result = library.MagickAutoOrientImage(self.wand)
+            if not result:
+                self.raise_exception()
+        except AttributeError as e:
+            self._auto_orient()
 
     def border(self, color, width, height):
         """Surrounds the image with a border.
@@ -2435,6 +2682,7 @@ class ImageProperty(object):
         raise ClosedImageError(
             'parent Image of {0!r} has been destroyed'.format(self)
         )
+
 
 class OptionDict(ImageProperty, collections.MutableMapping):
     """Mutable mapping of the image internal options.  See available

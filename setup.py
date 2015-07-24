@@ -41,9 +41,9 @@ setup(
     long_description=readme(),
     license='MIT License',
     author='Hong Minhee',
-    author_email='minhee@dahlia.kr',
+    author_email='hongminhee' '@' 'member.fsf.org',
     maintainer='Hong Minhee',
-    maintainer_email='minhee@dahlia.kr',
+    maintainer_email='hongminhee' '@' 'member.fsf.org',
     url='http://wand-py.org/',
     tests_require=[
         'pytest >= 2.3.0',
@@ -59,12 +59,14 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
         'Programming Language :: Python :: Implementation :: Stackless',
         'Topic :: Multimedia :: Graphics'
-      ],
+    ],
     cmdclass=cmdclass
 )

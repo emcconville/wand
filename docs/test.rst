@@ -77,15 +77,15 @@ You can use a double ``--`` to pass options to pytest:
 Continuous Integration
 ----------------------
 
-.. image:: https://secure.travis-ci.org/dahlia/wand.png?branch=master
+.. image:: https://secure.travis-ci.org/dahlia/wand.svg?branch=master
    :alt: Build Status
-   :target: http://travis-ci.org/dahlia/wand
+   :target: https://travis-ci.org/dahlia/wand
 
 `Travis CI`_ automatically builds and tests every commit and pull request.
 The above banner image shows the current status of Wand build.
 You can see the detail of the current status from the following URL:
 
-http://travis-ci.org/dahlia/wand
+https://travis-ci.org/dahlia/wand
 
 .. _Travis CI: http://travis-ci.org/
 
@@ -93,9 +93,9 @@ http://travis-ci.org/dahlia/wand
 Code Coverage
 -------------
 
-.. image:: https://coveralls.io/repos/dahlia/wand/badge.png
-  :alt: Coverage Status
-  :target: https://coveralls.io/r/dahlia/wand
+.. image:: https://img.shields.io/coveralls/dahlia/wand.svg?style=flat
+   :alt: Coverage Status
+   :target: https://coveralls.io/r/dahlia/wand
 
 Coveralls_ support tracking Wand's test coverage.  The above banner image
 shows the current status of Wand coverage.  You can see the details of the
