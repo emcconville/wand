@@ -9,6 +9,8 @@ Wand Changelog
 Version 0.4.1
 -------------
 
+To be released.
+
 - Added :meth:`Image.auto_orient() <wand.image.Image.auto_orient>` that fixes orientation by checking EXIF tags
 - Added :meth:`Image.transverse() <wand.image.Image.transverse>` transverse (MagickTransverseImage)
 - Added :meth:`Image.transpose() <wand.image.Image.transpose>` transpose (MagickTransposeImage)
@@ -39,6 +41,7 @@ Version 0.4.1
 - Fixed memory-leak when accessing images constructed in
   :class:`Image.sequence[] <wand.sequence.Sequence>`. [:issue:`237` by Eric McConville]
 - Fixed Windows memory-deallocate errors on :mod:`wand.drawing` API. [:issue:`226` by Eric McConville]
+- Fixed :exc:`ImportError` on FreeBSD.  [:issue:`252` by Pellaeon Lin]
 
 
 Version 0.4.0
