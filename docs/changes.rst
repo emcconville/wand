@@ -9,7 +9,7 @@ Wand Changelog
 Version 0.4.1
 -------------
 
-To be released.
+Released on August 3, 2015.
 
 - Added :meth:`Image.auto_orient() <wand.image.Image.auto_orient>` that fixes orientation by checking EXIF tags
 - Added :meth:`Image.transverse() <wand.image.Image.transverse>` transverse (MagickTransverseImage)
