@@ -51,7 +51,7 @@ def library_paths():
     libwand = None
     libmagick = None
     versions = '', '-6', '-Q16', '-Q8', '-6.Q16'
-    options = '', 'HDRI'
+    options = '', 'HDRI', 'HDRI-2'
     system = platform.system()
     magick_home = os.environ.get('MAGICK_HOME')
     magick_path = lambda dir: os.path.join(magick_home, *dir)
@@ -64,6 +64,9 @@ def library_paths():
                 libwand = 'CORE_RL_wand_{0}.dll'.format(suffix),
                 libmagick = 'CORE_RL_magick_{0}.dll'.format(suffix),
                 yield magick_path(libwand), magick_path(libmagick)
+                libwand = 'libMagickWand{0}.dll'.format(suffix),
+                libmagick = 'libMagickCore{0}.dll'.format(suffix),
+                yield magick_path(libwand), magick_path(libmagick)
             elif system == 'Darwin':
                 libwand = 'lib', 'libMagickWand{0}.dylib'.format(suffix),
                 yield magick_path(libwand), magick_path(libwand)
@@ -73,6 +76,9 @@ def library_paths():
         if system == 'Windows':
             libwand = ctypes.util.find_library('CORE_RL_wand_' + suffix)
             libmagick = ctypes.util.find_library('CORE_RL_magick_' + suffix)
+            yield libwand, libmagick
+            libwand = ctypes.util.find_library('libMagickWand' + suffix)
+            libmagick = ctypes.util.find_library('libMagickCore' + suffix)
             yield libwand, libmagick
         else:
             libwand = ctypes.util.find_library('MagickWand' + suffix)
