@@ -9,6 +9,8 @@ Version 0.4.2
 
 To be released
 
+- Fixed :exc:`ImportError` on MSYS2.  [:issue:`257` by Eon Jeong]
+
 
 .. _changelog-0.4.1:
 
