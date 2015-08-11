@@ -39,43 +39,44 @@ class c_magick_char_p(ctypes.c_char_p):
         library.MagickRelinquishMemory(self)
 
 
-def find_library(suffix=''):
-    """Finds library path to try loading.  The result paths are not
+def library_paths():
+    """Iterates for library paths to try loading.  The result paths are not
     guaranteed that they exist.
 
-    :param suffix: optional suffix e.g. ``'-Q16'``
-    :type suffix: :class:`basestring`
     :returns: a pair of libwand and libmagick paths.  they can be the same.
               path can be ``None`` as well
     :rtype: :class:`tuple`
 
     """
     libwand = None
+    libmagick = None
+    versions = '', '-6', '-Q16', '-Q8', '-6.Q16'
+    options = '', 'HDRI'
     system = platform.system()
     magick_home = os.environ.get('MAGICK_HOME')
-    if magick_home:
-        if system == 'Windows':
-            libwand = 'CORE_RL_wand_{0}.dll'.format(suffix),
-        elif system == 'Darwin':
-            libwand = 'lib', 'libMagickWand{0}.dylib'.format(suffix),
-        else:
-            libwand = 'lib', 'libMagickWand{0}.so'.format(suffix),
-        libwand = os.path.join(magick_home, *libwand)
-    else:
-        if system == 'Windows':
-            libwand = ctypes.util.find_library('CORE_RL_wand_' + suffix)
-        else:
-            libwand = ctypes.util.find_library('MagickWand' + suffix)
-    if system == 'Windows':
+    magick_path = lambda dir: os.path.join(magick_home, *dir)
+    combinations = itertools.product(versions, options)
+    for suffix in (version + option for version, option in combinations):
         # On Windows, the API is split between two libs. On other platforms,
         # it's all contained in one.
-        libmagick_filename = 'CORE_RL_magick_' + suffix
         if magick_home:
-            libmagick = os.path.join(magick_home, libmagick_filename + '.dll')
+            if system == 'Windows':
+                libwand = 'CORE_RL_wand_{0}.dll'.format(suffix),
+                libmagick = 'CORE_RL_magick_{0}.dll'.format(suffix),
+                yield magick_path(libwand), magick_path(libmagick)
+            elif system == 'Darwin':
+                libwand = 'lib', 'libMagickWand{0}.dylib'.format(suffix),
+                yield magick_path(libwand), magick_path(libwand)
+            else:
+                libwand = 'lib', 'libMagickWand{0}.so'.format(suffix),
+                yield magick_path(libwand), magick_path(libwand)
+        if system == 'Windows':
+            libwand = ctypes.util.find_library('CORE_RL_wand_' + suffix)
+            libmagick = ctypes.util.find_library('CORE_RL_magick_' + suffix)
+            yield libwand, libmagick
         else:
-            libmagick = ctypes.util.find_library(libmagick_filename)
-        return libwand, libmagick
-    return libwand, libwand
+            libwand = ctypes.util.find_library('MagickWand' + suffix)
+            yield libwand, libwand
 
 
 def load_library():
@@ -86,15 +87,11 @@ def load_library():
 
     """
     tried_paths = []
-    versions = ('', '-6', '-Q16', '-Q8', '-6.Q16')
-    options = ('', 'HDRI')
-    combinations = itertools.product(versions, options)
-    for suffix in (version + option for version, option in combinations):
-        libwand_path, libmagick_path = find_library(suffix)
+    for libwand_path, libmagick_path in library_paths():
         if libwand_path is None or libmagick_path is None:
             continue
-        tried_paths.append(libwand_path)
         try:
+            tried_paths.append(libwand_path)
             libwand = ctypes.CDLL(libwand_path)
             if libwand_path == libmagick_path:
                 libmagick = libwand
