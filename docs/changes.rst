@@ -4,6 +4,12 @@ Wand Changelog
 0.4 series
 ~~~~~~~~~~
 
+Version 0.4.2
+-------------
+
+To be released
+
+
 .. _changelog-0.4.1:
 
 Version 0.4.1
