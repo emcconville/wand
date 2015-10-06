@@ -16,7 +16,6 @@ import sys
 import traceback
 if platform.system() == "Windows":
     import winreg
-    import warnings
 
 __all__ = ('MagickPixelPacket', 'PointInfo', 'AffineMatrix', 'c_magick_char_p',
            'library', 'libc', 'libmagick', 'load_library')
