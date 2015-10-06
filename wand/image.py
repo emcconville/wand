@@ -2271,10 +2271,12 @@ class Image(BaseImage):
                    imagemagick detect the file format. Used only in
                    ``blob`` or ``file`` cases
     :type format: :class:`basestring`
-    :param width: the width of new blank image.
+    :param width: the width of new blank image or an image loaded from raw data.
     :type width: :class:`numbers.Integral`
-    :param height: the height of new blank imgage.
+    :param height: the height of new blank imgage or an image loaded from raw data.
     :type height: :class:`numbers.Integral`
+    :param depth: the depth used when loading raw data.
+    :type depth: :class:`numbers.Integral`
     :param background: an optional background color.
                        default is transparent
     :type background: :class:`wand.color.Color`
@@ -2343,27 +2345,31 @@ class Image(BaseImage):
     channel_depths = None
 
     def __init__(self, image=None, blob=None, file=None, filename=None,
-                 format=None, width=None, height=None, background=None,
-                 resolution=None):
-        new_args = width, height, background
+                 format=None, width=None, height=None, depth=None,
+                 background=None, resolution=None):
+        new_args = width, height, background, depth
         open_args = image, blob, file, filename
-        if (any(a is not None for a in new_args) and
-                any(a is not None for a in open_args)):
+        has_open_arg = (any(a is not None for a in open_args))
+        if any(a is not None for a in new_args) and image is not None:
             raise TypeError("blank image parameters can't be used with image "
-                            'opening parameters')
-        elif any(a is not None and b is not None
-                 for i, a in enumerate(open_args)
-                 for b in open_args[:i] + open_args[i + 1:]):
+                            'parameter')
+        if sum(a is not None for a in open_args) > 1:
             raise TypeError('parameters are exclusive each other; use only '
                             'one at once')
-        elif not (format is None or isinstance(format, string_type)):
+        if not (format is None or isinstance(format, string_type)):
             raise TypeError('format must be a string, not ' + repr(format))
+        if depth not in [None, 8, 16, 32]:
+            raise ValueError('Depth must be 8, 16 or 32')
         with self.allocate():
             if image is None:
                 wand = library.NewMagickWand()
                 super(Image, self).__init__(wand)
-            if width is not None and height is not None:
+            if not has_open_arg:
                 self.blank(width, height, background)
+                if depth:
+                    r = library.MagickSetImageDepth(self.wand, depth)
+                    if not r:
+                        raise self.raise_exception()
             elif image is not None:
                 if not isinstance(image, BaseImage):
                     raise TypeError('image must be a wand.image.Image '
@@ -2381,12 +2387,26 @@ class Image(BaseImage):
                                                               bg.resource)
                     if not result:
                         self.raise_exception()
+
+                # we allow setting the width, height and depth
+                # (needed for loading raw data)
+                if width is not None and height is not None:
+                    if not isinstance(width, numbers.Integral) or width < 1:
+                        raise TypeError('width must be a natural number, not ' +
+                                        repr(width))
+                    if not isinstance(height, numbers.Integral) or height < 1:
+                        raise TypeError('height must be a natural number, not ' +
+                                        repr(height))
+                    library.MagickSetSize(self.wand, width, height)
+                if depth is not None:
+                    library.MagickSetDepth(self.wand, depth)
+
                 if file is not None:
                     if format:
                         library.MagickSetFilename(self.wand,
                                                   b'buffer.' + format)
                     self.read(file=file, resolution=resolution)
-                if blob is not None:
+                elif blob is not None:
                     if format:
                         library.MagickSetFilename(self.wand,
                                                   b'buffer.' + format)
