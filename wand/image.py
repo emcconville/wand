@@ -2349,7 +2349,6 @@ class Image(BaseImage):
                  background=None, resolution=None):
         new_args = width, height, background, depth
         open_args = image, blob, file, filename
-        has_open_arg = (any(a is not None for a in open_args))
         if any(a is not None for a in new_args) and image is not None:
             raise TypeError("blank image parameters can't be used with image "
                             'parameter')
@@ -2364,13 +2363,7 @@ class Image(BaseImage):
             if image is None:
                 wand = library.NewMagickWand()
                 super(Image, self).__init__(wand)
-            if not has_open_arg:
-                self.blank(width, height, background)
-                if depth:
-                    r = library.MagickSetImageDepth(self.wand, depth)
-                    if not r:
-                        raise self.raise_exception()
-            elif image is not None:
+            if image is not None:
                 if not isinstance(image, BaseImage):
                     raise TypeError('image must be a wand.image.Image '
                                     'instance, not ' + repr(image))
@@ -2379,7 +2372,7 @@ class Image(BaseImage):
                                     'nor filename')
                 wand = library.CloneMagickWand(image.wand)
                 super(Image, self).__init__(wand)
-            else:
+            elif any(a is not None for a in open_args):
                 if format:
                     format = binary(format)
                 with Color('transparent') as bg:  # FIXME: parameterize this
@@ -2418,6 +2411,12 @@ class Image(BaseImage):
                             'nor filename'
                         )
                     self.read(filename=filename, resolution=resolution)
+            elif width is not None and height is not None:
+                self.blank(width, height, background)
+                if depth:
+                    r = library.MagickSetImageDepth(self.wand, depth)
+                    if not r:
+                        raise self.raise_exception()
             self.metadata = Metadata(self)
             from .sequence import Sequence
             self.sequence = Sequence(self)

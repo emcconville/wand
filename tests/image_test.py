@@ -43,14 +43,25 @@ def test_blank_image():
     gray = Color('#ccc')
     transparent = Color('transparent')
     with raises(TypeError):
-        Image(height=0, filename='/test.png')
-    with raises(TypeError):
         Image(width=0, height=0)
     with Image(width=20, height=10) as img:
         assert img[10, 5] == transparent
     with Image(width=20, height=10, background=gray) as img:
         assert img.size == (20, 10)
         assert img[10, 5] == gray
+
+
+def test_raw_image():
+    b = b"".join([bytes([i, j, 0]) for i in range(256) for j in range(256)])
+    with raises(ValueError):
+        Image(blob=b, depth=6)
+    with raises(TypeError):
+        Image(blob=b, depth=8, width=0, height=0, format="RGB")
+    with Image(blob=b, depth=8, width=256, height=256, format="RGB") as img:
+        assert img.size == (256, 256)
+        assert img[0, 0] == Color('#000000')
+        assert img[255, 255] == Color('#ffff00')
+        assert img[64, 128] == Color('#804000')
 
 
 def test_clear_image(fx_asset):
