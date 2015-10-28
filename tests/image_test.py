@@ -1727,6 +1727,21 @@ def test_quantize(fx_asset):
         assert len(colors) > number_colors
 
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+        with raises(TypeError):
+            img.quantize(str(number_colors), 'undefined', 0, True, True)
+
+        with raises(TypeError):
+            img.quantize(number_colors, 0, 0, True, True)
+
+        with raises(TypeError):
+            img.quantize(number_colors, 'undefined', 'depth', True, True)
+
+        with raises(TypeError):
+            img.quantize(number_colors, 'undefined', 0, 1, True)
+
+        with raises(TypeError):
+            img.quantize(number_colors, 'undefined', 0, True, 1)
+
         img.quantize(number_colors, 'undefined', 0, True, True)
         colors = set([color for row in img for color in row])
         assert colors
@@ -1735,5 +1750,8 @@ def test_quantize(fx_asset):
 
 def test_transform_colorspace(fx_asset):
     with Image(filename=str(fx_asset.join('cmyk.jpg'))) as img:
+        with raises(TypeError):
+            img.transform_colorspace('unknown')
+
         img.transform_colorspace('srgb')
         assert img.colorspace == 'srgb'

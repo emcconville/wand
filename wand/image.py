@@ -2249,7 +2249,7 @@ class BaseImage(Resource):
     @manipulative
     def quantize(self, number_colors, colorspace_type,
                  treedepth, dither, measure_error):
-        """ `quantize` analyzes the colors within a sequence of images and
+        """`quantize` analyzes the colors within a sequence of images and
         chooses a fixed number of colors to represent the image. The goal of
         the algorithm is to minimize the color difference between the input and
         output image while minimizing the processing time.
@@ -2283,6 +2283,9 @@ class BaseImage(Resource):
                               between each reference pixel value and
                               its quantized value.
         :type measure_error: :class:`bool`
+
+        .. versionadded:: 0.4.2
+
         """
         if not isinstance(number_colors, numbers.Integral):
             raise TypeError('number_colors must be integral, '
@@ -2313,10 +2316,15 @@ class BaseImage(Resource):
 
     @manipulative
     def transform_colorspace(self, colorspace_type):
-        """ Transform image's colorspace.
+        """Transform image's colorspace.
+
         :param colorspace_type: colorspace_type. available value can be found
                                 in the :const:`COLORSPACE_TYPES`
-        :type colorspace_type: :class:`basestring`"""
+        :type colorspace_type: :class:`basestring`
+
+        .. versionadded:: 0.4.2
+
+        """
         if not isinstance(colorspace_type, string_type) \
             or colorspace_type not in COLORSPACE_TYPES:
             raise TypeError('Colorspace value must be a string from '

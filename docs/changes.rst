@@ -10,6 +10,8 @@ Version 0.4.2
 To be released
 
 - Fixed :exc:`ImportError` on MSYS2.  [:issue:`257` by Eon Jeong]
+- Added :meth:`Image.quantize() <wand.image.Image.quantize>` quantize (MagickQuantizeImage)
+- Added :meth:`Image.transform_colorspace() <wand.image.Image.transform_colorspace>` quantize (MagickTransformImageColorspace)
 
 
 .. _changelog-0.4.1:
