@@ -481,6 +481,7 @@ VIRTUAL_PIXEL_METHOD = ('undefined', 'background', 'constant', 'dither',
                         'vertical_tile', 'horizontal_tile_edge',
                         'vertical_tile_edge', 'checker_tile')
 
+
 def manipulative(function):
     """Mark the operation manipulating itself instead of returning new one."""
     @functools.wraps(function)
@@ -1214,7 +1215,6 @@ class BaseImage(Resource):
                                    DISTORTION_METHODS.index(method),
                                    argc, argv, bool(best_fit))
         self.raise_exception()
-
 
     @manipulative
     def crop(self, left=0, top=0, right=None, bottom=None,
@@ -2246,6 +2246,93 @@ class BaseImage(Resource):
             self.composite(watermark_image, left=left, top=top)
         self.raise_exception()
 
+    @manipulative
+    def quantize(self, number_colors, colorspace_type,
+                 treedepth, dither, measure_error):
+        """`quantize` analyzes the colors within a sequence of images and
+        chooses a fixed number of colors to represent the image. The goal of
+        the algorithm is to minimize the color difference between the input and
+        output image while minimizing the processing time.
+
+        :param number_colors: the number of colors.
+        :type number_colors: :class:`numbers.Integral`
+        :param colorspace_type: colorspace_type. available value can be found
+                                in the :const:`COLORSPACE_TYPES`
+        :type colorspace_type: :class:`basestring`
+        :param treedepth: Normally, this integer value is zero or one. A zero or
+                          one tells Quantize to choose a optimal tree depth of
+                          Log4(number_colors).  A tree of this depth generally
+                          allows the best representation of the reference image
+                          with the least amount of memory and
+                          the fastest computational speed. In some cases,
+                          such as an image with low color dispersion
+                          (a few number of colors), a value other than
+                          Log4(number_colors) is required. To expand
+                          the color tree completely, use a value of 8.
+        :type treedepth: :class:`numbers.Integral`
+        :param dither: A value other than zero distributes the difference
+                       between an original image and the corresponding
+                       color reduced algorithm to neighboring pixels along
+                       a Hilbert curve.
+        :type dither: :class:`bool`
+        :param measure_error: A value other than zero measures the difference
+                              between the original and quantized images.
+                              This difference is the total quantization error.
+                              The error is computed by summing over all pixels
+                              in an image the distance squared in RGB space
+                              between each reference pixel value and
+                              its quantized value.
+        :type measure_error: :class:`bool`
+
+        .. versionadded:: 0.4.2
+
+        """
+        if not isinstance(number_colors, numbers.Integral):
+            raise TypeError('number_colors must be integral, '
+                            'not ' + repr(number_colors))
+
+        if not isinstance(colorspace_type, string_type) \
+                or colorspace_type not in COLORSPACE_TYPES:
+            raise TypeError('Colorspace value must be a string from '
+                            'COLORSPACE_TYPES, not ' + repr(colorspace_type))
+
+        if not isinstance(treedepth, numbers.Integral):
+            raise TypeError('treedepth must be integral, '
+                            'not ' + repr(treedepth))
+
+        if not isinstance(dither, bool):
+            raise TypeError('dither must be a bool, not ' +
+                            repr(dither))
+
+        if not isinstance(measure_error, bool):
+            raise TypeError('measure_error must be a bool, not ' +
+                            repr(measure_error))
+
+        r = library.MagickQuantizeImage(self.wand, number_colors,
+                                        COLORSPACE_TYPES.index(colorspace_type),
+                                        treedepth, dither, measure_error)
+        if not r:
+            self.raise_exception()
+
+    @manipulative
+    def transform_colorspace(self, colorspace_type):
+        """Transform image's colorspace.
+
+        :param colorspace_type: colorspace_type. available value can be found
+                                in the :const:`COLORSPACE_TYPES`
+        :type colorspace_type: :class:`basestring`
+
+        .. versionadded:: 0.4.2
+
+        """
+        if not isinstance(colorspace_type, string_type) \
+                or colorspace_type not in COLORSPACE_TYPES:
+            raise TypeError('Colorspace value must be a string from '
+                            'COLORSPACE_TYPES, not ' + repr(colorspace_type))
+        r = library.MagickTransformImageColorspace(self.wand, COLORSPACE_TYPES.index(colorspace_type))
+        if not r:
+            self.raise_exception()
+
     def __repr__(self):
         cls = type(self)
         if getattr(self, 'c_resource', None) is None:
@@ -2857,7 +2944,7 @@ class Image(BaseImage):
             result = library.MagickAutoOrientImage(self.wand)
             if not result:
                 self.raise_exception()
-        except AttributeError as e:
+        except AttributeError:
             self._auto_orient()
 
     def border(self, color, width, height):
