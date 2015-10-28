@@ -481,6 +481,7 @@ VIRTUAL_PIXEL_METHOD = ('undefined', 'background', 'constant', 'dither',
                         'vertical_tile', 'horizontal_tile_edge',
                         'vertical_tile_edge', 'checker_tile')
 
+
 def manipulative(function):
     """Mark the operation manipulating itself instead of returning new one."""
     @functools.wraps(function)
@@ -1214,7 +1215,6 @@ class BaseImage(Resource):
                                    DISTORTION_METHODS.index(method),
                                    argc, argv, bool(best_fit))
         self.raise_exception()
-
 
     @manipulative
     def crop(self, left=0, top=0, right=None, bottom=None,
@@ -2292,7 +2292,7 @@ class BaseImage(Resource):
                             'not ' + repr(number_colors))
 
         if not isinstance(colorspace_type, string_type) \
-            or colorspace_type not in COLORSPACE_TYPES:
+                or colorspace_type not in COLORSPACE_TYPES:
             raise TypeError('Colorspace value must be a string from '
                             'COLORSPACE_TYPES, not ' + repr(colorspace_type))
 
@@ -2326,7 +2326,7 @@ class BaseImage(Resource):
 
         """
         if not isinstance(colorspace_type, string_type) \
-            or colorspace_type not in COLORSPACE_TYPES:
+                or colorspace_type not in COLORSPACE_TYPES:
             raise TypeError('Colorspace value must be a string from '
                             'COLORSPACE_TYPES, not ' + repr(colorspace_type))
         r = library.MagickTransformImageColorspace(self.wand, COLORSPACE_TYPES.index(colorspace_type))
@@ -2944,7 +2944,7 @@ class Image(BaseImage):
             result = library.MagickAutoOrientImage(self.wand)
             if not result:
                 self.raise_exception()
-        except AttributeError as e:
+        except AttributeError:
             self._auto_orient()
 
     def border(self, color, width, height):
