@@ -2432,7 +2432,7 @@ class Image(BaseImage):
     def __init__(self, image=None, blob=None, file=None, filename=None,
                  format=None, width=None, height=None, background=None,
                  resolution=None):
-        new_args = width, height, background
+        new_args = (background,)
         open_args = image, blob, file, filename
         if (any(a is not None for a in new_args) and
                 any(a is not None for a in open_args)):
@@ -2445,11 +2445,13 @@ class Image(BaseImage):
                             'one at once')
         elif not (format is None or isinstance(format, string_type)):
             raise TypeError('format must be a string, not ' + repr(format))
+        elif (blob is not None and width is None and height is None):
+            raise TypeError('opening a blob requires a width and height')
         with self.allocate():
             if image is None:
                 wand = library.NewMagickWand()
                 super(Image, self).__init__(wand)
-            if width is not None and height is not None:
+            if width is not None and height is not None and blob is None:
                 self.blank(width, height, background)
             elif image is not None:
                 if not isinstance(image, BaseImage):
@@ -2477,7 +2479,8 @@ class Image(BaseImage):
                     if format:
                         library.MagickSetFilename(self.wand,
                                                   b'buffer.' + format)
-                    self.read(blob=blob, resolution=resolution)
+                    self.read(blob=blob, resolution=resolution, \
+                        format=format, width=width, height=height)
                 elif filename is not None:
                     if format:
                         raise TypeError(
@@ -2490,11 +2493,18 @@ class Image(BaseImage):
             self.sequence = Sequence(self)
         self.raise_exception()
 
-    def read(self, file=None, filename=None, blob=None, resolution=None):
+    def read(self, file=None, filename=None, blob=None, width=None,
+             height=None, format=None, resolution=None):
         """Read new image into Image() object.
 
         :param blob: reads an image from the ``blob`` byte array
         :type blob: :class:`str`
+        :param width: width of the image in the ``blob`` byte array
+        :type width: :class:`numbers.Integral`
+        :param height: height of the image in the ``blob`` byte array
+        :type height: :class:`numbers.Integral`
+        :param format: height of the image in the ``blob`` byte array
+        :type format: :class:`str`
         :param file: reads an image from the ``file`` object
         :type file: file object
         :param filename: reads an image from the ``filename`` string
@@ -2507,6 +2517,10 @@ class Image(BaseImage):
         .. versionadded:: 0.3.0
 
         """
+        if (blob is None and (width is not None or height is not None or \
+            format is not None)):
+            raise TypeError("only reading a raw pixel blob requires width and \
+                height or format")
         r = None
         # Resolution must be set after image reading.
         if resolution is not None:
@@ -2536,7 +2550,11 @@ class Image(BaseImage):
                                 repr(blob))
             if not isinstance(blob, binary_type):
                 blob = b''.join(blob)
-            r = library.MagickReadImageBlob(self.wand, blob, len(blob))
+            if format is not None:
+                r = library.MagickConstituteImage(self.wand, int(width), \
+                    int(height), format, int(1), blob)
+            else:
+                r = library.MagickReadImageBlob(self.wand, blob, len(blob))
         elif filename is not None:
             filename = encode_filename(filename)
             r = library.MagickReadImage(self.wand, filename)

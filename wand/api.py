@@ -420,6 +420,9 @@ try:
     library.MagickCoalesceImages.argtypes = [ctypes.c_void_p]
     library.MagickCoalesceImages.restype = ctypes.c_void_p
 
+    library.MagickConstituteImage.argtypes = [ctypes.c_void_p, ctypes.c_size_t,
+        ctypes.c_size_t, ctypes.c_char_p, ctypes.c_uint, ctypes.c_void_p]
+
     library.MagickIdentifyImage.argtypes = [ctypes.c_void_p]
     library.MagickIdentifyImage.restype = ctypes.c_char_p
 
