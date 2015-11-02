@@ -52,7 +52,7 @@ def test_blank_image():
 
 
 def test_raw_image():
-    b = b"".join([bytes([i, j, 0]) for i in range(256) for j in range(256)])
+    b = b"".join([struct.pack("BBB", i, j, 0) for i in range(256) for j in range(256)])
     with raises(ValueError):
         Image(blob=b, depth=6)
     with raises(TypeError):

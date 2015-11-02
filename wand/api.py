@@ -15,7 +15,10 @@ import platform
 import sys
 import traceback
 if platform.system() == "Windows":
-    import winreg
+    try:
+        import winreg
+    except ImportError:
+        import _winreg as winreg
 
 __all__ = ('MagickPixelPacket', 'PointInfo', 'AffineMatrix', 'c_magick_char_p',
            'library', 'libc', 'libmagick', 'load_library')
