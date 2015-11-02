@@ -4,6 +4,7 @@ import io
 import os
 import os.path
 import shutil
+import struct
 import sys
 import tempfile
 import warnings
