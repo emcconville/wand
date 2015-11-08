@@ -346,6 +346,8 @@ try:
     library.MagickGetImageColorspace.restype = ctypes.c_int
 
     library.MagickSetImageColorspace.argtypes = [ctypes.c_void_p, ctypes.c_int]
+    library.MagickTransformImageColorspace.argtypes = [ctypes.c_void_p, ctypes.c_int]
+
 
     library.MagickGetImageCompression.argtypes = [ctypes.c_void_p]
     library.MagickGetImageCompression.restype = ctypes.c_int
@@ -1300,6 +1302,12 @@ try:
     library.MagickTransposeImage.argtypes = [ctypes.c_void_p]
     library.MagickTransverseImage.argtypes = [ctypes.c_void_p]
 
+    library.MagickQuantizeImage.argtypes = [ctypes.c_void_p,
+                                            ctypes.c_int,
+                                            ctypes.c_int,
+                                            ctypes.c_int,
+                                            ctypes.c_bool,
+                                            ctypes.c_bool]
 
 except AttributeError:
     raise ImportError('MagickWand shared library not found or incompatible\n'
