@@ -40,6 +40,15 @@ def test_empty_image():
         assert img.size == (0, 0)
 
 
+def test_image_invalid_params():
+    with raises(TypeError):
+        Image(image=Image(), width=100, height=100)
+    with raises(TypeError):
+        Image(image=Image(), blob=b"blob")
+    with raises(TypeError):
+        Image(image=b"blob")
+
+
 def test_blank_image():
     gray = Color('#ccc')
     transparent = Color('transparent')
@@ -52,13 +61,22 @@ def test_blank_image():
         assert img[10, 5] == gray
 
 
-def test_raw_image():
-    b = b"".join([struct.pack("BBB", i, j, 0) for i in range(256) for j in range(256)])
+def test_raw_image(fx_asset):
+    b = b"".join([struct.pack("BBB", i, j, 0) 
+                    for i in range(256) for j in range(256)])
     with raises(ValueError):
         Image(blob=b, depth=6)
     with raises(TypeError):
         Image(blob=b, depth=8, width=0, height=0, format="RGB")
+    with raises(TypeError):
+        Image(blob=b, depth=8, width=256, height=256, format=1)
     with Image(blob=b, depth=8, width=256, height=256, format="RGB") as img:
+        assert img.size == (256, 256)
+        assert img[0, 0] == Color('#000000')
+        assert img[255, 255] == Color('#ffff00')
+        assert img[64, 128] == Color('#804000')
+    with Image(filename=str(fx_asset.join('blob.rgb')),
+               depth=8, width=256, height=256, format="RGB") as img:
         assert img.size == (256, 256)
         assert img[0, 0] == Color('#000000')
         assert img[255, 255] == Color('#ffff00')

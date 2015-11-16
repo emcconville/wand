@@ -140,6 +140,12 @@ if not hasattr(ctypes, 'c_ssize_t'):
     elif ctypes.sizeof(ctypes.c_ulonglong) == ctypes.sizeof(ctypes.c_void_p):
         ctypes.c_ssize_t = ctypes.c_longlong
 
+# FIXME: On 64-bit Windows, passing in a pointer using ctypes.c_void_p will
+# occasionally fail with an OverflowError for no apparent reason. I have not
+# yet found a suitable fix for this problem
+# 
+# One proposed solution is subclassing ctypes.c_void_p, but that breaks the
+# assert statements.
 
 class MagickPixelPacket(ctypes.Structure):
 
@@ -668,6 +674,10 @@ try:
     library.MagickSetDepth.argtypes = [ctypes.c_void_p,
                                       ctypes.c_uint]
     library.MagickSetDepth.restype = ctypes.c_int
+
+    library.MagickSetFormat.argtypes = [ctypes.c_void_p,
+                                      ctypes.c_char_p]
+    library.MagickSetFormat.restype = ctypes.c_int
 
     library.MagickGetFont.argtypes = [ctypes.c_void_p]
     library.MagickGetFont.restype = ctypes.c_char_p

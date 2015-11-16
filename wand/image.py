@@ -2354,9 +2354,8 @@ class Image(BaseImage):
     :type file: file object
     :param filename: opens an image of the ``filename`` string
     :type filename: :class:`basestring`
-    :param format: forces filename to  buffer.``format`` to help
-                   imagemagick detect the file format. Used only in
-                   ``blob`` or ``file`` cases
+    :param format: help imagemagick detect the file format. Used only in
+                   ``blob``, ``file`` or ``filename`` cases
     :type format: :class:`basestring`
     :param width: the width of new blank image or an image loaded from raw data.
     :type width: :class:`numbers.Integral`
@@ -2386,6 +2385,14 @@ class Image(BaseImage):
 
     .. versionadded:: 0.3.0
        The ``resolution`` parameter.
+
+    .. versionadded:: 4.2.0
+       The ``depth`` parameter.
+
+    .. versionchanged:: 4.2.0
+       The ``depth`` , ``width`` and ``height`` parameters can be used
+       with the ``filename``, ``file`` and ``blob`` parameters to load
+       raw pixel data.
 
     .. describe:: [left:right, top:bottom]
 
@@ -2435,15 +2442,20 @@ class Image(BaseImage):
                  format=None, width=None, height=None, depth=None,
                  background=None, resolution=None):
         new_args = width, height, background, depth
-        open_args = image, blob, file, filename
+        open_args = blob, file, filename
         if any(a is not None for a in new_args) and image is not None:
             raise TypeError("blank image parameters can't be used with image "
                             'parameter')
-        if sum(a is not None for a in open_args) > 1:
-            raise TypeError('parameters are exclusive each other; use only '
-                            'one at once')
-        if not (format is None or isinstance(format, string_type)):
-            raise TypeError('format must be a string, not ' + repr(format))
+        if sum(a is not None for a in open_args + (image,)) > 1:
+            raise TypeError(', '.join(open_args) +
+                            ' and image parameters are exclusive each other; '
+                            'use only one at once')
+        if not (format is None):
+            if not isinstance(format, string_type):
+                raise TypeError('format must be a string, not ' + repr(format))
+            if not any(a is not None for a in open_args):
+                raise TypeError('format can only be used with the blob, file '
+                                'or filename parameter')
         if depth not in [None, 8, 16, 32]:
             raise ValueError('Depth must be 8, 16 or 32')
         with self.allocate():
@@ -2454,9 +2466,6 @@ class Image(BaseImage):
                 if not isinstance(image, BaseImage):
                     raise TypeError('image must be a wand.image.Image '
                                     'instance, not ' + repr(image))
-                elif format:
-                    raise TypeError('format option cannot be used with image '
-                                    'nor filename')
                 wand = library.CloneMagickWand(image.wand)
                 super(Image, self).__init__(wand)
             elif any(a is not None for a in open_args):
@@ -2468,36 +2477,33 @@ class Image(BaseImage):
                     if not result:
                         self.raise_exception()
 
-                # we allow setting the width, height and depth
+                # allow setting the width, height and depth
                 # (needed for loading raw data)
                 if width is not None and height is not None:
                     if not isinstance(width, numbers.Integral) or width < 1:
-                        raise TypeError('width must be a natural number, not ' +
-                                        repr(width))
+                        raise TypeError('width must be a natural number, '
+                                        'not ' + repr(width))
                     if not isinstance(height, numbers.Integral) or height < 1:
-                        raise TypeError('height must be a natural number, not ' +
-                                        repr(height))
+                        raise TypeError('height must be a natural number, '
+                                        'not ' + repr(height))
                     library.MagickSetSize(self.wand, width, height)
                 if depth is not None:
                     library.MagickSetDepth(self.wand, depth)
-
-                if file is not None:
-                    if format:
+                if format:
+                    library.MagickSetFormat(self.wand, format)
+                    if not filename:
                         library.MagickSetFilename(self.wand,
                                                   b'buffer.' + format)
+                if file is not None:
                     self.read(file=file, resolution=resolution)
                 elif blob is not None:
-                    if format:
-                        library.MagickSetFilename(self.wand,
-                                                  b'buffer.' + format)
                     self.read(blob=blob, resolution=resolution)
                 elif filename is not None:
-                    if format:
-                        raise TypeError(
-                            'format option cannot be used with image '
-                            'nor filename'
-                        )
                     self.read(filename=filename, resolution=resolution)
+                # clear the wand format, otherwise any subsequent call to 
+                # MagickGetImageBlob will silently change the image to this
+                # format again.
+                library.MagickSetFormat(self.wand, binary(""))
             elif width is not None and height is not None:
                 self.blank(width, height, background)
                 if depth:
@@ -2704,7 +2710,7 @@ class Image(BaseImage):
         .. versionadded:: 0.3.6
 
         """
-        compression_index = libmagick.MagickGetImageCompression(self.wand)
+        compression_index = library.MagickGetImageCompression(self.wand)
         return COMPRESSION_TYPES[compression_index]
 
     @compression.setter
