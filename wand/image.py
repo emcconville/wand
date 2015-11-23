@@ -2354,7 +2354,7 @@ class Image(BaseImage):
     :type file: file object
     :param filename: opens an image of the ``filename`` string
     :type filename: :class:`basestring`
-    :param format: forces filename to  buffer.``format`` to help
+    :param format: forces filename to  buffer. ``format`` to help
                    imagemagick detect the file format. Used only in
                    ``blob`` or ``file`` cases
     :type format: :class:`basestring`
