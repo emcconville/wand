@@ -11,7 +11,7 @@ python:
 env:
 - secure: "EhG2uSD2m1eGxuL2HeQewJJx7MVL4WpjrxyfiUBEgsApemD1yKJPjUnLwAyd\nbPi5HJx5ySm1TTRSvj6/yP85YLYTaJHA8OabKk7p0wFW294qcrYIDGovU7NL\n3YOqZmqN+S3XOBGFCOnByxE+pcxxWW/3/I09EgeW7D6tBPh67G0="
 install:
-- pip install pytest pytest-xdist 'pytest-cov>=1.8.0' pytest-capturelog memory_profiler psutil coveralls
+- pip install pytest pytest-xdist 'pytest-cov>=1.8.0' 'coverage==3.7.1' pytest-capturelog memory_profiler psutil coveralls
 - pip install -e .
 script:
 - python -mwand.version --verbose
