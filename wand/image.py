@@ -2186,7 +2186,7 @@ class BaseImage(Resource):
         """Sharpens the image using unsharp mask filter. We convolve the image
         with a Gaussian operator of the given ``radius`` and standard deviation
         (``sigma``). For reasonable results, ``radius`` should be larger than
-        ``sigma``. Use a radius of 0 and :meth:`unsharp_mask()`` selects
+        ``sigma``. Use a radius of 0 and :meth:`unsharp_mask()` selects
         a suitable radius for you.
 
         :param radius: the radius of the Gaussian, in pixels,
@@ -2354,7 +2354,7 @@ class Image(BaseImage):
     :type file: file object
     :param filename: opens an image of the ``filename`` string
     :type filename: :class:`basestring`
-    :param format: forces filename to  buffer.``format`` to help
+    :param format: forces filename to  buffer. ``format`` to help
                    imagemagick detect the file format. Used only in
                    ``blob`` or ``file`` cases
     :type format: :class:`basestring`
