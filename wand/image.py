@@ -2416,10 +2416,10 @@ class Image(BaseImage):
     .. versionadded:: 0.3.0
        The ``resolution`` parameter.
 
-    .. versionadded:: 4.2.0
+    .. versionadded:: 0.4.2
        The ``depth`` parameter.
 
-    .. versionchanged:: 4.2.0
+    .. versionchanged:: 0.4.2
        The ``depth`` , ``width`` and ``height`` parameters can be used
        with the ``filename``, ``file`` and ``blob`` parameters to load
        raw pixel data.
