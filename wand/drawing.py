@@ -219,8 +219,11 @@ class Drawing(Resource):
         """(:class:`basestring`) The current clip path. It also can be set.
 
         .. versionadded:: 0.4.0
+
         .. versionchanged: 0.4.1
-           Safely release allocated memory with MagickRelinquishMemory instead of libc.free.
+           Safely release allocated memory with
+           :c:func:`MagickRelinquishMemory` instead of :c:func:`libc.free`.
+
         """
         clip_path_p = library.DrawGetClipPath(self.resource)
         return text(clip_path_p.value)
@@ -278,7 +281,9 @@ class Drawing(Resource):
         """(:class:`basestring`) The current font name.  It also can be set.
 
         .. versionchanged: 0.4.1
-           Safely release allocated memory with MagickRelinquishMemory instead of libc.free.
+           Safely release allocated memory with
+           :c:func:`MagickRelinquishMemory` instead of :c:func:`libc.free`.
+
         """
         font_p = library.DrawGetFont(self.resource)
         return text(font_p.value)
@@ -294,8 +299,11 @@ class Drawing(Resource):
         """(:class:`basestring`) The current font family. It also can be set.
 
         .. versionadded:: 0.4.0
+
         .. versionchanged: 0.4.1
-           Safely release allocated memory with MagickRelinquishMemory instead of libc.free.
+           Safely release allocated memory with
+           :c:func:`MagickRelinquishMemory` instead of :c:func:`libc.free`.
+
         """
         font_family_p = library.DrawGetFontFamily(self.resource)
         return text(font_family_p.value)
@@ -517,8 +525,11 @@ class Drawing(Resource):
         It also can be set.
 
         .. versionadded:: 0.4.0
+
         .. versionchanged: 0.4.1
-           Safely release allocated memory with MagickRelinquishMemory instead of libc.free.
+           Safely release allocated memory with
+           :c:func:`MagickRelinquishMemory` instead of :c:func:`libc.free`.
+
         """
         number_elements = ctypes.c_size_t(0)
         dash_array_p = library.DrawGetStrokeDashArray(
@@ -734,7 +745,9 @@ class Drawing(Resource):
         Although it also can be set, but it's not encouraged.
 
         .. versionchanged: 0.4.1
-           Safely release allocated memory with MagickRelinquishMemory instead of libc.free.
+           Safely release allocated memory with
+           :c:func:`MagickRelinquishMemory` instead of :c:func:`libc.free`.
+
         """
         text_encoding_p = library.DrawGetTextEncoding(self.resource)
         return text(text_encoding_p.value)
@@ -770,7 +783,8 @@ class Drawing(Resource):
                                           'ImageMagick does not support '
                                           'this feature')
         if not isinstance(spacing, numbers.Real):
-            raise TypeError('expected a numbers.Real, but got ' + repr(spacing))
+            raise TypeError('expected a numbers.Real, but got ' +
+                            repr(spacing))
         library.DrawSetTextInterlineSpacing(self.resource, spacing)
 
     @property
@@ -798,7 +812,8 @@ class Drawing(Resource):
     @text_kerning.setter
     def text_kerning(self, kerning):
         if not isinstance(kerning, numbers.Real):
-            raise TypeError('expected a numbers.Real, but got ' + repr(kerning))
+            raise TypeError('expected a numbers.Real, but got ' +
+                            repr(kerning))
         library.DrawSetTextKerning(self.resource, kerning)
 
     @property
@@ -824,15 +839,19 @@ class Drawing(Resource):
 
     @property
     def vector_graphics(self):
-        """(:class:`basestring`) The XML text of the Vector Graphics. It also
-        can be set. The drawing-wand XML is experimental, and subject to change.
+        """(:class:`basestring`) The XML text of the Vector Graphics.
+        It also can be set.  The drawing-wand XML is experimental,
+        and subject to change.
 
         Setting this property to None will reset all vector graphic properties
         to the default state.
 
         .. versionadded:: 0.4.0
+
         .. versionchanged: 0.4.1
-           Safely release allocated memory with MagickRelinquishMemory instead of libc.free.
+           Safely release allocated memory with
+           :c:func:`MagickRelinquishMemory` instead of :c:func:`libc.free`.
+
         """
         vector_graphics_p = library.DrawGetVectorGraphics(self.resource)
         return '<wand>' + text(vector_graphics_p.value) + '</wand>'
@@ -847,7 +866,8 @@ class Drawing(Resource):
             library.DrawResetVectorGraphics(self.resource)
         else:
             vector_graphics = binary(vector_graphics)
-            okay = library.DrawSetVectorGraphics(self.resource, vector_graphics)
+            okay = library.DrawSetVectorGraphics(self.resource,
+                                                 vector_graphics)
             if okay == 0:
                 raise ValueError("Vector graphic not understood.")
 
@@ -909,9 +929,9 @@ class Drawing(Resource):
             | x', y', 1 |  =  | x, y, 1 |  *  | ry  sy  0 |
                                               | tx  ty  1 |
 
-        :param matrix: a list of :class:`~numbers.Real` to define affine matrix.
-                       `[sx, rx, ry, sy, tx, ty]`
-        :type matrix: :class:`~collections.Sequence`
+        :param matrix: a list of :class:`~numbers.Real` to define affine
+                       matrix ``[sx, rx, ry, sy, tx, ty]``
+        :type matrix: :class:`collections.Sequence`
 
         .. versionadded:: 0.4.0
 
@@ -992,8 +1012,8 @@ class Drawing(Resource):
         if not isinstance(paint_method, string_type):
             raise TypeError('expected a string, not ' + repr(paint_method))
         elif paint_method not in PAINT_METHOD_TYPES:
-            raise ValueError('expected a string from PAINT_METHOD_TYPES, not ' +
-                             repr(paint_method))
+            raise ValueError('expected a string from PAINT_METHOD_TYPES, not '
+                             + repr(paint_method))
         library.DrawColor(self.resource, float(x), float(y),
                           PAINT_METHOD_TYPES.index(paint_method))
 
@@ -1120,8 +1140,8 @@ class Drawing(Resource):
         if not isinstance(paint_method, string_type):
             raise TypeError('expected a string, not ' + repr(paint_method))
         elif paint_method not in PAINT_METHOD_TYPES:
-            raise ValueError('expected a string from PAINT_METHOD_TYPES, not ' +
-                             repr(paint_method))
+            raise ValueError('expected a string from PAINT_METHOD_TYPES, not '
+                             + repr(paint_method))
         library.DrawMatte(self.resource, float(x), float(y),
                           PAINT_METHOD_TYPES.index(paint_method))
 
@@ -1138,22 +1158,22 @@ class Drawing(Resource):
 
     def path_curve(self, to=None, controls=None, smooth=False, relative=False):
         """Draws a cubic Bezier curve from the current point to given ``to``
-        (x,y) coordinate using ``controls`` points at the beginning & end of the
-        curve. If ``smooth`` is set to True, only one ``controls`` is expected
+        (x,y) coordinate using ``controls`` points at the beginning and
+        the end of the curve.
+        If ``smooth`` is set to True, only one ``controls`` is expected
         and the previous control is used, else two pair of coordinates are
         expected to define the control points. The ``to`` coordinate then
         becomes the new current point.
 
         :param to: (:class:`~numbers.Real`, :class:`numbers.Real`)
-                      pair which represents coordinates to draw to.
+                   pair which represents coordinates to draw to
         :type to: :class:`collections.Sequence`
         :param controls: (:class:`~numbers.Real`, :class:`numbers.Real`)
-                      coordinate to used to influence curve
+                         coordinate to used to influence curve
         :type controls: :class:`collections.Sequence`
         :param smooth: :class:`bool` assume last defined control coordinate
         :type smooth: :class:`bool`
-        :param relative: :class:`bool`
-                    treat given coordinates as relative to current point
+        :param relative: treat given coordinates as relative to current point
         :type relative: :class:`bool`
 
         .. versionadded:: 0.4.0
@@ -1190,22 +1210,21 @@ class Drawing(Resource):
         """Draws a quadratic Bezier curve from the current point to given
         ``to`` coordinate. The control point is assumed to be the reflection of
         the control point on the previous command if ``smooth`` is True, else a
-        pair of ``control`` coordinates must be given. Each` coordinates can be
+        pair of ``control`` coordinates must be given. Each coordinates can be
         relative, or absolute, to the current point by setting the ``relative``
         flag. The ``to`` coordinate then becomes the new current point, and the
-        ``control`` coordinate will be assumed when called again when ``smooth``
-        is set to true.
+        ``control`` coordinate will be assumed when called again
+        when ``smooth`` is set to true.
 
         :param to: (:class:`~numbers.Real`, :class:`numbers.Real`)
-                      pair which represents coordinates to draw to.
+                   pair which represents coordinates to draw to
         :type to: :class:`collections.Sequence`
         :param control: (:class:`~numbers.Real`, :class:`numbers.Real`)
-                      coordinate to used to influence curve
+                        coordinate to used to influence curve
         :type control: :class:`collections.Sequence`
-        :param smooth: :class:`bool` assume last defined control coordinate
+        :param smooth: assume last defined control coordinate
         :type smooth: :class:`bool`
-        :param relative: :class:`bool`
-                    treat given coordinates as relative to current point
+        :param relative: treat given coordinates as relative to current point
         :type relative: :class:`bool`
 
         .. versionadded:: 0.4.0
@@ -1245,10 +1264,11 @@ class Drawing(Resource):
     def path_elliptic_arc(self, to=None, radius=None, rotation=0.0,
                           large_arc=False, clockwise=False, relative=False):
         """Draws an elliptical arc from the current point to given ``to``
-        coordinates. The ``to`` coordinates can be relative, or absolute, to the
-        current point by setting the ``relative`` flag. The size and orientation
-        of the ellipse are defined by two radii (rx, ry) in ``radius`` and an
-        ``rotation`` parameters, which indicates how the ellipse as a whole is
+        coordinates. The ``to`` coordinates can be relative, or absolute,
+        to the current point by setting the ``relative`` flag.
+        The size and orientation of the ellipse are defined by
+        two radii (rx, ry) in ``radius`` and an ``rotation`` parameters,
+        which indicates how the ellipse as a whole is
         rotated relative to the current coordinate system. The center of the
         ellipse is calculated automagically to satisfy the constraints imposed
         by the other parameters. ``large_arc`` and ``clockwise`` contribute to
@@ -1258,20 +1278,18 @@ class Drawing(Resource):
         rotation.
 
         :param to: (:class:`~numbers.Real`, :class:`numbers.Real`)
-                      pair which represents coordinates to draw to.
+                   pair which represents coordinates to draw to
         :type to: :class:`collections.Sequence`
         :param radius: (:class:`~numbers.Real`, :class:`numbers.Real`)
-                      pair which represents the radii of the ellipse to draw
+                       pair which represents the radii of the ellipse to draw
         :type radius: :class:`collections.Sequence`
-        :param rotate: :class:`~numbers.Real` degree to rotate ellipse on x-axis
+        :param rotate: degree to rotate ellipse on x-axis
         :type rotate: :class:`~numbers.Real`
-        :param large_arc: :class:`bool` draw largest available arc
+        :param large_arc: draw largest available arc
         :type large_arc: :class:`bool`
-        :param clockwise: :class:`bool`
-                    draw arc path clockwise from start to target
+        :param clockwise: draw arc path clockwise from start to target
         :type clockwise: :class:`bool`
-        :param relative: :class:`bool`
-                    treat given coordinates as relative to current point
+        :param relative: treat given coordinates as relative to current point
         :type relative: :class:`bool`
 
         .. versionadded:: 0.4.0
@@ -1513,8 +1531,8 @@ class Drawing(Resource):
         :class:`Drawing.pop_pattern` command comprise the definition of a named
         pattern. The pattern space is assigned top left corner coordinates, a
         width and height, and becomes its own drawing space. Anything which can
-        be drawn may be used in a pattern definition. Named patterns may be used
-        as stroke or brush definitions.
+        be drawn may be used in a pattern definition.
+        Named patterns may be used as stroke or brush definitions.
 
         :param pattern_id: a unique identifier for the pattern.
         :type pattern_id: :class:`basestring`
@@ -1653,7 +1671,7 @@ class Drawing(Resource):
             if xradius is None:
                 xradius = 0.0
             if yradius is None:
-                yraduis = 0.0
+                yradius = 0.0
             if not isinstance(xradius, numbers.Real):
                 raise TypeError('xradius must be numbers.Real, not ' +
                                 repr(xradius))

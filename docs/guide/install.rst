@@ -21,6 +21,7 @@ Or you can simply install Wand and its entire dependencies using the package
 manager of your system (it's way convenient but the version might be outdated):
 
 - :ref:`Debian/Ubuntu <install-wand-debian>`
+- :ref:`Fefora <install-wand-fedora>`
 - :ref:`FreeBSD <install-wand-freebsd>`
 
 .. _PyPI: http://pypi.python.org/pypi/Wand
@@ -158,14 +159,30 @@ reserved by ImageMagick.
 Install Wand on Debian/Ubuntu
 -----------------------------
 
-Wand itself is already packaged in Debian/Ubuntu APT repository: python-wand_.
+Wand itself is already packaged in Debian/Ubuntu APT repository: python-wand__.
 You can install it using :program:`apt-get` command:
 
 .. sourcecode:: console
 
    $ sudo apt-get install python-wand
 
-.. _python-wand: http://packages.debian.org/sid/python-wand
+__ http://packages.debian.org/sid/python-wand
+
+
+.. _install-wand-fedora:
+
+Install Wand on Fedora
+----------------------
+
+Wand itself is already packaged in Fedora package DB: python-wand__.
+You can install it using :program:`dnf` command:
+
+.. code-block:: console
+
+   $ dnf install python-wand   # Python 2
+   $ dnf install python3-wand  # Python 3
+
+__ https://admin.fedoraproject.org/pkgdb/package/python-wand/
 
 
 .. _install-wand-freebsd:

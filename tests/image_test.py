@@ -16,7 +16,6 @@ from wand.color import Color
 from wand.compat import PY3, string_type, text, text_type
 from wand.exceptions import OptionError, MissingDelegateError
 from wand.font import Font
-from wand.version import QUANTUM_DEPTH
 
 try:
     filesystem_encoding = sys.getfilesystemencoding()
@@ -1385,6 +1384,7 @@ def test_linear_stretch_user_error(fx_asset):
             img.linear_stretch(white_point=0.5,
                                black_point='NaN')
 
+
 def test_normalize_default(display, fx_asset):
     with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
         display(img)
@@ -1430,6 +1430,7 @@ def test_normalize_channel(fx_asset):
             assert getattr(img[-1, 0], c) == getattr(right_top, c)
             assert getattr(img[-1, -1], c) == getattr(right_bottom, c)
 
+
 def test_level_default(fx_asset):
     with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
         # Adjust the levels to make this image entirely black
@@ -1458,6 +1459,7 @@ def test_level_default(fx_asset):
             assert light.red_int8 <= light.green_int8 <= light.blue_int8 <= 195
             assert light.red_int8 >= light.green_int8 >= light.blue_int8 >= 190
 
+
 def test_level_channel(fx_asset):
     for chan in ('red', 'green', 'blue'):
         c = chan + '_int8'
@@ -1483,6 +1485,7 @@ def test_level_channel(fx_asset):
             with img[0, len(img) // 2] as light:
                 assert(getattr(light, c) >= 190)
                 assert(getattr(light, c) <= 195)
+
 
 def test_level_user_error(fx_asset):
     with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
@@ -1518,7 +1521,7 @@ def test_evaluate(fx_asset):
         with img.clone() as literal_img:
             literal_img.evaluate('divide', 2, channel='red')
             with img[0, 0] as org_color:
-                expected_color = (img[0, 0].red_int8 * 0.5)
+                expected_color = (org_color.red_int8 * 0.5)
                 with literal_img[0, 0] as actual_color:
                     assert abs(expected_color - actual_color.red_int8) < 1
 
@@ -1626,6 +1629,7 @@ def test_fx_error(fx_asset):
         with raises(ValueError):
             with xc.fx('p[0,0]', True):
                 pass
+
 
 def test_transpose(fx_asset):
     with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
