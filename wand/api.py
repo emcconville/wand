@@ -132,10 +132,12 @@ class MagickPixelPacket(ctypes.Structure):
                 ('opacity', ctypes.c_double),
                 ('index', ctypes.c_double)]
 
+
 class PointInfo(ctypes.Structure):
 
     _fields_ = [('x', ctypes.c_double),
                 ('y', ctypes.c_double)]
+
 
 class AffineMatrix(ctypes.Structure):
     _fields_ = [('sx', ctypes.c_double),
@@ -318,14 +320,15 @@ try:
 
     library.MagickGetImageVirtualPixelMethod.argtypes = [ctypes.c_void_p]
 
-    library.MagickSetImageVirtualPixelMethod.argtypes = [ctypes.c_void_p, ctypes.c_int]
+    library.MagickSetImageVirtualPixelMethod.argtypes = [ctypes.c_void_p,
+                                                         ctypes.c_int]
 
     library.MagickGetImageColorspace.argtypes = [ctypes.c_void_p]
     library.MagickGetImageColorspace.restype = ctypes.c_int
 
     library.MagickSetImageColorspace.argtypes = [ctypes.c_void_p, ctypes.c_int]
-    library.MagickTransformImageColorspace.argtypes = [ctypes.c_void_p, ctypes.c_int]
-
+    library.MagickTransformImageColorspace.argtypes = [ctypes.c_void_p,
+                                                       ctypes.c_int]
 
     library.MagickGetImageCompression.argtypes = [ctypes.c_void_p]
     library.MagickGetImageCompression.restype = ctypes.c_int
@@ -360,16 +363,20 @@ try:
                                          ctypes.c_ssize_t,  # inner_bevel
                                          ctypes.c_ssize_t]  # outer_bevel
 
-    library.MagickFunctionImage.argtypes = [ctypes.c_void_p,  # wand
-                                            ctypes.c_int,     # MagickFunction
-                                            ctypes.c_size_t,  # number_arguments
-                                            ctypes.POINTER(ctypes.c_double)]  # arguments
+    library.MagickFunctionImage.argtypes = [
+        ctypes.c_void_p,  # wand
+        ctypes.c_int,     # MagickFunction
+        ctypes.c_size_t,  # number_arguments
+        ctypes.POINTER(ctypes.c_double),  # arguments
+    ]
 
-    library.MagickFunctionImageChannel.argtypes = [ctypes.c_void_p,  # wand
-                                                   ctypes.c_int,     # channel
-                                                   ctypes.c_int,     # MagickFunction
-                                                   ctypes.c_size_t,  # number_arguments
-                                                   ctypes.POINTER(ctypes.c_double)]  # arguments
+    library.MagickFunctionImageChannel.argtypes = [
+        ctypes.c_void_p,  # wand
+        ctypes.c_int,     # channel
+        ctypes.c_int,     # MagickFunction
+        ctypes.c_size_t,  # number_arguments
+        ctypes.POINTER(ctypes.c_double),  # arguments
+    ]
 
     library.MagickFxImage.argtypes = [ctypes.c_void_p,  # wand
                                       ctypes.c_char_p]  # expression
@@ -379,7 +386,6 @@ try:
                                              ctypes.c_int,     # channel
                                              ctypes.c_char_p]  # expression
     library.MagickFxImageChannel.restype = ctypes.c_void_p
-
 
     library.MagickResetImagePage.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
 
@@ -542,10 +548,12 @@ try:
                                                    ctypes.c_double,  # black
                                                    ctypes.c_double]  # white
 
-    library.MagickContrastStretchImageChannel.argtypes = [ctypes.c_void_p,  # wand
-                                                          ctypes.c_int,     # channel
-                                                          ctypes.c_double,  # black
-                                                          ctypes.c_double]  # white
+    library.MagickContrastStretchImageChannel.argtypes = [
+        ctypes.c_void_p,  # wand
+        ctypes.c_int,     # channel
+        ctypes.c_double,  # black
+        ctypes.c_double,  # white
+    ]
 
     library.MagickGammaImage.argtypes = [ctypes.c_void_p,
                                          ctypes.c_double]
@@ -553,7 +561,6 @@ try:
     library.MagickGammaImageChannel.argtypes = [ctypes.c_void_p,
                                                 ctypes.c_int,
                                                 ctypes.c_double]
-
 
     library.MagickLinearStretchImage.argtypes = [ctypes.c_void_p,  # wand
                                                  ctypes.c_double,  # black
@@ -725,57 +732,63 @@ try:
     library.DrawClearException.argtypes = [ctypes.c_void_p]
     library.DrawClearException.restype = ctypes.c_int
 
-    library.DrawAffine.argtypes = [ctypes.c_void_p, # Drawing wand
-                                   ctypes.POINTER(AffineMatrix)] # AffineMatrix
+    library.DrawAffine.argtypes = [
+        ctypes.c_void_p,  # Drawing wand
+        ctypes.POINTER(AffineMatrix),  # AffineMatrix
+    ]
 
-    library.DrawComment.argtypes = [ctypes.c_void_p, # wand
-                                    ctypes.c_char_p] #comment
+    library.DrawComment.argtypes = [
+        ctypes.c_void_p,  # wand
+        ctypes.c_char_p,  # comment
+    ]
 
-    library.DrawComposite.argtypes = [ctypes.c_void_p, # DrawingWand wand
-                                      ctypes.c_int, # CompositeOperator
-                                      ctypes.c_double, # x
-                                      ctypes.c_double, # y
-                                      ctypes.c_double, # width
-                                      ctypes.c_double, # height
-                                      ctypes.c_void_p] # MagickWand wand
+    library.DrawComposite.argtypes = [
+        ctypes.c_void_p,  # DrawingWand wand
+        ctypes.c_int,     # CompositeOperator
+        ctypes.c_double,  # x
+        ctypes.c_double,  # y
+        ctypes.c_double,  # width
+        ctypes.c_double,  # height
+        ctypes.c_void_p,  # MagickWand wand
+    ]
     library.DrawComposite.restype = ctypes.c_uint
 
-    library.DrawSetBorderColor.argtypes = [ctypes.c_void_p, # wand
-                                           ctypes.c_void_p] # PixelWand color
+    library.DrawSetBorderColor.argtypes = [ctypes.c_void_p,  # wand
+                                           ctypes.c_void_p]  # PixelWand color
 
-    library.DrawSetClipPath.argtypes = [ctypes.c_void_p, # wand
-                                        ctypes.c_char_p] # clip_mask
+    library.DrawSetClipPath.argtypes = [ctypes.c_void_p,  # wand
+                                        ctypes.c_char_p]  # clip_mask
     library.DrawSetClipPath.restype = ctypes.c_int
 
-    library.DrawSetClipRule.argtypes = [ctypes.c_void_p, # wand
-                                        ctypes.c_uint] # FillRule
+    library.DrawSetClipRule.argtypes = [ctypes.c_void_p,  # wand
+                                        ctypes.c_uint]    # FillRule
 
-    library.DrawSetClipUnits.argtypes = [ctypes.c_void_p, # wand
-                                         ctypes.c_uint] # ClipPathUnits
+    library.DrawSetClipUnits.argtypes = [ctypes.c_void_p,  # wand
+                                         ctypes.c_uint]    # ClipPathUnits
 
     library.DrawSetFont.argtypes = [ctypes.c_void_p,
                                     ctypes.c_char_p]
 
-    library.DrawSetFontFamily.argtypes = [ctypes.c_void_p, # wand
-                                          ctypes.c_char_p] # font_family
+    library.DrawSetFontFamily.argtypes = [ctypes.c_void_p,  # wand
+                                          ctypes.c_char_p]  # font_family
     library.DrawSetFontFamily.restype = ctypes.c_uint
 
-    library.DrawSetFontResolution.argtypes = [ctypes.c_void_p, #wand
-                                              ctypes.c_double, # x
-                                              ctypes.c_double] # y
+    library.DrawSetFontResolution.argtypes = [ctypes.c_void_p,  # wand
+                                              ctypes.c_double,  # x
+                                              ctypes.c_double]  # y
     library.DrawSetFontResolution.restype = ctypes.c_uint
 
     library.DrawSetFontSize.argtypes = [ctypes.c_void_p,
                                         ctypes.c_double]
 
-    library.DrawSetFontStretch.argtypes = [ctypes.c_void_p, # wand
-                                           ctypes.c_int] # font_stretch
+    library.DrawSetFontStretch.argtypes = [ctypes.c_void_p,  # wand
+                                           ctypes.c_int]     # font_stretch
 
-    library.DrawSetFontStyle.argtypes = [ctypes.c_void_p, # wand
-                                         ctypes.c_int] # style
+    library.DrawSetFontStyle.argtypes = [ctypes.c_void_p,  # wand
+                                         ctypes.c_int]     # style
 
-    library.DrawSetFontWeight.argtypes = [ctypes.c_void_p, # wand
-                                          ctypes.c_size_t] # font_weight
+    library.DrawSetFontWeight.argtypes = [ctypes.c_void_p,  # wand
+                                          ctypes.c_size_t]  # font_weight
 
     library.DrawSetFillColor.argtypes = [ctypes.c_void_p,
                                          ctypes.c_void_p]
@@ -783,8 +796,8 @@ try:
     library.DrawSetFillOpacity.argtypes = [ctypes.c_void_p,
                                            ctypes.c_double]
 
-    library.DrawSetFillPatternURL.argtypes = [ctypes.c_void_p, # wand
-                                              ctypes.c_char_p] # fill_url
+    library.DrawSetFillPatternURL.argtypes = [ctypes.c_void_p,  # wand
+                                              ctypes.c_char_p]  # fill_url
     library.DrawSetFillPatternURL.restype = ctypes.c_uint
 
     library.DrawSetFillRule.argtypes = [ctypes.c_void_p,
@@ -792,33 +805,41 @@ try:
 
     library.DrawSetOpacity.argtypes = [ctypes.c_void_p, ctypes.c_double]
 
-    library.DrawSetStrokeAntialias.argtypes = [ctypes.c_void_p, # wand
-                                               ctypes.c_int] # stroke_antialias
+    library.DrawSetStrokeAntialias.argtypes = [
+        ctypes.c_void_p,  # wand
+        ctypes.c_int,     # stroke_antialias
+    ]
 
     library.DrawSetStrokeColor.argtypes = [ctypes.c_void_p,
                                            ctypes.c_void_p]
 
-    library.DrawSetStrokeDashArray.argtypes = [ctypes.c_void_p, # wand
-                                               ctypes.c_size_t, # number_elements
-                                               ctypes.POINTER(ctypes.c_double)]
+    library.DrawSetStrokeDashArray.argtypes = [
+        ctypes.c_void_p,  # wand
+        ctypes.c_size_t,  # number_elements
+        ctypes.POINTER(ctypes.c_double),
+    ]
 
-    library.DrawSetStrokeDashOffset.argtypes = [ctypes.c_void_p, # wand
-                                                ctypes.c_double] # dash_offset
+    library.DrawSetStrokeDashOffset.argtypes = [
+        ctypes.c_void_p,  # wand
+        ctypes.c_double,  # dash_offset
+    ]
 
-    library.DrawSetStrokeLineCap.argtypes = [ctypes.c_void_p, # wand
-                                             ctypes.c_int] # linecap
+    library.DrawSetStrokeLineCap.argtypes = [
+        ctypes.c_void_p,  # wand
+        ctypes.c_int,     # linecap
+    ]
 
-    library.DrawSetStrokeLineJoin.argtypes = [ctypes.c_void_p, # wand
-                                              ctypes.c_int] # linejoin
+    library.DrawSetStrokeLineJoin.argtypes = [ctypes.c_void_p,  # wand
+                                              ctypes.c_int]     # linejoin
 
-    library.DrawSetStrokeMiterLimit.argtypes = [ctypes.c_void_p, # wand
-                                                ctypes.c_size_t] # miterlimit
+    library.DrawSetStrokeMiterLimit.argtypes = [ctypes.c_void_p,  # wand
+                                                ctypes.c_size_t]  # miterlimit
 
-    library.DrawSetStrokeOpacity.argtypes = [ctypes.c_void_p, # wand
-                                             ctypes.c_double] # stroke_opacity
+    library.DrawSetStrokeOpacity.argtypes = [ctypes.c_void_p,  # wand
+                                             ctypes.c_double]  # stroke_opacity
 
-    library.DrawSetStrokePatternURL.argtypes = [ctypes.c_void_p, # wand
-                                              ctypes.c_char_p] # fill_url
+    library.DrawSetStrokePatternURL.argtypes = [ctypes.c_void_p,  # wand
+                                                ctypes.c_char_p]  # fill_url
     library.DrawSetStrokePatternURL.restype = ctypes.c_uint
 
     library.DrawSetStrokeWidth.argtypes = [ctypes.c_void_p,
@@ -864,14 +885,14 @@ try:
 
     library.DrawResetVectorGraphics.argtypes = [ctypes.c_void_p]
 
-    library.DrawSetViewbox.argtypes = [ctypes.c_void_p, # wand
-                                       ctypes.c_ssize_t, # x1
-                                       ctypes.c_ssize_t, # y1
-                                       ctypes.c_ssize_t, # x2
-                                       ctypes.c_ssize_t] # y2
+    library.DrawSetViewbox.argtypes = [ctypes.c_void_p,   # wand
+                                       ctypes.c_ssize_t,  # x1
+                                       ctypes.c_ssize_t,  # y1
+                                       ctypes.c_ssize_t,  # x2
+                                       ctypes.c_ssize_t]  # y2
 
-    library.DrawGetBorderColor.argtypes = [ctypes.c_void_p, # wand
-                                           ctypes.c_void_p] # PixelWand color
+    library.DrawGetBorderColor.argtypes = [ctypes.c_void_p,  # wand
+                                           ctypes.c_void_p]  # PixelWand color
 
     library.DrawGetClipPath.argtypes = [ctypes.c_void_p]
     library.DrawGetClipPath.restype = c_magick_char_p
@@ -889,7 +910,7 @@ try:
     library.DrawGetFillOpacity.restype = ctypes.c_double
 
     library.DrawGetFillRule.argtypes = [ctypes.c_void_p]
-    library.DrawGetFillRule.restype =   ctypes.c_uint
+    library.DrawGetFillRule.restype = ctypes.c_uint
 
     library.DrawGetOpacity.argtypes = [ctypes.c_void_p]
     library.DrawGetOpacity.restype = ctypes.c_double
@@ -900,8 +921,10 @@ try:
     library.DrawGetStrokeColor.argtypes = [ctypes.c_void_p,
                                            ctypes.c_void_p]
 
-    library.DrawGetStrokeDashArray.argtypes = [ctypes.c_void_p,
-                                      ctypes.POINTER(ctypes.c_size_t)]
+    library.DrawGetStrokeDashArray.argtypes = [
+        ctypes.c_void_p,
+        ctypes.POINTER(ctypes.c_size_t),
+    ]
     library.DrawGetStrokeDashArray.restype = ctypes.POINTER(ctypes.c_double)
 
     library.DrawGetStrokeDashOffset.argtypes = [ctypes.c_void_p]
@@ -928,9 +951,11 @@ try:
     library.DrawGetFontFamily.argtypes = [ctypes.c_void_p]
     library.DrawGetFontFamily.restype = c_magick_char_p
 
-    library.DrawGetFontResolution.argtypes = [ctypes.c_void_p, #wand
-                               ctypes.POINTER(ctypes.c_double), # x
-                               ctypes.POINTER(ctypes.c_double)] # y
+    library.DrawGetFontResolution.argtypes = [
+        ctypes.c_void_p,  # wand
+        ctypes.POINTER(ctypes.c_double),  # x
+        ctypes.POINTER(ctypes.c_double),  # y
+    ]
     library.DrawGetFontResolution.restype = ctypes.c_uint
 
     library.DrawGetFontSize.argtypes = [ctypes.c_void_p]
@@ -995,13 +1020,14 @@ try:
                                             ctypes.c_char_p]
     library.MagickAnnotateImage.restype = ctypes.c_int
 
-    library.MagickDistortImage.argtypes = [ctypes.c_void_p,  # wand
-                                           ctypes.c_int,     # method
-                                           ctypes.c_size_t,  # number_arguments
-                                           ctypes.POINTER(ctypes.c_double),  # arguments
-                                           ctypes.c_int]     # bestfit
+    library.MagickDistortImage.argtypes = [
+        ctypes.c_void_p,  # wand
+        ctypes.c_int,     # method
+        ctypes.c_size_t,  # number_arguments
+        ctypes.POINTER(ctypes.c_double),  # arguments
+        ctypes.c_int,     # bestfit
+    ]
     library.MagickDistortImage.restype = ctypes.c_int
-
 
     library.ClearDrawingWand.argtypes = [ctypes.c_void_p]
 
@@ -1014,36 +1040,36 @@ try:
                                        ctypes.c_double,
                                        ctypes.POINTER(ctypes.c_ubyte)]
 
-    library.DrawArc.argtypes = [ctypes.c_void_p, # wand
-                                ctypes.c_double, # sx
-                                ctypes.c_double, # sy
-                                ctypes.c_double, # ex
-                                ctypes.c_double, # ey
-                                ctypes.c_double, # sd
-                                ctypes.c_double] # ed
+    library.DrawArc.argtypes = [ctypes.c_void_p,  # wand
+                                ctypes.c_double,  # sx
+                                ctypes.c_double,  # sy
+                                ctypes.c_double,  # ex
+                                ctypes.c_double,  # ey
+                                ctypes.c_double,  # sd
+                                ctypes.c_double]  # ed
 
     library.DrawBezier.argtypes = [ctypes.c_void_p,
                                    ctypes.c_ulong,
                                    ctypes.POINTER(PointInfo)]
 
-    library.DrawCircle.argtypes = [ctypes.c_void_p, # wand
-                                   ctypes.c_double, # ox
-                                   ctypes.c_double, # oy
-                                   ctypes.c_double, # px
-                                   ctypes.c_double] # py
+    library.DrawCircle.argtypes = [ctypes.c_void_p,  # wand
+                                   ctypes.c_double,  # ox
+                                   ctypes.c_double,  # oy
+                                   ctypes.c_double,  # px
+                                   ctypes.c_double]  # py
 
-    library.DrawColor.argtypes = [ctypes.c_void_p, # wand
-                                  ctypes.c_double, # x
-                                  ctypes.c_double, # y
-                                  ctypes.c_uint]   # PaintMethod
+    library.DrawColor.argtypes = [ctypes.c_void_p,  # wand
+                                  ctypes.c_double,  # x
+                                  ctypes.c_double,  # y
+                                  ctypes.c_uint]    # PaintMethod
 
-    library.DrawEllipse.argtypes = [ctypes.c_void_p, # wand
-                                    ctypes.c_double, # ox
-                                    ctypes.c_double, # oy
-                                    ctypes.c_double, # rx
-                                    ctypes.c_double, # ry
-                                    ctypes.c_double, # start
-                                    ctypes.c_double] # end
+    library.DrawEllipse.argtypes = [ctypes.c_void_p,  # wand
+                                    ctypes.c_double,  # ox
+                                    ctypes.c_double,  # oy
+                                    ctypes.c_double,  # rx
+                                    ctypes.c_double,  # ry
+                                    ctypes.c_double,  # start
+                                    ctypes.c_double]  # end
 
     library.DrawLine.argtypes = [ctypes.c_void_p,
                                  ctypes.c_double,
@@ -1051,125 +1077,141 @@ try:
                                  ctypes.c_double,
                                  ctypes.c_double]
 
-    library.DrawMatte.argtypes = [ctypes.c_void_p, # wand
-                                  ctypes.c_double, # x
-                                  ctypes.c_double, # y
-                                  ctypes.c_uint]   # PaintMethod
+    library.DrawMatte.argtypes = [ctypes.c_void_p,  # wand
+                                  ctypes.c_double,  # x
+                                  ctypes.c_double,  # y
+                                  ctypes.c_uint]    # PaintMethod
 
-    library.DrawPathClose.argtypes = [ctypes.c_void_p] # wand
+    library.DrawPathClose.argtypes = [ctypes.c_void_p]  # wand
 
-    library.DrawPathCurveToAbsolute.argtypes = [ctypes.c_void_p, # wand
-                                                ctypes.c_double, # x1
-                                                ctypes.c_double, # y1
-                                                ctypes.c_double, # x2
-                                                ctypes.c_double, # y2
-                                                ctypes.c_double, # x
-                                                ctypes.c_double] # y
+    library.DrawPathCurveToAbsolute.argtypes = [ctypes.c_void_p,  # wand
+                                                ctypes.c_double,  # x1
+                                                ctypes.c_double,  # y1
+                                                ctypes.c_double,  # x2
+                                                ctypes.c_double,  # y2
+                                                ctypes.c_double,  # x
+                                                ctypes.c_double]  # y
 
-    library.DrawPathCurveToRelative.argtypes = [ctypes.c_void_p, # wand
-                                                ctypes.c_double, # x1
-                                                ctypes.c_double, # y1
-                                                ctypes.c_double, # x2
-                                                ctypes.c_double, # y2
-                                                ctypes.c_double, # x
-                                                ctypes.c_double] # y
+    library.DrawPathCurveToRelative.argtypes = [ctypes.c_void_p,  # wand
+                                                ctypes.c_double,  # x1
+                                                ctypes.c_double,  # y1
+                                                ctypes.c_double,  # x2
+                                                ctypes.c_double,  # y2
+                                                ctypes.c_double,  # x
+                                                ctypes.c_double]  # y
 
-    library.DrawPathCurveToQuadraticBezierAbsolute.argtypes = [ctypes.c_void_p, # wand
-                                                      ctypes.c_double, # x1
-                                                      ctypes.c_double, # y1
-                                                      ctypes.c_double, # x
-                                                      ctypes.c_double] # y
+    library.DrawPathCurveToQuadraticBezierAbsolute.argtypes = [
+        ctypes.c_void_p,  # wand
+        ctypes.c_double,  # x1
+        ctypes.c_double,  # y1
+        ctypes.c_double,  # x
+        ctypes.c_double,  # y
+    ]
 
-    library.DrawPathCurveToQuadraticBezierRelative.argtypes = [ctypes.c_void_p, # wand
-                                                      ctypes.c_double, # x1
-                                                      ctypes.c_double, # y1
-                                                      ctypes.c_double, # x
-                                                      ctypes.c_double] # y
+    library.DrawPathCurveToQuadraticBezierRelative.argtypes = [
+        ctypes.c_void_p,  # wand
+        ctypes.c_double,  # x1
+        ctypes.c_double,  # y1
+        ctypes.c_double,  # x
+        ctypes.c_double,  # y
+    ]
 
-    library.DrawPathCurveToQuadraticBezierSmoothAbsolute.argtypes = [ctypes.c_void_p, # wand
-                                                      ctypes.c_double, # x
-                                                      ctypes.c_double] # y
+    library.DrawPathCurveToQuadraticBezierSmoothAbsolute.argtypes = [
+        ctypes.c_void_p,  # wand
+        ctypes.c_double,  # x
+        ctypes.c_double,  # y
+    ]
 
-    library.DrawPathCurveToQuadraticBezierSmoothRelative.argtypes = [ctypes.c_void_p, # wand
-                                                      ctypes.c_double, # x
-                                                      ctypes.c_double] # y
+    library.DrawPathCurveToQuadraticBezierSmoothRelative.argtypes = [
+        ctypes.c_void_p,  # wand
+        ctypes.c_double,  # x
+        ctypes.c_double,  # y
+    ]
 
-    library.DrawPathCurveToSmoothAbsolute.argtypes = [ctypes.c_void_p, # wand
-                                                      ctypes.c_double, # x2
-                                                      ctypes.c_double, # y2
-                                                      ctypes.c_double, # x
-                                                      ctypes.c_double] # y
+    library.DrawPathCurveToSmoothAbsolute.argtypes = [ctypes.c_void_p,  # wand
+                                                      ctypes.c_double,  # x2
+                                                      ctypes.c_double,  # y2
+                                                      ctypes.c_double,  # x
+                                                      ctypes.c_double]  # y
 
-    library.DrawPathCurveToSmoothRelative.argtypes = [ctypes.c_void_p, # wand
-                                                      ctypes.c_double, # x2
-                                                      ctypes.c_double, # y2
-                                                      ctypes.c_double, # x
-                                                      ctypes.c_double] # y
+    library.DrawPathCurveToSmoothRelative.argtypes = [ctypes.c_void_p,  # wand
+                                                      ctypes.c_double,  # x2
+                                                      ctypes.c_double,  # y2
+                                                      ctypes.c_double,  # x
+                                                      ctypes.c_double]  # y
 
-    library.DrawPathEllipticArcAbsolute.argtypes = [ctypes.c_void_p, # wand
-                                                    ctypes.c_double, # rx
-                                                    ctypes.c_double, # ry
-                                                    ctypes.c_double, # rotation
-                                                    ctypes.c_uint, # arc_flag
-                                                    ctypes.c_uint, # sweep_flag
-                                                    ctypes.c_double, # x
-                                                    ctypes.c_double] # y
+    library.DrawPathEllipticArcAbsolute.argtypes = [
+        ctypes.c_void_p,  # wand
+        ctypes.c_double,  # rx
+        ctypes.c_double,  # ry
+        ctypes.c_double,  # rotation
+        ctypes.c_uint,    # arc_flag
+        ctypes.c_uint,    # sweep_flag
+        ctypes.c_double,  # x
+        ctypes.c_double,  # y
+    ]
 
-    library.DrawPathEllipticArcRelative.argtypes = [ctypes.c_void_p, # wand
-                                                    ctypes.c_double, # rx
-                                                    ctypes.c_double, # ry
-                                                    ctypes.c_double, # rotation
-                                                    ctypes.c_uint, # arc_flag
-                                                    ctypes.c_uint, # sweep_flag
-                                                    ctypes.c_double, # x
-                                                    ctypes.c_double] # y
+    library.DrawPathEllipticArcRelative.argtypes = [
+        ctypes.c_void_p,  # wand
+        ctypes.c_double,  # rx
+        ctypes.c_double,  # ry
+        ctypes.c_double,  # rotation
+        ctypes.c_uint,    # arc_flag
+        ctypes.c_uint,    # sweep_flag
+        ctypes.c_double,  # x
+        ctypes.c_double,  # y
+    ]
 
-    library.DrawPathFinish.argtypes = [ctypes.c_void_p] # wand
+    library.DrawPathFinish.argtypes = [ctypes.c_void_p]  # wand
 
-    library.DrawPathLineToAbsolute.argtypes = [ctypes.c_void_p, # wand
-                                               ctypes.c_double, # x
-                                               ctypes.c_double] # y
+    library.DrawPathLineToAbsolute.argtypes = [ctypes.c_void_p,  # wand
+                                               ctypes.c_double,  # x
+                                               ctypes.c_double]  # y
 
-    library.DrawPathLineToRelative.argtypes = [ctypes.c_void_p, # wand
-                                               ctypes.c_double, # x
-                                               ctypes.c_double] # y
+    library.DrawPathLineToRelative.argtypes = [ctypes.c_void_p,  # wand
+                                               ctypes.c_double,  # x
+                                               ctypes.c_double]  # y
 
-    library.DrawPathLineToHorizontalAbsolute.argtypes = [ctypes.c_void_p, # wand
-                                                         ctypes.c_double] # x
+    library.DrawPathLineToHorizontalAbsolute.argtypes = [
+        ctypes.c_void_p,  # wand
+        ctypes.c_double,  # x
+    ]
 
-    library.DrawPathLineToHorizontalRelative.argtypes = [ctypes.c_void_p, # wand
-                                                         ctypes.c_double] # x
+    library.DrawPathLineToHorizontalRelative.argtypes = [
+        ctypes.c_void_p,  # wand
+        ctypes.c_double,  # x
+    ]
 
-    library.DrawPathLineToVerticalAbsolute.argtypes = [ctypes.c_void_p, # wand
-                                                       ctypes.c_double] # y
+    library.DrawPathLineToVerticalAbsolute.argtypes = [ctypes.c_void_p,  # wand
+                                                       ctypes.c_double]  # y
 
-    library.DrawPathLineToVerticalRelative.argtypes = [ctypes.c_void_p, # wand
-                                                       ctypes.c_double] # y
+    library.DrawPathLineToVerticalRelative.argtypes = [ctypes.c_void_p,  # wand
+                                                       ctypes.c_double]  # y
 
-    library.DrawPathMoveToAbsolute.argtypes = [ctypes.c_void_p, # wand
-                                               ctypes.c_double, # x
-                                               ctypes.c_double] # y
+    library.DrawPathMoveToAbsolute.argtypes = [ctypes.c_void_p,  # wand
+                                               ctypes.c_double,  # x
+                                               ctypes.c_double]  # y
 
-    library.DrawPathMoveToRelative.argtypes = [ctypes.c_void_p, # wand
-                                               ctypes.c_double, # x
-                                               ctypes.c_double] # y
+    library.DrawPathMoveToRelative.argtypes = [ctypes.c_void_p,  # wand
+                                               ctypes.c_double,  # x
+                                               ctypes.c_double]  # y
 
-    library.DrawPathStart.argtypes = [ctypes.c_void_p] # wand
+    library.DrawPathStart.argtypes = [ctypes.c_void_p]  # wand
 
-    library.DrawPoint.argtypes = [ctypes.c_void_p, # wand
-                                  ctypes.c_double, # x
-                                  ctypes.c_double] # y
+    library.DrawPoint.argtypes = [ctypes.c_void_p,  # wand
+                                  ctypes.c_double,  # x
+                                  ctypes.c_double]  # y
 
     library.DrawPolygon.argtypes = [ctypes.c_void_p,
                                     ctypes.c_ulong,
                                     ctypes.POINTER(PointInfo)]
 
     library.DrawPolyline.argtypes = [ctypes.c_void_p,
-                                    ctypes.c_ulong,
-                                    ctypes.POINTER(PointInfo)]
+                                     ctypes.c_ulong,
+                                     ctypes.POINTER(PointInfo)]
 
-    library.DrawRotate.argtypes = [ctypes.c_void_p, # wand
-                                   ctypes.c_double] # degree
+    library.DrawRotate.argtypes = [ctypes.c_void_p,  # wand
+                                   ctypes.c_double]  # degree
 
     library.DrawRectangle.argtypes = [ctypes.c_void_p,
                                       ctypes.c_double,
@@ -1177,40 +1219,40 @@ try:
                                       ctypes.c_double,
                                       ctypes.c_double]
 
-    library.DrawRoundRectangle.argtypes = [ctypes.c_void_p, # wand
-                                           ctypes.c_double, # x1
-                                           ctypes.c_double, # y1
-                                           ctypes.c_double, # x2
-                                           ctypes.c_double, # y2
-                                           ctypes.c_double, # rx
-                                           ctypes.c_double] # ry
+    library.DrawRoundRectangle.argtypes = [ctypes.c_void_p,  # wand
+                                           ctypes.c_double,  # x1
+                                           ctypes.c_double,  # y1
+                                           ctypes.c_double,  # x2
+                                           ctypes.c_double,  # y2
+                                           ctypes.c_double,  # rx
+                                           ctypes.c_double]  # ry
 
-    library.DrawScale.argtypes = [ctypes.c_void_p, # wand
-                                  ctypes.c_double, # x
-                                  ctypes.c_double] # y
+    library.DrawScale.argtypes = [ctypes.c_void_p,  # wand
+                                  ctypes.c_double,  # x
+                                  ctypes.c_double]  # y
 
-    library.DrawSkewX.argtypes = [ctypes.c_void_p, # wand
-                                  ctypes.c_double] # degree
+    library.DrawSkewX.argtypes = [ctypes.c_void_p,  # wand
+                                  ctypes.c_double]  # degree
 
-    library.DrawSkewY.argtypes = [ctypes.c_void_p, # wand
-                                  ctypes.c_double] # degree
+    library.DrawSkewY.argtypes = [ctypes.c_void_p,  # wand
+                                  ctypes.c_double]  # degree
 
-    library.DrawTranslate.argtypes = [ctypes.c_void_p, #wand
-                                      ctypes.c_double, # x
-                                      ctypes.c_double] # y
+    library.DrawTranslate.argtypes = [ctypes.c_void_p,  # wand
+                                      ctypes.c_double,  # x
+                                      ctypes.c_double]  # y
 
-### Drawing stack management ###
+    # -- Drawing stack management --
     library.PushDrawingWand.argtypes = [ctypes.c_void_p]
     library.PushDrawingWand.restype = ctypes.c_uint
-    library.DrawPushClipPath.argtypes = [ctypes.c_void_p, # wand
-                                         ctypes.c_char_p] # clip_mask_id
+    library.DrawPushClipPath.argtypes = [ctypes.c_void_p,  # wand
+                                         ctypes.c_char_p]  # clip_mask_id
     library.DrawPushDefs.argtypes = [ctypes.c_void_p]
-    library.DrawPushPattern.argtypes = [ctypes.c_void_p, # wand
-                                        ctypes.c_char_p, # clip_mask_id
-                                        ctypes.c_double, # x
-                                        ctypes.c_double, # y
-                                        ctypes.c_double, # width
-                                        ctypes.c_double] # height
+    library.DrawPushPattern.argtypes = [ctypes.c_void_p,  # wand
+                                        ctypes.c_char_p,  # clip_mask_id
+                                        ctypes.c_double,  # x
+                                        ctypes.c_double,  # y
+                                        ctypes.c_double,  # width
+                                        ctypes.c_double]  # height
     library.DrawPushClipPath.restype = ctypes.c_uint
     library.PopDrawingWand.argtypes = [ctypes.c_void_p]
     library.PopDrawingWand.restype = ctypes.c_uint
@@ -1234,9 +1276,12 @@ try:
     library.MagickQueryConfigureOption.argtypes = [ctypes.c_char_p]
     library.MagickQueryConfigureOption.restype = c_magick_char_p
 
-    library.MagickQueryConfigureOptions.argtypes = [ctypes.c_char_p,
-                                                    ctypes.POINTER(ctypes.c_size_t)]
-    library.MagickQueryConfigureOptions.restype = ctypes.POINTER(c_magick_char_p)
+    library.MagickQueryConfigureOptions.argtypes = [
+        ctypes.c_char_p,
+        ctypes.POINTER(ctypes.c_size_t),
+    ]
+    library.MagickQueryConfigureOptions.restype = \
+        ctypes.POINTER(c_magick_char_p)
 
     library.MagickQueryFontMetrics.argtypes = [ctypes.c_void_p,
                                                ctypes.c_void_p,

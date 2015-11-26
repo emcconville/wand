@@ -30,7 +30,8 @@ __all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COLORSPACE_TYPES',
            'COMPOSITE_OPERATORS', 'COMPRESSION_TYPES',
            'EVALUATE_OPS', 'FILTER_TYPES',
            'GRAVITY_TYPES', 'IMAGE_TYPES', 'ORIENTATION_TYPES', 'UNIT_TYPES',
-           'FUNCTION_TYPES', 'BaseImage', 'ChannelDepthDict', 'ChannelImageDict',
+           'FUNCTION_TYPES',
+           'BaseImage', 'ChannelDepthDict', 'ChannelImageDict',
            'ClosedImageError', 'HistogramDict', 'Image', 'ImageProperty',
            'Iterator', 'Metadata', 'OptionDict', 'manipulative')
 
@@ -448,11 +449,13 @@ FUNCTION_TYPES = ('undefined', 'polynomial', 'sinusoid', 'arcsin', 'arctan')
 #: - ``'sentinel'``
 #:
 #: .. versionadded:: 0.4.1
-DISTORTION_METHODS = ('undefined', 'affine', 'affine_projection', 'scale_rotate_translate',
-                      'perspective', 'perspective_projection', 'bilinear_forward',
-                      'bilinear_reverse', 'polynomial', 'arc', 'polar', 'depolar',
-                      'cylinder_2_plane', 'plane_2_cylinder', 'barrel', 'barrel_inverse',
-                      'shepards', 'resize', 'sentinel')
+DISTORTION_METHODS = (
+    'undefined', 'affine', 'affine_projection', 'scale_rotate_translate',
+    'perspective', 'perspective_projection', 'bilinear_forward',
+    'bilinear_reverse', 'polynomial', 'arc', 'polar', 'depolar',
+    'cylinder_2_plane', 'plane_2_cylinder', 'barrel', 'barrel_inverse',
+    'shepards', 'resize', 'sentinel'
+)
 
 #: (:class:`tuple`) The list of :attr:`~BaseImage.virtual_pixel` types.
 #: - ``'undefined'``
@@ -938,8 +941,10 @@ class BaseImage(Resource):
         if method not in VIRTUAL_PIXEL_METHOD:
             raise ValueError('expected method from VIRTUAL_PIXEL_METHOD,'
                              ' not ' + repr(method))
-        library.MagickSetImageVirtualPixelMethod(self.wand,
-                                                 VIRTUAL_PIXEL_METHOD.index(method))
+        library.MagickSetImageVirtualPixelMethod(
+            self.wand,
+            VIRTUAL_PIXEL_METHOD.index(method)
+        )
 
     @property
     def colorspace(self):
@@ -1206,9 +1211,11 @@ class BaseImage(Resource):
         .. versionadded:: 0.4.1
         """
         if method not in DISTORTION_METHODS:
-            raise ValueError('expected string from DISTORTION_METHODS, not ' + repr(method))
+            raise ValueError('expected string from DISTORTION_METHODS, not ' +
+                             repr(method))
         if not isinstance(arguments, collections.Sequence):
-            raise TypeError('expected sequence of doubles, not ' + repr(arguments))
+            raise TypeError('expected sequence of doubles, not ' +
+                            repr(arguments))
         argc = len(arguments)
         argv = (ctypes.c_double * argc)(*arguments)
         library.MagickDistortImage(self.wand,
@@ -1274,8 +1281,7 @@ class BaseImage(Resource):
                         :attr:`width` and :attr:`height` parameters to be
                         included.
         :type gravity: :const:`GRAVITY_TYPES`
-        :raises exceptions.ValueError:
-           when one or more arguments are invalid
+        :raises ValueError: when one or more arguments are invalid
 
         .. note::
 
@@ -1305,7 +1311,9 @@ class BaseImage(Resource):
         # Define left & top if gravity is given.
         if gravity:
             if width is None or height is None:
-                raise TypeError('Both width and height must be defined with gravity')
+                raise TypeError(
+                    'both width and height must be defined with gravity'
+                )
             if gravity not in GRAVITY_TYPES:
                 raise ValueError('expected a string from GRAVITY_TYPES, not '
                                  + repr(gravity))
@@ -1747,12 +1755,14 @@ class BaseImage(Resource):
         .. versionadded:: 0.4.1
         """
         if operator not in EVALUATE_OPS:
-            raise ValueError('expected value from EVALUATE_OPS, not ' + repr(operator))
+            raise ValueError('expected value from EVALUATE_OPS, not ' +
+                             repr(operator))
         if not isinstance(value, numbers.Real):
             raise TypeError('value must be real number, not ' + repr(value))
         if channel:
             if channel not in CHANNELS:
-                raise ValueError('expected value from CHANNELS, not ' + repr(channel))
+                raise ValueError('expected value from CHANNELS, not ' +
+                                 repr(channel))
             library.MagickEvaluateImageChannel(self.wand,
                                                CHANNELS[channel],
                                                EVALUATE_OPS.index(operator),
@@ -1787,31 +1797,35 @@ class BaseImage(Resource):
             self.raise_exception()
 
     @manipulative
-    def frame(self, matte=None, width=1, height=1, inner_bevel=0, outer_bevel=0):
-        """Creates a bordered frame around image. Inner & Outer bevel can simulate
-        a 3D effect.
+    def frame(self, matte=None, width=1, height=1, inner_bevel=0,
+              outer_bevel=0):
+        """Creates a bordered frame around image.
+        Inner & outer bevel can simulate a 3D effect.
 
-        :param matte: Color of the frame
+        :param matte: color of the frame
         :type matte: :class:`wand.color.Color`
-        :param width: Total size of frame on x-axis
+        :param width: total size of frame on x-axis
         :type width: :class:`numbers.Integral`
-        :param height: Total size of frame on y-axis
+        :param height: total size of frame on y-axis
         :type height: :class:`numbers.Integral`
-        :param inner_bevel: Inset shadow length
+        :param inner_bevel: inset shadow length
         :type inner_bevel: :class:`numbers.Real`
-        :param outer_bevel: Outset highlight length
+        :param outer_bevel: outset highlight length
         :type outer_bevel: :class:`numbers.Real`
 
         .. versionadded:: 0.4.1
+
         """
         if matte is None:
             matte = Color('gray')
         if not isinstance(matte, Color):
-            raise TypeError('Expecting instance of Color for matte, not ' + repr(matte))
+            raise TypeError('Expecting instance of Color for matte, not ' +
+                            repr(matte))
         if not isinstance(width, numbers.Integral):
             raise TypeError('Expecting integer for width, not ' + repr(width))
         if not isinstance(height, numbers.Integral):
-            raise TypeError('Expecting integer for height, not ' + repr(height))
+            raise TypeError('Expecting integer for height, not ' +
+                            repr(height))
         if not isinstance(inner_bevel, numbers.Real):
             raise TypeError('Expecting real number, not ' + repr(inner_bevel))
         if not isinstance(outer_bevel, numbers.Real):
@@ -1829,39 +1843,45 @@ class BaseImage(Resource):
         Defaults entire image, but can isolate affects to single color channel
         by passing :const:`CHANNELS` value to ``channel`` parameter.
 
-        .. note:: Support for function methods added in the following versions
-                  of ImageMagick.
+        .. note::
 
-                  - ``'polynomial'`` >= 6.4.8-8
-                  - ``'sinusoid'`` >= 6.4.8-8
-                  - ``'arcsin'`` >= 6.5.3-1
-                  - ``'arctan'`` >= 6.5.3-1
+           Support for function methods added in the following versions
+           of ImageMagick.
 
-        :param function: A string listed in :const:`FUNCTION_TYPES`
+           - ``'polynomial'`` >= 6.4.8-8
+           - ``'sinusoid'`` >= 6.4.8-8
+           - ``'arcsin'`` >= 6.5.3-1
+           - ``'arctan'`` >= 6.5.3-1
+
+        :param function: a string listed in :const:`FUNCTION_TYPES`
         :type function: :class:`basestring`
-        :param arguments: A sequence of doubles to apply against ``function``
+        :param arguments: a sequence of doubles to apply against ``function``
         :type arguments: :class:`collections.Sequence`
-        :param channel: Optional :const:`CHANNELS`, defaults all.
+        :param channel: optional :const:`CHANNELS`, defaults all
         :type channel: :class:`basestring`
-        :raises exception.ValueError: When a ``function``, or ``channel`` is not
-                                      defined in there respected constant.
-        :raises exception.TypeError: If ``arguments`` is not a sequence.
+        :raises ValueError: when a ``function``, or ``channel`` is not
+                            defined in there respected constant
+        :raises TypeError: if ``arguments`` is not a sequence
 
         .. versionadded:: 0.4.1
         """
         if function not in FUNCTION_TYPES:
-            raise ValueError('expected string from FUNCTION_TYPES, not ' + repr(function))
+            raise ValueError('expected string from FUNCTION_TYPES, not ' +
+                             repr(function))
         if not isinstance(arguments, collections.Sequence):
-            raise TypeError('expecting sequence of arguments, not ' + repr(arguments))
+            raise TypeError('expecting sequence of arguments, not ' +
+                            repr(arguments))
         argc = len(arguments)
         argv = (ctypes.c_double * argc)(*arguments)
         index = FUNCTION_TYPES.index(function)
         if channel is None:
             library.MagickFunctionImage(self.wand, index, argc, argv)
         elif channel in CHANNELS:
-            library.MagickFunctionImageChannel(self.wand, CHANNELS[channel], index, argc, argv)
+            library.MagickFunctionImageChannel(self.wand, CHANNELS[channel],
+                                               index, argc, argv)
         else:
-            raise ValueError('expected string from CHANNELS, not ' + repr(channel))
+            raise ValueError('expected string from CHANNELS, not ' +
+                             repr(channel))
         self.raise_exception()
 
     @manipulative
@@ -1888,14 +1908,18 @@ class BaseImage(Resource):
         .. versionadded:: 0.4.1
         """
         if not isinstance(expression, string_type):
-            raise TypeError('expected basestring for expression, not' + repr(expression))
+            raise TypeError('expected basestring for expression, not' +
+                            repr(expression))
         c_expression = binary(expression)
         if channel is None:
             new_wand = library.MagickFxImage(self.wand, c_expression)
         elif channel in CHANNELS:
-            new_wand = library.MagickFxImageChannel(self.wand, CHANNELS[channel], c_expression)
+            new_wand = library.MagickFxImageChannel(self.wand,
+                                                    CHANNELS[channel],
+                                                    c_expression)
         else:
-            raise ValueError('expected string from CHANNELS, not ' + repr(channel))
+            raise ValueError('expected string from CHANNELS, not ' +
+                             repr(channel))
         if new_wand:
             return Image(image=BaseImage(new_wand))
         self.raise_exception()
@@ -2012,8 +2036,8 @@ class BaseImage(Resource):
         :type left: :class:`numbers.Integral`
         :param top: the row offset of the composited source image
         :type top: :class:`numbers.Integral`
-        :raises exceptions.ValueError: when the given ``channel`` or
-                                       ``operator`` is invalid
+        :raises ValueError: when the given ``channel`` or
+                            ``operator`` is invalid
 
         .. versionadded:: 0.3.0
 
@@ -2066,9 +2090,7 @@ class BaseImage(Resource):
         :type saturation: :class:`numbers.Real`
         :param hue: percentage of hue rotation
         :type hue: :class:`numbers.Real`
-
-        :raises exceptions.ValueError:
-           when one or more arguments are invalid
+        :raises ValueError: when one or more arguments are invalid
 
         .. versionadded:: 0.3.4
 
@@ -2259,29 +2281,31 @@ class BaseImage(Resource):
         :param colorspace_type: colorspace_type. available value can be found
                                 in the :const:`COLORSPACE_TYPES`
         :type colorspace_type: :class:`basestring`
-        :param treedepth: Normally, this integer value is zero or one. A zero or
-                          one tells Quantize to choose a optimal tree depth of
-                          Log4(number_colors).  A tree of this depth generally
-                          allows the best representation of the reference image
+        :param treedepth: normally, this integer value is zero or one.
+                          a zero or one tells :meth:`quantize` to choose
+                          a optimal tree depth of ``log4(number_colors)``.
+                          a tree of this depth generally allows the best
+                          representation of the reference image
                           with the least amount of memory and
-                          the fastest computational speed. In some cases,
-                          such as an image with low color dispersion
-                          (a few number of colors), a value other than
-                          Log4(number_colors) is required. To expand
-                          the color tree completely, use a value of 8.
+                          the fastest computational speed.
+                          in some cases, such as an image with low color
+                          dispersion (a few number of colors), a value other
+                          than ``log4(number_colors)`` is required.
+                          to expand the color tree completely,
+                          use a value of 8
         :type treedepth: :class:`numbers.Integral`
-        :param dither: A value other than zero distributes the difference
+        :param dither: a value other than zero distributes the difference
                        between an original image and the corresponding
                        color reduced algorithm to neighboring pixels along
-                       a Hilbert curve.
+                       a Hilbert curve
         :type dither: :class:`bool`
-        :param measure_error: A value other than zero measures the difference
+        :param measure_error: a value other than zero measures the difference
                               between the original and quantized images.
-                              This difference is the total quantization error.
+                              this difference is the total quantization error.
                               The error is computed by summing over all pixels
                               in an image the distance squared in RGB space
                               between each reference pixel value and
-                              its quantized value.
+                              its quantized value
         :type measure_error: :class:`bool`
 
         .. versionadded:: 0.4.2
@@ -2308,9 +2332,11 @@ class BaseImage(Resource):
             raise TypeError('measure_error must be a bool, not ' +
                             repr(measure_error))
 
-        r = library.MagickQuantizeImage(self.wand, number_colors,
-                                        COLORSPACE_TYPES.index(colorspace_type),
-                                        treedepth, dither, measure_error)
+        r = library.MagickQuantizeImage(
+            self.wand, number_colors,
+            COLORSPACE_TYPES.index(colorspace_type),
+            treedepth, dither, measure_error
+        )
         if not r:
             self.raise_exception()
 
@@ -2329,7 +2355,10 @@ class BaseImage(Resource):
                 or colorspace_type not in COLORSPACE_TYPES:
             raise TypeError('Colorspace value must be a string from '
                             'COLORSPACE_TYPES, not ' + repr(colorspace_type))
-        r = library.MagickTransformImageColorspace(self.wand, COLORSPACE_TYPES.index(colorspace_type))
+        r = library.MagickTransformImageColorspace(
+            self.wand,
+            COLORSPACE_TYPES.index(colorspace_type)
+        )
         if not r:
             self.raise_exception()
 
@@ -2349,7 +2378,7 @@ class Image(BaseImage):
     :param image: makes an exact copy of the ``image``
     :type image: :class:`Image`
     :param blob: opens an image of the ``blob`` byte array
-    :type blob: :class:`str`
+    :type blob: :class:`bytes`
     :param file: opens an image of the ``file`` object
     :type file: file object
     :param filename: opens an image of the ``filename`` string
@@ -2494,7 +2523,7 @@ class Image(BaseImage):
         """Read new image into Image() object.
 
         :param blob: reads an image from the ``blob`` byte array
-        :type blob: :class:`str`
+        :type blob: :class:`bytes`
         :param file: reads an image from the ``file`` object
         :type file: file object
         :param filename: reads an image from the ``filename`` string
@@ -2745,7 +2774,7 @@ class Image(BaseImage):
         :type format: :class:`basestring`
         :returns: a converted image
         :rtype: :class:`Image`
-        :raises: :exc:`ValueError` when the given ``format`` is unsupported
+        :raises ValueError: when the given ``format`` is unsupported
 
         .. versionadded:: 0.1.6
 
@@ -2812,8 +2841,8 @@ class Image(BaseImage):
                        it is omittable
         :type format: :class:`basestring`
         :returns: a blob (bytes) string
-        :rtype: :class:`str`
-        :raises: :exc:`ValueError` when ``format`` is invalid
+        :rtype: :class:`bytes`
+        :raises ValueError: when ``format`` is invalid
 
         .. versionchanged:: 0.1.6
            Removed a side effect that changes the image :attr:`format`
@@ -2900,10 +2929,12 @@ class Image(BaseImage):
 
     @manipulative
     def _auto_orient(self):
-        """Fallback for :attr:`auto_orient()` method (which wraps :c:func:`MagickAutoOrientImage`),
+        """Fallback for :attr:`auto_orient()` method
+        (which wraps :c:func:`MagickAutoOrientImage`),
         fixes orientation by checking EXIF data.
 
         .. versionadded:: 0.4.1
+
         """
         exif_orientation = self.metadata.get('exif:orientation')
         if not exif_orientation:
@@ -2934,11 +2965,13 @@ class Image(BaseImage):
     @manipulative
     def auto_orient(self):
         """Adjusts an image so that its orientation is suitable
-        for viewing (i.e. top-left orientation). if available it uses :c:func:`MagickAutoOrientImage`
-        (was added in ImageMagick 6.8.9+) if you have an older magick library,
-        it will use :attr:`_auto_orient()` method for fallback
+        for viewing (i.e. top-left orientation). If available it uses
+        :c:func:`MagickAutoOrientImage` (was added in ImageMagick 6.8.9+)
+        if you have an older magick library,
+        it will use :attr:`_auto_orient()` method for fallback.
 
         .. versionadded:: 0.4.1
+
         """
         try:
             result = library.MagickAutoOrientImage(self.wand)
@@ -2970,29 +3003,31 @@ class Image(BaseImage):
             self.raise_exception()
 
     @manipulative
-    def contrast_stretch(self, black_point=0.0, white_point=None, channel=None):
+    def contrast_stretch(self, black_point=0.0, white_point=None,
+                         channel=None):
         """Enhance contrast of image by adjusting the span of the available
         colors.
 
-        If only ``black_point`` is given, match the CLI behavior by assuming the
-        ``white_point`` has the same delta percentage off the top. E.g. contrast
-        stretch of 15% is calculated as ``black_point`` = 0.15 and
-        ``white_point`` = 0.85.
+        If only ``black_point`` is given, match the CLI behavior by assuming
+        the ``white_point`` has the same delta percentage off the top
+        e.g. contrast stretch of 15% is calculated as ``black_point`` = 0.15
+        and ``white_point`` = 0.85.
 
-        :param black_point: Black point between 0.0 and 1.0. Default 0.0
+        :param black_point: black point between 0.0 and 1.0.  default is 0.0
         :type black_point: :class:`numbers.Real`
-        :param white_point: White point between 0.0 and 1.0. Default value of
-                            1.0 minus ``black_point``.
+        :param white_point: white point between 0.0 and 1.0.
+                            default value of 1.0 minus ``black_point``
         :type white_point: :class:`numbers.Real`
-        :param channel: Optional color channel to apply contrast stretch.
+        :param channel: optional color channel to apply contrast stretch
         :type channel: :const:`CHANNELS`
-        :raises: :exc:`ValueError` if ``channel`` is not in :const:`CHANNELS`
+        :raises ValueError: if ``channel`` is not in :const:`CHANNELS`
 
         .. versionadded:: 0.4.1
+
         """
         if not isinstance(black_point, numbers.Real):
             raise TypeError('expecting float, not ' + repr(black_point))
-        if white_point is not None and not isinstance(white_point, numbers.Real):
+        if not (white_point is None or isinstance(white_point, numbers.Real)):
             raise TypeError('expecting float, not ' + repr(white_point))
         # If only black-point is given, match CLI behavior by
         # calculating white point
@@ -3022,14 +3057,15 @@ class Image(BaseImage):
         Specific color channels can be correct individual. Typical values
         range between 0.8 and 2.3.
 
-        :param adjustment_value: Value to adjust gamma level
+        :param adjustment_value: value to adjust gamma level
         :type adjustment_value: :class:`numbers.Real`
-        :param channel: Optional channel to apply gamma correction
+        :param channel: optional channel to apply gamma correction
         :type channel: :class:`basestring`
-        :raises: :exc:`TypeError` if ``gamma_point`` is not a :class:`numbers.Real`
-        :raises: :exc:`ValueError` if ``channel`` is not in :const:`CHANNELS`
+        :raises TypeError: if ``gamma_point`` is not a :class:`numbers.Real`
+        :raises ValueError: if ``channel`` is not in :const:`CHANNELS`
 
         .. versionadded:: 0.4.1
+
         """
         if not isinstance(adjustment_value, numbers.Real):
             raise TypeError('expecting float, not ' + repr(adjustment_value))
