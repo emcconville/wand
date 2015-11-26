@@ -2387,9 +2387,11 @@ class Image(BaseImage):
                    imagemagick detect the file format. Used only in
                    ``blob`` or ``file`` cases
     :type format: :class:`basestring`
-    :param width: the width of new blank image or an image loaded from raw data.
+    :param width: the width of new blank image or an image loaded from raw
+                  data.
     :type width: :class:`numbers.Integral`
-    :param height: the height of new blank imgage or an image loaded from raw data.
+    :param height: the height of new blank imgage or an image loaded from
+                   raw data.
     :type height: :class:`numbers.Integral`
     :param depth: the depth used when loading raw data.
     :type depth: :class:`numbers.Integral`
@@ -2530,7 +2532,7 @@ class Image(BaseImage):
                     self.read(blob=blob, resolution=resolution)
                 elif filename is not None:
                     self.read(filename=filename, resolution=resolution)
-                # clear the wand format, otherwise any subsequent call to 
+                # clear the wand format, otherwise any subsequent call to
                 # MagickGetImageBlob will silently change the image to this
                 # format again.
                 library.MagickSetFormat(self.wand, binary(""))

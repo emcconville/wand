@@ -61,20 +61,22 @@ def library_paths():
     magick_home = os.environ.get('MAGICK_HOME')
 
     if system == 'Windows':
-        # ImageMagick installers normally install coder and filter DLLs in subfolders, we
-        # need to add those folders to PATH, otherwise loading the DLL later will fail.
+        # ImageMagick installers normally install coder and filter DLLs in
+        # subfolders, we need to add those folders to PATH, otherwise loading
+        # the DLL later will fail.
         try:
-            with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\ImageMagick\Current") as reg_key:
-                libPath    = winreg.QueryValueEx(reg_key, "LibPath")
-                coderPath  = winreg.QueryValueEx(reg_key, "CoderModulesPath")
+            with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE,
+                                r"SOFTWARE\ImageMagick\Current") as reg_key:
+                libPath = winreg.QueryValueEx(reg_key, "LibPath")
+                coderPath = winreg.QueryValueEx(reg_key, "CoderModulesPath")
                 filterPath = winreg.QueryValueEx(reg_key, "FilterModulesPath")
                 magick_home = libPath[0]
-                os.environ['PATH'] += ';' + libPath[0] + ";" + coderPath[0] + ";" + filterPath[0]
+                os.environ['PATH'] += (';' + libPath[0] + ";" +
+                                       coderPath[0] + ";" + filterPath[0])
         except OSError:
-            # otherwise use MAGICK_HOME, and we assume the coder and filter DLLs are in the same
-            # directory
-            if magick_home:
-                dll_load_paths = [magick_home]
+            # otherwise use MAGICK_HOME, and we assume the coder and
+            # filter DLLs are in the same directory
+            pass
 
     magick_path = lambda dir: os.path.join(magick_home, *dir)
     combinations = itertools.product(versions, options)
@@ -139,6 +141,7 @@ if not hasattr(ctypes, 'c_ssize_t'):
         ctypes.c_ssize_t = ctypes.c_long
     elif ctypes.sizeof(ctypes.c_ulonglong) == ctypes.sizeof(ctypes.c_void_p):
         ctypes.c_ssize_t = ctypes.c_longlong
+
 
 class MagickPixelPacket(ctypes.Structure):
 
