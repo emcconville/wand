@@ -675,11 +675,11 @@ try:
     library.MagickSetSize.restype = ctypes.c_int
 
     library.MagickSetDepth.argtypes = [ctypes.c_void_p,
-                                      ctypes.c_uint]
+                                       ctypes.c_uint]
     library.MagickSetDepth.restype = ctypes.c_int
 
     library.MagickSetFormat.argtypes = [ctypes.c_void_p,
-                                      ctypes.c_char_p]
+                                        ctypes.c_char_p]
     library.MagickSetFormat.restype = ctypes.c_int
 
     library.MagickGetFont.argtypes = [ctypes.c_void_p]
