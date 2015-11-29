@@ -17,6 +17,12 @@ To be released
   <wand.image.Image.transform_colorspace>` quantize
   (:c:func:`MagickTransformImageColorspace()`).
   [:issue:`152` by Adrian Jung, :issue:`262` by Jeong YunWon]
+- Now ImageMagick DLL can be loaded on Windows even if its location
+  is stored in the resitry.  [:issue:`261` by Roeland Schoukens]
+- Added ``depth`` parameter to :class:`~.wand.image.Image` constructor.
+  The ``depth``, ``width`` and ``height`` parameters can be used
+  with the ``filename``, ``file`` and ``blob`` parameters to load
+  raw pixel data. [:issue:`261` by Roeland Schoukens]
 
 
 .. _changelog-0.4.1:

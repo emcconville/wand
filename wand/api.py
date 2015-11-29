@@ -14,6 +14,11 @@ import os.path
 import platform
 import sys
 import traceback
+if platform.system() == "Windows":
+    try:
+        import winreg
+    except ImportError:
+        import _winreg as winreg
 
 __all__ = ('MagickPixelPacket', 'PointInfo', 'AffineMatrix', 'c_magick_char_p',
            'library', 'libc', 'libmagick', 'load_library')
@@ -54,6 +59,25 @@ def library_paths():
     options = '', 'HDRI', 'HDRI-2'
     system = platform.system()
     magick_home = os.environ.get('MAGICK_HOME')
+
+    if system == 'Windows':
+        # ImageMagick installers normally install coder and filter DLLs in
+        # subfolders, we need to add those folders to PATH, otherwise loading
+        # the DLL later will fail.
+        try:
+            with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE,
+                                r"SOFTWARE\ImageMagick\Current") as reg_key:
+                libPath = winreg.QueryValueEx(reg_key, "LibPath")
+                coderPath = winreg.QueryValueEx(reg_key, "CoderModulesPath")
+                filterPath = winreg.QueryValueEx(reg_key, "FilterModulesPath")
+                magick_home = libPath[0]
+                os.environ['PATH'] += (';' + libPath[0] + ";" +
+                                       coderPath[0] + ";" + filterPath[0])
+        except OSError:
+            # otherwise use MAGICK_HOME, and we assume the coder and
+            # filter DLLs are in the same directory
+            pass
+
     magick_path = lambda dir: os.path.join(magick_home, *dir)
     combinations = itertools.product(versions, options)
     for suffix in (version + option for version, option in combinations):
@@ -650,6 +674,14 @@ try:
                                       ctypes.c_uint]
     library.MagickSetSize.restype = ctypes.c_int
 
+    library.MagickSetDepth.argtypes = [ctypes.c_void_p,
+                                       ctypes.c_uint]
+    library.MagickSetDepth.restype = ctypes.c_int
+
+    library.MagickSetFormat.argtypes = [ctypes.c_void_p,
+                                        ctypes.c_char_p]
+    library.MagickSetFormat.restype = ctypes.c_int
+
     library.MagickGetFont.argtypes = [ctypes.c_void_p]
     library.MagickGetFont.restype = ctypes.c_char_p
 
@@ -688,6 +720,10 @@ try:
                                         ctypes.c_char_p,
                                         ctypes.c_char_p]
     library.MagickSetOption.restype = ctypes.c_int
+
+    library.MagickDeleteOption.argtypes = [ctypes.c_void_p,
+                                           ctypes.c_char_p]
+    library.MagickDeleteOption.restype = ctypes.c_int
 
     library.MagickGetAntialias.argtypes = [ctypes.c_void_p]
     library.MagickGetAntialias.restype = ctypes.c_int
@@ -1345,7 +1381,12 @@ except AttributeError:
 libc = None
 
 if platform.system() == 'Windows':
-    libc = ctypes.CDLL(ctypes.util.find_msvcrt())
+    msvcrt = ctypes.util.find_msvcrt()
+    # workaround -- the newest visual studio DLL is named differently:
+    if not msvcrt and "1900" in platform.python_compiler():
+        msvcrt = "vcruntime140.dll"
+    if msvcrt:
+        libc = ctypes.CDLL(msvcrt)
 else:
     if platform.system() == 'Darwin':
         libc = ctypes.cdll.LoadLibrary('libc.dylib')
@@ -1356,5 +1397,3 @@ else:
     libc.fdopen.argtypes = [ctypes.c_int, ctypes.c_char_p]
     libc.fdopen.restype = ctypes.c_void_p
     libc.fflush.argtypes = [ctypes.c_void_p]
-
-libc.free.argtypes = [ctypes.c_void_p]
