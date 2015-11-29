@@ -7,7 +7,7 @@ Wand Changelog
 Version 0.4.2
 -------------
 
-To be released
+Released on November 30, 2015.
 
 - Fixed :exc:`ImportError` on MSYS2.  [:issue:`257` by Eon Jeong]
 - Added :meth:`Image.quantize() <wand.image.Image.quantize>` quantize

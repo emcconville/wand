@@ -46,11 +46,11 @@ Wand should be compatible with various Python implementations including
 CPython 2.6, 2.7, PyPy.  tox_ is a testing software that helps Python
 packages to test on various Python implementations at a time.
 
-It can be installed using :program:`easy_install` or :program:`pip`:
+It can be installed using :program:`pip`:
 
 .. sourcecode:: console
 
-   $ easy_install tox
+   $ pip install tox
 
 If you type just :program:`tox` at Wand directory it will be tested
 on multiple Python interpreters:

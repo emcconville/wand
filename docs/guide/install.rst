@@ -1,12 +1,10 @@
 Installation
 ============
 
-Wand itself can be installed from PyPI_ using :program:`easy_install` or
-:program:`pip`:
+Wand itself can be installed from PyPI_ using :program:`pip`:
 
 .. sourcecode:: console
 
-   $ easy_install Wand  # or
    $ pip install Wand
 
 Wand is a Python binding of ImageMagick_, so you have to install it as well:

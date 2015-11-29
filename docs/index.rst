@@ -51,7 +51,7 @@ are lacking something we need:
 - Pythonic and modern interfaces
 - Good documentation
 - Binding through :mod:`ctypes` (not C API) --- we are ready to go PyPy!
-- Installation using :program:`pip` or :program:`easy_install`
+- Installation using :program:`pip`
 
 
 Requirements
