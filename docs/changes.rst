@@ -7,7 +7,8 @@ Wand Changelog
 Version 0.4.3
 -------------
 
-To be released.
+- Fixed :func:`repr()` for empty :class:`~.wand.image.Image` objects.
+  [:issue:`265`]
 
 
 Version 0.4.2

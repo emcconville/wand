@@ -2362,13 +2362,19 @@ class BaseImage(Resource):
         if not r:
             self.raise_exception()
 
-    def __repr__(self):
+    def __repr__(self, extra_format=' ({self.width}x{self.height})'):
         cls = type(self)
+        typename = '{0}.{1}'.format(
+            cls.__module__,
+            getattr(cls, '__qualname__', cls.__name__)
+        )
         if getattr(self, 'c_resource', None) is None:
-            return '<{0}.{1}: (closed)>'.format(cls.__module__, cls.__name__)
-        return '<{0}.{1}: {2} ({3}x{4})>'.format(
-            cls.__module__, cls.__name__,
-            self.signature[:7], self.width, self.height
+            return '<{0}: (closed)>'.format(typename)
+        sig = self.signature
+        if not sig:
+            return '<{0}: (empty)>'.format(typename)
+        return '<{0}: {1}{2}>'.format(
+            typename, sig[:7], extra_format.format(self=self)
         )
 
 
@@ -3154,12 +3160,8 @@ class Image(BaseImage):
             return cloned.make_blob()
 
     def __repr__(self):
-        cls = type(self)
-        if getattr(self, 'c_resource', None) is None:
-            return '<{0}.{1}: (closed)>'.format(cls.__module__, cls.__name__)
-        return '<{0}.{1}: {2} {3!r} ({4}x{5})>'.format(
-            cls.__module__, cls.__name__,
-            self.signature[:7], self.format, self.width, self.height
+        return super(Image, self).__repr__(
+            extra_format=' {self.format!r} ({self.width}x{self.height})'
         )
 
 
