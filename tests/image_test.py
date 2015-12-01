@@ -37,6 +37,7 @@ else:
 def test_empty_image():
     with Image() as img:
         assert img.size == (0, 0)
+        assert repr(img) == '<wand.image.Image: (empty)>'
 
 
 def test_image_invalid_params():
