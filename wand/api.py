@@ -590,6 +590,11 @@ try:
                                                  ctypes.c_double,  # black
                                                  ctypes.c_double]  # white
 
+    library.MagickCompareImages.argtypes = [ctypes.c_void_p, ctypes.c_void_p,
+                                            ctypes.c_int,
+                                            ctypes.POINTER(ctypes.c_double)]
+    library.MagickCompareImages.restype = ctypes.c_void_p
+
     library.MagickCompositeImage.argtypes = [ctypes.c_void_p, ctypes.c_void_p,
                                              ctypes.c_int, ctypes.c_ssize_t,
                                              ctypes.c_ssize_t]
