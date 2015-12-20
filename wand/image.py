@@ -2026,9 +2026,10 @@ class BaseImage(Resource):
         :type image: :class:`wand.image.Image`
         :param metric: The metric type to use for comparing.
         :type metric: :class:`basestring`
-        :returns: The difference image, the computed distortion between
-                  the images
-        :rtype: :class:`wand.image.Image`, :class:`numbers.Integral`
+        :returns: The difference image(:class:`wand.image.Image`),
+                  the computed distortion between the images
+                  (:class:`numbers.Integral`)
+        :rtype: :class:`tuple`
 
         ..versionadded:: 0.4.3
         """
