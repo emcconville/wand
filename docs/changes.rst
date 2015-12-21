@@ -20,11 +20,11 @@ Version 0.4.2
 Released on November 30, 2015.
 
 - Fixed :exc:`ImportError` on MSYS2.  [:issue:`257` by Eon Jeong]
-- Added :meth:`Image.quantize() <wand.image.Image.quantize>` quantize
+- Added :meth:`Image.quantize() <wand.image.BaseImage.quantize>` method
   (:c:func:`MagickQuantizeImage()`).
   [:issue:`152` by Kang Hyojun, :issue:`262` by Jeong YunWon]
 - Added :meth:`Image.transform_colorspace()
-  <wand.image.Image.transform_colorspace>` quantize
+  <wand.image.BaseImage.transform_colorspace>` quantize
   (:c:func:`MagickTransformImageColorspace()`).
   [:issue:`152` by Adrian Jung, :issue:`262` by Jeong YunWon]
 - Now ImageMagick DLL can be loaded on Windows even if its location
@@ -42,15 +42,18 @@ Version 0.4.1
 
 Released on August 3, 2015.
 
-- Added :meth:`Image.auto_orient() <wand.image.Image.auto_orient>` that fixes orientation by checking EXIF tags
-- Added :meth:`Image.transverse() <wand.image.Image.transverse>` transverse (MagickTransverseImage)
-- Added :meth:`Image.transpose() <wand.image.Image.transpose>` transpose (MagickTransposeImage)
+- Added :meth:`Image.auto_orient() <wand.image.BaseImage.auto_orient>`
+  that fixes orientation by checking EXIF tags.
+- Added :meth:`Image.transverse() <wand.image.BaseImage.transverse>` method
+  (:c:func:`MagickTransverseImage()`).
+- Added :meth:`Image.transpose() <wand.image.BaseImage.transpose>` method
+  (:c:func:`MagickTransposeImage()`).
 - Added :meth:`Image.evaluate() <wand.image.BaseImage.evaluate>` method.
 - Added :meth:`Image.frame() <wand.image.BaseImage.frame>` method.
 - Added :meth:`Image.function() <wand.image.BaseImage.function>` method.
 - Added :meth:`Image.fx() <wand.image.BaseImage.fx>` expression method.
-- Added ``gravity`` options in :meth:`Image.crop() <wand.image.BaseImage.crop>` method.
-  [:issue:`222` by Eric McConville]
+- Added ``gravity`` options in :meth:`Image.crop() <wand.image.BaseImage.crop>`
+  method.  [:issue:`222` by Eric McConville]
 - Added :attr:`Image.matte_color <wand.image.BaseImage.matte_color>` property.
 - Added :attr:`Image.virtual_pixel <wand.image.BaseImage.virtual_pixel>` property.
 - Added :meth:`Image.distort() <wand.image.BaseImage.distort>` method.
