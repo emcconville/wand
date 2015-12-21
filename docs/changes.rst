@@ -9,6 +9,9 @@ Version 0.4.3
 
 - Fixed :func:`repr()` for empty :class:`~.wand.image.Image` objects.
   [:issue:`265`]
+- Added :meth:`Image.compare() <wand.image.BaseImage.compare>` method
+  (:c:func:`MagickCompareImages()`).
+  [:issue:`238`, :issue:`268` by Gyusun Yeom]
 
 
 Version 0.4.2

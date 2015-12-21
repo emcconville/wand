@@ -1184,6 +1184,14 @@ def test_composite_channel(fx_asset):
                         assert ic.blue == oc.blue
 
 
+def test_compare(fx_asset):
+    with Image(filename=str(fx_asset.join('beach.jpg'))) as orig:
+        with Image(filename=str(fx_asset.join('watermark_beach.jpg'))) as img:
+            cmp_img, err = orig.compare(img, 'absolute')
+            cmp_img, err = orig.compare(img, 'mean_absolute')
+            cmp_img, err = orig.compare(img, 'root_mean_square')
+
+
 def test_liquid_rescale(fx_asset):
     def assert_equal_except_alpha(a, b):
         with a:

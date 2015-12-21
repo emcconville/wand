@@ -27,7 +27,7 @@ from .font import Font
 
 
 __all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COLORSPACE_TYPES',
-           'COMPOSITE_OPERATORS', 'COMPRESSION_TYPES',
+           'COMPARE_METRICS', 'COMPOSITE_OPERATORS', 'COMPRESSION_TYPES',
            'EVALUATE_OPS', 'FILTER_TYPES',
            'GRAVITY_TYPES', 'IMAGE_TYPES', 'ORIENTATION_TYPES', 'UNIT_TYPES',
            'FUNCTION_TYPES',
@@ -83,6 +83,31 @@ FILTER_TYPES = ('undefined', 'point', 'box', 'triangle', 'hermite', 'hanning',
                 'welsh', 'parzen', 'bohman', 'bartlett', 'lagrange', 'lanczos',
                 'lanczossharp', 'lanczos2', 'lanczos2sharp', 'robidoux',
                 'robidouxsharp', 'cosine', 'spline', 'sentinel')
+
+#: (:class:`tuple`) The list of compare metric types
+#:
+#: - ``'undefined'``
+#: - ``'absolute'``
+#: - ``'mean_absolute'``
+#: - ``'mean_error_per_pixel'``
+#: - ``'mean_squared'``
+#: - ``'normalized_cross_correlation'``
+#: - ``'peak_absolute'``
+#: - ``'peak_signal_to_noise_ratio'``
+#: - ``'perceptual_hash'``
+#: - ``'root_mean_square'``
+#: .. seealso::
+#:
+#:    `ImageMagick Compare Operations`__
+#:
+#:    __ http://www.imagemagick.org/Usage/compare/
+#:
+#: .. versionadded:: 0.4.3
+COMPARE_METRICS = ('undefined', 'absolute',
+                   'mean_absolute', 'mean_error_per_pixel',
+                   'mean_squared', 'normalized_cross_correlation',
+                   'peak_absolute', 'peak_signal_to_noise_ratio',
+                   'perceptual_hash', 'root_mean_square')
 
 #: (:class:`tuple`) The list of composition operators
 #:
@@ -1993,6 +2018,30 @@ class BaseImage(Resource):
         library.MagickTransparentPaintImage(self.wand, color.resource,
                                             alpha, fuzz, invert)
         self.raise_exception()
+
+    def compare(self, image, metric='undefined'):
+        """Compares an image to a reconstructed image.
+
+        :param image: The reference image
+        :type image: :class:`wand.image.Image`
+        :param metric: The metric type to use for comparing.
+        :type metric: :class:`basestring`
+        :returns: The difference image(:class:`wand.image.Image`),
+                  the computed distortion between the images
+                  (:class:`numbers.Integral`)
+        :rtype: :class:`tuple`
+
+        ..versionadded:: 0.4.3
+        """
+        if not isinstance(metric, string_type):
+            raise TypeError('metric must be a string, not ' + repr(metric))
+
+        metric = COMPARE_METRICS.index(metric)
+        distortion = ctypes.c_double()
+        compared_image = library.MagickCompareImages(self.wand, image.wand,
+                                                     metric,
+                                                     ctypes.byref(distortion))
+        return Image(BaseImage(compared_image)), distortion.value
 
     @manipulative
     def composite(self, image, left, top):
