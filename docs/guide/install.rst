@@ -115,10 +115,10 @@ http://www.imagemagick.org/download/binaries/
 Choose a binary for your architecture:
 
 Windows 32-bit
-   ImageMagick-6.9.0-4-Q16-x86-dll.exe__
+   ImageMagick-6.9.3-1-Q16-x86-dll.exe__
 
 Windows 64-bit
-   ImageMagick-6.9.0-4-Q16-x64-dll.exe__
+   ImageMagick-6.9.3-1-Q16-x64-dll.exe__
 
 .. image:: ../_images/windows-setup.png
 
@@ -130,12 +130,12 @@ libraries for C and C++` to make Wand able to link to it.
    :height: 315
 
 Lastly you have to set :envvar:`MAGICK_HOME` environment variable to the path
-of ImageMagick (e.g. :file:`C:\\Program Files\\ImageMagick-6.7.7-Q16`).
+of ImageMagick (e.g. :file:`C:\\Program Files\\ImageMagick-6.9.3-Q16`).
 You can set it in :menuselection:`Computer --> Properties -->
 Advanced system settings --> Advanced --> Enviro&nment Variables...`.
 
-__ http://www.imagemagick.org/download/binaries/ImageMagick-6.9.1-1-Q16-x86-dll.exe
-__ http://www.imagemagick.org/download/binaries/ImageMagick-6.9.1-1-Q16-x64-dll.exe
+__ http://www.imagemagick.org/download/binaries/ImageMagick-6.9.3-1-Q16-x86-dll.exe
+__ http://www.imagemagick.org/download/binaries/ImageMagick-6.9.3-1-Q16-x64-dll.exe
 
 
 .. _explicit-link:
