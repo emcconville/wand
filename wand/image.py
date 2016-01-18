@@ -723,8 +723,8 @@ class BaseImage(Resource):
         if not isinstance(value, string_type):
             raise TypeError('expected a string, not ' + repr(value))
         if value not in GRAVITY_TYPES:
-            raise ValueError('expected a string from GRAVITY_TYPES, not '
-                             + repr(value))
+            raise ValueError('expected a string from GRAVITY_TYPES, not ' +
+                             repr(value))
         library.MagickSetGravity(self.wand, GRAVITY_TYPES.index(value))
 
     @property
@@ -830,8 +830,8 @@ class BaseImage(Resource):
         if not isinstance(value, string_type):
             raise TypeError('expected a string, not ' + repr(value))
         if value not in ORIENTATION_TYPES:
-            raise ValueError('expected a string from ORIENTATION_TYPES, not '
-                             + repr(value))
+            raise ValueError('expected a string from ORIENTATION_TYPES, not ' +
+                             repr(value))
         index = ORIENTATION_TYPES.index(value)
         library.MagickSetImageOrientation(self.wand, index)
 
@@ -1340,8 +1340,8 @@ class BaseImage(Resource):
                     'both width and height must be defined with gravity'
                 )
             if gravity not in GRAVITY_TYPES:
-                raise ValueError('expected a string from GRAVITY_TYPES, not '
-                                 + repr(gravity))
+                raise ValueError('expected a string from GRAVITY_TYPES, not ' +
+                                 repr(gravity))
             # Set `top` based on given gravity
             if gravity in ('north_west', 'north', 'north_east'):
                 top = 0
@@ -2785,8 +2785,8 @@ class Image(BaseImage):
 
     @property
     def animation(self):
-        return (self.mimetype in ('image/gif', 'image/x-gif')
-                and len(self.sequence) > 1)
+        return (self.mimetype in ('image/gif', 'image/x-gif') and
+                len(self.sequence) > 1)
 
     @property
     def compression(self):
@@ -2805,8 +2805,8 @@ class Image(BaseImage):
         if not isinstance(value, string_type):
             raise TypeError('expected a string, not ' + repr(value))
         if value not in COMPRESSION_TYPES:
-            raise ValueError('expected a string from COMPRESSION_TYPES, not '
-                             + repr(value))
+            raise ValueError('expected a string from COMPRESSION_TYPES, not ' +
+                             repr(value))
         library.MagickSetImageCompression(
             self.wand,
             COMPRESSION_TYPES.index(value)

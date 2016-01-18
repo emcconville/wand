@@ -1412,8 +1412,8 @@ def test_normalize_default(display, fx_asset):
         with img[0, 0] as left_top:
             assert left_top.red == left_top.green == left_top.blue == 1
         with img[-1, -1] as right_bottom:
-            assert (right_bottom.red == right_bottom.green
-                                     == right_bottom.blue == 0)
+            assert (right_bottom.red == right_bottom.green ==
+                    right_bottom.blue == 0)
 
 
 def test_normalize_channel(fx_asset):

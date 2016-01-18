@@ -78,7 +78,8 @@ def library_paths():
             # filter DLLs are in the same directory
             pass
 
-    magick_path = lambda dir: os.path.join(magick_home, *dir)
+    def magick_path(path):
+        return os.path.join(magick_home, *path)
     combinations = itertools.product(versions, options)
     for suffix in (version + option for version, option in combinations):
         # On Windows, the API is split between two libs. On other platforms,

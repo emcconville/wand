@@ -21,7 +21,7 @@ import datetime
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('..'))
 sys.path.append(os.path.abspath('_themes'))
-from wand.version import VERSION
+from wand.version import VERSION  # noqa
 
 # Mocking C libraries to fake wand.api module which is unavailable
 # on ReadTheDocs builder.
