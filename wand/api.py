@@ -1397,7 +1397,7 @@ else:
     if platform.system() == 'Darwin':
         if platform.mac_ver()[0].startswith('10.11'):
             libc = ctypes.cdll.LoadLibrary('/usr/lib/libc.dylib')
-        else:    
+        else:
             libc = ctypes.cdll.LoadLibrary('libc.dylib')
     elif platform.system() == 'FreeBSD':
         libc = ctypes.cdll.LoadLibrary(ctypes.util.find_library('c'))
