@@ -85,9 +85,9 @@ Get binary string
 
 Want just a binary string of the image? Use :meth:`make_blob()` method so::
 
-    from wand.image import image
+    from wand.image import Image
 
-    with image(filename='pikachu.png') as img:
+    with Image(filename='pikachu.png') as img:
         img.format = 'jpeg'
         jpeg_bin = img.blob()
 
