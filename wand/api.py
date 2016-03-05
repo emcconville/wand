@@ -1395,7 +1395,7 @@ if platform.system() == 'Windows':
         libc = ctypes.CDLL(msvcrt)
 else:
     if platform.system() == 'Darwin':
-        libc = ctypes.cdll.LoadLibrary('libc.dylib')
+        libc = ctypes.cdll.LoadLibrary('/usr/lib/libc.dylib')
     elif platform.system() == 'FreeBSD':
         libc = ctypes.cdll.LoadLibrary(ctypes.util.find_library('c'))
     else:
