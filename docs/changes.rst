@@ -17,6 +17,8 @@ Version 0.4.3
 - Added :meth:`Image.merge_layers() <wand.image.BaseImage.merge_layers>` method
   (:c:func:`MagickMergeImageLayers()`).
   [:issue:`281` by Dan Harrison]
+- Fixed :exc:`OSError` during import :file:`libc.dylib` due to El Capitan's
+  SIP protection.  [:issue:`275` by Ramesh Dharan]
 
 
 Version 0.4.2
