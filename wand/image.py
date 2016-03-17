@@ -510,6 +510,32 @@ VIRTUAL_PIXEL_METHOD = ('undefined', 'background', 'constant', 'dither',
                         'vertical_tile_edge', 'checker_tile')
 
 
+#: (:class:`tuple`) The list of :attr:`~BaseImage.layer_method` types.
+#: - ``'undefined'``
+#: - ``'coalesce'``
+#: - ``'compareany'``
+#: - ``'compareclear'``
+#: - ``'compareoverlay'``
+#: - ``'dispose'``
+#: - ``'optimize'``
+#: - ``'optimizeimage'``
+#: - ``'optimizeplus'``
+#: - ``'optimizetrans'``
+#: - ``'removedups'``
+#: - ``'removezero'``
+#: - ``'composite'``
+#: - ``'merge'``
+#: - ``'flatten'``
+#: - ``'mosaic'``
+#: - ``'trimbounds'``
+#: .. versionadded:: 0.4.3
+IMAGE_LAYER_METHOD = ('undefined', 'coalesce', 'compareany', 'compareclear',
+                      'compareoverlay', 'dispose', 'optimize', 'optimizeimage',
+                      'optimizeplus', 'optimizetrans', 'removedups',
+                      'removezero', 'composite', 'merge', 'flatten', 'mosaic',
+                      'trimbounds')
+
+
 def manipulative(function):
     """Mark the operation manipulating itself instead of returning new one."""
     @functools.wraps(function)
@@ -2162,6 +2188,33 @@ class BaseImage(Resource):
         )
         if not r:
             self.raise_exception()
+
+    @manipulative
+    def merge_layers(self, method):
+        """Composes all the image layers from the current given image onward
+        to produce a single image of the merged layers.
+
+        The inital canvas's size depends on the given ImageLayerMethod, and is
+        initialized using the first images background color.  The images
+        are then compositied onto that image in sequence using the given
+        composition that has been assigned to each individual image.
+
+        :param method: the method of selecting the size of the initial canvas.
+        This must be set with a value from :const:`IMAGE_LAYER_METHOD` that is
+        acceptable to this operation.
+        :type method: :class:`basestring`
+
+        .. versionadded:: 0.4.3
+
+        """
+        if method not in ['merge', 'flatten', 'mosaic']:
+            raise TypeError('method must be one of: merge, flatten, mosaic')
+
+        m = IMAGE_LAYER_METHOD.index(method)
+        r = library.MagickMergeImageLayers(self.wand, m)
+        if not r:
+            self.raise_exception()
+        self.wand = r
 
     @manipulative
     def threshold(self, threshold=0.5, channel=None):
