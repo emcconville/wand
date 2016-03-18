@@ -2198,10 +2198,11 @@ class BaseImage(Resource):
         initialized using the first images background color.  The images
         are then compositied onto that image in sequence using the given
         composition that has been assigned to each individual image.
+        The method must be set with a value from :const:`IMAGE_LAYER_METHOD`
+        that is acceptable to this operation. (See ImageMagick documentation
+        for more details.)
 
         :param method: the method of selecting the size of the initial canvas.
-        This must be set with a value from :const:`IMAGE_LAYER_METHOD` that is
-        acceptable to this operation.
         :type method: :class:`basestring`
 
         .. versionadded:: 0.4.3
