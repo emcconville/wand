@@ -916,9 +916,14 @@ class BaseImage(Resource):
             width = self.width - left
         if height is None:
             height = self.height - top
+        if not font:
+            try:
+                font = self.font
+            except TypeError:
+                raise TypeError('font must be specified or existing in image')
         with Image() as textboard:
             library.MagickSetSize(textboard.wand, width, height)
-            textboard.font = font or self.font
+            textboard.font = font
             textboard.gravity = gravity or self.gravity
             with Color('transparent') as background_color:
                 library.MagickSetBackgroundColor(textboard.wand,
