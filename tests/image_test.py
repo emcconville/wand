@@ -1246,6 +1246,17 @@ def test_caption(fx_asset):
         )
 
 
+def test_caption_without_font(fx_asset):
+    with Image(width=144, height=192, background=Color('#1e50a2')) as img:
+        with raises(TypeError):
+            img.caption(
+                'Test message',
+                left=5, top=144,
+                width=134, height=20,
+                gravity='center'
+            )
+
+
 def test_setfont(fx_asset):
     with Image(width=144, height=192, background=Color('#1e50a2')) as img:
         font = Font(
