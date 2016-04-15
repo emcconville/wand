@@ -1834,6 +1834,19 @@ def test_merge_layers_method_merge(fx_asset):
             img1.merge_layers('merge')
             assert img1.size == (24, 24)
 
+def test_merge_layers_method_merge_neg_offset(fx_asset):
+    with Image(width=16, height=16) as img1:
+        img1.background_color = Color('black')
+        img1.alpha_channel = False
+        with Image(width=16, height=16) as img2:
+            img2.background_color = Color('white')
+            img2.alpha_channel = False
+            img2.page = (16, 16, -8, -8)
+
+            img1.sequence.append(img2)
+            img1.merge_layers('merge')
+            assert img1.size == (24, 24)
+
 
 def test_merge_layers_method_flatten(fx_asset):
     with Image(width=16, height=16) as img1:
@@ -1860,10 +1873,24 @@ def test_merge_layers_method_mosaic(fx_asset):
 
             img1.sequence.append(img2)
             img1.merge_layers('mosaic')
+            assert img1.size == (24, 24)
+
+
+def test_merge_layers_method_mosaic_neg_offset(fx_asset):
+    with Image(width=16, height=16) as img1:
+        img1.background_color = Color('black')
+        img1.alpha_channel = False
+        with Image(width=16, height=16) as img2:
+            img2.background_color = Color('white')
+            img2.alpha_channel = False
+            img2.page = (16, 16, -8, -8)
+
+            img1.sequence.append(img2)
+            img1.merge_layers('mosaic')
             # TODO: this should also check negative offsets, which is the
             # difference between merge and mosaic. Too bad Wand doesn't support
             # access to the virtual canvas to create one.
-            assert img1.size == (24, 24)
+            assert img1.size == (16, 16)
 
 
 def test_page_basic(fx_asset):
