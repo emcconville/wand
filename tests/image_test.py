@@ -1875,7 +1875,7 @@ def test_page_basic(fx_asset):
         assert img1.page_y == 0
 
 
-def test_page_basic(fx_asset):
+def test_page_offset(fx_asset):
     with Image(filename=str(fx_asset.join('watermark-offset.png'))) as img1:
         assert img1.page == (640, 480, 12, 13)
         assert img1.page_width == 640
