@@ -1882,3 +1882,35 @@ def test_page_offset(fx_asset):
         assert img1.page_height == 480
         assert img1.page_x == 12
         assert img1.page_y == 13
+
+
+def test_page_setter(fx_asset):
+    with Image(filename=str(fx_asset.join('watermark.png'))) as img1:
+        assert img1.page == (640, 480, 0, 0)
+        img1.page = (640, 480, 0, 0)
+        assert img1.page == (640, 480, 0, 0)
+        img1.page = (640, 480, 12, 13)
+        assert img1.page == (640, 480, 12, 13)
+        img1.page = (640, 480, -12, 13)
+        assert img1.page == (640, 480, -12, 13)
+        img1.page = (640, 480, 12, -13)
+        assert img1.page == (640, 480, 12, -13)
+        img1.page = (6400, 4800, 2, 3)
+        assert img1.page == (6400, 4800, 2, 3)
+
+
+def test_page_setter_items(fx_asset):
+    with Image(filename=str(fx_asset.join('watermark.png'))) as img1:
+        assert img1.page == (640, 480, 0, 0)
+        img1.page_width = 6400
+        assert img1.page == (6400, 480, 0, 0)
+        img1.page_height = 4800
+        assert img1.page == (6400, 4800, 0, 0)
+        img1.page_x = 12
+        assert img1.page == (6400, 4800, 12, 0)
+        img1.page_y = 13
+        assert img1.page == (6400, 4800, 12, 13)
+        img1.page_x = -12
+        assert img1.page == (6400, 4800, -12, 13)
+        img1.page_y = -13
+        assert img1.page == (6400, 4800, -12, -13)

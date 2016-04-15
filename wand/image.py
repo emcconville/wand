@@ -834,12 +834,30 @@ class BaseImage(Resource):
             self.raise_exception()
         return int(w.value), int(h.value), int(x.value), int(y.value)
 
+    @page.setter
+    @manipulative
+    def page(self, newpage):
+        if isinstance(newpage, collections.Sequence):
+            w, h, x, y = newpage
+        else:
+            raise TypeError("page layout must be 4-tuple")
+        r = library.MagickSetImagePage(self.wand, w, h, x, y)
+        if not r:
+            self.raise_exception()
+
     @property
     def page_width(self):
         """"(:class:`numbers.Integral`) The width of the page for this wand.
         ... versionadded:: 0.4.3
         """
         return self.page[0]
+
+    @page_width.setter
+    @manipulative
+    def page_width(self, width):
+        newpage = list(self.page)
+        newpage[0] = width
+        self.page = newpage
 
     @property
     def page_height(self):
@@ -848,6 +866,13 @@ class BaseImage(Resource):
         """
         return self.page[1]
 
+    @page_height.setter
+    @manipulative
+    def page_height(self, height):
+        newpage = list(self.page)
+        newpage[1] = height
+        self.page = newpage
+
     @property
     def page_x(self):
         """"(:class:`numbers.Integral`) The X-offset of the page for this wand.
@@ -855,12 +880,26 @@ class BaseImage(Resource):
         """
         return self.page[2]
 
+    @page_x.setter
+    @manipulative
+    def page_x(self, x):
+        newpage = list(self.page)
+        newpage[2] = x
+        self.page = newpage
+
     @property
     def page_y(self):
         """"(:class:`numbers.Integral`) The Y-offset of the page for this wand.
         ... versionadded:: 0.4.3
         """
         return self.page[3]
+
+    @page_y.setter
+    @manipulative
+    def page_y(self, y):
+        newpage = list(self.page)
+        newpage[3] = y
+        self.page = newpage
 
     @property
     def width(self):
