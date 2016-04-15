@@ -1834,6 +1834,7 @@ def test_merge_layers_method_merge(fx_asset):
             img1.merge_layers('merge')
             assert img1.size == (24, 24)
 
+
 def test_merge_layers_method_merge_neg_offset(fx_asset):
     with Image(width=16, height=16) as img1:
         img1.background_color = Color('black')
