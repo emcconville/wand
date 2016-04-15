@@ -1887,9 +1887,6 @@ def test_merge_layers_method_mosaic_neg_offset(fx_asset):
 
             img1.sequence.append(img2)
             img1.merge_layers('mosaic')
-            # TODO: this should also check negative offsets, which is the
-            # difference between merge and mosaic. Too bad Wand doesn't support
-            # access to the virtual canvas to create one.
             assert img1.size == (16, 16)
 
 
