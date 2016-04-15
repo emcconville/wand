@@ -817,13 +817,15 @@ class BaseImage(Resource):
 
     @property
     def page(self):
-        """The dimensions and offset of this Wand's page as a 4-tuple.
+        """The dimensions and offset of this Wand's page as a 4-tuple:
+        ``(width, height, x, y)``.
 
-        Note that since it is based on the virtual canvas, it is not likely to
-        equal the dimensions of an image unless used properly. See the
-        ImageMagick documentation for more information.
+        Note that since it is based on the virtual canvas, it may not equal the
+        dimensions of an image. See the ImageMagick documentation on the
+        virtual canvas for more information.
 
-        ... versionadded:: 0.4.3
+        .. versionadded:: 0.4.3
+
         """
         w = ctypes.c_uint()
         h = ctypes.c_uint()
@@ -847,8 +849,10 @@ class BaseImage(Resource):
 
     @property
     def page_width(self):
-        """"(:class:`numbers.Integral`) The width of the page for this wand.
-        ... versionadded:: 0.4.3
+        """(:class:`numbers.Integral`) The width of the page for this wand.
+
+        .. versionadded:: 0.4.3
+
         """
         return self.page[0]
 
@@ -861,8 +865,10 @@ class BaseImage(Resource):
 
     @property
     def page_height(self):
-        """"(:class:`numbers.Integral`) The height of the page for this wand.
-        ... versionadded:: 0.4.3
+        """(:class:`numbers.Integral`) The height of the page for this wand.
+
+        .. versionadded:: 0.4.3
+
         """
         return self.page[1]
 
@@ -875,8 +881,10 @@ class BaseImage(Resource):
 
     @property
     def page_x(self):
-        """"(:class:`numbers.Integral`) The X-offset of the page for this wand.
-        ... versionadded:: 0.4.3
+        """(:class:`numbers.Integral`) The X-offset of the page for this wand.
+
+        .. versionadded:: 0.4.3
+
         """
         return self.page[2]
 
@@ -889,8 +897,10 @@ class BaseImage(Resource):
 
     @property
     def page_y(self):
-        """"(:class:`numbers.Integral`) The Y-offset of the page for this wand.
-        ... versionadded:: 0.4.3
+        """(:class:`numbers.Integral`) The Y-offset of the page for this wand.
+
+        .. versionadded:: 0.4.3
+
         """
         return self.page[3]
 
