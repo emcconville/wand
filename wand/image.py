@@ -816,6 +816,53 @@ class BaseImage(Resource):
         self.font_antialias = font.antialias
 
     @property
+    def page(self):
+        """The dimensions and offset of this Wand's page as a 4-tuple.
+
+        Note that since it is based on the virtual canvas, it is not likely to
+        equal the dimensions of an image unless used properly. See the
+        ImageMagick documentation for more information.
+
+        ... versionadded:: 0.4.3
+        """
+        w = ctypes.c_uint()
+        h = ctypes.c_uint()
+        x = ctypes.c_int()
+        y = ctypes.c_int()
+        r = library.MagickGetImagePage(self.wand, w, h, x, y)
+        if not r:
+            self.raise_exception()
+        return int(w.value), int(h.value), int(x.value), int(y.value)
+
+    @property
+    def page_width(self):
+        """"(:class:`numbers.Integral`) The width of the page for this wand.
+        ... versionadded:: 0.4.3
+        """
+        return self.page[0]
+
+    @property
+    def page_height(self):
+        """"(:class:`numbers.Integral`) The height of the page for this wand.
+        ... versionadded:: 0.4.3
+        """
+        return self.page[1]
+
+    @property
+    def page_x(self):
+        """"(:class:`numbers.Integral`) The X-offset of the page for this wand.
+        ... versionadded:: 0.4.3
+        """
+        return self.page[2]
+
+    @property
+    def page_y(self):
+        """"(:class:`numbers.Integral`) The Y-offset of the page for this wand.
+        ... versionadded:: 0.4.3
+        """
+        return self.page[3]
+
+    @property
     def width(self):
         """(:class:`numbers.Integral`) The width of this image."""
         return library.MagickGetImageWidth(self.wand)

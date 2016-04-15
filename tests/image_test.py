@@ -1864,3 +1864,21 @@ def test_merge_layers_method_mosaic(fx_asset):
             # difference between merge and mosaic. Too bad Wand doesn't support
             # access to the virtual canvas to create one.
             assert img1.size == (24, 24)
+
+
+def test_page_basic(fx_asset):
+    with Image(filename=str(fx_asset.join('watermark.png'))) as img1:
+        assert img1.page == (640, 480, 0, 0)
+        assert img1.page_width == 640
+        assert img1.page_height == 480
+        assert img1.page_x == 0
+        assert img1.page_y == 0
+
+
+def test_page_basic(fx_asset):
+    with Image(filename=str(fx_asset.join('watermark-offset.png'))) as img1:
+        assert img1.page == (640, 480, 12, 13)
+        assert img1.page_width == 640
+        assert img1.page_height == 480
+        assert img1.page_x == 12
+        assert img1.page_y == 13
