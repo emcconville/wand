@@ -679,6 +679,20 @@ try:
                                       ctypes.POINTER(ctypes.c_uint)]
     library.MagickGetSize.restype = ctypes.c_int
 
+    library.MagickGetImagePage.argtypes = [ctypes.c_void_p,
+                                           ctypes.POINTER(ctypes.c_uint),
+                                           ctypes.POINTER(ctypes.c_uint),
+                                           ctypes.POINTER(ctypes.c_int),
+                                           ctypes.POINTER(ctypes.c_int)]
+    library.MagickGetImagePage.restype = ctypes.c_int
+
+    library.MagickSetImagePage.argtypes = [ctypes.c_void_p,
+                                           ctypes.c_size_t,
+                                           ctypes.c_size_t,
+                                           ctypes.c_ssize_t,
+                                           ctypes.c_ssize_t]
+    library.MagickSetImagePage.restype = ctypes.c_int
+
     library.MagickSetSize.argtypes = [ctypes.c_void_p,
                                       ctypes.c_uint,
                                       ctypes.c_uint]
