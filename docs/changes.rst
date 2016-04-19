@@ -12,6 +12,11 @@ Version 0.4.3
 - Added :meth:`Image.compare() <wand.image.BaseImage.compare>` method
   (:c:func:`MagickCompareImages()`).
   [:issue:`238`, :issue:`268` by Gyusun Yeom]
+- Added :meth:`Image.page <wand.image.BaseImage.page>` and related properties for virtual canvas handling.
+  [:issue:`284` by Dan Harrison]
+- Added :meth:`Image.merge_layers() <wand.image.BaseImage.merge_layers>` method
+  (:c:func:`MagickMergeImageLayers()`).
+  [:issue:`281` by Dan Harrison]
 
 
 Version 0.4.2
