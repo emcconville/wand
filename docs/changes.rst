@@ -42,8 +42,6 @@ Released on November 30, 2015.
   raw pixel data. [:issue:`261` by Roeland Schoukens]
 
 
-.. _changelog-0.4.1:
-
 Version 0.4.1
 -------------
 
@@ -84,6 +82,8 @@ Released on August 3, 2015.
 - Fixed Windows memory-deallocate errors on :mod:`wand.drawing` API. [:issue:`226` by Eric McConville]
 - Fixed :exc:`ImportError` on FreeBSD.  [:issue:`252` by Pellaeon Lin]
 
+
+.. _changelog-0.4.0:
 
 Version 0.4.0
 -------------
