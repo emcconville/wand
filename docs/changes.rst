@@ -7,6 +7,8 @@ Wand Changelog
 Version 0.4.3
 -------------
 
+Released on June 1, 2016.
+
 - Fixed :func:`repr()` for empty :class:`~.wand.image.Image` objects.
   [:issue:`265`]
 - Added :meth:`Image.compare() <wand.image.BaseImage.compare>` method
