@@ -1,5 +1,4 @@
-{% extends rtd_hack_template_path + '/layout.html' if READTHEDOCS
-                                                   else '!layout.html' %}
+{% extends '!layout.html' %}
 
 {% block sidebarlogo %}
   {% if pagename == 'index' %}
