@@ -9,6 +9,10 @@ Version 0.4.4
 
 To be released.
 
+- Added :exc:`~wand.exceptions.BaseError`, :exc:`~wand.exceptions.BaseWarning`,
+  and :exc:`~wand.exceptions.BaseFatalError`, base classes for domains.
+  [:issue:`292`]
+
 
 Version 0.4.3
 -------------
