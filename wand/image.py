@@ -2757,6 +2757,11 @@ class Image(BaseImage):
             self.sequence = Sequence(self)
         self.raise_exception()
 
+    def __exit__(self, type, value, traceback):
+        for i in range(0, len(self.sequence)):
+            self.sequence.pop()
+        super(Image, self).__exit__(type, value, traceback)
+
     def read(self, file=None, filename=None, blob=None, resolution=None):
         """Read new image into Image() object.
 
