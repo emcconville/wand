@@ -2171,7 +2171,7 @@ class BaseImage(Resource):
         return Image(BaseImage(compared_image)), distortion.value
 
     @manipulative
-    def composite(self, image, left, top):
+    def composite(self, image, left, top, operator='over'):
         """Places the supplied ``image`` over the current image, with the top
         left corner of ``image`` at coordinates ``left``, ``top`` of the
         current image.  The dimensions of the current image are not changed.
@@ -2182,6 +2182,10 @@ class BaseImage(Resource):
         :type left: :class:`numbers.Integral`
         :param top: the y-coordinate where `image` will be placed
         :type top: :class:`numbers.Integral`
+        :param operator: the operator that affects how the composite
+                         is applied to the image.  available values
+                         can be found in the :const:`COMPOSITE_OPERATORS`
+                         list
 
         .. versionadded:: 0.2.0
 
@@ -2190,7 +2194,12 @@ class BaseImage(Resource):
             raise TypeError('left must be an integer, not ' + repr(left))
         elif not isinstance(top, numbers.Integral):
             raise TypeError('top must be an integer, not ' + repr(left))
-        op = COMPOSITE_OPERATORS.index('over')
+        try:
+            op = COMPOSITE_OPERATORS.index(operator)
+        except IndexError:
+            raise IndexError(repr(operator) + ' is an invalid composite '
+                             'operator type; see wand.image.COMPOSITE_'
+                             'OPERATORS dictionary')
         library.MagickCompositeImage(self.wand, image.wand, op,
                                      int(left), int(top))
         self.raise_exception()
