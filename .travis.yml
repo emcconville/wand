@@ -27,6 +27,9 @@ script:
     else
       py.test --cov wand --boxed --durations=20;
     fi
-- flake8 .
+- >
+    if [[ "$TRAVIS_PYTHON_VERSION" != "2.6" ]]; then
+      flake8 .;
+    fi
 after_success:
 - coveralls
