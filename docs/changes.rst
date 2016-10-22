@@ -15,6 +15,11 @@ To be released.
 - Fixed :exc:`TypeError` during parsing version caused by format change of
   ImageMagick version string (introduced by 6.9.6.2).
   [:issue:`310`, `Debian bug report #841548`__]
+- Properly fixed again memory-leak when accessing images constructed in
+  :class:`Image.sequence[] <wand.sequence.Sequence>`.  It had still leaked
+  memory in the case an image is not closed using ``with`` but manual
+  :func:`wand.resource.Resource.destroy()`/:func:`wand.image.Image.close()`
+  method call.  [:issue:`237`]
 
 __ https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=841548
 

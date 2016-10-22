@@ -2757,15 +2757,16 @@ class Image(BaseImage):
             self.sequence = Sequence(self)
         self.raise_exception()
 
-    def __exit__(self, type, value, traceback):
-        """
-        Manually remove SingleImage's in the Sequence, allowing it to
-        be properly garbage collected after using a 'with Image()' context
+    def destroy(self):
+        """Manually remove :class:`~.sequence.SingleImage`'s in
+        the :class:`~.sequence.Sequence`, allowing it to
+        be properly garbage collected after using a ``with Image()`` context
         manager.
+
         """
         for i in range(0, len(self.sequence)):
             self.sequence.pop()
-        super(Image, self).__exit__(type, value, traceback)
+        super(Image, self).destroy()
 
     def read(self, file=None, filename=None, blob=None, resolution=None):
         """Read new image into Image() object.
