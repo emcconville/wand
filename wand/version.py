@@ -94,16 +94,16 @@ if libmagick:
     #: .. versionadded:: 0.2.1
     MAGICK_VERSION_INFO = tuple(int(v or 0) for v in _match.groups())
 
-    #: (:class:`datetime.date`) The release date of the linked ImageMagick
-    #: library.  The same to the result of :c:func:`GetMagickReleaseDate`
-    #: function.
+    #: (:class:`basestring`) The date string e.g. ``'2012-06-03'`` of
+    #: :const:`MAGICK_RELEASE_DATE_STRING`.  This value is the exactly same
+    #: string to the result of :c:func:`GetMagickReleaseDate` function.
     #:
     #: .. versionadded:: 0.2.1
     MAGICK_RELEASE_DATE_STRING = text(libmagick.GetMagickReleaseDate())
 
-    #: (:class:`basestring`) The date string e.g. ``'2012-06-03'`` of
-    #: :const:`MAGICK_RELEASE_DATE_STRING`.  This value is the exactly same
-    #: string to the result of :c:func:`GetMagickReleaseDate` function.
+    #: (:class:`datetime.date`) The release date of the linked ImageMagick
+    #: library.  Equivalent to the result of :c:func:`GetMagickReleaseDate`
+    #: function.
     #:
     #: .. versionadded:: 0.2.1
     MAGICK_RELEASE_DATE = datetime.date(
