@@ -4,6 +4,21 @@ Wand Changelog
 0.4 series
 ~~~~~~~~~~
 
+Version 0.4.4
+~~~~~~~~~~~~~
+
+To be released.
+
+- Added :exc:`~wand.exceptions.BaseError`, :exc:`~wand.exceptions.BaseWarning`,
+  and :exc:`~wand.exceptions.BaseFatalError`, base classes for domains.
+  [:issue:`292`]
+- Fixed :exc:`TypeError` during parsing version caused by format change of
+  ImageMagick version string (introduced by 6.9.6.2).
+  [:issue:`310`, `Debian bug report #841548`__]
+
+__ https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=841548
+
+
 Version 0.4.3
 -------------
 
