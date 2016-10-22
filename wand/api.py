@@ -1397,7 +1397,7 @@ try:
     library.MagickAutoOrientImage.argtypes = [ctypes.c_void_p]
 except AttributeError:
     # MagickAutoOrientImage was added in 6.8.9+, we have a fallback function
-    # so we pass silently if we cant import it
+    # so we pass silently if we cannot import it
     pass
 
 
