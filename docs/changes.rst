@@ -5,13 +5,13 @@ Wand Changelog
 ~~~~~~~~~~
 
 Version 0.4.5
-~~~~~~~~~~~~~
+-------------
 
 To be released.
 
 
 Version 0.4.4
-~~~~~~~~~~~~~
+-------------
 
 Released on October 22, 2016.
 
