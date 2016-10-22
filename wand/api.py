@@ -180,7 +180,7 @@ try:
     libraries = load_library()
 except (OSError, IOError):
     msg = 'http://docs.wand-py.org/en/latest/guide/install.html'
-    if sys.platform.startswith('dragonfly') or sys.platform.startswith('freebsd'):
+    if sys.platform.startswith(('dragonfly', 'freebsd')):
         msg = 'pkg install'
     elif sys.platform == 'win32':
         msg += '#install-imagemagick-on-windows'
@@ -1418,7 +1418,7 @@ else:
         except OSError:
             # In case of El Capitan SIP
             libc = ctypes.cdll.LoadLibrary('/usr/lib/libc.dylib')
-    elif sys.platform.startswith('dragonfly') or sys.platform.startswith('freebsd'):
+    elif sys.platform.startswith(('dragonfly', 'freebsd')):
         libc = ctypes.cdll.LoadLibrary(ctypes.util.find_library('c'))
     else:
         libc = ctypes.cdll.LoadLibrary('libc.so.6')
