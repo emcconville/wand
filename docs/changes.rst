@@ -7,7 +7,7 @@ Wand Changelog
 Version 0.4.4
 ~~~~~~~~~~~~~
 
-To be released.
+Released on October 22, 2016.
 
 - Added :exc:`~wand.exceptions.BaseError`, :exc:`~wand.exceptions.BaseWarning`,
   and :exc:`~wand.exceptions.BaseFatalError`, base classes for domains.
