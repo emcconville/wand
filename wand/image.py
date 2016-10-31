@@ -2408,6 +2408,33 @@ class BaseImage(Resource):
             self.raise_exception()
 
     @manipulative
+    def blur(self, radius, sigma):
+        """Blurs the image.  We convolve the image with a gaussian operator
+        of the given ``radius`` and standard deviation (``sigma``).
+        For reasonable results, the ``radius`` should be larger
+        than ``sigma``.  Use a ``radius`` of 0 and :meth:`blur()` selects
+        a suitable ``radius`` for you.
+
+        :param radius: the radius of the, in pixels,
+                       not counting the center pixel
+        :type radius: :class:`numbers.Real`
+        :param sigma: the standard deviation of the, in pixels
+        :type sigma: :class:`numbers.Real`
+
+        .. versionadded:: 0.4.5
+
+        """
+        if not isinstance(radius, numbers.Real):
+            raise TypeError('radius has to be a numbers.Real, not ' +
+                            repr(radius))
+        elif not isinstance(sigma, numbers.Real):
+            raise TypeError('sigma has to be a numbers.Real, not ' +
+                            repr(sigma))
+        r = library.MagickBlurImage(self.wand, radius, sigma)
+        if not r:
+            self.raise_exception()
+
+    @manipulative
     def unsharp_mask(self, radius, sigma, amount, threshold):
         """Sharpens the image using unsharp mask filter. We convolve the image
         with a Gaussian operator of the given ``radius`` and standard deviation
