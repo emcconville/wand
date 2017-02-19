@@ -223,6 +223,7 @@ def formats(pattern='*'):
         cursor += 1
     return formats
 
+
 if __doc__ is not None:
     __doc__ = __doc__.replace('0.0.0', VERSION)
 
