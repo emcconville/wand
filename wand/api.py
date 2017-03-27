@@ -70,7 +70,7 @@ def library_paths():
                 libPath = winreg.QueryValueEx(reg_key, "LibPath")
                 coderPath = winreg.QueryValueEx(reg_key, "CoderModulesPath")
                 filterPath = winreg.QueryValueEx(reg_key, "FilterModulesPath")
-                magick_home = libPath[0]
+                magick_home = str(libPath[0])
                 os.environ['PATH'] += (';' + libPath[0] + ";" +
                                        coderPath[0] + ";" + filterPath[0])
         except OSError:
