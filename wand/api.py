@@ -81,10 +81,13 @@ def library_paths():
     def magick_path(path):
         return os.path.join(magick_home, *path)
     combinations = itertools.product(versions, options)
-    for suffix in (version + option for version, option in combinations):
-        # On Windows, the API is split between two libs. On other platforms,
-        # it's all contained in one.
-        if magick_home:
+    suffixes = (version + option for version, option in combinations)
+    if magick_home:
+        # exhaustively search for libraries in magick_home before calling
+        # find_library
+        for suffix in suffixes:
+            # On Windows, the API is split between two libs.
+            # On other platforms, it's all contained in one.
             if system == 'Windows':
                 libwand = 'CORE_RL_wand_{0}.dll'.format(suffix),
                 libmagick = 'CORE_RL_magick_{0}.dll'.format(suffix),
@@ -98,6 +101,7 @@ def library_paths():
             else:
                 libwand = 'lib', 'libMagickWand{0}.so'.format(suffix),
                 yield magick_path(libwand), magick_path(libwand)
+    for suffix in suffixes:
         if system == 'Windows':
             libwand = ctypes.util.find_library('CORE_RL_wand_' + suffix)
             libmagick = ctypes.util.find_library('CORE_RL_magick_' + suffix)
