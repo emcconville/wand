@@ -2797,6 +2797,7 @@ class Image(BaseImage):
                 raise TypeError('resolution must be a (x, y) pair or an '
                                 'integer of the same x/y')
         if file is not None:
+            file.seek(0)
             if (isinstance(file, file_types) and
                     hasattr(libc, 'fdopen') and hasattr(file, 'mode')):
                 fd = libc.fdopen(file.fileno(), file.mode)
