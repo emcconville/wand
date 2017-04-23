@@ -2764,8 +2764,9 @@ class Image(BaseImage):
         manager.
 
         """
-        for i in range(0, len(self.sequence)):
-            self.sequence.pop()
+        if self.sequence is not None:
+            for i in range(0, len(self.sequence)):
+                self.sequence.pop()
         super(Image, self).destroy()
 
     def read(self, file=None, filename=None, blob=None, resolution=None):
