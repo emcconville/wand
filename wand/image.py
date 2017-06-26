@@ -15,11 +15,7 @@ import ctypes
 import functools
 import numbers
 import weakref
-
-try:
-    import pathlib
-except ImportError:
-    pathlib = None
+import os
 
 from . import compat
 from .api import MagickPixelPacket, libc, libmagick, library
@@ -2688,10 +2684,8 @@ class Image(BaseImage):
     def __init__(self, image=None, blob=None, file=None, filename=None,
                  format=None, width=None, height=None, depth=None,
                  background=None, resolution=None):
-        
-        if pathlib and isinstance(filename, pathlib.Path):
-            filename = str(filename)
-        
+        # Support PEP 519 paths
+        filename = filename.__fspath__() if hasattr(filename, "__fspath__") else filename
         new_args = width, height, background, depth
         open_args = blob, file, filename
         if any(a is not None for a in new_args) and image is not None:
