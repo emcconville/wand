@@ -13,6 +13,7 @@ def expire(image):
 
 def test_length(fx_asset):
     with Image(filename=str(fx_asset.join('apple.ico'))) as img:
+        assert len(img.sequence) == 4
 
 
 def test_getitem(fx_asset):
