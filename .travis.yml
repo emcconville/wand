@@ -13,7 +13,7 @@ env:
 - secure: "EhG2uSD2m1eGxuL2HeQewJJx7MVL4WpjrxyfiUBEgsApemD1yKJPjUnLwAyd\nbPi5HJx5ySm1TTRSvj6/yP85YLYTaJHA8OabKk7p0wFW294qcrYIDGovU7NL\n3YOqZmqN+S3XOBGFCOnByxE+pcxxWW/3/I09EgeW7D6tBPh67G0="
 install:
 - echo $TRAVIS_PYTHON_VERSION
-- pip install pytest pytest-xdist pytest-capturelog memory_profiler==0.40 psutil coveralls flake8
+- pip install memory_profiler==0.40 psutil coveralls flake8
 - >
     if [[ "$TRAVIS_PYTHON_VERSION" != "3.2" && "$TRAVIS_PYTHON_VERSION" != "pypy" && "$TRAVIS_PYTHON_VERSION" != "pypy3" ]]; then
       pip install 'pytest-cov>=1.8.0';
