@@ -83,6 +83,7 @@ slices = {
 
 slice_items = list(sorted(slices.items(), key=lambda k: k[0]))
 
+
 @mark.parametrize(('slice_name', 'slice_'), slice_items)
 def test_getitem_slice(slice_name, slice_, fx_asset):
     print(1, slice_)
