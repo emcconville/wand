@@ -31,14 +31,13 @@ else:
             raise SystemExit(errno)
     cmdclass = {'test': pytest}
 
-    
 test_requires = [
     'pytest >= 2.3.0',
     'pytest-xdist >= 1.8',
     'memory_profiler >= 0.27',
     'psutil >= 1.0.1'
 ]
-    
+
 setup(
     name='Wand',
     packages=['wand'],
