@@ -34,7 +34,6 @@ else:
 test_requires = [
     'pytest >= 2.3.0',
     'pytest-xdist >= 1.8',
-    'memory_profiler >= 0.27',
     'psutil >= 1.0.1'
 ]
 
