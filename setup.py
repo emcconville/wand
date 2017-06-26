@@ -53,10 +53,7 @@ setup(
     maintainer_email='hongminhee' '@' 'member.fsf.org',
     url='http://wand-py.org/',
     tests_require=test_requires,
-    extras_require={
-        'test': test_requires
-    },
-    extras_require={'doc': ['Sphinx >=1.0']},
+    extras_require={'doc': ['Sphinx >=1.0'], 'test': test_requires},
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
