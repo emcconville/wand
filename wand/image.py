@@ -16,6 +16,11 @@ import functools
 import numbers
 import weakref
 
+try:
+    import pathlib
+except ImportError:
+    pathlib = None
+
 from . import compat
 from .api import MagickPixelPacket, libc, libmagick, library
 from .color import Color
@@ -2683,6 +2688,10 @@ class Image(BaseImage):
     def __init__(self, image=None, blob=None, file=None, filename=None,
                  format=None, width=None, height=None, depth=None,
                  background=None, resolution=None):
+        
+        if pathlib and isinstance(filename, pathlib.Path):
+            filename = str(filename)
+        
         new_args = width, height, background, depth
         open_args = blob, file, filename
         if any(a is not None for a in new_args) and image is not None:
