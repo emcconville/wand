@@ -31,7 +31,14 @@ else:
             raise SystemExit(errno)
     cmdclass = {'test': pytest}
 
-
+    
+test_requires = [
+    'pytest >= 2.3.0',
+    'pytest-xdist >= 1.8',
+    'memory_profiler >= 0.27',
+    'psutil >= 1.0.1'
+]
+    
 setup(
     name='Wand',
     packages=['wand'],
@@ -45,12 +52,10 @@ setup(
     maintainer='Hong Minhee',
     maintainer_email='hongminhee' '@' 'member.fsf.org',
     url='http://wand-py.org/',
-    tests_require=[
-        'pytest >= 2.3.0',
-        'pytest-xdist >= 1.8',
-        'memory_profiler >= 0.27',
-        'psutil >= 1.0.1'
-    ],
+    tests_require=test_requires,
+    extras_require={
+        'test': test_requires
+    },
     extras_require={'doc': ['Sphinx >=1.0']},
     classifiers=[
         'Development Status :: 5 - Production/Stable',
