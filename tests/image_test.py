@@ -140,12 +140,21 @@ def test_new_from_file(fx_asset):
 
 def test_new_from_filename(fx_asset):
     """Opens an image through its filename."""
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+    mona_lisa = str(fx_asset.join('mona-lisa.jpg'))
+    with Image(filename=mona_lisa) as img:
         assert img.width == 402
     with raises(ClosedImageError):
         img.wand
     with raises(IOError):
         Image(filename=str(fx_asset.join('not-exists.jpg')))
+    
+    try:
+        import pathlib
+    except ImportError:
+        return
+    
+    with Image(filename=pathlib.Path(mona_lisa)) as img:
+        assert img.width == 402
 
 
 @mark.skipif(not unicode_filesystem_encoding,
