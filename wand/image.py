@@ -17,13 +17,14 @@ import numbers
 import weakref
 
 from . import compat
-from .api import MagickPixelPacket, libc, libmagick, library
+from .api import MagickPixelPacket, PixelInfo, libc, libmagick, library
 from .color import Color
 from .compat import (binary, binary_type, encode_filename, file_types,
                      string_type, text, xrange)
 from .exceptions import MissingDelegateError, WandException
 from .resource import DestroyedResourceError, Resource
 from .font import Font
+from .version import MAGICK_VERSION_NUMBER
 
 
 __all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COLORSPACE_TYPES',
@@ -36,53 +37,138 @@ __all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COLORSPACE_TYPES',
            'Iterator', 'Metadata', 'OptionDict', 'manipulative')
 
 
-#: (:class:`tuple`) The list of filter types.
+#: (:class:`tuple`) The list of alpha channel types
 #:
 #: - ``'undefined'``
-#: - ``'point'``
-#: - ``'box'``
-#: - ``'triangle'``
-#: - ``'hermite'``
-#: - ``'hanning'``
-#: - ``'hamming'``
-#: - ``'blackman'``
-#: - ``'gaussian'``
-#: - ``'quadratic'``
-#: - ``'cubic'``
-#: - ``'catrom'``
-#: - ``'mitchell'``
-#: - ``'jinc'``
-#: - ``'sinc'``
-#: - ``'sincfast'``
-#: - ``'kaiser'``
-#: - ``'welsh'``
-#: - ``'parzen'``
-#: - ``'bohman'``
-#: - ``'bartlett'``
-#: - ``'lagrange'``
-#: - ``'lanczos'``
-#: - ``'lanczossharp'``
-#: - ``'lanczos2'``
-#: - ``'lanczos2sharp'``
-#: - ``'robidoux'``
-#: - ``'robidouxsharp'``
-#: - ``'cosine'``
-#: - ``'spline'``
-#: - ``'sentinel'``
+#: - ``'activate'``
+#: - ``'background'``
+#: - ``'copy'``
+#: - ``'deactivate'``
+#: - ``'extract'``
+#: - ``'opaque'``
+#: - ``'reset'``
+#: - ``'set'``
+#: - ``'shape'``
+#: - ``'transparent'``
+#: - ``'flatten'``
+#: - ``'remove'``
+#:
+#: .. seealso::
+#:    `ImageMagick Image Channel`__
+#:       Describes the SetImageAlphaChannel method which can be used
+#:       to modify alpha channel. Also describes AlphaChannelType
+#:
+#:    __ http://www.imagemagick.org/api/channel.php#SetImageAlphaChannel
+ALPHA_CHANNEL_TYPES = ('undefined', 'activate', 'background', 'copy',
+                       'deactivate', 'extract', 'opaque', 'reset', 'set',
+                       'shape', 'transparent', 'flatten', 'remove')
+if MAGICK_VERSION_NUMBER >= 0x700:
+    ALPHA_CHANNEL_TYPES = ('undefined', 'activate', 'associate', 'background',
+                           'copy', 'deactivate', 'discrete', 'disassociate',
+                           'extract', 'off', 'on', 'opaque', 'remove', 'set',
+                           'shape', 'transparent')
+
+
+#: (:class:`dict`) The dictionary of channel types.
+#:
+#: - ``'undefined'``
+#: - ``'red'``
+#: - ``'gray'``
+#: - ``'cyan'``
+#: - ``'green'``
+#: - ``'magenta'``
+#: - ``'blue'``
+#: - ``'yellow'``
+#: - ``'alpha'``
+#: - ``'opacity'``
+#: - ``'black'``
+#: - ``'index'``
+#: - ``'composite_channels'``
+#: - ``'all_channels'``
+#: - ``'true_alpha'``
+#: - ``'rgb_channels'``
+#: - ``'gray_channels'``
+#: - ``'sync_channels'``
+#: - ``'default_channels'``
 #:
 #: .. seealso::
 #:
-#:    `ImageMagick Resize Filters`__
-#:       Demonstrates the results of resampling images using the various
-#:       resize filters and blur settings available in ImageMagick.
+#:    `ImageMagick Color Channels`__
+#:       Lists the various channel types with descriptions of each
 #:
-#:    __ http://www.imagemagick.org/Usage/resize/
-FILTER_TYPES = ('undefined', 'point', 'box', 'triangle', 'hermite', 'hanning',
-                'hamming', 'blackman', 'gaussian', 'quadratic', 'cubic',
-                'catrom', 'mitchell', 'jinc', 'sinc', 'sincfast', 'kaiser',
-                'welsh', 'parzen', 'bohman', 'bartlett', 'lagrange', 'lanczos',
-                'lanczossharp', 'lanczos2', 'lanczos2sharp', 'robidoux',
-                'robidouxsharp', 'cosine', 'spline', 'sentinel')
+#:    __ http://www.imagemagick.org/Magick++/Enumerations.html#ChannelType
+CHANNELS = dict(undefined=0, red=1, gray=1, cyan=1, green=2, magenta=2,
+                blue=4, yellow=4, alpha=8, opacity=8, black=32, index=32,
+                composite_channels=47, all_channels=134217727, true_alpha=64,
+                rgb_channels=128, gray_channels=128, sync_channels=256,
+                default_channels=134217719)
+if MAGICK_VERSION_NUMBER >= 0x700:
+    CHANNELS = dict(undefined=0, red=1, gray=1, cyan=1, green=2, magenta=2,
+                    blue=4, yellow=4, black=8, alpha=16, opacity=16, index=32,
+                    readmask=0x0040, write_mask=128, meta=256,
+                    composite_channels=31, all_channels=134217727,
+                    true_alpha=256, rgb_channels=512, gray_channels=1024,
+                    sync_channels=131072, default_channels=134217727)
+
+
+#: (:class:`tuple`) The list of colorspaces.
+#:
+#: - ``'undefined'``
+#: - ``'rgb'``
+#: - ``'gray'``
+#: - ``'transparent'``
+#: - ``'ohta'``
+#: - ``'lab'``
+#: - ``'xyz'``
+#: - ``'ycbcr'``
+#: - ``'ycc'``
+#: - ``'yiq'``
+#: - ``'ypbpr'``
+#: - ``'yuv'``
+#: - ``'cmyk'``
+#: - ``'srgb'``
+#: - ``'hsb'``
+#: - ``'hsl'``
+#: - ``'hwb'``
+#: - ``'rec601luma'``
+#: - ``'rec601ycbcr'``
+#: - ``'rec709luma'``
+#: - ``'rec709ycbcr'``
+#: - ``'log'``
+#: - ``'cmy'``
+#: - ``'luv'``
+#: - ``'hcl'``
+#: - ``'lch'``
+#: - ``'lms'``
+#: - ``'lchab'``
+#: - ``'lchuv'``
+#: - ``'scrgb'``
+#: - ``'hsi'``
+#: - ``'hsv'``
+#: - ``'hclp'``
+#: - ``'ydbdr'``
+#:
+#: .. seealso::
+#:
+#:    `ImageMagick Color Management`__
+#:       Describes the ImageMagick color management operations
+#:
+#:    __ http://www.imagemagick.org/script/color-management.php
+#:
+#: .. versionadded:: 0.3.4
+COLORSPACE_TYPES = ('undefined', 'rgb', 'gray', 'transparent', 'ohta', 'lab',
+                    'xyz', 'ycbcr', 'ycc', 'yiq', 'ypbpr', 'yuv', 'cmyk',
+                    'srgb', 'hsb', 'hsl', 'hwb', 'rec601luma', 'rec601ycbcr',
+                    'rec709luma', 'rec709ycbcr', 'log', 'cmy', 'luv', 'hcl',
+                    'lch', 'lms', 'lchab', 'lchuv', 'scrgb', 'hsi', 'hsv',
+                    'hclp', 'ydbdr')
+if MAGICK_VERSION_NUMBER >= 0x700:
+    COLORSPACE_TYPES = ('undefined', 'cmy', 'cmyk', 'gray', 'hcl', 'hclp',
+                        'hsb', 'hsi', 'hsl', 'hsv', 'hwb', 'lab', 'lch',
+                        'lchab', 'lchuv', 'log', 'lms', 'luv', 'ohta',
+                        'rec601ycbcr', 'rec709ycbcr', 'rgb', 'scrgb', 'srgb',
+                        'transparent', 'xyy', 'xyz', 'ycbcr', 'ycc', 'ydbdr',
+                        'yiq', 'ypbpr', 'yuv')
 
 #: (:class:`tuple`) The list of compare metric types
 #:
@@ -108,6 +194,13 @@ COMPARE_METRICS = ('undefined', 'absolute',
                    'mean_squared', 'normalized_cross_correlation',
                    'peak_absolute', 'peak_signal_to_noise_ratio',
                    'perceptual_hash', 'root_mean_square')
+if MAGICK_VERSION_NUMBER >= 0x700:
+    COMPARE_METRICS = ('undefined', 'absolute', 'fuzz', 'mean_absolute',
+                       'mean_error_per_pixel', 'mean_squared',
+                       'normalized_cross_correlation', 'peak_absolute',
+                       'peak_signal_to_noise_ratio', 'perceptual_hash',
+                       'root_mean_square')
+
 
 #: (:class:`tuple`) The list of composition operators
 #:
@@ -198,39 +291,53 @@ COMPOSITE_OPERATORS = (
     'src_in', 'src_out', 'src_over', 'subtract', 'threshold', 'xor', 'divide'
 )
 
-#: (:class:`dict`) The dictionary of channel types.
+
+#: (:class:`tuple`) The list of :attr:`Image.compression` types.
+#:
+#: .. versionadded:: 0.3.6
+COMPRESSION_TYPES = (
+    'undefined', 'b44a', 'b44', 'bzip', 'dxt1', 'dxt3', 'dxt5', 'fax',
+    'group4',
+    'jbig1',        # ISO/IEC std 11544 / ITU-T rec T.82
+    'jbig2',        # ISO/IEC std 14492 / ITU-T rec T.88
+    'jpeg2000',     # ISO/IEC std 15444-1
+    'jpeg', 'losslessjpeg',
+    'lzma',         # Lempel-Ziv-Markov chain algorithm
+    'lzw', 'no', 'piz', 'pxr24', 'rle', 'zip', 'zips'
+)
+
+
+#: (:class:`tuple`) The list of :method:`Image.distort` methods.
 #:
 #: - ``'undefined'``
-#: - ``'red'``
-#: - ``'gray'``
-#: - ``'cyan'``
-#: - ``'green'``
-#: - ``'magenta'``
-#: - ``'blue'``
-#: - ``'yellow'``
-#: - ``'alpha'``
-#: - ``'opacity'``
-#: - ``'black'``
-#: - ``'index'``
-#: - ``'composite_channels'``
-#: - ``'all_channels'``
-#: - ``'true_alpha'``
-#: - ``'rgb_channels'``
-#: - ``'gray_channels'``
-#: - ``'sync_channels'``
-#: - ``'default_channels'``
+#: - ``'affine'``
+#: - ``'affine_projection'``
+#: - ``'scale_rotate_translate'``
+#: - ``'perspective'``
+#: - ``'perspective_projection'``
+#: - ``'bilinear_forward'``
+#: - ``'bilinear_reverse'``
+#: - ``'polynomial'``
+#: - ``'arc'``
+#: - ``'polar'``
+#: - ``'depolar'``
+#: - ``'cylinder_2_plane'``
+#: - ``'plane_2_cylinder'``
+#: - ``'barrel'``
+#: - ``'barrel_inverse'``
+#: - ``'shepards'``
+#: - ``'resize'``
+#: - ``'sentinel'``
 #:
-#: .. seealso::
-#:
-#:    `ImageMagick Color Channels`__
-#:       Lists the various channel types with descriptions of each
-#:
-#:    __ http://www.imagemagick.org/Magick++/Enumerations.html#ChannelType
-CHANNELS = dict(undefined=0, red=1, gray=1, cyan=1, green=2, magenta=2,
-                blue=4, yellow=4, alpha=8, opacity=8, black=32, index=32,
-                composite_channels=47, all_channels=134217727, true_alpha=64,
-                rgb_channels=128, gray_channels=128, sync_channels=256,
-                default_channels=134217719)
+#: .. versionadded:: 0.4.1
+DISTORTION_METHODS = (
+    'undefined', 'affine', 'affine_projection', 'scale_rotate_translate',
+    'perspective', 'perspective_projection', 'bilinear_forward',
+    'bilinear_reverse', 'polynomial', 'arc', 'polar', 'depolar',
+    'cylinder_2_plane', 'plane_2_cylinder', 'barrel', 'barrel_inverse',
+    'shepards', 'resize', 'sentinel'
+)
+
 
 #: (:class:`tuple`) The list of evaluation operators
 #:
@@ -281,84 +388,122 @@ EVALUATE_OPS = ('undefined', 'add', 'and', 'divide', 'leftshift', 'max',
                 'laplaciannoise', 'multiplicativenoise', 'poissonnoise',
                 'uniformnoise', 'cosine', 'sine', 'addmodulus', 'mean',
                 'abs', 'exponential', 'median', 'sum', 'rootmeansquare')
+if MAGICK_VERSION_NUMBER >= 0x700:
+    EVALUATE_OPS = ('undefined', 'abs', 'add', 'addmodulus', 'and', 'cosine',
+                    'divide', 'exponential', 'gaussiannoise', 'impulsenoise',
+                    'laplaciannoise', 'leftshift', 'log', 'max', 'mean',
+                    'median', 'min', 'multiplicativenoise', 'multiply', 'or',
+                    'poissonnoise', 'pow', 'rightshift', 'rootmeansquare',
+                    'set', 'sine', 'subtract', 'sum', 'thresholdblack',
+                    'threshold', 'thresholdwhite', 'uniformnoise', 'xor')
 
-#: (:class:`tuple`) The list of colorspaces.
+
+#: (:class:`tuple`) The list of filter types.
 #:
 #: - ``'undefined'``
-#: - ``'rgb'``
-#: - ``'gray'``
-#: - ``'transparent'``
-#: - ``'ohta'``
-#: - ``'lab'``
-#: - ``'xyz'``
-#: - ``'ycbcr'``
-#: - ``'ycc'``
-#: - ``'yiq'``
-#: - ``'ypbpr'``
-#: - ``'yuv'``
-#: - ``'cmyk'``
-#: - ``'srgb'``
-#: - ``'hsb'``
-#: - ``'hsl'``
-#: - ``'hwb'``
-#: - ``'rec601luma'``
-#: - ``'rec601ycbcr'``
-#: - ``'rec709luma'``
-#: - ``'rec709ycbcr'``
-#: - ``'log'``
-#: - ``'cmy'``
-#: - ``'luv'``
-#: - ``'hcl'``
-#: - ``'lch'``
-#: - ``'lms'``
-#: - ``'lchab'``
-#: - ``'lchuv'``
-#: - ``'scrgb'``
-#: - ``'hsi'``
-#: - ``'hsv'``
-#: - ``'hclp'``
-#: - ``'ydbdr'``
+#: - ``'point'``
+#: - ``'box'``
+#: - ``'triangle'``
+#: - ``'hermite'``
+#: - ``'hanning'``
+#: - ``'hamming'``
+#: - ``'blackman'``
+#: - ``'gaussian'``
+#: - ``'quadratic'``
+#: - ``'cubic'``
+#: - ``'catrom'``
+#: - ``'mitchell'``
+#: - ``'jinc'``
+#: - ``'sinc'``
+#: - ``'sincfast'``
+#: - ``'kaiser'``
+#: - ``'welsh'``
+#: - ``'parzen'``
+#: - ``'bohman'``
+#: - ``'bartlett'``
+#: - ``'lagrange'``
+#: - ``'lanczos'``
+#: - ``'lanczossharp'``
+#: - ``'lanczos2'``
+#: - ``'lanczos2sharp'``
+#: - ``'robidoux'``
+#: - ``'robidouxsharp'``
+#: - ``'cosine'``
+#: - ``'spline'``
+#: - ``'sentinel'``
 #:
 #: .. seealso::
 #:
-#:    `ImageMagick Color Management`__
-#:       Describes the ImageMagick color management operations
+#:    `ImageMagick Resize Filters`__
+#:       Demonstrates the results of resampling images using the various
+#:       resize filters and blur settings available in ImageMagick.
 #:
-#:    __ http://www.imagemagick.org/script/color-management.php
-#:
-#: .. versionadded:: 0.3.4
-COLORSPACE_TYPES = ('undefined', 'rgb', 'gray', 'transparent', 'ohta', 'lab',
-                    'xyz', 'ycbcr', 'ycc', 'yiq', 'ypbpr', 'yuv', 'cmyk',
-                    'srgb', 'hsb', 'hsl', 'hwb', 'rec601luma', 'rec601ycbcr',
-                    'rec709luma', 'rec709ycbcr', 'log', 'cmy', 'luv', 'hcl',
-                    'lch', 'lms', 'lchab', 'lchuv', 'scrgb', 'hsi', 'hsv',
-                    'hclp', 'ydbdr')
+#:    __ http://www.imagemagick.org/Usage/resize/
+FILTER_TYPES = ('undefined', 'point', 'box', 'triangle', 'hermite', 'hanning',
+                'hamming', 'blackman', 'gaussian', 'quadratic', 'cubic',
+                'catrom', 'mitchell', 'jinc', 'sinc', 'sincfast', 'kaiser',
+                'welsh', 'parzen', 'bohman', 'bartlett', 'lagrange', 'lanczos',
+                'lanczossharp', 'lanczos2', 'lanczos2sharp', 'robidoux',
+                'robidouxsharp', 'cosine', 'spline', 'sentinel')
 
-#: (:class:`tuple`) The list of alpha channel types
+
+#: (:class:`tuple`) The list of :attr:`Image.function` types.
 #:
 #: - ``'undefined'``
-#: - ``'activate'``
-#: - ``'background'``
-#: - ``'copy'``
-#: - ``'deactivate'``
-#: - ``'extract'``
-#: - ``'opaque'``
-#: - ``'reset'``
-#: - ``'set'``
-#: - ``'shape'``
-#: - ``'transparent'``
+#: - ``'polynomial'``
+#: - ``'sinusoid'``
+#: - ``'arcsin'``
+#: - ``'arctan'``
+FUNCTION_TYPES = ('undefined', 'polynomial', 'sinusoid', 'arcsin', 'arctan')
+if MAGICK_VERSION_NUMBER >= 0x700:
+    FUNCTION_TYPES = ('undefined', 'arcsin', 'arctan', 'polynomial',
+                      'sinusoid')
+
+
+#: (:class:`tuple`) The list of :attr:`~BaseImage.gravity` types.
+#:
+#: - ``'forget'``
+#: - ``'north_west'``
+#: - ``'north'``
+#: - ``'north_east'``
+#: - ``'west'``
+#: - ``'center'``
+#: - ``'east'``
+#: - ``'south_west'``
+#: - ``'south'``
+#: - ``'south_east'``
+#:
+#: .. versionadded:: 0.3.0
+GRAVITY_TYPES = ('forget', 'north_west', 'north', 'north_east', 'west',
+                 'center', 'east', 'south_west', 'south', 'south_east',
+                 'static')
+
+
+#: (:class:`tuple`) The list of :attr:`~BaseImage.layer_method` types.
+#: - ``'undefined'``
+#: - ``'coalesce'``
+#: - ``'compareany'``
+#: - ``'compareclear'``
+#: - ``'compareoverlay'``
+#: - ``'dispose'``
+#: - ``'optimize'``
+#: - ``'optimizeimage'``
+#: - ``'optimizeplus'``
+#: - ``'optimizetrans'``
+#: - ``'removedups'``
+#: - ``'removezero'``
+#: - ``'composite'``
+#: - ``'merge'``
 #: - ``'flatten'``
-#: - ``'remove'``
-#:
-#: .. seealso::
-#:    `ImageMagick Image Channel`__
-#:       Describes the SetImageAlphaChannel method which can be used
-#:       to modify alpha channel. Also describes AlphaChannelType
-#:
-#:    __ http://www.imagemagick.org/api/channel.php#SetImageAlphaChannel
-ALPHA_CHANNEL_TYPES = ('undefined', 'activate', 'background', 'copy',
-                       'deactivate', 'extract', 'opaque', 'reset', 'set',
-                       'shape', 'transparent', 'flatten', 'remove')
+#: - ``'mosaic'``
+#: - ``'trimbounds'``
+#: .. versionadded:: 0.4.3
+IMAGE_LAYER_METHOD = ('undefined', 'coalesce', 'compareany', 'compareclear',
+                      'compareoverlay', 'dispose', 'optimize', 'optimizeimage',
+                      'optimizeplus', 'optimizetrans', 'removedups',
+                      'removezero', 'composite', 'merge', 'flatten', 'mosaic',
+                      'trimbounds')
+
 
 #: (:class:`tuple`) The list of image types
 #:
@@ -387,6 +532,31 @@ IMAGE_TYPES = ('undefined', 'bilevel', 'grayscale', 'grayscalematte',
                'colorseparation', 'colorseparationmatte', 'optimize',
                'palettebilevelmatte')
 
+
+#: (:class:`collections.Set`) The set of available :attr:`~BaseImage.options`.
+#:
+#: .. versionadded:: 0.3.0
+#:
+#: .. versionchanged:: 0.3.4
+#:    Added ``'jpeg:sampling-factor'`` option.
+#:
+#: .. versionchanged:: 0.3.9
+#:    Added ``'pdf:use-cropbox'`` option.
+#: .. deprecated:: ?.?.?
+#:    Any arbitrary key can be set to the option table. Key-Value pairs set
+#:    on the MagickWand stack allowing for various coders, kernels, morphology
+#:    (&tc) to pick and choose additional user-supplied properties/artifacts.
+OPTIONS = frozenset(['fill', 'jpeg:sampling-factor', 'pdf:use-cropbox'])
+
+
+#: (:class:`tuple`) The list of :attr:`~BaseImage.orientation` types.
+#:
+#: .. versionadded:: 0.3.0
+ORIENTATION_TYPES = ('undefined', 'top_left', 'top_right', 'bottom_right',
+                     'bottom_left', 'left_top', 'right_top', 'right_bottom',
+                     'left_bottom')
+
+
 #: (:class:`tuple`) The list of resolution unit types.
 #:
 #: - ``'undefined'``
@@ -400,87 +570,8 @@ IMAGE_TYPES = ('undefined', 'bilevel', 'grayscale', 'grayscalematte',
 #:       to set image units of resolution
 #:
 #:    __ http://www.imagemagick.org/api/magick-image.php#MagickSetImageUnits
-UNIT_TYPES = 'undefined', 'pixelsperinch', 'pixelspercentimeter'
+UNIT_TYPES = ('undefined', 'pixelsperinch', 'pixelspercentimeter')
 
-#: (:class:`tuple`) The list of :attr:`~BaseImage.gravity` types.
-#:
-#: .. versionadded:: 0.3.0
-GRAVITY_TYPES = ('forget', 'north_west', 'north', 'north_east', 'west',
-                 'center', 'east', 'south_west', 'south', 'south_east',
-                 'static')
-
-#: (:class:`tuple`) The list of :attr:`~BaseImage.orientation` types.
-#:
-#: .. versionadded:: 0.3.0
-ORIENTATION_TYPES = ('undefined', 'top_left', 'top_right', 'bottom_right',
-                     'bottom_left', 'left_top', 'right_top', 'right_bottom',
-                     'left_bottom')
-
-#: (:class:`collections.Set`) The set of available :attr:`~BaseImage.options`.
-#:
-#: .. versionadded:: 0.3.0
-#:
-#: .. versionchanged:: 0.3.4
-#:    Added ``'jpeg:sampling-factor'`` option.
-#:
-#: .. versionchanged:: 0.3.9
-#:    Added ``'pdf:use-cropbox'`` option.
-OPTIONS = frozenset(['fill', 'jpeg:sampling-factor', 'pdf:use-cropbox'])
-
-#: (:class:`tuple`) The list of :attr:`Image.compression` types.
-#:
-#: .. versionadded:: 0.3.6
-COMPRESSION_TYPES = (
-    'undefined', 'b44a', 'b44', 'bzip', 'dxt1', 'dxt3', 'dxt5', 'fax',
-    'group4',
-    'jbig1',        # ISO/IEC std 11544 / ITU-T rec T.82
-    'jbig2',        # ISO/IEC std 14492 / ITU-T rec T.88
-    'jpeg2000',     # ISO/IEC std 15444-1
-    'jpeg', 'losslessjpeg',
-    'lzma',         # Lempel-Ziv-Markov chain algorithm
-    'lzw', 'no', 'piz', 'pxr24', 'rle', 'zip', 'zips'
-)
-
-#: (:class:`tuple`) The list of :attr:`Image.function` types.
-#:
-#: - ``'undefined'``
-#: - ``'polynomial'``
-#: - ``'sinusoid'``
-#: - ``'arcsin'``
-#: - ``'arctan'``
-FUNCTION_TYPES = ('undefined', 'polynomial', 'sinusoid', 'arcsin', 'arctan')
-
-
-#: (:class:`tuple`) The list of :method:`Image.distort` methods.
-#:
-#: - ``'undefined'``
-#: - ``'affine'``
-#: - ``'affine_projection'``
-#: - ``'scale_rotate_translate'``
-#: - ``'perspective'``
-#: - ``'perspective_projection'``
-#: - ``'bilinear_forward'``
-#: - ``'bilinear_reverse'``
-#: - ``'polynomial'``
-#: - ``'arc'``
-#: - ``'polar'``
-#: - ``'depolar'``
-#: - ``'cylinder_2_plane'``
-#: - ``'plane_2_cylinder'``
-#: - ``'barrel'``
-#: - ``'barrel_inverse'``
-#: - ``'shepards'``
-#: - ``'resize'``
-#: - ``'sentinel'``
-#:
-#: .. versionadded:: 0.4.1
-DISTORTION_METHODS = (
-    'undefined', 'affine', 'affine_projection', 'scale_rotate_translate',
-    'perspective', 'perspective_projection', 'bilinear_forward',
-    'bilinear_reverse', 'polynomial', 'arc', 'polar', 'depolar',
-    'cylinder_2_plane', 'plane_2_cylinder', 'barrel', 'barrel_inverse',
-    'shepards', 'resize', 'sentinel'
-)
 
 #: (:class:`tuple`) The list of :attr:`~BaseImage.virtual_pixel` types.
 #: - ``'undefined'``
@@ -508,32 +599,13 @@ VIRTUAL_PIXEL_METHOD = ('undefined', 'background', 'constant', 'dither',
                         'mask', 'black', 'gray', 'white', 'horizontal_tile',
                         'vertical_tile', 'horizontal_tile_edge',
                         'vertical_tile_edge', 'checker_tile')
-
-
-#: (:class:`tuple`) The list of :attr:`~BaseImage.layer_method` types.
-#: - ``'undefined'``
-#: - ``'coalesce'``
-#: - ``'compareany'``
-#: - ``'compareclear'``
-#: - ``'compareoverlay'``
-#: - ``'dispose'``
-#: - ``'optimize'``
-#: - ``'optimizeimage'``
-#: - ``'optimizeplus'``
-#: - ``'optimizetrans'``
-#: - ``'removedups'``
-#: - ``'removezero'``
-#: - ``'composite'``
-#: - ``'merge'``
-#: - ``'flatten'``
-#: - ``'mosaic'``
-#: - ``'trimbounds'``
-#: .. versionadded:: 0.4.3
-IMAGE_LAYER_METHOD = ('undefined', 'coalesce', 'compareany', 'compareclear',
-                      'compareoverlay', 'dispose', 'optimize', 'optimizeimage',
-                      'optimizeplus', 'optimizetrans', 'removedups',
-                      'removezero', 'composite', 'merge', 'flatten', 'mosaic',
-                      'trimbounds')
+if MAGICK_VERSION_NUMBER >= 0x700:
+    VIRTUAL_PIXEL_METHOD = ('undefined', 'background', 'dither',
+                            'edge', 'mirror', 'random', 'tile', 'transparent',
+                            'mask', 'black', 'gray', 'white',
+                            'horizontal_tile', 'vertical_tile',
+                            'horizontal_tile_edge', 'vertical_tile_edge',
+                            'checker_tile')
 
 
 def manipulative(function):
@@ -1278,9 +1350,14 @@ class BaseImage(Resource):
         pixel = library.NewPixelWand()
         result = library.MagickGetImageBackgroundColor(self.wand, pixel)
         if result:
-            size = ctypes.sizeof(MagickPixelPacket)
+            if MAGICK_VERSION_NUMBER < 0x700:
+                pixel_structure = MagickPixelPacket
+            else:
+                pixel_structure = PixelInfo
+            size = ctypes.sizeof(pixel_structure)
             buffer = ctypes.create_string_buffer(size)
             library.PixelGetMagickColor(pixel, buffer)
+            pixel = library.DestroyPixelWand(pixel)
             return Color(raw=buffer)
         self.raise_exception()
 
@@ -1306,9 +1383,14 @@ class BaseImage(Resource):
         pixel = library.NewPixelWand()
         result = library.MagickGetImageMatteColor(self.wand, pixel)
         if result:
-            pixel_size = ctypes.sizeof(MagickPixelPacket)
+            if MAGICK_VERSION_NUMBER < 0x700:
+                pixel_structure = MagickPixelPacket
+            else:
+                pixel_structure = PixelInfo
+            pixel_size = ctypes.sizeof(pixel_structure)
             pixel_buffer = ctypes.create_string_buffer(pixel_size)
             library.PixelGetMagickColor(pixel, pixel_buffer)
+            pixel = library.DestroyPixelWand(pixel)
             return Color(raw=pixel_buffer)
         self.raise_exception()
 
@@ -1740,8 +1822,18 @@ class BaseImage(Resource):
            __ http://www.imagemagick.org/script/command-line-processing.php#geometry
 
         .. versionadded:: 0.2.2
+        .. versionupdated:: ?.?.?
+           This method will raise a :class:`NotImplementedError` if calling with
+           ImageMagick 7; which, removed :c:func:`MagickTransformImage`.
 
         """  # noqa
+        # MagickTransformImage was removed from ImageMagick 7.x.x, and it is
+        # not clear if this was a mistake.
+        if MAGICK_VERSION_NUMBER >= 0x700 or not library.MagickTransformImage:
+            raise NotImplementedError(
+                "Method not supported. `MagickTransformImage' is not " +
+                "available on library."
+            )
         # Check that the values given are the correct types.  ctypes will do
         # this automatically, but we can make the error message more friendly
         # here.
@@ -1776,6 +1868,7 @@ class BaseImage(Resource):
                                                             resize)
             self.sequence.instances = []
         else:
+            print('>>> ', self.wand, crop, resize)
             new_wand = library.MagickTransformImage(self.wand, crop, resize)
         if not new_wand:
             self.raise_exception()
@@ -1911,17 +2004,27 @@ class BaseImage(Resource):
                              repr(operator))
         if not isinstance(value, numbers.Real):
             raise TypeError('value must be real number, not ' + repr(value))
+        idx_op = EVALUATE_OPS.index(operator)
         if channel:
             if channel not in CHANNELS:
                 raise ValueError('expected value from CHANNELS, not ' +
                                  repr(channel))
-            library.MagickEvaluateImageChannel(self.wand,
-                                               CHANNELS[channel],
-                                               EVALUATE_OPS.index(operator),
-                                               value)
+            ch_const = CHANNELS[channel]
+            # Use channel method if IM6, else create channel mask for IM7.
+            if library.MagickEvaluateImageChannel:
+                library.MagickEvaluateImageChannel(self.wand,
+                                                   ch_const,
+                                                   idx_op,
+                                                   value)
+            else:
+                # Set active channel, and capture mask to restore.
+                channel_mask = library.MagickSetImageChannelMask(self.wand,
+                                                                 ch_const)
+                library.MagickEvaluateImage(self.wand, idx_op, value)
+                # Restore original state of channels
+                library.MagickSetImageChannelMask(self.wand, channel_mask)
         else:
-            library.MagickEvaluateImage(self.wand,
-                                        EVALUATE_OPS.index(operator), value)
+            library.MagickEvaluateImage(self.wand, idx_op, value)
         self.raise_exception()
 
     @manipulative
@@ -2029,8 +2132,21 @@ class BaseImage(Resource):
         if channel is None:
             library.MagickFunctionImage(self.wand, index, argc, argv)
         elif channel in CHANNELS:
-            library.MagickFunctionImageChannel(self.wand, CHANNELS[channel],
-                                               index, argc, argv)
+            ch_channel = CHANNELS[channel]
+            # Use channel method if IM6, else create channel mask for IM7.
+            if library.MagickFunctionImageChannel:
+                library.MagickFunctionImageChannel(self.wand,
+                                                   ch_channel,
+                                                   index,
+                                                   argc,
+                                                   argv)
+            else:
+                # Set active channel, and capture mask to restore.
+                channel_mask = library.MagickSetImageChannelMask(self.wand,
+                                                                 ch_channel)
+                library.MagickFunctionImage(self.wand, index, argc, argv)
+                # Restore original state of channels
+                library.MagickSetImageChannelMask(self.wand, channel_mask)
         else:
             raise ValueError('expected string from CHANNELS, not ' +
                              repr(channel))
@@ -2066,9 +2182,18 @@ class BaseImage(Resource):
         if channel is None:
             new_wand = library.MagickFxImage(self.wand, c_expression)
         elif channel in CHANNELS:
-            new_wand = library.MagickFxImageChannel(self.wand,
-                                                    CHANNELS[channel],
-                                                    c_expression)
+            ch_channel = CHANNELS[channel]
+            if library.MagickFxImageChannel:
+                new_wand = library.MagickFxImageChannel(self.wand,
+                                                        ch_channel,
+                                                        c_expression)
+            else:
+                # Set active channel, and capture mask to restore.
+                channel_mask = library.MagickSetImageChannelMask(self.wand,
+                                                                 ch_channel)
+                new_wand = library.MagickFxImage(self.wand, c_expression)
+                # Restore original state of channels
+                library.MagickSetImageChannelMask(self.wand, channel_mask)
         else:
             raise ValueError('expected string from CHANNELS, not ' +
                              repr(channel))
@@ -2103,10 +2228,9 @@ class BaseImage(Resource):
             library.MagickSetImageType(self.wand,
                                        IMAGE_TYPES.index('truecolormatte'))
             # Perform the black channel subtraction
-            library.MagickEvaluateImageChannel(self.wand,
-                                               CHANNELS['opacity'],
-                                               EVALUATE_OPS.index('subtract'),
-                                               t)
+            self.evaluate(operator='subtract',
+                          value=t.value,
+                          channel='opacity')
             self.raise_exception()
 
     @manipulative
@@ -2239,8 +2363,14 @@ class BaseImage(Resource):
             raise IndexError(repr(operator) + ' is an invalid composite '
                              'operator type; see wand.image.COMPOSITE_'
                              'OPERATORS dictionary')
-        library.MagickCompositeImageChannel(self.wand, ch_const, image.wand,
-                                            op, int(left), int(top))
+        if library.MagickCompositeImageChannel:
+            library.MagickCompositeImageChannel(self.wand, ch_const, image.wand,
+                                                op, int(left), int(top))
+        else:
+            ch_mask = library.MagickSetImageChannelMask(self.wand, ch_const)
+            library.MagickCompositeImage(self.wand, image.wand, op,
+                                         int(left), int(top))
+            library.MagickSetImageChannelMask(self.wand, ch_mask)
         self.raise_exception()
 
     @manipulative
@@ -2373,8 +2503,17 @@ class BaseImage(Resource):
             except KeyError:
                 raise ValueError(repr(channel) + ' is an invalid channel type'
                                  '; see wand.image.CHANNELS dictionary')
-            r = library.MagickNegateImageChannel(self.wand, ch_const,
-                                                 grayscale)
+            if library.MagickNegateImageChannel:
+                r = library.MagickNegateImageChannel(self.wand, ch_const,
+                                                     grayscale)
+            else:
+                # Set active channel, and capture mask to restore.
+                channel_mask = library.MagickSetImageChannelMask(self.wand,
+                                                                 ch_const)
+                r = library.MagickNegateImage(self.wand, grayscale)
+                # Restore original state of channels
+                library.MagickSetImageChannelMask(self.wand, channel_mask)
+
         else:
             r = library.MagickNegateImage(self.wand, grayscale)
         if not r:
@@ -2764,8 +2903,9 @@ class Image(BaseImage):
         manager.
 
         """
-        for i in range(0, len(self.sequence)):
-            self.sequence.pop()
+        if self.sequence:
+            for i in range(0, len(self.sequence)):
+                self.sequence.pop()
         super(Image, self).destroy()
 
     def read(self, file=None, filename=None, blob=None, resolution=None):
@@ -2887,7 +3027,19 @@ class Image(BaseImage):
             except KeyError:
                 raise ValueError(repr(channel) + ' is an invalid channel type'
                                  '; see wand.image.CHANNELS dictionary')
-            library.MagickLevelImageChannel(self.wand, ch_const, bp, gamma, wp)
+            if library.MagickLevelImageChannel:
+                library.MagickLevelImageChannel(self.wand,
+                                                ch_const,
+                                                bp,
+                                                gamma,
+                                                wp)
+            else:
+                # Set active channel, and capture mask to restore.
+                channel_mask = library.MagickSetImageChannelMask(self.wand,
+                                                                 ch_const)
+                library.MagickLevelImage(self.wand, bp, gamma, wp)
+                # Restore original state of channels
+                library.MagickSetImageChannelMask(self.wand, channel_mask)
         else:
             library.MagickLevelImage(self.wand, bp, gamma, wp)
 
@@ -3286,10 +3438,21 @@ class Image(BaseImage):
         black_point *= contrast_range
         white_point *= contrast_range
         if channel in CHANNELS:
-            library.MagickContrastStretchImageChannel(self.wand,
-                                                      CHANNELS[channel],
-                                                      black_point,
-                                                      white_point)
+            ch_const = CHANNELS[channel]
+            if library.MagickContrastStretchImageChannel:
+                library.MagickContrastStretchImageChannel(self.wand,
+                                                          ch_const,
+                                                          black_point,
+                                                          white_point)
+            else:
+                # Set active channel, and capture mask to restore.
+                channel_mask = library.MagickSetImageChannelMask(self.wand,
+                                                                 ch_const)
+                library.MagickContrastStretchImage(self.wand,
+                                                   black_point,
+                                                   white_point)
+                # Restore original state of channels
+                library.MagickSetImageChannelMask(self.wand, channel_mask)
         elif channel is None:
             library.MagickContrastStretchImage(self.wand,
                                                black_point,
@@ -3319,9 +3482,18 @@ class Image(BaseImage):
         if not isinstance(adjustment_value, numbers.Real):
             raise TypeError('expecting float, not ' + repr(adjustment_value))
         if channel in CHANNELS:
-            library.MagickGammaImageChannel(self.wand,
-                                            CHANNELS[channel],
-                                            adjustment_value)
+            ch_const = CHANNELS[channel]
+            if library.MagickGammaImageChannel:
+                library.MagickGammaImageChannel(self.wand,
+                                                ch_const,
+                                                adjustment_value)
+            else:
+                # Set active channel, and capture mask to restore.
+                channel_mask = library.MagickSetImageChannelMask(self.wand,
+                                                                 ch_const)
+                library.MagickGammaImage(self.wand, adjustment_value)
+                # Restore original state of channels
+                library.MagickSetImageChannelMask(self.wand, channel_mask)
         elif channel is None:
             library.MagickGammaImage(self.wand, adjustment_value)
         else:
@@ -3364,7 +3536,15 @@ class Image(BaseImage):
             except KeyError:
                 raise ValueError(repr(channel) + ' is an invalid channel type'
                                  '; see wand.image.CHANNELS dictionary')
-            r = library.MagickNormalizeImageChannel(self.wand, ch_const)
+            if library.MagickNormalizeImageChannel:
+                r = library.MagickNormalizeImageChannel(self.wand, ch_const)
+            else:
+                # Set active channel, and capture mask to restore.
+                channel_mask = library.MagickSetImageChannelMask(self.wand,
+                                                                 ch_const)
+                r = library.MagickNormalizeImage(self.wand)
+                # Restore original state of channels
+                library.MagickSetImageChannelMask(self.wand, channel_mask)
         else:
             r = library.MagickNormalizeImage(self.wand)
         if not r:
@@ -3454,7 +3634,11 @@ class Iterator(Resource, collections.Iterator):
         pixels = library.PixelGetNextIteratorRow(self.resource,
                                                  ctypes.byref(width))
         get_color = library.PixelGetMagickColor
-        struct_size = ctypes.sizeof(MagickPixelPacket)
+        if MAGICK_VERSION_NUMBER < 0x700:
+            pixel_structure = MagickPixelPacket
+        else:
+            pixel_structure = PixelInfo
+        struct_size = ctypes.sizeof(pixel_structure)
         if x is None:
             r_pixels = [None] * width.value
             for x in xrange(width.value):
@@ -3516,6 +3700,10 @@ class OptionDict(ImageProperty, collections.MutableMapping):
 
     .. versionadded:: 0.3.0
 
+    .. versionchange:: ?.?.?
+       Remove key check to :const:`OPTIONS`. Image properties are specific to
+       vendor, and this library should not attempt to manage the 100+ options
+       in a whitelist.
     """
 
     def __iter__(self):
@@ -3527,8 +3715,8 @@ class OptionDict(ImageProperty, collections.MutableMapping):
     def __getitem__(self, key):
         if not isinstance(key, string_type):
             raise TypeError('option name must be a string, not ' + repr(key))
-        if key not in OPTIONS:
-            raise ValueError('invalid option: ' + repr(key))
+        #if key not in OPTIONS:
+        #    raise ValueError('invalid option: ' + repr(key))
         image = self.image
         return text(library.MagickGetOption(image.wand, binary(key)))
 
@@ -3538,8 +3726,8 @@ class OptionDict(ImageProperty, collections.MutableMapping):
         if not isinstance(value, string_type):
             raise TypeError('option value must be a string, not ' +
                             repr(value))
-        if key not in OPTIONS:
-            raise ValueError('invalid option: ' + repr(key))
+        #if key not in OPTIONS:
+        #    raise ValueError('invalid option: ' + repr(key))
         image = self.image
         library.MagickSetOption(image.wand, binary(key), binary(value))
 
@@ -3659,7 +3847,15 @@ class ChannelDepthDict(ImageProperty, collections.Mapping):
 
     def __getitem__(self, channel):
         c = CHANNELS[channel]
-        depth = library.MagickGetImageChannelDepth(self.image.wand, c)
+        if library.MagickGetImageChannelDepth:
+            depth = library.MagickGetImageChannelDepth(self.image.wand, c)
+        else:
+            mask = 0
+            if c != 0:
+                mask = library.MagickSetImageChannelMask(self.image.wand, c)
+            depth = library.MagickGetImageDepth(self.image.wand);
+            if mask != 0:
+                library.MagickSetImageChannelMask(self.image.wand, mask)
         return int(depth)
 
 
