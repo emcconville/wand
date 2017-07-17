@@ -844,7 +844,7 @@ class Drawing(Resource):
             pixel_structure = MagickPixelPacket
         else:
             pixel_structure = PixelInfo
-        size = ctypes.sizeof(PixelInfo)
+        size = ctypes.sizeof(pixel_structure)
         buffer = ctypes.create_string_buffer(size)
         library.PixelGetMagickColor(pixel, buffer)
         pixel = library.DestroyPixelWand(pixel)

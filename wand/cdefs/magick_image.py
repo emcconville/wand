@@ -120,7 +120,8 @@ def load(lib, IM_VERSION):
     lib.MagickBlurImage.argtypes = [c_void_p, c_double, c_double]
     lib.MagickBlurImage.restype = c_bool
     if is_im_6:
-        lib.MagickBlurImageChannel.argtypes = [c_void_p, c_int, c_double, c_double]
+        lib.MagickBlurImageChannel.argtypes = [c_void_p, c_int, c_double,
+                                               c_double]
         lib.MagickBlurImageChannel.restype = c_bool
     lib.MagickBorderImage.argtypes = [c_void_p, c_void_p, c_size_t, c_size_t]
     lib.MagickBrightnessContrastImage.argtypes = [c_void_p, c_double, c_double]

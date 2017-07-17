@@ -2364,8 +2364,9 @@ class BaseImage(Resource):
                              'operator type; see wand.image.COMPOSITE_'
                              'OPERATORS dictionary')
         if library.MagickCompositeImageChannel:
-            library.MagickCompositeImageChannel(self.wand, ch_const, image.wand,
-                                                op, int(left), int(top))
+            library.MagickCompositeImageChannel(self.wand, ch_const,
+                                                image.wand, op, int(left),
+                                                int(top))
         else:
             ch_mask = library.MagickSetImageChannelMask(self.wand, ch_const)
             library.MagickCompositeImage(self.wand, image.wand, op,
@@ -3715,8 +3716,8 @@ class OptionDict(ImageProperty, collections.MutableMapping):
     def __getitem__(self, key):
         if not isinstance(key, string_type):
             raise TypeError('option name must be a string, not ' + repr(key))
-        #if key not in OPTIONS:
-        #    raise ValueError('invalid option: ' + repr(key))
+        # if key not in OPTIONS:
+        #     raise ValueError('invalid option: ' + repr(key))
         image = self.image
         return text(library.MagickGetOption(image.wand, binary(key)))
 
@@ -3726,8 +3727,8 @@ class OptionDict(ImageProperty, collections.MutableMapping):
         if not isinstance(value, string_type):
             raise TypeError('option value must be a string, not ' +
                             repr(value))
-        #if key not in OPTIONS:
-        #    raise ValueError('invalid option: ' + repr(key))
+        # if key not in OPTIONS:
+        #     raise ValueError('invalid option: ' + repr(key))
         image = self.image
         library.MagickSetOption(image.wand, binary(key), binary(value))
 
@@ -3853,7 +3854,7 @@ class ChannelDepthDict(ImageProperty, collections.Mapping):
             mask = 0
             if c != 0:
                 mask = library.MagickSetImageChannelMask(self.image.wand, c)
-            depth = library.MagickGetImageDepth(self.image.wand);
+            depth = library.MagickGetImageDepth(self.image.wand)
             if mask != 0:
                 library.MagickSetImageChannelMask(self.image.wand, mask)
         return int(depth)

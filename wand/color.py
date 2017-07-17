@@ -322,13 +322,13 @@ def scale_quantum_to_int8(quantum):
         if QUANTUM_DEPTH == 8:
             v = quantum / table[QUANTUM_DEPTH]
         elif QUANTUM_DEPTH == 16:
-            v = ((int(quantum+128)-(int(quantum+128) >> 8)) >> 8);
+            v = ((int(quantum+128)-(int(quantum+128) >> 8)) >> 8)
         elif QUANTUM_DEPTH == 32:
-            v = ((quantum+8421504) / table[QUANTUM_DEPTH]);
+            v = ((quantum+8421504) / table[QUANTUM_DEPTH])
         elif QUANTUM_DEPTH == 64:
             v = quantum / table[QUANTUM_DEPTH]
     else:
         v = quantum / table[QUANTUM_DEPTH]
-    #if v >= 255:
-    #    return 255
+    if v >= 255:
+        return 255
     return int(v + 0.5)

@@ -6,7 +6,7 @@
 from ctypes import (POINTER, c_void_p, c_char_p, c_double, c_int, c_uint,
                     c_size_t, c_ubyte, c_ulong)
 from wand.cdefs.wandtypes import c_magick_char_p, c_ssize_t
-from wand.cdefs.structures import AffineMatrix, PointInfo
+from wand.cdefs.structures import PointInfo
 
 __all__ = ('load',)
 
