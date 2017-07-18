@@ -1744,9 +1744,13 @@ def test_modulate(fx_asset, display):
         img.modulate(120, 120, 120)
         after = img[100, 100]
         assert before != after
-        assert 0.98 <= after.red <= 0.99
-        assert 0.98 <= after.green <= 0.99
-        assert 0.96 <= after.blue <= 0.97
+        #  Resulting channels should be between around ``(0.98, 0.98, 0.92)``;
+        #  however, JPEG format + quantuom depth can effect this metric.
+        #  For this test, any value above between ``(0.89, 0.89, 0.72)`` and
+        #  ``(1.0, 1.0, 1.0)`` should pass.
+        assert 0.90 <= after.red <= 0.99
+        assert 0.90 <= after.green <= 0.99
+        assert 0.80 <= after.blue <= 0.97
 
 
 def test_unsharp_mask(fx_asset, display):
