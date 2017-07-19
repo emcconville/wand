@@ -13,6 +13,7 @@ from pytest import fixture, mark, skip
 
 from wand.display import display as display_fn
 from wand.image import Image
+from wand.version import MAGICK_VERSION, VERSION
 
 
 def pytest_addoption(parser):
@@ -47,6 +48,11 @@ def pytest_runtest_makereport(item, call, __multicall__):
     # be "setup", "call", "teardown"
     setattr(item, 'rep_' + rep.when, rep)
     return rep
+
+
+def pytest_report_header(config):
+    versions = (VERSION, os.linesep, MAGICK_VERSION, os.linesep)
+    return "Wand Version :{0}{1}ImageMagick Version: {2}{3}".format(*versions)
 
 
 @fixture
