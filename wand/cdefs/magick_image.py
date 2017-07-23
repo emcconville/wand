@@ -123,7 +123,11 @@ def load(lib, IM_VERSION):
         lib.MagickBlurImageChannel.argtypes = [c_void_p, c_int, c_double,
                                                c_double]
         lib.MagickBlurImageChannel.restype = c_bool
-    lib.MagickBorderImage.argtypes = [c_void_p, c_void_p, c_size_t, c_size_t]
+    border_image_args = [c_void_p, c_void_p, c_size_t, c_size_t]
+    if is_im_7:
+        border_image_args.append(c_int)
+    lib.MagickBorderImage.argtypes = border_image_args
+    lib.MagickBorderImage.restype = c_bool
     lib.MagickBrightnessContrastImage.argtypes = [c_void_p, c_double, c_double]
     lib.MagickBrightnessContrastImage.restype = c_bool
     if is_im_6:
@@ -667,11 +671,13 @@ def load(lib, IM_VERSION):
     lib.MagickSepiaToneImage.argtypes = [c_void_p, c_double]
     lib.MagickSepiaToneImage.restype = c_bool
     if is_im_6:
+        lib.MagickSeparateImage = None
         lib.MagickSeparateImageChannel.argtypes = [c_void_p, c_int]
         lib.MagickSeparateImageChannel.restype = c_bool
     else:
-        lib.MagickSeparateImage.argtypes = [c_void_p, c_int]
+        lib.MagickSeparateImage.argtypes = [c_void_p]
         lib.MagickSeparateImage.restype = c_bool
+        lib.MagickSeparateImageChannel = None
     lib.MagickSetImage.argtypes = [c_void_p, c_void_p]
     lib.MagickSetImage.restype = c_bool
     lib.MagickSetImageAlphaChannel.argtypes = [c_void_p, c_int]

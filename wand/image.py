@@ -3302,7 +3302,7 @@ class Image(BaseImage):
 
         """
         with color or self[0, 0] as color:
-            self.border(color, 1, 1)
+            self.border(color, 1, 1, compose="copy")
         result = library.MagickTrimImage(self.wand, fuzz)
         if not result:
             self.raise_exception()
@@ -3382,7 +3382,7 @@ class Image(BaseImage):
         except AttributeError:
             self._auto_orient()
 
-    def border(self, color, width, height):
+    def border(self, color, width, height, compose="copy"):
         """Surrounds the image with a border.
 
         :param bordercolor: the border color pixel wand
@@ -3391,16 +3391,28 @@ class Image(BaseImage):
         :type width: :class:`numbers.Integral`
         :param height: the border height
         :type height: :class:`numbers.Integral`
+        :param compose: Use composite operator when applying frame. Only used
+                        if called with ImageMagick 7+.
+        :type compose: :class:`basestring`
 
         .. versionadded:: 0.3.0
-
+        .. versionchanged:: ?.?.?
+           Added ``compose`` paramater, and ImageMagick 7 support.
         """
         if not isinstance(color, Color):
             raise TypeError('color must be a wand.color.Color object, not ' +
                             repr(color))
         with color:
-            result = library.MagickBorderImage(self.wand, color.resource,
-                                               width, height)
+            if MAGICK_VERSION_NUMBER < 0x700:
+                result = library.MagickBorderImage(self.wand, color.resource,
+                                                   width, height)
+            else:
+                if compose not in COMPOSITE_OPERATORS:
+                    raise TypeError(repr(compose) + ' is an invalid type. ' +
+                                    'See wand.image.COMPOSITE_OPERATORS.')
+                compose_idx = COMPOSITE_OPERATORS.index(compose)
+                result = library.MagickBorderImage(self.wand, color.resource,
+                                                   width, height, compose_idx)
         if not result:
             self.raise_exception()
 
@@ -3815,7 +3827,12 @@ class ChannelImageDict(ImageProperty, collections.Mapping):
     def __getitem__(self, channel):
         c = CHANNELS[channel]
         img = self.image.clone()
-        succeeded = library.MagickSeparateImageChannel(img.wand, c)
+        if library.MagickSeparateImageChannel:
+            succeeded = library.MagickSeparateImageChannel(img.wand, c)
+        else:
+            c_mask = library.MagickSetImageChannelMask(img.wand, c)
+            succeeded = library.MagickSeparateImage(img.wand)
+            library.MagickSetImageChannelMask(img.wand, c_mask)
         if not succeeded:
             try:
                 img.raise_exception()
