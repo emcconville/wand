@@ -609,7 +609,7 @@ def test_set_fill_pattern_url(display, fx_wand):
             fx_wand.rectangle(top=5, left=5, width=40, height=40)
             fx_wand.draw(img)
             display(img)
-            assert img[25, 25] == green
+            assert img[17, 17] == green
 
 
 def test_set_stroke_pattern_url(display, fx_wand):
