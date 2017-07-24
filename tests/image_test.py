@@ -943,8 +943,12 @@ def test_rotate(fx_asset):
                 assert bg == cloned[0, 0] == cloned[0, -1]
                 assert bg == cloned[-1, 0] == cloned[-1, -1]
                 with Color('black') as black:
-                    assert black == cloned[2, 70] == cloned[35, 37]
-                    assert black == cloned[85, 88] == cloned[52, 120]
+                    # Until we implement antialiasing, we need to evaluate
+                    # pixels next to corners.
+                    assert black == cloned[5, 70]
+                    assert black == cloned[36, 39]
+                    assert black == cloned[85, 88]
+                    assert black == cloned[54, 120]
 
 
 @mark.slow
