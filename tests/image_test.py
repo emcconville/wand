@@ -971,9 +971,13 @@ def test_rotate_gif(tmpdir, fx_asset):
 
 
 def test_transparent_color(fx_asset):
-    """TransparentPaint test"""
+    """TransparentPaint test
+    .. versionchanged:: ?.?.?
+       Alpha channel must be enabled with ``'set'``, previously ``True``.
+       See docstring in :meth:`wand.image.BaseImage.alpha_channel`.
+    """
     with Image(filename=str(fx_asset.join('rotatetest.gif'))) as img:
-        img.alpha_channel = True
+        img.alpha_channel = 'set'
         with Color('white') as white:
             img.transparent_color(white, 0.0, 2, 0)
             assert img[75, 50].alpha == 0
@@ -1066,7 +1070,7 @@ def test_transparentize(fx_asset):
                 assert im[99, 100] == transparent
                 assert im[100, 100] == black
                 im.transparentize(0.3)
-                assert im[99, 100] == transparent
+                assert im[99, 100].alpha_int8 == transparent.alpha_int8
                 with im[100, 100] as c:
                     assert c.red == c.green == c.blue == 0
                     assert 0.69 < c.alpha < 0.71
@@ -1462,7 +1466,7 @@ def test_normalize_channel(fx_asset):
 def test_level_default(fx_asset):
     with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
         # Adjust the levels to make this image entirely black
-        img.level(1, 1)
+        img.level(black=1, white=1)
         with img[0, 0] as dark:
             assert dark.red_int8 <= dark.green_int8 <= dark.blue_int8 <= 0
         with img[0, -1] as dark:

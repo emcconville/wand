@@ -24,7 +24,7 @@ from .compat import (binary, binary_type, encode_filename, file_types,
 from .exceptions import MissingDelegateError, WandException
 from .resource import DestroyedResourceError, Resource
 from .font import Font
-from .version import MAGICK_VERSION_NUMBER
+from .version import MAGICK_VERSION_NUMBER, MAGICK_HDRI
 
 
 __all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COLORSPACE_TYPES',
@@ -3022,6 +3022,9 @@ class Image(BaseImage):
 
         bp = float(self.quantum_range * black)
         wp = float(self.quantum_range * white)
+        if MAGICK_HDRI:
+            bp -= 0.5  # TODO: Document why HDRI requires 0.5 adjustments.
+            wp -= 0.5
         if channel:
             try:
                 ch_const = CHANNELS[channel]
