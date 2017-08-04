@@ -181,9 +181,14 @@ def load(lib, IM_VERSION):
     if not is_im_6:
         lib.MagickCompareImagesLayers.argtypes = [c_void_p, c_int]
         lib.MagickCompareImagesLayers.restype = c_void_p
-    lib.MagickCompositeImage.argtypes = [
-        c_void_p, c_void_p, c_int, c_ssize_t, c_ssize_t
-    ]
+    if is_im_6:
+        lib.MagickCompositeImage.argtypes = [
+            c_void_p, c_void_p, c_int, c_ssize_t, c_ssize_t
+        ]
+    else:
+        lib.MagickCompositeImage.argtypes = [
+            c_void_p, c_void_p, c_int, c_bool, c_ssize_t, c_ssize_t
+        ]
     lib.MagickCompositeImage.restype = c_bool
     lib.MagickCompositeLayers.argtypes = [
         c_void_p, c_void_p, c_int, c_ssize_t, c_ssize_t
@@ -675,7 +680,7 @@ def load(lib, IM_VERSION):
         lib.MagickSeparateImageChannel.argtypes = [c_void_p, c_int]
         lib.MagickSeparateImageChannel.restype = c_bool
     else:
-        lib.MagickSeparateImage.argtypes = [c_void_p]
+        lib.MagickSeparateImage.argtypes = [c_void_p, c_int]
         lib.MagickSeparateImage.restype = c_bool
         lib.MagickSeparateImageChannel = None
     lib.MagickSetImage.argtypes = [c_void_p, c_void_p]

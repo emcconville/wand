@@ -61,7 +61,8 @@ __all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COLORSPACE_TYPES',
 #:    __ http://www.imagemagick.org/api/channel.php#SetImageAlphaChannel
 ALPHA_CHANNEL_TYPES = ('undefined', 'activate', 'background', 'copy',
                        'deactivate', 'extract', 'opaque', 'reset', 'set',
-                       'shape', 'transparent', 'flatten', 'remove')
+                       'shape', 'transparent', 'flatten', 'remove',
+                       'associate', 'disassociate')
 if MAGICK_VERSION_NUMBER >= 0x700:
     ALPHA_CHANNEL_TYPES = ('undefined', 'activate', 'associate', 'background',
                            'copy', 'deactivate', 'discrete', 'disassociate',
@@ -2315,8 +2316,12 @@ class BaseImage(Resource):
         elif not isinstance(top, numbers.Integral):
             raise TypeError('top must be an integer, not ' + repr(left))
         op = COMPOSITE_OPERATORS.index('over')
-        library.MagickCompositeImage(self.wand, image.wand, op,
-                                     int(left), int(top))
+        if MAGICK_VERSION_NUMBER < 0x700:
+            library.MagickCompositeImage(self.wand, image.wand, op,
+                                         int(left), int(top))
+        else:
+            library.MagickCompositeImage(self.wand, image.wand, op, True,
+                                         int(left), int(top))
         self.raise_exception()
 
     @manipulative
@@ -2369,7 +2374,7 @@ class BaseImage(Resource):
                                                 int(top))
         else:
             ch_mask = library.MagickSetImageChannelMask(self.wand, ch_const)
-            library.MagickCompositeImage(self.wand, image.wand, op,
+            library.MagickCompositeImage(self.wand, image.wand, op, True,
                                          int(left), int(top))
             library.MagickSetImageChannelMask(self.wand, ch_mask)
         self.raise_exception()
@@ -3046,7 +3051,6 @@ class Image(BaseImage):
                 library.MagickSetImageChannelMask(self.wand, channel_mask)
         else:
             library.MagickLevelImage(self.wand, bp, gamma, wp)
-
         self.raise_exception()
 
     @property
@@ -3833,9 +3837,7 @@ class ChannelImageDict(ImageProperty, collections.Mapping):
         if library.MagickSeparateImageChannel:
             succeeded = library.MagickSeparateImageChannel(img.wand, c)
         else:
-            c_mask = library.MagickSetImageChannelMask(img.wand, c)
-            succeeded = library.MagickSeparateImage(img.wand)
-            library.MagickSetImageChannelMask(img.wand, c_mask)
+            succeeded = library.MagickSeparateImage(img.wand, c)
         if not succeeded:
             try:
                 img.raise_exception()

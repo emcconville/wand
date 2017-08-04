@@ -1178,11 +1178,15 @@ def test_composite_channel(fx_asset):
             (left, bottom + 1), (left - 1, bottom), (left - 1, bottom + 1),
             (right, bottom + 1), (right + 1, bottom), (right + 1, bottom + 1)
         ]
+        if MAGICK_VERSION_NUMBER < 0x700:
+            channel_name = 'red'
+        else:
+            channel_name = 'default_channels'
         with orig.clone() as img:
             with Color('black') as color:
                 with Image(width=w // 2, height=h // 2,
                            background=color) as cimg:
-                    img.composite_channel('red', cimg, 'copy_red',
+                    img.composite_channel(channel_name, cimg, 'copy_red',
                                           w // 4, h // 4)
             # These points should be not changed:
             for point in outer_points:
