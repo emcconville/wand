@@ -1778,7 +1778,10 @@ def test_unsharp_mask(fx_asset, display):
 
 def test_compression(fx_asset):
     with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
-        assert img.compression == 'group4'
+        # Legacy releases/library asserted ``'group4'`` compression type.
+        # IM 7 will correctly report ``'jpeg'``, but ``'group4'`` should
+        # still be apart of regression acceptance.
+        assert img.compression in ('group4', 'jpeg')
 
 
 def test_issue_150(fx_asset, tmpdir):
