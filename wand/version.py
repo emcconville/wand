@@ -95,8 +95,14 @@ if libmagick:
     #: This value is identical to what is returned by
     #: :c:func:`GetMagickDelegates`
     #:
+    #: Set to empty string if the system uses an older version of
+    #: ImageMagick-6, or does not support :c:func:`GetMagickDelegates`.
+    #:
     #: .. versionadded:: ?.?.?
-    MAGICK_VERSION_DELEGATES = text(libmagick.GetMagickDelegates())
+    if libmagick.GetMagickDelegates:
+        MAGICK_VERSION_DELEGATES = text(libmagick.GetMagickDelegates())
+    else:
+        MAGICK_VERSION_DELEGATES = ""
 
     #: (:class:`basestring`) A string of all features enabled.
     #: This value is identical to what is returned by

@@ -38,8 +38,11 @@ def load(libmagick):
     libmagick.GetNextImageInList.restype = c_void_p
     libmagick.GetMagickCopyright.argtypes = []
     libmagick.GetMagickCopyright.restype = c_char_p
-    libmagick.GetMagickDelegates.argtypes = []
-    libmagick.GetMagickDelegates.restype = c_char_p
+    try:
+        libmagick.GetMagickDelegates.argtypes = []
+        libmagick.GetMagickDelegates.restype = c_char_p
+    except AttributeError:
+        libmagick.GetMagickDelegates = None
     libmagick.GetMagickFeatures.argtypes = []
     libmagick.GetMagickFeatures.restype = c_char_p
     try:
