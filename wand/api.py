@@ -72,6 +72,9 @@ def library_paths():
                 libwand = 'CORE_RL_wand_{0}.dll'.format(suffix),
                 libmagick = 'CORE_RL_magick_{0}.dll'.format(suffix),
                 yield magick_path(libwand), magick_path(libmagick)
+                libwand = 'CORE_RL_MagickWand_{0}.dll'.format(suffix),
+                libmagick = 'CORE_RL_MagickCore_{0}.dll'.format(suffix),
+                yield magick_path(libwand), magick_path(libmagick)
                 libwand = 'libMagickWand{0}.dll'.format(suffix),
                 libmagick = 'libMagickCore{0}.dll'.format(suffix),
                 yield magick_path(libwand), magick_path(libmagick)
@@ -84,6 +87,9 @@ def library_paths():
         if system == 'Windows':
             libwand = ctypes.util.find_library('CORE_RL_wand_' + suffix)
             libmagick = ctypes.util.find_library('CORE_RL_magick_' + suffix)
+            yield libwand, libmagick
+            libwand = ctypes.util.find_library('CORE_RL_MagickWand_' + suffix)
+            libmagick = ctypes.util.find_library('CORE_RL_MagickCore_' + suffix)
             yield libwand, libmagick
             libwand = ctypes.util.find_library('libMagickWand' + suffix)
             libmagick = ctypes.util.find_library('libMagickCore' + suffix)
