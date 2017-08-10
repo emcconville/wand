@@ -190,10 +190,13 @@ def load(lib, IM_VERSION):
             c_void_p, c_void_p, c_int, c_bool, c_ssize_t, c_ssize_t
         ]
     lib.MagickCompositeImage.restype = c_bool
-    lib.MagickCompositeLayers.argtypes = [
-        c_void_p, c_void_p, c_int, c_ssize_t, c_ssize_t
-    ]
-    lib.MagickCompositeLayers.restype = c_bool
+    try:
+        lib.MagickCompositeLayers.argtypes = [
+            c_void_p, c_void_p, c_int, c_ssize_t, c_ssize_t
+        ]
+        lib.MagickCompositeLayers.restype = c_bool
+    except AttributeError:
+        lib.MagickCompositeLayers = None
     if is_im_6:
         lib.MagickCompositeImageChannel.argtypes = [
             c_void_p, c_int, c_void_p, c_int, c_ssize_t, c_ssize_t
@@ -331,7 +334,7 @@ def load(lib, IM_VERSION):
         lib.MagickGaussianBlurImageChannel.restype = c_bool
     else:
         lib.MagickGaussianBlurImageChannel = None
-    lib.MagickGetImage.argtype = [c_void_p]
+    lib.MagickGetImage.argtypes = [c_void_p]
     lib.MagickGetImage.restype = c_void_p
     lib.MagickGetImageAlphaChannel.argtypes = [c_void_p]
     lib.MagickGetImageAlphaChannel.restype = c_size_t
@@ -368,8 +371,11 @@ def load(lib, IM_VERSION):
     lib.MagickGetImageCompression.restype = c_int
     lib.MagickGetImageCompressionQuality.argtypes = [c_void_p]
     lib.MagickGetImageCompressionQuality.restype = c_ssize_t
-    lib.MagickGetImageEndian.argtypes = [c_void_p]
-    lib.MagickGetImageEndian.restype = c_int
+    try:
+        lib.MagickGetImageEndian.argtypes = [c_void_p]
+        lib.MagickGetImageEndian.restype = c_int
+    except AttributeError:
+        lib.MagickGetImageEndian = None
     lib.MagickGetImageDelay.argtypes = [c_void_p]
     lib.MagickGetImageDelay.restype = c_size_t
     lib.MagickGetImageDepth.argtypes = [c_void_p]
@@ -576,8 +582,11 @@ def load(lib, IM_VERSION):
         lib.MagickOpaquePaintImageChannel.restype = c_bool
     lib.MagickOptimizeImageLayers.argtypes = [c_void_p]
     lib.MagickOptimizeImageLayers.restype = c_void_p
-    lib.MagickOptimizeImageTransparency.argtypes = [c_void_p]
-    lib.MagickOptimizeImageTransparency.restype = c_bool
+    try:
+        lib.MagickOptimizeImageTransparency.argtypes = [c_void_p]
+        lib.MagickOptimizeImageTransparency.restype = c_bool
+    except AttributeError:
+        lib.MagickOptimizeImageTransparency = None
     if is_im_6:
         lib.MagickOrderedPosterizeImage.argtypes = [c_void_p, c_char_p]
         lib.MagickOrderedPosterizeImage.restype = c_bool
@@ -606,7 +615,7 @@ def load(lib, IM_VERSION):
     lib.MagickQuantizeImages.argtypes = [
         c_void_p, c_size_t, c_int, c_size_t, c_bool, c_bool
     ]
-    lib.MagickQuantizeImages.restypes = c_bool
+    lib.MagickQuantizeImages.restype = c_bool
     lib.MagickRaiseImage.argtypes = [
         c_void_p, c_size_t, c_size_t, c_ssize_t, c_ssize_t, c_bool
     ]
@@ -726,8 +735,11 @@ def load(lib, IM_VERSION):
     lib.MagickSetImageDepth.restype = c_bool
     lib.MagickSetImageDispose.argtypes = [c_void_p, c_int]
     lib.MagickSetImageDispose.restype = c_bool
-    lib.MagickSetImageEndian.argtypes = [c_void_p, c_int]
-    lib.MagickSetImageEndian.restype = c_bool
+    try:
+        lib.MagickSetImageEndian.argtypes = [c_void_p, c_int]
+        lib.MagickSetImageEndian.restype = c_bool
+    except AttributeError:
+        lib.MagickSetImageEndian = None
     lib.MagickSetImageExtent.argtypes = [c_void_p, c_size_t, c_size_t]
     lib.MagickSetImageExtent.restype = c_bool
     lib.MagickSetImageFilename.argtypes = [c_void_p, c_char_p]
@@ -740,7 +752,7 @@ def load(lib, IM_VERSION):
     lib.MagickSetImageGamma.restype = c_bool
     lib.MagickSetImageGravity.argtypes = [c_void_p, c_int]
     lib.MagickSetImageGravity.restype = c_bool
-    lib.MagickSetImageGreenPrimary.argtype = [c_void_p, c_double, c_double]
+    lib.MagickSetImageGreenPrimary.argtypes = [c_void_p, c_double, c_double]
     lib.MagickSetImageGreenPrimary.restype = c_bool
     lib.MagickSetImageInterlaceScheme.argtypes = [c_void_p, c_int]
     lib.MagickSetImageInterlaceScheme.restype = c_bool
@@ -777,7 +789,10 @@ def load(lib, IM_VERSION):
     lib.MagickSetImageVirtualPixelMethod.argtypes = [c_void_p, c_int]
     lib.MagickSetImageWhitePoint.argtypes = [c_void_p, c_double, c_double]
     lib.MagickSetImageWhitePoint.restype = c_bool
-    lib.MagickSetResolution.argtypes = [c_void_p, c_double, c_double]
+    try:
+        lib.MagickSetResolution.argtypes = [c_void_p, c_double, c_double]
+    except AttributeError:
+        lib.MagickSetResolution = None
     lib.MagickShadeImage.argtypes = [c_void_p, c_bool, c_double, c_double]
     lib.MagickShadeImage.restype = c_bool
     lib.MagickShadowImage.argtypes = [
@@ -818,10 +833,10 @@ def load(lib, IM_VERSION):
     lib.MagickSmushImages.restype = c_void_p
     lib.MagickSolarizeImage.argtypes = [c_void_p, c_double]
     lib.MagickSolarizeImage.restype = c_bool
-    if is_im_6:
+    try:
         lib.MagickSolarizeImageChannel.argtypes = [c_void_p, c_int, c_double]
         lib.MagickSolarizeImageChannel.restype = c_bool
-    else:
+    except AttributeError:
         lib.MagickSolarizeImageChannel = None
     lib.MagickSparseColorImage.argtypes = [
         c_void_p, c_int, c_int, c_size_t, POINTER(c_double)
@@ -852,7 +867,7 @@ def load(lib, IM_VERSION):
     lib.MagickSwirlImage.restype = c_bool
     lib.MagickTextureImage.argtypes = [c_void_p, c_void_p]
     lib.MagickTextureImage.restype = c_void_p
-    lib.MagickTintImage.argtype = [c_void_p, c_void_p, c_void_p]
+    lib.MagickTintImage.argtypes = [c_void_p, c_void_p, c_void_p]
     lib.MagickTintImage.restype = c_bool
     lib.MagickThresholdImage.argtypes = [c_void_p, c_double]
     lib.MagickThresholdImage.restype = c_bool
