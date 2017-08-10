@@ -222,6 +222,7 @@ def test_draw_circle(fx_asset):
 
 
 def test_draw_comment():
+    skip('TODO - Rewrite as MVG is now disabled by default on CI runner.')
     comment = 'pikachu\'s ghost'
     expected = '#pikachu\'s ghost\n'
     with nested(Image(width=1, height=1), Drawing()) as (img, draw):

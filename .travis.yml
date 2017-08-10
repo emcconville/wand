@@ -25,9 +25,9 @@ script:
 - python -mwand.version --verbose
 - >
     if [[ "$TRAVIS_PYTHON_VERSION" == "pypy" || "$TRAVIS_PYTHON_VERSION" == "pypy3" ]]; then
-      py.test --boxed --durations=20 -n 6;
+      py.test --boxed --durations=20;
     else
-      py.test --cov wand --boxed --durations=20 -n 6;
+      py.test --cov wand --boxed --durations=20;
     fi
 - >
     if [[ "$TRAVIS_PYTHON_VERSION" != "2.6" ]]; then

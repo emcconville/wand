@@ -948,7 +948,7 @@ def test_rotate(fx_asset):
                     assert black == cloned[5, 70]
                     assert black == cloned[36, 39]
                     assert black == cloned[85, 88]
-                    assert black == cloned[54, 120]
+                    assert black == cloned[53, 120]
 
 
 @mark.slow
