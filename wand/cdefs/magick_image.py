@@ -851,10 +851,16 @@ def load(lib, IM_VERSION):
     lib.MagickStatisticImage.argtypes = [c_void_p, c_int, c_size_t, c_size_t]
     lib.MagickStatisticImage.restype = c_bool
     if is_im_6:
-        lib.MagickStatisticImageChannel.argtypes = [
-            c_void_p, c_int, c_int, c_size_t, c_size_t
-        ]
-        lib.MagickStatisticImageChannel.restype = c_bool
+        try:
+            # TODO - Arguments for MagickStatisticImageChannel changed
+            # around commit 2d8a006b @ Feb 9 13:02:53 2013. Use IM_VERSION
+            # to determine correct method signature/arguments.
+            lib.MagickStatisticImageChannel.argtypes = [
+                c_void_p, c_int, c_int, c_size_t, c_size_t
+            ]
+            lib.MagickStatisticImageChannel.restype = c_bool
+        except AttributeError:
+            lib.MagickStatisticImageChannel = None
     else:
         lib.MagickStatisticImageChannel = None
     lib.MagickSteganoImage.argtypes = [c_void_p, c_void_p, c_ssize_t]
