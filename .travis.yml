@@ -20,6 +20,10 @@ install:
     if [[ "$TRAVIS_PYTHON_VERSION" != "pypy" ]]; then
       pip install 'pytest-cov>=1.8.0';
     fi
+- >
+    if [[ "$TRAVIS_PYTHON_VERSION" == "3.6" ]]; then
+      pip install --upgrade setuptools;
+    fi
 - pip install -e .[test] --upgrade
 script:
 - python -mwand.version --verbose
