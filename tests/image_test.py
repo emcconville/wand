@@ -1030,9 +1030,15 @@ def test_get_alpha_channel(fx_asset):
 def test_set_alpha_channel(fx_asset):
     """Sets alpha channel to off."""
     with Image(filename=str(fx_asset.join('watermark.png'))) as img:
-        img.alpha_channel = 'on'
+        if MAGICK_VERSION_NUMBER < 0x700:
+            enable_option = 'on'
+            disable_option = False
+        else:
+            enable_option = 'associate'
+            disable_option = 'disassociate'
+        img.alpha_channel = enable_option
         assert img.alpha_channel is True
-        img.alpha_channel = False
+        img.alpha_channel = disable_option
         assert img.alpha_channel is False
         img.alpha_channel = 'opaque'
         assert img[0, 0].alpha == 1.0

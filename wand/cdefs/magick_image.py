@@ -337,7 +337,7 @@ def load(lib, IM_VERSION):
     lib.MagickGetImage.argtypes = [c_void_p]
     lib.MagickGetImage.restype = c_void_p
     lib.MagickGetImageAlphaChannel.argtypes = [c_void_p]
-    lib.MagickGetImageAlphaChannel.restype = c_size_t
+    lib.MagickGetImageAlphaChannel.restype = c_bool
     lib.MagickGetImageBackgroundColor.argtypes = [c_void_p, c_void_p]
     lib.MagickGetImageBackgroundColor.restype = c_bool
     lib.MagickGetImageBlob.argtypes = [c_void_p, POINTER(c_size_t)]
