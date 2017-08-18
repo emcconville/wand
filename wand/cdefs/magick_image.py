@@ -760,7 +760,7 @@ def load(lib, IM_VERSION):
     lib.MagickSetImageInterpolateMethod.restype = c_bool
     lib.MagickSetImageIterations.argtypes = [c_void_p, c_size_t]
     lib.MagickSetImageIterations.restype = c_bool
-    lib.MagickSetImageMatte.argtypes = [c_void_p, c_int]
+    lib.MagickSetImageMatte.argtypes = [c_void_p, c_bool]
     lib.MagickSetImageMatteColor.argtypes = [c_void_p, c_void_p]
     if is_im_6:
         lib.MagickSetImageOpacity.argtypes = [c_void_p, c_double]

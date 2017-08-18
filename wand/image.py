@@ -291,7 +291,22 @@ COMPOSITE_OPERATORS = (
     'plus', 'replace', 'saturate', 'screen', 'soft_light', 'src_atop', 'src',
     'src_in', 'src_out', 'src_over', 'subtract', 'threshold', 'xor', 'divide'
 )
-
+if MAGICK_VERSION_NUMBER >= 0x700:
+    COMPOSITE_OPERATORS = (
+        'undefined', 'alpha', 'atop', 'blend', 'blur', 'bumpmap',
+        'change_mask', 'clear', 'color_burn', 'color_dodge', 'colorize',
+        'copy_black', 'copy_blue', 'copy', 'copy_cyan', 'copy_green',
+        'copy_magenta', 'copy_alpha', 'copy_red', 'copy_yellow', 'darken',
+        'darken_intensity', 'difference', 'displace', 'dissolve', 'distort',
+        'divide_dst', 'divide_src', 'dst_atop', 'dst', 'dst_in', 'dst_out',
+        'dst_over', 'exclusion', 'hard_light', 'hard_mix', 'hue', 'in',
+        'intensity', 'lighten', 'lighten_intensity', 'linear_burn',
+        'linear_dodge', 'linear_light', 'luminize', 'mathematics', 'minus_dst',
+        'minus_src', 'modulate', 'modulus_add', 'modulus_subtract', 'multiply',
+        'no', 'out', 'over', 'overlay', 'pegtop_light', 'pin_light', 'plus',
+        'replace', 'saturate', 'screen', 'soft_light', 'src_atop', 'src',
+        'src_in', 'src_out', 'src_over', 'threshold', 'vivid_light', 'xor'
+    )
 
 #: (:class:`tuple`) The list of :attr:`Image.compression` types.
 #:
