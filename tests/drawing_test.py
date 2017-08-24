@@ -837,7 +837,7 @@ def test_draw_affine(display, fx_wand):
             assert img[75, 75] == black
 
 
-@mark.skipif(MAGICK_VERSION_NUMBER >= 0x700,
+@mark.xfail(MAGICK_VERSION_NUMBER >= 0x700,
              reason="Needs to be rewritten/simplified.")
 def test_draw_clip_path(display, fx_wand):
     with nested(Color('skyblue'),
