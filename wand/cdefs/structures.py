@@ -20,6 +20,15 @@ class AffineMatrix(Structure):
                 ('ty', c_double)]
 
 
+class GeomertyInfo(Structure):
+
+    _fields_ = [('rho', c_double),
+                ('sigma', c_double),
+                ('xi', c_double),
+                ('psi', c_double),
+                ('chi', c_double)]
+
+
 class KernelInfo(Structure):
     pass
 
@@ -53,6 +62,12 @@ class MagickPixelPacket(Structure):
                 ('index', c_double)]
 
 
+class OffsetInfo(Structure):
+
+    _fields_ = [('x', c_double),
+                ('y', c_double)]
+
+
 class PixelInfo(Structure):
 
     _fields_ = [('storage_class', c_int),
@@ -73,6 +88,14 @@ class PointInfo(Structure):
 
     _fields_ = [('x', c_double),
                 ('y', c_double)]
+
+
+class RectangleInfo(Structure):
+
+    _fields_ = [('width', c_size_t),
+                ('height', c_size_t),
+                ('x', c_ssize_t),
+                ('y', c_ssize_t)]
 
 
 # All this will change with IM7, so let's not implement this just yet.

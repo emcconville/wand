@@ -44,13 +44,16 @@ __all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COLORSPACE_TYPES',
 #: - ``'background'``
 #: - ``'copy'``
 #: - ``'deactivate'``
+#: - ``'discrete'`` - Only available in ImageMagick-7
 #: - ``'extract'``
+#: - ``'off'`` - Only available in ImageMagick-7
+#: - ``'on'`` - Only available in ImageMagick-7
 #: - ``'opaque'``
-#: - ``'reset'``
+#: - ``'reset'`` - Only available in ImageMagick-6
 #: - ``'set'``
 #: - ``'shape'``
 #: - ``'transparent'``
-#: - ``'flatten'``
+#: - ``'flatten'`` - Only available in ImageMagick-6
 #: - ``'remove'``
 #:
 #: .. seealso::
@@ -131,9 +134,9 @@ if MAGICK_VERSION_NUMBER >= 0x700:
 #: - ``'hsb'``
 #: - ``'hsl'``
 #: - ``'hwb'``
-#: - ``'rec601luma'``
+#: - ``'rec601luma'`` - Only available with ImageMagick-6
 #: - ``'rec601ycbcr'``
-#: - ``'rec709luma'``
+#: - ``'rec709luma'`` - Only available with ImageMagick-6
 #: - ``'rec709ycbcr'``
 #: - ``'log'``
 #: - ``'cmy'``
@@ -147,6 +150,7 @@ if MAGICK_VERSION_NUMBER >= 0x700:
 #: - ``'hsi'``
 #: - ``'hsv'``
 #: - ``'hclp'``
+#: - ``'xyy'`` - Only available with ImageMagick-7
 #: - ``'ydbdr'``
 #:
 #: .. seealso::
@@ -175,6 +179,7 @@ if MAGICK_VERSION_NUMBER >= 0x700:
 #:
 #: - ``'undefined'``
 #: - ``'absolute'``
+#: - ``'fuzz'`` - Only available with ImageMagick-7
 #: - ``'mean_absolute'``
 #: - ``'mean_error_per_pixel'``
 #: - ``'mean_squared'``
@@ -207,9 +212,11 @@ if MAGICK_VERSION_NUMBER >= 0x700:
 #:
 #: - ``'undefined'``
 #: - ``'no'``
-#: - ``'add'``
+#: - ``'add'`` - Only available with ImageMagick-6
+#: - ``'alpha'`` - Only available with ImageMagick-7
 #: - ``'atop'``
 #: - ``'blend'``
+#: - ``'blur'`` - Only available with ImageMagick-7
 #: - ``'bumpmap'``
 #: - ``'change_mask'``
 #: - ``'clear'``
@@ -219,13 +226,15 @@ if MAGICK_VERSION_NUMBER >= 0x700:
 #: - ``'copy_black'``
 #: - ``'copy_blue'``
 #: - ``'copy'``
+#: - ``'copy_alpha'`` - Only available with ImageMagick-7
 #: - ``'copy_cyan'``
 #: - ``'copy_green'``
 #: - ``'copy_magenta'``
-#: - ``'copy_opacity'``
+#: - ``'copy_opacity'`` - Only available with ImageMagick-6
 #: - ``'copy_red'``
 #: - ``'copy_yellow'``
 #: - ``'darken'``
+#: - ``'darken_intensity'`` - Only available with ImageMagick-7
 #: - ``'dst_atop'``
 #: - ``'dst'``
 #: - ``'dst_in'``
@@ -234,19 +243,32 @@ if MAGICK_VERSION_NUMBER >= 0x700:
 #: - ``'difference'``
 #: - ``'displace'``
 #: - ``'dissolve'``
+#: - ``'distort'`` - Only available with ImageMagick-7
+#: - ``'divide'`` - Only available with ImageMagick-6
 #: - ``'exclusion'``
 #: - ``'hard_light'``
+#: - ``'head_mix'`` - Only available with ImageMagick-7
 #: - ``'hue'``
 #: - ``'in'``
+#: - ``'intensity'`` - Only available with ImageMagick-7
 #: - ``'lighten'``
+#: - ``'lighten_intensity'`` - Only available with ImageMagick-7
+#: - ``'linear_burn'`` - Only available with ImageMagick-7
+#: - ``'linear_dodge'`` - Only available with ImageMagick-7
 #: - ``'linear_light'``
 #: - ``'luminize'``
-#: - ``'minus'``
+#: - ``'mathematics'`` - Only available with ImageMagick-7
+#: - ``'minus'`` - Only available with ImageMagick-6
+#: - ``'minus_dst'`` - Only available with ImageMagick-7
+#: - ``'minus_src'`` - Only available with ImageMagick-7
 #: - ``'modulate'``
+#: - ``'modulate_add'`` - Only available with ImageMagick-7
+#: - ``'modulate_subtract'`` - Only available with ImageMagick-7
 #: - ``'multiply'``
 #: - ``'out'``
 #: - ``'over'``
 #: - ``'overlay'``
+#: - ``'pegtop_light'`` - Only available with ImageMagick-7
 #: - ``'plus'``
 #: - ``'replace'``
 #: - ``'saturate'``
@@ -257,10 +279,10 @@ if MAGICK_VERSION_NUMBER >= 0x700:
 #: - ``'src_in'``
 #: - ``'src_out'``
 #: - ``'src_over'``
-#: - ``'subtract'``
+#: - ``'subtract'`` - Only available with ImageMagick-6
 #: - ``'threshold'``
+#: - ``'vivid_light'`` - Only available with ImageMagick-7
 #: - ``'xor'``
-#: - ``'divide'``
 #:
 #: .. versionchanged:: 0.3.0
 #:    Renamed from :const:`COMPOSITE_OPS` to :const:`COMPOSITE_OPERATORS`.
@@ -358,37 +380,37 @@ DISTORTION_METHODS = (
 #: (:class:`tuple`) The list of evaluation operators
 #:
 #: - ``'undefined'``
+#: - ``'abs'``
 #: - ``'add'``
+#: - ``'addmodulus'``
 #: - ``'and'``
+#: - ``'cosine'``
 #: - ``'divide'``
-#: - ``'leftshift'``
-#: - ``'max'``
-#: - ``'min'``
-#: - ``'multiply'``
-#: - ``'or'``
-#: - ``'rightshift'``
-#: - ``'set'``
-#: - ``'subtract'``
-#: - ``'xor'``
-#: - ``'pow'``
-#: - ``'log'``
-#: - ``'threshold'``
-#: - ``'thresholdblack'``
-#: - ``'thresholdwhite'``
+#: - ``'exponential'``
 #: - ``'gaussiannoise'``
 #: - ``'impulsenoise'``
 #: - ``'laplaciannoise'``
-#: - ``'multiplicativenoise'``
-#: - ``'poissonnoise'``
-#: - ``'uniformnoise'``
-#: - ``'cosine'``
-#: - ``'sine'``
-#: - ``'addmodulus'``
+#: - ``'leftshift'``
+#: - ``'log'``
+#: - ``'max'``
 #: - ``'mean'``
-#: - ``'abs'``
-#: - ``'exponential'``
 #: - ``'median'``
+#: - ``'min'``
+#: - ``'multiplicativenoise'``
+#: - ``'multiply'``
+#: - ``'or'``
+#: - ``'poissonnoise'``
+#: - ``'pow'``
+#: - ``'rightshift'``
+#: - ``'set'``
+#: - ``'sine'``
+#: - ``'subtract'``
 #: - ``'sum'``
+#: - ``'threshold'``
+#: - ``'thresholdblack'``
+#: - ``'thresholdwhite'``
+#: - ``'uniformnoise'``
+#: - ``'xor'``
 #:
 #: .. seealso::
 #:
@@ -466,10 +488,10 @@ FILTER_TYPES = ('undefined', 'point', 'box', 'triangle', 'hermite', 'hanning',
 #: (:class:`tuple`) The list of :attr:`Image.function` types.
 #:
 #: - ``'undefined'``
-#: - ``'polynomial'``
-#: - ``'sinusoid'``
 #: - ``'arcsin'``
 #: - ``'arctan'``
+#: - ``'polynomial'``
+#: - ``'sinusoid'``
 FUNCTION_TYPES = ('undefined', 'polynomial', 'sinusoid', 'arcsin', 'arctan')
 if MAGICK_VERSION_NUMBER >= 0x700:
     FUNCTION_TYPES = ('undefined', 'arcsin', 'arctan', 'polynomial',
@@ -592,7 +614,7 @@ UNIT_TYPES = ('undefined', 'pixelsperinch', 'pixelspercentimeter')
 #: (:class:`tuple`) The list of :attr:`~BaseImage.virtual_pixel` types.
 #: - ``'undefined'``
 #: - ``'background'``
-#: - ``'constant'``
+#: - ``'constant'`` - Only available with ImageMagick-6
 #: - ``'dither'``
 #: - ``'edge'``
 #: - ``'mirror'``
