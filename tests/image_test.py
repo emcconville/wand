@@ -14,7 +14,7 @@ from pytest import mark, raises
 from wand.image import ClosedImageError, Image, IMAGE_LAYER_METHOD
 from wand.color import Color
 from wand.compat import PY3, string_type, text, text_type
-from wand.exceptions import OptionError, MissingDelegateError
+from wand.exceptions import DelegateError, MissingDelegateError, OptionError
 from wand.font import Font
 from wand.version import MAGICK_VERSION_NUMBER
 
@@ -324,16 +324,22 @@ def test_set_resolution_02(fx_asset):
 
 def test_set_resolution_03(fx_asset):
     """Sets image resolution on constructor"""
-    with Image(filename=str(fx_asset.join('sample.pdf')),
-               resolution=(100, 100)) as img:
-        assert img.resolution == (100, 100)
+    try:
+        with Image(filename=str(fx_asset.join('sample.pdf')),
+                   resolution=(100, 100)) as img:
+            assert img.resolution == (100, 100)
+    except DelegateError:
+        warnings.warn('PDF delegate could not be found.')
 
 
 def test_set_resolution_04(fx_asset):
     """Sets image resolution on constructor with integer as parameter."""
-    with Image(filename=str(fx_asset.join('sample.pdf')),
-               resolution=100) as img:
-        assert img.resolution == (100, 100)
+    try:
+        with Image(filename=str(fx_asset.join('sample.pdf')),
+                   resolution=100) as img:
+            assert img.resolution == (100, 100)
+    except DelegateError:
+        warnings.warn('PDF delegate could not be found.')
 
 
 def test_get_units(fx_asset):
