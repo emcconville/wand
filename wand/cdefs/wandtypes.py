@@ -1,7 +1,7 @@
 """:mod:`wand.cdefs.structures` --- MagickWand C typedefs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. versionadded:: ?.?.?
+.. versionadded:: 0.5.0
 """
 import ctypes
 

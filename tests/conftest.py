@@ -52,7 +52,7 @@ def pytest_runtest_makereport(item, call, __multicall__):
 
 def pytest_report_header(config):
     versions = (VERSION, os.linesep, MAGICK_VERSION)
-    return "Wand Version :{0}{1}ImageMagick Version: {2}".format(*versions)
+    return "Wand Version: {0}{1}ImageMagick Version: {2}".format(*versions)
 
 
 @fixture

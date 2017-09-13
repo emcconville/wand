@@ -980,7 +980,7 @@ def test_rotate_gif(tmpdir, fx_asset):
 
 def test_transparent_color(fx_asset):
     """TransparentPaint test
-    .. versionchanged:: ?.?.?
+    .. versionchanged:: 0.5.0
        Alpha channel must be enabled with ``'set'``, previously ``True``.
        See docstring in :meth:`wand.image.BaseImage.alpha_channel`.
     """

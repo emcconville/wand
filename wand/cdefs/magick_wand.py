@@ -1,7 +1,7 @@
 """:mod:`wand.cdefs.magick_wand` --- Magick-Wand definitions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. versionadded:: ?.?.?
+.. versionadded:: 0.5.0
 """
 from ctypes import POINTER, c_void_p, c_bool, c_int
 from wand.cdefs.wandtypes import c_ssize_t, c_magick_char_p
@@ -30,7 +30,7 @@ def load(lib, IM_VERSION):
     :param IM_VERSION: the ImageMagick version number (i.e. 0x0689)
     :type IM_VERSION: :class:`numbers.Integral`
 
-    .. versionadded:: 0.?.?
+    .. versionadded:: 0.5.0
 
     """
     lib.ClearMagickWand.argtypes = [c_void_p]

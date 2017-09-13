@@ -98,7 +98,7 @@ if libmagick:
     #: Set to empty string if the system uses an older version of
     #: ImageMagick-6, or does not support :c:func:`GetMagickDelegates`.
     #:
-    #: .. versionadded:: ?.?.?
+    #: .. versionadded:: 0.5.0
     if libmagick.GetMagickDelegates:
         MAGICK_VERSION_DELEGATES = text(libmagick.GetMagickDelegates())
     else:
@@ -108,7 +108,7 @@ if libmagick:
     #: This value is identical to what is returned by
     #: :c:func:`GetMagickFeatures`
     #:
-    #: .. versionadded:: ?.?.?
+    #: .. versionadded:: 0.5.0
     MAGICK_VERSION_FEATURES = text(libmagick.GetMagickFeatures())
 
     #: (:class:`tuple`) The version tuple e.g. ``(6, 7, 7, 6)`` of
@@ -145,7 +145,7 @@ if libmagick:
     #: (:class:`numbers.Integral`) The quantum range configuration of
     #: the linked ImageMagick library.
     #:
-    #: .. versionadded:: ?.?.?
+    #: .. versionadded:: 0.5.0
     QUANTUM_RANGE = c_quantum_range.value
 
     #: (:class:`bool`) True if ImageMagick is compiled for High Dynamic

@@ -1,7 +1,7 @@
 """:mod:`wand.cdefs.pixel_wand` --- Pixel-Wand definitions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. versionadded:: ?.?.?
+.. versionadded:: 0.5.0
 """
 from ctypes import CDLL, POINTER, c_void_p, c_size_t, c_double, c_int, c_char_p
 from wand.cdefs.wandtypes import c_magick_char_p
@@ -31,7 +31,7 @@ def load(lib, IM_VERSION):
     :param IM_VERSION: the ImageMagick version number (i.e. 0x0689)
     :type IM_VERSION: :class:`numbers.Integral`
 
-    .. versionadded:: 0.?.?
+    .. versionadded:: 0.5.0
 
     """
     if not isinstance(lib, CDLL):

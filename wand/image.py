@@ -580,7 +580,7 @@ IMAGE_TYPES = ('undefined', 'bilevel', 'grayscale', 'grayscalematte',
 #:
 #: .. versionchanged:: 0.3.9
 #:    Added ``'pdf:use-cropbox'`` option.
-#: .. deprecated:: ?.?.?
+#: .. deprecated:: 0.5.0
 #:    Any arbitrary key can be set to the option table. Key-Value pairs set
 #:    on the MagickWand stack allowing for various coders, kernels, morphology
 #:    (&tc) to pick and choose additional user-supplied properties/artifacts.
@@ -1860,7 +1860,7 @@ class BaseImage(Resource):
            __ http://www.imagemagick.org/script/command-line-processing.php#geometry
 
         .. versionadded:: 0.2.2
-        .. versionupdated:: ?.?.?
+        .. versionupdated:: 0.5.0
            This method will raise a :class:`NotImplementedError` if calling with
            ImageMagick 7; which, removed :c:func:`MagickTransformImage`.
 
@@ -3440,7 +3440,7 @@ class Image(BaseImage):
         :type compose: :class:`basestring`
 
         .. versionadded:: 0.3.0
-        .. versionchanged:: ?.?.?
+        .. versionchanged:: 0.5.0
            Added ``compose`` paramater, and ImageMagick 7 support.
         """
         if not isinstance(color, Color):
@@ -3757,7 +3757,7 @@ class OptionDict(ImageProperty, collections.MutableMapping):
 
     .. versionadded:: 0.3.0
 
-    .. versionchange:: ?.?.?
+    .. versionchange:: 0.5.0
        Remove key check to :const:`OPTIONS`. Image properties are specific to
        vendor, and this library should not attempt to manage the 100+ options
        in a whitelist.

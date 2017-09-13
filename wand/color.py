@@ -312,7 +312,7 @@ def scale_quantum_to_int8(quantum):
     :rtype: :class:`numbers.Integral`
 
     .. versionadded:: 0.3.0
-    .. versionchanged:: ?.?.?
+    .. versionchanged:: 0.5.0
         Added HDRI support
     """
     if quantum <= 0:

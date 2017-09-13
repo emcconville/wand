@@ -1,5 +1,5 @@
 """:mod:`wand.cdefs` --- Low-level definitions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. versionadded:: ?.?.?
+.. versionadded:: 0.5.0
 """

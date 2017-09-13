@@ -987,7 +987,7 @@ class Drawing(Resource):
             An :class:`AttributeError` will be raised if attempting
             to call on a library without ``DrawAlpha`` support.
 
-        .. versionadded:: ?.?.?
+        .. versionadded:: 0.5.0
 
         """
         if library.DrawAlpha is None:

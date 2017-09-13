@@ -1,7 +1,7 @@
 """:mod:`wand.cdefs.drawing_wand` --- Drawing-Wand definitions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. versionadded:: ?.?.?
+.. versionadded:: 0.5.0
 """
 from ctypes import (POINTER, c_void_p, c_char_p, c_double, c_int, c_uint,
                     c_size_t, c_ubyte, c_ulong)
@@ -32,7 +32,7 @@ def load(lib, IM_VERSION):
     :param IM_VERSION: the ImageMagick version number (i.e. 0x0689)
     :type IM_VERSION: :class:`numbers.Integral`
 
-    .. versionadded:: 0.?.?
+    .. versionadded:: 0.5.0
 
     """
     is_im_6 = IM_VERSION < 0x700

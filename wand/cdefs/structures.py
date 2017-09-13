@@ -1,7 +1,7 @@
 """:mod:`wand.cdefs.structures` --- MagickWand C-Structures
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. versionadded:: ?.?.?
+.. versionadded:: 0.5.0
 """
 from ctypes import POINTER, Structure, c_double, c_int, c_size_t
 from wand.cdefs.wandtypes import c_ssize_t

@@ -1,7 +1,7 @@
 """:mod:`wand.cdefs.core` --- MagickCore definitions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. versionadded:: ?.?.?
+.. versionadded:: 0.5.0
 """
 from ctypes import POINTER, c_void_p, c_char_p, c_size_t
 from wand.cdefs.wandtypes import c_magick_char_p
@@ -23,7 +23,7 @@ def load(libmagick):
     :param libmagick: the loaded ``MagickCore`` library.
     :type libmagick: :class:`ctypes.CDLL`
 
-    .. versionadded:: 0.?.?
+    .. versionadded:: 0.5.0
 
     """
     libmagick.AcquireExceptionInfo.argtypes = []

@@ -1,7 +1,7 @@
 """:mod:`wand.cdefs.magick_property` --- Magick-Property definitions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. versionadded:: ?.?.?
+.. versionadded:: 0.5.0
 """
 from ctypes import (POINTER, c_void_p, c_char_p, c_size_t, c_uint, c_int,
                     c_double)
@@ -31,7 +31,7 @@ def load(lib, IM_VERSION):
     :param IM_VERSION: the ImageMagick version number (i.e. 0x0689)
     :type IM_VERSION: :class:`numbers.Integral`
 
-    .. versionadded:: 0.?.?
+    .. versionadded:: 0.5.0
 
     """
     lib.MagickDeleteImageProperty.argtypes = [c_void_p, c_char_p]
