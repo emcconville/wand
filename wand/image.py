@@ -944,7 +944,10 @@ class BaseImage(Resource):
 
         """
         orientation_index = library.MagickGetImageOrientation(self.wand)
-        return ORIENTATION_TYPES[orientation_index]
+        try:
+            return ORIENTATION_TYPES[orientation_index]
+        except IndexError:
+            return ORIENTATION_TYPES[0]
 
     @orientation.setter
     @manipulative
