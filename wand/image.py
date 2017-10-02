@@ -3595,12 +3595,22 @@ class Image(BaseImage):
             if library.MagickNormalizeImageChannel:
                 r = library.MagickNormalizeImageChannel(self.wand, ch_const)
             else:
-                # Set active channel, and capture mask to restore.
-                channel_mask = library.MagickSetImageChannelMask(self.wand,
-                                                                 ch_const)
-                r = library.MagickNormalizeImage(self.wand)
-                # Restore original state of channels
-                library.MagickSetImageChannelMask(self.wand, channel_mask)
+                with Image(image=self) as mask:
+                    # Set active channel, and capture mask to restore.
+                    channel_mask = library.MagickSetImageChannelMask(mask.wand,
+                                                                     ch_const)
+                    r = library.MagickNormalizeImage(mask.wand)
+                    # Restore original state of channels.
+                    library.MagickSetImageChannelMask(mask.wand,
+                                                      channel_mask)
+                    # Copy adjusted mask over original value.
+                    copy_mask = COMPOSITE_OPERATORS.index('copy_' + channel)
+                    library.MagickCompositeImage(self.wand,
+                                                 mask.wand,
+                                                 copy_mask,
+                                                 False,
+                                                 0,
+                                                 0)
         else:
             r = library.MagickNormalizeImage(self.wand)
         if not r:
