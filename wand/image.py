@@ -1906,7 +1906,6 @@ class BaseImage(Resource):
                                                             resize)
             self.sequence.instances = []
         else:
-            print('>>> ', self.wand, crop, resize)
             new_wand = library.MagickTransformImage(self.wand, crop, resize)
         if not new_wand:
             self.raise_exception()
