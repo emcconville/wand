@@ -3045,6 +3045,10 @@ class Image(BaseImage):
                         normalize all channels.
         :type channel: :const:`CHANNELS`
 
+        .. note::
+            Images may not be affected if the ``white`` value is equal, or
+            less then, the ``black`` value.
+
         .. versionadded:: 0.4.1
 
         """

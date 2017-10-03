@@ -1484,14 +1484,14 @@ def test_normalize_channel(fx_asset):
 def test_level_default(fx_asset):
     with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
         # Adjust the levels to make this image entirely black
-        img.level(black=1, white=1)
+        img.level(black=0.99, white=1.0)
         with img[0, 0] as dark:
             assert dark.red_int8 <= dark.green_int8 <= dark.blue_int8 <= 0
         with img[0, -1] as dark:
             assert dark.red_int8 <= dark.green_int8 <= dark.blue_int8 <= 0
     with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
         # Adjust the levels to make this image entirely white
-        img.level(0, 0)
+        img.level(0, 0.01)
         with img[0, 0] as light:
             assert light.red_int8 >= light.green_int8 >= light.blue_int8 >= 255
         with img[0, -1] as light:
@@ -1515,12 +1515,12 @@ def test_level_channel(fx_asset):
         c = chan + '_int8'
         with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
             # Adjust each channel level to make it entirely black
-            img.level(1, 1, channel=chan)
+            img.level(0.99, 1.0, channel=chan)
             assert(getattr(img[0, 0], c) <= 0)
             assert(getattr(img[0, -1], c) <= 0)
         with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
             # Adjust each channel level to make it entirely white
-            img.level(0, 0, channel=chan)
+            img.level(0.0, 0.01, channel=chan)
             assert(getattr(img[0, 0], c) >= 255)
             assert(getattr(img[0, -1], c) >= 255)
         with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
