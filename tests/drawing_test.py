@@ -18,6 +18,12 @@ def fx_wand(request):
     return wand
 
 
+def test_init_user_error():
+    with raises(TypeError):
+        with Drawing(0xDEADBEEF):
+            pass
+
+
 def test_is_drawing_wand(fx_wand):
     assert library.IsDrawingWand(fx_wand.resource)
 
@@ -26,57 +32,93 @@ def test_set_get_border_color(fx_wand):
     with Color("#0F0") as green:
         fx_wand.border_color = green
         assert green == fx_wand.border_color
+    # Assert user error
+    with raises(ValueError):
+        fx_wand.border_color = 0xDEADBEEF
 
 
 def test_set_get_clip_path(fx_wand):
     fx_wand.clip_path = 'path_id'
     assert fx_wand.clip_path == 'path_id'
+    # Assert user error
+    with raises(TypeError):
+        fx_wand.clip_path = 0xDEADBEEF
 
 
 def test_set_get_clip_rule(fx_wand):
     fx_wand.clip_rule = 'evenodd'
     assert fx_wand.clip_rule == 'evenodd'
+    with raises(TypeError):
+        fx_wand.clip_rule = 0xDEADBEEF
+    with raises(ValueError):
+        fx_wand.clip_rule = 'not-a-rule'
 
 
 def test_set_get_clip_units(fx_wand):
     fx_wand.clip_units = 'object_bounding_box'
     assert fx_wand.clip_units == 'object_bounding_box'
+    with raises(TypeError):
+        fx_wand.clip_units = 0xDEADBEEF
+    with raises(ValueError):
+        fx_wand.clip_units = 'not-a-clip_unit'
 
 
 def test_set_get_font(fx_wand, fx_asset):
     fx_wand.font = str(fx_asset.join('League_Gothic.otf'))
     assert fx_wand.font == str(fx_asset.join('League_Gothic.otf'))
+    with raises(TypeError):
+        fx_wand.font = 0xDEADBEEF
 
 
 def test_set_get_font_family(fx_wand):
     assert fx_wand.font_family is None
     fx_wand.font_family = 'sans-serif'
     assert fx_wand.font_family == 'sans-serif'
+    with raises(TypeError):
+        fx_wand.font_family = 0xDEADBEEF
 
 
 def test_set_get_font_resolution(fx_wand):
     fx_wand.font_resolution = (78.0, 78.0)
     assert fx_wand.font_resolution == (78.0, 78.0)
+    with raises(TypeError):
+        fx_wand.font_resolution = 0xDEADBEEF
+    with raises(ValueError):
+        fx_wand.font_resolution = (78.0, 78.0, 78.0)
 
 
 def test_set_get_font_size(fx_wand):
     fx_wand.font_size = 22.2
     assert fx_wand.font_size == 22.2
+    with raises(TypeError):
+        fx_wand.font_size = '22.2%'
+    with raises(ValueError):
+        fx_wand.font_size = -22.2
 
 
 def test_set_get_font_stretch(fx_wand):
     fx_wand.font_stretch = 'condensed'
     assert fx_wand.font_stretch == 'condensed'
+    with raises(TypeError):
+        fx_wand.font_stretch = 0xDEADBEEF
+    with raises(ValueError):
+        fx_wand.font_stretch = 'not-a-stretch-type'
 
 
 def test_set_get_font_style(fx_wand):
     fx_wand.font_style = 'italic'
     assert fx_wand.font_style == 'italic'
+    with raises(TypeError):
+        fx_wand.font_style = 0xDEADBEEF
+    with raises(ValueError):
+        fx_wand.font_style = 'not-a-style-type'
 
 
 def test_set_get_font_weight(fx_wand):
     fx_wand.font_weight = 400  # Normal
     assert fx_wand.font_weight == 400
+    with raises(TypeError):
+        fx_wand.font_weight = '400'
 
 
 def test_set_get_fill_color(fx_wand):
@@ -99,6 +141,10 @@ def test_set_get_stroke_width(fx_wand):
 def test_set_get_text_alignment(fx_wand):
     fx_wand.text_alignment = 'center'
     assert fx_wand.text_alignment == 'center'
+    with raises(TypeError):
+        fx_wand.text_alignment = 0xDEADBEEF
+    with raises(ValueError):
+        fx_wand.text_alignment = 'not-a-text-alignment-type'
 
 
 def set_get_text_antialias(fx_wand):
@@ -109,6 +155,10 @@ def set_get_text_antialias(fx_wand):
 def test_set_get_text_decoration(fx_wand):
     fx_wand.text_decoration = 'underline'
     assert fx_wand.text_decoration == 'underline'
+    with raises(TypeError):
+        fx_wand.text_decoration = 0xDEADBEEF
+    with raises(ValueError):
+        fx_wand.text_decoration = 'not-a-text-decoration-type'
 
 
 def test_set_get_text_direction(fx_wand):
@@ -127,22 +177,30 @@ def test_set_get_text_encoding(fx_wand):
 def test_set_get_text_interline_spacing(fx_wand):
     fx_wand.text_interline_spacing = 10.11
     assert fx_wand.text_interline_spacing == 10.11
+    with raises(TypeError):
+        fx_wand.text_interline_spacing = '10.11'
 
 
 def test_set_get_text_interword_spacing(fx_wand):
     fx_wand.text_interword_spacing = 5.55
     assert fx_wand.text_interword_spacing == 5.55
+    with raises(TypeError):
+        fx_wand.text_interline_spacing = '5.55'
 
 
 def test_set_get_text_kerning(fx_wand):
     fx_wand.text_kerning = 10.22
     assert fx_wand.text_kerning == 10.22
+    with raises(TypeError):
+        fx_wand.text_kerning = '10.22'
 
 
 def test_set_get_text_under_color(fx_wand):
     with Color('#333333') as black:
         fx_wand.text_under_color = black
     assert fx_wand.text_under_color == Color('#333333')
+    with raises(TypeError):
+        fx_wand.text_under_color = 0xDEADBEEF
 
 
 def test_set_get_vector_graphics(fx_wand):
@@ -158,6 +216,10 @@ def test_set_get_vector_graphics(fx_wand):
 def test_set_get_gravity(fx_wand):
     fx_wand.gravity = 'center'
     assert fx_wand.gravity == 'center'
+    with raises(TypeError):
+        fx_wand.gravity = 0xDEADBEEF
+    with raises(ValueError):
+        fx_wand.gravity = 'not-a-gravity-type'
 
 
 def test_clone_drawing_wand(fx_wand):

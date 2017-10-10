@@ -9,7 +9,7 @@ except ImportError:
     import urllib2
 
 from py.path import local
-from pytest import fixture, mark, skip
+from pytest import fixture, hookimpl, skip
 
 from wand.display import display as display_fn
 from wand.image import Image
@@ -37,16 +37,19 @@ def pytest_runtest_setup(item):
                 skip('skipped; --skip-slow option is used')
 
 
-@mark.tryfirst
-def pytest_runtest_makereport(item, call, __multicall__):
+@hookimpl(tryfirst=True, hookwrapper=True)
+def pytest_runtest_makereport(item, call):
     """Copied from http://pytest.org/dev/example/simple.html#making-test-result-information-available-in-fixtures
 
     """  # noqa
     # execute all other hooks to obtain the report object
-    rep = __multicall__.execute()
-    # set an report attribute for each phase of a call, which can
+    outcome = yield
+    rep = outcome.get_result()
+
+    # set a report attribute for each phase of a call, which can
     # be "setup", "call", "teardown"
-    setattr(item, 'rep_' + rep.when, rep)
+
+    setattr(item, "rep_" + rep.when, rep)
     return rep
 
 

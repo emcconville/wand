@@ -239,9 +239,7 @@ class Drawing(Resource):
     def clip_path(self, path):
         if not isinstance(path, string_type):
             raise TypeError('expected a string, not ' + repr(path))
-        okay = library.DrawSetClipPath(self.resource, binary(path))
-        if okay == 0:
-            raise ValueError('Clip path not understood')
+        library.DrawSetClipPath(self.resource, binary(path))
 
     @property
     def clip_rule(self):
