@@ -50,7 +50,6 @@ def pytest_runtest_makereport(item, call):
     # be "setup", "call", "teardown"
 
     setattr(item, "rep_" + rep.when, rep)
-    return rep
 
 
 def pytest_report_header(config):
