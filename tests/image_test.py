@@ -427,7 +427,11 @@ def test_get_type(fx_asset):
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         assert img.type == "truecolor"
         img.alpha_channel = True
-        assert img.type == "truecolormatte"
+        if MAGICK_VERSION_NUMBER < 0x700:
+            expected = "truecolormatte"
+        else:
+            expected = "truecoloralpha"
+        assert img.type == expected
 
 
 def test_set_type(fx_asset):

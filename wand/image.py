@@ -548,15 +548,20 @@ IMAGE_LAYER_METHOD = ('undefined', 'coalesce', 'compareany', 'compareclear',
 #: - ``'undefined'``
 #: - ``'bilevel'``
 #: - ``'grayscale'``
-#: - ``'grayscalematte'``
+#: - ``'grayscalealpha'`` - Only available with ImageMagick-7
+#: - ``'grayscalematte'`` - Only available with ImageMagick-6
 #: - ``'palette'``
-#: - ``'palettematte'``
+#: - ``'palettealpha'`` - Only available with ImageMagick-7
+#: - ``'palettematte'`` - Only available with ImageMagick-6
 #: - ``'truecolor'``
-#: - ``'truecolormatte'``
+#: - ``'truecoloralpha'`` - Only available with ImageMagick-7
+#: - ``'truecolormatte'`` - Only available with ImageMagick-6
 #: - ``'colorseparation'``
-#: - ``'colorseparationmatte'``
+#: - ``'colorseparationaplha'`` - Only available with ImageMagick-7
+#: - ``'colorseparationmatte'`` - Only available with ImageMagick-6
 #: - ``'optimize'``
-#: - ``'palettebilevelmatte'``
+#: - ``'palettebilevelalpha'`` - Only available with ImageMagick-7
+#: - ``'palettebilevelmatte'`` - Only available with ImageMagick-6
 #:
 #: .. seealso::
 #:
@@ -569,7 +574,11 @@ IMAGE_TYPES = ('undefined', 'bilevel', 'grayscale', 'grayscalematte',
                'palette', 'palettematte', 'truecolor', 'truecolormatte',
                'colorseparation', 'colorseparationmatte', 'optimize',
                'palettebilevelmatte')
-
+if MAGICK_VERSION_NUMBER >= 0x700:
+    IMAGE_TYPES = ('undefined', 'bilevel', 'grayscale', 'grayscalemalpha',
+                   'palette', 'palettealpha', 'truecolor', 'truecoloralpha',
+                   'colorseparation', 'colorseparationalpha', 'optimize',
+                   'palettebilevelalpha')
 
 #: (:class:`collections.Set`) The set of available :attr:`~BaseImage.options`.
 #:
@@ -580,11 +589,39 @@ IMAGE_TYPES = ('undefined', 'bilevel', 'grayscale', 'grayscalematte',
 #:
 #: .. versionchanged:: 0.3.9
 #:    Added ``'pdf:use-cropbox'`` option.
+#:
 #: .. deprecated:: 0.5.0
 #:    Any arbitrary key can be set to the option table. Key-Value pairs set
 #:    on the MagickWand stack allowing for various coders, kernels, morphology
 #:    (&tc) to pick and choose additional user-supplied properties/artifacts.
-OPTIONS = frozenset(['fill', 'jpeg:sampling-factor', 'pdf:use-cropbox'])
+OPTIONS = frozenset([
+    'caption',
+    'comment',
+    'date:create',
+    'date:modify',
+    'exif:ColorSpace',
+    'exif:InteroperabilityIndex',
+    'fill',
+    'film-gamma',
+    'gamma',
+    'hdr:exposure',
+    'jpeg:colorspace',
+    'jpeg:sampling-factor',
+    'label',
+    'pdf:use-cropbox',
+    'png:bit-depth-written',
+    'png:IHDR.bit-depth-orig',
+    'png:IHDR.color-type-orig',
+    'png:tIME',
+    'reference-black',
+    'reference-white',
+    'signature',
+    'tiff:Orientation',
+    'tiff:photometric',
+    'tiff:ResolutionUnit',
+    'type:hinting',
+    'vips:metadata'
+])
 
 
 #: (:class:`tuple`) The list of :attr:`~BaseImage.orientation` types.
@@ -2262,8 +2299,12 @@ class BaseImage(Resource):
             library.MagickSetIteratorIndex(self.wand, 0)
             # Change the pixel representation of the image
             # to RGB with an alpha channel
+            if MAGICK_VERSION_NUMBER < 0x700:
+                image_type = 'truecolormatte'
+            else:
+                image_type = 'truecoloralpha'
             library.MagickSetImageType(self.wand,
-                                       IMAGE_TYPES.index('truecolormatte'))
+                                       IMAGE_TYPES.index(image_type))
             # Perform the black channel subtraction
             self.evaluate(operator='subtract',
                           value=t.value,
