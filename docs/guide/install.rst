@@ -115,15 +115,15 @@ a prebuilt binary of ImageMagick for your architecture (``win32`` or
 
 You can download it from the following link:
 
-http://www.imagemagick.org/download/binaries/
+http://legacy.imagemagick.org/script/binary-releases.php#windows
 
 Choose a binary for your architecture:
 
 Windows 32-bit
-   ImageMagick-6.9.3-1-Q16-x86-dll.exe__
+   ImageMagick-6.9.x-x-Q16-x86-dll.exe
 
 Windows 64-bit
-   ImageMagick-6.9.3-1-Q16-x64-dll.exe__
+   ImageMagick-6.9.x-x-Q16-x64-dll.exe
 
 .. image:: ../_images/windows-setup.png
 
@@ -138,9 +138,6 @@ Lastly you have to set :envvar:`MAGICK_HOME` environment variable to the path
 of ImageMagick (e.g. :file:`C:\\Program Files\\ImageMagick-6.9.3-Q16`).
 You can set it in :menuselection:`Computer --> Properties -->
 Advanced system settings --> Advanced --> Enviro&nment Variables...`.
-
-__ http://www.imagemagick.org/download/binaries/ImageMagick-6.9.3-1-Q16-x86-dll.exe
-__ http://www.imagemagick.org/download/binaries/ImageMagick-6.9.3-1-Q16-x64-dll.exe
 
 
 .. _explicit-link:
