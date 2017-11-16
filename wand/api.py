@@ -127,12 +127,12 @@ def load_library():
             continue
         try:
             tried_paths.append(libwand_path)
-            libwand = ctypes.CDLL(libwand_path)
+            libwand = ctypes.CDLL(str(libwand_path))
             if libwand_path == libmagick_path:
                 libmagick = libwand
             else:
                 tried_paths.append(libmagick_path)
-                libmagick = ctypes.CDLL(libmagick_path)
+                libmagick = ctypes.CDLL(str(libmagick_path))
         except (IOError, OSError):
             continue
         return libwand, libmagick
@@ -1414,7 +1414,7 @@ if platform.system() == 'Windows':
     if not msvcrt and "1900" in platform.python_compiler():
         msvcrt = "vcruntime140.dll"
     if msvcrt:
-        libc = ctypes.CDLL(msvcrt)
+        libc = ctypes.CDLL(str(msvcrt))
 else:
     if platform.system() == 'Darwin':
         try:
