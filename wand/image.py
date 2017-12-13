@@ -2690,8 +2690,15 @@ class BaseImage(Resource):
 
         """
         with image.clone() as watermark_image:
-            watermark_image.transparentize(transparency)
-            self.composite(watermark_image, left=left, top=top)
+            if MAGICK_VERSION_NUMBER >= 0x700 and transparency:
+                # With IM7, evaluation returns signed values that can
+                # cause composite issues.
+                expression = 'max(0, u - {0:g})'.format(transparency)
+                with watermark_image.fx(expression, channel='alpha') as fx:
+                    self.composite(fx, left=left, top=top)
+            else:
+                watermark_image.transparentize(transparency)
+                self.composite(watermark_image, left=left, top=top)
         self.raise_exception()
 
     @manipulative
