@@ -36,7 +36,7 @@ script:
     fi
 - >
     if [[ "$TRAVIS_PYTHON_VERSION" != "2.6" ]]; then
-      flake8 .;
+      flake8 --ignore=E722 .;
     fi
 after_success:
 - coveralls
