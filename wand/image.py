@@ -188,6 +188,7 @@ if MAGICK_VERSION_NUMBER >= 0x700:
 #: - ``'peak_signal_to_noise_ratio'``
 #: - ``'perceptual_hash'``
 #: - ``'root_mean_square'``
+#:
 #: .. seealso::
 #:
 #:    `ImageMagick Compare Operations`__
@@ -1897,7 +1898,7 @@ class BaseImage(Resource):
            __ http://www.imagemagick.org/script/command-line-processing.php#geometry
 
         .. versionadded:: 0.2.2
-        .. versionupdated:: 0.5.0
+        .. versionchanged:: 0.5.0
            This method will raise a :class:`NotImplementedError` if calling with
            ImageMagick 7; which, removed :c:func:`MagickTransformImage`.
 
@@ -3818,7 +3819,7 @@ class OptionDict(ImageProperty, collections.MutableMapping):
 
     .. versionadded:: 0.3.0
 
-    .. versionchange:: 0.5.0
+    .. versionchanged:: 0.5.0
        Remove key check to :const:`OPTIONS`. Image properties are specific to
        vendor, and this library should not attempt to manage the 100+ options
        in a whitelist.
