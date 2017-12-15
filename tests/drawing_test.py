@@ -341,8 +341,9 @@ def test_draw_line(fx_wand):
         assert img[8, 5] == Color('#ccc')
 
 
-@mark.skipif(MAGICK_VERSION_NUMBER >= 0x700,
-             reason='wand.drawing.Drawing.matte removed with IM 7.')
+@mark.xfail(MAGICK_VERSION_NUMBER >= 0x700,
+            reason='wand.drawing.Drawing.matte removed with IM 7.',
+            rasies=AttributeError)
 def test_draw_matte():
     with nested(Color('#fff'),
                 Color('transparent')) as (white, transparent):
@@ -354,8 +355,9 @@ def test_draw_matte():
                 assert img[25, 25] == transparent
 
 
-@mark.skipif(MAGICK_VERSION_NUMBER >= 0x700,
-             reason='wand.drawing.Drawing.matte removed with IM 7.')
+@mark.xfail(MAGICK_VERSION_NUMBER >= 0x700,
+            reason='wand.drawing.Drawing.matte removed with IM 7.',
+            rasies=AttributeError)
 def test_draw_matte_user_error():
     with Drawing() as draw:
         with raises(TypeError):
@@ -364,6 +366,33 @@ def test_draw_matte_user_error():
             draw.matte(1, 2, 4)
         with raises(ValueError):
             draw.matte(1, 2, 'apples')
+
+
+@mark.xfail(MAGICK_VERSION_NUMBER < 0x700,
+            reason='wand.drawing.Drawing.alpha was added with IM 7.',
+            rasies=AttributeError)
+def test_draw_alpha():
+    with nested(Color('#fff'),
+                Color('transparent')) as (white, transparent):
+        with Image(width=50, height=50, background=white) as img:
+            with Drawing() as draw:
+                draw.fill_opacity = 0
+                draw.alpha(25, 25, 'floodfill')
+                draw.draw(img)
+                assert img[25, 25] == transparent
+
+
+@mark.xfail(MAGICK_VERSION_NUMBER < 0x700,
+            reason='wand.drawing.Drawing.alpha was added with IM 7.',
+            rasies=AttributeError)
+def test_draw_alpha_user_error():
+    with Drawing() as draw:
+        with raises(TypeError):
+            draw.alpha()
+        with raises(TypeError):
+            draw.alpha(1, 2, 4)
+        with raises(ValueError):
+            draw.alpha(1, 2, 'apples')
 
 
 def test_draw_point():
