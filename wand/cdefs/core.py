@@ -3,8 +3,8 @@
 
 .. versionadded:: 0.5.0
 """
-from ctypes import POINTER, c_void_p, c_char_p, c_size_t
-from wand.cdefs.wandtypes import c_magick_char_p
+from ctypes import POINTER, c_void_p, c_char_p, c_int, c_size_t
+from wand.cdefs.wandtypes import c_magick_char_p, c_ssize_t
 
 __all__ = ('load',)
 
@@ -34,8 +34,15 @@ def load(libmagick):
     libmagick.DestroyExceptionInfo.restype = c_void_p
     libmagick.DestroyImage.argtypes = [c_void_p]
     libmagick.DestroyImage.restype = c_void_p
-    libmagick.GetNextImageInList.argtypes = [c_void_p]
-    libmagick.GetNextImageInList.restype = c_void_p
+    try:
+        libmagick.GetGeometry.argtypes = [c_char_p,
+                                          POINTER(c_ssize_t),
+                                          POINTER(c_ssize_t),
+                                          POINTER(c_size_t),
+                                          POINTER(c_size_t)]
+        libmagick.GetGeometry.restype = c_int
+    except AttributeError:
+        libmagick.GetGeometry = None
     libmagick.GetMagickCopyright.argtypes = []
     libmagick.GetMagickCopyright.restype = c_char_p
     try:
@@ -60,5 +67,16 @@ def load(libmagick):
     libmagick.GetMagickReleaseDate.restype = c_char_p
     libmagick.GetMagickVersion.argtypes = [POINTER(c_size_t)]
     libmagick.GetMagickVersion.restype = c_char_p
+    libmagick.GetNextImageInList.argtypes = [c_void_p]
+    libmagick.GetNextImageInList.restype = c_void_p
     libmagick.MagickToMime.argtypes = [c_char_p]
     libmagick.MagickToMime.restype = c_magick_char_p
+    try:
+        libmagick.ParseMetaGeometry.argtypes = [c_char_p,
+                                                POINTER(c_ssize_t),
+                                                POINTER(c_ssize_t),
+                                                POINTER(c_size_t),
+                                                POINTER(c_size_t)]
+        libmagick.ParseMetaGeometry.restype = c_int
+    except AttributeError:
+        libmagick.ParseMetaGeometry = None

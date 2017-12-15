@@ -1899,17 +1899,10 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.2.2
         .. versionchanged:: 0.5.0
-           This method will raise a :class:`NotImplementedError` if calling with
-           ImageMagick 7; which, removed :c:func:`MagickTransformImage`.
+           Will call :meth:`crop()` followed by :meth:`resize()` in the event
+           that :c:func:`MagickTransformImage` is not available.
 
         """  # noqa
-        # MagickTransformImage was removed from ImageMagick 7.x.x, and it is
-        # not clear if this was a mistake.
-        if MAGICK_VERSION_NUMBER >= 0x700 or not library.MagickTransformImage:
-            raise NotImplementedError(
-                "Method not supported. `MagickTransformImage' is not " +
-                "available on library."
-            )
         # Check that the values given are the correct types.  ctypes will do
         # this automatically, but we can make the error message more friendly
         # here.
@@ -1928,6 +1921,38 @@ class BaseImage(Resource):
         except UnicodeEncodeError:
             raise ValueError('resize must only contain ascii-encodable ' +
                              'characters.')
+        if not library.MagickTransformImage:  # pragma: no cover
+            # Method removed from ImageMagick-7.
+            if crop:
+                x = ctypes.c_ssize_t(0)
+                y = ctypes.c_ssize_t(0)
+                width = ctypes.c_size_t(self.width)
+                height = ctypes.c_size_t(self.height)
+                libmagick.GetGeometry(crop,
+                                      ctypes.byref(x),
+                                      ctypes.byref(y),
+                                      ctypes.byref(width),
+                                      ctypes.byref(height))
+                self.crop(top=y.value,
+                          left=x.value,
+                          width=width.value,
+                          height=height.value,
+                          reset_coords=False)
+            if resize:
+                x = ctypes.c_ssize_t()
+                y = ctypes.c_ssize_t()
+                width = ctypes.c_size_t(self.width)
+                height = ctypes.c_size_t(self.height)
+                libmagick.ParseMetaGeometry(resize,
+                                            ctypes.byref(x),
+                                            ctypes.byref(y),
+                                            ctypes.byref(width),
+                                            ctypes.byref(height))
+                self.resize(width=width.value,
+                            height=height.value)
+            # Both `BaseImage.crop` & `BaseImage.resize` will handle
+            # animation & error handling, so we can stop here.
+            return None
         if self.animation:
             new_wand = library.MagickCoalesceImages(self.wand)
             length = len(self.sequence)

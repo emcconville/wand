@@ -870,9 +870,6 @@ def test_resize_and_sample_errors(method, fx_asset):
     ((), {'crop': '300x300-150-150'}, (150, 150)),
     (('300x300', '200%'), {}, (600, 600)),
 ])
-@mark.xfail(MAGICK_VERSION_NUMBER >= 0x700,
-            raises=NotImplementedError,
-            reason="Method removed in IM7.")
 def test_transform(args, kwargs, expected_size, fx_asset):
     """Transforms (crops and resizes with geometry strings) the image."""
     with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
@@ -881,7 +878,6 @@ def test_transform(args, kwargs, expected_size, fx_asset):
         assert img.size == expected_size
 
 
-@mark.xfail(MAGICK_VERSION_NUMBER >= 0x700, reason="Method removed in IM7.")
 def test_transform_gif(tmpdir, fx_asset):
     filename = str(tmpdir.join('test_transform_gif.gif'))
     with Image(filename=str(fx_asset.join('nocomments-delay-100.gif'))) as img:
@@ -905,7 +901,6 @@ def test_transform_gif(tmpdir, fx_asset):
     tmpdir.remove()
 
 
-@mark.xfail(MAGICK_VERSION_NUMBER >= 0x700, reason="Method removed in IM7.")
 def test_transform_errors(fx_asset):
     """Tests errors raised by invalid parameters for transform."""
     unichar = b'\xe2\x9a\xa0'.decode('utf-8')
@@ -1887,8 +1882,6 @@ def test_merge_layers_bad_method(fx_asset):
                 img.merge_layers(method)
 
 
-@mark.xfail(MAGICK_VERSION_NUMBER >= 0x700,
-            reason="Method `transform' removed in IM7.")
 def test_merge_layers_method_merge(fx_asset):
     with Image(width=16, height=16) as img1:
         img1.background_color = Color('black')
@@ -1917,8 +1910,6 @@ def test_merge_layers_method_merge_neg_offset(fx_asset):
             assert img1.size == (24, 24)
 
 
-@mark.xfail(MAGICK_VERSION_NUMBER >= 0x700,
-            reason="Method `transform' removed in IM7.")
 def test_merge_layers_method_flatten(fx_asset):
     with Image(width=16, height=16) as img1:
         img1.background_color = Color('black')
@@ -1933,8 +1924,6 @@ def test_merge_layers_method_flatten(fx_asset):
             assert img1.size == (16, 16)
 
 
-@mark.xfail(MAGICK_VERSION_NUMBER >= 0x700,
-            reason="Method `transform' removed in IM7.")
 def test_merge_layers_method_mosaic(fx_asset):
     with Image(width=16, height=16) as img1:
         img1.background_color = Color('black')
