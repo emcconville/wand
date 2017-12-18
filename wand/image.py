@@ -1610,6 +1610,40 @@ class BaseImage(Resource):
                 self.raise_exception()
 
     @manipulative
+    def thumbnail(self, width=None, height=None):
+        """Changes the size of an image to the given dimensions and removes any associated profiles.
+        The goal is to produce small low cost thumbnail images suited for display on the Web.
+
+        :param width: the width in the scaled image. default is the original
+                      width
+        :type width: :class:`numbers.Integral`
+        :param height: the height in the scaled image. default is the original
+                       height
+        :type height: :class:`numbers.Integral`
+
+        """
+        if width is None:
+            width = self.width
+        if height is None:
+            height = self.height
+        if not isinstance(width, numbers.Integral):
+            raise TypeError('width must be a natural number, not ' +
+                            repr(width))
+        elif not isinstance(height, numbers.Integral):
+            raise TypeError('height must be a natural number, not ' +
+                            repr(height))
+        elif width < 1:
+            raise ValueError('width must be a natural number, not ' +
+                             repr(width))
+        elif height < 1:
+            raise ValueError('height must be a natural number, not ' +
+                             repr(height))
+
+        r = library.MagickThumbnailImage(self.wand, width, height)
+        if not r:
+            self.raise_exception()
+
+    @manipulative
     def sample(self, width=None, height=None):
         """Resizes the image by sampling the pixels.  It's basically quicker
         than :meth:`resize()` except less quality as a tradeoff.
