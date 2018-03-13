@@ -102,7 +102,7 @@ def library_paths():
                 coderPath = winreg.QueryValueEx(reg_key, "CoderModulesPath")
                 filterPath = winreg.QueryValueEx(reg_key, "FilterModulesPath")
                 pathSep = ';' if is_windows[1] == False else ':'
-                os.environ['PATH'] = (pathSep.join(libPath[0], coderPath[0], filterPath[0]) + 
+                os.environ['PATH'] = (pathSep.join((libPath[0], coderPath[0], filterPath[0])) + 
                                       os.environ['PATH'])
         except OSError:
             # otherwise do nothing; we assume the coder and
