@@ -14,11 +14,38 @@ import os.path
 import platform
 import sys
 import traceback
-if platform.system() == "Windows":
-    try:
-        import winreg
-    except ImportError:
-        import _winreg as winreg
+
+def _is_windows():
+   """Python on Windows hatch in different nests. Some are more Unix
+   than others.
+   
+   :returns: A pair of ``<Bool, Maybe<str>>`` type. The first element
+             indicates Windows-ness; the second gives a string for
+             replacement "lib" prefix when the platform is Unix-y.
+   :rtype: :class:`tuple`
+   """
+   system = platform.system()
+   if system == "Windows":
+      return (True, False)
+   if system.startswith('CYGWIN_NT-'):
+      return (True, "cyg")
+   if system.startswith('MSYS_NT-'):
+      return (True, "msys-")
+   else:
+      return (False, False)
+
+is_windows = _is_windows()
+
+if is_windows[0]:
+    for winregmod in ['winreg', '_winreg', 'cygwinreg']:
+        try:
+            winreg = __import__(winregmod)
+        except ImportError:
+            pass
+    else:
+        winreg = None
+else:
+    winreg = None
 
 __all__ = ('MagickPixelPacket', 'PointInfo', 'AffineMatrix', 'c_magick_char_p',
            'library', 'libc', 'libmagick', 'load_library')
@@ -60,26 +87,30 @@ def library_paths():
     system = platform.system()
     magick_home = os.environ.get('MAGICK_HOME')
 
-    if system == 'Windows':
+    if winreg:
         # ImageMagick installers normally install coder and filter DLLs in
         # subfolders, we need to add those folders to PATH, otherwise loading
         # the DLL later will fail.
+        #
+        # We prepend those paths to PATH so that ImageMagick will be sure to
+        # use those DLLs. Since ctype looks in PATH, we can save magick_home
+        # for the actual environment variable.
         try:
             with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE,
                                 r"SOFTWARE\ImageMagick\Current") as reg_key:
                 libPath = winreg.QueryValueEx(reg_key, "LibPath")
                 coderPath = winreg.QueryValueEx(reg_key, "CoderModulesPath")
                 filterPath = winreg.QueryValueEx(reg_key, "FilterModulesPath")
-                magick_home = libPath[0]
-                os.environ['PATH'] += (';' + libPath[0] + ";" +
-                                       coderPath[0] + ";" + filterPath[0])
+                os.environ['PATH'] += (libPath[0] + ";" +
+                                       coderPath[0] + ";" + filterPath[0] + ';')
         except OSError:
-            # otherwise use MAGICK_HOME, and we assume the coder and
+            # otherwise do nothing; we assume the coder and
             # filter DLLs are in the same directory
             pass
 
     def magick_path(path):
         return os.path.join(magick_home, *path)
+
     combinations = itertools.product(versions, options)
     suffixes = (version + option for version, option in combinations)
     if magick_home:
@@ -92,9 +123,20 @@ def library_paths():
                 libwand = 'CORE_RL_wand_{0}.dll'.format(suffix),
                 libmagick = 'CORE_RL_magick_{0}.dll'.format(suffix),
                 yield magick_path(libwand), magick_path(libmagick)
-                libwand = 'libMagickWand{0}.dll'.format(suffix),
-                libmagick = 'libMagickCore{0}.dll'.format(suffix),
-                yield magick_path(libwand), magick_path(libmagick)
+
+                # Prioritize the Unix-y instance
+                if is_windows[1] != False:
+                    prefixes = (is_windows[1], 'lib')
+                else:
+                    prefixes = ('lib',)
+
+                for prefix in prefixes:
+                    libwand = '{1}MagickWand{0}.dll'.format(suffix, prefix),
+                    libmagick = '{1}MagickCore{0}.dll'.format(suffix, prefix),
+                    # "lib" (or other prefixes) are used for MinGW/Cygwin/MSYS
+                    # builds, which may have a "bin" hierarchy over the DLLs. Add twice.
+                    yield magick_path(libwand), magick_path(libmagick)
+                    yield magick_path('bin', libwand), magick_path('bin', libmagick)
             elif system == 'Darwin':
                 libwand = 'lib', 'libMagickWand{0}.dylib'.format(suffix),
                 yield magick_path(libwand), magick_path(libwand)
@@ -107,11 +149,14 @@ def library_paths():
             libmagick = ctypes.util.find_library('CORE_RL_magick_' + suffix)
             yield libwand, libmagick
             libwand = ctypes.util.find_library('libMagickWand' + suffix)
-            libmagick = ctypes.util.find_library('libMagickCore' + suffix)
+            libmagick = ctypes.util.find_library('libMagickCore' + suffix) or libwand
             yield libwand, libmagick
+        # On Cygwin-like systems, find_library function normally with the prefixes.
+        # But libmagick is split (totally legit), so let's do a "or" fallback instead:
         else:
             libwand = ctypes.util.find_library('MagickWand' + suffix)
-            yield libwand, libwand
+            libmagick = ctypes.util.find_library('MagickCore' + suffix) or libwand
+            yield libwand, libmagick
 
 
 def load_library():
@@ -1422,10 +1467,13 @@ else:
         except OSError:
             # In case of El Capitan SIP
             libc = ctypes.cdll.LoadLibrary('/usr/lib/libc.dylib')
-    elif sys.platform.startswith(('dragonfly', 'freebsd')):
-        libc = ctypes.cdll.LoadLibrary(ctypes.util.find_library('c'))
     else:
-        libc = ctypes.cdll.LoadLibrary('libc.so.6')
+        try:
+            # Theoretically correct for all *nix, including Darwin
+            libc = ctypes.cdll.LoadLibrary(ctypes.util.find_library('c'))
+        except OSError:
+            # Hardcode a Linux case
+            libc = ctypes.cdll.LoadLibrary('libc.so.6')
     libc.fdopen.argtypes = [ctypes.c_int, ctypes.c_char_p]
     libc.fdopen.restype = ctypes.c_void_p
     libc.fflush.argtypes = [ctypes.c_void_p]
