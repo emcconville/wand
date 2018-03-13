@@ -101,8 +101,9 @@ def library_paths():
                 libPath = winreg.QueryValueEx(reg_key, "LibPath")
                 coderPath = winreg.QueryValueEx(reg_key, "CoderModulesPath")
                 filterPath = winreg.QueryValueEx(reg_key, "FilterModulesPath")
-                os.environ['PATH'] += (libPath[0] + ";" +
-                                       coderPath[0] + ";" + filterPath[0] + ';')
+                pathSep = ';' if is_windows[1] == False else ':'
+                os.environ['PATH'] = (pathSep.join(libPath[0], coderPath[0], filterPath[0]) + 
+                                      os.environ['PATH'])
         except OSError:
             # otherwise do nothing; we assume the coder and
             # filter DLLs are in the same directory
