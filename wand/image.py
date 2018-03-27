@@ -1655,6 +1655,23 @@ class BaseImage(Resource):
             if not r:
                 self.raise_exception()
 
+    def sigmoidal_contrast(self, increase=True, strength=0.0, midpoint=0.0):
+        """Adjusts the contrast of an image with a non-linear
+        sigmoidal contrast algorithm using :c:func:`MagickSigmoidalContrastImage`
+
+        :param increase: increase or decrease contrast
+        :type increase: :class:`bool`
+        :param strength : how much to increase or decrease contrast
+                          (0 is none; 3 is typical; 20 is pushing it)
+        :type strength: :class:`numbers.Real`
+        :param midpoint: midpoint as a factor of quantum
+        :type midpoint: :class:`numbers.Real`
+
+        """
+
+        beta = float(self.quantum_range * midpoint)
+        library.MagickSigmoidalContrastImage(self.wand, increase, strength, beta)
+
     @manipulative
     def transform(self, crop='', resize=''):
         """Transforms the image using :c:func:`MagickTransformImage`,
