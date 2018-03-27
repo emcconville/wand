@@ -425,7 +425,7 @@ ORIENTATION_TYPES = ('undefined', 'top_left', 'top_right', 'bottom_right',
 #:
 #: .. versionchanged:: 0.3.9
 #:    Added ``'pdf:use-cropbox'`` option.
-OPTIONS = frozenset(['fill', 'jpeg:sampling-factor', 'pdf:use-cropbox'])
+OPTIONS = frozenset(['fill', 'jpeg:sampling-factor', 'pdf:use-cropbox', 'jpeg:size'])
 
 #: (:class:`tuple`) The list of :attr:`Image.compression` types.
 #:
@@ -1654,6 +1654,23 @@ class BaseImage(Resource):
             library.MagickSetSize(self.wand, width, height)
             if not r:
                 self.raise_exception()
+
+    def sigmoidal_contrast(self, increase=True, strength=0.0, midpoint=0.0):
+        """Adjusts the contrast of an image with a non-linear
+        sigmoidal contrast algorithm using :c:func:`MagickSigmoidalContrastImage`
+
+        :param increase: increase or decrease contrast
+        :type increase: :class:`bool`
+        :param strength : how much to increase or decrease contrast
+                          (0 is none; 3 is typical; 20 is pushing it)
+        :type strength: :class:`numbers.Real`
+        :param midpoint: midpoint as a factor of quantum
+        :type midpoint: :class:`numbers.Real`
+
+        """
+
+        beta = float(self.quantum_range * midpoint)
+        library.MagickSigmoidalContrastImage(self.wand, increase, strength, beta)
 
     @manipulative
     def transform(self, crop='', resize=''):
