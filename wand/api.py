@@ -1392,6 +1392,10 @@ try:
                                             ctypes.c_bool,
                                             ctypes.c_bool]
 
+    library.MagickWaveImage.argtypes = [ctypes.c_void_p,
+                                        ctypes.c_double,
+                                        ctypes.c_double]
+
 except AttributeError:
     raise ImportError('MagickWand shared library not found or incompatible\n'
                       'Original exception was raised in:\n' +

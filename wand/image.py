@@ -1376,6 +1376,21 @@ class BaseImage(Resource):
         self.raise_exception()
 
     @manipulative
+    def wave(self, amplitude, wavelength = 1):
+        """Shear the columns of an image into a sine wave.
+
+        :param amplitude: amplitude of the sine wave.
+        :type amplitude: :class:`numbers.Real`
+        :param wavelength: wavelength of the sine wave (default 1).
+        :type wavelength :class:`numbers.Real`"""
+        if not isinstance(amplitude, numbers.Real):
+            raise TypeError('expected a real number, not ' + repr(amplitude))
+        elif not isinstance(wavelength, numbers.Real):
+            raise TypeError('expected a real number, not ' + repr(wavelength))
+        library.MagickWaveImage(self.wand, amplitude, wavelength)
+        self.raise_exception()
+
+    @manipulative
     def crop(self, left=0, top=0, right=None, bottom=None,
              width=None, height=None, reset_coords=True,
              gravity=None):
