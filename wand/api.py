@@ -1394,7 +1394,13 @@ try:
 
     library.MagickWaveImage.argtypes = [ctypes.c_void_p,
                                         ctypes.c_double,
-                                        ctypes.c_double]
+                                        ctypes.c_double,
+                                        ctypes.c_int]
+
+    library.MagickGetImageInterpolateMethod.argtypes = [ctypes.c_void_p]
+
+    library.MagickSetImageInterpolateMethod.argtypes = [ctypes.c_void_p,
+                                                        ctypes.c_int]
 
 except AttributeError:
     raise ImportError('MagickWand shared library not found or incompatible\n'

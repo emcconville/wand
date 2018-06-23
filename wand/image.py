@@ -482,6 +482,27 @@ DISTORTION_METHODS = (
     'shepards', 'resize', 'sentinel'
 )
 
+#: (:class:`tuple`) The list of pixel interpolate methods.
+#: - ``'undefined'``
+#: - ``'average'``
+#: - ``'average9'``
+#: - ``'average16'``
+#: - ``'background'``
+#: - ``'bilinear'``
+#: - ``'blend'``
+#: - ``'catrom'``
+#: - ``'integer'``
+#: - ``'mesh'``
+#: - ``'nearest'``
+#: - ``'spline'``
+#:
+#: .. versionadded:: 0.4.4
+PIXEL_INTERPOLATE_METHODS = (
+  'undefined', 'average', 'average9',
+  'average16', 'background', 'bilinear',
+  'blend', 'catrom', 'integer',
+  'mesh', 'nearest', 'spline')
+
 #: (:class:`tuple`) The list of :attr:`~BaseImage.virtual_pixel` types.
 #: - ``'undefined'``
 #: - ``'background'``
@@ -1375,6 +1396,26 @@ class BaseImage(Resource):
                                    argc, argv, bool(best_fit))
         self.raise_exception()
 
+    @property
+    def interpolate_method(self):
+      """(:class:`basestring`) Pixel interpolation method to use.
+      .. versionadded:: 0.4.4
+      """
+      result = library.MagickGetImageInterpolateMethod(self.wand)
+      return PIXEL_INTERPOLATE_METHODS[result]
+
+    @interpolate_method.setter
+    @manipulative
+    def interpolate_method(self, method):
+        if method not in PIXEL_INTERPOLATE_METHODS:
+            raise ValueError('expected string from PIXEL_INTERPOLATE_METHODS, not ' +
+                             repr(method))
+        else:
+            result = library.MagickSetImageInterpolateMethod(self.wand, PIXEL_INTERPOLATE_METHODS.index(method))
+
+            if not result:
+              self.raise_exception()
+
     @manipulative
     def wave(self, amplitude, wavelength):
         """Shear the columns of an image into a sine wave.
@@ -1389,8 +1430,7 @@ class BaseImage(Resource):
             raise TypeError('expected a real number, not ' + repr(amplitude))
         elif not isinstance(wavelength, numbers.Real):
             raise TypeError('expected a real number, not ' + repr(wavelength))
-        library.MagickWaveImage(self.wand, amplitude, wavelength)
-        self.raise_exception()
+        library.MagickWaveImage(self.wand, amplitude, wavelength, library.MagickGetImageInterpolateMethod(self.wand))
 
     @manipulative
     def crop(self, left=0, top=0, right=None, bottom=None,

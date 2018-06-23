@@ -755,13 +755,18 @@ def test_distort_error(fx_asset):
         with raises(TypeError):
             img.distort('perspective', 1)
 
+def test_set_interpolate_method(fx_asset):
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+        assert img.interpolate_method == "undefined"
+        img.interpolate_method = 'average16'
+        assert img.interpolate_method == 'average16'
+
 def test_wave(fx_asset):
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         with Color('srgb(130,70,90)') as color:
             img.background_color = color
             img.alpha_channel = 'off'
             img.wave(100, img.width)
-            img.save(filename="xd.jpg")
             assert img[0, 0] == color
             assert img[img.width - 1, img.height - 1] == color
 
