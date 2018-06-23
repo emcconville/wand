@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import codecs
 import io
+import math
 import os
 import os.path
 import shutil
@@ -746,7 +747,6 @@ def test_distort(fx_asset):
                                         90, 90, 85, 88))
             assert img[img.width - 1, 0] == color
 
-
 def test_distort_error(fx_asset):
     """Distort image with user error"""
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
@@ -755,6 +755,15 @@ def test_distort_error(fx_asset):
         with raises(TypeError):
             img.distort('perspective', 1)
 
+def test_wave(fx_asset):
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+        with Color('srgb(130,70,90)') as color:
+            img.background_color = color
+            img.alpha_channel = 'off'
+            img.wave(100, img.width)
+            img.save(filename="xd.jpg")
+            assert img[0, 0] == color
+            assert img[img.width - 1, img.height - 1] == color
 
 @mark.parametrize(('method'), [
     ('resize'),

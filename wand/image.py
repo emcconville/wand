@@ -1376,13 +1376,15 @@ class BaseImage(Resource):
         self.raise_exception()
 
     @manipulative
-    def wave(self, amplitude, wavelength = 1):
+    def wave(self, amplitude, wavelength):
         """Shear the columns of an image into a sine wave.
 
         :param amplitude: amplitude of the sine wave.
         :type amplitude: :class:`numbers.Real`
-        :param wavelength: wavelength of the sine wave (default 1).
-        :type wavelength :class:`numbers.Real`"""
+        :param wavelength: wavelength of the sine wave.
+        :type wavelength :class:`numbers.Real`
+        
+        .. version added:: 0.4.4"""
         if not isinstance(amplitude, numbers.Real):
             raise TypeError('expected a real number, not ' + repr(amplitude))
         elif not isinstance(wavelength, numbers.Real):
