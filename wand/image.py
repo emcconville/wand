@@ -971,7 +971,7 @@ class BaseImage(Resource):
 
     @manipulative
     def caption(self, text, left=0, top=0, width=None, height=None, font=None,
-                gravity=None):
+                gravity=None, stroke_color=None, stroke_width=None):
         """Writes a caption ``text`` into the position.
 
         :param text: text to write
@@ -992,7 +992,11 @@ class BaseImage(Resource):
                         uses the current :attr:`gravity` setting of the image
                         by default
         :type gravity: :class:`basestring`
-
+        :param stroke_color:    color for optional stroke on text.
+        :type stroke_color: :class:`wand.color.Color`
+        :param stroke_width:    width for optional stroke on text.
+        :type stroke_width: :class:`numbers.Integral`
+        
         .. versionadded:: 0.3.0
 
         """
@@ -1024,6 +1028,9 @@ class BaseImage(Resource):
             with Color('transparent') as background_color:
                 library.MagickSetBackgroundColor(textboard.wand,
                                                  background_color.resource)
+            with stroke_color:
+                library.MagickSetOption(textboard.wand, b"stroke", str(stroke_color.resource).encode())
+            library.MagickSetOption(textboard.wand, b"strokewidth", str(stroke_width).encode())
             textboard.read(filename=b'caption:' + text.encode('utf-8'))
             self.composite(textboard, left, top)
 
