@@ -702,7 +702,7 @@ def test_viewbox(fx_asset):
 
 
 def test_regression_issue_163(tmpdir):
-    """https://github.com/dahlia/wand/issues/163"""
+    """https://github.com/emcconville/wand/issues/163"""
     unicode_char = b'\xce\xa6'.decode('utf-8')
     with Drawing() as draw:
         with Image(width=500, height=500) as image:

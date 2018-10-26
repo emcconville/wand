@@ -9,13 +9,13 @@ Wand
    :alt: Documentation Status
    :target: http://docs.wand-py.org/en/latest/
 
-.. image:: https://secure.travis-ci.org/dahlia/wand.svg?branch=master
+.. image:: https://secure.travis-ci.org/emcconville/wand.svg?branch=master
    :alt: Build Status
-   :target: https://travis-ci.org/dahlia/wand
+   :target: https://travis-ci.org/emcconville/wand
 
-.. image:: https://img.shields.io/coveralls/dahlia/wand.svg?style=flat
+.. image:: https://img.shields.io/coveralls/emcconville/wand.svg?style=flat
    :alt: Coverage Status
-   :target: https://coveralls.io/r/dahlia/wand
+   :target: https://coveralls.io/r/emcconville/wand
 
 Wand is a :mod:`ctypes`-based simple ImageMagick_ binding for Python. ::
 
@@ -153,7 +153,7 @@ The source code is distributed under `MIT license`_ and you can find it at
 
 .. sourcecode:: bash
 
-   $ git clone git://github.com/dahlia/wand.git
+   $ git clone git://github.com/emcconville/wand.git
 
 If you find a bug, please notify to `our issue tracker`_. Pull requests
 are always welcome!
@@ -165,10 +165,10 @@ Check out :doc:`changes` also.
 
 .. _Hong Minhee: http://hongminhee.org/
 .. _StyleShare: https://stylesha.re/
-.. _contributors: https://github.com/dahlia/wand/graphs/contributors
+.. _contributors: https://github.com/emcconville/wand/graphs/contributors
 .. _MIT license: http://minhee.mit-license.org/
-.. _GitHub repository: https://github.com/dahlia/wand
-.. _our issue tracker: https://github.com/dahlia/wand/issues
+.. _GitHub repository: https://github.com/emcconville/wand
+.. _our issue tracker: https://github.com/emcconville/wand/issues
 
 
 Indices and tables

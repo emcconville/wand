@@ -260,9 +260,9 @@ man_pages = [
 intersphinx_mapping = {'http://docs.python.org/': None}
 
 extlinks = {
-    'issue': ('https://github.com/dahlia/wand/issues/%s', '#'),
-    'branch': ('https://github.com/dahlia/wand/compare/master...%s', ''),
-    'commit': ('https://github.com/dahlia/wand/commit/%s', '')
+    'issue': ('https://github.com/emcconville/wand/issues/%s', '#'),
+    'branch': ('https://github.com/emcconville/wand/compare/master...%s', ''),
+    'commit': ('https://github.com/emcconville/wand/commit/%s', '')
 }
 
 # fall back if theme is not there
