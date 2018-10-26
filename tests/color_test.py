@@ -109,7 +109,7 @@ def color_memory_leak():
 
 @mark.skipif('MAGICK_VERSION_INFO <= (6, 6, 9, 7)')
 def test_memory_leak():
-    """https://github.com/dahlia/wand/pull/127"""
+    """https://github.com/emcconville/wand/pull/127"""
     consumes = memory_usage((color_memory_leak, (), {}))
     vm = platform.python_implementation()
     minimum = 15.0 if vm == 'PyPy' else 1.0  # FIXME

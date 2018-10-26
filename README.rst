@@ -20,14 +20,14 @@ revision of the source code from the `GitHub repository`__:
 
 .. code-block:: console
 
-   $ git clone git://github.com/dahlia/wand.git
+   $ git clone git://github.com/emcconville/wand.git
    $ cd wand/
    $ python setup.py install
 
 .. _Wand: http://wand-py.org/
 .. _ImageMagick: http://www.imagemagick.org/
 .. _PyPI: https://pypi.python.org/pypi/Wand
-__ https://github.com/dahlia/wand
+__ https://github.com/emcconville/wand
 
 
 Docs
@@ -51,7 +51,7 @@ Website
    http://wand-py.org/
 
 GitHub
-   https://github.com/dahlia/wand
+   https://github.com/emcconville/wand
 
 Package Index (Cheeseshop)
    https://pypi.python.org/pypi/Wand
@@ -77,15 +77,15 @@ IRC
    `irc://irc.freenode.net/wand <http://webchat.freenode.net/?channels=wand>`_
 
 Continuous Integration (Travis CI)
-   https://travis-ci.org/dahlia/wand
+   https://travis-ci.org/emcconville/wand
 
-   .. image:: https://secure.travis-ci.org/dahlia/wand.svg?branch=master
+   .. image:: https://secure.travis-ci.org/emcconville/wand.svg?branch=master
       :alt: Build Status
-      :target: https://travis-ci.org/dahlia/wand
+      :target: https://travis-ci.org/emcconville/wand
 
 Code Coverage
-   https://coveralls.io/r/dahlia/wand
+   https://coveralls.io/r/emcconville/wand
 
-   .. image:: https://img.shields.io/coveralls/dahlia/wand.svg?style=flat
+   .. image:: https://img.shields.io/coveralls/emcconville/wand.svg?style=flat
       :alt: Coverage Status
-      :target: https://coveralls.io/r/dahlia/wand
+      :target: https://coveralls.io/r/emcconville/wand

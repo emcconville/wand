@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # Python MagickWand bindings can be obtained
-# from https://github.com/dahlia/wand
+# from https://github.com/emcconville/wand
 from wand.image import Image
 
 import os

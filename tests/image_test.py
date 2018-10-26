@@ -110,7 +110,7 @@ def test_read_from_filename(fx_asset):
 @mark.skipif(not unicode_filesystem_encoding,
              reason='Unicode filesystem encoding needed')
 def test_read_from_unicode_filename(fx_asset, tmpdir):
-    """https://github.com/dahlia/wand/issues/122"""
+    """https://github.com/emcconville/wand/issues/122"""
     filename = '모나리자.jpg'
     if not PY3:
         filename = filename.decode('utf-8')
@@ -151,7 +151,7 @@ def test_new_from_filename(fx_asset):
 @mark.skipif(not unicode_filesystem_encoding,
              reason='Unicode filesystem encoding needed')
 def test_new_from_unicode_filename(fx_asset, tmpdir):
-    """https://github.com/dahlia/wand/issues/122"""
+    """https://github.com/emcconville/wand/issues/122"""
     filename = '모나리자.jpg'
     if not PY3:
         filename = filename.decode('utf-8')
@@ -1764,7 +1764,7 @@ def test_compression(fx_asset):
 def test_issue_150(fx_asset, tmpdir):
     """Should not be terminated with segmentation fault.
 
-    https://github.com/dahlia/wand/issues/150
+    https://github.com/emcconville/wand/issues/150
 
     """
     with Image(filename=str(fx_asset.join('tiger_hd-1920x1080.jpg'))) as img:
