@@ -2764,7 +2764,7 @@ class Image(BaseImage):
         manager.
 
         """
-        for i in range(0, len(self.sequence)):
+        while self.sequence:
             self.sequence.pop()
         super(Image, self).destroy()
 
