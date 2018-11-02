@@ -9,6 +9,8 @@ Version 0.4.5
 
 To be released.
 
+- Fixed misleading `TypeError: object of type 'NoneType' has no len()` during destroy routines.  [:issue:`346`]
+
 
 Version 0.4.4
 -------------
