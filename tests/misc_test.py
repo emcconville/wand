@@ -11,7 +11,7 @@ from wand.version import (MAGICK_VERSION, MAGICK_VERSION_INFO,
 
 def test_version():
     """Test version strings."""
-    match = re.match('^ImageMagick\s+\d+\.\d+\.\d+(?:-\d+)?', MAGICK_VERSION)
+    match = re.match(r'^ImageMagick\s+\d+\.\d+\.\d+(?:-\d+)?', MAGICK_VERSION)
     assert match
     assert isinstance(MAGICK_VERSION_INFO, tuple)
     assert (len(MAGICK_VERSION_INFO) ==

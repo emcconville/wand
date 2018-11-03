@@ -269,7 +269,7 @@ class SingleImage(BaseImage):
 
     Note that all changes on single images are invisible to their
     containers until they are :meth:`~wand.image.BaseImage.close`\ d
-    (:meth:`~wand.resource.Resource.destroy`\ ed).
+    (:meth:`~wand.resource.Resource.destroy`\\ ed).
 
     .. versionadded:: 0.3.0
 
