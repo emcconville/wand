@@ -7,7 +7,7 @@ from wand.color import Color
 from wand.compat import nested, text
 from wand.api import library
 from wand.drawing import Drawing
-from wand.exceptions import WandLibraryVersionError
+from wand.exceptions import PolicyError, WandLibraryVersionError
 
 
 @fixture
@@ -223,15 +223,16 @@ def test_draw_circle(fx_asset):
 def test_draw_comment():
     comment = 'pikachu\'s ghost'
     expected = '#pikachu\'s ghost\n'
-    with nested(Image(width=1, height=1), Drawing()) as (img, draw):
-        draw.comment(comment)
-        draw(img)
-        try:
-            blob = img.make_blob(format="mvg")
-        except PolicyError:
-            skip("MVG disabled by security polcies.")
-        else:
-            assert expected == text(blob)
+    with Image(width=1, height=1) as img:
+        with Drawing() as draw:
+            draw.comment(comment)
+            draw(img)
+            try:
+                blob = img.make_blob(format="mvg")
+            except PolicyError as pe:
+                skip("MVG disabled by security polcies.")
+            else:
+                assert expected == text(blob)
 
 
 def test_draw_color():

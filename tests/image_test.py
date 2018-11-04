@@ -14,7 +14,7 @@ from pytest import config, mark, raises
 from wand.image import ClosedImageError, Image, IMAGE_LAYER_METHOD
 from wand.color import Color
 from wand.compat import PY3, string_type, text, text_type
-from wand.exceptions import OptionError, MissingDelegateError
+from wand.exceptions import MissingDelegateError, OptionError
 from wand.font import Font
 
 try:
