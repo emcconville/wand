@@ -9,7 +9,7 @@ import sys
 import tempfile
 import warnings
 
-from pytest import mark, raises
+from pytest import config, mark, raises
 
 from wand.image import ClosedImageError, Image, IMAGE_LAYER_METHOD
 from wand.color import Color
@@ -321,6 +321,8 @@ def test_set_resolution_02(fx_asset):
         assert img.resolution == (100, 100)
 
 
+@mark.skipif(config.option.nopdf,
+             reason='Skipping any PDF document tests.')
 def test_set_resolution_03(fx_asset):
     """Sets image resolution on constructor"""
     with Image(filename=str(fx_asset.join('sample.pdf')),
@@ -328,6 +330,8 @@ def test_set_resolution_03(fx_asset):
         assert img.resolution == (100, 100)
 
 
+@mark.skipif(config.option.nopdf,
+             reason='Skipping any PDF document tests.')
 def test_set_resolution_04(fx_asset):
     """Sets image resolution on constructor with integer as parameter."""
     with Image(filename=str(fx_asset.join('sample.pdf')),

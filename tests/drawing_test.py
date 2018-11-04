@@ -226,8 +226,12 @@ def test_draw_comment():
     with nested(Image(width=1, height=1), Drawing()) as (img, draw):
         draw.comment(comment)
         draw(img)
-        blob = img.make_blob(format="mvg")
-        assert expected == text(blob)
+        try:
+            blob = img.make_blob(format="mvg")
+        except PolicyError:
+            skip("MVG disabled by security polcies.")
+        else:
+            assert expected == text(blob)
 
 
 def test_draw_color():
