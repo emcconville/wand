@@ -1,4 +1,4 @@
-import platform
+import ctypes
 import time
 
 from memory_profiler import memory_usage
@@ -110,7 +110,8 @@ def color_memory_leak():
 @mark.skipif('MAGICK_VERSION_INFO <= (6, 6, 9, 7)')
 def test_memory_leak():
     """https://github.com/emcconville/wand/pull/127"""
+    minimum = 1.0
+    with Color('NONE') as nil_color:
+        minimum = ctypes.sizeof(nil_color.raw)
     consumes = memory_usage((color_memory_leak, (), {}))
-    vm = platform.python_implementation()
-    minimum = 15.0 if vm == 'PyPy' else 1.0  # FIXME
     assert consumes[-1] - consumes[0] <= minimum
