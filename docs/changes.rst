@@ -9,7 +9,13 @@ Version 0.4.5
 
 To be released.
 
-- Fixed misleading `TypeError: object of type 'NoneType' has no len()` during destroy routines.  [:issue:`346`]
+- Improve library searching when :var:`MAGICK_HOME` environment variable is
+  set. [:issue:`320` by Chase Anderson]
+- Fixed misleading `TypeError: object of type 'NoneType' has no len()` during
+  destroy routines.  [:issue:`346`]
+- Added :meth:`Image.blur() <wand.image.Image.blur>` method
+  (:c:func:`MagickBlurImage()`).
+  [:issue:`311` by Alexander Karpinsky]
 
 
 Version 0.4.4
