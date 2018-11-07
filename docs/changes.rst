@@ -9,11 +9,11 @@ Version 0.4.5
 
 To be released.
 
-- Improve library searching when :var:`MAGICK_HOME` environment variable is
+- Improve library searching when ``MAGICK_HOME`` environment variable is
   set. [:issue:`320` by Chase Anderson]
 - Fixed misleading `TypeError: object of type 'NoneType' has no len()` during
-  destroy routines.  [:issue:`346`]
-- Added :meth:`Image.blur() <wand.image.Image.blur>` method
+  destroy routines.  [:issue:`346` by Carey Metcalfe]
+- Added :meth:`Image.blur() <wand.image.BaseImage.blur>` method
   (:c:func:`MagickBlurImage()`).
   [:issue:`311` by Alexander Karpinsky]
 
