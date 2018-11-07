@@ -760,6 +760,27 @@ def test_distort_error(fx_asset):
             img.distort('perspective', 1)
 
 
+def test_extent(fx_asset):
+    with Image(filename=str(fx_asset.join('croptest.png'))) as img:
+        with img.clone() as extended:
+            assert extended.size == img.size
+            extended.extent(width=500)
+            assert extended.width == 500
+            assert extended.height == img.height
+
+        with img.clone() as extended:
+            assert extended.size == img.size
+            extended.extent(height=500)
+            assert extended.width == img.width
+            assert extended.height == 500
+
+        with raises(ValueError):
+            img.extent(width=-10)
+
+        with raises(ValueError):
+            img.extent(height=-10)
+
+
 @mark.parametrize(('method'), [
     ('resize'),
     ('sample'),

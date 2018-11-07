@@ -16,6 +16,9 @@ To be released.
 - Added :meth:`Image.blur() <wand.image.BaseImage.blur>` method
   (:c:func:`MagickBlurImage()`).
   [:issue:`311` by Alexander Karpinsky]
+- Added :meth:`Image.extent() <wand.image.BaseImage.extent>` method
+  (:c::func:`MagickExtentImage()`).
+  [:issue:`233` by Jae-Myoung Yu]
 
 
 Version 0.4.4

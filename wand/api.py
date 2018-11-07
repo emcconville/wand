@@ -624,6 +624,12 @@ try:
     library.MagickTrimImage.argtypes = [ctypes.c_void_p,
                                         ctypes.c_double]
 
+    library.MagickExtentImage.argtypes = [ctypes.c_void_p,
+                                          ctypes.c_size_t,
+                                          ctypes.c_size_t,
+                                          ctypes.c_ssize_t,
+                                          ctypes.c_ssize_t]
+
     library.MagickGaussianBlurImage.argtypes = [ctypes.c_void_p,
                                                 ctypes.c_double,
                                                 ctypes.c_double]
