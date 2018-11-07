@@ -1541,6 +1541,8 @@ class BaseImage(Resource):
         :param y: the :attr:`y` offset of the extended image.
                        default is 0
         :type y: :class:`numbers.Integral`
+
+        .. versionadded:: 0.4.5
         """
         if width is None or width == 0:
             width = self.width
