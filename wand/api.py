@@ -628,6 +628,10 @@ try:
                                                 ctypes.c_double,
                                                 ctypes.c_double]
 
+    library.MagickBlurImage.argtypes = [ctypes.c_void_p,
+                                        ctypes.c_double,
+                                        ctypes.c_double]
+
     library.MagickUnsharpMaskImage.argtypes = [ctypes.c_void_p,
                                                ctypes.c_double,
                                                ctypes.c_double,
