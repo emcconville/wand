@@ -17,8 +17,11 @@ To be released.
   (:c:func:`MagickBlurImage()`).
   [:issue:`311` by Alexander Karpinsky]
 - Added :meth:`Image.extent() <wand.image.BaseImage.extent>` method
-  (:c::func:`MagickExtentImage()`).
+  (:c:func:`MagickExtentImage()`).
   [:issue:`233` by Jae-Myoung Yu]
+- Added :meth:`Image.resample() <wand.image.BaseImage.resample>` method
+  (:c:func:`MagickResampleImage()`).
+  [:issue:`244` by Zio Tibia]
 
 
 Version 0.4.4

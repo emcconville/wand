@@ -1663,7 +1663,7 @@ class BaseImage(Resource):
                      default is 1
         :type blur: :class:`numbers.Real`
 
-        .. versionadded:::: 0.4.5
+        .. versionadded:: 0.4.5
         """
         if x_res is None:
             x_res, _ = self.resolution
