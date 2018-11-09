@@ -350,7 +350,9 @@ class Drawing(Resource):
 
     @property
     def font_stretch(self):
-        """(:class:`basestring`) The current font family. It also can be set.
+        """(:class:`basestring`) The current font stretch variation.
+        It also can be set, but will only apply if the font-family or encoder
+        supports the stretch type.
 
         .. versionadded:: 0.4.0
         """
@@ -369,7 +371,9 @@ class Drawing(Resource):
 
     @property
     def font_style(self):
-        """(:class:`basestring`) The current font style. It also can be set.
+        """(:class:`basestring`) The current font style.
+        It also can be set, but will only apply if the font-family
+        supports the style.
 
         .. versionadded:: 0.4.0
         """
