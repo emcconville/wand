@@ -1642,32 +1642,33 @@ class BaseImage(Resource):
             library.MagickSetSize(self.wand, width, height)
             if not r:
                 self.raise_exception()
-                
+
     @manipulative
     def resample(self, x_res=None, y_res=None, filter='undefined', blur=1):
-        """Adjust the number of pixels in an image so that when displayed at the
-        given Resolution or Density the image will still look the same size in
-        real world terms.
+        """Adjust the number of pixels in an image so that when displayed at
+        the given Resolution or Density the image will still look the same size
+        in real world terms.
 
-        :param x_res: the X resolution (density) in the scaled image. default is
-                      the original resolution
+        :param x_res: the X resolution (density) in the scaled image. default
+                      is  the original resolution.
         :type x_res: :class:`numbers.Real`
-        :param y_res: the Y resolution (density) in the scaled image. default is
-                      the original resolution
+        :param y_res: the Y resolution (density) in the scaled image. default
+                      is the original resolution.
         :type y_res: :class:`numbers.Real`
         :param filter: a filter type to use for resizing. choose one in
                        :const:`FILTER_TYPES`. default is ``'undefined'``
-                       which means IM will try to guess best one to use
+                       which means IM will try to guess best one to use.
         :type filter: :class:`basestring`, :class:`numbers.Integral`
         :param blur: the blur factor where > 1 is blurry, < 1 is sharp.
                      default is 1
         :type blur: :class:`numbers.Real`
 
+        .. versionadded:::: 0.4.5
         """
         if x_res is None:
-            x_res , _ = self.resolution
+            x_res, _ = self.resolution
         if y_res is None:
-            _ , y_res = self.resolution
+            _, y_res = self.resolution
         if not isinstance(x_res, numbers.Real):
             raise TypeError('x_res must be a Real number, not ' +
                             repr(x_res))
@@ -1703,15 +1704,14 @@ class BaseImage(Resource):
             for i in xrange(n + 1):
                 library.MagickSetIteratorIndex(self.wand, i)
                 library.MagickResampleImage(self.wand, x_res, y_res,
-                                          filter, blur)
-            
+                                            filter, blur)
         else:
             r = library.MagickResampleImage(self.wand, x_res, y_res,
-                                          filter, blur)
+                                            filter, blur)
 
             if not r:
                 self.raise_exception()
-                
+
     @manipulative
     def sample(self, width=None, height=None):
         """Resizes the image by sampling the pixels.  It's basically quicker
