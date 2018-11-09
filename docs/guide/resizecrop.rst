@@ -10,9 +10,9 @@ properties:
 
 .. sourcecode:: pycon
 
-   >>> from urllib2 import urlopen
+   >>> from urllib.request import urlopen
    >>> from wand.image import Image
-   >>> f = urlopen('http://api.twitter.com/1/users/profile_image/hongminhee')
+   >>> f = urlopen('http://pbs.twimg.com/profile_images/712673855341367296/WY6aLbBV_normal.jpg')
    >>> with Image(file=f) as img:
    ...     width = img.width
    ...     height = img.height
