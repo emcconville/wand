@@ -9,7 +9,7 @@ import sys
 import tempfile
 import warnings
 
-from pytest import mark, raises
+from pytest import config, mark, raises
 
 from wand.image import ClosedImageError, Image, IMAGE_LAYER_METHOD
 from wand.color import Color
@@ -111,7 +111,7 @@ def test_read_from_filename(fx_asset):
 @mark.skipif(not unicode_filesystem_encoding,
              reason='Unicode filesystem encoding needed')
 def test_read_from_unicode_filename(fx_asset, tmpdir):
-    """https://github.com/dahlia/wand/issues/122"""
+    """https://github.com/emcconville/wand/issues/122"""
     filename = '모나리자.jpg'
     if not PY3:
         filename = filename.decode('utf-8')
@@ -152,7 +152,7 @@ def test_new_from_filename(fx_asset):
 @mark.skipif(not unicode_filesystem_encoding,
              reason='Unicode filesystem encoding needed')
 def test_new_from_unicode_filename(fx_asset, tmpdir):
-    """https://github.com/dahlia/wand/issues/122"""
+    """https://github.com/emcconville/wand/issues/122"""
     filename = '모나리자.jpg'
     if not PY3:
         filename = filename.decode('utf-8')
@@ -322,6 +322,8 @@ def test_set_resolution_02(fx_asset):
         assert img.resolution == (100, 100)
 
 
+@mark.skipif(config.option.nopdf,
+             reason='Skipping any PDF document tests.')
 def test_set_resolution_03(fx_asset):
     """Sets image resolution on constructor"""
     try:
@@ -332,6 +334,8 @@ def test_set_resolution_03(fx_asset):
         warnings.warn('PDF delegate could not be found.')
 
 
+@mark.skipif(config.option.nopdf,
+             reason='Skipping any PDF document tests.')
 def test_set_resolution_04(fx_asset):
     """Sets image resolution on constructor with integer as parameter."""
     try:
@@ -767,6 +771,27 @@ def test_distort_error(fx_asset):
             img.distort('perspective', 1)
 
 
+def test_extent(fx_asset):
+    with Image(filename=str(fx_asset.join('croptest.png'))) as img:
+        with img.clone() as extended:
+            assert extended.size == img.size
+            extended.extent(width=500)
+            assert extended.width == 500
+            assert extended.height == img.height
+
+        with img.clone() as extended:
+            assert extended.size == img.size
+            extended.extent(height=500)
+            assert extended.width == img.width
+            assert extended.height == 500
+
+        with raises(ValueError):
+            img.extent(width=-10)
+
+        with raises(ValueError):
+            img.extent(height=-10)
+
+
 @mark.parametrize(('method'), [
     ('resize'),
     ('sample'),
@@ -852,6 +877,46 @@ def test_resize_and_sample_errors(method, fx_asset):
             getattr(img, method)(width=-5)
         with raises(ValueError):
             getattr(img, method)(height=-5)
+
+
+@mark.parametrize(('density', 'expected_size'), [
+    ((72, 72), (800, 600)),
+    ((36, 36), (400, 300)),
+    ((144, 144), (1600, 1200)),
+    ((None, 36), (800, 300)),
+    ((36, None), (400, 600)),
+])
+def test_resample(density, expected_size, fx_asset):
+    """Resample (Adjust nuber of pixels at the given density) the image."""
+    xr, yr = density
+    with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
+        img.units = "pixelspercentimeter"
+        assert img.resolution == (72, 72)
+        img.resample(xr, yr)
+        # Expect ``None`` values to match ImageMagick's default 72 resolution.
+        if xr is None:
+            xr = 72
+        if yr is None:
+            yr = 72
+        assert img.resolution == (xr, yr)
+        assert img.size == expected_size
+
+
+def test_resample_errors(fx_asset):
+    """Sampling errors."""
+    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+        with raises(TypeError):
+            img.resample(x_res='100')
+        with raises(TypeError):
+            img.resample(y_res='100')
+        with raises(ValueError):
+            img.resample(x_res=0)
+        with raises(ValueError):
+            img.resample(y_res=0)
+        with raises(ValueError):
+            img.resample(x_res=-5)
+        with raises(ValueError):
+            img.resample(y_res=-5)
 
 
 @mark.parametrize(('args', 'kwargs', 'expected_size'), [
@@ -1777,6 +1842,17 @@ def test_gaussian_blur(fx_asset, display):
         assert 0.655 <= after.blue < 0.67
 
 
+def test_blur(fx_asset, display):
+    with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
+        before = img[100, 100]
+        img.blur(30, 10)
+        after = img[100, 100]
+        assert before != after
+        assert 0.84 <= after.red <= 0.851
+        assert 0.74 <= after.green <= 0.75
+        assert 0.655 <= after.blue < 0.67
+
+
 def test_modulate(fx_asset, display):
     with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
         before = img[100, 100]
@@ -1814,7 +1890,7 @@ def test_compression(fx_asset):
 def test_issue_150(fx_asset, tmpdir):
     """Should not be terminated with segmentation fault.
 
-    https://github.com/dahlia/wand/issues/150
+    https://github.com/emcconville/wand/issues/150
 
     """
     with Image(filename=str(fx_asset.join('tiger_hd-1920x1080.jpg'))) as img:

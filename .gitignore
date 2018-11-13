@@ -9,3 +9,5 @@ dist
 .cache
 .coverage
 .DS_Store
+.pytest_cache
+

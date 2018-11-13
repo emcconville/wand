@@ -1681,6 +1681,40 @@ class BaseImage(Resource):
             if reset_coords:
                 self.reset_coords()
 
+    @manipulative
+    def extent(self, width=None, height=None, x=0, y=0):
+        """extends the image as defined by the geometry, gravity, and wand
+        background color. Set the (x,y) offset of the geometry to move the
+        original wand relative to the extended wand.
+
+        :param width: the :attr:`width` of the extended image.
+                      default is the :attr:`width` of the image.
+        :type width: :class:`numbers.Integral`
+        :param height: the :attr:`height` of the extended image.
+                       default is the :attr:`height` of the image.
+        :type height: :class:`numbers.Integral`
+        :param x: the :attr:`x` offset of the extended image.
+                      default is 0
+        :type x: :class:`numbers.Integral`
+        :param y: the :attr:`y` offset of the extended image.
+                       default is 0
+        :type y: :class:`numbers.Integral`
+
+        .. versionadded:: 0.4.5
+        """
+        if width is None or width == 0:
+            width = self.width
+        if height is None or height == 0:
+            height = self.height
+        if width < 0:
+            raise ValueError('image width cannot be negative integer')
+        elif height < 0:
+            raise ValueError('image height cannot be negative integer')
+
+        result = library.MagickExtentImage(self.wand, width, height, x, y)
+        if not result:
+            self.raise_exception()
+
     def reset_coords(self):
         """Reset the coordinate frame of the image so to the upper-left corner
         is (0, 0) again (crop and rotate operations change it).
@@ -1764,6 +1798,75 @@ class BaseImage(Resource):
             r = library.MagickResizeImage(self.wand, width, height,
                                           filter, blur)
             library.MagickSetSize(self.wand, width, height)
+            if not r:
+                self.raise_exception()
+
+    @manipulative
+    def resample(self, x_res=None, y_res=None, filter='undefined', blur=1):
+        """Adjust the number of pixels in an image so that when displayed at
+        the given Resolution or Density the image will still look the same size
+        in real world terms.
+
+        :param x_res: the X resolution (density) in the scaled image. default
+                      is  the original resolution.
+        :type x_res: :class:`numbers.Real`
+        :param y_res: the Y resolution (density) in the scaled image. default
+                      is the original resolution.
+        :type y_res: :class:`numbers.Real`
+        :param filter: a filter type to use for resizing. choose one in
+                       :const:`FILTER_TYPES`. default is ``'undefined'``
+                       which means IM will try to guess best one to use.
+        :type filter: :class:`basestring`, :class:`numbers.Integral`
+        :param blur: the blur factor where > 1 is blurry, < 1 is sharp.
+                     default is 1
+        :type blur: :class:`numbers.Real`
+
+        .. versionadded:: 0.4.5
+        """
+        if x_res is None:
+            x_res, _ = self.resolution
+        if y_res is None:
+            _, y_res = self.resolution
+        if not isinstance(x_res, numbers.Real):
+            raise TypeError('x_res must be a Real number, not ' +
+                            repr(x_res))
+        elif not isinstance(y_res, numbers.Real):
+            raise TypeError('y_res must be a Real number, not ' +
+                            repr(y_res))
+        elif x_res < 1:
+            raise ValueError('x_res must be a Real number, not ' +
+                             repr(x_res))
+        elif y_res < 1:
+            raise ValueError('y_res must be a Real number, not ' +
+                             repr(y_res))
+        elif not isinstance(blur, numbers.Real):
+            raise TypeError('blur must be numbers.Real , not ' + repr(blur))
+        elif not isinstance(filter, (string_type, numbers.Integral)):
+            raise TypeError('filter must be one string defined in wand.image.'
+                            'FILTER_TYPES or an integer, not ' + repr(filter))
+        if isinstance(filter, string_type):
+            try:
+                filter = FILTER_TYPES.index(filter)
+            except IndexError:
+                raise ValueError(repr(filter) + ' is an invalid filter type; '
+                                 'choose on in ' + repr(FILTER_TYPES))
+        elif (isinstance(filter, numbers.Integral) and
+              not (0 <= filter < len(FILTER_TYPES))):
+            raise ValueError(repr(filter) + ' is an invalid filter type')
+        blur = ctypes.c_double(float(blur))
+        if self.animation:
+            self.wand = library.MagickCoalesceImages(self.wand)
+            library.MagickSetLastIterator(self.wand)
+            n = library.MagickGetIteratorIndex(self.wand)
+            library.MagickResetIterator(self.wand)
+            for i in xrange(n + 1):
+                library.MagickSetIteratorIndex(self.wand, i)
+                library.MagickResampleImage(self.wand, x_res, y_res,
+                                            filter, blur)
+        else:
+            r = library.MagickResampleImage(self.wand, x_res, y_res,
+                                            filter, blur)
+
             if not r:
                 self.raise_exception()
 
@@ -2656,6 +2759,33 @@ class BaseImage(Resource):
             self.raise_exception()
 
     @manipulative
+    def blur(self, radius, sigma):
+        """Blurs the image.  We convolve the image with a gaussian operator
+        of the given ``radius`` and standard deviation (``sigma``).
+        For reasonable results, the ``radius`` should be larger
+        than ``sigma``.  Use a ``radius`` of 0 and :meth:`blur()` selects
+        a suitable ``radius`` for you.
+
+        :param radius: the radius of the, in pixels,
+                       not counting the center pixel
+        :type radius: :class:`numbers.Real`
+        :param sigma: the standard deviation of the, in pixels
+        :type sigma: :class:`numbers.Real`
+
+        .. versionadded:: 0.4.5
+
+        """
+        if not isinstance(radius, numbers.Real):
+            raise TypeError('radius has to be a numbers.Real, not ' +
+                            repr(radius))
+        elif not isinstance(sigma, numbers.Real):
+            raise TypeError('sigma has to be a numbers.Real, not ' +
+                            repr(sigma))
+        r = library.MagickBlurImage(self.wand, radius, sigma)
+        if not r:
+            self.raise_exception()
+
+    @manipulative
     def unsharp_mask(self, radius, sigma, amount, threshold):
         """Sharpens the image using unsharp mask filter. We convolve the image
         with a Gaussian operator of the given ``radius`` and standard deviation
@@ -3019,9 +3149,8 @@ class Image(BaseImage):
         manager.
 
         """
-        if self.sequence:
-            for i in range(0, len(self.sequence)):
-                self.sequence.pop()
+        while self.sequence:
+            self.sequence.pop()
         super(Image, self).destroy()
 
     def read(self, file=None, filename=None, blob=None, resolution=None):

@@ -58,10 +58,10 @@ on multiple Python interpreters:
 .. sourcecode:: console
 
    $ tox
-   GLOB sdist-make: /Users/dahlia/Desktop/wand/setup.py
-   py26 create: /Users/dahlia/Desktop/wand/.tox/py26
+   GLOB sdist-make: /Users/emcconville/Desktop/wand/setup.py
+   py26 create: /Users/emcconville/Desktop/wand/.tox/py26
    py26 installdeps: pytest
-   py26 sdist-inst: /Users/dahlia/Desktop/wand/.tox/dist/Wand-0.2.2.zip
+   py26 sdist-inst: /Users/emcconville/Desktop/wand/.tox/dist/Wand-0.2.2.zip
    py26 runtests: commands[0]
    ...
 
@@ -77,15 +77,15 @@ You can use a double ``--`` to pass options to pytest:
 Continuous Integration
 ----------------------
 
-.. image:: https://secure.travis-ci.org/dahlia/wand.svg?branch=master
+.. image:: https://secure.travis-ci.org/emcconville/wand.svg?branch=master
    :alt: Build Status
-   :target: https://travis-ci.org/dahlia/wand
+   :target: https://travis-ci.org/emcconville/wand
 
 `Travis CI`_ automatically builds and tests every commit and pull request.
 The above banner image shows the current status of Wand build.
 You can see the detail of the current status from the following URL:
 
-https://travis-ci.org/dahlia/wand
+https://travis-ci.org/emcconville/wand
 
 .. _Travis CI: http://travis-ci.org/
 
@@ -93,14 +93,14 @@ https://travis-ci.org/dahlia/wand
 Code Coverage
 -------------
 
-.. image:: https://img.shields.io/coveralls/dahlia/wand.svg?style=flat
+.. image:: https://img.shields.io/coveralls/emcconville/wand.svg?style=flat
    :alt: Coverage Status
-   :target: https://coveralls.io/r/dahlia/wand
+   :target: https://coveralls.io/r/emcconville/wand
 
 Coveralls_ support tracking Wand's test coverage.  The above banner image
 shows the current status of Wand coverage.  You can see the details of the
 current status from the following URL:
 
-https://coveralls.io/r/dahlia/wand
+https://coveralls.io/r/emcconville/wand
 
 .. _Coveralls: https://coveralls.io/

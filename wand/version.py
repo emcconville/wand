@@ -124,13 +124,15 @@ if libmagick:
     #: .. versionadded:: 0.2.1
     MAGICK_RELEASE_DATE_STRING = text(libmagick.GetMagickReleaseDate())
 
-    _match = re.match(r'^(\d{4})-?(\d\d)-?(\d\d)$', MAGICK_RELEASE_DATE_STRING)
-    #: (:class:`datetime.date`) The release date of the linked ImageMagick
-    #: library.  Equivalent to the result of :c:func:`GetMagickReleaseDate`
-    #: function.
-    #:
-    #: .. versionadded:: 0.2.1
-    MAGICK_RELEASE_DATE = datetime.date(*map(int, _match.groups()))
+    if MAGICK_RELEASE_DATE_STRING:
+        _match = re.match(r'^(\d{4})-?(\d\d)-?(\d\d)$',
+                          MAGICK_RELEASE_DATE_STRING)
+        #: (:class:`datetime.date`) The release date of the linked ImageMagick
+        #: library.  Equivalent to the result of :c:func:`GetMagickReleaseDate`
+        #: function.
+        #:
+        #: .. versionadded:: 0.2.1
+        MAGICK_RELEASE_DATE = datetime.date(*map(int, _match.groups()))
 
     c_quantum_depth = ctypes.c_size_t()
     libmagick.GetMagickQuantumDepth(ctypes.byref(c_quantum_depth))

@@ -7,7 +7,7 @@ from wand.color import Color
 from wand.compat import nested, text
 from wand.api import library
 from wand.drawing import Drawing
-from wand.exceptions import WandLibraryVersionError
+from wand.exceptions import PolicyError, WandLibraryVersionError
 from wand.version import MAGICK_VERSION_NUMBER
 
 
@@ -287,11 +287,16 @@ def test_draw_comment():
     skip('TODO - Rewrite as MVG is now disabled by default on CI runner.')
     comment = 'pikachu\'s ghost'
     expected = '#pikachu\'s ghost\n'
-    with nested(Image(width=1, height=1), Drawing()) as (img, draw):
-        draw.comment(comment)
-        draw(img)
-        blob = img.make_blob(format="mvg")
-        assert expected == text(blob)
+    with Image(width=1, height=1) as img:
+        with Drawing() as draw:
+            draw.comment(comment)
+            draw(img)
+            try:
+                blob = img.make_blob(format="mvg")
+            except PolicyError as pe:
+                skip("MVG disabled by security polcies.")
+            else:
+                assert expected == text(blob)
 
 
 def test_draw_color():
@@ -799,7 +804,7 @@ def test_viewbox(fx_asset):
 
 
 def test_regression_issue_163(tmpdir):
-    """https://github.com/dahlia/wand/issues/163"""
+    """https://github.com/emcconville/wand/issues/163"""
     unicode_char = b'\xce\xa6'.decode('utf-8')
     with Drawing() as draw:
         with Image(width=500, height=500) as image:

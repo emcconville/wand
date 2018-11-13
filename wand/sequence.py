@@ -268,8 +268,8 @@ class SingleImage(BaseImage):
     For example, it can be a frame of GIF animation.
 
     Note that all changes on single images are invisible to their
-    containers until they are :meth:`~wand.image.BaseImage.close`\ d
-    (:meth:`~wand.resource.Resource.destroy`\ ed).
+    containers until they are :meth:`~wand.image.Image.close`\\ d
+    (:meth:`~wand.resource.Resource.destroy`\\ ed).
 
     .. versionadded:: 0.3.0
 

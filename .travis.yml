@@ -1,23 +1,19 @@
 language: python
 sudo: false
-dist: precise
 cache: pip
 git:
    depth: 1
 python:
 - 2.7
-- 3.3
-- 3.4
-- 3.5
 - 3.6
 - pypy
 env:
 - secure: "EhG2uSD2m1eGxuL2HeQewJJx7MVL4WpjrxyfiUBEgsApemD1yKJPjUnLwAyd\nbPi5HJx5ySm1TTRSvj6/yP85YLYTaJHA8OabKk7p0wFW294qcrYIDGovU7NL\n3YOqZmqN+S3XOBGFCOnByxE+pcxxWW/3/I09EgeW7D6tBPh67G0="
 install:
 - echo $TRAVIS_PYTHON_VERSION
-- pip install psutil coveralls flake8 memory_profiler
+- pip install pytest pytest-xdist memory_profiler==0.40 psutil coveralls
 - >
-    if [[ "$TRAVIS_PYTHON_VERSION" != "pypy" ]]; then
+    if [[ "$TRAVIS_PYTHON_VERSION" != "pypy" && "$TRAVIS_PYTHON_VERSION" != "pypy3" ]]; then
       pip install 'pytest-cov>=1.8.0';
     fi
 - >
@@ -29,13 +25,9 @@ script:
 - python -mwand.version --verbose
 - >
     if [[ "$TRAVIS_PYTHON_VERSION" == "pypy" || "$TRAVIS_PYTHON_VERSION" == "pypy3" ]]; then
-      py.test --boxed --durations=20;
+      py.test --no-pdf --boxed --durations=20;
     else
-      py.test --cov wand --boxed --durations=20;
-    fi
-- >
-    if [[ "$TRAVIS_PYTHON_VERSION" != "2.6" ]]; then
-      flake8 --ignore=E722 .;
+      py.test --no-pdf --cov wand --boxed --durations=20;
     fi
 after_success:
 - coveralls

@@ -260,15 +260,15 @@ man_pages = [
 intersphinx_mapping = {'http://docs.python.org/': None}
 
 extlinks = {
-    'issue': ('https://github.com/dahlia/wand/issues/%s', '#'),
-    'branch': ('https://github.com/dahlia/wand/compare/master...%s', ''),
-    'commit': ('https://github.com/dahlia/wand/commit/%s', '')
+    'issue': ('https://github.com/emcconville/wand/issues/%s', '#'),
+    'branch': ('https://github.com/emcconville/wand/compare/master...%s', ''),
+    'commit': ('https://github.com/emcconville/wand/commit/%s', '')
 }
 
 # fall back if theme is not there
 try:
     __import__('flask_theme_support')
-except ImportError as e:
+except ImportError:
     print('-' * 74)
     print('Warning: Flask themes unavailable. Building with default theme')
     print('If you want the Flask themes, run this command and build again:')

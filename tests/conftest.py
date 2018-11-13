@@ -24,6 +24,9 @@ def pytest_addoption(parser):
                           'display() fixture if present.  Useful for '
                           'debugging on CI',
                      default=os.environ.get('IMGUR_CLIENT_ID'))
+    parser.addoption('--no-pdf', action='store_true', dest='nopdf',
+                     help='Skip any test with PDF documents.',
+                     default=False)
 
 
 def pytest_runtest_setup(item):
