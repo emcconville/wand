@@ -6,10 +6,11 @@
 """
 import ctypes
 
-from .api import MagickPixelPacket, library
+from .api import library
+from .cdefs.structures import MagickPixelPacket, PixelInfo
 from .compat import binary, text
 from .resource import Resource
-from .version import QUANTUM_DEPTH
+from .version import QUANTUM_DEPTH, MAGICK_HDRI
 
 __all__ = 'Color', 'scale_quantum_to_int8'
 
@@ -75,13 +76,23 @@ class Color(Resource):
                 string is not None and raw is not None):
             raise TypeError('expected one argument')
 
+        # MagickPixelPacket has been deprecated, use PixelInfo
+        self.use_pixel = library.PixelSetMagickColor is None
+
         self.allocated = 0
         if raw is None:
-            self.raw = ctypes.create_string_buffer(
-                ctypes.sizeof(MagickPixelPacket)
-            )
+            if self.use_pixel:
+                self.raw = ctypes.create_string_buffer(
+                    ctypes.sizeof(PixelInfo)
+                )
+            else:
+                self.raw = ctypes.create_string_buffer(
+                    ctypes.sizeof(MagickPixelPacket)
+                )
             with self:
+                # Create color from string.
                 library.PixelSetColor(self.resource, binary(string))
+                # Copy color value to structure buffer for future read.
                 library.PixelGetMagickColor(self.resource, self.raw)
         else:
             self.raw = raw
@@ -92,8 +103,13 @@ class Color(Resource):
     def __enter__(self):
         if not self.allocated:
             with self.allocate():
+                # Initialize resource.
                 self.resource = library.NewPixelWand()
-                library.PixelSetMagickColor(self.resource, self.raw)
+                # Restore color value from structure buffer.
+                if self.use_pixel:
+                    library.PixelSetPixelColor(self.resource, self.raw)
+                else:
+                    library.PixelSetMagickColor(self.resource, self.raw)
         self.allocated += 1
         return Resource.__enter__(self)
 
@@ -296,12 +312,23 @@ def scale_quantum_to_int8(quantum):
     :rtype: :class:`numbers.Integral`
 
     .. versionadded:: 0.3.0
-
+    .. versionchanged:: 0.5.0
+        Added HDRI support
     """
     if quantum <= 0:
         return 0
     table = {8: 1, 16: 257.0, 32: 16843009.0, 64: 72340172838076673.0}
-    v = quantum / table[QUANTUM_DEPTH]
+    if MAGICK_HDRI:
+        if QUANTUM_DEPTH == 8:
+            v = quantum / table[QUANTUM_DEPTH]
+        elif QUANTUM_DEPTH == 16:
+            v = ((int(quantum + 128) - (int(quantum + 128) >> 8)) >> 8)
+        elif QUANTUM_DEPTH == 32:
+            v = ((quantum + 8421504) / table[QUANTUM_DEPTH])
+        elif QUANTUM_DEPTH == 64:
+            v = quantum / table[QUANTUM_DEPTH]
+    else:
+        v = quantum / table[QUANTUM_DEPTH]
     if v >= 255:
         return 255
     return int(v + 0.5)

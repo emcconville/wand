@@ -1,5 +1,8 @@
 language: python
 sudo: false
+cache: pip
+git:
+   depth: 1
 python:
 - 2.7
 - 3.6
@@ -14,7 +17,11 @@ install:
     if [[ "$TRAVIS_PYTHON_VERSION" != "pypy" && "$TRAVIS_PYTHON_VERSION" != "pypy3" ]]; then
       pip install 'pytest-cov>=1.8.0';
     fi
-- pip install -e .
+- >
+    if [[ "$TRAVIS_PYTHON_VERSION" == "3.6" ]]; then
+      pip install --upgrade setuptools;
+    fi
+- pip install -e .[test] --upgrade
 script:
 - python -mwand.version --verbose
 - >

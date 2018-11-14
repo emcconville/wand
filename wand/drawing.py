@@ -10,12 +10,14 @@ import collections
 import ctypes
 import numbers
 
-from .api import library, MagickPixelPacket, PointInfo, AffineMatrix
+from .api import (AffineMatrix, MagickPixelPacket, PixelInfo, PointInfo,
+                  library)
 from .color import Color
 from .compat import binary, string_type, text, text_type, xrange
+from .exceptions import WandLibraryVersionError
 from .image import Image, COMPOSITE_OPERATORS
 from .resource import Resource
-from .exceptions import WandLibraryVersionError
+from .version import MAGICK_VERSION_NUMBER
 
 __all__ = ('CLIP_PATH_UNITS', 'FILL_RULE_TYPES', 'FONT_METRICS_ATTRIBUTES',
            'GRAVITY_TYPES', 'LINE_CAP_TYPES', 'LINE_JOIN_TYPES',
@@ -201,9 +203,14 @@ class Drawing(Resource):
         """
         pixelwand = library.NewPixelWand()
         library.DrawGetBorderColor(self.resource, pixelwand)
-        size = ctypes.sizeof(MagickPixelPacket)
+        if MAGICK_VERSION_NUMBER < 0x700:
+            pixel_structure = MagickPixelPacket
+        else:
+            pixel_structure = PixelInfo
+        size = ctypes.sizeof(pixel_structure)
         buffer = ctypes.create_string_buffer(size)
         library.PixelGetMagickColor(pixelwand, buffer)
+        pixelwand = library.DestroyPixelWand(pixelwand)
         return Color(raw=buffer)
 
     @border_color.setter
@@ -232,9 +239,7 @@ class Drawing(Resource):
     def clip_path(self, path):
         if not isinstance(path, string_type):
             raise TypeError('expected a string, not ' + repr(path))
-        okay = library.DrawSetClipPath(self.resource, binary(path))
-        if okay == 0:
-            raise ValueError('Clip path not understood')
+        library.DrawSetClipPath(self.resource, binary(path))
 
     @property
     def clip_rule(self):
@@ -413,9 +418,14 @@ class Drawing(Resource):
         """
         pixel = library.NewPixelWand()
         library.DrawGetFillColor(self.resource, pixel)
-        size = ctypes.sizeof(MagickPixelPacket)
+        if MAGICK_VERSION_NUMBER < 0x700:
+            pixel_structure = MagickPixelPacket
+        else:
+            pixel_structure = PixelInfo
+        size = ctypes.sizeof(pixel_structure)
         buffer = ctypes.create_string_buffer(size)
         library.PixelGetMagickColor(pixel, buffer)
+        pixel = library.DestroyPixelWand(pixel)
         return Color(raw=buffer)
 
     @fill_color.setter
@@ -509,7 +519,11 @@ class Drawing(Resource):
         """
         pixel = library.NewPixelWand()
         library.DrawGetStrokeColor(self.resource, pixel)
-        size = ctypes.sizeof(MagickPixelPacket)
+        if MAGICK_VERSION_NUMBER < 0x700:
+            pixel_structure = MagickPixelPacket
+        else:
+            pixel_structure = PixelInfo
+        size = ctypes.sizeof(pixel_structure)
         buffer = ctypes.create_string_buffer(size)
         library.PixelGetMagickColor(pixel, buffer)
         return Color(raw=buffer)
@@ -828,9 +842,14 @@ class Drawing(Resource):
         """
         pixel = library.NewPixelWand()
         library.DrawGetTextUnderColor(self.resource, pixel)
-        size = ctypes.sizeof(MagickPixelPacket)
+        if MAGICK_VERSION_NUMBER < 0x700:
+            pixel_structure = MagickPixelPacket
+        else:
+            pixel_structure = PixelInfo
+        size = ctypes.sizeof(pixel_structure)
         buffer = ctypes.create_string_buffer(size)
         library.PixelGetMagickColor(pixel, buffer)
+        pixel = library.DestroyPixelWand(pixel)
         return Color(raw=buffer)
 
     @text_under_color.setter
@@ -949,7 +968,46 @@ class Drawing(Resource):
         amx = AffineMatrix(sx=matrix[0], rx=matrix[1],
                            ry=matrix[2], sy=matrix[3],
                            tx=matrix[4], ty=matrix[5])
-        library.DrawAffine(self.resource, amx)
+        library.DrawAffine(self.resource, ctypes.byref(amx))
+
+    def alpha(self, x=None, y=None, paint_method='undefined'):
+        """Paints on the image's opacity channel in order to set effected pixels
+        to transparent.
+
+         To influence the opacity of pixels. The available methods are:
+
+        - ``'undefined'``
+        - ``'point'``
+        - ``'replace'``
+        - ``'floodfill'``
+        - ``'filltoborder'``
+        - ``'reset'``
+
+        .. note::
+
+            This method replaces :meth:`matte()` in ImageMagick version 7.
+            An :class:`AttributeError` will be raised if attempting
+            to call on a library without ``DrawAlpha`` support.
+
+        .. versionadded:: 0.5.0
+
+        """
+        if library.DrawAlpha is None:
+            raise AttributeError(
+                'Method added with ImageMagick version 7. ' +
+                'Please use `wand.drawing.Drawing.matte()\' instead.'
+            )
+        if x is None or y is None:
+            raise TypeError('Both x & y coordinates need to be defined')
+        if not isinstance(paint_method, string_type):
+            raise TypeError('expected a string, not ' + repr(paint_method))
+        elif paint_method not in PAINT_METHOD_TYPES:
+            raise ValueError(
+                'expected a string from PAINT_METHOD_TYPES, not ' +
+                repr(paint_method)
+            )
+        library.DrawAlpha(self.resource, float(x), float(y),
+                          PAINT_METHOD_TYPES.index(paint_method))
 
     def arc(self, start, end, degree):
         """Draws a arc using the current :attr:`stroke_color`,
@@ -1138,9 +1196,20 @@ class Drawing(Resource):
         - ``'filltoborder'``
         - ``'reset'``
 
+        .. note::
+
+            This method has been replace by :meth:`alpha()` in ImageMagick
+            version 7. An :class:`AttributeError` will be raised if attempting
+            to call on a library without ``DrawMatte`` support.
+
         .. versionadded:: 0.4.0
 
         """
+        if library.DrawMatte is None:
+            raise AttributeError(
+                'Method removed from ImageMagick version. ' +
+                'Please use `wand.drawing.Drawing.alpha()\' instead.'
+            )
         if x is None or y is None:
             raise TypeError('Both x & y coordinates need to be defined')
         if not isinstance(paint_method, string_type):

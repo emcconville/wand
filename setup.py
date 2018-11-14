@@ -31,10 +31,16 @@ else:
             raise SystemExit(errno)
     cmdclass = {'test': pytest}
 
+test_requires = [
+    'pytest >= 2.3.0',
+    'pytest-xdist >= 1.8',
+    'psutil >= 1.0.1'
+]
 
 setup(
     name='Wand',
-    packages=['wand'],
+    packages=['wand', 'wand.cdefs'],
+    data_files=[('', ['README.rst'])],
     version=VERSION,
     description='Ctypes-based simple MagickWand API binding for Python',
     long_description=readme(),
@@ -44,13 +50,8 @@ setup(
     maintainer='E. McConville',
     maintainer_email='emcconville' '@' 'emcconville.com',
     url='http://wand-py.org/',
-    tests_require=[
-        'pytest >= 2.3.0',
-        'pytest-xdist >= 1.8',
-        'memory_profiler >= 0.27',
-        'psutil >= 1.0.1'
-    ],
-    extras_require={'doc': ['Sphinx >=1.0']},
+    tests_require=test_requires,
+    extras_require={'doc': ['Sphinx >=1.0'], 'test': test_requires},
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
@@ -59,7 +60,6 @@ setup(
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',

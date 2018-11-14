@@ -49,9 +49,11 @@ from .compat import binary, string_type, text
 
 
 __all__ = ('VERSION', 'VERSION_INFO', 'MAGICK_VERSION',
+           'MAGICK_VERSION_DELEGATES', 'MAGICK_VERSION_FEATURES',
            'MAGICK_VERSION_INFO', 'MAGICK_VERSION_NUMBER',
-           'MAGICK_RELEASE_DATE', 'MAGICK_RELEASE_DATE_STRING',
-           'QUANTUM_DEPTH', 'configure_options', 'fonts', 'formats')
+           'MAGICK_RELEASE_DATE', 'MAGICK_RELEASE_DATE_STRING', 'MAGICK_HDRI',
+           'QUANTUM_DEPTH', 'QUANTUM_RANGE', 'configure_options',
+           'fonts', 'formats')
 
 #: (:class:`tuple`) The version tuple e.g. ``(0, 1, 2)``.
 #:
@@ -88,6 +90,27 @@ if libmagick:
 
     _match = re.match(r'^ImageMagick\s+(\d+)\.(\d+)\.(\d+)(?:-(\d+))?',
                       MAGICK_VERSION)
+
+    #: (:class:`basestring`) A string of all delegates enabled.
+    #: This value is identical to what is returned by
+    #: :c:func:`GetMagickDelegates`
+    #:
+    #: Set to empty string if the system uses an older version of
+    #: ImageMagick-6, or does not support :c:func:`GetMagickDelegates`.
+    #:
+    #: .. versionadded:: 0.5.0
+    if libmagick.GetMagickDelegates:
+        MAGICK_VERSION_DELEGATES = text(libmagick.GetMagickDelegates())
+    else:
+        MAGICK_VERSION_DELEGATES = ""
+
+    #: (:class:`basestring`) A string of all features enabled.
+    #: This value is identical to what is returned by
+    #: :c:func:`GetMagickFeatures`
+    #:
+    #: .. versionadded:: 0.5.0
+    MAGICK_VERSION_FEATURES = text(libmagick.GetMagickFeatures())
+
     #: (:class:`tuple`) The version tuple e.g. ``(6, 7, 7, 6)`` of
     #: :const:`MAGICK_VERSION`.
     #:
@@ -119,7 +142,19 @@ if libmagick:
     #: .. versionadded:: 0.3.0
     QUANTUM_DEPTH = c_quantum_depth.value
 
-    del c_magick_version, _match, c_quantum_depth
+    c_quantum_range = ctypes.c_size_t()
+    libmagick.GetMagickQuantumRange(ctypes.byref(c_quantum_range))
+    #: (:class:`numbers.Integral`) The quantum range configuration of
+    #: the linked ImageMagick library.
+    #:
+    #: .. versionadded:: 0.5.0
+    QUANTUM_RANGE = c_quantum_range.value
+
+    #: (:class:`bool`) True if ImageMagick is compiled for High Dynamic
+    #: Range Image.
+    MAGICK_HDRI = 'HDRI' in MAGICK_VERSION_FEATURES
+
+    del c_magick_version, _match, c_quantum_depth, c_quantum_range
 
 
 def configure_options(pattern='*'):
