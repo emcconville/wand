@@ -4,7 +4,7 @@
 .. versionadded:: 0.5.0
 """
 from ctypes import POINTER, Structure, c_double, c_int, c_size_t
-from wand.cdefs.wandtypes import c_ssize_t
+from wand.cdefs.wandtypes import c_ssize_t, c_magick_real_t
 
 __all__ = ('AffineMatrix', 'KernelInfo', 'MagickPixelPacket', 'PixelInfo',
            'PointInfo')
@@ -55,11 +55,11 @@ class MagickPixelPacket(Structure):
                 ('matte', c_int),
                 ('fuzz', c_double),
                 ('depth', c_size_t),
-                ('red', c_double),
-                ('green', c_double),
-                ('blue', c_double),
-                ('opacity', c_double),
-                ('index', c_double)]
+                ('red', c_magick_real_t),
+                ('green', c_magick_real_t),
+                ('blue', c_magick_real_t),
+                ('opacity', c_magick_real_t),
+                ('index', c_magick_real_t)]
 
 
 class OffsetInfo(Structure):
@@ -76,12 +76,12 @@ class PixelInfo(Structure):
                 ('fuzz', c_double),
                 ('depth', c_size_t),
                 ('count', c_size_t),
-                ('red', c_double),
-                ('green', c_double),
-                ('blue', c_double),
-                ('black', c_double),
-                ('alpha', c_double),
-                ('index', c_double)]
+                ('red', c_magick_real_t),
+                ('green', c_magick_real_t),
+                ('blue', c_magick_real_t),
+                ('black', c_magick_real_t),
+                ('alpha', c_magick_real_t),
+                ('index', c_magick_real_t)]
 
 
 class PointInfo(Structure):
