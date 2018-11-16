@@ -126,42 +126,6 @@ def load_library():
     raise IOError('cannot find library; tried paths: ' + repr(tried_paths))
 
 
-if not hasattr(ctypes, 'c_ssize_t'):
-    if ctypes.sizeof(ctypes.c_uint) == ctypes.sizeof(ctypes.c_void_p):
-        ctypes.c_ssize_t = ctypes.c_int
-    elif ctypes.sizeof(ctypes.c_ulong) == ctypes.sizeof(ctypes.c_void_p):
-        ctypes.c_ssize_t = ctypes.c_long
-    elif ctypes.sizeof(ctypes.c_ulonglong) == ctypes.sizeof(ctypes.c_void_p):
-        ctypes.c_ssize_t = ctypes.c_longlong
-
-
-class MagickPixelPacket(ctypes.Structure):
-
-    _fields_ = [('storage_class', ctypes.c_int),
-                ('colorspace', ctypes.c_int),
-                ('matte', ctypes.c_int),
-                ('fuzz', ctypes.c_double),
-                ('depth', ctypes.c_size_t),
-                ('red', ctypes.c_double),
-                ('green', ctypes.c_double),
-                ('blue', ctypes.c_double),
-                ('opacity', ctypes.c_double),
-                ('index', ctypes.c_double)]
-
-class PointInfo(ctypes.Structure):
-
-    _fields_ = [('x', ctypes.c_double),
-                ('y', ctypes.c_double)]
-
-class AffineMatrix(ctypes.Structure):
-    _fields_ = [('sx', ctypes.c_double),
-                ('rx', ctypes.c_double),
-                ('ry', ctypes.c_double),
-                ('sy', ctypes.c_double),
-                ('tx', ctypes.c_double),
-                ('ty', ctypes.c_double)]
-
-
 try:
     # Preserve the module itself even if it fails to import
     sys.modules['wand._api'] = sys.modules['wand.api']
