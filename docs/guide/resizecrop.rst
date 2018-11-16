@@ -10,9 +10,9 @@ properties:
 
 .. sourcecode:: pycon
 
-   >>> from urllib2 import urlopen
+   >>> from urllib.request import urlopen
    >>> from wand.image import Image
-   >>> f = urlopen('http://api.twitter.com/1/users/profile_image/hongminhee')
+   >>> f = urlopen('http://pbs.twimg.com/profile_images/712673855341367296/WY6aLbBV_normal.jpg')
    >>> with Image(file=f) as img:
    ...     width = img.width
    ...     height = img.height
@@ -121,6 +121,17 @@ an image by ``[left:right, top:bottom]`` with maintaining the original:
    (40, 80)
    >>> img.size
    (300, 300)
+
+Specifying ``gravity`` along with ``width`` and ``height`` keyword
+arguments allows a simplified cropping alternative.
+
+.. sourcecode:: pycon
+
+    >>> img.size
+    (300, 300)
+    >>> img.crop(width=40, height=80, gravity='center')
+    >>> img.size
+    (40, 80)
 
 
 Transform images

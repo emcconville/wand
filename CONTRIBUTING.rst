@@ -29,7 +29,7 @@ Tests
 - All commits will be tested by `Travis CI`__.
 
 __ http://docs.wand-py.org/en/latest/test.html
-__ http://travis-ci.org/dahlia/wand
+__ http://travis-ci.org/emcconville/wand
 
 
 Docs

@@ -81,15 +81,17 @@ slices = {
     'to_overflow': slice(None, 10, None)
 }
 
+slice_items = list(sorted(slices.items(), key=lambda k: k[0]))
 
-@mark.parametrize(('slice_name', 'slice_'), slices.items())
+
+@mark.parametrize(('slice_name', 'slice_'), slice_items)
 def test_getitem_slice(slice_name, slice_, fx_asset):
     print(1, slice_)
     with Image(filename=str(fx_asset.join('apple.ico'))) as img:
         assert list(img.sequence[slice_]) == list(img.sequence)[slice_]
 
 
-@mark.parametrize(('slice_name', 'slice_'), slices.items())
+@mark.parametrize(('slice_name', 'slice_'), slice_items)
 def test_setitem_slice(slice_name, slice_, fx_asset):
     with Image(filename=str(fx_asset.join('apple.ico'))) as imga:
         instances = list(imga.sequence)
@@ -102,7 +104,7 @@ def test_setitem_slice(slice_name, slice_, fx_asset):
             assert instances == list(imga.sequence)
 
 
-@mark.parametrize(('slice_name', 'slice_'), slices.items())
+@mark.parametrize(('slice_name', 'slice_'), slice_items)
 def test_delitem_slice(slice_name, slice_, fx_asset):
     with Image(filename=str(fx_asset.join('apple.ico'))) as img:
         instances = list(img.sequence)

@@ -21,13 +21,13 @@ import datetime
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('..'))
 sys.path.append(os.path.abspath('_themes'))
-from wand.version import VERSION
+from wand.version import VERSION  # noqa
 
 # Mocking C libraries to fake wand.api module which is unavailable
 # on ReadTheDocs builder.
 if os.environ.get('READTHEDOCS', 0):
     try:
-        import wand.api
+        import wand.api  # noqa
     except ImportError:
         pass
 
@@ -53,22 +53,6 @@ if os.environ.get('READTHEDOCS', 0):
     sys.modules['wand.version'].MAGICK_RELEASE_DATE = None
     sys.modules['wand.version'].QUANTUM_DEPTH = None
 
-    html_context = {}
-
-    class PathList(list):
-        """Fake list to ignore ReadTheDocs.org's hack."""
-
-        def insert(self, index, value):
-            if index == 0:
-                index = 1
-                html_context['rtd_hack_template_path'] = value
-            super(PathList, self).insert(index, value)
-
-        def __reduce__(self):
-            return list, (list(self),)
-else:
-    PathList = list
-
 # -- General configuration ----------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -80,7 +64,7 @@ extensions = ['sphinx.ext.autodoc', 'sphinx.ext.intersphinx',
               'sphinx.ext.extlinks', 'sphinx.ext.todo']
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = PathList(['_templates'])
+templates_path = ['_templates']
 
 # The suffix of source filenames.
 source_suffix = '.rst'
@@ -92,8 +76,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Wand'
-copyright = str(datetime.date.today().year) + u', Hong Minhee'
+project = 'Wand'
+copyright = str(datetime.date.today().year) + ', Hong Minhee'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -176,7 +160,7 @@ html_logo = '_static/wand.png'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = PathList(['_static'])
+html_static_path = ['_static']
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
@@ -235,7 +219,7 @@ htmlhelp_basename = 'Wanddoc'
 # (source start file, target name, title, author,
 #  documentclass [howto/manual]).
 latex_documents = [
-    ('index', 'Wand.tex', u'Wand Documentation', u'Hong Minhee', 'manual'),
+    ('index', 'Wand.tex', 'Wand Documentation', 'Hong Minhee', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -267,8 +251,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'wand', u'Wand Documentation',
-     [u'Hong Minhee'], 1)
+    ('index', 'wand', 'Wand Documentation',
+     ['Hong Minhee'], 1)
 ]
 
 
@@ -276,15 +260,15 @@ man_pages = [
 intersphinx_mapping = {'http://docs.python.org/': None}
 
 extlinks = {
-    'issue': ('https://github.com/dahlia/wand/issues/%s', '#'),
-    'branch': ('https://github.com/dahlia/wand/compare/master...%s', ''),
-    'commit': ('https://github.com/dahlia/wand/commit/%s', '')
+    'issue': ('https://github.com/emcconville/wand/issues/%s', '#'),
+    'branch': ('https://github.com/emcconville/wand/compare/master...%s', ''),
+    'commit': ('https://github.com/emcconville/wand/commit/%s', '')
 }
 
 # fall back if theme is not there
 try:
     __import__('flask_theme_support')
-except ImportError as e:
+except ImportError:
     print('-' * 74)
     print('Warning: Flask themes unavailable. Building with default theme')
     print('If you want the Flask themes, run this command and build again:')

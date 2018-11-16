@@ -5,7 +5,7 @@
 
 :class:`Font` is an object which takes the :attr:`~Font.path` of font file,
 :attr:`~Font.size`, :attr:`~Font.color`, and whether to use
-:attr:`~Font.antialias`\ ing.  If you want to use font by its name rather
+:attr:`~Font.antialias`\\ ing.  If you want to use font by its name rather
 than the file path, use TTFQuery_ package.  The font path resolution by its
 name is a very complicated problem to achieve.
 

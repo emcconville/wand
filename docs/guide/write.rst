@@ -58,6 +58,15 @@ method with the keyword argument ``filename``::
         img.format = 'jpeg'
         img.save(filename='pikachu.jpg')
 
+.. note::
+
+    The image format does not effect the file being saved, to save with a given colorspace use::
+
+        from wand.image import Image
+
+        with Image(filename='pikachu.jpg') as img:
+            img.format = 'jpeg'
+            img.save(filename='PNG24:pikachu.png')
 
 Save to stream
 --------------

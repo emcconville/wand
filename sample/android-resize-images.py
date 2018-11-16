@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # Python MagickWand bindings can be obtained
-# from https://github.com/dahlia/wand
+# from https://github.com/emcconville/wand
 from wand.image import Image
 
 import os
@@ -34,5 +34,5 @@ if __name__ == "__main__":
 
             for dpi, ratio in MANIFEST:
                 cimg = img.clone()
-                cimg.resize(int(width*ratio), int(height*ratio))
+                cimg.resize(int(width * ratio), int(height * ratio))
                 cimg.save(filename="res/drawable-%sdpi/%s" % (dpi, filename))

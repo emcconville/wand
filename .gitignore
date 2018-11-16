@@ -6,5 +6,8 @@ dist
 *.egg
 *.egg-info
 .*.swp
+.cache
 .coverage
 .DS_Store
+.pytest_cache
+

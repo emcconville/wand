@@ -4,6 +4,127 @@ Wand Changelog
 0.4 series
 ~~~~~~~~~~
 
+Version 0.4.5
+-------------
+
+To be released.
+
+- Improve library searching when ``MAGICK_HOME`` environment variable is
+  set. [:issue:`320` by Chase Anderson]
+- Fixed misleading `TypeError: object of type 'NoneType' has no len()` during
+  destroy routines.  [:issue:`346` by Carey Metcalfe]
+- Added :meth:`Image.blur() <wand.image.BaseImage.blur>` method
+  (:c:func:`MagickBlurImage()`).
+  [:issue:`311` by Alexander Karpinsky]
+- Added :meth:`Image.extent() <wand.image.BaseImage.extent>` method
+  (:c:func:`MagickExtentImage()`).
+  [:issue:`233` by Jae-Myoung Yu]
+- Added :meth:`Image.resample() <wand.image.BaseImage.resample>` method
+  (:c:func:`MagickResampleImage()`).
+  [:issue:`244` by Zio Tibia]
+
+
+Version 0.4.4
+-------------
+
+Released on October 22, 2016.
+
+- Added :exc:`~wand.exceptions.BaseError`, :exc:`~wand.exceptions.BaseWarning`,
+  and :exc:`~wand.exceptions.BaseFatalError`, base classes for domains.
+  [:issue:`292`]
+- Fixed :exc:`TypeError` during parsing version caused by format change of
+  ImageMagick version string (introduced by 6.9.6.2).
+  [:issue:`310`, `Debian bug report #841548`__]
+- Properly fixed again memory-leak when accessing images constructed in
+  :class:`Image.sequence[] <wand.sequence.Sequence>`.  It had still leaked
+  memory in the case an image is not closed using ``with`` but manual
+  :func:`wand.resource.Resource.destroy()`/:func:`wand.image.Image.close()`
+  method call.  [:issue:`237`]
+
+__ https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=841548
+
+
+Version 0.4.3
+-------------
+
+Released on June 1, 2016.
+
+- Fixed :func:`repr()` for empty :class:`~.wand.image.Image` objects.
+  [:issue:`265`]
+- Added :meth:`Image.compare() <wand.image.BaseImage.compare>` method
+  (:c:func:`MagickCompareImages()`).
+  [:issue:`238`, :issue:`268` by Gyusun Yeom]
+- Added :meth:`Image.page <wand.image.BaseImage.page>` and related properties for virtual canvas handling.
+  [:issue:`284` by Dan Harrison]
+- Added :meth:`Image.merge_layers() <wand.image.BaseImage.merge_layers>` method
+  (:c:func:`MagickMergeImageLayers()`).
+  [:issue:`281` by Dan Harrison]
+- Fixed :exc:`OSError` during import :file:`libc.dylib` due to El Capitan's
+  SIP protection.  [:issue:`275` by Ramesh Dharan]
+
+
+Version 0.4.2
+-------------
+
+Released on November 30, 2015.
+
+- Fixed :exc:`ImportError` on MSYS2.  [:issue:`257` by Eon Jeong]
+- Added :meth:`Image.quantize() <wand.image.BaseImage.quantize>` method
+  (:c:func:`MagickQuantizeImage()`).
+  [:issue:`152` by Kang Hyojun, :issue:`262` by Jeong YunWon]
+- Added :meth:`Image.transform_colorspace()
+  <wand.image.BaseImage.transform_colorspace>` quantize
+  (:c:func:`MagickTransformImageColorspace()`).
+  [:issue:`152` by Adrian Jung, :issue:`262` by Jeong YunWon]
+- Now ImageMagick DLL can be loaded on Windows even if its location
+  is stored in the resitry.  [:issue:`261` by Roeland Schoukens]
+- Added ``depth`` parameter to :class:`~.wand.image.Image` constructor.
+  The ``depth``, ``width`` and ``height`` parameters can be used
+  with the ``filename``, ``file`` and ``blob`` parameters to load
+  raw pixel data. [:issue:`261` by Roeland Schoukens]
+
+
+Version 0.4.1
+-------------
+
+Released on August 3, 2015.
+
+- Added :meth:`Image.auto_orient() <wand.image.BaseImage.auto_orient>`
+  that fixes orientation by checking EXIF tags.
+- Added :meth:`Image.transverse() <wand.image.BaseImage.transverse>` method
+  (:c:func:`MagickTransverseImage()`).
+- Added :meth:`Image.transpose() <wand.image.BaseImage.transpose>` method
+  (:c:func:`MagickTransposeImage()`).
+- Added :meth:`Image.evaluate() <wand.image.BaseImage.evaluate>` method.
+- Added :meth:`Image.frame() <wand.image.BaseImage.frame>` method.
+- Added :meth:`Image.function() <wand.image.BaseImage.function>` method.
+- Added :meth:`Image.fx() <wand.image.BaseImage.fx>` expression method.
+- Added ``gravity`` options in :meth:`Image.crop() <wand.image.BaseImage.crop>`
+  method.  [:issue:`222` by Eric McConville]
+- Added :attr:`Image.matte_color <wand.image.BaseImage.matte_color>` property.
+- Added :attr:`Image.virtual_pixel <wand.image.BaseImage.virtual_pixel>` property.
+- Added :meth:`Image.distort() <wand.image.BaseImage.distort>` method.
+- Added :meth:`Image.contrast_stretch() <wand.image.Image.contrast_stretch>` method.
+- Added :meth:`Image.gamma() <wand.image.Image.gamma>` method.
+- Added :meth:`Image.linear_stretch() <wand.image.Image.linear_stretch>` method.
+- Additional support for :attr:`Image.alpha_channel <wand.image.BaseImage.alpha_channel>`.
+- Additional query functions have been added to :mod:`wand.version` API. [:issue:`120`]
+
+  - Added :func:`configure_options() <wand.version.configure_options>` function.
+  - Added :func:`fonts() <wand.version.fonts>` function.
+  - Added :func:`formats() <wand.version.formats>` function.
+
+- Additional IPython support. [:issue:`117`]
+
+  - Render RGB :class:`Color <wand.color.Color>` preview.
+  - Display each frame in image :class:`Sequence <wand.sequence.Sequence>`.
+
+- Fixed memory-leak when accessing images constructed in
+  :class:`Image.sequence[] <wand.sequence.Sequence>`. [:issue:`237` by Eric McConville]
+- Fixed Windows memory-deallocate errors on :mod:`wand.drawing` API. [:issue:`226` by Eric McConville]
+- Fixed :exc:`ImportError` on FreeBSD.  [:issue:`252` by Pellaeon Lin]
+
+
 .. _changelog-0.4.0:
 
 Version 0.4.0

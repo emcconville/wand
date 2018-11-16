@@ -1,18 +1,14 @@
-{% extends rtd_hack_template_path + '/layout.html' if READTHEDOCS
-                                                   else '!layout.html' %}
+{% extends '!layout.html' %}
 
 {% block sidebarlogo %}
   {% if pagename == 'index' %}
     <iframe
-      src="http://ghbtns.com/github-btn.html?user=dahlia&repo=wand{{- '' -}}
+      src="http://ghbtns.com/github-btn.html?user=emcconville&repo=wand{{- '' -}}
            &type=watch&count=true&size=large"
       allowtransparency="true" frameborder="0" scrolling="0"
       width="170px" height="30px">
       {{- '' -}}
     </iframe>
-    <iframe style="border: 0; margin: 15px 0; padding: 0;"
-            src="https://www.gittip.com/dahlia/widget.html"
-            width="48pt" height="22pt"></iframe>
     <hr class="github-line" />
   {% else %}
     {{ super() }}

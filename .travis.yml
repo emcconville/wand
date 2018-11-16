@@ -1,27 +1,34 @@
 language: python
 sudo: false
+cache: pip
+git:
+   depth: 1
 python:
-- 2.6
 - 2.7
-- 3.2
-- 3.3
-- 3.4
+- 3.6
 - pypy
 - pypy3
 env:
 - secure: "EhG2uSD2m1eGxuL2HeQewJJx7MVL4WpjrxyfiUBEgsApemD1yKJPjUnLwAyd\nbPi5HJx5ySm1TTRSvj6/yP85YLYTaJHA8OabKk7p0wFW294qcrYIDGovU7NL\n3YOqZmqN+S3XOBGFCOnByxE+pcxxWW/3/I09EgeW7D6tBPh67G0="
 install:
-- pip install pytest pytest-xdist 'pytest-cov>=1.8.0' pytest-capturelog memory_profiler psutil coveralls
-- pip install -e .
+- echo $TRAVIS_PYTHON_VERSION
+- pip install pytest pytest-xdist memory_profiler==0.40 psutil coveralls
+- >
+    if [[ "$TRAVIS_PYTHON_VERSION" != "pypy" && "$TRAVIS_PYTHON_VERSION" != "pypy3" ]]; then
+      pip install 'pytest-cov>=1.8.0';
+    fi
+- >
+    if [[ "$TRAVIS_PYTHON_VERSION" == "3.6" ]]; then
+      pip install --upgrade setuptools;
+    fi
+- pip install -e .[test] --upgrade
 script:
 - python -mwand.version --verbose
-- py.test --cov wand --boxed --durations=20
+- >
+    if [[ "$TRAVIS_PYTHON_VERSION" == "pypy" || "$TRAVIS_PYTHON_VERSION" == "pypy3" ]]; then
+      py.test --no-pdf --boxed --durations=20;
+    else
+      py.test --no-pdf --cov wand --boxed --durations=20;
+    fi
 after_success:
 - coveralls
-notifications:
-  irc:
-    channels:
-    - "ircs://ssl.ozinger.org:16667#hongminhee"
-    - "irc.freenode.net#wand"
-    on_success: change
-    on_failure: always

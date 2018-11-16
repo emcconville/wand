@@ -1,20 +1,22 @@
 Roadmap
 =======
 
-Version 0.5
+Version 0.6
 -----------
 
-CFFI
-   Wand 0.5 will move to CFFI from ctypes.
 
 Image layers (:issue:`22`)
-   Wand 0.5 will be able to deal with layers of an image.
+   Wand 0.6 will be able to deal with layers of an image.
 
    Its branch name will be :branch:`layer`.
 
 
 Very future versions
 --------------------
+
+
+CFFI
+   Wand 0.5 will move to CFFI from ctypes.
 
 PIL compatibility layer
    PIL has very long history and the most of Python projects still

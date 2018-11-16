@@ -1,12 +1,10 @@
 Installation
 ============
 
-Wand itself can be installed from PyPI_ using :program:`easy_install` or
-:program:`pip`:
+Wand itself can be installed from PyPI_ using :program:`pip`:
 
 .. sourcecode:: console
 
-   $ easy_install Wand  # or
    $ pip install Wand
 
 Wand is a Python binding of ImageMagick_, so you have to install it as well:
@@ -15,11 +13,18 @@ Wand is a Python binding of ImageMagick_, so you have to install it as well:
 - :ref:`Fedora/CentOS <install-imagemagick-redhat>`
 - :ref:`Mac <install-imagemagick-mac>`
 - :ref:`Windows <install-imagemagick-windows>`
+- :ref:`Explicitly link to specific ImageMagick <explicit-link>`
+
+.. note::
+
+   Wand yet doesn't support ImageMagick 7 which has several incompatible APIs
+   with previous versions.  For more details, see the issue :issue:`287`.
 
 Or you can simply install Wand and its entire dependencies using the package
 manager of your system (it's way convenient but the version might be outdated):
 
 - :ref:`Debian/Ubuntu <install-wand-debian>`
+- :ref:`Fefora <install-wand-fedora>`
 - :ref:`FreeBSD <install-wand-freebsd>`
 
 .. _PyPI: http://pypi.python.org/pypi/Wand
@@ -110,15 +115,15 @@ a prebuilt binary of ImageMagick for your architecture (``win32`` or
 
 You can download it from the following link:
 
-http://www.imagemagick.org/download/binaries/
+http://legacy.imagemagick.org/script/binary-releases.php#windows
 
 Choose a binary for your architecture:
 
 Windows 32-bit
-   ImageMagick-6.9.0-4-Q16-x86-dll.exe__
+   ImageMagick-6.9.x-x-Q16-x86-dll.exe
 
 Windows 64-bit
-   ImageMagick-6.9.0-4-Q16-x64-dll.exe__
+   ImageMagick-6.9.x-x-Q16-x64-dll.exe
 
 .. image:: ../_images/windows-setup.png
 
@@ -130,12 +135,23 @@ libraries for C and C++` to make Wand able to link to it.
    :height: 315
 
 Lastly you have to set :envvar:`MAGICK_HOME` environment variable to the path
-of ImageMagick (e.g. :file:`C:\\Program Files\\ImageMagick-6.7.7-Q16`).
+of ImageMagick (e.g. :file:`C:\\Program Files\\ImageMagick-6.9.3-Q16`).
 You can set it in :menuselection:`Computer --> Properties -->
 Advanced system settings --> Advanced --> Enviro&nment Variables...`.
 
-__ http://www.imagemagick.org/download/binaries/ImageMagick-6.9.0-4-Q16-x86-dll.exe
-__ http://www.imagemagick.org/download/binaries/ImageMagick-6.9.0-4-Q16-x64-dll.exe
+
+.. _explicit-link:
+
+Explicitly link to specific ImageMagick
+---------------------------------------
+
+Although Wand tries searching operating system's standard library paths for
+a ImageMagick installation, sometimes you need to explicitly specify
+the path of ImageMagick installation.
+
+In that case, you can give the path to Wand by setting :envvar:`MAGICK_HOME`.
+Wand respects :envvar:`MAGICK_HOME`, the environment variable which has been
+reserved by ImageMagick.
 
 
 .. _install-wand-debian:
@@ -143,14 +159,30 @@ __ http://www.imagemagick.org/download/binaries/ImageMagick-6.9.0-4-Q16-x64-dll.
 Install Wand on Debian/Ubuntu
 -----------------------------
 
-Wand itself is already packaged in Debian/Ubuntu APT repository: python-wand_.
+Wand itself is already packaged in Debian/Ubuntu APT repository: python-wand__.
 You can install it using :program:`apt-get` command:
 
 .. sourcecode:: console
 
    $ sudo apt-get install python-wand
 
-.. _python-wand: http://packages.debian.org/sid/python-wand
+__ http://packages.debian.org/sid/python-wand
+
+
+.. _install-wand-fedora:
+
+Install Wand on Fedora
+----------------------
+
+Wand itself is already packaged in Fedora package DB: python-wand__.
+You can install it using :program:`dnf` command:
+
+.. code-block:: console
+
+   $ dnf install python-wand   # Python 2
+   $ dnf install python3-wand  # Python 3
+
+__ https://admin.fedoraproject.org/pkgdb/package/python-wand/
 
 
 .. _install-wand-freebsd:

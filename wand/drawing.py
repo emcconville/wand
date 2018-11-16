@@ -10,12 +10,14 @@ import collections
 import ctypes
 import numbers
 
-from .api import library, libc, MagickPixelPacket, PointInfo, AffineMatrix
+from .api import (AffineMatrix, MagickPixelPacket, PixelInfo, PointInfo,
+                  library)
 from .color import Color
 from .compat import binary, string_type, text, text_type, xrange
+from .exceptions import WandLibraryVersionError
 from .image import Image, COMPOSITE_OPERATORS
 from .resource import Resource
-from .exceptions import WandLibraryVersionError
+from .version import MAGICK_VERSION_NUMBER
 
 __all__ = ('CLIP_PATH_UNITS', 'FILL_RULE_TYPES', 'FONT_METRICS_ATTRIBUTES',
            'GRAVITY_TYPES', 'LINE_CAP_TYPES', 'LINE_JOIN_TYPES',
@@ -146,24 +148,6 @@ PAINT_METHOD_TYPES = ('undefined', 'point', 'replace',
                       'floodfill', 'filltoborder', 'reset')
 
 
-def leaky_string(func):
-    """Decorator method to convert MagickWand's dynamically allocated
-    char buffers to python strings. Ensures any returned non-None pointer is
-    freed with libc's method.
-
-    .. versionadded:: 0.4.0
-    """
-    def wrapper(*args, **kwargs):
-        c_void_p = func(*args, **kwargs)
-        string = text('')
-        if c_void_p is not None:
-            c_void_p = ctypes.cast(c_void_p, ctypes.c_char_p)
-            string = text(c_void_p.value)
-            libc.free(c_void_p)
-        return string
-    return wrapper
-
-
 class Drawing(Resource):
     """Drawing object.  It maintains several vector drawing instructions
     and can get drawn into zero or more :class:`~wand.image.Image` objects
@@ -219,9 +203,14 @@ class Drawing(Resource):
         """
         pixelwand = library.NewPixelWand()
         library.DrawGetBorderColor(self.resource, pixelwand)
-        size = ctypes.sizeof(MagickPixelPacket)
+        if MAGICK_VERSION_NUMBER < 0x700:
+            pixel_structure = MagickPixelPacket
+        else:
+            pixel_structure = PixelInfo
+        size = ctypes.sizeof(pixel_structure)
         buffer = ctypes.create_string_buffer(size)
         library.PixelGetMagickColor(pixelwand, buffer)
+        pixelwand = library.DestroyPixelWand(pixelwand)
         return Color(raw=buffer)
 
     @border_color.setter
@@ -233,22 +222,24 @@ class Drawing(Resource):
             library.DrawSetBorderColor(self.resource, border_color.resource)
 
     @property
-    @leaky_string
     def clip_path(self):
         """(:class:`basestring`) The current clip path. It also can be set.
 
         .. versionadded:: 0.4.0
 
+        .. versionchanged: 0.4.1
+           Safely release allocated memory with
+           :c:func:`MagickRelinquishMemory` instead of :c:func:`libc.free`.
+
         """
-        return library.DrawGetClipPath(self.resource)
+        clip_path_p = library.DrawGetClipPath(self.resource)
+        return text(clip_path_p.value)
 
     @clip_path.setter
     def clip_path(self, path):
         if not isinstance(path, string_type):
             raise TypeError('expected a string, not ' + repr(path))
-        okay = library.DrawSetClipPath(self.resource, binary(path))
-        if okay == 0:
-            raise ValueError('Clip path not understood')
+        library.DrawSetClipPath(self.resource, binary(path))
 
     @property
     def clip_rule(self):
@@ -291,10 +282,16 @@ class Drawing(Resource):
                                  CLIP_PATH_UNITS.index(clip_unit))
 
     @property
-    @leaky_string
     def font(self):
-        """(:class:`basestring`) The current font name.  It also can be set."""
-        return library.DrawGetFont(self.resource)
+        """(:class:`basestring`) The current font name.  It also can be set.
+
+        .. versionchanged: 0.4.1
+           Safely release allocated memory with
+           :c:func:`MagickRelinquishMemory` instead of :c:func:`libc.free`.
+
+        """
+        font_p = library.DrawGetFont(self.resource)
+        return text(font_p.value)
 
     @font.setter
     def font(self, font):
@@ -303,13 +300,18 @@ class Drawing(Resource):
         library.DrawSetFont(self.resource, binary(font))
 
     @property
-    @leaky_string
     def font_family(self):
         """(:class:`basestring`) The current font family. It also can be set.
 
         .. versionadded:: 0.4.0
+
+        .. versionchanged: 0.4.1
+           Safely release allocated memory with
+           :c:func:`MagickRelinquishMemory` instead of :c:func:`libc.free`.
+
         """
-        return library.DrawGetFontFamily(self.resource)
+        font_family_p = library.DrawGetFontFamily(self.resource)
+        return text(font_family_p.value)
 
     @font_family.setter
     def font_family(self, family):
@@ -353,7 +355,9 @@ class Drawing(Resource):
 
     @property
     def font_stretch(self):
-        """(:class:`basestring`) The current font family. It also can be set.
+        """(:class:`basestring`) The current font stretch variation.
+        It also can be set, but will only apply if the font-family or encoder
+        supports the stretch type.
 
         .. versionadded:: 0.4.0
         """
@@ -372,7 +376,9 @@ class Drawing(Resource):
 
     @property
     def font_style(self):
-        """(:class:`basestring`) The current font style. It also can be set.
+        """(:class:`basestring`) The current font style.
+        It also can be set, but will only apply if the font-family
+        supports the style.
 
         .. versionadded:: 0.4.0
         """
@@ -412,9 +418,14 @@ class Drawing(Resource):
         """
         pixel = library.NewPixelWand()
         library.DrawGetFillColor(self.resource, pixel)
-        size = ctypes.sizeof(MagickPixelPacket)
+        if MAGICK_VERSION_NUMBER < 0x700:
+            pixel_structure = MagickPixelPacket
+        else:
+            pixel_structure = PixelInfo
+        size = ctypes.sizeof(pixel_structure)
         buffer = ctypes.create_string_buffer(size)
         library.PixelGetMagickColor(pixel, buffer)
+        pixel = library.DestroyPixelWand(pixel)
         return Color(raw=buffer)
 
     @fill_color.setter
@@ -477,7 +488,7 @@ class Drawing(Resource):
 
     @opacity.setter
     def opacity(self, opaque):
-        library.DrawSetOpacity(self.resource, float(opaque))
+        library.DrawSetOpacity(self.resource, ctypes.c_double(opaque))
 
     @property
     def stroke_antialias(self):
@@ -508,7 +519,11 @@ class Drawing(Resource):
         """
         pixel = library.NewPixelWand()
         library.DrawGetStrokeColor(self.resource, pixel)
-        size = ctypes.sizeof(MagickPixelPacket)
+        if MAGICK_VERSION_NUMBER < 0x700:
+            pixel_structure = MagickPixelPacket
+        else:
+            pixel_structure = PixelInfo
+        size = ctypes.sizeof(pixel_structure)
         buffer = ctypes.create_string_buffer(size)
         library.PixelGetMagickColor(pixel, buffer)
         return Color(raw=buffer)
@@ -528,6 +543,11 @@ class Drawing(Resource):
         It also can be set.
 
         .. versionadded:: 0.4.0
+
+        .. versionchanged: 0.4.1
+           Safely release allocated memory with
+           :c:func:`MagickRelinquishMemory` instead of :c:func:`libc.free`.
+
         """
         number_elements = ctypes.c_size_t(0)
         dash_array_p = library.DrawGetStrokeDashArray(
@@ -537,7 +557,7 @@ class Drawing(Resource):
         if dash_array_p is not None:
             dash_array = [float(dash_array_p[i])
                           for i in xrange(number_elements.value)]
-            libc.free(dash_array_p)
+            library.MagickRelinquishMemory(dash_array_p)
         return dash_array
 
     @stroke_dash_array.setter
@@ -738,13 +758,17 @@ class Drawing(Resource):
                                      TEXT_DIRECTION_TYPES.index(direction))
 
     @property
-    @leaky_string
     def text_encoding(self):
         """(:class:`basestring`) The internally used text encoding setting.
         Although it also can be set, but it's not encouraged.
 
+        .. versionchanged: 0.4.1
+           Safely release allocated memory with
+           :c:func:`MagickRelinquishMemory` instead of :c:func:`libc.free`.
+
         """
-        return library.DrawGetTextEncoding(self.resource)
+        text_encoding_p = library.DrawGetTextEncoding(self.resource)
+        return text(text_encoding_p.value)
 
     @text_encoding.setter
     def text_encoding(self, encoding):
@@ -777,7 +801,8 @@ class Drawing(Resource):
                                           'ImageMagick does not support '
                                           'this feature')
         if not isinstance(spacing, numbers.Real):
-            raise TypeError('expected a numbers.Real, but got ' + repr(spacing))
+            raise TypeError('expected a numbers.Real, but got ' +
+                            repr(spacing))
         library.DrawSetTextInterlineSpacing(self.resource, spacing)
 
     @property
@@ -805,7 +830,8 @@ class Drawing(Resource):
     @text_kerning.setter
     def text_kerning(self, kerning):
         if not isinstance(kerning, numbers.Real):
-            raise TypeError('expected a numbers.Real, but got ' + repr(kerning))
+            raise TypeError('expected a numbers.Real, but got ' +
+                            repr(kerning))
         library.DrawSetTextKerning(self.resource, kerning)
 
     @property
@@ -816,9 +842,14 @@ class Drawing(Resource):
         """
         pixel = library.NewPixelWand()
         library.DrawGetTextUnderColor(self.resource, pixel)
-        size = ctypes.sizeof(MagickPixelPacket)
+        if MAGICK_VERSION_NUMBER < 0x700:
+            pixel_structure = MagickPixelPacket
+        else:
+            pixel_structure = PixelInfo
+        size = ctypes.sizeof(pixel_structure)
         buffer = ctypes.create_string_buffer(size)
         library.PixelGetMagickColor(pixel, buffer)
+        pixel = library.DestroyPixelWand(pixel)
         return Color(raw=buffer)
 
     @text_under_color.setter
@@ -831,23 +862,22 @@ class Drawing(Resource):
 
     @property
     def vector_graphics(self):
-        """(:class:`basestring`) The XML text of the Vector Graphics. It also
-        can be set. The drawing-wand XML is experimental, and subject to change.
+        """(:class:`basestring`) The XML text of the Vector Graphics.
+        It also can be set.  The drawing-wand XML is experimental,
+        and subject to change.
 
         Setting this property to None will reset all vector graphic properties
         to the default state.
 
         .. versionadded:: 0.4.0
 
+        .. versionchanged: 0.4.1
+           Safely release allocated memory with
+           :c:func:`MagickRelinquishMemory` instead of :c:func:`libc.free`.
+
         """
         vector_graphics_p = library.DrawGetVectorGraphics(self.resource)
-        vector_graphics = ''
-
-        if vector_graphics_p is not None:
-            vector_graphics_p = ctypes.cast(vector_graphics_p, ctypes.c_char_p)
-            vector_graphics = text(vector_graphics_p.value)
-            libc.free(vector_graphics_p)
-        return '<wand>' + vector_graphics + '</wand>'
+        return '<wand>' + text(vector_graphics_p.value) + '</wand>'
 
     @vector_graphics.setter
     def vector_graphics(self, vector_graphics):
@@ -859,7 +889,8 @@ class Drawing(Resource):
             library.DrawResetVectorGraphics(self.resource)
         else:
             vector_graphics = binary(vector_graphics)
-            okay = library.DrawSetVectorGraphics(self.resource, vector_graphics)
+            okay = library.DrawSetVectorGraphics(self.resource,
+                                                 vector_graphics)
             if okay == 0:
                 raise ValueError("Vector graphic not understood.")
 
@@ -880,8 +911,8 @@ class Drawing(Resource):
         if not isinstance(value, string_type):
             raise TypeError('expected a string, not ' + repr(value))
         elif value not in GRAVITY_TYPES:
-            raise ValueError('expected a string from GRAVITY_TYPES, not '
-                             + repr(value))
+            raise ValueError('expected a string from GRAVITY_TYPES, not ' +
+                             repr(value))
         library.DrawSetGravity(self.resource, GRAVITY_TYPES.index(value))
 
     def clear(self):
@@ -904,8 +935,8 @@ class Drawing(Resource):
 
         """
         if not isinstance(image, Image):
-            raise TypeError('image must be a wand.image.Image instance, not '
-                            + repr(image))
+            raise TypeError('image must be a wand.image.Image instance, not ' +
+                            repr(image))
         res = library.MagickDrawImage(image.wand, self.resource)
         if not res:
             self.raise_exception()
@@ -921,9 +952,9 @@ class Drawing(Resource):
             | x', y', 1 |  =  | x, y, 1 |  *  | ry  sy  0 |
                                               | tx  ty  1 |
 
-        :param matrix: a list of :class:`~numbers.Real` to define affine matrix.
-                       `[sx, rx, ry, sy, tx, ty]`
-        :type matrix: :class:`~collections.Sequence`
+        :param matrix: a list of :class:`~numbers.Real` to define affine
+                       matrix ``[sx, rx, ry, sy, tx, ty]``
+        :type matrix: :class:`collections.Sequence`
 
         .. versionadded:: 0.4.0
 
@@ -937,7 +968,46 @@ class Drawing(Resource):
         amx = AffineMatrix(sx=matrix[0], rx=matrix[1],
                            ry=matrix[2], sy=matrix[3],
                            tx=matrix[4], ty=matrix[5])
-        library.DrawAffine(self.resource, amx)
+        library.DrawAffine(self.resource, ctypes.byref(amx))
+
+    def alpha(self, x=None, y=None, paint_method='undefined'):
+        """Paints on the image's opacity channel in order to set effected pixels
+        to transparent.
+
+         To influence the opacity of pixels. The available methods are:
+
+        - ``'undefined'``
+        - ``'point'``
+        - ``'replace'``
+        - ``'floodfill'``
+        - ``'filltoborder'``
+        - ``'reset'``
+
+        .. note::
+
+            This method replaces :meth:`matte()` in ImageMagick version 7.
+            An :class:`AttributeError` will be raised if attempting
+            to call on a library without ``DrawAlpha`` support.
+
+        .. versionadded:: 0.5.0
+
+        """
+        if library.DrawAlpha is None:
+            raise AttributeError(
+                'Method added with ImageMagick version 7. ' +
+                'Please use `wand.drawing.Drawing.matte()\' instead.'
+            )
+        if x is None or y is None:
+            raise TypeError('Both x & y coordinates need to be defined')
+        if not isinstance(paint_method, string_type):
+            raise TypeError('expected a string, not ' + repr(paint_method))
+        elif paint_method not in PAINT_METHOD_TYPES:
+            raise ValueError(
+                'expected a string from PAINT_METHOD_TYPES, not ' +
+                repr(paint_method)
+            )
+        library.DrawAlpha(self.resource, float(x), float(y),
+                          PAINT_METHOD_TYPES.index(paint_method))
 
     def arc(self, start, end, degree):
         """Draws a arc using the current :attr:`stroke_color`,
@@ -1004,8 +1074,10 @@ class Drawing(Resource):
         if not isinstance(paint_method, string_type):
             raise TypeError('expected a string, not ' + repr(paint_method))
         elif paint_method not in PAINT_METHOD_TYPES:
-            raise ValueError('expected a string from PAINT_METHOD_TYPES, not ' +
-                             repr(paint_method))
+            raise ValueError(
+                'expected a string from PAINT_METHOD_TYPES, not ' +
+                repr(paint_method)
+            )
         library.DrawColor(self.resource, float(x), float(y),
                           PAINT_METHOD_TYPES.index(paint_method))
 
@@ -1124,16 +1196,29 @@ class Drawing(Resource):
         - ``'filltoborder'``
         - ``'reset'``
 
+        .. note::
+
+            This method has been replace by :meth:`alpha()` in ImageMagick
+            version 7. An :class:`AttributeError` will be raised if attempting
+            to call on a library without ``DrawMatte`` support.
+
         .. versionadded:: 0.4.0
 
         """
+        if library.DrawMatte is None:
+            raise AttributeError(
+                'Method removed from ImageMagick version. ' +
+                'Please use `wand.drawing.Drawing.alpha()\' instead.'
+            )
         if x is None or y is None:
             raise TypeError('Both x & y coordinates need to be defined')
         if not isinstance(paint_method, string_type):
             raise TypeError('expected a string, not ' + repr(paint_method))
         elif paint_method not in PAINT_METHOD_TYPES:
-            raise ValueError('expected a string from PAINT_METHOD_TYPES, not ' +
-                             repr(paint_method))
+            raise ValueError(
+                'expected a string from PAINT_METHOD_TYPES, not ' +
+                repr(paint_method)
+            )
         library.DrawMatte(self.resource, float(x), float(y),
                           PAINT_METHOD_TYPES.index(paint_method))
 
@@ -1150,22 +1235,22 @@ class Drawing(Resource):
 
     def path_curve(self, to=None, controls=None, smooth=False, relative=False):
         """Draws a cubic Bezier curve from the current point to given ``to``
-        (x,y) coordinate using ``controls`` points at the beginning & end of the
-        curve. If ``smooth`` is set to True, only one ``controls`` is expected
+        (x,y) coordinate using ``controls`` points at the beginning and
+        the end of the curve.
+        If ``smooth`` is set to True, only one ``controls`` is expected
         and the previous control is used, else two pair of coordinates are
         expected to define the control points. The ``to`` coordinate then
         becomes the new current point.
 
         :param to: (:class:`~numbers.Real`, :class:`numbers.Real`)
-                      pair which represents coordinates to draw to.
+                   pair which represents coordinates to draw to
         :type to: :class:`collections.Sequence`
         :param controls: (:class:`~numbers.Real`, :class:`numbers.Real`)
-                      coordinate to used to influence curve
+                         coordinate to used to influence curve
         :type controls: :class:`collections.Sequence`
         :param smooth: :class:`bool` assume last defined control coordinate
         :type smooth: :class:`bool`
-        :param relative: :class:`bool`
-                    treat given coordinates as relative to current point
+        :param relative: treat given coordinates as relative to current point
         :type relative: :class:`bool`
 
         .. versionadded:: 0.4.0
@@ -1202,22 +1287,21 @@ class Drawing(Resource):
         """Draws a quadratic Bezier curve from the current point to given
         ``to`` coordinate. The control point is assumed to be the reflection of
         the control point on the previous command if ``smooth`` is True, else a
-        pair of ``control`` coordinates must be given. Each` coordinates can be
+        pair of ``control`` coordinates must be given. Each coordinates can be
         relative, or absolute, to the current point by setting the ``relative``
         flag. The ``to`` coordinate then becomes the new current point, and the
-        ``control`` coordinate will be assumed when called again when ``smooth``
-        is set to true.
+        ``control`` coordinate will be assumed when called again
+        when ``smooth`` is set to true.
 
         :param to: (:class:`~numbers.Real`, :class:`numbers.Real`)
-                      pair which represents coordinates to draw to.
+                   pair which represents coordinates to draw to
         :type to: :class:`collections.Sequence`
         :param control: (:class:`~numbers.Real`, :class:`numbers.Real`)
-                      coordinate to used to influence curve
+                        coordinate to used to influence curve
         :type control: :class:`collections.Sequence`
-        :param smooth: :class:`bool` assume last defined control coordinate
+        :param smooth: assume last defined control coordinate
         :type smooth: :class:`bool`
-        :param relative: :class:`bool`
-                    treat given coordinates as relative to current point
+        :param relative: treat given coordinates as relative to current point
         :type relative: :class:`bool`
 
         .. versionadded:: 0.4.0
@@ -1257,10 +1341,11 @@ class Drawing(Resource):
     def path_elliptic_arc(self, to=None, radius=None, rotation=0.0,
                           large_arc=False, clockwise=False, relative=False):
         """Draws an elliptical arc from the current point to given ``to``
-        coordinates. The ``to`` coordinates can be relative, or absolute, to the
-        current point by setting the ``relative`` flag. The size and orientation
-        of the ellipse are defined by two radii (rx, ry) in ``radius`` and an
-        ``rotation`` parameters, which indicates how the ellipse as a whole is
+        coordinates. The ``to`` coordinates can be relative, or absolute,
+        to the current point by setting the ``relative`` flag.
+        The size and orientation of the ellipse are defined by
+        two radii (rx, ry) in ``radius`` and an ``rotation`` parameters,
+        which indicates how the ellipse as a whole is
         rotated relative to the current coordinate system. The center of the
         ellipse is calculated automagically to satisfy the constraints imposed
         by the other parameters. ``large_arc`` and ``clockwise`` contribute to
@@ -1270,20 +1355,18 @@ class Drawing(Resource):
         rotation.
 
         :param to: (:class:`~numbers.Real`, :class:`numbers.Real`)
-                      pair which represents coordinates to draw to.
+                   pair which represents coordinates to draw to
         :type to: :class:`collections.Sequence`
         :param radius: (:class:`~numbers.Real`, :class:`numbers.Real`)
-                      pair which represents the radii of the ellipse to draw
+                       pair which represents the radii of the ellipse to draw
         :type radius: :class:`collections.Sequence`
-        :param rotate: :class:`~numbers.Real` degree to rotate ellipse on x-axis
+        :param rotate: degree to rotate ellipse on x-axis
         :type rotate: :class:`~numbers.Real`
-        :param large_arc: :class:`bool` draw largest available arc
+        :param large_arc: draw largest available arc
         :type large_arc: :class:`bool`
-        :param clockwise: :class:`bool`
-                    draw arc path clockwise from start to target
+        :param clockwise: draw arc path clockwise from start to target
         :type clockwise: :class:`bool`
-        :param relative: :class:`bool`
-                    treat given coordinates as relative to current point
+        :param relative: treat given coordinates as relative to current point
         :type relative: :class:`bool`
 
         .. versionadded:: 0.4.0
@@ -1525,8 +1608,8 @@ class Drawing(Resource):
         :class:`Drawing.pop_pattern` command comprise the definition of a named
         pattern. The pattern space is assigned top left corner coordinates, a
         width and height, and becomes its own drawing space. Anything which can
-        be drawn may be used in a pattern definition. Named patterns may be used
-        as stroke or brush definitions.
+        be drawn may be used in a pattern definition.
+        Named patterns may be used as stroke or brush definitions.
 
         :param pattern_id: a unique identifier for the pattern.
         :type pattern_id: :class:`basestring`
@@ -1563,7 +1646,7 @@ class Drawing(Resource):
     def rectangle(self, left=None, top=None, right=None, bottom=None,
                   width=None, height=None, radius=None, xradius=None,
                   yradius=None):
-        """Draws a rectangle using the current :attr:`stoke_color`,
+        """Draws a rectangle using the current :attr:`stroke_color`,
         :attr:`stroke_width`, and :attr:`fill_color`.
 
         .. sourcecode:: text
@@ -1665,7 +1748,7 @@ class Drawing(Resource):
             if xradius is None:
                 xradius = 0.0
             if yradius is None:
-                yraduis = 0.0
+                yradius = 0.0
             if not isinstance(xradius, numbers.Real):
                 raise TypeError('xradius must be numbers.Real, not ' +
                                 repr(xradius))
@@ -1903,8 +1986,8 @@ class Drawing(Resource):
 
         """
         if not isinstance(image, Image):
-            raise TypeError('image must be a wand.image.Image instance, not '
-                            + repr(image))
+            raise TypeError('image must be a wand.image.Image instance, not ' +
+                            repr(image))
         if not isinstance(text, string_type):
             raise TypeError('text must be a string, not ' + repr(text))
         if multiline:
