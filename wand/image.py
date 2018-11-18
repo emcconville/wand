@@ -589,7 +589,8 @@ if MAGICK_VERSION_NUMBER >= 0x700:
 #:    Added ``'jpeg:sampling-factor'`` option.
 #:
 #: .. versionchanged:: 0.3.9
-#:    Added ``'pdf:use-cropbox'`` option.
+#:    Added ``'pdf:use-cropbox'`` option. Ensure you set this option *before*
+#:    reading the PDF document.
 #:
 #: .. deprecated:: 0.5.0
 #:    Any arbitrary key can be set to the option table. Key-Value pairs set
