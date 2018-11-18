@@ -126,8 +126,12 @@ def load_library():
     raise IOError('cannot find library; tried paths: ' + repr(tried_paths))
 
 
-# Preserve the module itself even if it fails to import
-sys.modules['wand._api'] = sys.modules['wand.api']
+try:
+    # Preserve the module itself even if it fails to import
+    sys.modules['wand._api'] = sys.modules['wand.api']
+except KeyError:
+    # Loading the module locally or a non-standard setting
+    pass
 
 try:
     libraries = load_library()

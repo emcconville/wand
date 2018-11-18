@@ -3,7 +3,9 @@
 
 .. versionadded:: 0.5.0
 """
-from ctypes import CDLL, POINTER, c_void_p, c_size_t, c_double, c_int, c_char_p
+from ctypes import (CDLL, POINTER, byref, c_char_p, c_double,
+                    c_float, c_int, c_longdouble, c_size_t,
+                    c_ubyte, c_uint, c_ushort, c_void_p)
 from wand.cdefs.wandtypes import c_magick_char_p
 import numbers
 
@@ -26,6 +28,14 @@ def load(lib, IM_VERSION):
         // Or
         #include "MagickWand/pixel-wand.h"
 
+    Mapping Pixel methods also requires the wand library to evaluate
+    what "Quantum" is to ImageMagick. We must query the library
+    to identify if HRDI is enabled, and what the quantum depth is.
+
+    .. seealso::
+
+        MagickCore/magick-type.h
+
     :param lib: the loaded ``MagickWand`` library
     :type lib: :class:`ctypes.CDLL`
     :param IM_VERSION: the ImageMagick version number (i.e. 0x0689)
@@ -40,11 +50,22 @@ def load(lib, IM_VERSION):
         raise AttributeError("Expecting MagickCore version number")
     is_im_6 = IM_VERSION < 0x700
     is_im_7 = IM_VERSION >= 0x700
-    # TODO: QuantumType needs to evaluate the version, quantum, and HDRI
-    if is_im_6:
-        QuantumType = c_size_t
-    else:
-        QuantumType = c_double
+    c_quantum_depth = c_size_t()
+    lib.GetMagickQuantumDepth(byref(c_quantum_depth))
+    QUANTUM_DEPTH = c_quantum_depth.value
+    features = str(lib.GetMagickFeatures())
+    HDRI = 'HDRI' in features
+    del features
+
+    if QUANTUM_DEPTH == 8:
+        QuantumType = c_float if HDRI else c_ubyte
+    elif QUANTUM_DEPTH == 16:
+        QuantumType = c_float if HDRI else c_ushort
+    elif QUANTUM_DEPTH == 32:
+        QuantumType = c_double if HDRI else c_uint
+    elif QUANTUM_DEPTH == 64:
+        QuantumType = c_longdouble
+
     lib.DestroyPixelWand.argtypes = [c_void_p]
     lib.DestroyPixelWand.restype = c_void_p
     lib.IsPixelWand.argtypes = [c_void_p]
