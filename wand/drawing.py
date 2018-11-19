@@ -1529,12 +1529,16 @@ class Drawing(Resource):
                           float(y))
 
     def pop(self):
-        """Pop destroys the current drawing wand and returns to the previously
-        pushed drawing wand. Multiple drawing wands may exist. It is an error
-        to attempt to pop more drawing wands than have been pushed, and it is
-        proper form to pop all drawing wands which have been pushed.
+        """Pop destroys the current tip of the drawing stack,
+        and restores the parant style context.
+        See :meth:`push()` method for an example.
 
-        :returns: success of pop operation
+        .. note::
+
+            Popping the graphical context stack will not erase,
+            or alter, any previously executed drawing commands.
+
+        :returns: success of pop operation.
         :rtype: `bool`
 
         .. versionadded:: 0.4.0
@@ -1567,12 +1571,52 @@ class Drawing(Resource):
         library.DrawPopPattern(self.resource)
 
     def push(self):
-        """Push clones the current drawing wand to create a new drawing wand.
-        The original drawing wand(s) may be returned to by invoking
-        :class:`Drawing.pop`. The drawing wands are stored on a drawing wand
-        stack. For every Pop there must have already been an equivalent Push.
+        """Grows the current drawing context stack by one, and inherits
+        the previous style attributes. Use :class:`Drawing.pop` to return
+        to restore previous style attributes.
 
-        :returns: success of push operation
+        This is useful for drawing shapes with diffrent styles
+        without repeatedly setting the similar
+        :meth:`fill_color <wand.drawing.Drawing.fill_color>` &
+        :meth:`stroke_color <wand.drawing.Drawing.stroke_color>` properties.
+
+        For example::
+
+            with Drawing() as ctx:
+                ctx.fill_color = Color('GREEN')
+                ctx.stroke_color = Color('ORANGE')
+                ctx.push()
+                ctx.fill_color = Color('RED')
+                ctx.text(x1, y1, 'this is RED with ORANGE outline')
+                ctx.push()
+                ctx.stroke_color = Color('BLACK')
+                ctx.text(x2, y2, 'this is RED with BLACK outline')
+                ctx.pop()
+                ctx.pop()
+                ctx.text(x3, y3, 'this is GREEN with ORANGE outline')
+
+        Which translate to the following MVG::
+
+            push graphic-context
+                fill "GREEN"
+                stroke "ORANGE"
+                push graphic-context
+                    fill "RED"
+                    text x1,y1 "this is RED with ORANGE outline"
+                    push graphic-context
+                        stroke "BLACK"
+                        text x2,y2 "this is RED with BLACK outline"
+                    pop graphic-context
+                pop graphic-context
+                text x3,y3 "this is GREEN with ORANGE outline"
+            pop graphic-context
+
+        .. note::
+
+            Pushing graphical context does not reset any previously
+            drawn artifacts.
+
+        :returns: success of push operation.
         :rtype: `bool`
 
         .. versionadded:: 0.4.0
