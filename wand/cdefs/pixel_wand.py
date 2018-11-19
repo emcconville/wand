@@ -3,7 +3,7 @@
 
 .. versionadded:: 0.5.0
 """
-from ctypes import (CDLL, POINTER, byref, c_char_p, c_double,
+from ctypes import (CDLL, POINTER, c_char_p, c_double,
                     c_float, c_int, c_longdouble, c_size_t,
                     c_ubyte, c_uint, c_ushort, c_void_p)
 from wand.cdefs.wandtypes import c_magick_char_p
@@ -12,7 +12,7 @@ import numbers
 __all__ = ('load',)
 
 
-def load(lib, IM_VERSION):
+def load(lib, IM_VERSION, IM_QUANTUM_DEPTH, IM_HDRI):
     """Define Pixel Wand methods. The ImageMagick version is given as
     a second argument for comparison. This will quick to determine which
     methods are available from the library, and can be implemented as::
@@ -36,10 +36,15 @@ def load(lib, IM_VERSION):
 
         MagickCore/magick-type.h
 
-    :param lib: the loaded ``MagickWand`` library
+    :param lib: the loaded ``MagickWand`` library.
     :type lib: :class:`ctypes.CDLL`
-    :param IM_VERSION: the ImageMagick version number (i.e. 0x0689)
+    :param IM_VERSION: the ImageMagick version number (i.e. 0x0689).
     :type IM_VERSION: :class:`numbers.Integral`
+    :param IM_QUANTUM_DEPTH: the ImageMagick Quantum Depth
+                             (must be 8, 16, 32, or 64).
+    :type IM_QUANTUM_DEPTH: :class:`numbers.Integral`
+    :param IM_HDRI: if ImageMagick was compiled with HDRI support.
+    :type IM_HDRI: :class:`bool`
 
     .. versionadded:: 0.5.0
 
@@ -48,22 +53,18 @@ def load(lib, IM_VERSION):
         raise AttributeError(repr(lib) + " is not an instanced of ctypes.CDLL")
     if not isinstance(IM_VERSION, numbers.Integral):
         raise AttributeError("Expecting MagickCore version number")
+    if IM_QUANTUM_DEPTH not in [8, 16, 32, 65]:
+        raise AttributeError("QUANTUM_DEPTH must be one of 8, 16, 32, or 64")
     is_im_6 = IM_VERSION < 0x700
     is_im_7 = IM_VERSION >= 0x700
-    c_quantum_depth = c_size_t()
-    lib.GetMagickQuantumDepth(byref(c_quantum_depth))
-    QUANTUM_DEPTH = c_quantum_depth.value
-    features = str(lib.GetMagickFeatures())
-    HDRI = 'HDRI' in features
-    del features
 
-    if QUANTUM_DEPTH == 8:
-        QuantumType = c_float if HDRI else c_ubyte
-    elif QUANTUM_DEPTH == 16:
-        QuantumType = c_float if HDRI else c_ushort
-    elif QUANTUM_DEPTH == 32:
-        QuantumType = c_double if HDRI else c_uint
-    elif QUANTUM_DEPTH == 64:
+    if IM_QUANTUM_DEPTH == 8:
+        QuantumType = c_float if IM_HDRI else c_ubyte
+    elif IM_QUANTUM_DEPTH == 16:
+        QuantumType = c_float if IM_HDRI else c_ushort
+    elif IM_QUANTUM_DEPTH == 32:
+        QuantumType = c_double if IM_HDRI else c_uint
+    elif IM_QUANTUM_DEPTH == 64:
         QuantumType = c_longdouble
 
     lib.DestroyPixelWand.argtypes = [c_void_p]

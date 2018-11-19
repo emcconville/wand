@@ -179,13 +179,18 @@ try:
     # Let's get the magick-version number to pass to load methods.
     IM_VERSION = ctypes.c_size_t()
     libmagick.GetMagickVersion(ctypes.byref(IM_VERSION))
+    # Query Quantum Depth (i.e. Q8, Q16, ... etc).
+    IM_QUANTUM_DEPTH = ctypes.c_size_t()
+    libmagick.GetMagickQuantumDepth(ctypes.byref(IM_QUANTUM_DEPTH))
+    # Does the library support HDRI?
+    IM_HDRI = 'HDRI' in str(libmagick.GetMagickFeatures())
     magick_wand.load(library, IM_VERSION.value)
     magick_property.load(library, IM_VERSION.value)
     magick_image.load(library, IM_VERSION.value)
     pixel_iterator.load(library, IM_VERSION.value)
-    pixel_wand.load(library, IM_VERSION.value)
+    pixel_wand.load(library, IM_VERSION.value, IM_QUANTUM_DEPTH.value, IM_HDRI)
     drawing_wand.load(library, IM_VERSION.value)
-    del IM_VERSION
+    del IM_HDRI, IM_QUANTUM_DEPTH, IM_VERSION
 
 except AttributeError:
     raise ImportError('MagickWand shared library not found or incompatible\n'
