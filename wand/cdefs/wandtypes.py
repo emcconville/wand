@@ -4,8 +4,10 @@
 .. versionadded:: 0.5.0
 """
 import ctypes
+import os
+import sys
 
-__all__ = ('c_magick_char_p', 'c_ssize_t')
+__all__ = ('c_magick_char_p', 'c_magick_real_t', 'c_ssize_t')
 
 
 class c_magick_char_p(ctypes.c_char_p):
@@ -42,3 +44,17 @@ if not hasattr(ctypes, 'c_ssize_t'):
     elif ctypes.sizeof(ctypes.c_ulonglong) == ctypes.sizeof(ctypes.c_void_p):
         ctypes.c_ssize_t = ctypes.c_longlong
 c_ssize_t = ctypes.c_ssize_t
+
+
+env_real = os.getenv('WAND_REAL_TYPE', 'auto')
+if env_real in ('double', 'c_double'):
+    c_magick_real_t = ctypes.c_double
+elif env_real in ('longdouble', 'c_longdouble'):
+    c_magick_real_t = ctypes.c_longdouble
+else:
+    # Attempt to guess MagickRealType size
+    if sys.maxsize > 2**32:
+        c_magick_real_t = ctypes.c_double
+    else:
+        c_magick_real_t = ctypes.c_longdouble
+del env_real
