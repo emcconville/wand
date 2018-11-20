@@ -54,8 +54,8 @@ def library_paths():
                 coderPath = winreg.QueryValueEx(reg_key, "CoderModulesPath")
                 filterPath = winreg.QueryValueEx(reg_key, "FilterModulesPath")
                 magick_home = libPath[0]
-                os.environ['PATH'] += (';' + libPath[0] + ";" +
-                                       coderPath[0] + ";" + filterPath[0])
+                os.environ['PATH'] += str((';' + libPath[0] + ";" +
+                                          coderPath[0] + ";" + filterPath[0]))
         except OSError:
             # otherwise use MAGICK_HOME, and we assume the coder and
             # filter DLLs are in the same directory
