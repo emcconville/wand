@@ -34,7 +34,8 @@ __all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COLORSPACE_TYPES',
            'FUNCTION_TYPES',
            'BaseImage', 'ChannelDepthDict', 'ChannelImageDict',
            'ClosedImageError', 'HistogramDict', 'Image', 'ImageProperty',
-           'Iterator', 'Metadata', 'OptionDict', 'manipulative')
+           'Iterator', 'Metadata', 'OptionDict', 'manipulative',
+           'ArtifactTree')
 
 
 #: (:class:`tuple`) The list of alpha channel types
@@ -3053,6 +3054,13 @@ class Image(BaseImage):
     #: .. versionadded:: 0.3.0
     metadata = None
 
+    #: (:class:`ArtifactTree`) A dict mapping to image artifacts.
+    #: Similar to :attr:`metadata`, but used to alter behavior of various
+    #: internal operations.
+    #:
+    #: .. versionadded:: 0.5.0
+    artifacts = None
+
     #: (:class:`ChannelImageDict`) The mapping of separated channels
     #: from the image. ::
     #:
@@ -3139,6 +3147,7 @@ class Image(BaseImage):
                     if not r:
                         raise self.raise_exception()
             self.metadata = Metadata(self)
+            self.artifacts = ArtifactTree(self)
             from .sequence import Sequence
             self.sequence = Sequence(self)
         self.raise_exception()
@@ -3969,8 +3978,7 @@ class ImageProperty(object):
 
 
 class OptionDict(ImageProperty, collections.MutableMapping):
-    """Mutable mapping of the image internal options.  See available
-    options in :const:`OPTIONS` constant.
+    """Free-form mutable mapping of global internal settings.
 
     .. versionadded:: 0.3.0
 
@@ -4011,7 +4019,8 @@ class OptionDict(ImageProperty, collections.MutableMapping):
 
 class Metadata(ImageProperty, collections.Mapping):
     """Class that implements dict-like read-only access to image metadata
-    like EXIF or IPTC headers.
+    like EXIF or IPTC headers. Most WRITE encoders will ignore properties
+    assigned here.
 
     :param image: an image instance
     :type image: :class:`Image`
@@ -4047,6 +4056,39 @@ class Metadata(ImageProperty, collections.Mapping):
         value = v.value
         return text(value)
 
+    def __setitem__(self, k, v):
+        """
+        :param k: Metadata header name string.
+        :type k: :class:`basestring`
+        :param v: Value to assign.
+        :type v: :class:`basestring`
+
+        .. versionadded: 0.5.0
+        """
+        image = self.image
+        if not isinstance(k, string_type):
+            raise TypeError('k must be a string, not ' + repr(k))
+        if not isinstance(v, string_type):
+            raise TypeError('v must be a string, not ' + repr(v))
+        r = library.MagickSetImageProperty(image.wand, binary(k), binary(v))
+        if not r:
+            image.raise_exception()
+        return v
+
+    def __delitem__(self, k):
+        """
+        :param k: Metadata header name string.
+        :type k: :class:`basestring`
+
+        .. versionadded: 0.5.0
+        """
+        image = self.image
+        if not isinstance(k, string_type):
+            raise TypeError('k must be a string, not ' + repr(k))
+        r = library.MagickDeleteImageProperty(image.wand, binary(k))
+        if not r:
+            image.raise_exception()
+
     def __iter__(self):
         image = self.image
         num = ctypes.c_size_t()
@@ -4059,6 +4101,107 @@ class Metadata(ImageProperty, collections.Mapping):
         image = self.image
         num = ctypes.c_size_t()
         props_p = library.MagickGetImageProperties(image.wand, b'', num)
+        library.MagickRelinquishMemory(props_p)
+        return num.value
+
+
+class ArtifactTree(ImageProperty, collections.Mapping):
+    """Splay tree to map image artifacts. Values defined here
+    are intended to be used elseware, and will not be written
+    to the encoded image.
+
+    For example::
+
+        # Omit timestamp from PNG file headers.
+        with Image(filename='input.png') as img:
+            img.artifacts['png:exclude-chunks'] = 'tIME'
+            img.save(filename='output.png')
+
+    :param image: an image instance
+    :type image: :class:`Image`
+
+    .. note::
+
+       You don't have to use this by yourself.
+       Use :attr:`Image.artifacts` property instead.
+
+    .. versionadded:: 0.5.0
+    """
+
+    def __init__(self, image):
+        if not isinstance(image, Image):
+            raise TypeError('expected a wand.image.Image instance, '
+                            'not ' + repr(image))
+        super(ArtifactTree, self).__init__(image)
+
+    def __getitem__(self, k):
+        """
+        :param k: Metadata header name string.
+        :type k: :class:`basestring`
+        :returns: a header value string
+        :rtype: :class:`str`
+
+        .. versionadded: 0.5.0
+        """
+        image = self.image
+        if not isinstance(k, string_type):
+            raise TypeError('k must be a string, not ' + repr(k))
+        v = library.MagickGetImageArtifact(image.wand, binary(k))
+        if bool(v) is False:
+            try:
+                v = library.MagickGetImageProperty(image.wand, binary(k))
+                value = v.value
+            except KeyError:
+                value = ""
+        else:
+            value = v.value
+        return text(value)
+
+    def __setitem__(self, k, v):
+        """
+        :param k: Metadata header name string.
+        :type k: :class:`basestring`
+        :param v: Value to assign.
+        :type v: :class:`basestring`
+
+        .. versionadded: 0.5.0
+        """
+        image = self.image
+        if not isinstance(k, string_type):
+            raise TypeError('k must be a string, not ' + repr(k))
+        if not isinstance(v, string_type):
+            raise TypeError('v must be a string, not ' + repr(v))
+        r = library.MagickSetImageArtifact(image.wand, binary(k), binary(v))
+        if not r:
+            image.raise_exception()
+        return v
+
+    def __delitem__(self, k):
+        """
+        :param k: Metadata header name string.
+        :type k: :class:`basestring`
+
+        .. versionadded: 0.5.0
+        """
+        image = self.image
+        if not isinstance(k, string_type):
+            raise TypeError('k must be a string, not ' + repr(k))
+        r = library.MagickDeleteImageArtifact(image.wand, binary(k))
+        if not r:
+            image.raise_exception()
+
+    def __iter__(self):
+        image = self.image
+        num = ctypes.c_size_t()
+        props_p = library.MagickGetImageArtifacts(image.wand, b'', num)
+        props = [text(props_p[i]) for i in xrange(num.value)]
+        library.MagickRelinquishMemory(props_p)
+        return iter(props)
+
+    def __len__(self):
+        image = self.image
+        num = ctypes.c_size_t()
+        props_p = library.MagickGetImageArtifacts(image.wand, b'', num)
         library.MagickRelinquishMemory(props_p)
         return num.value
 

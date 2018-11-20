@@ -45,6 +45,13 @@ def load(lib, IM_VERSION):
     lib.MagickGetFont.restype = c_char_p
     lib.MagickGetGravity.argtypes = [c_void_p]
     lib.MagickGetGravity.restype = c_int
+    lib.MagickGetImageArtifact.argtypes = [c_void_p, c_char_p]
+    lib.MagickGetImageArtifact.restype = c_magick_char_p
+    lib.MagickGetImageArtifacts.argtypes = [
+        c_void_p, c_char_p, POINTER(c_size_t)
+    ]
+    lib.MagickGetImageArtifacts.restype = POINTER(c_char_p)
+
     lib.MagickGetImageProperty.argtypes = [c_void_p, c_char_p]
     lib.MagickGetImageProperty.restype = c_magick_char_p
     lib.MagickGetImageProperties.argtypes = [
@@ -85,6 +92,7 @@ def load(lib, IM_VERSION):
     lib.MagickSetFormat.restype = c_int
     lib.MagickSetGravity.argtypes = [c_void_p, c_int]
     lib.MagickSetGravity.restype = c_int
+    lib.MagickSetImageArtifact.argtypes = [c_void_p, c_char_p, c_char_p]
     lib.MagickSetImageProperty.argtypes = [c_void_p, c_char_p, c_char_p]
     lib.MagickSetOption.argtypes = [c_void_p, c_char_p, c_char_p]
     lib.MagickSetOption.restype = c_int
