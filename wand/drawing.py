@@ -1529,8 +1529,8 @@ class Drawing(Resource):
                           float(y))
 
     def pop(self):
-        """Pop destroys the current tip of the drawing stack,
-        and restores the parant style context.
+        """Pop destroys the current tip of the drawing context stack,
+        and restores the parent style context.
         See :meth:`push()` method for an example.
 
         .. note::
