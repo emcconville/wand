@@ -1,13 +1,30 @@
 Wand Changelog
 ==============
 
+0.5 series
+~~~~~~~~~~
+
+Version 0.5.0
+-------------
+
+To be released.
+
+- Support for ImageMagick-7.
+- Improved support for 32-bit systems.
+- Improved support for non-Q16 libraries.
+- Removed `README.rst` from setup.py's `data_files`. [:issue:`336`]
+- Improved `EXIF:ORIENTATION` handling. [:issue:`364` by M. Skrzypek]
+- Tolerate failures while accessing wand.api. [:issue:`220` by Utkarsh Upadhyay]
+- Added support for Image Artifacts through :attr:`Image.artifacts <wand.image.Image.artifacts>`. [:issue:`369`]
+
+
 0.4 series
 ~~~~~~~~~~
 
 Version 0.4.5
 -------------
 
-To be released.
+Released on November 12, 2018.
 
 - Improve library searching when ``MAGICK_HOME`` environment variable is
   set. [:issue:`320` by Chase Anderson]
