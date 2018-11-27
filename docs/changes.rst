@@ -16,6 +16,7 @@ To be released.
 - Improved `EXIF:ORIENTATION` handling. [:issue:`364` by M. Skrzypek]
 - Tolerate failures while accessing wand.api. [:issue:`220` by Utkarsh Upadhyay]
 - Added support for Image Artifacts through :attr:`Image.artifacts <wand.image.Image.artifacts>`. [:issue:`369`]
+- Added optional stroke color/width parameters for :class:`Font <wand.font.Font>`.
 
 
 0.4 series

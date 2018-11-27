@@ -952,7 +952,9 @@ class BaseImage(Resource):
             path=text(self.font_path),
             size=self.font_size,
             color=self.font_color,
-            antialias=self.font_antialias
+            antialias=self.font_antialias,
+            stroke_color=self.stroke_color,
+            stroke_width=self.stroke_width
         )
 
     @font.setter
@@ -964,6 +966,10 @@ class BaseImage(Resource):
         self.font_size = font.size
         self.font_color = font.color
         self.font_antialias = font.antialias
+        if font.stroke_color:
+            self.stroke_color = font.stroke_color
+        if font.stroke_width is not None:
+            self.stroke_width = font.stroke_width
 
     @property
     def page(self):
@@ -1121,6 +1127,35 @@ class BaseImage(Resource):
             raise TypeError('font_color must be a wand.color.Color, not ' +
                             repr(color))
         self.options['fill'] = color.string
+
+    @property
+    def stroke_color(self):
+        stroke = self.options['stroke']
+        return Color(stroke) if stroke else None
+
+    @stroke_color.setter
+    @manipulative
+    def stroke_color(self, color):
+        if isinstance(color, Color):
+            self.options['stroke'] = color.string
+        elif color is None:
+            del self.options['stroke']
+        else:
+            raise TypeError('stroke_color must be a wand.color.Color, not ' +
+                            repr(color))
+
+    @property
+    def stroke_width(self):
+        strokewidth = self.options['strokewidth']
+        return float(strokewidth) if strokewidth else None
+
+    @stroke_width.setter
+    @manipulative
+    def stroke_width(self, width):
+        if not isinstance(width, numbers.Real):
+            raise TypeError('stroke_width must be a real number, not ' +
+                            repr(width))
+        self.options['strokewidth'] = str(width)
 
     @manipulative
     def caption(self, text, left=0, top=0, width=None, height=None, font=None,

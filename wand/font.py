@@ -39,7 +39,7 @@ import numbers
 from .color import Color
 from .compat import string_type, text
 
-__all__ = 'Font',
+__all__ = ('Font',)
 
 
 class Font(tuple):
@@ -53,14 +53,21 @@ class Font(tuple):
     :type color: :class:`~wand.color.Color`
     :param antialias: whether to use antialiasing.  :const:`True` by default
     :type antialias: :class:`bool`
+    :param stroke_color: optional color to outline typeface.
+    :type stroke_color: :class:`~wand.color.Color`
+    :param stroke_width: optional thickness of typeface outline.
+    :type stroke_width: :class:`numbers.Real`
 
     .. versionchanged:: 0.3.9
        The ``size`` parameter becomes optional.  Its default value is
        0, which means *autosized*.
 
+    .. versionchanged:: 0.5.0
+       Added ``stroke_color`` & ``stoke_width`` paramaters.
     """
 
-    def __new__(cls, path, size=0, color=None, antialias=True):
+    def __new__(cls, path, size=0, color=None, antialias=True,
+                stroke_color=None, stroke_width=None):
         if not isinstance(path, string_type):
             raise TypeError('path must be a string, not ' + repr(path))
         if not isinstance(size, numbers.Real):
@@ -70,8 +77,16 @@ class Font(tuple):
         elif not isinstance(color, Color):
             raise TypeError('color must be an instance of wand.color.Color, '
                             'not ' + repr(color))
+        if stroke_color and not isinstance(stroke_color, Color):
+            raise TypeError('stroke_color must be an instance of '
+                            'wand.color.Color, not ' + repr(stroke_color))
+        if stroke_width is not None and not isinstance(stroke_width,
+                                                       numbers.Real):
+            raise TypeError('stroke_width must be a number, not ' +
+                            repr(stroke_width))
         path = text(path)
-        return tuple.__new__(cls, (path, size, color, bool(antialias)))
+        return tuple.__new__(cls, (path, size, color, bool(antialias),
+                                   stroke_color, stroke_width))
 
     @property
     def path(self):
@@ -95,6 +110,16 @@ class Font(tuple):
 
         """
         return self[3]
+
+    @property
+    def stroke_color(self):
+        """(:class:`wand.color.Color`) The stroke color."""
+        return self[4]
+
+    @property
+    def stroke_width(self):
+        """(:class:`numbers.Real`) The width of the stroke line."""
+        return self[5]
 
     def __repr__(self):
         return '{0.__module__}.{0.__name__}({1})'.format(

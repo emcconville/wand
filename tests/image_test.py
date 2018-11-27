@@ -1379,6 +1379,14 @@ def test_setfont(fx_asset):
         assert img.font_color == font.color
         assert img.font_antialias == font.antialias
         assert img.font == font
+        fontStroke = Font(
+            path=str(fx_asset.join('League_Gothic.otf')),
+            stroke_color=Color('ORANGE'),
+            stroke_width=1.5
+        )
+        img.font = font
+        assert img.stroke_color == font.stroke_color
+        assert img.stroke_width == font.stroke_width
 
 
 def test_setgravity():
