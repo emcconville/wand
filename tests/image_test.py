@@ -11,7 +11,7 @@ import warnings
 
 from pytest import config, mark, raises
 
-from wand.image import ClosedImageError, Image, IMAGE_LAYER_METHOD
+from wand.image import ClosedImageError, Image
 from wand.color import Color
 from wand.compat import PY3, string_type, text, text_type
 from wand.exceptions import DelegateError, MissingDelegateError, OptionError
@@ -400,6 +400,13 @@ def test_set_depth(fx_asset):
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         img.depth = 16
         assert img.depth == 16
+
+
+def test_setget_dispose(fx_asset):
+    with Image(filename=str(fx_asset.join('nocomments.gif'))) as img:
+        assert img.dispose == 'none'
+        img.dispose = 'background'
+        assert img.dispose == 'background'
 
 
 def test_get_format(fx_asset):
@@ -1384,9 +1391,9 @@ def test_setfont(fx_asset):
             stroke_color=Color('ORANGE'),
             stroke_width=1.5
         )
-        img.font = font
-        assert img.stroke_color == font.stroke_color
-        assert img.stroke_width == font.stroke_width
+        img.font = fontStroke
+        assert img.stroke_color == fontStroke.stroke_color
+        assert img.stroke_width == fontStroke.stroke_width
 
 
 def test_setgravity():
@@ -1945,6 +1952,14 @@ def test_transform_colorspace(fx_asset):
         assert img.colorspace == 'srgb'
 
 
+def test_coalesce(fx_asset):
+    with Image(filename=str(fx_asset.join('nocomments.gif'))) as img1:
+        with Image(img1) as img2:
+            img2.coalesce()
+            assert img1.signature != img2.signature
+            assert img1.size == img2.size
+
+
 def test_merge_layers_basic(fx_asset):
     for method in ['merge', 'flatten', 'mosaic']:
             with Image(filename=str(fx_asset.join('cmyk.jpg'))) as img1:
@@ -1959,11 +1974,11 @@ def test_merge_layers_basic(fx_asset):
 
 def test_merge_layers_bad_method(fx_asset):
     with Image(filename=str(fx_asset.join('cmyk.jpg'))) as img:
-        for method in IMAGE_LAYER_METHOD + ('', 'junk'):
-            if method in ['merge', 'flatten', 'mosaic']:
-                continue  # skip the valid ones
-            with raises(TypeError):
+        for method in ('', 'mosaic' 'junk'):
+            with raises(ValueError):
                 img.merge_layers(method)
+        with raises(TypeError):
+            img.merge_layers(None)
 
 
 def test_merge_layers_method_merge(fx_asset):
@@ -2034,6 +2049,26 @@ def test_merge_layers_method_mosaic_neg_offset(fx_asset):
             img1.sequence.append(img2)
             img1.merge_layers('mosaic')
             assert img1.size == (16, 16)
+
+
+def test_optimize_layers(fx_asset):
+    with Image(filename=str(fx_asset.join('nocomments.gif'))) as img1:
+        with Image(img1) as img2:
+            img2.optimize_layers()
+            assert img1.signature != img2.signature
+            assert img1.size == img2.size
+
+
+def test_optimize_transparency(fx_asset):
+    with Image(filename=str(fx_asset.join('nocomments.gif'))) as img1:
+        with Image(img1) as img2:
+            try:
+                img2.optimize_transparency()
+                assert img1.signature != img2.signature
+                assert img1.size == img2.size
+            except AttributeError as e:
+                warnings.warn('MagickOptimizeImageTransparency not '
+                              'present on system.')
 
 
 def test_page_basic(fx_asset):

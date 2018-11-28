@@ -29,9 +29,10 @@ from .version import MAGICK_VERSION_NUMBER, MAGICK_HDRI
 
 __all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COLORSPACE_TYPES',
            'COMPARE_METRICS', 'COMPOSITE_OPERATORS', 'COMPRESSION_TYPES',
-           'EVALUATE_OPS', 'FILTER_TYPES',
-           'GRAVITY_TYPES', 'IMAGE_TYPES', 'ORIENTATION_TYPES', 'UNIT_TYPES',
-           'FUNCTION_TYPES',
+           'DISPOSE_TYPES', 'DISTORTION_METHODS', 'EVALUATE_OPS',
+           'FILTER_TYPES', 'FUNCTION_TYPES', 'GRAVITY_TYPES',
+           'IMAGE_LAYER_METHOD', 'IMAGE_TYPES', 'ORIENTATION_TYPES',
+           'VIRTUAL_PIXEL_METHOD', 'UNIT_TYPES',
            'BaseImage', 'ChannelDepthDict', 'ChannelImageDict',
            'ClosedImageError', 'HistogramDict', 'Image', 'ImageProperty',
            'Iterator', 'Metadata', 'OptionDict', 'manipulative',
@@ -347,7 +348,18 @@ COMPRESSION_TYPES = (
 )
 
 
-#: (:class:`tuple`) The list of :method:`Image.distort` methods.
+#: (:class:`tuple`) The list of :attr:`BaseImage.dispose` types.
+#:
+#: .. versionadded:: 0.5.0
+DISPOSE_TYPES = (
+    'undefined',
+    'none',
+    'background',
+    'previous'
+)
+
+
+#: (:class:`tuple`) The list of :meth:`BaseImage.distort` methods.
 #:
 #: - ``'undefined'``
 #: - ``'affine'``
@@ -519,12 +531,14 @@ GRAVITY_TYPES = ('forget', 'north_west', 'north', 'north_east', 'west',
                  'static')
 
 
-#: (:class:`tuple`) The list of :attr:`~BaseImage.layer_method` types.
+#: (:class:`tuple`) The list of methods for :meth:`~BaseImage.merge_layers`
+#: and :meth:`~Image.compare_layers`.
+#:
 #: - ``'undefined'``
 #: - ``'coalesce'``
-#: - ``'compareany'``
-#: - ``'compareclear'``
-#: - ``'compareoverlay'``
+#: - ``'compareany'`` - Only used for :meth:`~Image.compare_layers`.
+#: - ``'compareclear'`` - Only used for :meth:`~Image.compare_layers`.
+#: - ``'compareoverlay'`` - Only used for :meth:`~Image.compare_layers`.
 #: - ``'dispose'``
 #: - ``'optimize'``
 #: - ``'optimizeimage'``
@@ -533,10 +547,11 @@ GRAVITY_TYPES = ('forget', 'north_west', 'north', 'north_east', 'west',
 #: - ``'removedups'``
 #: - ``'removezero'``
 #: - ``'composite'``
-#: - ``'merge'``
-#: - ``'flatten'``
-#: - ``'mosaic'``
-#: - ``'trimbounds'``
+#: - ``'merge'`` - Only used for :meth:`~BaseImage.merge_layers`.
+#: - ``'flatten'`` - Only used for :meth:`~BaseImage.merge_layers`.
+#: - ``'mosaic'`` - Only used for :meth:`~BaseImage.merge_layers`.
+#: - ``'trimbounds'`` - Only used for :meth:`~BaseImage.merge_layers`.
+#:
 #: .. versionadded:: 0.4.3
 IMAGE_LAYER_METHOD = ('undefined', 'coalesce', 'compareany', 'compareclear',
                       'compareoverlay', 'dispose', 'optimize', 'optimizeimage',
@@ -1333,6 +1348,35 @@ class BaseImage(Resource):
             raise self.raise_exception()
 
     @property
+    def dispose(self):
+        """(:class:`basestring`) Controls how the image data is
+        handled during animations. Values are from :const:`DISPOSE_TYPES`
+        list, and can also be set.
+
+        .. seealso::
+
+            `Dispose Images`__ section in ``Animation Basics`` article.
+
+        __ https://www.imagemagick.org/Usage/anim_basics/#dispose_images
+
+        .. versionadded:: 0.5.0
+        """
+        dispose_idx = library.MagickGetImageDispose(self.wand)
+        try:
+            return DISPOSE_TYPES[dispose_idx]
+        except IndexError:
+            return DISPOSE_TYPES[0]
+
+    @dispose.setter
+    def dispose(self, value):
+        if not isinstance(value, string_type):
+            raise TypeError('expected a string, not ' + repr(value))
+        if value not in DISPOSE_TYPES:
+            raise ValueError('expected a string from DISPOSE_TYPES, not ' +
+                             repr(value))
+        library.MagickSetImageDispose(self.wand, DISPOSE_TYPES.index(value))
+
+    @property
     def type(self):
         """(:class:`basestring`) The image type.
 
@@ -1544,6 +1588,22 @@ class BaseImage(Resource):
 
         """
         return HistogramDict(self)
+
+    @manipulative
+    def coalesce(self):
+        """Rebuilds image sequence with each frame size the same as first frame,
+        and composites each frame atop of previous.
+
+        .. note::
+
+            Only affects GIF, and other formats with multiple pages/layers.
+
+        .. versionadded:: 0.5.0
+        """
+        r = library.MagickCoalesceImages(self.wand)
+        if not r:
+            self.raise_exception()
+        self.wand = r
 
     @manipulative
     def distort(self, method, arguments, best_fit=False):
@@ -2677,9 +2737,9 @@ class BaseImage(Resource):
         """Composes all the image layers from the current given image onward
         to produce a single image of the merged layers.
 
-        The inital canvas's size depends on the given ImageLayerMethod, and is
+        The initial canvas's size depends on the given ImageLayerMethod, and is
         initialized using the first images background color.  The images
-        are then compositied onto that image in sequence using the given
+        are then composited onto that image in sequence using the given
         composition that has been assigned to each individual image.
         The method must be set with a value from :const:`IMAGE_LAYER_METHOD`
         that is acceptable to this operation. (See ImageMagick documentation
@@ -2691,14 +2751,53 @@ class BaseImage(Resource):
         .. versionadded:: 0.4.3
 
         """
-        if method not in ['merge', 'flatten', 'mosaic']:
-            raise TypeError('method must be one of: merge, flatten, mosaic')
-
+        if not isinstance(method, string_type):
+            raise TypeError('method must be a string from IMAGE_LAYER_METHOD, '
+                            'not ' + repr(method))
+        if method not in ('merge', 'flatten', 'mosaic', 'trimbounds'):
+            raise ValueError('method can only be \'merge\', \'flatten\', '
+                             '\'mosaic\', or \'trimbounds\'')
         m = IMAGE_LAYER_METHOD.index(method)
         r = library.MagickMergeImageLayers(self.wand, m)
         if not r:
             self.raise_exception()
         self.wand = r
+
+    @manipulative
+    def optimize_layers(self):
+        """Attempts to crop each frame to the smallest image without altering
+        the animation.
+
+        .. note::
+
+            This will only affect ``GIF`` image formates.
+
+        .. versionadded:: 0.5.0
+        """
+        r = library.MagickOptimizeImageLayers(self.wand)
+        if not r:
+            self.raise_exception()
+        self.wand = r
+
+    @manipulative
+    def optimize_transparency(self):
+        """Iterates over frames, and sets transparent values for each
+        pixel unchanged by previous frame.
+
+        .. note::
+
+            This will only affect ``GIF`` image formates.
+
+        .. versionadded:: 0.5.0
+        """
+        if library.MagickOptimizeImageTransparency:
+            r = library.MagickOptimizeImageTransparency(self.wand)
+            if not r:
+                self.raise_exception()
+        else:
+            raise AttributeError('`MagickOptimizeImageTransparency\' not '
+                                 'available on current version of MagickWand '
+                                 'library.')
 
     @manipulative
     def threshold(self, threshold=0.5, channel=None):
@@ -3462,6 +3561,46 @@ class Image(BaseImage):
             if not r:
                 self.raise_exception()
         return self
+
+    def compare_layers(self, method):
+        """Generates new images showing the delta pixels between
+        layers. Similar pixels are converted to transparent.
+        Useful for debugging complex animations. ::
+
+            with img.compare_layers('compareany') as delta:
+                delta.save(filename='framediff_%02d.png')
+
+        .. note::
+
+            May not work as expected if animations are already
+            optimized.
+
+        :param method: Can be ``'compareany'``,
+                       ``'compareclear'``, or ``'compareoverlay'``
+        :type method: :class:`basestring`
+        :returns: new image stack.
+        :rtype: :class:`Image`
+
+        .. versionadded:: 0.5.0
+        """
+        if not isinstance(method, string_type):
+            raise TypeError('method must be a string from IMAGE_LAYER_METHOD, '
+                            'not ' + repr(method))
+        if method not in ('compareany', 'compareclear', 'compareoverlay'):
+            raise ValueError('method can only be \'compareany\', '
+                             '\'compareclear\', or \'compareoverlay\'')
+        r = None
+        m = IMAGE_LAYER_METHOD.index(method)
+        if MAGICK_VERSION_NUMBER >= 0x700:
+            r = library.MagickCompareImagesLayers(self.wand, m)
+        elif library.MagickCompareImageLayers:
+            r = library.MagickCompareImageLayers(self.wand, m)
+        else:
+            raise AttributeError('MagickCompareImageLayers method '
+                                 'not available on system.')
+        if not r:
+            self.raise_exception()
+        return Image(image=BaseImage(r))
 
     def convert(self, format):
         """Converts the image format with the original image maintained.

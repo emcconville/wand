@@ -178,7 +178,13 @@ def load(lib, IM_VERSION):
         c_void_p, c_void_p, c_int, POINTER(c_double)
     ]
     lib.MagickCompareImages.restype = c_void_p
-    if not is_im_6:
+    if is_im_6:
+        try:
+            lib.MagickCompareImageLayers.argtypes = [c_void_p, c_int]
+            lib.MagickCompareImageLayers.restype = c_void_p
+        except AttributeError:
+            lib.MagickCompareImageLayers = None
+    else:
         lib.MagickCompareImagesLayers.argtypes = [c_void_p, c_int]
         lib.MagickCompareImagesLayers.restype = c_void_p
     if is_im_6:

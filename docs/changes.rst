@@ -17,7 +17,12 @@ To be released.
 - Tolerate failures while accessing wand.api. [:issue:`220` by Utkarsh Upadhyay]
 - Added support for Image Artifacts through :attr:`Image.artifacts <wand.image.Image.artifacts>`. [:issue:`369`]
 - Added optional stroke color/width parameters for :class:`Font <wand.font.Font>`.
-
+- Added :meth:`Image.optimize_layers() <wand.image.BaseImage.optimize_layers>` method
+  (:c:func:`MagickOptmizeImageLayers()`).
+- Added :meth:`Image.optimize_transparency() <wand.image.BaseImage.optimize_transparency>` method
+  (:c:func:`MagickOptmizeImageTransparency()`).
+- Added :attr:`Image.dispose <wand.image.BaseImage.dispose>` property.
+- Added :meth:`Image.coalesce() <wand.image.BaseImage.coalesce>` method.
 
 0.4 series
 ~~~~~~~~~~
