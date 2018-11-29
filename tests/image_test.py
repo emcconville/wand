@@ -1344,6 +1344,17 @@ def test_border(fx_asset):
             assert img[-3, -6] == right_bottom
 
 
+def test_append():
+    with Image(filename='rose:') as img:
+        img.read(filename='rose:')
+        with Image(img) as row:
+            row.append()
+            assert row.size == (140, 46)
+        with Image(img) as row:
+            row.append(True)
+            assert row.size == (70, 92)
+
+
 def test_caption(fx_asset):
     with Image(width=144, height=192, background=Color('#1e50a2')) as img:
         font = Font(

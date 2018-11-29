@@ -23,6 +23,7 @@ To be released.
   (:c:func:`MagickOptmizeImageTransparency()`).
 - Added :attr:`Image.dispose <wand.image.BaseImage.dispose>` property.
 - Added :meth:`Image.coalesce() <wand.image.BaseImage.coalesce>` method.
+- Added :meth:`Image.append() <wand.image.BaseImage.append>` method. [:issue:`177`]
 
 0.4 series
 ~~~~~~~~~~

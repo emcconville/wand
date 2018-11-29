@@ -1173,6 +1173,21 @@ class BaseImage(Resource):
         self.options['strokewidth'] = str(width)
 
     @manipulative
+    def append(self, stacked=False):
+        """Concatenates images in stack into a single image. Left-to-right
+        by default, top-to-bottom if ``stacked`` is True.
+
+        :param stacked: stack images in a column, or in a row (default)
+        :type stacked: :class:`bool`
+
+        .. versionadded:: 0.5.0
+        """
+        r = library.MagickAppendImages(self.wand, stacked)
+        if not r:
+            self.raise_exception()
+        self.wand = r
+
+    @manipulative
     def caption(self, text, left=0, top=0, width=None, height=None, font=None,
                 gravity=None):
         """Writes a caption ``text`` into the position.
