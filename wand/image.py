@@ -875,6 +875,44 @@ class BaseImage(Resource):
         return hash(self.signature)
 
     @property
+    def __array_interface__(self):
+        """Allows image-data from :class:`Image <wand.image.BaseImage>`
+        instances to be loaded into numpy's array.
+
+        .. example::
+
+            import numpy
+            from wand.image import Image
+
+            with Image(filename='rose:') as img:
+                img_data = numpy.asarray(img)
+
+        :raises ValueError: if image has no data.
+
+        .. versionadded:: 0.5.0
+        """
+        if not self.signature:
+            raise ValueError("No image data to interface with.")
+        width, height = self.size
+        storage_type = 1  # CharPixel
+        channel_format = binary("RGB")
+        channel_number = 3
+        if self.alpha_channel:
+            channel_format = binary("RGBA")
+            channel_number = 4
+        c_buffer = (width * height * channel_number * ctypes.c_char)()
+        # FIXME: Move to pixel-data import/export methods.
+        r = library.MagickExportImagePixels(self.wand,
+                                            0, 0, width, height,
+                                            channel_format, storage_type,
+                                            ctypes.byref(c_buffer))
+        if not r:
+            self.raise_exception()
+        return dict(data=c_buffer,
+                    shape=(width, height, channel_number),
+                    typestr='|u1')
+
+    @property
     def animation(self):
         """(:class:`bool`) Whether the image is animation or not.
         It doesn't only mean that the image has two or more images (frames),

@@ -1,22 +1,12 @@
 Roadmap
 =======
 
-Version 0.6
------------
-
-
-Image layers (:issue:`22`)
-   Wand 0.6 will be able to deal with layers of an image.
-
-   Its branch name will be :branch:`layer`.
-
-
 Very future versions
 --------------------
 
 
 CFFI
-   Wand 0.5 will move to CFFI from ctypes.
+   Wand will move to CFFI from ctypes.
 
 PIL compatibility layer
    PIL has very long history and the most of Python projects still
@@ -43,9 +33,3 @@ CLI (:program:`covert` command) to Wand compiler (:issue:`100`)
    copy-and-paste these code to utilize Wand.
 
    This feature is to make these CLI codes possible to be used with Wand.
-
-Supporting :meth:`__array_interface__` for NumPy (:issue:`65`)
-   It makes :func:`numpy.asarray()` able to take :class:`~wand.image.Image`
-   object to deal with its pixels as matrix.
-
-   Its branch name will be :branch:`numpy`.
