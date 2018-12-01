@@ -3342,69 +3342,229 @@ class Image(BaseImage):
             self.sequence = Sequence(self)
         self.raise_exception()
 
-    def destroy(self):
-        """Manually remove :class:`~.sequence.SingleImage`'s in
-        the :class:`~.sequence.Sequence`, allowing it to
-        be properly garbage collected after using a ``with Image()`` context
-        manager.
+    def __repr__(self):
+        return super(Image, self).__repr__(
+            extra_format=' {self.format!r} ({self.width}x{self.height})'
+        )
+
+    def _repr_png_(self):
+        with self.convert('png') as cloned:
+            return cloned.make_blob()
+
+    @property
+    def animation(self):
+        return (self.mimetype in ('image/gif', 'image/x-gif') and
+                len(self.sequence) > 1)
+
+    @property
+    def compression(self):
+        """(:class:`basestring`) The type of image compression.
+        It's a string from :const:`COMPRESSION_TYPES` list.
+        It also can be set.
+
+        .. versionadded:: 0.3.6
 
         """
-        while self.sequence:
-            self.sequence.pop()
-        super(Image, self).destroy()
+        compression_index = library.MagickGetImageCompression(self.wand)
+        return COMPRESSION_TYPES[compression_index]
 
-    def read(self, file=None, filename=None, blob=None, resolution=None):
-        """Read new image into Image() object.
+    @compression.setter
+    def compression(self, value):
+        if not isinstance(value, string_type):
+            raise TypeError('expected a string, not ' + repr(value))
+        if value not in COMPRESSION_TYPES:
+            raise ValueError('expected a string from COMPRESSION_TYPES, not ' +
+                             repr(value))
+        library.MagickSetImageCompression(
+            self.wand,
+            COMPRESSION_TYPES.index(value)
+        )
 
-        :param blob: reads an image from the ``blob`` byte array
-        :type blob: :class:`bytes`
-        :param file: reads an image from the ``file`` object
-        :type file: file object
-        :param filename: reads an image from the ``filename`` string
-        :type filename: :class:`basestring`
-        :param resolution: set a resolution value (DPI),
-                           useful for vectorial formats (like PDF)
-        :type resolution: :class:`collections.Sequence`,
-                          :class:`numbers.Integral`
+    @property
+    def format(self):
+        """(:class:`basestring`) The image format.
+
+        If you want to convert the image format, just reset this property::
+
+            assert isinstance(img, wand.image.Image)
+            img.format = 'png'
+
+        It may raise :exc:`ValueError` when the format is unsupported.
+
+        .. seealso::
+
+           `ImageMagick Image Formats`__
+              ImageMagick uses an ASCII string known as *magick* (e.g. ``GIF``)
+              to identify file formats, algorithms acting as formats,
+              built-in patterns, and embedded profile types.
+
+           __ http://www.imagemagick.org/script/formats.php
+
+        .. versionadded:: 0.1.6
+
+        """
+        fmt = library.MagickGetImageFormat(self.wand)
+        if bool(fmt):
+            return text(fmt.value)
+        self.raise_exception()
+
+    @format.setter
+    def format(self, fmt):
+        if not isinstance(fmt, string_type):
+            raise TypeError("format must be a string like 'png' or 'jpeg'"
+                            ', not ' + repr(fmt))
+        fmt = fmt.strip()
+        r = library.MagickSetImageFormat(self.wand, binary(fmt.upper()))
+        if not r:
+            raise ValueError(repr(fmt) + ' is unsupported format')
+        r = library.MagickSetFilename(self.wand,
+                                      b'buffer.' + binary(fmt.lower()))
+        if not r:
+            self.raise_exception()
+
+    @property
+    def mimetype(self):
+        """(:class:`basestring`) The MIME type of the image
+        e.g. ``'image/jpeg'``, ``'image/png'``.
+
+        .. versionadded:: 0.1.7
+
+        """
+        rp = libmagick.MagickToMime(binary(self.format))
+        if not bool(rp):
+            self.raise_exception()
+        mimetype = rp.value
+        return text(mimetype)
+
+    @manipulative
+    def _auto_orient(self):
+        """Fallback for :attr:`auto_orient()` method
+        (which wraps :c:func:`MagickAutoOrientImage`),
+        fixes orientation by checking EXIF data.
+
+        .. versionadded:: 0.4.1
+
+        """
+        exif_orientation = self.metadata.get('exif:orientation')
+        if not exif_orientation:
+            return
+
+        orientation_type = ORIENTATION_TYPES[int(exif_orientation)]
+
+        fn_lookup = {
+            'undefined': None,
+            'top_left': None,
+            'top_right': self.flop,
+            'bottom_right': functools.partial(self.rotate, degree=180.0),
+            'bottom_left': self.flip,
+            'left_top': self.transpose,
+            'right_top': functools.partial(self.rotate, degree=90.0),
+            'right_bottom': self.transverse,
+            'left_bottom': functools.partial(self.rotate, degree=270.0)
+        }
+
+        fn = fn_lookup.get(orientation_type)
+
+        if not fn:
+            return
+
+        fn()
+        self.orientation = 'top_left'
+
+    @manipulative
+    def auto_orient(self):
+        """Adjusts an image so that its orientation is suitable
+        for viewing (i.e. top-left orientation). If available it uses
+        :c:func:`MagickAutoOrientImage` (was added in ImageMagick 6.8.9+)
+        if you have an older magick library,
+        it will use :attr:`_auto_orient()` method for fallback.
+
+        .. versionadded:: 0.4.1
+
+        """
+        try:
+            result = library.MagickAutoOrientImage(self.wand)
+            if not result:
+                self.raise_exception()
+        except AttributeError:
+            self._auto_orient()
+
+    def blank(self, width, height, background=None):
+        """Creates blank image.
+
+        :param width: the width of new blank image.
+        :type width: :class:`numbers.Integral`
+        :param height: the height of new blank imgage.
+        :type height: :class:`numbers.Integral`
+        :param background: an optional background color.
+                           default is transparent
+        :type background: :class:`wand.color.Color`
+        :returns: blank image
+        :rtype: :class:`Image`
 
         .. versionadded:: 0.3.0
 
         """
-        r = None
-        # Resolution must be set after image reading.
-        if resolution is not None:
-            if (isinstance(resolution, collections.Sequence) and
-                    len(resolution) == 2):
-                library.MagickSetResolution(self.wand, *resolution)
-            elif isinstance(resolution, numbers.Integral):
-                library.MagickSetResolution(self.wand, resolution, resolution)
+        if not isinstance(width, numbers.Integral) or width < 1:
+            raise TypeError('width must be a natural number, not ' +
+                            repr(width))
+        if not isinstance(height, numbers.Integral) or height < 1:
+            raise TypeError('height must be a natural number, not ' +
+                            repr(height))
+        if background is not None and not isinstance(background, Color):
+            raise TypeError('background must be a wand.color.Color '
+                            'instance, not ' + repr(background))
+        if background is None:
+            background = Color('transparent')
+        with background:
+            r = library.MagickNewImage(self.wand, width, height,
+                                       background.resource)
+            if not r:
+                self.raise_exception()
+        return self
+
+    def border(self, color, width, height, compose="copy"):
+        """Surrounds the image with a border.
+
+        :param bordercolor: the border color pixel wand
+        :type image: :class:`~wand.color.Color`
+        :param width: the border width
+        :type width: :class:`numbers.Integral`
+        :param height: the border height
+        :type height: :class:`numbers.Integral`
+        :param compose: Use composite operator when applying frame. Only used
+                        if called with ImageMagick 7+.
+        :type compose: :class:`basestring`
+
+        .. versionadded:: 0.3.0
+        .. versionchanged:: 0.5.0
+           Added ``compose`` paramater, and ImageMagick 7 support.
+        """
+        if not isinstance(color, Color):
+            raise TypeError('color must be a wand.color.Color object, not ' +
+                            repr(color))
+        with color:
+            if MAGICK_VERSION_NUMBER < 0x700:
+                result = library.MagickBorderImage(self.wand, color.resource,
+                                                   width, height)
             else:
-                raise TypeError('resolution must be a (x, y) pair or an '
-                                'integer of the same x/y')
-        if file is not None:
-            if (isinstance(file, file_types) and
-                    hasattr(libc, 'fdopen') and hasattr(file, 'mode')):
-                fd = libc.fdopen(file.fileno(), file.mode)
-                r = library.MagickReadImageFile(self.wand, fd)
-            elif not callable(getattr(file, 'read', None)):
-                raise TypeError('file must be a readable file object'
-                                ', but the given object does not '
-                                'have read() method')
-            else:
-                blob = file.read()
-                file = None
-        if blob is not None:
-            if not isinstance(blob, collections.Iterable):
-                raise TypeError('blob must be iterable, not ' +
-                                repr(blob))
-            if not isinstance(blob, binary_type):
-                blob = b''.join(blob)
-            r = library.MagickReadImageBlob(self.wand, blob, len(blob))
-        elif filename is not None:
-            filename = encode_filename(filename)
-            r = library.MagickReadImage(self.wand, filename)
-        if not r:
+                if compose not in COMPOSITE_OPERATORS:
+                    raise TypeError(repr(compose) + ' is an invalid type. ' +
+                                    'See wand.image.COMPOSITE_OPERATORS.')
+                compose_idx = COMPOSITE_OPERATORS.index(compose)
+                result = library.MagickBorderImage(self.wand, color.resource,
+                                                   width, height, compose_idx)
+        if not result:
             self.raise_exception()
+
+    def clear(self):
+        """Clears resources associated with the image, leaving the image blank,
+        and ready to be used with new image.
+
+        .. versionadded:: 0.3.0
+
+        """
+        library.ClearMagickWand(self.wand)
 
     def close(self):
         """Closes the image explicitly. If you use the image object in
@@ -3418,14 +3578,174 @@ class Image(BaseImage):
         """
         self.destroy()
 
-    def clear(self):
-        """Clears resources associated with the image, leaving the image blank,
-        and ready to be used with new image.
+    def compare_layers(self, method):
+        """Generates new images showing the delta pixels between
+        layers. Similar pixels are converted to transparent.
+        Useful for debugging complex animations. ::
 
-        .. versionadded:: 0.3.0
+            with img.compare_layers('compareany') as delta:
+                delta.save(filename='framediff_%02d.png')
+
+        .. note::
+
+            May not work as expected if animations are already
+            optimized.
+
+        :param method: Can be ``'compareany'``,
+                       ``'compareclear'``, or ``'compareoverlay'``
+        :type method: :class:`basestring`
+        :returns: new image stack.
+        :rtype: :class:`Image`
+
+        .. versionadded:: 0.5.0
+        """
+        if not isinstance(method, string_type):
+            raise TypeError('method must be a string from IMAGE_LAYER_METHOD, '
+                            'not ' + repr(method))
+        if method not in ('compareany', 'compareclear', 'compareoverlay'):
+            raise ValueError('method can only be \'compareany\', '
+                             '\'compareclear\', or \'compareoverlay\'')
+        r = None
+        m = IMAGE_LAYER_METHOD.index(method)
+        if MAGICK_VERSION_NUMBER >= 0x700:
+            r = library.MagickCompareImagesLayers(self.wand, m)
+        elif library.MagickCompareImageLayers:
+            r = library.MagickCompareImageLayers(self.wand, m)
+        else:
+            raise AttributeError('MagickCompareImageLayers method '
+                                 'not available on system.')
+        if not r:
+            self.raise_exception()
+        return Image(image=BaseImage(r))
+
+    @manipulative
+    def contrast_stretch(self, black_point=0.0, white_point=None,
+                         channel=None):
+        """Enhance contrast of image by adjusting the span of the available
+        colors.
+
+        If only ``black_point`` is given, match the CLI behavior by assuming
+        the ``white_point`` has the same delta percentage off the top
+        e.g. contrast stretch of 15% is calculated as ``black_point`` = 0.15
+        and ``white_point`` = 0.85.
+
+        :param black_point: black point between 0.0 and 1.0.  default is 0.0
+        :type black_point: :class:`numbers.Real`
+        :param white_point: white point between 0.0 and 1.0.
+                            default value of 1.0 minus ``black_point``
+        :type white_point: :class:`numbers.Real`
+        :param channel: optional color channel to apply contrast stretch
+        :type channel: :const:`CHANNELS`
+        :raises ValueError: if ``channel`` is not in :const:`CHANNELS`
+
+        .. versionadded:: 0.4.1
 
         """
-        library.ClearMagickWand(self.wand)
+        if not isinstance(black_point, numbers.Real):
+            raise TypeError('expecting float, not ' + repr(black_point))
+        if not (white_point is None or isinstance(white_point, numbers.Real)):
+            raise TypeError('expecting float, not ' + repr(white_point))
+        # If only black-point is given, match CLI behavior by
+        # calculating white point
+        if white_point is None:
+            white_point = 1.0 - black_point
+        contrast_range = float(self.width * self.height)
+        black_point *= contrast_range
+        white_point *= contrast_range
+        if channel in CHANNELS:
+            ch_const = CHANNELS[channel]
+            if library.MagickContrastStretchImageChannel:
+                library.MagickContrastStretchImageChannel(self.wand,
+                                                          ch_const,
+                                                          black_point,
+                                                          white_point)
+            else:
+                # Set active channel, and capture mask to restore.
+                channel_mask = library.MagickSetImageChannelMask(self.wand,
+                                                                 ch_const)
+                library.MagickContrastStretchImage(self.wand,
+                                                   black_point,
+                                                   white_point)
+                # Restore original state of channels
+                library.MagickSetImageChannelMask(self.wand, channel_mask)
+        elif channel is None:
+            library.MagickContrastStretchImage(self.wand,
+                                               black_point,
+                                               white_point)
+        else:
+            raise ValueError(repr(channel) + ' is an invalid channel type'
+                             '; see wand.image.CHANNELS dictionary')
+        self.raise_exception()
+
+    def convert(self, format):
+        """Converts the image format with the original image maintained.
+        It returns a converted image instance which is new. ::
+
+            with img.convert('png') as converted:
+                converted.save(filename='converted.png')
+
+        :param format: image format to convert to
+        :type format: :class:`basestring`
+        :returns: a converted image
+        :rtype: :class:`Image`
+        :raises ValueError: when the given ``format`` is unsupported
+
+        .. versionadded:: 0.1.6
+
+        """
+        cloned = self.clone()
+        cloned.format = format
+        return cloned
+
+    def destroy(self):
+        """Manually remove :class:`~.sequence.SingleImage`'s in
+        the :class:`~.sequence.Sequence`, allowing it to
+        be properly garbage collected after using a ``with Image()`` context
+        manager.
+
+        """
+        while self.sequence:
+            self.sequence.pop()
+        super(Image, self).destroy()
+
+    @manipulative
+    def gamma(self, adjustment_value, channel=None):
+        """Gamma correct image.
+
+        Specific color channels can be correct individual. Typical values
+        range between 0.8 and 2.3.
+
+        :param adjustment_value: value to adjust gamma level
+        :type adjustment_value: :class:`numbers.Real`
+        :param channel: optional channel to apply gamma correction
+        :type channel: :class:`basestring`
+        :raises TypeError: if ``gamma_point`` is not a :class:`numbers.Real`
+        :raises ValueError: if ``channel`` is not in :const:`CHANNELS`
+
+        .. versionadded:: 0.4.1
+
+        """
+        if not isinstance(adjustment_value, numbers.Real):
+            raise TypeError('expecting float, not ' + repr(adjustment_value))
+        if channel in CHANNELS:
+            ch_const = CHANNELS[channel]
+            if library.MagickGammaImageChannel:
+                library.MagickGammaImageChannel(self.wand,
+                                                ch_const,
+                                                adjustment_value)
+            else:
+                # Set active channel, and capture mask to restore.
+                channel_mask = library.MagickSetImageChannelMask(self.wand,
+                                                                 ch_const)
+                library.MagickGammaImage(self.wand, adjustment_value)
+                # Restore original state of channels
+                library.MagickSetImageChannelMask(self.wand, channel_mask)
+        elif channel is None:
+            library.MagickGammaImage(self.wand, adjustment_value)
+        else:
+            raise ValueError(repr(channel) + ' is an invalid channel type'
+                             '; see wand.image.CHANNELS dictionary')
+        self.raise_exception()
 
     def level(self, black=0.0, white=None, gamma=1.0, channel=None):
         """Adjusts the levels of an image by scaling the colors falling
@@ -3496,184 +3816,156 @@ class Image(BaseImage):
             library.MagickLevelImage(self.wand, bp, gamma, wp)
         self.raise_exception()
 
-    @property
-    def format(self):
-        """(:class:`basestring`) The image format.
+    @manipulative
+    def linear_stretch(self, black_point=0.0, white_point=1.0):
+        """Enhance saturation intensity of an image.
 
-        If you want to convert the image format, just reset this property::
+        :param black_point: Black point between 0.0 and 1.0. Default 0.0
+        :type black_point: :class:`numbers.Real`
+        :param white_point: White point between 0.0 and 1.0. Default 1.0
+        :type white_point: :class:`numbers.Real`
 
-            assert isinstance(img, wand.image.Image)
-            img.format = 'png'
+        .. versionadded:: 0.4.1
+        """
+        if not isinstance(black_point, numbers.Real):
+            raise TypeError('expecting float, not ' + repr(black_point))
+        if not isinstance(white_point, numbers.Real):
+            raise TypeError('expecting float, not ' + repr(white_point))
+        linear_range = float(self.width * self.height)
+        library.MagickLinearStretchImage(self.wand,
+                                         linear_range * black_point,
+                                         linear_range * white_point)
 
-        It may raise :exc:`ValueError` when the format is unsupported.
+    def make_blob(self, format=None):
+        """Makes the binary string of the image.
 
-        .. seealso::
+        :param format: the image format to write e.g. ``'png'``, ``'jpeg'``.
+                       it is omittable
+        :type format: :class:`basestring`
+        :returns: a blob (bytes) string
+        :rtype: :class:`bytes`
+        :raises ValueError: when ``format`` is invalid
 
-           `ImageMagick Image Formats`__
-              ImageMagick uses an ASCII string known as *magick* (e.g. ``GIF``)
-              to identify file formats, algorithms acting as formats,
-              built-in patterns, and embedded profile types.
+        .. versionchanged:: 0.1.6
+           Removed a side effect that changes the image :attr:`format`
+           silently.
 
-           __ http://www.imagemagick.org/script/formats.php
+        .. versionadded:: 0.1.5
+           The ``format`` parameter became optional.
 
-        .. versionadded:: 0.1.6
+        .. versionadded:: 0.1.1
 
         """
-        fmt = library.MagickGetImageFormat(self.wand)
-        if bool(fmt):
-            return text(fmt.value)
+        if format is not None:
+            with self.convert(format) as converted:
+                return converted.make_blob()
+        library.MagickResetIterator(self.wand)
+        length = ctypes.c_size_t()
+        blob_p = None
+        if len(self.sequence) > 1:
+            blob_p = library.MagickGetImagesBlob(self.wand,
+                                                 ctypes.byref(length))
+        else:
+            blob_p = library.MagickGetImageBlob(self.wand,
+                                                ctypes.byref(length))
+        if blob_p and length.value:
+            blob = ctypes.string_at(blob_p, length.value)
+            library.MagickRelinquishMemory(blob_p)
+            return blob
         self.raise_exception()
 
-    @format.setter
-    def format(self, fmt):
-        if not isinstance(fmt, string_type):
-            raise TypeError("format must be a string like 'png' or 'jpeg'"
-                            ', not ' + repr(fmt))
-        fmt = fmt.strip()
-        r = library.MagickSetImageFormat(self.wand, binary(fmt.upper()))
-        if not r:
-            raise ValueError(repr(fmt) + ' is unsupported format')
-        r = library.MagickSetFilename(self.wand,
-                                      b'buffer.' + binary(fmt.lower()))
+    @manipulative
+    def normalize(self, channel=None):
+        """Normalize color channels.
+
+        :param channel: the channel type.  available values can be found
+                        in the :const:`CHANNELS` mapping.  If ``None``,
+                        normalize all channels.
+        :type channel: :class:`basestring`
+
+        """
+        if channel:
+            try:
+                ch_const = CHANNELS[channel]
+            except KeyError:
+                raise ValueError(repr(channel) + ' is an invalid channel type'
+                                 '; see wand.image.CHANNELS dictionary')
+            if library.MagickNormalizeImageChannel:
+                r = library.MagickNormalizeImageChannel(self.wand, ch_const)
+            else:
+                with Image(image=self) as mask:
+                    # Set active channel, and capture mask to restore.
+                    channel_mask = library.MagickSetImageChannelMask(mask.wand,
+                                                                     ch_const)
+                    r = library.MagickNormalizeImage(mask.wand)
+                    # Restore original state of channels.
+                    library.MagickSetImageChannelMask(mask.wand,
+                                                      channel_mask)
+                    # Copy adjusted mask over original value.
+                    copy_mask = COMPOSITE_OPERATORS.index('copy_' + channel)
+                    library.MagickCompositeImage(self.wand,
+                                                 mask.wand,
+                                                 copy_mask,
+                                                 False,
+                                                 0,
+                                                 0)
+        else:
+            r = library.MagickNormalizeImage(self.wand)
         if not r:
             self.raise_exception()
 
-    @property
-    def mimetype(self):
-        """(:class:`basestring`) The MIME type of the image
-        e.g. ``'image/jpeg'``, ``'image/png'``.
+    def read(self, file=None, filename=None, blob=None, resolution=None):
+        """Read new image into Image() object.
 
-        .. versionadded:: 0.1.7
-
-        """
-        rp = libmagick.MagickToMime(binary(self.format))
-        if not bool(rp):
-            self.raise_exception()
-        mimetype = rp.value
-        return text(mimetype)
-
-    @property
-    def animation(self):
-        return (self.mimetype in ('image/gif', 'image/x-gif') and
-                len(self.sequence) > 1)
-
-    @property
-    def compression(self):
-        """(:class:`basestring`) The type of image compression.
-        It's a string from :const:`COMPRESSION_TYPES` list.
-        It also can be set.
-
-        .. versionadded:: 0.3.6
-
-        """
-        compression_index = library.MagickGetImageCompression(self.wand)
-        return COMPRESSION_TYPES[compression_index]
-
-    @compression.setter
-    def compression(self, value):
-        if not isinstance(value, string_type):
-            raise TypeError('expected a string, not ' + repr(value))
-        if value not in COMPRESSION_TYPES:
-            raise ValueError('expected a string from COMPRESSION_TYPES, not ' +
-                             repr(value))
-        library.MagickSetImageCompression(
-            self.wand,
-            COMPRESSION_TYPES.index(value)
-        )
-
-    def blank(self, width, height, background=None):
-        """Creates blank image.
-
-        :param width: the width of new blank image.
-        :type width: :class:`numbers.Integral`
-        :param height: the height of new blank imgage.
-        :type height: :class:`numbers.Integral`
-        :param background: an optional background color.
-                           default is transparent
-        :type background: :class:`wand.color.Color`
-        :returns: blank image
-        :rtype: :class:`Image`
+        :param blob: reads an image from the ``blob`` byte array
+        :type blob: :class:`bytes`
+        :param file: reads an image from the ``file`` object
+        :type file: file object
+        :param filename: reads an image from the ``filename`` string
+        :type filename: :class:`basestring`
+        :param resolution: set a resolution value (DPI),
+                           useful for vectorial formats (like PDF)
+        :type resolution: :class:`collections.Sequence`,
+                          :class:`numbers.Integral`
 
         .. versionadded:: 0.3.0
 
         """
-        if not isinstance(width, numbers.Integral) or width < 1:
-            raise TypeError('width must be a natural number, not ' +
-                            repr(width))
-        if not isinstance(height, numbers.Integral) or height < 1:
-            raise TypeError('height must be a natural number, not ' +
-                            repr(height))
-        if background is not None and not isinstance(background, Color):
-            raise TypeError('background must be a wand.color.Color '
-                            'instance, not ' + repr(background))
-        if background is None:
-            background = Color('transparent')
-        with background:
-            r = library.MagickNewImage(self.wand, width, height,
-                                       background.resource)
-            if not r:
-                self.raise_exception()
-        return self
-
-    def compare_layers(self, method):
-        """Generates new images showing the delta pixels between
-        layers. Similar pixels are converted to transparent.
-        Useful for debugging complex animations. ::
-
-            with img.compare_layers('compareany') as delta:
-                delta.save(filename='framediff_%02d.png')
-
-        .. note::
-
-            May not work as expected if animations are already
-            optimized.
-
-        :param method: Can be ``'compareany'``,
-                       ``'compareclear'``, or ``'compareoverlay'``
-        :type method: :class:`basestring`
-        :returns: new image stack.
-        :rtype: :class:`Image`
-
-        .. versionadded:: 0.5.0
-        """
-        if not isinstance(method, string_type):
-            raise TypeError('method must be a string from IMAGE_LAYER_METHOD, '
-                            'not ' + repr(method))
-        if method not in ('compareany', 'compareclear', 'compareoverlay'):
-            raise ValueError('method can only be \'compareany\', '
-                             '\'compareclear\', or \'compareoverlay\'')
         r = None
-        m = IMAGE_LAYER_METHOD.index(method)
-        if MAGICK_VERSION_NUMBER >= 0x700:
-            r = library.MagickCompareImagesLayers(self.wand, m)
-        elif library.MagickCompareImageLayers:
-            r = library.MagickCompareImageLayers(self.wand, m)
-        else:
-            raise AttributeError('MagickCompareImageLayers method '
-                                 'not available on system.')
+        # Resolution must be set after image reading.
+        if resolution is not None:
+            if (isinstance(resolution, collections.Sequence) and
+                    len(resolution) == 2):
+                library.MagickSetResolution(self.wand, *resolution)
+            elif isinstance(resolution, numbers.Integral):
+                library.MagickSetResolution(self.wand, resolution, resolution)
+            else:
+                raise TypeError('resolution must be a (x, y) pair or an '
+                                'integer of the same x/y')
+        if file is not None:
+            if (isinstance(file, file_types) and
+                    hasattr(libc, 'fdopen') and hasattr(file, 'mode')):
+                fd = libc.fdopen(file.fileno(), file.mode)
+                r = library.MagickReadImageFile(self.wand, fd)
+            elif not callable(getattr(file, 'read', None)):
+                raise TypeError('file must be a readable file object'
+                                ', but the given object does not '
+                                'have read() method')
+            else:
+                blob = file.read()
+                file = None
+        if blob is not None:
+            if not isinstance(blob, collections.Iterable):
+                raise TypeError('blob must be iterable, not ' +
+                                repr(blob))
+            if not isinstance(blob, binary_type):
+                blob = b''.join(blob)
+            r = library.MagickReadImageBlob(self.wand, blob, len(blob))
+        elif filename is not None:
+            filename = encode_filename(filename)
+            r = library.MagickReadImage(self.wand, filename)
         if not r:
             self.raise_exception()
-        return Image(image=BaseImage(r))
-
-    def convert(self, format):
-        """Converts the image format with the original image maintained.
-        It returns a converted image instance which is new. ::
-
-            with img.convert('png') as converted:
-                converted.save(filename='converted.png')
-
-        :param format: image format to convert to
-        :type format: :class:`basestring`
-        :returns: a converted image
-        :rtype: :class:`Image`
-        :raises ValueError: when the given ``format`` is unsupported
-
-        .. versionadded:: 0.1.6
-
-        """
-        cloned = self.clone()
-        cloned.format = format
-        return cloned
 
     def save(self, file=None, filename=None):
         """Saves the image into the ``file`` or ``filename``. It takes
@@ -3726,44 +4018,6 @@ class Image(BaseImage):
             if not r:
                 self.raise_exception()
 
-    def make_blob(self, format=None):
-        """Makes the binary string of the image.
-
-        :param format: the image format to write e.g. ``'png'``, ``'jpeg'``.
-                       it is omittable
-        :type format: :class:`basestring`
-        :returns: a blob (bytes) string
-        :rtype: :class:`bytes`
-        :raises ValueError: when ``format`` is invalid
-
-        .. versionchanged:: 0.1.6
-           Removed a side effect that changes the image :attr:`format`
-           silently.
-
-        .. versionadded:: 0.1.5
-           The ``format`` parameter became optional.
-
-        .. versionadded:: 0.1.1
-
-        """
-        if format is not None:
-            with self.convert(format) as converted:
-                return converted.make_blob()
-        library.MagickResetIterator(self.wand)
-        length = ctypes.c_size_t()
-        blob_p = None
-        if len(self.sequence) > 1:
-            blob_p = library.MagickGetImagesBlob(self.wand,
-                                                 ctypes.byref(length))
-        else:
-            blob_p = library.MagickGetImageBlob(self.wand,
-                                                ctypes.byref(length))
-        if blob_p and length.value:
-            blob = ctypes.string_at(blob_p, length.value)
-            library.MagickRelinquishMemory(blob_p)
-            return blob
-        self.raise_exception()
-
     def strip(self):
         """Strips an image of all profiles and comments.
 
@@ -3771,29 +4025,6 @@ class Image(BaseImage):
 
         """
         result = library.MagickStripImage(self.wand)
-        if not result:
-            self.raise_exception()
-
-    def trim(self, color=None, fuzz=0):
-        """Remove solid border from image. Uses top left pixel as a guide
-        by default, or you can also specify the ``color`` to remove.
-
-        :param color: the border color to remove.
-                      if it's omitted top left pixel is used by default
-        :type color: :class:`~wand.color.Color`
-        :param fuzz: Defines how much tolerance is acceptable to consider
-                     two colors as the same.
-        :type fuzz: :class:`numbers.Integral`
-
-        .. versionadded:: 0.3.0
-           Optional ``color`` and ``fuzz`` parameters.
-
-        .. versionadded:: 0.2.1
-
-        """
-        with color or self[0, 0] as color:
-            self.border(color, 1, 1, compose="copy")
-        result = library.MagickTrimImage(self.wand, fuzz)
         if not result:
             self.raise_exception()
 
@@ -3819,258 +4050,28 @@ class Image(BaseImage):
         if not result:
             self.raise_exception()
 
-    @manipulative
-    def _auto_orient(self):
-        """Fallback for :attr:`auto_orient()` method
-        (which wraps :c:func:`MagickAutoOrientImage`),
-        fixes orientation by checking EXIF data.
+    def trim(self, color=None, fuzz=0):
+        """Remove solid border from image. Uses top left pixel as a guide
+        by default, or you can also specify the ``color`` to remove.
 
-        .. versionadded:: 0.4.1
-
-        """
-        exif_orientation = self.metadata.get('exif:orientation')
-        if not exif_orientation:
-            return
-
-        orientation_type = ORIENTATION_TYPES[int(exif_orientation)]
-
-        fn_lookup = {
-            'undefined': None,
-            'top_left': None,
-            'top_right': self.flop,
-            'bottom_right': functools.partial(self.rotate, degree=180.0),
-            'bottom_left': self.flip,
-            'left_top': self.transpose,
-            'right_top': functools.partial(self.rotate, degree=90.0),
-            'right_bottom': self.transverse,
-            'left_bottom': functools.partial(self.rotate, degree=270.0)
-        }
-
-        fn = fn_lookup.get(orientation_type)
-
-        if not fn:
-            return
-
-        fn()
-        self.orientation = 'top_left'
-
-    @manipulative
-    def auto_orient(self):
-        """Adjusts an image so that its orientation is suitable
-        for viewing (i.e. top-left orientation). If available it uses
-        :c:func:`MagickAutoOrientImage` (was added in ImageMagick 6.8.9+)
-        if you have an older magick library,
-        it will use :attr:`_auto_orient()` method for fallback.
-
-        .. versionadded:: 0.4.1
-
-        """
-        try:
-            result = library.MagickAutoOrientImage(self.wand)
-            if not result:
-                self.raise_exception()
-        except AttributeError:
-            self._auto_orient()
-
-    def border(self, color, width, height, compose="copy"):
-        """Surrounds the image with a border.
-
-        :param bordercolor: the border color pixel wand
-        :type image: :class:`~wand.color.Color`
-        :param width: the border width
-        :type width: :class:`numbers.Integral`
-        :param height: the border height
-        :type height: :class:`numbers.Integral`
-        :param compose: Use composite operator when applying frame. Only used
-                        if called with ImageMagick 7+.
-        :type compose: :class:`basestring`
+        :param color: the border color to remove.
+                      if it's omitted top left pixel is used by default
+        :type color: :class:`~wand.color.Color`
+        :param fuzz: Defines how much tolerance is acceptable to consider
+                     two colors as the same.
+        :type fuzz: :class:`numbers.Integral`
 
         .. versionadded:: 0.3.0
-        .. versionchanged:: 0.5.0
-           Added ``compose`` paramater, and ImageMagick 7 support.
+           Optional ``color`` and ``fuzz`` parameters.
+
+        .. versionadded:: 0.2.1
+
         """
-        if not isinstance(color, Color):
-            raise TypeError('color must be a wand.color.Color object, not ' +
-                            repr(color))
-        with color:
-            if MAGICK_VERSION_NUMBER < 0x700:
-                result = library.MagickBorderImage(self.wand, color.resource,
-                                                   width, height)
-            else:
-                if compose not in COMPOSITE_OPERATORS:
-                    raise TypeError(repr(compose) + ' is an invalid type. ' +
-                                    'See wand.image.COMPOSITE_OPERATORS.')
-                compose_idx = COMPOSITE_OPERATORS.index(compose)
-                result = library.MagickBorderImage(self.wand, color.resource,
-                                                   width, height, compose_idx)
+        with color or self[0, 0] as color:
+            self.border(color, 1, 1, compose="copy")
+        result = library.MagickTrimImage(self.wand, fuzz)
         if not result:
             self.raise_exception()
-
-    @manipulative
-    def contrast_stretch(self, black_point=0.0, white_point=None,
-                         channel=None):
-        """Enhance contrast of image by adjusting the span of the available
-        colors.
-
-        If only ``black_point`` is given, match the CLI behavior by assuming
-        the ``white_point`` has the same delta percentage off the top
-        e.g. contrast stretch of 15% is calculated as ``black_point`` = 0.15
-        and ``white_point`` = 0.85.
-
-        :param black_point: black point between 0.0 and 1.0.  default is 0.0
-        :type black_point: :class:`numbers.Real`
-        :param white_point: white point between 0.0 and 1.0.
-                            default value of 1.0 minus ``black_point``
-        :type white_point: :class:`numbers.Real`
-        :param channel: optional color channel to apply contrast stretch
-        :type channel: :const:`CHANNELS`
-        :raises ValueError: if ``channel`` is not in :const:`CHANNELS`
-
-        .. versionadded:: 0.4.1
-
-        """
-        if not isinstance(black_point, numbers.Real):
-            raise TypeError('expecting float, not ' + repr(black_point))
-        if not (white_point is None or isinstance(white_point, numbers.Real)):
-            raise TypeError('expecting float, not ' + repr(white_point))
-        # If only black-point is given, match CLI behavior by
-        # calculating white point
-        if white_point is None:
-            white_point = 1.0 - black_point
-        contrast_range = float(self.width * self.height)
-        black_point *= contrast_range
-        white_point *= contrast_range
-        if channel in CHANNELS:
-            ch_const = CHANNELS[channel]
-            if library.MagickContrastStretchImageChannel:
-                library.MagickContrastStretchImageChannel(self.wand,
-                                                          ch_const,
-                                                          black_point,
-                                                          white_point)
-            else:
-                # Set active channel, and capture mask to restore.
-                channel_mask = library.MagickSetImageChannelMask(self.wand,
-                                                                 ch_const)
-                library.MagickContrastStretchImage(self.wand,
-                                                   black_point,
-                                                   white_point)
-                # Restore original state of channels
-                library.MagickSetImageChannelMask(self.wand, channel_mask)
-        elif channel is None:
-            library.MagickContrastStretchImage(self.wand,
-                                               black_point,
-                                               white_point)
-        else:
-            raise ValueError(repr(channel) + ' is an invalid channel type'
-                             '; see wand.image.CHANNELS dictionary')
-        self.raise_exception()
-
-    @manipulative
-    def gamma(self, adjustment_value, channel=None):
-        """Gamma correct image.
-
-        Specific color channels can be correct individual. Typical values
-        range between 0.8 and 2.3.
-
-        :param adjustment_value: value to adjust gamma level
-        :type adjustment_value: :class:`numbers.Real`
-        :param channel: optional channel to apply gamma correction
-        :type channel: :class:`basestring`
-        :raises TypeError: if ``gamma_point`` is not a :class:`numbers.Real`
-        :raises ValueError: if ``channel`` is not in :const:`CHANNELS`
-
-        .. versionadded:: 0.4.1
-
-        """
-        if not isinstance(adjustment_value, numbers.Real):
-            raise TypeError('expecting float, not ' + repr(adjustment_value))
-        if channel in CHANNELS:
-            ch_const = CHANNELS[channel]
-            if library.MagickGammaImageChannel:
-                library.MagickGammaImageChannel(self.wand,
-                                                ch_const,
-                                                adjustment_value)
-            else:
-                # Set active channel, and capture mask to restore.
-                channel_mask = library.MagickSetImageChannelMask(self.wand,
-                                                                 ch_const)
-                library.MagickGammaImage(self.wand, adjustment_value)
-                # Restore original state of channels
-                library.MagickSetImageChannelMask(self.wand, channel_mask)
-        elif channel is None:
-            library.MagickGammaImage(self.wand, adjustment_value)
-        else:
-            raise ValueError(repr(channel) + ' is an invalid channel type'
-                             '; see wand.image.CHANNELS dictionary')
-        self.raise_exception()
-
-    @manipulative
-    def linear_stretch(self, black_point=0.0, white_point=1.0):
-        """Enhance saturation intensity of an image.
-
-        :param black_point: Black point between 0.0 and 1.0. Default 0.0
-        :type black_point: :class:`numbers.Real`
-        :param white_point: White point between 0.0 and 1.0. Default 1.0
-        :type white_point: :class:`numbers.Real`
-
-        .. versionadded:: 0.4.1
-        """
-        if not isinstance(black_point, numbers.Real):
-            raise TypeError('expecting float, not ' + repr(black_point))
-        if not isinstance(white_point, numbers.Real):
-            raise TypeError('expecting float, not ' + repr(white_point))
-        linear_range = float(self.width * self.height)
-        library.MagickLinearStretchImage(self.wand,
-                                         linear_range * black_point,
-                                         linear_range * white_point)
-
-    def normalize(self, channel=None):
-        """Normalize color channels.
-
-        :param channel: the channel type.  available values can be found
-                        in the :const:`CHANNELS` mapping.  If ``None``,
-                        normalize all channels.
-        :type channel: :class:`basestring`
-
-        """
-        if channel:
-            try:
-                ch_const = CHANNELS[channel]
-            except KeyError:
-                raise ValueError(repr(channel) + ' is an invalid channel type'
-                                 '; see wand.image.CHANNELS dictionary')
-            if library.MagickNormalizeImageChannel:
-                r = library.MagickNormalizeImageChannel(self.wand, ch_const)
-            else:
-                with Image(image=self) as mask:
-                    # Set active channel, and capture mask to restore.
-                    channel_mask = library.MagickSetImageChannelMask(mask.wand,
-                                                                     ch_const)
-                    r = library.MagickNormalizeImage(mask.wand)
-                    # Restore original state of channels.
-                    library.MagickSetImageChannelMask(mask.wand,
-                                                      channel_mask)
-                    # Copy adjusted mask over original value.
-                    copy_mask = COMPOSITE_OPERATORS.index('copy_' + channel)
-                    library.MagickCompositeImage(self.wand,
-                                                 mask.wand,
-                                                 copy_mask,
-                                                 False,
-                                                 0,
-                                                 0)
-        else:
-            r = library.MagickNormalizeImage(self.wand)
-        if not r:
-            self.raise_exception()
-
-    def _repr_png_(self):
-        with self.convert('png') as cloned:
-            return cloned.make_blob()
-
-    def __repr__(self):
-        return super(Image, self).__repr__(
-            extra_format=' {self.format!r} ({self.width}x{self.height})'
-        )
 
 
 class Iterator(Resource, collections.Iterator):
