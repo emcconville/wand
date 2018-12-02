@@ -282,6 +282,70 @@ class Drawing(Resource):
                                  CLIP_PATH_UNITS.index(clip_unit))
 
     @property
+    def fill_color(self):
+        """(:class:`~wand.color.Color`) The current color to fill.
+        It also can be set.
+
+        """
+        pixel = library.NewPixelWand()
+        library.DrawGetFillColor(self.resource, pixel)
+        if MAGICK_VERSION_NUMBER < 0x700:
+            pixel_structure = MagickPixelPacket
+        else:
+            pixel_structure = PixelInfo
+        size = ctypes.sizeof(pixel_structure)
+        buffer = ctypes.create_string_buffer(size)
+        library.PixelGetMagickColor(pixel, buffer)
+        pixel = library.DestroyPixelWand(pixel)
+        return Color(raw=buffer)
+
+    @fill_color.setter
+    def fill_color(self, color):
+        if not isinstance(color, Color):
+            raise TypeError('color must be a wand.color.Color object, not ' +
+                            repr(color))
+        with color:
+            library.DrawSetFillColor(self.resource, color.resource)
+
+    @property
+    def fill_opacity(self):
+        """(:class:`~numbers.Real`) The current fill opacity.
+        It also can be set.
+
+        .. versionadded:: 0.4.0
+        """
+        return library.DrawGetFillOpacity(self.resource)
+
+    @fill_opacity.setter
+    def fill_opacity(self, opacity):
+        if not isinstance(opacity, numbers.Real):
+            raise TypeError('opacity must be a double, not ' +
+                            repr(opacity))
+        library.DrawSetFillOpacity(self.resource, opacity)
+
+    @property
+    def fill_rule(self):
+        """(:class:`basestring`) The current fill rule. It can also be set.
+        It's a string value from :const:`FILL_RULE_TYPES` list.
+
+        .. versionadded:: 0.4.0
+        """
+        fill_rule_index = library.DrawGetFillRule(self.resource)
+        if fill_rule_index not in FILL_RULE_TYPES:
+            self.raise_exception()
+        return text(FILL_RULE_TYPES[fill_rule_index])
+
+    @fill_rule.setter
+    def fill_rule(self, fill_rule):
+        if not isinstance(fill_rule, string_type):
+            raise TypeError('expected a string, not ' + repr(fill_rule))
+        elif fill_rule not in FILL_RULE_TYPES:
+            raise ValueError('expected a string from FILE_RULE_TYPES, not' +
+                             repr(fill_rule))
+        library.DrawSetFillRule(self.resource,
+                                FILL_RULE_TYPES.index(fill_rule))
+
+    @property
     def font(self):
         """(:class:`basestring`) The current font name.  It also can be set.
 
@@ -411,70 +475,6 @@ class Drawing(Resource):
         library.DrawSetFontWeight(self.resource, weight)
 
     @property
-    def fill_color(self):
-        """(:class:`~wand.color.Color`) The current color to fill.
-        It also can be set.
-
-        """
-        pixel = library.NewPixelWand()
-        library.DrawGetFillColor(self.resource, pixel)
-        if MAGICK_VERSION_NUMBER < 0x700:
-            pixel_structure = MagickPixelPacket
-        else:
-            pixel_structure = PixelInfo
-        size = ctypes.sizeof(pixel_structure)
-        buffer = ctypes.create_string_buffer(size)
-        library.PixelGetMagickColor(pixel, buffer)
-        pixel = library.DestroyPixelWand(pixel)
-        return Color(raw=buffer)
-
-    @fill_color.setter
-    def fill_color(self, color):
-        if not isinstance(color, Color):
-            raise TypeError('color must be a wand.color.Color object, not ' +
-                            repr(color))
-        with color:
-            library.DrawSetFillColor(self.resource, color.resource)
-
-    @property
-    def fill_opacity(self):
-        """(:class:`~numbers.Real`) The current fill opacity.
-        It also can be set.
-
-        .. versionadded:: 0.4.0
-        """
-        return library.DrawGetFillOpacity(self.resource)
-
-    @fill_opacity.setter
-    def fill_opacity(self, opacity):
-        if not isinstance(opacity, numbers.Real):
-            raise TypeError('opacity must be a double, not ' +
-                            repr(opacity))
-        library.DrawSetFillOpacity(self.resource, opacity)
-
-    @property
-    def fill_rule(self):
-        """(:class:`basestring`) The current fill rule. It can also be set.
-        It's a string value from :const:`FILL_RULE_TYPES` list.
-
-        .. versionadded:: 0.4.0
-        """
-        fill_rule_index = library.DrawGetFillRule(self.resource)
-        if fill_rule_index not in FILL_RULE_TYPES:
-            self.raise_exception()
-        return text(FILL_RULE_TYPES[fill_rule_index])
-
-    @fill_rule.setter
-    def fill_rule(self, fill_rule):
-        if not isinstance(fill_rule, string_type):
-            raise TypeError('expected a string, not ' + repr(fill_rule))
-        elif fill_rule not in FILL_RULE_TYPES:
-            raise ValueError('expected a string from FILE_RULE_TYPES, not' +
-                             repr(fill_rule))
-        library.DrawSetFillRule(self.resource,
-                                FILL_RULE_TYPES.index(fill_rule))
-
-    @property
     def opacity(self):
         """(:class:`~numbers.Real`) returns the opacity used when drawing with
         the fill or stroke color or texture. Fully opaque is 1.0. This method
@@ -485,6 +485,27 @@ class Drawing(Resource):
         .. versionadded:: 0.4.0
         """
         return library.DrawGetOpacity(self.resource)
+
+    @property
+    def gravity(self):
+        """(:class:`basestring`) The text placement gravity used when
+        annotating with text.  It's a string from :const:`GRAVITY_TYPES`
+        list.  It also can be set.
+
+        """
+        gravity_index = library.DrawGetGravity(self.resource)
+        if not gravity_index:
+            self.raise_exception()
+        return text(GRAVITY_TYPES[gravity_index])
+
+    @gravity.setter
+    def gravity(self, value):
+        if not isinstance(value, string_type):
+            raise TypeError('expected a string, not ' + repr(value))
+        elif value not in GRAVITY_TYPES:
+            raise ValueError('expected a string from GRAVITY_TYPES, not ' +
+                             repr(value))
+        library.DrawSetGravity(self.resource, GRAVITY_TYPES.index(value))
 
     @opacity.setter
     def opacity(self, opaque):
@@ -893,27 +914,6 @@ class Drawing(Resource):
                                                  vector_graphics)
             if okay == 0:
                 raise ValueError("Vector graphic not understood.")
-
-    @property
-    def gravity(self):
-        """(:class:`basestring`) The text placement gravity used when
-        annotating with text.  It's a string from :const:`GRAVITY_TYPES`
-        list.  It also can be set.
-
-        """
-        gravity_index = library.DrawGetGravity(self.resource)
-        if not gravity_index:
-            self.raise_exception()
-        return text(GRAVITY_TYPES[gravity_index])
-
-    @gravity.setter
-    def gravity(self, value):
-        if not isinstance(value, string_type):
-            raise TypeError('expected a string, not ' + repr(value))
-        elif value not in GRAVITY_TYPES:
-            raise ValueError('expected a string from GRAVITY_TYPES, not ' +
-                             repr(value))
-        library.DrawSetGravity(self.resource, GRAVITY_TYPES.index(value))
 
     def clear(self):
         library.ClearDrawingWand(self.resource)
