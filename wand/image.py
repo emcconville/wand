@@ -755,49 +755,10 @@ class BaseImage(Resource):
         self.options = OptionDict(self)
         self.dirty = False
 
-    @property
-    def wand(self):
-        """Internal pointer to the MagickWand instance. It may raise
-        :exc:`ClosedImageError` when the instance has destroyed already.
-
-        """
-        try:
-            return self.resource
-        except DestroyedResourceError:
-            raise ClosedImageError(repr(self) + ' is closed already')
-
-    @wand.setter
-    def wand(self, wand):
-        try:
-            self.resource = wand
-        except TypeError:
-            raise TypeError(repr(wand) + ' is not a MagickWand instance')
-
-    @wand.deleter
-    def wand(self):
-        del self.resource
-
-    def clone(self):
-        """Clones the image. It is equivalent to call :class:`Image` with
-        ``image`` parameter. ::
-
-            with img.clone() as cloned:
-                # manipulate the cloned image
-                pass
-
-        :returns: the cloned new image
-        :rtype: :class:`Image`
-
-        .. versionadded:: 0.1.1
-
-        """
-        return Image(image=self)
-
-    def __len__(self):
-        return self.height
-
-    def __iter__(self):
-        return Iterator(image=self)
+    def __eq__(self, other):
+        if isinstance(other, type(self)):
+            return self.signature == other.signature
+        return False
 
     def __getitem__(self, idx):
         if (not isinstance(idx, string_type) and
@@ -863,16 +824,32 @@ class BaseImage(Resource):
             return self[:, idx]
         raise TypeError('unsupported index type: ' + repr(idx))
 
-    def __eq__(self, other):
-        if isinstance(other, type(self)):
-            return self.signature == other.signature
-        return False
+    def __hash__(self):
+        return hash(self.signature)
+
+    def __iter__(self):
+        return Iterator(image=self)
+
+    def __len__(self):
+        return self.height
 
     def __ne__(self, other):
         return not (self == other)
 
-    def __hash__(self):
-        return hash(self.signature)
+    def __repr__(self, extra_format=' ({self.width}x{self.height})'):
+        cls = type(self)
+        typename = '{0}.{1}'.format(
+            cls.__module__,
+            getattr(cls, '__qualname__', cls.__name__)
+        )
+        if getattr(self, 'c_resource', None) is None:
+            return '<{0}: (closed)>'.format(typename)
+        sig = self.signature
+        if not sig:
+            return '<{0}: (empty)>'.format(typename)
+        return '<{0}: {1}{2}>'.format(
+            typename, sig[:7], extra_format.format(self=self)
+        )
 
     @property
     def __array_interface__(self):
@@ -911,588 +888,6 @@ class BaseImage(Resource):
         return dict(data=c_buffer,
                     shape=(width, height, channel_number),
                     typestr='|u1')
-
-    @property
-    def animation(self):
-        """(:class:`bool`) Whether the image is animation or not.
-        It doesn't only mean that the image has two or more images (frames),
-        but all frames are even the same size.  It's about image format,
-        not content.  It's :const:`False` even if :mimetype:`image/ico`
-        consits of two or more images of the same size.
-
-        For example, it's :const:`False` for :mimetype:`image/jpeg`,
-        :mimetype:`image/gif`, :mimetype:`image/ico`.
-
-        If :mimetype:`image/gif` has two or more frames, it's :const:`True`.
-        If :mimetype:`image/gif` has only one frame, it's :const:`False`.
-
-        .. versionadded:: 0.3.0
-
-        .. versionchanged:: 0.3.8
-           Became to accept :mimetype:`image/x-gif` as well.
-
-        """
-        return False
-
-    @property
-    def gravity(self):
-        """(:class:`basestring`) The text placement gravity used when
-        annotating with text.  It's a string from :const:`GRAVITY_TYPES`
-        list.  It also can be set.
-
-        """
-        gravity_index = library.MagickGetGravity(self.wand)
-        if not gravity_index:
-            self.raise_exception()
-        return GRAVITY_TYPES[gravity_index]
-
-    @gravity.setter
-    @manipulative
-    def gravity(self, value):
-        if not isinstance(value, string_type):
-            raise TypeError('expected a string, not ' + repr(value))
-        if value not in GRAVITY_TYPES:
-            raise ValueError('expected a string from GRAVITY_TYPES, not ' +
-                             repr(value))
-        library.MagickSetGravity(self.wand, GRAVITY_TYPES.index(value))
-
-    @property
-    def font_path(self):
-        """(:class:`basestring`) The path of the current font.
-        It also can be set.
-
-        """
-        return text(library.MagickGetFont(self.wand))
-
-    @font_path.setter
-    @manipulative
-    def font_path(self, font):
-        font = binary(font)
-        if library.MagickSetFont(self.wand, font) is False:
-            raise ValueError('font is invalid')
-
-    @property
-    def font_size(self):
-        """(:class:`numbers.Real`) The font size.  It also can be set."""
-        return library.MagickGetPointsize(self.wand)
-
-    @font_size.setter
-    @manipulative
-    def font_size(self, size):
-        if not isinstance(size, numbers.Real):
-            raise TypeError('expected a numbers.Real, but got ' + repr(size))
-        elif size < 0.0:
-            raise ValueError('cannot be less then 0.0, but got ' + repr(size))
-        elif library.MagickSetPointsize(self.wand, size) is False:
-            raise ValueError('unexpected error is occur')
-
-    @property
-    def font_antialias(self):
-        return bool(library.MagickGetAntialias(self.wand))
-
-    @font_antialias.setter
-    @manipulative
-    def font_antialias(self, antialias):
-        if not isinstance(antialias, bool):
-            raise TypeError('font_antialias must be a bool, not ' +
-                            repr(antialias))
-        library.MagickSetAntialias(self.wand, antialias)
-
-    @property
-    def font(self):
-        """(:class:`wand.font.Font`) The current font options."""
-        return Font(
-            path=text(self.font_path),
-            size=self.font_size,
-            color=self.font_color,
-            antialias=self.font_antialias,
-            stroke_color=self.stroke_color,
-            stroke_width=self.stroke_width
-        )
-
-    @font.setter
-    @manipulative
-    def font(self, font):
-        if not isinstance(font, Font):
-            raise TypeError('font must be a wand.font.Font, not ' + repr(font))
-        self.font_path = font.path
-        self.font_size = font.size
-        self.font_color = font.color
-        self.font_antialias = font.antialias
-        if font.stroke_color:
-            self.stroke_color = font.stroke_color
-        if font.stroke_width is not None:
-            self.stroke_width = font.stroke_width
-
-    @property
-    def page(self):
-        """The dimensions and offset of this Wand's page as a 4-tuple:
-        ``(width, height, x, y)``.
-
-        Note that since it is based on the virtual canvas, it may not equal the
-        dimensions of an image. See the ImageMagick documentation on the
-        virtual canvas for more information.
-
-        .. versionadded:: 0.4.3
-
-        """
-        w = ctypes.c_uint()
-        h = ctypes.c_uint()
-        x = ctypes.c_int()
-        y = ctypes.c_int()
-        r = library.MagickGetImagePage(self.wand, w, h, x, y)
-        if not r:
-            self.raise_exception()
-        return int(w.value), int(h.value), int(x.value), int(y.value)
-
-    @page.setter
-    @manipulative
-    def page(self, newpage):
-        if isinstance(newpage, collections.Sequence):
-            w, h, x, y = newpage
-        else:
-            raise TypeError("page layout must be 4-tuple")
-        r = library.MagickSetImagePage(self.wand, w, h, x, y)
-        if not r:
-            self.raise_exception()
-
-    @property
-    def page_width(self):
-        """(:class:`numbers.Integral`) The width of the page for this wand.
-
-        .. versionadded:: 0.4.3
-
-        """
-        return self.page[0]
-
-    @page_width.setter
-    @manipulative
-    def page_width(self, width):
-        newpage = list(self.page)
-        newpage[0] = width
-        self.page = newpage
-
-    @property
-    def page_height(self):
-        """(:class:`numbers.Integral`) The height of the page for this wand.
-
-        .. versionadded:: 0.4.3
-
-        """
-        return self.page[1]
-
-    @page_height.setter
-    @manipulative
-    def page_height(self, height):
-        newpage = list(self.page)
-        newpage[1] = height
-        self.page = newpage
-
-    @property
-    def page_x(self):
-        """(:class:`numbers.Integral`) The X-offset of the page for this wand.
-
-        .. versionadded:: 0.4.3
-
-        """
-        return self.page[2]
-
-    @page_x.setter
-    @manipulative
-    def page_x(self, x):
-        newpage = list(self.page)
-        newpage[2] = x
-        self.page = newpage
-
-    @property
-    def page_y(self):
-        """(:class:`numbers.Integral`) The Y-offset of the page for this wand.
-
-        .. versionadded:: 0.4.3
-
-        """
-        return self.page[3]
-
-    @page_y.setter
-    @manipulative
-    def page_y(self, y):
-        newpage = list(self.page)
-        newpage[3] = y
-        self.page = newpage
-
-    @property
-    def width(self):
-        """(:class:`numbers.Integral`) The width of this image."""
-        return library.MagickGetImageWidth(self.wand)
-
-    @width.setter
-    @manipulative
-    def width(self, width):
-        if width is not None and not isinstance(width, numbers.Integral):
-            raise TypeError('width must be a integral, not ' + repr(width))
-        library.MagickSetSize(self.wand, width, self.height)
-
-    @property
-    def height(self):
-        """(:class:`numbers.Integral`) The height of this image."""
-        return library.MagickGetImageHeight(self.wand)
-
-    @height.setter
-    @manipulative
-    def height(self, height):
-        if height is not None and not isinstance(height, numbers.Integral):
-            raise TypeError('height must be a integral, not ' + repr(height))
-        library.MagickSetSize(self.wand, self.width, height)
-
-    @property
-    def orientation(self):
-        """(:class:`basestring`) The image orientation.  It's a string from
-        :const:`ORIENTATION_TYPES` list.  It also can be set.
-
-        .. versionadded:: 0.3.0
-
-        """
-        orientation_index = library.MagickGetImageOrientation(self.wand)
-        try:
-            return ORIENTATION_TYPES[orientation_index]
-        except IndexError:
-            return ORIENTATION_TYPES[0]
-
-    @orientation.setter
-    @manipulative
-    def orientation(self, value):
-        if not isinstance(value, string_type):
-            raise TypeError('expected a string, not ' + repr(value))
-        if value not in ORIENTATION_TYPES:
-            raise ValueError('expected a string from ORIENTATION_TYPES, not ' +
-                             repr(value))
-        index = ORIENTATION_TYPES.index(value)
-        library.MagickSetImageOrientation(self.wand, index)
-
-    @property
-    def font_color(self):
-        return Color(self.options['fill'])
-
-    @font_color.setter
-    @manipulative
-    def font_color(self, color):
-        if not isinstance(color, Color):
-            raise TypeError('font_color must be a wand.color.Color, not ' +
-                            repr(color))
-        self.options['fill'] = color.string
-
-    @property
-    def stroke_color(self):
-        stroke = self.options['stroke']
-        return Color(stroke) if stroke else None
-
-    @stroke_color.setter
-    @manipulative
-    def stroke_color(self, color):
-        if isinstance(color, Color):
-            self.options['stroke'] = color.string
-        elif color is None:
-            del self.options['stroke']
-        else:
-            raise TypeError('stroke_color must be a wand.color.Color, not ' +
-                            repr(color))
-
-    @property
-    def stroke_width(self):
-        strokewidth = self.options['strokewidth']
-        return float(strokewidth) if strokewidth else None
-
-    @stroke_width.setter
-    @manipulative
-    def stroke_width(self, width):
-        if not isinstance(width, numbers.Real):
-            raise TypeError('stroke_width must be a real number, not ' +
-                            repr(width))
-        self.options['strokewidth'] = str(width)
-
-    @manipulative
-    def append(self, stacked=False):
-        """Concatenates images in stack into a single image. Left-to-right
-        by default, top-to-bottom if ``stacked`` is True.
-
-        :param stacked: stack images in a column, or in a row (default)
-        :type stacked: :class:`bool`
-
-        .. versionadded:: 0.5.0
-        """
-        r = library.MagickAppendImages(self.wand, stacked)
-        if not r:
-            self.raise_exception()
-        self.wand = r
-
-    @manipulative
-    def caption(self, text, left=0, top=0, width=None, height=None, font=None,
-                gravity=None):
-        """Writes a caption ``text`` into the position.
-
-        :param text: text to write
-        :type text: :class:`basestring`
-        :param left: x offset in pixels
-        :type left: :class:`numbers.Integral`
-        :param top: y offset in pixels
-        :type top: :class:`numbers.Integral`
-        :param width: width of caption in pixels.
-                      default is :attr:`width` of the image
-        :type width: :class:`numbers.Integral`
-        :param height: height of caption in pixels.
-                       default is :attr:`height` of the image
-        :type height: :class:`numbers.Integral`
-        :param font: font to use.  default is :attr:`font` of the image
-        :type font: :class:`wand.font.Font`
-        :param gravity: text placement gravity.
-                        uses the current :attr:`gravity` setting of the image
-                        by default
-        :type gravity: :class:`basestring`
-
-        .. versionadded:: 0.3.0
-
-        """
-        if not isinstance(left, numbers.Integral):
-            raise TypeError('left must be an integer, not ' + repr(left))
-        elif not isinstance(top, numbers.Integral):
-            raise TypeError('top must be an integer, not ' + repr(top))
-        elif width is not None and not isinstance(width, numbers.Integral):
-            raise TypeError('width must be an integer, not ' + repr(width))
-        elif height is not None and not isinstance(height, numbers.Integral):
-            raise TypeError('height must be an integer, not ' + repr(height))
-        elif font is not None and not isinstance(font, Font):
-            raise TypeError('font must be a wand.font.Font, not ' + repr(font))
-        elif gravity is not None and compat.text(gravity) not in GRAVITY_TYPES:
-            raise ValueError('invalid gravity value')
-        if width is None:
-            width = self.width - left
-        if height is None:
-            height = self.height - top
-        if not font:
-            try:
-                font = self.font
-            except TypeError:
-                raise TypeError('font must be specified or existing in image')
-        with Image() as textboard:
-            library.MagickSetSize(textboard.wand, width, height)
-            textboard.font = font
-            textboard.gravity = gravity or self.gravity
-            with Color('transparent') as background_color:
-                library.MagickSetBackgroundColor(textboard.wand,
-                                                 background_color.resource)
-            textboard.read(filename=b'caption:' + text.encode('utf-8'))
-            self.composite(textboard, left, top)
-
-    @property
-    def resolution(self):
-        """(:class:`tuple`) Resolution of this image.
-
-        .. versionadded:: 0.3.0
-
-        """
-        x = ctypes.c_double()
-        y = ctypes.c_double()
-        r = library.MagickGetImageResolution(self.wand, x, y)
-        if not r:
-            self.raise_exception()
-        return int(x.value), int(y.value)
-
-    @resolution.setter
-    @manipulative
-    def resolution(self, geometry):
-        if isinstance(geometry, collections.Sequence):
-            x, y = geometry
-        elif isinstance(geometry, numbers.Integral):
-            x, y = geometry, geometry
-        else:
-            raise TypeError('resolution must be a (x, y) pair or an integer '
-                            'of the same x/y')
-        if self.size == (0, 0):
-            r = library.MagickSetResolution(self.wand, x, y)
-        else:
-            r = library.MagickSetImageResolution(self.wand, x, y)
-        if not r:
-            self.raise_exception()
-
-    @property
-    def size(self):
-        """(:class:`tuple`) The pair of (:attr:`width`, :attr:`height`)."""
-        return self.width, self.height
-
-    @property
-    def units(self):
-        """(:class:`basestring`) The resolution units of this image."""
-        r = library.MagickGetImageUnits(self.wand)
-        return UNIT_TYPES[text(r)]
-
-    @units.setter
-    @manipulative
-    def units(self, units):
-        if not isinstance(units, string_type) or units not in UNIT_TYPES:
-            raise TypeError('Unit value must be a string from wand.images.'
-                            'UNIT_TYPES, not ' + repr(units))
-        r = library.MagickSetImageUnits(self.wand, UNIT_TYPES.index(units))
-        if not r:
-            self.raise_exception()
-
-    @property
-    def virtual_pixel(self):
-        """(:class:`basestring`) The virtual pixel of image.
-        This can also be set with a value from :const:`VIRTUAL_PIXEL_METHOD`
-        ... versionadded:: 0.4.1
-        """
-        method_index = library.MagickGetImageVirtualPixelMethod(self.wand)
-        return VIRTUAL_PIXEL_METHOD[method_index]
-
-    @virtual_pixel.setter
-    def virtual_pixel(self, method):
-        if method not in VIRTUAL_PIXEL_METHOD:
-            raise ValueError('expected method from VIRTUAL_PIXEL_METHOD,'
-                             ' not ' + repr(method))
-        library.MagickSetImageVirtualPixelMethod(
-            self.wand,
-            VIRTUAL_PIXEL_METHOD.index(method)
-        )
-
-    @property
-    def colorspace(self):
-        """(:class:`basestring`) The image colorspace.
-
-        Defines image colorspace as in :const:`COLORSPACE_TYPES` enumeration.
-
-        It may raise :exc:`ValueError` when the colorspace is unknown.
-
-        .. versionadded:: 0.3.4
-
-        """
-        colorspace_type_index = library.MagickGetImageColorspace(self.wand)
-        if not colorspace_type_index:
-            self.raise_exception()
-        return COLORSPACE_TYPES[text(colorspace_type_index)]
-
-    @colorspace.setter
-    @manipulative
-    def colorspace(self, colorspace_type):
-        if (not isinstance(colorspace_type, string_type) or
-                colorspace_type not in COLORSPACE_TYPES):
-            raise TypeError('Colorspace value must be a string from '
-                            'COLORSPACE_TYPES, not ' + repr(colorspace_type))
-        r = library.MagickSetImageColorspace(
-            self.wand,
-            COLORSPACE_TYPES.index(colorspace_type)
-        )
-        if not r:
-            self.raise_exception()
-
-    @property
-    def depth(self):
-        """(:class:`numbers.Integral`) The depth of this image.
-
-        .. versionadded:: 0.2.1
-
-        """
-        return library.MagickGetImageDepth(self.wand)
-
-    @depth.setter
-    @manipulative
-    def depth(self, depth):
-        r = library.MagickSetImageDepth(self.wand, depth)
-        if not r:
-            raise self.raise_exception()
-
-    @property
-    def dispose(self):
-        """(:class:`basestring`) Controls how the image data is
-        handled during animations. Values are from :const:`DISPOSE_TYPES`
-        list, and can also be set.
-
-        .. seealso::
-
-            `Dispose Images`__ section in ``Animation Basics`` article.
-
-        __ https://www.imagemagick.org/Usage/anim_basics/#dispose_images
-
-        .. versionadded:: 0.5.0
-        """
-        dispose_idx = library.MagickGetImageDispose(self.wand)
-        try:
-            return DISPOSE_TYPES[dispose_idx]
-        except IndexError:
-            return DISPOSE_TYPES[0]
-
-    @dispose.setter
-    def dispose(self, value):
-        if not isinstance(value, string_type):
-            raise TypeError('expected a string, not ' + repr(value))
-        if value not in DISPOSE_TYPES:
-            raise ValueError('expected a string from DISPOSE_TYPES, not ' +
-                             repr(value))
-        library.MagickSetImageDispose(self.wand, DISPOSE_TYPES.index(value))
-
-    @property
-    def type(self):
-        """(:class:`basestring`) The image type.
-
-        Defines image type as in :const:`IMAGE_TYPES` enumeration.
-
-        It may raise :exc:`ValueError` when the type is unknown.
-
-        .. versionadded:: 0.2.2
-
-        """
-        image_type_index = library.MagickGetImageType(self.wand)
-        if not image_type_index:
-            self.raise_exception()
-        return IMAGE_TYPES[text(image_type_index)]
-
-    @type.setter
-    @manipulative
-    def type(self, image_type):
-        if (not isinstance(image_type, string_type) or
-                image_type not in IMAGE_TYPES):
-            raise TypeError('Type value must be a string from IMAGE_TYPES'
-                            ', not ' + repr(image_type))
-        r = library.MagickSetImageType(self.wand,
-                                       IMAGE_TYPES.index(image_type))
-        if not r:
-            self.raise_exception()
-
-    @property
-    def compression_quality(self):
-        """(:class:`numbers.Integral`) Compression quality of this image.
-
-        .. versionadded:: 0.2.0
-
-        """
-        return library.MagickGetImageCompressionQuality(self.wand)
-
-    @compression_quality.setter
-    @manipulative
-    def compression_quality(self, quality):
-        """Set compression quality for the image.
-
-        :param quality: new compression quality setting
-        :type quality: :class:`numbers.Integral`
-
-        """
-        if not isinstance(quality, numbers.Integral):
-            raise TypeError('compression quality must be a natural '
-                            'number, not ' + repr(quality))
-        r = library.MagickSetImageCompressionQuality(self.wand, quality)
-        if not r:
-            raise ValueError('Unable to set compression quality to ' +
-                             repr(quality))
-
-    @property
-    def signature(self):
-        """(:class:`str`) The SHA-256 message digest for the image pixel
-        stream.
-
-        .. versionadded:: 0.1.9
-
-        """
-        signature = library.MagickGetImageSignature(self.wand)
-        return text(signature.value)
 
     @property
     def alpha_channel(self):
@@ -1553,6 +948,28 @@ class BaseImage(Resource):
                              'not ' + repr(alpha_type))
 
     @property
+    def animation(self):
+        """(:class:`bool`) Whether the image is animation or not.
+        It doesn't only mean that the image has two or more images (frames),
+        but all frames are even the same size.  It's about image format,
+        not content.  It's :const:`False` even if :mimetype:`image/ico`
+        consits of two or more images of the same size.
+
+        For example, it's :const:`False` for :mimetype:`image/jpeg`,
+        :mimetype:`image/gif`, :mimetype:`image/ico`.
+
+        If :mimetype:`image/gif` has two or more frames, it's :const:`True`.
+        If :mimetype:`image/gif` has only one frame, it's :const:`False`.
+
+        .. versionadded:: 0.3.0
+
+        .. versionchanged:: 0.3.8
+           Became to accept :mimetype:`image/x-gif` as well.
+
+        """
+        return False
+
+    @property
     def background_color(self):
         """(:class:`wand.color.Color`) The image background color.
         It can also be set to change the background color.
@@ -1585,6 +1002,248 @@ class BaseImage(Resource):
                                                            color.resource)
             if not result:
                 self.raise_exception()
+
+    def clone(self):
+        """Clones the image. It is equivalent to call :class:`Image` with
+        ``image`` parameter. ::
+
+            with img.clone() as cloned:
+                # manipulate the cloned image
+                pass
+
+        :returns: the cloned new image
+        :rtype: :class:`Image`
+
+        .. versionadded:: 0.1.1
+
+        """
+        return Image(image=self)
+
+    @property
+    def colorspace(self):
+        """(:class:`basestring`) The image colorspace.
+
+        Defines image colorspace as in :const:`COLORSPACE_TYPES` enumeration.
+
+        It may raise :exc:`ValueError` when the colorspace is unknown.
+
+        .. versionadded:: 0.3.4
+
+        """
+        colorspace_type_index = library.MagickGetImageColorspace(self.wand)
+        if not colorspace_type_index:
+            self.raise_exception()
+        return COLORSPACE_TYPES[text(colorspace_type_index)]
+
+    @colorspace.setter
+    @manipulative
+    def colorspace(self, colorspace_type):
+        if (not isinstance(colorspace_type, string_type) or
+                colorspace_type not in COLORSPACE_TYPES):
+            raise TypeError('Colorspace value must be a string from '
+                            'COLORSPACE_TYPES, not ' + repr(colorspace_type))
+        r = library.MagickSetImageColorspace(
+            self.wand,
+            COLORSPACE_TYPES.index(colorspace_type)
+        )
+        if not r:
+            self.raise_exception()
+
+    @property
+    def compression_quality(self):
+        """(:class:`numbers.Integral`) Compression quality of this image.
+
+        .. versionadded:: 0.2.0
+
+        """
+        return library.MagickGetImageCompressionQuality(self.wand)
+
+    @compression_quality.setter
+    @manipulative
+    def compression_quality(self, quality):
+        """Set compression quality for the image.
+
+        :param quality: new compression quality setting
+        :type quality: :class:`numbers.Integral`
+
+        """
+        if not isinstance(quality, numbers.Integral):
+            raise TypeError('compression quality must be a natural '
+                            'number, not ' + repr(quality))
+        r = library.MagickSetImageCompressionQuality(self.wand, quality)
+        if not r:
+            raise ValueError('Unable to set compression quality to ' +
+                             repr(quality))
+
+    @property
+    def depth(self):
+        """(:class:`numbers.Integral`) The depth of this image.
+
+        .. versionadded:: 0.2.1
+
+        """
+        return library.MagickGetImageDepth(self.wand)
+
+    @depth.setter
+    @manipulative
+    def depth(self, depth):
+        r = library.MagickSetImageDepth(self.wand, depth)
+        if not r:
+            raise self.raise_exception()
+
+    @property
+    def dispose(self):
+        """(:class:`basestring`) Controls how the image data is
+        handled during animations. Values are from :const:`DISPOSE_TYPES`
+        list, and can also be set.
+
+        .. seealso::
+
+            `Dispose Images`__ section in ``Animation Basics`` article.
+
+        __ https://www.imagemagick.org/Usage/anim_basics/#dispose_images
+
+        .. versionadded:: 0.5.0
+        """
+        dispose_idx = library.MagickGetImageDispose(self.wand)
+        try:
+            return DISPOSE_TYPES[dispose_idx]
+        except IndexError:
+            return DISPOSE_TYPES[0]
+
+    @dispose.setter
+    def dispose(self, value):
+        if not isinstance(value, string_type):
+            raise TypeError('expected a string, not ' + repr(value))
+        if value not in DISPOSE_TYPES:
+            raise ValueError('expected a string from DISPOSE_TYPES, not ' +
+                             repr(value))
+        library.MagickSetImageDispose(self.wand, DISPOSE_TYPES.index(value))
+
+    @property
+    def font(self):
+        """(:class:`wand.font.Font`) The current font options."""
+        return Font(
+            path=text(self.font_path),
+            size=self.font_size,
+            color=self.font_color,
+            antialias=self.font_antialias,
+            stroke_color=self.stroke_color,
+            stroke_width=self.stroke_width
+        )
+
+    @font.setter
+    @manipulative
+    def font(self, font):
+        if not isinstance(font, Font):
+            raise TypeError('font must be a wand.font.Font, not ' + repr(font))
+        self.font_path = font.path
+        self.font_size = font.size
+        self.font_color = font.color
+        self.font_antialias = font.antialias
+        if font.stroke_color:
+            self.stroke_color = font.stroke_color
+        if font.stroke_width is not None:
+            self.stroke_width = font.stroke_width
+
+    @property
+    def font_antialias(self):
+        return bool(library.MagickGetAntialias(self.wand))
+
+    @font_antialias.setter
+    @manipulative
+    def font_antialias(self, antialias):
+        if not isinstance(antialias, bool):
+            raise TypeError('font_antialias must be a bool, not ' +
+                            repr(antialias))
+        library.MagickSetAntialias(self.wand, antialias)
+
+    @property
+    def font_color(self):
+        return Color(self.options['fill'])
+
+    @font_color.setter
+    @manipulative
+    def font_color(self, color):
+        if not isinstance(color, Color):
+            raise TypeError('font_color must be a wand.color.Color, not ' +
+                            repr(color))
+        self.options['fill'] = color.string
+
+    @property
+    def font_path(self):
+        """(:class:`basestring`) The path of the current font.
+        It also can be set.
+
+        """
+        return text(library.MagickGetFont(self.wand))
+
+    @font_path.setter
+    @manipulative
+    def font_path(self, font):
+        font = binary(font)
+        if library.MagickSetFont(self.wand, font) is False:
+            raise ValueError('font is invalid')
+
+    @property
+    def font_size(self):
+        """(:class:`numbers.Real`) The font size.  It also can be set."""
+        return library.MagickGetPointsize(self.wand)
+
+    @font_size.setter
+    @manipulative
+    def font_size(self, size):
+        if not isinstance(size, numbers.Real):
+            raise TypeError('expected a numbers.Real, but got ' + repr(size))
+        elif size < 0.0:
+            raise ValueError('cannot be less then 0.0, but got ' + repr(size))
+        elif library.MagickSetPointsize(self.wand, size) is False:
+            raise ValueError('unexpected error is occur')
+
+    @property
+    def gravity(self):
+        """(:class:`basestring`) The text placement gravity used when
+        annotating with text.  It's a string from :const:`GRAVITY_TYPES`
+        list.  It also can be set.
+
+        """
+        gravity_index = library.MagickGetGravity(self.wand)
+        if not gravity_index:
+            self.raise_exception()
+        return GRAVITY_TYPES[gravity_index]
+
+    @gravity.setter
+    @manipulative
+    def gravity(self, value):
+        if not isinstance(value, string_type):
+            raise TypeError('expected a string, not ' + repr(value))
+        if value not in GRAVITY_TYPES:
+            raise ValueError('expected a string from GRAVITY_TYPES, not ' +
+                             repr(value))
+        library.MagickSetGravity(self.wand, GRAVITY_TYPES.index(value))
+
+    @property
+    def height(self):
+        """(:class:`numbers.Integral`) The height of this image."""
+        return library.MagickGetImageHeight(self.wand)
+
+    @height.setter
+    @manipulative
+    def height(self, height):
+        if height is not None and not isinstance(height, numbers.Integral):
+            raise TypeError('height must be a integral, not ' + repr(height))
+        library.MagickSetSize(self.wand, self.width, height)
+
+    @property
+    def histogram(self):
+        """(:class:`HistogramDict`) The mapping that represents the histogram.
+        Keys are :class:`~wand.color.Color` objects, and values are
+        the number of pixels.
+
+        .. versionadded:: 0.3.0
+
+        """
+        return HistogramDict(self)
 
     @property
     def matte_color(self):
@@ -1620,6 +1279,127 @@ class BaseImage(Resource):
                 self.raise_exception()
 
     @property
+    def orientation(self):
+        """(:class:`basestring`) The image orientation.  It's a string from
+        :const:`ORIENTATION_TYPES` list.  It also can be set.
+
+        .. versionadded:: 0.3.0
+
+        """
+        orientation_index = library.MagickGetImageOrientation(self.wand)
+        try:
+            return ORIENTATION_TYPES[orientation_index]
+        except IndexError:
+            return ORIENTATION_TYPES[0]
+
+    @orientation.setter
+    @manipulative
+    def orientation(self, value):
+        if not isinstance(value, string_type):
+            raise TypeError('expected a string, not ' + repr(value))
+        if value not in ORIENTATION_TYPES:
+            raise ValueError('expected a string from ORIENTATION_TYPES, not ' +
+                             repr(value))
+        index = ORIENTATION_TYPES.index(value)
+        library.MagickSetImageOrientation(self.wand, index)
+
+    @property
+    def page(self):
+        """The dimensions and offset of this Wand's page as a 4-tuple:
+        ``(width, height, x, y)``.
+
+        Note that since it is based on the virtual canvas, it may not equal the
+        dimensions of an image. See the ImageMagick documentation on the
+        virtual canvas for more information.
+
+        .. versionadded:: 0.4.3
+
+        """
+        w = ctypes.c_uint()
+        h = ctypes.c_uint()
+        x = ctypes.c_int()
+        y = ctypes.c_int()
+        r = library.MagickGetImagePage(self.wand, w, h, x, y)
+        if not r:
+            self.raise_exception()
+        return int(w.value), int(h.value), int(x.value), int(y.value)
+
+    @page.setter
+    @manipulative
+    def page(self, newpage):
+        if isinstance(newpage, collections.Sequence):
+            w, h, x, y = newpage
+        else:
+            raise TypeError("page layout must be 4-tuple")
+        r = library.MagickSetImagePage(self.wand, w, h, x, y)
+        if not r:
+            self.raise_exception()
+
+    @property
+    def page_height(self):
+        """(:class:`numbers.Integral`) The height of the page for this wand.
+
+        .. versionadded:: 0.4.3
+
+        """
+        return self.page[1]
+
+    @page_height.setter
+    @manipulative
+    def page_height(self, height):
+        newpage = list(self.page)
+        newpage[1] = height
+        self.page = newpage
+
+    @property
+    def page_width(self):
+        """(:class:`numbers.Integral`) The width of the page for this wand.
+
+        .. versionadded:: 0.4.3
+
+        """
+        return self.page[0]
+
+    @page_width.setter
+    @manipulative
+    def page_width(self, width):
+        newpage = list(self.page)
+        newpage[0] = width
+        self.page = newpage
+
+    @property
+    def page_x(self):
+        """(:class:`numbers.Integral`) The X-offset of the page for this wand.
+
+        .. versionadded:: 0.4.3
+
+        """
+        return self.page[2]
+
+    @page_x.setter
+    @manipulative
+    def page_x(self, x):
+        newpage = list(self.page)
+        newpage[2] = x
+        self.page = newpage
+
+    @property
+    def page_y(self):
+        """(:class:`numbers.Integral`) The Y-offset of the page for this wand.
+
+        .. versionadded:: 0.4.3
+
+        """
+        return self.page[3]
+
+    @page_y.setter
+    @manipulative
+    def page_y(self, y):
+        newpage = list(self.page)
+        newpage[3] = y
+        self.page = newpage
+
+    @property
     def quantum_range(self):
         """(:class:`int`) The maxumim value of a color channel that is
         supported by the imagemagick library.
@@ -1632,15 +1412,277 @@ class BaseImage(Resource):
         return result.value
 
     @property
-    def histogram(self):
-        """(:class:`HistogramDict`) The mapping that represents the histogram.
-        Keys are :class:`~wand.color.Color` objects, and values are
-        the number of pixels.
+    def resolution(self):
+        """(:class:`tuple`) Resolution of this image.
 
         .. versionadded:: 0.3.0
 
         """
-        return HistogramDict(self)
+        x = ctypes.c_double()
+        y = ctypes.c_double()
+        r = library.MagickGetImageResolution(self.wand, x, y)
+        if not r:
+            self.raise_exception()
+        return int(x.value), int(y.value)
+
+    @resolution.setter
+    @manipulative
+    def resolution(self, geometry):
+        if isinstance(geometry, collections.Sequence):
+            x, y = geometry
+        elif isinstance(geometry, numbers.Integral):
+            x, y = geometry, geometry
+        else:
+            raise TypeError('resolution must be a (x, y) pair or an integer '
+                            'of the same x/y')
+        if self.size == (0, 0):
+            r = library.MagickSetResolution(self.wand, x, y)
+        else:
+            r = library.MagickSetImageResolution(self.wand, x, y)
+        if not r:
+            self.raise_exception()
+
+    @property
+    def signature(self):
+        """(:class:`str`) The SHA-256 message digest for the image pixel
+        stream.
+
+        .. versionadded:: 0.1.9
+
+        """
+        signature = library.MagickGetImageSignature(self.wand)
+        return text(signature.value)
+
+    @property
+    def size(self):
+        """(:class:`tuple`) The pair of (:attr:`width`, :attr:`height`)."""
+        return self.width, self.height
+
+    @property
+    def stroke_color(self):
+        stroke = self.options['stroke']
+        return Color(stroke) if stroke else None
+
+    @stroke_color.setter
+    @manipulative
+    def stroke_color(self, color):
+        if isinstance(color, Color):
+            self.options['stroke'] = color.string
+        elif color is None:
+            del self.options['stroke']
+        else:
+            raise TypeError('stroke_color must be a wand.color.Color, not ' +
+                            repr(color))
+
+    @property
+    def stroke_width(self):
+        strokewidth = self.options['strokewidth']
+        return float(strokewidth) if strokewidth else None
+
+    @stroke_width.setter
+    @manipulative
+    def stroke_width(self, width):
+        if not isinstance(width, numbers.Real):
+            raise TypeError('stroke_width must be a real number, not ' +
+                            repr(width))
+        self.options['strokewidth'] = str(width)
+
+    @property
+    def type(self):
+        """(:class:`basestring`) The image type.
+
+        Defines image type as in :const:`IMAGE_TYPES` enumeration.
+
+        It may raise :exc:`ValueError` when the type is unknown.
+
+        .. versionadded:: 0.2.2
+
+        """
+        image_type_index = library.MagickGetImageType(self.wand)
+        if not image_type_index:
+            self.raise_exception()
+        return IMAGE_TYPES[text(image_type_index)]
+
+    @type.setter
+    @manipulative
+    def type(self, image_type):
+        if (not isinstance(image_type, string_type) or
+                image_type not in IMAGE_TYPES):
+            raise TypeError('Type value must be a string from IMAGE_TYPES'
+                            ', not ' + repr(image_type))
+        r = library.MagickSetImageType(self.wand,
+                                       IMAGE_TYPES.index(image_type))
+        if not r:
+            self.raise_exception()
+
+    @property
+    def units(self):
+        """(:class:`basestring`) The resolution units of this image."""
+        r = library.MagickGetImageUnits(self.wand)
+        return UNIT_TYPES[text(r)]
+
+    @units.setter
+    @manipulative
+    def units(self, units):
+        if not isinstance(units, string_type) or units not in UNIT_TYPES:
+            raise TypeError('Unit value must be a string from wand.images.'
+                            'UNIT_TYPES, not ' + repr(units))
+        r = library.MagickSetImageUnits(self.wand, UNIT_TYPES.index(units))
+        if not r:
+            self.raise_exception()
+
+    @property
+    def virtual_pixel(self):
+        """(:class:`basestring`) The virtual pixel of image.
+        This can also be set with a value from :const:`VIRTUAL_PIXEL_METHOD`
+        ... versionadded:: 0.4.1
+        """
+        method_index = library.MagickGetImageVirtualPixelMethod(self.wand)
+        return VIRTUAL_PIXEL_METHOD[method_index]
+
+    @virtual_pixel.setter
+    def virtual_pixel(self, method):
+        if method not in VIRTUAL_PIXEL_METHOD:
+            raise ValueError('expected method from VIRTUAL_PIXEL_METHOD,'
+                             ' not ' + repr(method))
+        library.MagickSetImageVirtualPixelMethod(
+            self.wand,
+            VIRTUAL_PIXEL_METHOD.index(method)
+        )
+
+    @property
+    def wand(self):
+        """Internal pointer to the MagickWand instance. It may raise
+        :exc:`ClosedImageError` when the instance has destroyed already.
+
+        """
+        try:
+            return self.resource
+        except DestroyedResourceError:
+            raise ClosedImageError(repr(self) + ' is closed already')
+
+    @wand.setter
+    def wand(self, wand):
+        try:
+            self.resource = wand
+        except TypeError:
+            raise TypeError(repr(wand) + ' is not a MagickWand instance')
+
+    @wand.deleter
+    def wand(self):
+        del self.resource
+
+    @property
+    def width(self):
+        """(:class:`numbers.Integral`) The width of this image."""
+        return library.MagickGetImageWidth(self.wand)
+
+    @width.setter
+    @manipulative
+    def width(self, width):
+        if width is not None and not isinstance(width, numbers.Integral):
+            raise TypeError('width must be a integral, not ' + repr(width))
+        library.MagickSetSize(self.wand, width, self.height)
+
+    @manipulative
+    def append(self, stacked=False):
+        """Concatenates images in stack into a single image. Left-to-right
+        by default, top-to-bottom if ``stacked`` is True.
+
+        :param stacked: stack images in a column, or in a row (default)
+        :type stacked: :class:`bool`
+
+        .. versionadded:: 0.5.0
+        """
+        r = library.MagickAppendImages(self.wand, stacked)
+        if not r:
+            self.raise_exception()
+        self.wand = r
+
+    @manipulative
+    def blur(self, radius, sigma):
+        """Blurs the image.  We convolve the image with a gaussian operator
+        of the given ``radius`` and standard deviation (``sigma``).
+        For reasonable results, the ``radius`` should be larger
+        than ``sigma``.  Use a ``radius`` of 0 and :meth:`blur()` selects
+        a suitable ``radius`` for you.
+
+        :param radius: the radius of the, in pixels,
+                       not counting the center pixel
+        :type radius: :class:`numbers.Real`
+        :param sigma: the standard deviation of the, in pixels
+        :type sigma: :class:`numbers.Real`
+
+        .. versionadded:: 0.4.5
+
+        """
+        if not isinstance(radius, numbers.Real):
+            raise TypeError('radius has to be a numbers.Real, not ' +
+                            repr(radius))
+        elif not isinstance(sigma, numbers.Real):
+            raise TypeError('sigma has to be a numbers.Real, not ' +
+                            repr(sigma))
+        r = library.MagickBlurImage(self.wand, radius, sigma)
+        if not r:
+            self.raise_exception()
+
+    @manipulative
+    def caption(self, text, left=0, top=0, width=None, height=None, font=None,
+                gravity=None):
+        """Writes a caption ``text`` into the position.
+
+        :param text: text to write
+        :type text: :class:`basestring`
+        :param left: x offset in pixels
+        :type left: :class:`numbers.Integral`
+        :param top: y offset in pixels
+        :type top: :class:`numbers.Integral`
+        :param width: width of caption in pixels.
+                      default is :attr:`width` of the image
+        :type width: :class:`numbers.Integral`
+        :param height: height of caption in pixels.
+                       default is :attr:`height` of the image
+        :type height: :class:`numbers.Integral`
+        :param font: font to use.  default is :attr:`font` of the image
+        :type font: :class:`wand.font.Font`
+        :param gravity: text placement gravity.
+                        uses the current :attr:`gravity` setting of the image
+                        by default
+        :type gravity: :class:`basestring`
+
+        .. versionadded:: 0.3.0
+
+        """
+        if not isinstance(left, numbers.Integral):
+            raise TypeError('left must be an integer, not ' + repr(left))
+        elif not isinstance(top, numbers.Integral):
+            raise TypeError('top must be an integer, not ' + repr(top))
+        elif width is not None and not isinstance(width, numbers.Integral):
+            raise TypeError('width must be an integer, not ' + repr(width))
+        elif height is not None and not isinstance(height, numbers.Integral):
+            raise TypeError('height must be an integer, not ' + repr(height))
+        elif font is not None and not isinstance(font, Font):
+            raise TypeError('font must be a wand.font.Font, not ' + repr(font))
+        elif gravity is not None and compat.text(gravity) not in GRAVITY_TYPES:
+            raise ValueError('invalid gravity value')
+        if width is None:
+            width = self.width - left
+        if height is None:
+            height = self.height - top
+        if not font:
+            try:
+                font = self.font
+            except TypeError:
+                raise TypeError('font must be specified or existing in image')
+        with Image() as textboard:
+            library.MagickSetSize(textboard.wand, width, height)
+            textboard.font = font
+            textboard.gravity = gravity or self.gravity
+            with Color('transparent') as background_color:
+                library.MagickSetBackgroundColor(textboard.wand,
+                                                 background_color.resource)
+            textboard.read(filename=b'caption:' + text.encode('utf-8'))
+            self.composite(textboard, left, top)
 
     @manipulative
     def coalesce(self):
@@ -1659,31 +1701,111 @@ class BaseImage(Resource):
         self.wand = r
 
     @manipulative
-    def distort(self, method, arguments, best_fit=False):
-        """Distorts an image using various distorting methods.
+    def compare(self, image, metric='undefined'):
+        """Compares an image to a reconstructed image.
 
-        :param method: Distortion method name from :const:`DISTORTION_METHODS`
-        :type method: :class:`basestring`
-        :param arguments: List of distorting float arguments
-                          unique to distortion method
-        :type arguments: :class:`collections.Sequence`
-        :param best_fit: Attempt to resize resulting image fit distortion.
-                         Defaults False
-        :type best_fit: :class:`bool`
+        :param image: The reference image
+        :type image: :class:`wand.image.Image`
+        :param metric: The metric type to use for comparing.
+        :type metric: :class:`basestring`
+        :returns: The difference image(:class:`wand.image.Image`),
+                  the computed distortion between the images
+                  (:class:`numbers.Integral`)
+        :rtype: :class:`tuple`
 
-        .. versionadded:: 0.4.1
+        ..versionadded:: 0.4.3
         """
-        if method not in DISTORTION_METHODS:
-            raise ValueError('expected string from DISTORTION_METHODS, not ' +
-                             repr(method))
-        if not isinstance(arguments, collections.Sequence):
-            raise TypeError('expected sequence of doubles, not ' +
-                            repr(arguments))
-        argc = len(arguments)
-        argv = (ctypes.c_double * argc)(*arguments)
-        library.MagickDistortImage(self.wand,
-                                   DISTORTION_METHODS.index(method),
-                                   argc, argv, bool(best_fit))
+        if not isinstance(metric, string_type):
+            raise TypeError('metric must be a string, not ' + repr(metric))
+
+        metric = COMPARE_METRICS.index(metric)
+        distortion = ctypes.c_double()
+        compared_image = library.MagickCompareImages(self.wand, image.wand,
+                                                     metric,
+                                                     ctypes.byref(distortion))
+        return Image(BaseImage(compared_image)), distortion.value
+
+    def composite(self, image, left, top):
+        """Places the supplied ``image`` over the current image, with the top
+        left corner of ``image`` at coordinates ``left``, ``top`` of the
+        current image.  The dimensions of the current image are not changed.
+
+        :param image: the image placed over the current image
+        :type image: :class:`wand.image.Image`
+        :param left: the x-coordinate where `image` will be placed
+        :type left: :class:`numbers.Integral`
+        :param top: the y-coordinate where `image` will be placed
+        :type top: :class:`numbers.Integral`
+
+        .. versionadded:: 0.2.0
+
+        """
+        if not isinstance(left, numbers.Integral):
+            raise TypeError('left must be an integer, not ' + repr(left))
+        elif not isinstance(top, numbers.Integral):
+            raise TypeError('top must be an integer, not ' + repr(left))
+        op = COMPOSITE_OPERATORS.index('over')
+        if MAGICK_VERSION_NUMBER < 0x700:
+            library.MagickCompositeImage(self.wand, image.wand, op,
+                                         int(left), int(top))
+        else:
+            library.MagickCompositeImage(self.wand, image.wand, op, True,
+                                         int(left), int(top))
+        self.raise_exception()
+
+    @manipulative
+    def composite_channel(self, channel, image, operator, left=0, top=0):
+        """Composite two images using the particular ``channel``.
+
+        :param channel: the channel type.  available values can be found
+                        in the :const:`CHANNELS` mapping
+        :param image: the composited source image.
+                      (the receiver image becomes the destination)
+        :type image: :class:`Image`
+        :param operator: the operator that affects how the composite
+                         is applied to the image.  available values
+                         can be found in the :const:`COMPOSITE_OPERATORS`
+                         list
+        :param left: the column offset of the composited source image
+        :type left: :class:`numbers.Integral`
+        :param top: the row offset of the composited source image
+        :type top: :class:`numbers.Integral`
+        :raises ValueError: when the given ``channel`` or
+                            ``operator`` is invalid
+
+        .. versionadded:: 0.3.0
+
+        """
+        if not isinstance(channel, string_type):
+            raise TypeError('channel must be a string, not ' +
+                            repr(channel))
+        elif not isinstance(operator, string_type):
+            raise TypeError('operator must be a string, not ' +
+                            repr(operator))
+        elif not isinstance(left, numbers.Integral):
+            raise TypeError('left must be an integer, not ' + repr(left))
+        elif not isinstance(top, numbers.Integral):
+            raise TypeError('top must be an integer, not ' + repr(left))
+        try:
+            ch_const = CHANNELS[channel]
+        except KeyError:
+            raise ValueError(repr(channel) + ' is an invalid channel type'
+                             '; see wand.image.CHANNELS dictionary')
+        try:
+            op = COMPOSITE_OPERATORS.index(operator)
+        except IndexError:
+            raise IndexError(repr(operator) + ' is an invalid composite '
+                             'operator type; see wand.image.COMPOSITE_'
+                             'OPERATORS dictionary')
+        if library.MagickCompositeImageChannel:
+            library.MagickCompositeImageChannel(self.wand, ch_const,
+                                                image.wand, op, int(left),
+                                                int(top))
+        else:
+            ch_mask = library.MagickSetImageChannelMask(self.wand, ch_const)
+            library.MagickCompositeImage(self.wand, image.wand, op, True,
+                                         int(left), int(top))
+            library.MagickSetImageChannelMask(self.wand, ch_mask)
         self.raise_exception()
 
     @manipulative
@@ -1835,503 +1957,43 @@ class BaseImage(Resource):
                 self.reset_coords()
 
     @manipulative
-    def extent(self, width=None, height=None, x=0, y=0):
-        """extends the image as defined by the geometry, gravity, and wand
-        background color. Set the (x,y) offset of the geometry to move the
-        original wand relative to the extended wand.
+    def distort(self, method, arguments, best_fit=False):
+        """Distorts an image using various distorting methods.
 
-        :param width: the :attr:`width` of the extended image.
-                      default is the :attr:`width` of the image.
-        :type width: :class:`numbers.Integral`
-        :param height: the :attr:`height` of the extended image.
-                       default is the :attr:`height` of the image.
-        :type height: :class:`numbers.Integral`
-        :param x: the :attr:`x` offset of the extended image.
-                      default is 0
-        :type x: :class:`numbers.Integral`
-        :param y: the :attr:`y` offset of the extended image.
-                       default is 0
-        :type y: :class:`numbers.Integral`
+        :param method: Distortion method name from :const:`DISTORTION_METHODS`
+        :type method: :class:`basestring`
+        :param arguments: List of distorting float arguments
+                          unique to distortion method
+        :type arguments: :class:`collections.Sequence`
+        :param best_fit: Attempt to resize resulting image fit distortion.
+                         Defaults False
+        :type best_fit: :class:`bool`
 
-        .. versionadded:: 0.4.5
+        .. versionadded:: 0.4.1
         """
-        if width is None or width == 0:
-            width = self.width
-        if height is None or height == 0:
-            height = self.height
-        if width < 0:
-            raise ValueError('image width cannot be negative integer')
-        elif height < 0:
-            raise ValueError('image height cannot be negative integer')
+        if method not in DISTORTION_METHODS:
+            raise ValueError('expected string from DISTORTION_METHODS, not ' +
+                             repr(method))
+        if not isinstance(arguments, collections.Sequence):
+            raise TypeError('expected sequence of doubles, not ' +
+                            repr(arguments))
+        argc = len(arguments)
+        argv = (ctypes.c_double * argc)(*arguments)
+        library.MagickDistortImage(self.wand,
+                                   DISTORTION_METHODS.index(method),
+                                   argc, argv, bool(best_fit))
+        self.raise_exception()
 
-        result = library.MagickExtentImage(self.wand, width, height, x, y)
+    @manipulative
+    def equalize(self):
+        """Equalizes the image histogram
+
+        .. versionadded:: 0.3.10
+
+        """
+        result = library.MagickEqualizeImage(self.wand)
         if not result:
             self.raise_exception()
-
-    def reset_coords(self):
-        """Reset the coordinate frame of the image so to the upper-left corner
-        is (0, 0) again (crop and rotate operations change it).
-
-        .. versionadded:: 0.2.0
-
-        """
-        library.MagickResetImagePage(self.wand, None)
-
-    @manipulative
-    def resize(self, width=None, height=None, filter='undefined', blur=1):
-        """Resizes the image.
-
-        :param width: the width in the scaled image. default is the original
-                      width
-        :type width: :class:`numbers.Integral`
-        :param height: the height in the scaled image. default is the original
-                       height
-        :type height: :class:`numbers.Integral`
-        :param filter: a filter type to use for resizing. choose one in
-                       :const:`FILTER_TYPES`. default is ``'undefined'``
-                       which means IM will try to guess best one to use
-        :type filter: :class:`basestring`, :class:`numbers.Integral`
-        :param blur: the blur factor where > 1 is blurry, < 1 is sharp.
-                     default is 1
-        :type blur: :class:`numbers.Real`
-
-        .. versionchanged:: 0.2.1
-           The default value of ``filter`` has changed from ``'triangle'``
-           to ``'undefined'`` instead.
-
-        .. versionchanged:: 0.1.8
-           The ``blur`` parameter changed to take :class:`numbers.Real`
-           instead of :class:`numbers.Rational`.
-
-        .. versionadded:: 0.1.1
-
-        """
-        if width is None:
-            width = self.width
-        if height is None:
-            height = self.height
-        if not isinstance(width, numbers.Integral):
-            raise TypeError('width must be a natural number, not ' +
-                            repr(width))
-        elif not isinstance(height, numbers.Integral):
-            raise TypeError('height must be a natural number, not ' +
-                            repr(height))
-        elif width < 1:
-            raise ValueError('width must be a natural number, not ' +
-                             repr(width))
-        elif height < 1:
-            raise ValueError('height must be a natural number, not ' +
-                             repr(height))
-        elif not isinstance(blur, numbers.Real):
-            raise TypeError('blur must be numbers.Real , not ' + repr(blur))
-        elif not isinstance(filter, (string_type, numbers.Integral)):
-            raise TypeError('filter must be one string defined in wand.image.'
-                            'FILTER_TYPES or an integer, not ' + repr(filter))
-        if isinstance(filter, string_type):
-            try:
-                filter = FILTER_TYPES.index(filter)
-            except IndexError:
-                raise ValueError(repr(filter) + ' is an invalid filter type; '
-                                 'choose on in ' + repr(FILTER_TYPES))
-        elif (isinstance(filter, numbers.Integral) and
-              not (0 <= filter < len(FILTER_TYPES))):
-            raise ValueError(repr(filter) + ' is an invalid filter type')
-        blur = ctypes.c_double(float(blur))
-        if self.animation:
-            self.wand = library.MagickCoalesceImages(self.wand)
-            library.MagickSetLastIterator(self.wand)
-            n = library.MagickGetIteratorIndex(self.wand)
-            library.MagickResetIterator(self.wand)
-            for i in xrange(n + 1):
-                library.MagickSetIteratorIndex(self.wand, i)
-                library.MagickResizeImage(self.wand, width, height,
-                                          filter, blur)
-            library.MagickSetSize(self.wand, width, height)
-        else:
-            r = library.MagickResizeImage(self.wand, width, height,
-                                          filter, blur)
-            library.MagickSetSize(self.wand, width, height)
-            if not r:
-                self.raise_exception()
-
-    @manipulative
-    def resample(self, x_res=None, y_res=None, filter='undefined', blur=1):
-        """Adjust the number of pixels in an image so that when displayed at
-        the given Resolution or Density the image will still look the same size
-        in real world terms.
-
-        :param x_res: the X resolution (density) in the scaled image. default
-                      is  the original resolution.
-        :type x_res: :class:`numbers.Real`
-        :param y_res: the Y resolution (density) in the scaled image. default
-                      is the original resolution.
-        :type y_res: :class:`numbers.Real`
-        :param filter: a filter type to use for resizing. choose one in
-                       :const:`FILTER_TYPES`. default is ``'undefined'``
-                       which means IM will try to guess best one to use.
-        :type filter: :class:`basestring`, :class:`numbers.Integral`
-        :param blur: the blur factor where > 1 is blurry, < 1 is sharp.
-                     default is 1
-        :type blur: :class:`numbers.Real`
-
-        .. versionadded:: 0.4.5
-        """
-        if x_res is None:
-            x_res, _ = self.resolution
-        if y_res is None:
-            _, y_res = self.resolution
-        if not isinstance(x_res, numbers.Real):
-            raise TypeError('x_res must be a Real number, not ' +
-                            repr(x_res))
-        elif not isinstance(y_res, numbers.Real):
-            raise TypeError('y_res must be a Real number, not ' +
-                            repr(y_res))
-        elif x_res < 1:
-            raise ValueError('x_res must be a Real number, not ' +
-                             repr(x_res))
-        elif y_res < 1:
-            raise ValueError('y_res must be a Real number, not ' +
-                             repr(y_res))
-        elif not isinstance(blur, numbers.Real):
-            raise TypeError('blur must be numbers.Real , not ' + repr(blur))
-        elif not isinstance(filter, (string_type, numbers.Integral)):
-            raise TypeError('filter must be one string defined in wand.image.'
-                            'FILTER_TYPES or an integer, not ' + repr(filter))
-        if isinstance(filter, string_type):
-            try:
-                filter = FILTER_TYPES.index(filter)
-            except IndexError:
-                raise ValueError(repr(filter) + ' is an invalid filter type; '
-                                 'choose on in ' + repr(FILTER_TYPES))
-        elif (isinstance(filter, numbers.Integral) and
-              not (0 <= filter < len(FILTER_TYPES))):
-            raise ValueError(repr(filter) + ' is an invalid filter type')
-        blur = ctypes.c_double(float(blur))
-        if self.animation:
-            self.wand = library.MagickCoalesceImages(self.wand)
-            library.MagickSetLastIterator(self.wand)
-            n = library.MagickGetIteratorIndex(self.wand)
-            library.MagickResetIterator(self.wand)
-            for i in xrange(n + 1):
-                library.MagickSetIteratorIndex(self.wand, i)
-                library.MagickResampleImage(self.wand, x_res, y_res,
-                                            filter, blur)
-        else:
-            r = library.MagickResampleImage(self.wand, x_res, y_res,
-                                            filter, blur)
-
-            if not r:
-                self.raise_exception()
-
-    @manipulative
-    def sample(self, width=None, height=None):
-        """Resizes the image by sampling the pixels.  It's basically quicker
-        than :meth:`resize()` except less quality as a tradeoff.
-
-        :param width: the width in the scaled image. default is the original
-                      width
-        :type width: :class:`numbers.Integral`
-        :param height: the height in the scaled image. default is the original
-                       height
-        :type height: :class:`numbers.Integral`
-
-        .. versionadded:: 0.3.4
-
-        """
-        if width is None:
-            width = self.width
-        if height is None:
-            height = self.height
-        if not isinstance(width, numbers.Integral):
-            raise TypeError('width must be a natural number, not ' +
-                            repr(width))
-        elif not isinstance(height, numbers.Integral):
-            raise TypeError('height must be a natural number, not ' +
-                            repr(height))
-        elif width < 1:
-            raise ValueError('width must be a natural number, not ' +
-                             repr(width))
-        elif height < 1:
-            raise ValueError('height must be a natural number, not ' +
-                             repr(height))
-        if self.animation:
-            self.wand = library.MagickCoalesceImages(self.wand)
-            library.MagickSetLastIterator(self.wand)
-            n = library.MagickGetIteratorIndex(self.wand)
-            library.MagickResetIterator(self.wand)
-            for i in xrange(n + 1):
-                library.MagickSetIteratorIndex(self.wand, i)
-                library.MagickSampleImage(self.wand, width, height)
-            library.MagickSetSize(self.wand, width, height)
-        else:
-            r = library.MagickSampleImage(self.wand, width, height)
-            library.MagickSetSize(self.wand, width, height)
-            if not r:
-                self.raise_exception()
-
-    @manipulative
-    def transform(self, crop='', resize=''):
-        """Transforms the image using :c:func:`MagickTransformImage`,
-        which is a convenience function accepting geometry strings to
-        perform cropping and resizing.  Cropping is performed first,
-        followed by resizing.  Either or both arguments may be omitted
-        or given an empty string, in which case the corresponding action
-        will not be performed. Geometry specification strings are
-        defined as follows:
-
-        A geometry string consists of a size followed by an optional offset.
-        The size is specified by one of the options below,
-        where **bold** terms are replaced with appropriate integer values:
-
-        **scale**\ ``%``
-          Height and width both scaled by specified percentage
-
-        **scale-x**\ ``%x``\ \ **scale-y**\ ``%``
-          Height and width individually scaled by specified percentages.
-          Only one % symbol is needed.
-
-        **width**
-          Width given, height automagically selected to preserve aspect ratio.
-
-        ``x``\ \ **height**
-          Height given, width automagically selected to preserve aspect ratio.
-
-        **width**\ ``x``\ **height**
-          Maximum values of width and height given; aspect ratio preserved.
-
-        **width**\ ``x``\ **height**\ ``!``
-          Width and height emphatically given; original aspect ratio ignored.
-
-        **width**\ ``x``\ **height**\ ``>``
-          Shrinks images with dimension(s) larger than the corresponding
-          width and/or height dimension(s).
-
-        **width**\ ``x``\ **height**\ ``<``
-          Enlarges images with dimensions smaller than the corresponding
-          width and/or height dimension(s).
-
-        **area**\ ``@``
-          Resize image to have the specified area in pixels.
-          Aspect ratio is preserved.
-
-        The offset, which only applies to the cropping geometry string,
-        is given by ``{+-}``\ **x**\ ``{+-}``\ **y**\ , that is,
-        one plus or minus sign followed by an **x** offset,
-        followed by another plus or minus sign, followed by a **y** offset.
-        Offsets are in pixels from the upper left corner of the image.
-        Negative offsets will cause the corresponding number of pixels to
-        be removed from the right or bottom edge of the image, meaning the
-        cropped size will be the computed size minus the absolute value
-        of the offset.
-
-        For example, if you want to crop your image to 300x300 pixels
-        and then scale it by 2x for a final size of 600x600 pixels,
-        you can call::
-
-            image.transform('300x300', '200%')
-
-        This method is a fairly thing wrapper for the C API, and does not
-        perform any additional checking of the parameters except insofar as
-        verifying that they are of the correct type.  Thus, like the C
-        API function, the method is very permissive in terms of what
-        it accepts for geometry strings; unrecognized strings and
-        trailing characters will be ignored rather than raising an error.
-
-        :param crop: A geometry string defining a subregion of the image
-                     to crop to
-        :type crop: :class:`basestring`
-        :param resize: A geometry string defining the final size of the image
-        :type resize: :class:`basestring`
-
-        .. seealso::
-
-           `ImageMagick Geometry Specifications`__
-              Cropping and resizing geometry for the ``transform`` method are
-              specified according to ImageMagick's geometry string format.
-              The ImageMagick documentation provides more information about
-              geometry strings.
-
-           __ http://www.imagemagick.org/script/command-line-processing.php#geometry
-
-        .. versionadded:: 0.2.2
-        .. versionchanged:: 0.5.0
-           Will call :meth:`crop()` followed by :meth:`resize()` in the event
-           that :c:func:`MagickTransformImage` is not available.
-
-        """  # noqa
-        # Check that the values given are the correct types.  ctypes will do
-        # this automatically, but we can make the error message more friendly
-        # here.
-        if not isinstance(crop, string_type):
-            raise TypeError("crop must be a string, not " + repr(crop))
-        if not isinstance(resize, string_type):
-            raise TypeError("resize must be a string, not " + repr(resize))
-        # Also verify that only ASCII characters are included
-        try:
-            crop = crop.encode('ascii')
-        except UnicodeEncodeError:
-            raise ValueError('crop must only contain ascii-encodable ' +
-                             'characters.')
-        try:
-            resize = resize.encode('ascii')
-        except UnicodeEncodeError:
-            raise ValueError('resize must only contain ascii-encodable ' +
-                             'characters.')
-        if not library.MagickTransformImage:  # pragma: no cover
-            # Method removed from ImageMagick-7.
-            if crop:
-                x = ctypes.c_ssize_t(0)
-                y = ctypes.c_ssize_t(0)
-                width = ctypes.c_size_t(self.width)
-                height = ctypes.c_size_t(self.height)
-                libmagick.GetGeometry(crop,
-                                      ctypes.byref(x),
-                                      ctypes.byref(y),
-                                      ctypes.byref(width),
-                                      ctypes.byref(height))
-                self.crop(top=y.value,
-                          left=x.value,
-                          width=width.value,
-                          height=height.value,
-                          reset_coords=False)
-            if resize:
-                x = ctypes.c_ssize_t()
-                y = ctypes.c_ssize_t()
-                width = ctypes.c_size_t(self.width)
-                height = ctypes.c_size_t(self.height)
-                libmagick.ParseMetaGeometry(resize,
-                                            ctypes.byref(x),
-                                            ctypes.byref(y),
-                                            ctypes.byref(width),
-                                            ctypes.byref(height))
-                self.resize(width=width.value,
-                            height=height.value)
-            # Both `BaseImage.crop` & `BaseImage.resize` will handle
-            # animation & error handling, so we can stop here.
-            return None
-        if self.animation:
-            new_wand = library.MagickCoalesceImages(self.wand)
-            length = len(self.sequence)
-            for i in xrange(length):
-                library.MagickSetIteratorIndex(new_wand, i)
-                if i:
-                    library.MagickAddImage(
-                        new_wand,
-                        library.MagickTransformImage(new_wand, crop, resize)
-                    )
-                else:
-                    new_wand = library.MagickTransformImage(new_wand,
-                                                            crop,
-                                                            resize)
-            self.sequence.instances = []
-        else:
-            new_wand = library.MagickTransformImage(self.wand, crop, resize)
-        if not new_wand:
-            self.raise_exception()
-        self.wand = new_wand
-
-    @manipulative
-    def liquid_rescale(self, width, height, delta_x=0, rigidity=0):
-        """Rescales the image with `seam carving`_, also known as
-        image retargeting, content-aware resizing, or liquid rescaling.
-
-        :param width: the width in the scaled image
-        :type width: :class:`numbers.Integral`
-        :param height: the height in the scaled image
-        :type height: :class:`numbers.Integral`
-        :param delta_x: maximum seam transversal step.
-                        0 means straight seams.  default is 0
-        :type delta_x: :class:`numbers.Real`
-        :param rigidity: introduce a bias for non-straight seams.
-                         default is 0
-        :type rigidity: :class:`numbers.Real`
-        :raises wand.exceptions.MissingDelegateError:
-           when ImageMagick isn't configured ``--with-lqr`` option.
-
-        .. note::
-
-           This feature requires ImageMagick to be configured
-           ``--with-lqr`` option.  Or it will raise
-           :exc:`~wand.exceptions.MissingDelegateError`:
-
-        .. seealso::
-
-           `Seam carving`_ --- Wikipedia
-              The article which explains what seam carving is
-              on Wikipedia.
-
-        .. _Seam carving: http://en.wikipedia.org/wiki/Seam_carving
-
-        """
-        if not isinstance(width, numbers.Integral):
-            raise TypeError('width must be an integer, not ' + repr(width))
-        elif not isinstance(height, numbers.Integral):
-            raise TypeError('height must be an integer, not ' + repr(height))
-        elif not isinstance(delta_x, numbers.Real):
-            raise TypeError('delta_x must be a float, not ' + repr(delta_x))
-        elif not isinstance(rigidity, numbers.Real):
-            raise TypeError('rigidity must be a float, not ' + repr(rigidity))
-        library.MagickLiquidRescaleImage(self.wand, int(width), int(height),
-                                         float(delta_x), float(rigidity))
-        try:
-            self.raise_exception()
-        except MissingDelegateError as e:
-            raise MissingDelegateError(
-                str(e) + '\n\nImageMagick in the system is likely to be '
-                'impossible to load liblqr.  You might not install liblqr, '
-                'or ImageMagick may not compiled with liblqr.'
-            )
-
-    @manipulative
-    def rotate(self, degree, background=None, reset_coords=True):
-        """Rotates the image right.  It takes a ``background`` color
-        for ``degree`` that isn't a multiple of 90.
-
-        :param degree: a degree to rotate. multiples of 360 affect nothing
-        :type degree: :class:`numbers.Real`
-        :param background: an optional background color.
-                           default is transparent
-        :type background: :class:`wand.color.Color`
-        :param reset_coords: optional flag. If set, after the rotation, the
-            coordinate frame will be relocated to the upper-left corner of
-            the new image. By default is `True`.
-        :type reset_coords: :class:`bool`
-
-        .. versionadded:: 0.2.0
-           The ``reset_coords`` parameter.
-
-        .. versionadded:: 0.1.8
-
-        """
-        if background is None:
-            background = Color('transparent')
-        elif not isinstance(background, Color):
-            raise TypeError('background must be a wand.color.Color instance, '
-                            'not ' + repr(background))
-        if not isinstance(degree, numbers.Real):
-            raise TypeError('degree must be a numbers.Real value, not ' +
-                            repr(degree))
-        with background:
-            if self.animation:
-                self.wand = library.MagickCoalesceImages(self.wand)
-                library.MagickSetLastIterator(self.wand)
-                n = library.MagickGetIteratorIndex(self.wand)
-                library.MagickResetIterator(self.wand)
-                for i in range(0, n + 1):
-                    library.MagickSetIteratorIndex(self.wand, i)
-                    library.MagickRotateImage(self.wand,
-                                              background.resource,
-                                              degree)
-                    if reset_coords:
-                        library.MagickResetImagePage(self.wand, None)
-            else:
-                result = library.MagickRotateImage(self.wand,
-                                                   background.resource,
-                                                   degree)
-                if not result:
-                    self.raise_exception()
-                if reset_coords:
-                    self.reset_coords()
 
     @manipulative
     def evaluate(self, operator=None, value=0.0, channel=None):
@@ -2382,6 +2044,40 @@ class BaseImage(Resource):
         else:
             library.MagickEvaluateImage(self.wand, idx_op, value)
         self.raise_exception()
+
+    @manipulative
+    def extent(self, width=None, height=None, x=0, y=0):
+        """extends the image as defined by the geometry, gravity, and wand
+        background color. Set the (x,y) offset of the geometry to move the
+        original wand relative to the extended wand.
+
+        :param width: the :attr:`width` of the extended image.
+                      default is the :attr:`width` of the image.
+        :type width: :class:`numbers.Integral`
+        :param height: the :attr:`height` of the extended image.
+                       default is the :attr:`height` of the image.
+        :type height: :class:`numbers.Integral`
+        :param x: the :attr:`x` offset of the extended image.
+                      default is 0
+        :type x: :class:`numbers.Integral`
+        :param y: the :attr:`y` offset of the extended image.
+                       default is 0
+        :type y: :class:`numbers.Integral`
+
+        .. versionadded:: 0.4.5
+        """
+        if width is None or width == 0:
+            width = self.width
+        if height is None or height == 0:
+            height = self.height
+        if width < 0:
+            raise ValueError('image width cannot be negative integer')
+        elif height < 0:
+            raise ValueError('image height cannot be negative integer')
+
+        result = library.MagickExtentImage(self.wand, width, height, x, y)
+        if not result:
+            self.raise_exception()
 
     @manipulative
     def flip(self):
@@ -2558,196 +2254,114 @@ class BaseImage(Resource):
         self.raise_exception()
 
     @manipulative
-    def transparentize(self, transparency):
-        """Makes the image transparent by subtracting some percentage of
-        the black color channel.  The ``transparency`` parameter specifies the
-        percentage.
+    def gaussian_blur(self, radius, sigma):
+        """Blurs the image.  We convolve the image with a gaussian operator
+        of the given ``radius`` and standard deviation (``sigma``).
+        For reasonable results, the ``radius`` should be larger
+        than ``sigma``.  Use a ``radius`` of 0 and :meth:`blur()` selects
+        a suitable ``radius`` for you.
 
-        :param transparency: the percentage fade that should be performed on
-                             the image, from 0.0 to 1.0
-        :type transparency: :class:`numbers.Real`
+        :param radius: the radius of the, in pixels,
+                       not counting the center pixel
+        :type radius: :class:`numbers.Real`
+        :param sigma: the standard deviation of the, in pixels
+        :type sigma: :class:`numbers.Real`
 
-        .. versionadded:: 0.2.0
+        .. versionadded:: 0.3.3
 
         """
-        if transparency:
-            t = ctypes.c_double(float(self.quantum_range *
-                                      float(transparency)))
-            if t.value > self.quantum_range or t.value < 0:
-                raise ValueError('transparency must be a numbers.Real value ' +
-                                 'between 0.0 and 1.0')
-            # Set the wand to image zero, in case there are multiple images
-            # in it
-            library.MagickSetIteratorIndex(self.wand, 0)
-            # Change the pixel representation of the image
-            # to RGB with an alpha channel
-            if MAGICK_VERSION_NUMBER < 0x700:
-                image_type = 'truecolormatte'
-            else:
-                image_type = 'truecoloralpha'
-            library.MagickSetImageType(self.wand,
-                                       IMAGE_TYPES.index(image_type))
-            # Perform the black channel subtraction
-            self.evaluate(operator='subtract',
-                          value=t.value,
-                          channel='opacity')
+        if not isinstance(radius, numbers.Real):
+            raise TypeError('radius has to be a numbers.Real, not ' +
+                            repr(radius))
+        elif not isinstance(sigma, numbers.Real):
+            raise TypeError('sigma has to be a numbers.Real, not ' +
+                            repr(sigma))
+        r = library.MagickGaussianBlurImage(self.wand, radius, sigma)
+        if not r:
             self.raise_exception()
 
     @manipulative
-    def transparent_color(self, color, alpha, fuzz=0, invert=False):
-        """Makes the color ``color`` a transparent color with a tolerance of
-        fuzz. The ``alpha`` parameter specify the transparency level and the
-        parameter ``fuzz`` specify the tolerance.
+    def liquid_rescale(self, width, height, delta_x=0, rigidity=0):
+        """Rescales the image with `seam carving`_, also known as
+        image retargeting, content-aware resizing, or liquid rescaling.
 
-        :param color: The color that should be made transparent on the image,
-                      color object
-        :type color: :class:`wand.color.Color`
-        :param alpha: the level of transparency: 1.0 is fully opaque
-                      and 0.0 is fully transparent.
-        :type alpha: :class:`numbers.Real`
-        :param fuzz: By default target must match a particular pixel color
-                     exactly. However, in many cases two colors may differ
-                     by a small amount. The fuzz member of image defines how
-                     much tolerance is acceptable to consider two colors as the
-                     same. For example, set fuzz to 10 and the color red at
-                     intensities of 100 and 102 respectively are now
-                     interpreted as the same color for the color.
-        :type fuzz: :class:`numbers.Integral`
-        :param invert: Boolean to tell to paint the inverse selection.
-        :type invert: :class:`bool`
+        :param width: the width in the scaled image
+        :type width: :class:`numbers.Integral`
+        :param height: the height in the scaled image
+        :type height: :class:`numbers.Integral`
+        :param delta_x: maximum seam transversal step.
+                        0 means straight seams.  default is 0
+        :type delta_x: :class:`numbers.Real`
+        :param rigidity: introduce a bias for non-straight seams.
+                         default is 0
+        :type rigidity: :class:`numbers.Real`
+        :raises wand.exceptions.MissingDelegateError:
+           when ImageMagick isn't configured ``--with-lqr`` option.
 
-        .. versionadded:: 0.3.0
+        .. note::
 
-        """
-        if not isinstance(alpha, numbers.Real):
-            raise TypeError('alpha must be an float, not ' + repr(alpha))
-        elif not isinstance(fuzz, numbers.Integral):
-            raise TypeError('fuzz must be an integer, not ' + repr(fuzz))
-        elif not isinstance(color, Color):
-            raise TypeError('color must be a wand.color.Color object, not ' +
-                            repr(color))
-        library.MagickTransparentPaintImage(self.wand, color.resource,
-                                            alpha, fuzz, invert)
-        self.raise_exception()
+           This feature requires ImageMagick to be configured
+           ``--with-lqr`` option.  Or it will raise
+           :exc:`~wand.exceptions.MissingDelegateError`:
 
-    def compare(self, image, metric='undefined'):
-        """Compares an image to a reconstructed image.
+        .. seealso::
 
-        :param image: The reference image
-        :type image: :class:`wand.image.Image`
-        :param metric: The metric type to use for comparing.
-        :type metric: :class:`basestring`
-        :returns: The difference image(:class:`wand.image.Image`),
-                  the computed distortion between the images
-                  (:class:`numbers.Integral`)
-        :rtype: :class:`tuple`
+           `Seam carving`_ --- Wikipedia
+              The article which explains what seam carving is
+              on Wikipedia.
 
-        ..versionadded:: 0.4.3
-        """
-        if not isinstance(metric, string_type):
-            raise TypeError('metric must be a string, not ' + repr(metric))
-
-        metric = COMPARE_METRICS.index(metric)
-        distortion = ctypes.c_double()
-        compared_image = library.MagickCompareImages(self.wand, image.wand,
-                                                     metric,
-                                                     ctypes.byref(distortion))
-        return Image(BaseImage(compared_image)), distortion.value
-
-    @manipulative
-    def composite(self, image, left, top):
-        """Places the supplied ``image`` over the current image, with the top
-        left corner of ``image`` at coordinates ``left``, ``top`` of the
-        current image.  The dimensions of the current image are not changed.
-
-        :param image: the image placed over the current image
-        :type image: :class:`wand.image.Image`
-        :param left: the x-coordinate where `image` will be placed
-        :type left: :class:`numbers.Integral`
-        :param top: the y-coordinate where `image` will be placed
-        :type top: :class:`numbers.Integral`
-
-        .. versionadded:: 0.2.0
+        .. _Seam carving: http://en.wikipedia.org/wiki/Seam_carving
 
         """
-        if not isinstance(left, numbers.Integral):
-            raise TypeError('left must be an integer, not ' + repr(left))
-        elif not isinstance(top, numbers.Integral):
-            raise TypeError('top must be an integer, not ' + repr(left))
-        op = COMPOSITE_OPERATORS.index('over')
-        if MAGICK_VERSION_NUMBER < 0x700:
-            library.MagickCompositeImage(self.wand, image.wand, op,
-                                         int(left), int(top))
-        else:
-            library.MagickCompositeImage(self.wand, image.wand, op, True,
-                                         int(left), int(top))
-        self.raise_exception()
-
-    @manipulative
-    def composite_channel(self, channel, image, operator, left=0, top=0):
-        """Composite two images using the particular ``channel``.
-
-        :param channel: the channel type.  available values can be found
-                        in the :const:`CHANNELS` mapping
-        :param image: the composited source image.
-                      (the receiver image becomes the destination)
-        :type image: :class:`Image`
-        :param operator: the operator that affects how the composite
-                         is applied to the image.  available values
-                         can be found in the :const:`COMPOSITE_OPERATORS`
-                         list
-        :param left: the column offset of the composited source image
-        :type left: :class:`numbers.Integral`
-        :param top: the row offset of the composited source image
-        :type top: :class:`numbers.Integral`
-        :raises ValueError: when the given ``channel`` or
-                            ``operator`` is invalid
-
-        .. versionadded:: 0.3.0
-
-        """
-        if not isinstance(channel, string_type):
-            raise TypeError('channel must be a string, not ' +
-                            repr(channel))
-        elif not isinstance(operator, string_type):
-            raise TypeError('operator must be a string, not ' +
-                            repr(operator))
-        elif not isinstance(left, numbers.Integral):
-            raise TypeError('left must be an integer, not ' + repr(left))
-        elif not isinstance(top, numbers.Integral):
-            raise TypeError('top must be an integer, not ' + repr(left))
+        if not isinstance(width, numbers.Integral):
+            raise TypeError('width must be an integer, not ' + repr(width))
+        elif not isinstance(height, numbers.Integral):
+            raise TypeError('height must be an integer, not ' + repr(height))
+        elif not isinstance(delta_x, numbers.Real):
+            raise TypeError('delta_x must be a float, not ' + repr(delta_x))
+        elif not isinstance(rigidity, numbers.Real):
+            raise TypeError('rigidity must be a float, not ' + repr(rigidity))
+        library.MagickLiquidRescaleImage(self.wand, int(width), int(height),
+                                         float(delta_x), float(rigidity))
         try:
-            ch_const = CHANNELS[channel]
-        except KeyError:
-            raise ValueError(repr(channel) + ' is an invalid channel type'
-                             '; see wand.image.CHANNELS dictionary')
-        try:
-            op = COMPOSITE_OPERATORS.index(operator)
-        except IndexError:
-            raise IndexError(repr(operator) + ' is an invalid composite '
-                             'operator type; see wand.image.COMPOSITE_'
-                             'OPERATORS dictionary')
-        if library.MagickCompositeImageChannel:
-            library.MagickCompositeImageChannel(self.wand, ch_const,
-                                                image.wand, op, int(left),
-                                                int(top))
-        else:
-            ch_mask = library.MagickSetImageChannelMask(self.wand, ch_const)
-            library.MagickCompositeImage(self.wand, image.wand, op, True,
-                                         int(left), int(top))
-            library.MagickSetImageChannelMask(self.wand, ch_mask)
-        self.raise_exception()
-
-    @manipulative
-    def equalize(self):
-        """Equalizes the image histogram
-
-        .. versionadded:: 0.3.10
-
-        """
-        result = library.MagickEqualizeImage(self.wand)
-        if not result:
             self.raise_exception()
+        except MissingDelegateError as e:
+            raise MissingDelegateError(
+                str(e) + '\n\nImageMagick in the system is likely to be '
+                'impossible to load liblqr.  You might not install liblqr, '
+                'or ImageMagick may not compiled with liblqr.'
+            )
+
+    @manipulative
+    def merge_layers(self, method):
+        """Composes all the image layers from the current given image onward
+        to produce a single image of the merged layers.
+
+        The initial canvas's size depends on the given ImageLayerMethod, and is
+        initialized using the first images background color.  The images
+        are then composited onto that image in sequence using the given
+        composition that has been assigned to each individual image.
+        The method must be set with a value from :const:`IMAGE_LAYER_METHOD`
+        that is acceptable to this operation. (See ImageMagick documentation
+        for more details.)
+
+        :param method: the method of selecting the size of the initial canvas.
+        :type method: :class:`basestring`
+
+        .. versionadded:: 0.4.3
+
+        """
+        if not isinstance(method, string_type):
+            raise TypeError('method must be a string from IMAGE_LAYER_METHOD, '
+                            'not ' + repr(method))
+        if method not in ('merge', 'flatten', 'mosaic', 'trimbounds'):
+            raise ValueError('method can only be \'merge\', \'flatten\', '
+                             '\'mosaic\', or \'trimbounds\'')
+        m = IMAGE_LAYER_METHOD.index(method)
+        r = library.MagickMergeImageLayers(self.wand, m)
+        if not r:
+            self.raise_exception()
+        self.wand = r
 
     @manipulative
     def modulate(self, brightness=100.0, saturation=100.0, hue=100.0):
@@ -2782,109 +2396,6 @@ class BaseImage(Resource):
             saturation,
             hue
         )
-        if not r:
-            self.raise_exception()
-
-    @manipulative
-    def merge_layers(self, method):
-        """Composes all the image layers from the current given image onward
-        to produce a single image of the merged layers.
-
-        The initial canvas's size depends on the given ImageLayerMethod, and is
-        initialized using the first images background color.  The images
-        are then composited onto that image in sequence using the given
-        composition that has been assigned to each individual image.
-        The method must be set with a value from :const:`IMAGE_LAYER_METHOD`
-        that is acceptable to this operation. (See ImageMagick documentation
-        for more details.)
-
-        :param method: the method of selecting the size of the initial canvas.
-        :type method: :class:`basestring`
-
-        .. versionadded:: 0.4.3
-
-        """
-        if not isinstance(method, string_type):
-            raise TypeError('method must be a string from IMAGE_LAYER_METHOD, '
-                            'not ' + repr(method))
-        if method not in ('merge', 'flatten', 'mosaic', 'trimbounds'):
-            raise ValueError('method can only be \'merge\', \'flatten\', '
-                             '\'mosaic\', or \'trimbounds\'')
-        m = IMAGE_LAYER_METHOD.index(method)
-        r = library.MagickMergeImageLayers(self.wand, m)
-        if not r:
-            self.raise_exception()
-        self.wand = r
-
-    @manipulative
-    def optimize_layers(self):
-        """Attempts to crop each frame to the smallest image without altering
-        the animation.
-
-        .. note::
-
-            This will only affect ``GIF`` image formates.
-
-        .. versionadded:: 0.5.0
-        """
-        r = library.MagickOptimizeImageLayers(self.wand)
-        if not r:
-            self.raise_exception()
-        self.wand = r
-
-    @manipulative
-    def optimize_transparency(self):
-        """Iterates over frames, and sets transparent values for each
-        pixel unchanged by previous frame.
-
-        .. note::
-
-            This will only affect ``GIF`` image formates.
-
-        .. versionadded:: 0.5.0
-        """
-        if library.MagickOptimizeImageTransparency:
-            r = library.MagickOptimizeImageTransparency(self.wand)
-            if not r:
-                self.raise_exception()
-        else:
-            raise AttributeError('`MagickOptimizeImageTransparency\' not '
-                                 'available on current version of MagickWand '
-                                 'library.')
-
-    @manipulative
-    def threshold(self, threshold=0.5, channel=None):
-        """Changes the value of individual pixels based on the intensity
-        of each pixel compared to threshold. The result is a high-contrast,
-        two color image. It manipulates the image in place.
-
-        :param threshold: threshold as a factor of quantum
-        :type threshold: :class:`numbers.Real`
-        :param channel: the channel type.  available values can be found
-                        in the :const:`CHANNELS` mapping.  If ``None``,
-                        threshold all channels.
-        :type channel: :class:`basestring`
-
-        .. versionadded:: 0.3.10
-
-        """
-        if not isinstance(threshold, numbers.Real):
-            raise TypeError('threshold has to be a numbers.Real, not ' +
-                            repr(threshold))
-
-        if channel:
-            try:
-                ch_const = CHANNELS[channel]
-            except KeyError:
-                raise ValueError(repr(channel) + ' is an invalid channel type'
-                                 '; see wand.image.CHANNELS dictionary')
-            r = library.MagickThresholdImageChannel(
-                self.wand, ch_const,
-                threshold * self.quantum_range
-            )
-        else:
-            r = library.MagickThresholdImage(self.wand,
-                                             threshold * self.quantum_range)
         if not r:
             self.raise_exception()
 
@@ -2924,130 +2435,40 @@ class BaseImage(Resource):
             self.raise_exception()
 
     @manipulative
-    def gaussian_blur(self, radius, sigma):
-        """Blurs the image.  We convolve the image with a gaussian operator
-        of the given ``radius`` and standard deviation (``sigma``).
-        For reasonable results, the ``radius`` should be larger
-        than ``sigma``.  Use a ``radius`` of 0 and :meth:`blur()` selects
-        a suitable ``radius`` for you.
+    def optimize_layers(self):
+        """Attempts to crop each frame to the smallest image without altering
+        the animation.
 
-        :param radius: the radius of the, in pixels,
-                       not counting the center pixel
-        :type radius: :class:`numbers.Real`
-        :param sigma: the standard deviation of the, in pixels
-        :type sigma: :class:`numbers.Real`
+        .. note::
 
-        .. versionadded:: 0.3.3
+            This will only affect ``GIF`` image formates.
 
+        .. versionadded:: 0.5.0
         """
-        if not isinstance(radius, numbers.Real):
-            raise TypeError('radius has to be a numbers.Real, not ' +
-                            repr(radius))
-        elif not isinstance(sigma, numbers.Real):
-            raise TypeError('sigma has to be a numbers.Real, not ' +
-                            repr(sigma))
-        r = library.MagickGaussianBlurImage(self.wand, radius, sigma)
+        r = library.MagickOptimizeImageLayers(self.wand)
         if not r:
             self.raise_exception()
+        self.wand = r
 
     @manipulative
-    def blur(self, radius, sigma):
-        """Blurs the image.  We convolve the image with a gaussian operator
-        of the given ``radius`` and standard deviation (``sigma``).
-        For reasonable results, the ``radius`` should be larger
-        than ``sigma``.  Use a ``radius`` of 0 and :meth:`blur()` selects
-        a suitable ``radius`` for you.
+    def optimize_transparency(self):
+        """Iterates over frames, and sets transparent values for each
+        pixel unchanged by previous frame.
 
-        :param radius: the radius of the, in pixels,
-                       not counting the center pixel
-        :type radius: :class:`numbers.Real`
-        :param sigma: the standard deviation of the, in pixels
-        :type sigma: :class:`numbers.Real`
+        .. note::
 
-        .. versionadded:: 0.4.5
+            This will only affect ``GIF`` image formates.
 
+        .. versionadded:: 0.5.0
         """
-        if not isinstance(radius, numbers.Real):
-            raise TypeError('radius has to be a numbers.Real, not ' +
-                            repr(radius))
-        elif not isinstance(sigma, numbers.Real):
-            raise TypeError('sigma has to be a numbers.Real, not ' +
-                            repr(sigma))
-        r = library.MagickBlurImage(self.wand, radius, sigma)
-        if not r:
-            self.raise_exception()
-
-    @manipulative
-    def unsharp_mask(self, radius, sigma, amount, threshold):
-        """Sharpens the image using unsharp mask filter. We convolve the image
-        with a Gaussian operator of the given ``radius`` and standard deviation
-        (``sigma``). For reasonable results, ``radius`` should be larger than
-        ``sigma``. Use a radius of 0 and :meth:`unsharp_mask()` selects
-        a suitable radius for you.
-
-        :param radius: the radius of the Gaussian, in pixels,
-                       not counting the center pixel
-        :type radius: :class:`numbers.Real`
-        :param sigma: the standard deviation of the Gaussian, in pixels
-        :type sigma: :class:`numbers.Real`
-        :param amount: the percentage of the difference between the original
-                       and the blur image that is added back into the original
-        :type amount: :class:`numbers.Real`
-        :param threshold: the threshold in pixels needed to apply
-                          the diffence amount
-        :type threshold: :class:`numbers.Real`
-
-        .. versionadded:: 0.3.4
-
-        """
-        if not isinstance(radius, numbers.Real):
-            raise TypeError('radius has to be a numbers.Real, not ' +
-                            repr(radius))
-        elif not isinstance(sigma, numbers.Real):
-            raise TypeError('sigma has to be a numbers.Real, not ' +
-                            repr(sigma))
-        elif not isinstance(amount, numbers.Real):
-            raise TypeError('amount has to be a numbers.Real, not ' +
-                            repr(amount))
-        elif not isinstance(threshold, numbers.Real):
-            raise TypeError('threshold has to be a numbers.Real, not ' +
-                            repr(threshold))
-        r = library.MagickUnsharpMaskImage(self.wand, radius, sigma,
-                                           amount, threshold)
-        if not r:
-            self.raise_exception()
-
-    @manipulative
-    def watermark(self, image, transparency=0.0, left=0, top=0):
-        """Transparentized the supplied ``image`` and places it over the
-        current image, with the top left corner of ``image`` at coordinates
-        ``left``, ``top`` of the current image.  The dimensions of the
-        current image are not changed.
-
-        :param image: the image placed over the current image
-        :type image: :class:`wand.image.Image`
-        :param transparency: the percentage fade that should be performed on
-                             the image, from 0.0 to 1.0
-        :type transparency: :class:`numbers.Real`
-        :param left: the x-coordinate where `image` will be placed
-        :type left: :class:`numbers.Integral`
-        :param top: the y-coordinate where `image` will be placed
-        :type top: :class:`numbers.Integral`
-
-        .. versionadded:: 0.2.0
-
-        """
-        with image.clone() as watermark_image:
-            if MAGICK_VERSION_NUMBER >= 0x700 and transparency:
-                # With IM7, evaluation returns signed values that can
-                # cause composite issues.
-                expression = 'max(0, u - {0:g})'.format(transparency)
-                with watermark_image.fx(expression, channel='alpha') as fx:
-                    self.composite(fx, left=left, top=top)
-            else:
-                watermark_image.transparentize(transparency)
-                self.composite(watermark_image, left=left, top=top)
-        self.raise_exception()
+        if library.MagickOptimizeImageTransparency:
+            r = library.MagickOptimizeImageTransparency(self.wand)
+            if not r:
+                self.raise_exception()
+        else:
+            raise AttributeError('`MagickOptimizeImageTransparency\' not '
+                                 'available on current version of MagickWand '
+                                 'library.')
 
     @manipulative
     def quantize(self, number_colors, colorspace_type,
@@ -3122,6 +2543,455 @@ class BaseImage(Resource):
             self.raise_exception()
 
     @manipulative
+    def resample(self, x_res=None, y_res=None, filter='undefined', blur=1):
+        """Adjust the number of pixels in an image so that when displayed at
+        the given Resolution or Density the image will still look the same size
+        in real world terms.
+
+        :param x_res: the X resolution (density) in the scaled image. default
+                      is  the original resolution.
+        :type x_res: :class:`numbers.Real`
+        :param y_res: the Y resolution (density) in the scaled image. default
+                      is the original resolution.
+        :type y_res: :class:`numbers.Real`
+        :param filter: a filter type to use for resizing. choose one in
+                       :const:`FILTER_TYPES`. default is ``'undefined'``
+                       which means IM will try to guess best one to use.
+        :type filter: :class:`basestring`, :class:`numbers.Integral`
+        :param blur: the blur factor where > 1 is blurry, < 1 is sharp.
+                     default is 1
+        :type blur: :class:`numbers.Real`
+
+        .. versionadded:: 0.4.5
+        """
+        if x_res is None:
+            x_res, _ = self.resolution
+        if y_res is None:
+            _, y_res = self.resolution
+        if not isinstance(x_res, numbers.Real):
+            raise TypeError('x_res must be a Real number, not ' +
+                            repr(x_res))
+        elif not isinstance(y_res, numbers.Real):
+            raise TypeError('y_res must be a Real number, not ' +
+                            repr(y_res))
+        elif x_res < 1:
+            raise ValueError('x_res must be a Real number, not ' +
+                             repr(x_res))
+        elif y_res < 1:
+            raise ValueError('y_res must be a Real number, not ' +
+                             repr(y_res))
+        elif not isinstance(blur, numbers.Real):
+            raise TypeError('blur must be numbers.Real , not ' + repr(blur))
+        elif not isinstance(filter, (string_type, numbers.Integral)):
+            raise TypeError('filter must be one string defined in wand.image.'
+                            'FILTER_TYPES or an integer, not ' + repr(filter))
+        if isinstance(filter, string_type):
+            try:
+                filter = FILTER_TYPES.index(filter)
+            except IndexError:
+                raise ValueError(repr(filter) + ' is an invalid filter type; '
+                                 'choose on in ' + repr(FILTER_TYPES))
+        elif (isinstance(filter, numbers.Integral) and
+              not (0 <= filter < len(FILTER_TYPES))):
+            raise ValueError(repr(filter) + ' is an invalid filter type')
+        blur = ctypes.c_double(float(blur))
+        if self.animation:
+            self.wand = library.MagickCoalesceImages(self.wand)
+            library.MagickSetLastIterator(self.wand)
+            n = library.MagickGetIteratorIndex(self.wand)
+            library.MagickResetIterator(self.wand)
+            for i in xrange(n + 1):
+                library.MagickSetIteratorIndex(self.wand, i)
+                library.MagickResampleImage(self.wand, x_res, y_res,
+                                            filter, blur)
+        else:
+            r = library.MagickResampleImage(self.wand, x_res, y_res,
+                                            filter, blur)
+
+            if not r:
+                self.raise_exception()
+
+    def reset_coords(self):
+        """Reset the coordinate frame of the image so to the upper-left corner
+        is (0, 0) again (crop and rotate operations change it).
+
+        .. versionadded:: 0.2.0
+
+        """
+        library.MagickResetImagePage(self.wand, None)
+
+    @manipulative
+    def resize(self, width=None, height=None, filter='undefined', blur=1):
+        """Resizes the image.
+
+        :param width: the width in the scaled image. default is the original
+                      width
+        :type width: :class:`numbers.Integral`
+        :param height: the height in the scaled image. default is the original
+                       height
+        :type height: :class:`numbers.Integral`
+        :param filter: a filter type to use for resizing. choose one in
+                       :const:`FILTER_TYPES`. default is ``'undefined'``
+                       which means IM will try to guess best one to use
+        :type filter: :class:`basestring`, :class:`numbers.Integral`
+        :param blur: the blur factor where > 1 is blurry, < 1 is sharp.
+                     default is 1
+        :type blur: :class:`numbers.Real`
+
+        .. versionchanged:: 0.2.1
+           The default value of ``filter`` has changed from ``'triangle'``
+           to ``'undefined'`` instead.
+
+        .. versionchanged:: 0.1.8
+           The ``blur`` parameter changed to take :class:`numbers.Real`
+           instead of :class:`numbers.Rational`.
+
+        .. versionadded:: 0.1.1
+
+        """
+        if width is None:
+            width = self.width
+        if height is None:
+            height = self.height
+        if not isinstance(width, numbers.Integral):
+            raise TypeError('width must be a natural number, not ' +
+                            repr(width))
+        elif not isinstance(height, numbers.Integral):
+            raise TypeError('height must be a natural number, not ' +
+                            repr(height))
+        elif width < 1:
+            raise ValueError('width must be a natural number, not ' +
+                             repr(width))
+        elif height < 1:
+            raise ValueError('height must be a natural number, not ' +
+                             repr(height))
+        elif not isinstance(blur, numbers.Real):
+            raise TypeError('blur must be numbers.Real , not ' + repr(blur))
+        elif not isinstance(filter, (string_type, numbers.Integral)):
+            raise TypeError('filter must be one string defined in wand.image.'
+                            'FILTER_TYPES or an integer, not ' + repr(filter))
+        if isinstance(filter, string_type):
+            try:
+                filter = FILTER_TYPES.index(filter)
+            except IndexError:
+                raise ValueError(repr(filter) + ' is an invalid filter type; '
+                                 'choose on in ' + repr(FILTER_TYPES))
+        elif (isinstance(filter, numbers.Integral) and
+              not (0 <= filter < len(FILTER_TYPES))):
+            raise ValueError(repr(filter) + ' is an invalid filter type')
+        blur = ctypes.c_double(float(blur))
+        if self.animation:
+            self.wand = library.MagickCoalesceImages(self.wand)
+            library.MagickSetLastIterator(self.wand)
+            n = library.MagickGetIteratorIndex(self.wand)
+            library.MagickResetIterator(self.wand)
+            for i in xrange(n + 1):
+                library.MagickSetIteratorIndex(self.wand, i)
+                library.MagickResizeImage(self.wand, width, height,
+                                          filter, blur)
+            library.MagickSetSize(self.wand, width, height)
+        else:
+            r = library.MagickResizeImage(self.wand, width, height,
+                                          filter, blur)
+            library.MagickSetSize(self.wand, width, height)
+            if not r:
+                self.raise_exception()
+
+    @manipulative
+    def rotate(self, degree, background=None, reset_coords=True):
+        """Rotates the image right.  It takes a ``background`` color
+        for ``degree`` that isn't a multiple of 90.
+
+        :param degree: a degree to rotate. multiples of 360 affect nothing
+        :type degree: :class:`numbers.Real`
+        :param background: an optional background color.
+                           default is transparent
+        :type background: :class:`wand.color.Color`
+        :param reset_coords: optional flag. If set, after the rotation, the
+            coordinate frame will be relocated to the upper-left corner of
+            the new image. By default is `True`.
+        :type reset_coords: :class:`bool`
+
+        .. versionadded:: 0.2.0
+           The ``reset_coords`` parameter.
+
+        .. versionadded:: 0.1.8
+
+        """
+        if background is None:
+            background = Color('transparent')
+        elif not isinstance(background, Color):
+            raise TypeError('background must be a wand.color.Color instance, '
+                            'not ' + repr(background))
+        if not isinstance(degree, numbers.Real):
+            raise TypeError('degree must be a numbers.Real value, not ' +
+                            repr(degree))
+        with background:
+            if self.animation:
+                self.wand = library.MagickCoalesceImages(self.wand)
+                library.MagickSetLastIterator(self.wand)
+                n = library.MagickGetIteratorIndex(self.wand)
+                library.MagickResetIterator(self.wand)
+                for i in range(0, n + 1):
+                    library.MagickSetIteratorIndex(self.wand, i)
+                    library.MagickRotateImage(self.wand,
+                                              background.resource,
+                                              degree)
+                    if reset_coords:
+                        library.MagickResetImagePage(self.wand, None)
+            else:
+                result = library.MagickRotateImage(self.wand,
+                                                   background.resource,
+                                                   degree)
+                if not result:
+                    self.raise_exception()
+                if reset_coords:
+                    self.reset_coords()
+
+    @manipulative
+    def sample(self, width=None, height=None):
+        """Resizes the image by sampling the pixels.  It's basically quicker
+        than :meth:`resize()` except less quality as a tradeoff.
+
+        :param width: the width in the scaled image. default is the original
+                      width
+        :type width: :class:`numbers.Integral`
+        :param height: the height in the scaled image. default is the original
+                       height
+        :type height: :class:`numbers.Integral`
+
+        .. versionadded:: 0.3.4
+
+        """
+        if width is None:
+            width = self.width
+        if height is None:
+            height = self.height
+        if not isinstance(width, numbers.Integral):
+            raise TypeError('width must be a natural number, not ' +
+                            repr(width))
+        elif not isinstance(height, numbers.Integral):
+            raise TypeError('height must be a natural number, not ' +
+                            repr(height))
+        elif width < 1:
+            raise ValueError('width must be a natural number, not ' +
+                             repr(width))
+        elif height < 1:
+            raise ValueError('height must be a natural number, not ' +
+                             repr(height))
+        if self.animation:
+            self.wand = library.MagickCoalesceImages(self.wand)
+            library.MagickSetLastIterator(self.wand)
+            n = library.MagickGetIteratorIndex(self.wand)
+            library.MagickResetIterator(self.wand)
+            for i in xrange(n + 1):
+                library.MagickSetIteratorIndex(self.wand, i)
+                library.MagickSampleImage(self.wand, width, height)
+            library.MagickSetSize(self.wand, width, height)
+        else:
+            r = library.MagickSampleImage(self.wand, width, height)
+            library.MagickSetSize(self.wand, width, height)
+            if not r:
+                self.raise_exception()
+
+    @manipulative
+    def threshold(self, threshold=0.5, channel=None):
+        """Changes the value of individual pixels based on the intensity
+        of each pixel compared to threshold. The result is a high-contrast,
+        two color image. It manipulates the image in place.
+
+        :param threshold: threshold as a factor of quantum
+        :type threshold: :class:`numbers.Real`
+        :param channel: the channel type.  available values can be found
+                        in the :const:`CHANNELS` mapping.  If ``None``,
+                        threshold all channels.
+        :type channel: :class:`basestring`
+
+        .. versionadded:: 0.3.10
+
+        """
+        if not isinstance(threshold, numbers.Real):
+            raise TypeError('threshold has to be a numbers.Real, not ' +
+                            repr(threshold))
+
+        if channel:
+            try:
+                ch_const = CHANNELS[channel]
+            except KeyError:
+                raise ValueError(repr(channel) + ' is an invalid channel type'
+                                 '; see wand.image.CHANNELS dictionary')
+            r = library.MagickThresholdImageChannel(
+                self.wand, ch_const,
+                threshold * self.quantum_range
+            )
+        else:
+            r = library.MagickThresholdImage(self.wand,
+                                             threshold * self.quantum_range)
+        if not r:
+            self.raise_exception()
+
+    @manipulative
+    def transform(self, crop='', resize=''):
+        """Transforms the image using :c:func:`MagickTransformImage`,
+        which is a convenience function accepting geometry strings to
+        perform cropping and resizing.  Cropping is performed first,
+        followed by resizing.  Either or both arguments may be omitted
+        or given an empty string, in which case the corresponding action
+        will not be performed. Geometry specification strings are
+        defined as follows:
+
+        A geometry string consists of a size followed by an optional offset.
+        The size is specified by one of the options below,
+        where **bold** terms are replaced with appropriate integer values:
+
+        **scale**\ ``%``
+          Height and width both scaled by specified percentage
+
+        **scale-x**\ ``%x``\ \ **scale-y**\ ``%``
+          Height and width individually scaled by specified percentages.
+          Only one % symbol is needed.
+
+        **width**
+          Width given, height automagically selected to preserve aspect ratio.
+
+        ``x``\ \ **height**
+          Height given, width automagically selected to preserve aspect ratio.
+
+        **width**\ ``x``\ **height**
+          Maximum values of width and height given; aspect ratio preserved.
+
+        **width**\ ``x``\ **height**\ ``!``
+          Width and height emphatically given; original aspect ratio ignored.
+
+        **width**\ ``x``\ **height**\ ``>``
+          Shrinks images with dimension(s) larger than the corresponding
+          width and/or height dimension(s).
+
+        **width**\ ``x``\ **height**\ ``<``
+          Enlarges images with dimensions smaller than the corresponding
+          width and/or height dimension(s).
+
+        **area**\ ``@``
+          Resize image to have the specified area in pixels.
+          Aspect ratio is preserved.
+
+        The offset, which only applies to the cropping geometry string,
+        is given by ``{+-}``\ **x**\ ``{+-}``\ **y**\ , that is,
+        one plus or minus sign followed by an **x** offset,
+        followed by another plus or minus sign, followed by a **y** offset.
+        Offsets are in pixels from the upper left corner of the image.
+        Negative offsets will cause the corresponding number of pixels to
+        be removed from the right or bottom edge of the image, meaning the
+        cropped size will be the computed size minus the absolute value
+        of the offset.
+
+        For example, if you want to crop your image to 300x300 pixels
+        and then scale it by 2x for a final size of 600x600 pixels,
+        you can call::
+
+            image.transform('300x300', '200%')
+
+        This method is a fairly thing wrapper for the C API, and does not
+        perform any additional checking of the parameters except insofar as
+        verifying that they are of the correct type.  Thus, like the C
+        API function, the method is very permissive in terms of what
+        it accepts for geometry strings; unrecognized strings and
+        trailing characters will be ignored rather than raising an error.
+
+        :param crop: A geometry string defining a subregion of the image
+                     to crop to
+        :type crop: :class:`basestring`
+        :param resize: A geometry string defining the final size of the image
+        :type resize: :class:`basestring`
+
+        .. seealso::
+
+           `ImageMagick Geometry Specifications`__
+              Cropping and resizing geometry for the ``transform`` method are
+              specified according to ImageMagick's geometry string format.
+              The ImageMagick documentation provides more information about
+              geometry strings.
+
+           __ http://www.imagemagick.org/script/command-line-processing.php#geometry
+
+        .. versionadded:: 0.2.2
+        .. versionchanged:: 0.5.0
+           Will call :meth:`crop()` followed by :meth:`resize()` in the event
+           that :c:func:`MagickTransformImage` is not available.
+
+        """  # noqa
+        # Check that the values given are the correct types.  ctypes will do
+        # this automatically, but we can make the error message more friendly
+        # here.
+        if not isinstance(crop, string_type):
+            raise TypeError("crop must be a string, not " + repr(crop))
+        if not isinstance(resize, string_type):
+            raise TypeError("resize must be a string, not " + repr(resize))
+        # Also verify that only ASCII characters are included
+        try:
+            crop = crop.encode('ascii')
+        except UnicodeEncodeError:
+            raise ValueError('crop must only contain ascii-encodable ' +
+                             'characters.')
+        try:
+            resize = resize.encode('ascii')
+        except UnicodeEncodeError:
+            raise ValueError('resize must only contain ascii-encodable ' +
+                             'characters.')
+        if not library.MagickTransformImage:  # pragma: no cover
+            # Method removed from ImageMagick-7.
+            if crop:
+                x = ctypes.c_ssize_t(0)
+                y = ctypes.c_ssize_t(0)
+                width = ctypes.c_size_t(self.width)
+                height = ctypes.c_size_t(self.height)
+                libmagick.GetGeometry(crop,
+                                      ctypes.byref(x),
+                                      ctypes.byref(y),
+                                      ctypes.byref(width),
+                                      ctypes.byref(height))
+                self.crop(top=y.value,
+                          left=x.value,
+                          width=width.value,
+                          height=height.value,
+                          reset_coords=False)
+            if resize:
+                x = ctypes.c_ssize_t()
+                y = ctypes.c_ssize_t()
+                width = ctypes.c_size_t(self.width)
+                height = ctypes.c_size_t(self.height)
+                libmagick.ParseMetaGeometry(resize,
+                                            ctypes.byref(x),
+                                            ctypes.byref(y),
+                                            ctypes.byref(width),
+                                            ctypes.byref(height))
+                self.resize(width=width.value,
+                            height=height.value)
+            # Both `BaseImage.crop` & `BaseImage.resize` will handle
+            # animation & error handling, so we can stop here.
+            return None
+        if self.animation:
+            new_wand = library.MagickCoalesceImages(self.wand)
+            length = len(self.sequence)
+            for i in xrange(length):
+                library.MagickSetIteratorIndex(new_wand, i)
+                if i:
+                    library.MagickAddImage(
+                        new_wand,
+                        library.MagickTransformImage(new_wand, crop, resize)
+                    )
+                else:
+                    new_wand = library.MagickTransformImage(new_wand,
+                                                            crop,
+                                                            resize)
+            self.sequence.instances = []
+        else:
+            new_wand = library.MagickTransformImage(self.wand, crop, resize)
+        if not new_wand:
+            self.raise_exception()
+        self.wand = new_wand
+
+    @manipulative
     def transform_colorspace(self, colorspace_type):
         """Transform image's colorspace.
 
@@ -3143,20 +3013,150 @@ class BaseImage(Resource):
         if not r:
             self.raise_exception()
 
-    def __repr__(self, extra_format=' ({self.width}x{self.height})'):
-        cls = type(self)
-        typename = '{0}.{1}'.format(
-            cls.__module__,
-            getattr(cls, '__qualname__', cls.__name__)
-        )
-        if getattr(self, 'c_resource', None) is None:
-            return '<{0}: (closed)>'.format(typename)
-        sig = self.signature
-        if not sig:
-            return '<{0}: (empty)>'.format(typename)
-        return '<{0}: {1}{2}>'.format(
-            typename, sig[:7], extra_format.format(self=self)
-        )
+    @manipulative
+    def transparent_color(self, color, alpha, fuzz=0, invert=False):
+        """Makes the color ``color`` a transparent color with a tolerance of
+        fuzz. The ``alpha`` parameter specify the transparency level and the
+        parameter ``fuzz`` specify the tolerance.
+
+        :param color: The color that should be made transparent on the image,
+                      color object
+        :type color: :class:`wand.color.Color`
+        :param alpha: the level of transparency: 1.0 is fully opaque
+                      and 0.0 is fully transparent.
+        :type alpha: :class:`numbers.Real`
+        :param fuzz: By default target must match a particular pixel color
+                     exactly. However, in many cases two colors may differ
+                     by a small amount. The fuzz member of image defines how
+                     much tolerance is acceptable to consider two colors as the
+                     same. For example, set fuzz to 10 and the color red at
+                     intensities of 100 and 102 respectively are now
+                     interpreted as the same color for the color.
+        :type fuzz: :class:`numbers.Integral`
+        :param invert: Boolean to tell to paint the inverse selection.
+        :type invert: :class:`bool`
+
+        .. versionadded:: 0.3.0
+
+        """
+        if not isinstance(alpha, numbers.Real):
+            raise TypeError('alpha must be an float, not ' + repr(alpha))
+        elif not isinstance(fuzz, numbers.Integral):
+            raise TypeError('fuzz must be an integer, not ' + repr(fuzz))
+        elif not isinstance(color, Color):
+            raise TypeError('color must be a wand.color.Color object, not ' +
+                            repr(color))
+        library.MagickTransparentPaintImage(self.wand, color.resource,
+                                            alpha, fuzz, invert)
+        self.raise_exception()
+
+    @manipulative
+    def transparentize(self, transparency):
+        """Makes the image transparent by subtracting some percentage of
+        the black color channel.  The ``transparency`` parameter specifies the
+        percentage.
+
+        :param transparency: the percentage fade that should be performed on
+                             the image, from 0.0 to 1.0
+        :type transparency: :class:`numbers.Real`
+
+        .. versionadded:: 0.2.0
+
+        """
+        if transparency:
+            t = ctypes.c_double(float(self.quantum_range *
+                                      float(transparency)))
+            if t.value > self.quantum_range or t.value < 0:
+                raise ValueError('transparency must be a numbers.Real value ' +
+                                 'between 0.0 and 1.0')
+            # Set the wand to image zero, in case there are multiple images
+            # in it
+            library.MagickSetIteratorIndex(self.wand, 0)
+            # Change the pixel representation of the image
+            # to RGB with an alpha channel
+            if MAGICK_VERSION_NUMBER < 0x700:
+                image_type = 'truecolormatte'
+            else:
+                image_type = 'truecoloralpha'
+            library.MagickSetImageType(self.wand,
+                                       IMAGE_TYPES.index(image_type))
+            # Perform the black channel subtraction
+            self.evaluate(operator='subtract',
+                          value=t.value,
+                          channel='opacity')
+            self.raise_exception()
+
+    @manipulative
+    def unsharp_mask(self, radius, sigma, amount, threshold):
+        """Sharpens the image using unsharp mask filter. We convolve the image
+        with a Gaussian operator of the given ``radius`` and standard deviation
+        (``sigma``). For reasonable results, ``radius`` should be larger than
+        ``sigma``. Use a radius of 0 and :meth:`unsharp_mask()` selects
+        a suitable radius for you.
+
+        :param radius: the radius of the Gaussian, in pixels,
+                       not counting the center pixel
+        :type radius: :class:`numbers.Real`
+        :param sigma: the standard deviation of the Gaussian, in pixels
+        :type sigma: :class:`numbers.Real`
+        :param amount: the percentage of the difference between the original
+                       and the blur image that is added back into the original
+        :type amount: :class:`numbers.Real`
+        :param threshold: the threshold in pixels needed to apply
+                          the diffence amount
+        :type threshold: :class:`numbers.Real`
+
+        .. versionadded:: 0.3.4
+
+        """
+        if not isinstance(radius, numbers.Real):
+            raise TypeError('radius has to be a numbers.Real, not ' +
+                            repr(radius))
+        elif not isinstance(sigma, numbers.Real):
+            raise TypeError('sigma has to be a numbers.Real, not ' +
+                            repr(sigma))
+        elif not isinstance(amount, numbers.Real):
+            raise TypeError('amount has to be a numbers.Real, not ' +
+                            repr(amount))
+        elif not isinstance(threshold, numbers.Real):
+            raise TypeError('threshold has to be a numbers.Real, not ' +
+                            repr(threshold))
+        r = library.MagickUnsharpMaskImage(self.wand, radius, sigma,
+                                           amount, threshold)
+        if not r:
+            self.raise_exception()
+
+    @manipulative
+    def watermark(self, image, transparency=0.0, left=0, top=0):
+        """Transparentized the supplied ``image`` and places it over the
+        current image, with the top left corner of ``image`` at coordinates
+        ``left``, ``top`` of the current image.  The dimensions of the
+        current image are not changed.
+
+        :param image: the image placed over the current image
+        :type image: :class:`wand.image.Image`
+        :param transparency: the percentage fade that should be performed on
+                             the image, from 0.0 to 1.0
+        :type transparency: :class:`numbers.Real`
+        :param left: the x-coordinate where `image` will be placed
+        :type left: :class:`numbers.Integral`
+        :param top: the y-coordinate where `image` will be placed
+        :type top: :class:`numbers.Integral`
+
+        .. versionadded:: 0.2.0
+
+        """
+        with image.clone() as watermark_image:
+            if MAGICK_VERSION_NUMBER >= 0x700 and transparency:
+                # With IM7, evaluation returns signed values that can
+                # cause composite issues.
+                expression = 'max(0, u - {0:g})'.format(transparency)
+                with watermark_image.fx(expression, channel='alpha') as fx:
+                    self.composite(fx, left=left, top=top)
+            else:
+                watermark_image.transparentize(transparency)
+                self.composite(watermark_image, left=left, top=top)
+        self.raise_exception()
 
 
 class Image(BaseImage):
