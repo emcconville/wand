@@ -183,15 +183,6 @@ class Drawing(Resource):
                 wand = library.CloneDrawingWand(drawing.resource)
             self.resource = wand
 
-    def clone(self):
-        """Copies a drawing object.
-
-        :returns: a duplication
-        :rtype: :class:`Drawing`
-
-        """
-        return type(self)(drawing=self)
-
     @property
     def border_color(self):
         """(:class:`~wand.color.Color`) the current border color. It also can
@@ -915,32 +906,6 @@ class Drawing(Resource):
             if okay == 0:
                 raise ValueError("Vector graphic not understood.")
 
-    def clear(self):
-        library.ClearDrawingWand(self.resource)
-
-    def draw(self, image):
-        """Renders the current drawing into the ``image``.  You can simply
-        call :class:`Drawing` instance rather than calling this method.
-        That means the following code which calls :class:`Drawing` object
-        itself::
-
-            drawing(image)
-
-        is equivalent to the following code which calls :meth:`draw()` method::
-
-            drawing.draw(image)
-
-        :param image: the image to be drawn
-        :type image: :class:`~wand.image.Image`
-
-        """
-        if not isinstance(image, Image):
-            raise TypeError('image must be a wand.image.Image instance, not ' +
-                            repr(image))
-        res = library.MagickDrawImage(image.wand, self.resource)
-        if not res:
-            self.raise_exception()
-
     def affine(self, matrix):
         """Adjusts the current affine transformation matrix with the specified
         affine transformation matrix. Note that the current affine transform is
@@ -1034,6 +999,37 @@ class Drawing(Resource):
                         float(end_x), float(end_y),
                         float(degree_start), float(degree_end))
 
+    def bezier(self, points=None):
+        """Draws a bezier curve through a set of points on the image, using
+        the specified array of coordinates.
+
+        At least four points should be given to complete a bezier path.
+        The first & forth point being the start & end point, and the second
+        & third point controlling the direction & curve.
+
+        Example bezier on ``image`` ::
+
+            with Drawing() as draw:
+                points = [(40,10), # Start point
+                          (20,50), # First control
+                          (90,10), # Second control
+                          (70,40)] # End point
+                draw.stroke_color = Color('#000')
+                draw.fill_color = Color('#fff')
+                draw.bezier(points)
+                draw.draw(image)
+
+        :param points: list of x,y tuples
+        :type points: :class:`list`
+
+        .. versionadded:: 0.4.0
+
+        """
+
+        (points_l, points_p) = _list_to_point_info(points)
+        library.DrawBezier(self.resource, points_l,
+                           ctypes.cast(points_p, ctypes.POINTER(PointInfo)))
+
     def circle(self, origin, perimeter):
         """Draws a circle from ``origin`` to ``perimeter``
 
@@ -1052,6 +1048,18 @@ class Drawing(Resource):
         library.DrawCircle(self.resource,
                            float(origin_x), float(origin_y),  # origin
                            float(perimeter_x), float(perimeter_y))  # perimeter
+
+    def clear(self):
+        library.ClearDrawingWand(self.resource)
+
+    def clone(self):
+        """Copies a drawing object.
+
+        :returns: a duplication
+        :rtype: :class:`Drawing`
+
+        """
+        return type(self)(drawing=self)
 
     def color(self, x=None, y=None, paint_method='undefined'):
         """Draws a color on the image using current fill color, starting
@@ -1140,6 +1148,29 @@ class Drawing(Resource):
         if okay == 0:
             self.raise_exception()
 
+    def draw(self, image):
+        """Renders the current drawing into the ``image``.  You can simply
+        call :class:`Drawing` instance rather than calling this method.
+        That means the following code which calls :class:`Drawing` object
+        itself::
+
+            drawing(image)
+
+        is equivalent to the following code which calls :meth:`draw()` method::
+
+            drawing.draw(image)
+
+        :param image: the image to be drawn
+        :type image: :class:`~wand.image.Image`
+
+        """
+        if not isinstance(image, Image):
+            raise TypeError('image must be a wand.image.Image instance, not ' +
+                            repr(image))
+        res = library.MagickDrawImage(image.wand, self.resource)
+        if not res:
+            self.raise_exception()
+
     def ellipse(self, origin, radius, rotation=(0, 360)):
         """Draws a ellipse at ``origin`` with independent x & y ``radius``.
         Ellipse can be partial by setting start & end ``rotation``.
@@ -1165,6 +1196,35 @@ class Drawing(Resource):
                             float(origin_x), float(origin_y),  # origin
                             float(radius_x), float(radius_y),  # radius
                             float(rotation_start), float(rotation_end))
+
+    def get_font_metrics(self, image, text, multiline=False):
+        """Queries font metrics from the given ``text``.
+
+        :param image: the image to be drawn
+        :type image: :class:`~wand.image.Image`
+        :param text: the text string for get font metrics.
+        :type text: :class:`basestring`
+        :param multiline: text is multiline or not
+        :type multiline: `boolean`
+
+        """
+        if not isinstance(image, Image):
+            raise TypeError('image must be a wand.image.Image instance, not ' +
+                            repr(image))
+        if not isinstance(text, string_type):
+            raise TypeError('text must be a string, not ' + repr(text))
+        if multiline:
+            font_metrics_f = library.MagickQueryMultilineFontMetrics
+        else:
+            font_metrics_f = library.MagickQueryFontMetrics
+        if isinstance(text, text_type):
+            if self.text_encoding:
+                text = text.encode(self.text_encoding)
+            else:
+                text = binary(text)
+        result = font_metrics_f(image.wand, self.resource, text)
+        args = (result[i] for i in xrange(13))
+        return FontMetrics(*args)
 
     def line(self, start, end):
         """Draws a line ``start`` to ``end``.
@@ -1403,31 +1463,6 @@ class Drawing(Resource):
         library.DrawPathFinish(self.resource)
         return self
 
-    def path_line(self, to=None, relative=False):
-        """Draws a line path from the current point to the given ``to``
-        coordinate. The ``to`` coordinates can be relative, or absolute, to the
-        current point by setting the ``relative`` flag. The coordinate then
-        becomes the new current point.
-
-        :param to: (:class:`~numbers.Real`, :class:`numbers.Real`)
-                      pair which represents coordinates to draw to.
-        :type to: :class:`collections.Sequence`
-        :param relative: :class:`bool`
-                    treat given coordinates as relative to current point
-        :type relative: :class:`bool`
-
-        .. versionadded:: 0.4.0
-
-        """
-        if to is None:
-            raise TypeError('to is missing')
-        x, y = to
-        if relative:
-            library.DrawPathLineToRelative(self.resource, float(x), float(y))
-        else:
-            library.DrawPathLineToAbsolute(self.resource, float(x), float(y))
-        return self
-
     def path_horizontal_line(self, x=None, relative=False):
         """Draws a horizontal line path from the current point to the target
         point. Given ``x`` parameter can be relative, or absolute, to the
@@ -1452,28 +1487,29 @@ class Drawing(Resource):
             library.DrawPathLineToHorizontalAbsolute(self.resource, float(x))
         return self
 
-    def path_vertical_line(self, y=None, relative=False):
-        """Draws a vertical line path from the current point to the target
-        point. Given ``y`` parameter can be relative, or absolute, to the
-        current point by setting the ``relative`` flag. The target point then
+    def path_line(self, to=None, relative=False):
+        """Draws a line path from the current point to the given ``to``
+        coordinate. The ``to`` coordinates can be relative, or absolute, to the
+        current point by setting the ``relative`` flag. The coordinate then
         becomes the new current point.
 
-        :param y: :class:`~numbers.Real`
-                      y-axis point to draw to.
-        :type y: :class:`~numbers.Real`
+        :param to: (:class:`~numbers.Real`, :class:`numbers.Real`)
+                      pair which represents coordinates to draw to.
+        :type to: :class:`collections.Sequence`
         :param relative: :class:`bool`
-                    treat given point as relative to current point
+                    treat given coordinates as relative to current point
         :type relative: :class:`bool`
 
         .. versionadded:: 0.4.0
 
         """
-        if y is None:
-            raise TypeError('y is missing')
+        if to is None:
+            raise TypeError('to is missing')
+        x, y = to
         if relative:
-            library.DrawPathLineToVerticalRelative(self.resource, float(y))
+            library.DrawPathLineToRelative(self.resource, float(x), float(y))
         else:
-            library.DrawPathLineToVerticalAbsolute(self.resource, float(y))
+            library.DrawPathLineToAbsolute(self.resource, float(x), float(y))
         return self
 
     def path_move(self, to=None, relative=False):
@@ -1512,6 +1548,72 @@ class Drawing(Resource):
         """
         library.DrawPathStart(self.resource)
         return self
+
+    def path_vertical_line(self, y=None, relative=False):
+        """Draws a vertical line path from the current point to the target
+        point. Given ``y`` parameter can be relative, or absolute, to the
+        current point by setting the ``relative`` flag. The target point then
+        becomes the new current point.
+
+        :param y: :class:`~numbers.Real`
+                      y-axis point to draw to.
+        :type y: :class:`~numbers.Real`
+        :param relative: :class:`bool`
+                    treat given point as relative to current point
+        :type relative: :class:`bool`
+
+        .. versionadded:: 0.4.0
+
+        """
+        if y is None:
+            raise TypeError('y is missing')
+        if relative:
+            library.DrawPathLineToVerticalRelative(self.resource, float(y))
+        else:
+            library.DrawPathLineToVerticalAbsolute(self.resource, float(y))
+        return self
+
+    def polygon(self, points=None):
+        """Draws a polygon using the current :attr:`stoke_color`,
+        :attr:`stroke_width`, and :attr:`fill_color`, using the specified
+        array of coordinates.
+
+        Example polygon on ``image`` ::
+
+            with Drawing() as draw:
+                points = [(40,10), (20,50), (90,10), (70,40)]
+                draw.polygon(points)
+                draw.draw(image)
+
+        :param points: list of x,y tuples
+        :type points: :class:`list`
+
+        .. versionadded:: 0.4.0
+
+        """
+
+        (points_l, points_p) = _list_to_point_info(points)
+        library.DrawPolygon(self.resource, points_l,
+                            ctypes.cast(points_p, ctypes.POINTER(PointInfo)))
+
+    def polyline(self, points=None):
+        """Draws a polyline using the current :attr:`stoke_color`,
+        :attr:`stroke_width`, and :attr:`fill_color`, using the specified
+        array of coordinates.
+
+        Identical to :class:`~wand.drawing.Drawing.polygon`, but without closed
+        stroke line.
+
+        :param points: list of x,y tuples
+        :type points: :class:`list`
+
+        .. versionadded:: 0.4.0
+
+        """
+
+        (points_l, points_p) = _list_to_point_info(points)
+        library.DrawPolyline(self.resource, points_l,
+                             ctypes.cast(points_p, ctypes.POINTER(PointInfo)))
 
     def point(self, x, y):
         """Draws a point at given ``x`` and ``y``
@@ -1816,113 +1918,6 @@ class Drawing(Resource):
         """
         library.DrawRotate(self.resource, float(degree))
 
-    def polygon(self, points=None):
-        """Draws a polygon using the current :attr:`stoke_color`,
-        :attr:`stroke_width`, and :attr:`fill_color`, using the specified
-        array of coordinates.
-
-        Example polygon on ``image`` ::
-
-            with Drawing() as draw:
-                points = [(40,10), (20,50), (90,10), (70,40)]
-                draw.polygon(points)
-                draw.draw(image)
-
-        :param points: list of x,y tuples
-        :type points: :class:`list`
-
-        .. versionadded:: 0.4.0
-
-        """
-
-        (points_l, points_p) = _list_to_point_info(points)
-        library.DrawPolygon(self.resource, points_l,
-                            ctypes.cast(points_p, ctypes.POINTER(PointInfo)))
-
-    def polyline(self, points=None):
-        """Draws a polyline using the current :attr:`stoke_color`,
-        :attr:`stroke_width`, and :attr:`fill_color`, using the specified
-        array of coordinates.
-
-        Identical to :class:`~wand.drawing.Drawing.polygon`, but without closed
-        stroke line.
-
-        :param points: list of x,y tuples
-        :type points: :class:`list`
-
-        .. versionadded:: 0.4.0
-
-        """
-
-        (points_l, points_p) = _list_to_point_info(points)
-        library.DrawPolyline(self.resource, points_l,
-                             ctypes.cast(points_p, ctypes.POINTER(PointInfo)))
-
-    def bezier(self, points=None):
-        """Draws a bezier curve through a set of points on the image, using
-        the specified array of coordinates.
-
-        At least four points should be given to complete a bezier path.
-        The first & forth point being the start & end point, and the second
-        & third point controlling the direction & curve.
-
-        Example bezier on ``image`` ::
-
-            with Drawing() as draw:
-                points = [(40,10), # Start point
-                          (20,50), # First control
-                          (90,10), # Second control
-                          (70,40)] # End point
-                draw.stroke_color = Color('#000')
-                draw.fill_color = Color('#fff')
-                draw.bezier(points)
-                draw.draw(image)
-
-        :param points: list of x,y tuples
-        :type points: :class:`list`
-
-        .. versionadded:: 0.4.0
-
-        """
-
-        (points_l, points_p) = _list_to_point_info(points)
-        library.DrawBezier(self.resource, points_l,
-                           ctypes.cast(points_p, ctypes.POINTER(PointInfo)))
-
-    def text(self, x, y, body):
-        """Writes a text ``body`` into (``x``, ``y``).
-
-        :param x: the left offset where to start writing a text
-        :type x: :class:`numbers.Integral`
-        :param y: the baseline where to start writing text
-        :type y: :class:`numbers.Integral`
-        :param body: the body string to write
-        :type body: :class:`basestring`
-
-        """
-        if not isinstance(x, numbers.Integral) or x < 0:
-            exc = ValueError if x < 0 else TypeError
-            raise exc('x must be a natural number, not ' + repr(x))
-        elif not isinstance(y, numbers.Integral) or y < 0:
-            exc = ValueError if y < 0 else TypeError
-            raise exc('y must be a natural number, not ' + repr(y))
-        elif not isinstance(body, string_type):
-            raise TypeError('body must be a string, not ' + repr(body))
-        elif not body:
-            raise ValueError('body string cannot be empty')
-        if isinstance(body, text_type):
-            # According to ImageMagick C API docs, we can use only UTF-8
-            # at this time, so we do hardcoding here.
-            # http://imagemagick.org/api/drawing-wand.php#DrawSetTextEncoding
-            if not self.text_encoding:
-                self.text_encoding = 'UTF-8'
-            body = body.encode(self.text_encoding)
-        body_p = ctypes.create_string_buffer(body)
-        library.DrawAnnotation(
-            self.resource, x, y,
-            ctypes.cast(body_p, ctypes.POINTER(ctypes.c_ubyte))
-        )
-
     def scale(self, x=None, y=None):
         """
         Adjusts the scaling factor to apply in the horizontal and vertical
@@ -2003,6 +1998,40 @@ class Drawing(Resource):
         if y is not None:
             library.DrawSkewY(self.resource, float(y))
 
+    def text(self, x, y, body):
+        """Writes a text ``body`` into (``x``, ``y``).
+
+        :param x: the left offset where to start writing a text
+        :type x: :class:`numbers.Integral`
+        :param y: the baseline where to start writing text
+        :type y: :class:`numbers.Integral`
+        :param body: the body string to write
+        :type body: :class:`basestring`
+
+        """
+        if not isinstance(x, numbers.Integral) or x < 0:
+            exc = ValueError if x < 0 else TypeError
+            raise exc('x must be a natural number, not ' + repr(x))
+        elif not isinstance(y, numbers.Integral) or y < 0:
+            exc = ValueError if y < 0 else TypeError
+            raise exc('y must be a natural number, not ' + repr(y))
+        elif not isinstance(body, string_type):
+            raise TypeError('body must be a string, not ' + repr(body))
+        elif not body:
+            raise ValueError('body string cannot be empty')
+        if isinstance(body, text_type):
+            # According to ImageMagick C API docs, we can use only UTF-8
+            # at this time, so we do hardcoding here.
+            # http://imagemagick.org/api/drawing-wand.php#DrawSetTextEncoding
+            if not self.text_encoding:
+                self.text_encoding = 'UTF-8'
+            body = body.encode(self.text_encoding)
+        body_p = ctypes.create_string_buffer(body)
+        library.DrawAnnotation(
+            self.resource, x, y,
+            ctypes.cast(body_p, ctypes.POINTER(ctypes.c_ubyte))
+        )
+
     def translate(self, x=None, y=None):
         """Applies a translation to the current coordinate system which moves
         the coordinate system origin to the specified coordinate.
@@ -2017,35 +2046,6 @@ class Drawing(Resource):
         if x is None or y is None:
             raise TypeError('Both x & y coordinates need to be defined')
         library.DrawTranslate(self.resource, float(x), float(y))
-
-    def get_font_metrics(self, image, text, multiline=False):
-        """Queries font metrics from the given ``text``.
-
-        :param image: the image to be drawn
-        :type image: :class:`~wand.image.Image`
-        :param text: the text string for get font metrics.
-        :type text: :class:`basestring`
-        :param multiline: text is multiline or not
-        :type multiline: `boolean`
-
-        """
-        if not isinstance(image, Image):
-            raise TypeError('image must be a wand.image.Image instance, not ' +
-                            repr(image))
-        if not isinstance(text, string_type):
-            raise TypeError('text must be a string, not ' + repr(text))
-        if multiline:
-            font_metrics_f = library.MagickQueryMultilineFontMetrics
-        else:
-            font_metrics_f = library.MagickQueryFontMetrics
-        if isinstance(text, text_type):
-            if self.text_encoding:
-                text = text.encode(self.text_encoding)
-            else:
-                text = binary(text)
-        result = font_metrics_f(image.wand, self.resource, text)
-        args = (result[i] for i in xrange(13))
-        return FontMetrics(*args)
 
     def viewbox(self, left, top, right, bottom):
         """Viewbox sets the overall canvas size to be recorded with the drawing
@@ -2100,7 +2100,7 @@ def _list_to_point_info(points):
     point_info_size = point_length * tuple_size
     # Allocate sequence of memory
     point_info = (ctypes.c_double * point_info_size)()
-    for double_index in xrange(0, point_info_size):
+    for double_index in range(point_info_size):
         tuple_index = double_index // tuple_size
         tuple_offset = double_index % tuple_size
         point_info[double_index] = ctypes.c_double(
