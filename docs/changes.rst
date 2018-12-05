@@ -26,6 +26,22 @@ To be released.
     - Added :meth:`Image.coalesce() <wand.image.BaseImage.coalesce>` method.
 - Added :meth:`Image.append() <wand.image.BaseImage.append>` method. [:issue:`177`]
 - Implemented :meth:`__array_interface__` for NumPy [:issue:`65`]
+- Migrated the following methods & attributes from :class:`Image <wand.image.Image>`
+  to :class:`BaseImage <wand.image.BaseImage>` for a more uniformed code-base.
+
+    - :attr:`Image.compression <wand.image.BaseImage.compression>`
+    - :attr:`Image.format <wand.image.BaseImage.format>`
+    - :meth:`Image.auto_orient() <wand.image.BaseImage.auto_orient>`
+    - :meth:`Image.border() <wand.image.BaseImage.border>`
+    - :meth:`Image.contrast_stretch() <wand.image.BaseImage.contrast_stretch>`
+    - :meth:`Image.gamma() <wand.image.BaseImage.gamma>`
+    - :meth:`Image.level() <wand.image.BaseImage.level>`
+    - :meth:`Image.linear_stretch() <wand.image.BaseImage.linear_stretch>`
+    - :meth:`Image.normalize() <wand.image.BaseImage.normalize>`
+    - :meth:`Image.strip() <wand.image.BaseImage.strip>`
+    - :meth:`Image.transpose() <wand.image.BaseImage.transpose>`
+    - :meth:`Image.transverse() <wand.image.BaseImage.transverse>`
+    - :meth:`Image.trim() <wand.image.BaseImage.trim>`
 
 0.4 series
 ~~~~~~~~~~
@@ -130,9 +146,9 @@ Released on August 3, 2015.
 - Added :attr:`Image.matte_color <wand.image.BaseImage.matte_color>` property.
 - Added :attr:`Image.virtual_pixel <wand.image.BaseImage.virtual_pixel>` property.
 - Added :meth:`Image.distort() <wand.image.BaseImage.distort>` method.
-- Added :meth:`Image.contrast_stretch() <wand.image.Image.contrast_stretch>` method.
-- Added :meth:`Image.gamma() <wand.image.Image.gamma>` method.
-- Added :meth:`Image.linear_stretch() <wand.image.Image.linear_stretch>` method.
+- Added :meth:`Image.contrast_stretch() <wand.image.BaseImage.contrast_stretch>` method.
+- Added :meth:`Image.gamma() <wand.image.BaseImage.gamma>` method.
+- Added :meth:`Image.linear_stretch() <wand.image.BaseImage.linear_stretch>` method.
 - Additional support for :attr:`Image.alpha_channel <wand.image.BaseImage.alpha_channel>`.
 - Additional query functions have been added to :mod:`wand.version` API. [:issue:`120`]
 
@@ -288,7 +304,7 @@ Released on March 23, 2014.
 
 - Added :meth:`Drawing.rectangle() <wand.drawing.Drawing.rectangle>` method.
   :ref:`Now you can draw rectangles. <draw-rectangles>` [:issue:`159`]
-- Added :attr:`Image.compression <wand.image.Image.compression>` property.
+- Added :attr:`Image.compression <wand.image.BaseImage.compression>` property.
   [:issue:`171`]
 - Added :func:`contextlib.nested()` function to :mod:`wand.compat` module.
 - Fixed :exc:`UnicodeEncodeError` when :meth:`Drawing.text()
@@ -303,7 +319,7 @@ Version 0.3.5
 
 Released on September 13, 2013.
 
-- Fix segmentation fault on :meth:`Image.save() <wand.image.save>` method.
+- Fix segmentation fault on :meth:`Image.save() <wand.image.Image.save>` method.
   [:issue:`150`]
 
 
@@ -399,8 +415,8 @@ Released on June 17, 2013.
 - Added :meth:`Image.caption() <wand.image.BaseImage.caption>` method.
   [:issue:`74` by Cha, Hojeong]
 - Added optional ``color`` parameter to :meth:`Image.trim()
-  <wand.image.Image.trim>` method.
-- Added :meth:`Image.border() <wand.image.Image.border>` method.
+  <wand.image.BaseImage.trim>` method.
+- Added :meth:`Image.border() <wand.image.BaseImage.border>` method.
   [:commit:`2496d37f75d75e9425f95dde07033217dc8afefc` by Jae-Myoung Yu]
 - Added ``resolution`` parameter to :meth:`Image.read() <wand.image.Image.read>`
   method and the constructor of :class:`~wand.image.Image`.
@@ -445,7 +461,7 @@ Released on June 17, 2013.
   - :attr:`~wand.color.Color.blue_int8`
   - :attr:`~wand.color.Color.alpha_int8`
 
-- Added :meth:`Image.normalize() <wand.image.Image.normalize>` method.
+- Added :meth:`Image.normalize() <wand.image.BaseImage.normalize>` method.
   [:issue:`95` by Michael Curry]
 - Added :meth:`Image.transparent_color()
   <wand.image.BaseImage.transparent_color>` method.
@@ -465,7 +481,7 @@ Released on June 17, 2013.
 - :class:`~wand.image.Image` has :attr:`~wand.image.BaseImage.histogram`
   dictionary.
 - Added optional ``fuzz`` parameter to :meth:`Image.trim()
-  <wand.image.Image.trim>` method.  [:issue:`113` by Evaldo Junior]
+  <wand.image.BaseImage.trim>` method.  [:issue:`113` by Evaldo Junior]
 
 __ http://en.wikipedia.org/wiki/Seam_carving
 
@@ -494,15 +510,15 @@ Version 0.2.3
 Released on January 25, 2013.
 
 - Fixed a bug that :meth:`Image.transparentize()
-  <wand.image.Image.transparentize>` method (and :meth:`Image.watermark()
-  <wand.image.Image.watermark>` method which internally uses it) didn't
+  <wand.image.BaseImage.transparentize>` method (and :meth:`Image.watermark()
+  <wand.image.BaseImage.watermark>` method which internally uses it) didn't
   work.
 - Fixed segmentation fault occurred when :attr:`Color.red
   <wand.color.Color.red>`, :attr:`Color.green <wand.color.Color.green>`,
-  or :attr:`Color.blue <Wand.color.Color.blue>` is accessed.
+  or :attr:`Color.blue <wand.color.Color.blue>` is accessed.
 - Added :attr:`Color.alpha <wand.color.Color.alpha>` property.
 - Fixed a bug that format converting using :attr:`Image.format
-  <wand.image.Image.format>` property or :meth:`Image.convert()
+  <wand.image.BaseImage.format>` property or :meth:`Image.convert()
   <wand.image.Image.convert>` method doesn't correctly work
   to save blob.
 
@@ -517,16 +533,16 @@ Released on September 24, 2012.
 - Now :class:`~wand.image.Image` can be instantiated without any opening.
   Instead, it can take ``width``/``height`` and ``background``.
   [:issue:`53` by Michael Elovskikh]
-- Added :meth:`Image.transform() <wand.image.Image.transform>` method
+- Added :meth:`Image.transform() <wand.image.BaseImage.transform>` method
   which is a convenience method accepting geometry strings to perform
   cropping and resizing.
   [:issue:`50` by Mitch Lindgren]
-- Added :attr:`Image.units <wand.image.Image.units>` property.
+- Added :attr:`Image.units <wand.image.BaseImage.units>` property.
   [:issue:`45` by Piotr Florczyk]
-- Now :meth:`Image.resize() <wand.image.Image.resize>` method raises
+- Now :meth:`Image.resize() <wand.image.BaseImage.resize>` method raises
   a proper error when it fails for any reason.
   [:issue:`41` by Piotr Florczyk]
-- Added :attr:`Image.type <wand.image.Image.type>` property.
+- Added :attr:`Image.type <wand.image.BaseImage.type>` property.
   [:issue:`33` by Yauhen Yakimovich, :issue:`42` by Piotr Florczyk]
 
 __ http://olivier-freebsd-ports.googlecode.com/hg-history/efb852a5572/graphics/py-wand/files/patch-wand_api.py
@@ -537,19 +553,19 @@ Version 0.2.1
 
 Released on August 19, 2012.  Beta version.
 
-- Added :meth:`Image.trim() <wand.image.Image.trim>` method.
+- Added :meth:`Image.trim() <wand.image.BaseImage.trim>` method.
   [:issue:`26` by Jökull Sólberg Auðunsson]
 
-- Added :attr:`Image.depth <wand.image.Image.depth>` property.
+- Added :attr:`Image.depth <wand.image.BaseImage.depth>` property.
   [:issue:`31` by Piotr Florczyk]
 
 - Now :class:`~wand.image.Image` can take an optional ``format`` hint.
   [:issue:`32` by Michael Elovskikh]
 
-- Added :attr:`Image.alpha_channel <wand.image.Image.alpha_channel>`
+- Added :attr:`Image.alpha_channel <wand.image.BaseImage.alpha_channel>`
   property.  [:issue:`35` by Piotr Florczyk]
 
-- The default value of :meth:`Image.resize() <wand.image.Image.resize>`'s
+- The default value of :meth:`Image.resize() <wand.image.BaseImage.resize>`'s
   ``filter`` option has changed from ``'triangle'`` to ``'undefined'``.
   [:issue:`37` by Piotr Florczyk]
 
@@ -569,20 +585,20 @@ Version 0.2.0
 
 Released on June 20, 2012.  Alpha version.
 
-- Added :meth:`Image.transparentize() <wand.image.Image.transparentize>` method.
+- Added :meth:`Image.transparentize() <wand.image.BaseImage.transparentize>` method.
   [:issue:`19` by Jeremy Axmacher]
-- Added :meth:`Image.composite() <wand.image.Image.composite>` method.
+- Added :meth:`Image.composite() <wand.image.BaseImage.composite>` method.
   [:issue:`19` by Jeremy Axmacher]
-- Added :meth:`Image.watermark() <wand.image.Image.watermark>` method.
+- Added :meth:`Image.watermark() <wand.image.BaseImage.watermark>` method.
   [:issue:`19` by Jeremy Axmacher]
-- Added :attr:`Image.quantum_range <wand.image.Image.quantum_range>` property.
+- Added :attr:`Image.quantum_range <wand.image.BaseImage.quantum_range>` property.
   [:issue:`19` by Jeremy Axmacher]
-- Added :meth:`Image.reset_coords() <wand.image.Image.reset_coords>` method
+- Added :meth:`Image.reset_coords() <wand.image.BaseImage.reset_coords>` method
   and ``reset_coords`` option to :meth:`Image.rotate()
-  <wand.image.Image.rotate>` method. [:issue:`20` by Juan Pablo Scaletti]
-- Added :meth:`Image.strip() <wand.image.Image.strip>` method.
+  <wand.image.BaseImage.rotate>` method. [:issue:`20` by Juan Pablo Scaletti]
+- Added :meth:`Image.strip() <wand.image.BaseImage.strip>` method.
   [:issue:`23` by Dmitry Vukolov]
-- Added :attr:`Image.compression_quality <wand.image.Image.compression_quality>`
+- Added :attr:`Image.compression_quality <wand.image.BaseImage.compression_quality>`
   property.  [:issue:`23` by Dmitry Vukolov]
 - Now the current version can be found from the command line interface:
   ``python -m wand.version``.
@@ -614,11 +630,11 @@ Released on December 23, 2011. Still alpha version.
 
 - Now :const:`wand.version.VERSION_INFO` becomes :class:`tuple` and
   :const:`wand.version.VERSION` becomes a string.
-- Added :attr:`Image.background_color <wand.image.Image.background_color>`
+- Added :attr:`Image.background_color <wand.image.BaseImage.background_color>`
   property.
 - Added ``==`` operator for :class:`~wand.image.Image` type.
 - Added :func:`hash()` support of :class:`~wand.image.Image` type.
-- Added :attr:`Image.signature <wand.image.Image.signature>` property.
+- Added :attr:`Image.signature <wand.image.BaseImage.signature>` property.
 - Added :mod:`wand.display` module.
 - Changed the theme of Sphinx documentation.
 - Changed the start example of the documentation.
@@ -630,16 +646,16 @@ Released on December 2, 2011. Still alpha version.
 
 - Wrote some guide documentations: :doc:`guide/read`, :doc:`guide/write` and
   :doc:`guide/resizecrop`.
-- Added :meth:`Image.rotate() <wand.image.Image.rotate>` method for in-place
+- Added :meth:`Image.rotate() <wand.image.BaseImage.rotate>` method for in-place
   rotation.
-- Made :meth:`Image.crop() <wand.image.Image.crop>` to raise proper
+- Made :meth:`Image.crop() <wand.image.BaseImage.crop>` to raise proper
   :exc:`ValueError` instead of :exc:`IndexError` for invalid width/height
   arguments.
-- Changed the type of :meth:`Image.resize() <wand.image.Image.resize()>`
+- Changed the type of :meth:`Image.resize() <wand.image.BaseImage.resize()>`
   method's ``blur`` parameter from :class:`numbers.Rational` to
   :class:`numbers.Real`.
 - Fixed a bug of raising :exc:`~exceptions.ValueError` when invalid ``filter``
-  has passed to :meth:`Image.resize() <wand.image.Image.resize>` method.
+  has passed to :meth:`Image.resize() <wand.image.BaseImage.resize>` method.
 
 Version 0.1.7
 -------------
@@ -647,7 +663,7 @@ Version 0.1.7
 Released on November 10, 2011. Still alpha version.
 
 - Added :attr:`Image.mimetype <wand.image.Image.mimetype>` property.
-- Added :meth:`Image.crop() <wand.image.Image.crop>` method for in-place
+- Added :meth:`Image.crop() <wand.image.BaseImage.crop>` method for in-place
   crop.
 
 Version 0.1.6
@@ -657,7 +673,7 @@ Released on October 31, 2011. Still alpha version.
 
 - Removed a side effect of :class:`Image.make_blob()
   <wand.image.Image.make_blob>` method that changes the image format silently.
-- Added :attr:`Image.format <wand.image.Image.format>` property.
+- Added :attr:`Image.format <wand.image.BaseImage.format>` property.
 - Added :meth:`Image.convert() <wand.image.Image.convert>` method.
 - Fixed a bug about Python 2.6 compatibility.
 - Use the internal representation of :c:type:`PixelWand` instead of
@@ -711,9 +727,9 @@ Released on October 4, 2011. Still alpha version.
 - Now it handles errors and warnings properly and in natural way of Python.
 - Added :meth:`Image.make_blob() <wand.image.Image.make_blob>` method.
 - Added ``blob`` parameter into :class:`~wand.image.Image` constructor.
-- Added :meth:`Image.resize() <wand.image.Image.resize>` method.
+- Added :meth:`Image.resize() <wand.image.BaseImage.resize>` method.
 - Added :meth:`Image.save() <wand.image.Image.save>` method.
-- Added :meth:`Image.clone() <wand.image.Image.clone>` method.
+- Added :meth:`Image.clone() <wand.image.BaseImage.clone>` method.
 - Drawed `the pretty logo picture <_static/wand.png>`_
   (thanks to `Hyojin Choi <http://me2day.net/crocodile>`_).
 
