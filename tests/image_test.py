@@ -2130,3 +2130,27 @@ def test_page_setter_items(fx_asset):
         assert img1.page == (6400, 4800, -12, 13)
         img1.page_y = -13
         assert img1.page == (6400, 4800, -12, -13)
+
+
+def test_export_pixels(fx_asset):
+    with Image(filename=str(fx_asset.join('pixels.png'))) as img:
+        data = img.export_pixels(x=0, y=0, width=4, height=1,
+                                 channel_map='RGBA', storage='char')
+        expected = [0xFF, 0x00, 0x00, 0xFF,
+                    0x00, 0xFF, 0x00, 0xFF,
+                    0x00, 0x00, 0xFF, 0xFF,
+                    0x00, 0x00, 0x00, 0x00]
+        assert data == expected
+
+
+def test_import_pixels(fx_asset):
+    data = [0xFF, 0x00, 0x00, 0xFF,
+            0x00, 0xFF, 0x00, 0xFF,
+            0x00, 0x00, 0xFF, 0xFF,
+            0x00, 0x00, 0x00, 0x00]
+    with Image(width=4, height=1, background=Color('BLACK')) as dst:
+        with Image(filename=str(fx_asset.join('pixels.png'))) as expected:
+            dst.import_pixels(x=0, y=0, width=4, height=1,
+                              channel_map='RGBA', storage='char',
+                              data=data)
+            assert dst.signature == expected.signature

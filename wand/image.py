@@ -32,7 +32,7 @@ __all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COLORSPACE_TYPES',
            'DISPOSE_TYPES', 'DISTORTION_METHODS', 'EVALUATE_OPS',
            'FILTER_TYPES', 'FUNCTION_TYPES', 'GRAVITY_TYPES',
            'IMAGE_LAYER_METHOD', 'IMAGE_TYPES', 'ORIENTATION_TYPES',
-           'VIRTUAL_PIXEL_METHOD', 'UNIT_TYPES',
+           'STORAGE_TYPES', 'VIRTUAL_PIXEL_METHOD', 'UNIT_TYPES',
            'BaseImage', 'ChannelDepthDict', 'ChannelImageDict',
            'ClosedImageError', 'HistogramDict', 'Image', 'ImageProperty',
            'Iterator', 'Metadata', 'OptionDict', 'manipulative',
@@ -648,6 +648,22 @@ OPTIONS = frozenset([
 ORIENTATION_TYPES = ('undefined', 'top_left', 'top_right', 'bottom_right',
                      'bottom_left', 'left_top', 'right_top', 'right_bottom',
                      'left_bottom')
+
+
+#: (:class:`tuple`) The list of pixel storage types.
+#:
+#: - ``'undefined'``
+#: - ``'char'``
+#: - ``'double'``
+#: - ``'float'``
+#: - ``'integer'``
+#: - ``'long'``
+#: - ``'quantum'``
+#: - ``'short'``
+#:
+#: - .. versionadded:: 0.5.0
+STORAGE_TYPES = ('undefined', 'char', 'double', 'float', 'integer',
+                 'long', 'quantum', 'short')
 
 
 #: (:class:`tuple`) The list of resolution unit types.
@@ -2257,6 +2273,111 @@ class BaseImage(Resource):
             library.MagickEvaluateImage(self.wand, idx_op, value)
         self.raise_exception()
 
+    def export_pixels(self, x=0, y=0, width=None, height=None,
+                      channel_map="RGBA", storage='char'):
+        """Export pixel data from a raster image to
+        a list of values.
+
+        The ``channel_map`` tells ImageMagick which color
+        channels to export, and what order they should be
+        written as -- per pixel. Valid entries for
+        ``channel_map`` are::
+
+        - ``'R'`` - Red channel
+        - ``'G'`` - Green channel
+        - ``'B'`` - Blue channel
+        - ``'A'`` - Alpha channel (``0`` is transparent)
+        - ``'O'`` - Alpha channel (``0`` is opaque)
+        - ``'C'`` - Cyan channel
+        - ``'Y'`` - Yellow channel
+        - ``'M'`` - Magenta channel
+        - ``'K'`` - Black channel
+        - ``'I'`` - Intensity channel (only for grayscale)
+        - ``'P'`` - Padding
+
+        See :const:`STORAGE_TYPES` for a list of valid
+        ``storage`` options. This tells ImageMagick
+        what type of data it should calculate & write to.
+        For example; a storage type of ``'char'`` will write
+        a 8-bit value between 0 ~ 255,  a storage type
+        of ``'short'`` will write a 16-bit value between
+        0 ~ 65535, and a ``'integer'`` will write a
+        32-bit value between 0 ~ 4294967295.
+
+        .. note::
+
+            By default, the entire image will be exported
+            as ``'char'`` storage with each pixel mapping
+            Red, Green, Blue, & Alpha channels.
+
+
+        :param x: horizontal starting coordinate of raster.
+        :type x: :class:`numbers.Integral`
+        :param y: vertical starting coordinate of raster.
+        :type y: :class:`numbers.Integral`
+        :param width: horizontal length of raster.
+        :type width: :class:`numbers.Integral`
+        :param height: vertical length of raster.
+        :type height: :class:`numbers.Integral`
+        :param channel_map: a string listing the channel data
+                            format for each pixel.
+        :type channel_map: :class:`basestring`
+        :param storage: what data type each value should
+                        be calculated as.
+        :type storage: :class:`basestring`
+        :returns: list of values.
+        :rtype: :class:`collections.Sequence`
+        .. versionadded:: 0.5.0
+        """
+        _w, _h = self.size
+        if width is None:
+            width = _w
+        if height is None:
+            height = _h
+        if not isinstance(x, numbers.Integral):
+            raise TypeError('expecting integer, not ' + repr(x))
+        if not isinstance(y, numbers.Integral):
+            raise TypeError('expecting integer, not ' + repr(y))
+        if not isinstance(width, numbers.Integral):
+            raise TypeError('expecting integer, not ' + repr(width))
+        if not isinstance(height, numbers.Integral):
+            raise TypeError('expecting integer, not ' + repr(height))
+        if not isinstance(channel_map, string_type):
+            raise TypeError('channel_map must be a string, not ' +
+                            repr(channel_map))
+        channel_map = channel_map.upper()
+        valid_channels = 'RGBAOCYMKIP'
+        for channel in channel_map:
+            if channel not in valid_channels:
+                raise ValueError('Unknown channel label: ' +
+                                 repr(channel))
+        if storage not in STORAGE_TYPES:
+            raise ValueError('storage must be a value from STORAGE_TYPES, '
+                             ' not ' + repr(storage))
+        c_storage_types = [
+            None,
+            ctypes.c_ubyte,
+            ctypes.c_double,
+            ctypes.c_float,
+            ctypes.c_uint,
+            ctypes.c_ulong,
+            ctypes.c_double,  # FIXME: Might be c_longdouble?
+            ctypes.c_ushort
+        ]
+        s_index = STORAGE_TYPES.index(storage)
+        c_storage = c_storage_types[s_index]
+        total_pixels = (width - x) * (height - y)
+        c_buffer_size = total_pixels * len(channel_map)
+        c_buffer = (c_buffer_size * c_storage)()
+        r = library.MagickExportImagePixels(self.wand,
+                                            x, y, width, height,
+                                            binary(channel_map),
+                                            s_index,
+                                            ctypes.byref(c_buffer))
+        if not r:
+            self.raise_exception()
+        return c_buffer[:c_buffer_size]
+
     @manipulative
     def extent(self, width=None, height=None, x=0, y=0):
         """extends the image as defined by the geometry, gravity, and wand
@@ -2528,6 +2649,111 @@ class BaseImage(Resource):
             raise TypeError('sigma has to be a numbers.Real, not ' +
                             repr(sigma))
         r = library.MagickGaussianBlurImage(self.wand, radius, sigma)
+        if not r:
+            self.raise_exception()
+
+    def import_pixels(self, x=0, y=0, width=None, height=None,
+                      channel_map='RGB', storage='char', data=None):
+        """Import pixel data from a byte-string to
+        the image. The instance of :class:`Image` must already
+        be allocated with the correct size.
+
+        The ``channel_map`` tells ImageMagick which color
+        channels to export, and what order they should be
+        written as -- per pixel. Valid entries for
+        ``channel_map`` are::
+
+        - ``'R'`` - Red channel
+        - ``'G'`` - Green channel
+        - ``'B'`` - Blue channel
+        - ``'A'`` - Alpha channel (``0`` is transparent)
+        - ``'O'`` - Alpha channel (``0`` is opaque)
+        - ``'C'`` - Cyan channel
+        - ``'Y'`` - Yellow channel
+        - ``'M'`` - Magenta channel
+        - ``'K'`` - Black channel
+        - ``'I'`` - Intensity channel (only for grayscale)
+        - ``'P'`` - Padding
+
+        See :const:`STORAGE_TYPES` for a list of valid
+        ``storage`` options. This tells ImageMagick
+        what type of data it should calculate & write to.
+        For example; a storage type of ``'char'`` will write
+        a 8-bit value between 0 ~ 255,  a storage type
+        of ``'short'`` will write a 16-bit value between
+        0 ~ 65535, and a ``'integer'`` will write a
+        32-bit value between 0 ~ 4294967295.
+
+        .. note::
+
+            By default, the entire image will be exported
+            as ``'char'`` storage with each pixel mapping
+            Red, Green, Blue, & Alpha channels.
+
+
+        :param x: horizontal starting coordinate of raster.
+        :type x: :class:`numbers.Integral`
+        :param y: vertical starting coordinate of raster.
+        :type y: :class:`numbers.Integral`
+        :param width: horizontal length of raster.
+        :type width: :class:`numbers.Integral`
+        :param height: vertical length of raster.
+        :type height: :class:`numbers.Integral`
+        :param channel_map: a string listing the channel data
+                            format for each pixel.
+        :type channel_map: :class:`basestring`
+        :param storage: what data type each value should
+                        be calculated as.
+        :type storage: :class:`basestring`
+
+        .. versionadded:: 0.5.0
+        """
+        _w, _h = self.size
+        if width is None:
+            width = _w
+        if height is None:
+            height = _h
+        if not isinstance(x, numbers.Integral):
+            raise TypeError('expecting integer, not ' + repr(x))
+        if not isinstance(y, numbers.Integral):
+            raise TypeError('expecting integer, not ' + repr(y))
+        if not isinstance(width, numbers.Integral):
+            raise TypeError('expecting integer, not ' + repr(width))
+        if not isinstance(height, numbers.Integral):
+            raise TypeError('expecting integer, not ' + repr(height))
+        if storage not in STORAGE_TYPES:
+            raise ValueError('storage must be a value from STORAGE_TYPES, '
+                             ' not ' + repr(storage))
+        if not isinstance(channel_map, string_type):
+            raise TypeError('channel_map must be a string, not ' +
+                            repr(channel_map))
+        channel_map = channel_map.upper()
+        valid_channels = 'RGBAOCYMKIP'
+        for channel in channel_map:
+            if channel not in valid_channels:
+                raise ValueError('Unknown channel label: ' +
+                                 repr(channel))
+        if not isinstance(data, collections.Sequence):
+            raise TypeError('data must list of values, not' +
+                            repr(data))
+        c_storage_types = [
+            None,
+            ctypes.c_ubyte,
+            ctypes.c_double,
+            ctypes.c_float,
+            ctypes.c_uint,
+            ctypes.c_ulong,
+            ctypes.c_double,  # FIXME: Might be c_longdouble ?
+            ctypes.c_ushort
+        ]
+        s_index = STORAGE_TYPES.index(storage)
+        c_type = c_storage_types[s_index]
+        c_buffer = (len(data) * c_type)(*data)
+        r = library.MagickImportImagePixels(self.wand,
+                                            x, y, width, height,
+                                            binary(channel_map),
+                                            s_index,
+                                            ctypes.byref(c_buffer))
         if not r:
             self.raise_exception()
 
