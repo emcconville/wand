@@ -2134,6 +2134,7 @@ def test_page_setter_items(fx_asset):
 
 def test_export_pixels(fx_asset):
     with Image(filename=str(fx_asset.join('pixels.png'))) as img:
+        img.depth = 8  # Not need, but want to match import.
         data = img.export_pixels(x=0, y=0, width=4, height=1,
                                  channel_map='RGBA', storage='char')
         expected = [0xFF, 0x00, 0x00, 0xFF,
@@ -2141,6 +2142,21 @@ def test_export_pixels(fx_asset):
                     0x00, 0x00, 0xFF, 0xFF,
                     0x00, 0x00, 0x00, 0x00]
         assert data == expected
+        # Test Bad value
+        with raises(TypeError):
+            img.export_pixels(x='LUX')
+        with raises(TypeError):
+            img.export_pixels(y='THEO')
+        with raises(TypeError):
+            img.export_pixels(width='LUX')
+        with raises(TypeError):
+            img.export_pixels(height='THEO')
+        with raises(TypeError):
+            img.export_pixels(channel_map=0xDEADBEEF)
+        with raises(ValueError):
+            img.export_pixels(channel_map='LUX')
+        with raises(ValueError):
+            img.export_pixels(storage='THEO')
 
 
 def test_import_pixels(fx_asset):
@@ -2149,8 +2165,27 @@ def test_import_pixels(fx_asset):
             0x00, 0x00, 0xFF, 0xFF,
             0x00, 0x00, 0x00, 0x00]
     with Image(width=4, height=1, background=Color('BLACK')) as dst:
+        dst.depth = 8  # For safety
         with Image(filename=str(fx_asset.join('pixels.png'))) as expected:
             dst.import_pixels(x=0, y=0, width=4, height=1,
                               channel_map='RGBA', storage='char',
                               data=data)
             assert dst.signature == expected.signature
+        with raises(TypeError):
+            dst.import_pixels(x='LUX')
+        with raises(TypeError):
+            dst.import_pixels(y='THEO')
+        with raises(TypeError):
+            dst.import_pixels(width='LUX')
+        with raises(TypeError):
+            dst.import_pixels(height='THEO')
+        with raises(TypeError):
+            dst.import_pixels(channel_map=0xDEADBEEF)
+        with raises(ValueError):
+            dst.import_pixels(channel_map='LUX')
+        with raises(ValueError):
+            dst.import_pixels(storage='THEO')
+        with raises(TypeError):
+            dst.import_pixels(data=0xDEADBEEF)
+        with raises(ValueError):
+            dst.import_pixels(data=[0x00,0xFF])

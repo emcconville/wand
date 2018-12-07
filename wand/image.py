@@ -2736,6 +2736,15 @@ class BaseImage(Resource):
         if not isinstance(data, collections.Sequence):
             raise TypeError('data must list of values, not' +
                             repr(data))
+        # Ensure enough data was given.
+        expected_len = (width - x) * (height - y) * len(channel_map)
+        given_len = len(data)
+        if expected_len != given_len:
+            msg = 'data length should be {0}, not {0}.'.format(
+                expected_len,
+                given_len
+            )
+            raise ValueError(msg)
         c_storage_types = [
             None,
             ctypes.c_ubyte,
