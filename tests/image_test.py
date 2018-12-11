@@ -756,6 +756,20 @@ def test_crop_gravity_error(fx_asset):
             img.crop(width=1, height=1, gravity='nowhere')
 
 
+def test_deskew(fx_asset):
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.deskew(0.4 * img.quantum_range)
+        assert was != img.signature
+
+
+def test_despeckle(fx_asset):
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.despeckle()
+        assert was != img.signature
+
+
 @mark.slow
 def test_distort(fx_asset):
     """Distort image."""
@@ -776,6 +790,27 @@ def test_distort_error(fx_asset):
             img.distort('mirror', (1,))
         with raises(TypeError):
             img.distort('perspective', 1)
+
+
+def test_edge(fx_asset):
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.edge(1.5)
+        assert was != img.signature
+
+
+def test_emboss(fx_asset):
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.emboss(1.5, 0.25)
+        assert was != img.signature
+
+
+def test_enhance(fx_asset):
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.enhance()
+        assert was != img.signature
 
 
 def test_extent(fx_asset):

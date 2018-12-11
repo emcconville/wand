@@ -41,8 +41,13 @@ To be released.
     - :meth:`Image.transverse() <wand.image.BaseImage.transverse>`
     - :meth:`Image.trim() <wand.image.BaseImage.trim>`
 
- - Added :meth:`Image.export_pixels() <wand.image.BaseImage.export_pixels>` method.
- - Added :meth:`Image.import_pixels() <wand.image.BaseImage.import_pixels>` method.
+- Added :meth:`Image.export_pixels() <wand.image.BaseImage.export_pixels>` method.
+- Added :meth:`Image.import_pixels() <wand.image.BaseImage.import_pixels>` method.
+- Added :meth:`Image.deskew() <wand.image.BaseImage.deskew>` method.
+- Added :meth:`Image.despeckle() <wand.image.BaseImage.despeckle>` method.
+- Added :meth:`Image.edge() <wand.image.BaseImage.edge>` method.
+- Added :meth:`Image.emboss() <wand.image.BaseImage.emboss>` method. [:issue:`196`]
+- Added :meth:`Image.enhance() <wand.image.BaseImage.enhance>` method.
 
 
 0.4 series

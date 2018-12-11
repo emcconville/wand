@@ -2185,6 +2185,33 @@ class BaseImage(Resource):
                 self.reset_coords()
 
     @manipulative
+    def deskew(self, threshold):
+        """Attempts to remove skew artifacts common with most
+        scanning & optical import devices.
+
+        :params threshold: limit between foreground & background.
+        :type threshold: :class:`numbers.Real`
+
+        .. versionadded:: 0.5.0
+        """
+        if not isinstance(threshold, numbers.Real):
+            raise TypeError('expecting float number, not ' +
+                            repr(threshold))
+        r = library.MagickDeskewImage(self.wand, threshold)
+        if not r:
+            self.raise_exception()
+
+    @manipulative
+    def despeckle(self):
+        """Applies filter to reduce noise in image.
+
+        .. versionadded:: 0.5.0
+        """
+        r = library.MagickDespeckleImage(self.wand)
+        if not r:
+            self.raise_exception()
+
+    @manipulative
     def distort(self, method, arguments, best_fit=False):
         """Distorts an image using various distorting methods.
 
@@ -2211,6 +2238,57 @@ class BaseImage(Resource):
                                    DISTORTION_METHODS.index(method),
                                    argc, argv, bool(best_fit))
         self.raise_exception()
+
+    @manipulative
+    def edge(self, radius=0.0):
+        """Applies convolution filter to detect edges.
+
+        :param radius: aperture of detection filter.
+        :type radius: :class:`numbers.Real`
+
+        .. versionadded:: 0.5.0
+        """
+        if not isinstance(radius, numbers.Real):
+            raise TypeError('expecting real number, not' +
+                            repr(radius))
+        r = library.MagickEdgeImage(self.wand, float(radius))
+        if not r:
+            self.raise_exception()
+
+    @manipulative
+    def emboss(self, radius=0.0, sigma=0.0):
+        """Applies convolution filter against gaussians filter.
+
+        .. note::
+
+            The `radius` value should be larger than `sigma` for best results.
+
+        :param radius: filter aperture size.
+        :type radius: :class:`numbers.Real`
+        :param sigma: standard deviation.
+        :type sigma: :class:`numbers.Real`
+
+        .. versionadded:: 0.5.0
+        """
+        if not isinstance(radius, numbers.Real):
+            raise TypeError('expecting radius as a real number, not' +
+                            repr(radius))
+        if not isinstance(sigma, numbers.Real):
+            raise TypeError('expecting sigma as a real number, not' +
+                            repr(radius))
+        r = library.MagickEmbossImage(self.wand, float(radius), float(sigma))
+        if not r:
+            self.raise_exception()
+
+    @manipulative
+    def enhance(self):
+        """Applies digital filter to reduce noise.
+
+        .. versionadded:: 0.5.0
+        """
+        r = library.MagickEnhanceImage(self.wand)
+        if not r:
+            self.raise_exception()
 
     @manipulative
     def equalize(self):
