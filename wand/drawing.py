@@ -15,7 +15,7 @@ from .api import (AffineMatrix, MagickPixelPacket, PixelInfo, PointInfo,
 from .color import Color
 from .compat import binary, string_type, text, text_type, xrange
 from .exceptions import WandLibraryVersionError
-from .image import Image, COMPOSITE_OPERATORS
+from .image import BaseImage, COMPOSITE_OPERATORS
 from .resource import Resource
 from .version import MAGICK_VERSION_NUMBER
 
@@ -1161,11 +1161,11 @@ class Drawing(Resource):
             drawing.draw(image)
 
         :param image: the image to be drawn
-        :type image: :class:`~wand.image.Image`
+        :type image: :class:`~wand.image.BaseImage`
 
         """
-        if not isinstance(image, Image):
-            raise TypeError('image must be a wand.image.Image instance, not ' +
+        if not isinstance(image, BaseImage):
+            raise TypeError('image must be a wand.image.BaseImage instance, not ' +
                             repr(image))
         res = library.MagickDrawImage(image.wand, self.resource)
         if not res:
@@ -1201,15 +1201,15 @@ class Drawing(Resource):
         """Queries font metrics from the given ``text``.
 
         :param image: the image to be drawn
-        :type image: :class:`~wand.image.Image`
+        :type image: :class:`~wand.image.BaseImage`
         :param text: the text string for get font metrics.
         :type text: :class:`basestring`
         :param multiline: text is multiline or not
         :type multiline: `boolean`
 
         """
-        if not isinstance(image, Image):
-            raise TypeError('image must be a wand.image.Image instance, not ' +
+        if not isinstance(image, BaseImage):
+            raise TypeError('image must be a wand.image.BaseImage instance, not ' +
                             repr(image))
         if not isinstance(text, string_type):
             raise TypeError('text must be a string, not ' + repr(text))

@@ -48,7 +48,8 @@ To be released.
 - Added :meth:`Image.edge() <wand.image.BaseImage.edge>` method.
 - Added :meth:`Image.emboss() <wand.image.BaseImage.emboss>` method. [:issue:`196`]
 - Added :meth:`Image.enhance() <wand.image.BaseImage.enhance>` method.
-
+- Method :meth:`Drawing.draw() <wand.drawing.Drawing.draw>` now accepts
+  :class:`BaseImage <wand.image.BaseImage>` for folks extended classes.
 
 0.4 series
 ~~~~~~~~~~
