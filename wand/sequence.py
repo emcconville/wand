@@ -20,7 +20,7 @@ __all__ = 'Sequence', 'SingleImage'
 class Sequence(ImageProperty, collections.MutableSequence):
     """The list-like object that contains every :class:`SingleImage`
     in the :class:`~wand.image.Image` container.  It implements
-    :class:`collections.Sequence` prototocol.
+    :class:`collections.Sequence` protocol.
 
     .. versionadded:: 0.3.0
 
