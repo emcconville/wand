@@ -2281,7 +2281,7 @@ class BaseImage(Resource):
         The ``channel_map`` tells ImageMagick which color
         channels to export, and what order they should be
         written as -- per pixel. Valid entries for
-        ``channel_map`` are::
+        ``channel_map`` are:
 
         - ``'R'`` - Red channel
         - ``'G'`` - Green channel
@@ -2661,7 +2661,7 @@ class BaseImage(Resource):
         The ``channel_map`` tells ImageMagick which color
         channels to export, and what order they should be
         written as -- per pixel. Valid entries for
-        ``channel_map`` are::
+        ``channel_map`` are:
 
         - ``'R'`` - Red channel
         - ``'G'`` - Green channel

@@ -18,10 +18,8 @@ To be released.
 - Added support for Image Artifacts through :attr:`Image.artifacts <wand.image.Image.artifacts>`. [:issue:`369`]
 - Added optional stroke color/width parameters for :class:`Font <wand.font.Font>`.
 - Image layers support (:issue:`22`)
-    - Added :meth:`Image.optimize_layers() <wand.image.BaseImage.optimize_layers>` method
-      (:c:func:`MagickOptmizeImageLayers()`).
-    - Added :meth:`Image.optimize_transparency() <wand.image.BaseImage.optimize_transparency>` method
-      (:c:func:`MagickOptmizeImageTransparency()`).
+    - Added :meth:`Image.optimize_layers() <wand.image.BaseImage.optimize_layers>` method.
+    - Added :meth:`Image.optimize_transparency() <wand.image.BaseImage.optimize_transparency>` method.
     - Added :attr:`Image.dispose <wand.image.BaseImage.dispose>` property.
     - Added :meth:`Image.coalesce() <wand.image.BaseImage.coalesce>` method.
 - Added :meth:`Image.append() <wand.image.BaseImage.append>` method. [:issue:`177`]
@@ -42,6 +40,10 @@ To be released.
     - :meth:`Image.transpose() <wand.image.BaseImage.transpose>`
     - :meth:`Image.transverse() <wand.image.BaseImage.transverse>`
     - :meth:`Image.trim() <wand.image.BaseImage.trim>`
+
+ - Added :meth:`Image.export_pixels() <wand.image.BaseImage.export_pixels>` method.
+ - Added :meth:`Image.import_pixels() <wand.image.BaseImage.import_pixels>` method.
+
 
 0.4 series
 ~~~~~~~~~~
