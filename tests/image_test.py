@@ -2223,4 +2223,4 @@ def test_import_pixels(fx_asset):
         with raises(TypeError):
             dst.import_pixels(data=0xDEADBEEF)
         with raises(ValueError):
-            dst.import_pixels(data=[0x00,0xFF])
+            dst.import_pixels(data=[0x00, 0xFF])

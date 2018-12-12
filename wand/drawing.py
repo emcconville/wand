@@ -1165,8 +1165,8 @@ class Drawing(Resource):
 
         """
         if not isinstance(image, BaseImage):
-            raise TypeError('image must be a wand.image.BaseImage instance, not ' +
-                            repr(image))
+            raise TypeError('image must be a wand.image.BaseImage instance,'
+                            ' not ' + repr(image))
         res = library.MagickDrawImage(image.wand, self.resource)
         if not res:
             self.raise_exception()
@@ -1209,8 +1209,8 @@ class Drawing(Resource):
 
         """
         if not isinstance(image, BaseImage):
-            raise TypeError('image must be a wand.image.BaseImage instance, not ' +
-                            repr(image))
+            raise TypeError('image must be a wand.image.BaseImage instance,'
+                            ' not ' + repr(image))
         if not isinstance(text, string_type):
             raise TypeError('text must be a string, not ' + repr(text))
         if multiline:
