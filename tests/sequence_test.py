@@ -324,7 +324,5 @@ def test_set_delay(fx_asset):
         with img.sequence[2] as frame:
             assert frame.delay == 0
             frame.delay = 10
-            with img.sequence.index_context(2):
-                assert library.MagickGetImageDelay(img.wand) == 0
         with img.sequence.index_context(2):
             assert library.MagickGetImageDelay(img.wand) == 10

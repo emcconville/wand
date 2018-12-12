@@ -1328,6 +1328,21 @@ class BaseImage(Resource):
         return HistogramDict(self)
 
     @property
+    def loop(self):
+        """(:class:`numbers.Integral`) Number of frame iterations.
+        A value of ``0`` will loop forever."""
+        return library.MagickGetImageIterations(self.wand)
+
+    @loop.setter
+    def loop(self, iterations):
+        if not isinstance(iterations, numbers.Integral):
+            raise TypeError('iterations must be an integral, not ' +
+                            repr(iterations))
+        if iterations < 0:
+            raise ValueError('iterations value must be 0, or greater.')
+        library.MagickSetImageIterations(self.wand, iterations)
+
+    @property
     def matte_color(self):
         """(:class:`wand.color.Color`) The color value of the matte channel.
         This can also be set.
@@ -2405,6 +2420,7 @@ class BaseImage(Resource):
         :type storage: :class:`basestring`
         :returns: list of values.
         :rtype: :class:`collections.Sequence`
+
         .. versionadded:: 0.5.0
         """
         _w, _h = self.size

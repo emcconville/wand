@@ -324,15 +324,14 @@ class SingleImage(BaseImage):
             raise TypeError('delay must be an integer, not ' + repr(delay))
         elif delay < 0:
             raise ValueError('delay cannot be less than zero')
+        container = self.container
+        with container.sequence.index_context(self.index):
+            library.MagickSetImageDelay(container.wand, delay)
         self._delay = delay
 
     def destroy(self):
         if self.dirty:
             self.container.sequence[self.index] = self
-        if self._delay is not None:
-            container = self.container
-            with container.sequence.index_context(self.index):
-                library.MagickSetImageDelay(container.wand, self._delay)
         super(SingleImage, self).destroy()
 
     def __repr__(self):

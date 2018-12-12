@@ -50,6 +50,9 @@ To be released.
 - Added :meth:`Image.enhance() <wand.image.BaseImage.enhance>` method.
 - Method :meth:`Drawing.draw() <wand.drawing.Drawing.draw>` now accepts
   :class:`BaseImage <wand.image.BaseImage>` for folks extended classes.
+- Added :attr:`Image.loop <wand.image.BaseImage.loop>` property. [:issue:`227`]
+- Fixed :attr:`SingleImage.delay <wand.sequence.SingleImage.delay>` property. [:issue:`153`]
+
 
 0.4 series
 ~~~~~~~~~~
