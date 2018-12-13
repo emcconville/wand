@@ -15,10 +15,6 @@ Wand is a Python binding of ImageMagick_, so you have to install it as well:
 - :ref:`Windows <install-imagemagick-windows>`
 - :ref:`Explicitly link to specific ImageMagick <explicit-link>`
 
-.. note::
-
-   Wand yet doesn't support ImageMagick 7 which has several incompatible APIs
-   with previous versions.  For more details, see the issue :issue:`287`.
 
 Or you can simply install Wand and its entire dependencies using the package
 manager of your system (it's way convenient but the version might be outdated):
@@ -124,6 +120,11 @@ Windows 32-bit
 
 Windows 64-bit
    ImageMagick-6.9.x-x-Q16-x64-dll.exe
+
+.. note::
+
+    Double check your Python runtime, and ensure the architectures match.
+    A 32-bit Python runtime can not load a 64-bit dynamic library.
 
 .. image:: ../_images/windows-setup.png
 
