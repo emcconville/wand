@@ -336,17 +336,20 @@ if MAGICK_VERSION_NUMBER >= 0x700:
 #: (:class:`tuple`) The list of :attr:`Image.compression` types.
 #:
 #: .. versionadded:: 0.3.6
+#: .. versionchanged:: 0.5.0
+#:    Support for ImageMagick-6 & ImageMagick-7
 COMPRESSION_TYPES = (
-    'undefined', 'b44a', 'b44', 'bzip', 'dxt1', 'dxt3', 'dxt5', 'fax',
-    'group4',
-    'jbig1',        # ISO/IEC std 11544 / ITU-T rec T.82
-    'jbig2',        # ISO/IEC std 14492 / ITU-T rec T.88
-    'jpeg2000',     # ISO/IEC std 15444-1
-    'jpeg', 'losslessjpeg',
-    'lzma',         # Lempel-Ziv-Markov chain algorithm
-    'lzw', 'no', 'piz', 'pxr24', 'rle', 'zip', 'zips'
+    'undefined', 'no', 'bzip', 'dxt1', 'dxt3', 'dxt5',
+    'fax', 'group4', 'jpeg', 'jpeg2000', 'losslessjpeg',
+    'lzw', 'rle', 'zip', 'zips', 'piz', 'pxr24', 'b44',
+    'b44a', 'lzma', 'jbig1', 'jbig2'
 )
-
+if MAGICK_VERSION_NUMBER >= 0x700:
+    COMPRESSION_TYPES = (
+        'undefined', 'b44a', 'b44', 'bzip', 'dxt1', 'dxt3', 'dxt5', 'fax',
+        'group4', 'jbig1', 'jbig2', 'jpeg2000', 'jpeg', 'losslessjpeg',
+        'lzma', 'lzw', 'no', 'piz', 'pxr24', 'rle', 'zip', 'zips'
+    )
 
 #: (:class:`tuple`) The list of :attr:`BaseImage.dispose` types.
 #:

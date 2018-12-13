@@ -54,7 +54,8 @@ To be released.
 - Fixed :attr:`SingleImage.delay <wand.sequence.SingleImage.delay>` property. [:issue:`153`]
 - Attribute :attr:`Image.font_antialias <wand.image.BaseImage.font_antialias>` has been
   deprecated in favor of :attr:`Image.antialias <wand.image.BaseImage.antialias>`. [:issue:`218`]
-
+- Fixed ordering of :const:`COMPRESSION_TYPES <wand.image.COMPRESSION_TYPES>`
+  based on ImageMagick version. [:issue:`309`]
 
 0.4 series
 ~~~~~~~~~~
