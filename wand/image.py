@@ -1544,10 +1544,10 @@ class BaseImage(Resource):
     def resolution(self, geometry):
         if isinstance(geometry, collections.Sequence):
             x, y = geometry
-        elif isinstance(geometry, numbers.Integral):
+        elif isinstance(geometry, numbers.Real):
             x, y = geometry, geometry
         else:
-            raise TypeError('resolution must be a (x, y) pair or an integer '
+            raise TypeError('resolution must be a (x, y) pair or a float '
                             'of the same x/y')
         if self.size == (0, 0):
             r = library.MagickSetResolution(self.wand, x, y)
