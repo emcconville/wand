@@ -114,12 +114,12 @@ def load_library():
             continue
         try:
             tried_paths.append(libwand_path)
-            libwand = ctypes.CDLL(libwand_path)
+            libwand = ctypes.CDLL(str(libwand_path))
             if libwand_path == libmagick_path:
                 libmagick = libwand
             else:
                 tried_paths.append(libmagick_path)
-                libmagick = ctypes.CDLL(libmagick_path)
+                libmagick = ctypes.CDLL(str(libmagick_path))
         except (IOError, OSError):
             continue
         return libwand, libmagick
