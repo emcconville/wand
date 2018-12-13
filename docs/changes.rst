@@ -52,6 +52,8 @@ To be released.
   :class:`BaseImage <wand.image.BaseImage>` for folks extended classes.
 - Added :attr:`Image.loop <wand.image.BaseImage.loop>` property. [:issue:`227`]
 - Fixed :attr:`SingleImage.delay <wand.sequence.SingleImage.delay>` property. [:issue:`153`]
+- Attribute :attr:`Image.font_antialias <wand.image.BaseImage.font_antialias>` has been
+  deprecated in favor of :attr:`Image.antialias <wand.image.BaseImage.antialias>`. [:issue:`218`]
 
 
 0.4 series

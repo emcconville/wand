@@ -986,6 +986,23 @@ class BaseImage(Resource):
         return False
 
     @property
+    def antialias(self):
+        """(:class:`bool`) If vectors & fonts will use anti-aliasing.
+
+        .. versionchanged:: 0.5.0
+           Previosuly named :attr:`font_antialias`.
+        """
+        return bool(library.MagickGetAntialias(self.wand))
+
+    @antialias.setter
+    @manipulative
+    def antialias(self, antialias):
+        if not isinstance(antialias, bool):
+            raise TypeError('antialias must be a bool, not ' +
+                            repr(antialias))
+        library.MagickSetAntialias(self.wand, antialias)
+
+    @property
     def background_color(self):
         """(:class:`wand.color.Color`) The image background color.
         It can also be set to change the background color.
@@ -1167,7 +1184,7 @@ class BaseImage(Resource):
             path=text(self.font_path),
             size=self.font_size,
             color=self.font_color,
-            antialias=self.font_antialias,
+            antialias=self.antialias,
             stroke_color=self.stroke_color,
             stroke_width=self.stroke_width
         )
@@ -1180,7 +1197,7 @@ class BaseImage(Resource):
         self.font_path = font.path
         self.font_size = font.size
         self.font_color = font.color
-        self.font_antialias = font.antialias
+        self.antialias = font.antialias
         if font.stroke_color:
             self.stroke_color = font.stroke_color
         if font.stroke_width is not None:
@@ -1188,15 +1205,15 @@ class BaseImage(Resource):
 
     @property
     def font_antialias(self):
-        return bool(library.MagickGetAntialias(self.wand))
+        """
+        .. deprecated:: 0.5.0
+           Use :attr:`antialias` instead.
+        """
+        return self.antialias
 
     @font_antialias.setter
-    @manipulative
     def font_antialias(self, antialias):
-        if not isinstance(antialias, bool):
-            raise TypeError('font_antialias must be a bool, not ' +
-                            repr(antialias))
-        library.MagickSetAntialias(self.wand, antialias)
+        self.antialias = antialias
 
     @property
     def font_color(self):

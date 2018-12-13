@@ -1430,7 +1430,7 @@ def test_setfont(fx_asset):
         assert img.font_path == font.path
         assert img.font_size == font.size
         assert img.font_color == font.color
-        assert img.font_antialias == font.antialias
+        assert img.antialias == font.antialias
         assert img.font == font
         fontStroke = Font(
             path=str(fx_asset.join('League_Gothic.otf')),
