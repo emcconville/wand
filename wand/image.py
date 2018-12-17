@@ -2220,6 +2220,18 @@ class BaseImage(Resource):
                 self.reset_coords()
 
     @manipulative
+    def deconstruct(self):
+        """Iterates over internal image stack, and adjust each frame
+        size to maximum bounding region.
+
+        .. versionadded:: 0.5.0
+        """
+        r = library.MagickDeconstructImages(self.wand)
+        if not r:
+            self.raise_exception()
+        self.wand = r
+
+    @manipulative
     def deskew(self, threshold):
         """Attempts to remove skew artifacts common with most
         scanning & optical import devices.

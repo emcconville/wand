@@ -18,10 +18,13 @@ To be released.
 - Added support for Image Artifacts through :attr:`Image.artifacts <wand.image.Image.artifacts>`. [:issue:`369`]
 - Added optional stroke color/width parameters for :class:`Font <wand.font.Font>`.
 - Image layers support (:issue:`22`)
+
+    - Added :meth:`Image.coalesce() <wand.image.BaseImage.coalesce>` method.
+    - Added :meth:`Image.deconstruct <wand.image.BaseImage.deconstruct>` method.
+    - Added :attr:`Image.dispose <wand.image.BaseImage.dispose>` property.
     - Added :meth:`Image.optimize_layers() <wand.image.BaseImage.optimize_layers>` method.
     - Added :meth:`Image.optimize_transparency() <wand.image.BaseImage.optimize_transparency>` method.
-    - Added :attr:`Image.dispose <wand.image.BaseImage.dispose>` property.
-    - Added :meth:`Image.coalesce() <wand.image.BaseImage.coalesce>` method.
+
 - Added :meth:`Image.append() <wand.image.BaseImage.append>` method. [:issue:`177`]
 - Implemented :meth:`__array_interface__` for NumPy [:issue:`65`]
 - Migrated the following methods & attributes from :class:`Image <wand.image.Image>`
