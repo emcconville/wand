@@ -59,6 +59,8 @@ To be released.
   deprecated in favor of :attr:`Image.antialias <wand.image.BaseImage.antialias>`. [:issue:`218`]
 - Fixed ordering of :const:`COMPRESSION_TYPES <wand.image.COMPRESSION_TYPES>`
   based on ImageMagick version. [:issue:`309`]
+- Fixed drawing on :class:`SingleImage <wand.sequence.SingleImage>`. [:issue:`289`]
+
 
 0.4 series
 ~~~~~~~~~~

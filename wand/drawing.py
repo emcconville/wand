@@ -16,6 +16,7 @@ from .color import Color
 from .compat import binary, string_type, text, text_type, xrange
 from .exceptions import WandLibraryVersionError
 from .image import BaseImage, COMPOSITE_OPERATORS
+from .sequence import SingleImage
 from .resource import Resource
 from .version import MAGICK_VERSION_NUMBER
 
@@ -1167,7 +1168,13 @@ class Drawing(Resource):
         if not isinstance(image, BaseImage):
             raise TypeError('image must be a wand.image.BaseImage instance,'
                             ' not ' + repr(image))
-        res = library.MagickDrawImage(image.wand, self.resource)
+        if isinstance(image, SingleImage):
+            previous = library.MagickGetIteratorIndex(image.container.wand)
+            library.MagickSetIteratorIndex(image.container.wand, image.index)
+            res = library.MagickDrawImage(image.container.wand, self.resource)
+            library.MagickSetIteratorIndex(image.container.wand, previous)
+        else:
+            res = library.MagickDrawImage(image.wand, self.resource)
         if not res:
             self.raise_exception()
 
