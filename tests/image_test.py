@@ -756,6 +756,17 @@ def test_crop_gravity_error(fx_asset):
             img.crop(width=1, height=1, gravity='nowhere')
 
 
+def test_crop_issue367(fx_asset):
+    with Image(filename='rose:') as img:
+        expected = img.size
+        for gravity in ('north_west', 'north', 'north_east',
+                        'west', 'center', 'east',
+                        'south_west', 'south', 'south_east',):
+            with Image(img) as actual:
+                actual.crop(width=200, height=200, gravity=gravity)
+                assert actual.size == expected
+
+
 def test_deskew(fx_asset):
     with Image(filename='rose:') as img:
         was = img.signature

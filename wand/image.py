@@ -2156,6 +2156,15 @@ class BaseImage(Resource):
             raise TypeError('parameters bottom and height are exclusive each '
                             'other; use one at a time')
 
+        def abs_(n, m, null=None):
+            if n is None:
+                return m if null is None else null
+            elif not isinstance(n, numbers.Integral):
+                raise TypeError('expected integer, not ' + repr(n))
+            elif n > m:
+                raise ValueError(repr(n) + ' > ' + repr(m))
+            return m + n if n < 0 else n
+
         # Define left & top if gravity is given.
         if gravity:
             if width is None or height is None:
@@ -2179,17 +2188,10 @@ class BaseImage(Resource):
                 left = int(self.width / 2) - int(width / 2)
             elif gravity in ('north_east', 'east', 'south_east'):
                 left = self.width - width
+        else:
+            left = abs_(left, self.width, 0)
+            top = abs_(top, self.height, 0)
 
-        def abs_(n, m, null=None):
-            if n is None:
-                return m if null is None else null
-            elif not isinstance(n, numbers.Integral):
-                raise TypeError('expected integer, not ' + repr(n))
-            elif n > m:
-                raise ValueError(repr(n) + ' > ' + repr(m))
-            return m + n if n < 0 else n
-        left = abs_(left, self.width, 0)
-        top = abs_(top, self.height, 0)
         if width is None:
             right = abs_(right, self.width)
             width = right - left

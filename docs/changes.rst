@@ -60,6 +60,8 @@ To be released.
 - Fixed ordering of :const:`COMPRESSION_TYPES <wand.image.COMPRESSION_TYPES>`
   based on ImageMagick version. [:issue:`309`]
 - Fixed drawing on :class:`SingleImage <wand.sequence.SingleImage>`. [:issue:`289`]
+- Fixed wrapping issue for larger offsets when using `gravity` kwarg in
+  :meth:`Image.crop() <wand.image.BaseImage.crop>` method. [:issue:`367`]
 
 
 0.4 series
