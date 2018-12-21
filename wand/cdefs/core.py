@@ -6,7 +6,7 @@
 from ctypes import POINTER, c_void_p, c_char_p, c_int, c_size_t
 from wand.cdefs.wandtypes import c_magick_char_p, c_ssize_t
 
-__all__ = ('load',)
+__all__ = ('load', 'load_with_version')
 
 
 def load(libmagick):
@@ -72,6 +72,8 @@ def load(libmagick):
     libmagick.MagickToMime.argtypes = [c_char_p]
     libmagick.MagickToMime.restype = c_magick_char_p
     try:
+        libmagick.ParseGeometry.argtypes = [c_char_p, c_void_p]
+        libmagick.ParseGeometry.restype = c_int
         libmagick.ParseMetaGeometry.argtypes = [c_char_p,
                                                 POINTER(c_ssize_t),
                                                 POINTER(c_ssize_t),
@@ -79,4 +81,14 @@ def load(libmagick):
                                                 POINTER(c_size_t)]
         libmagick.ParseMetaGeometry.restype = c_int
     except AttributeError:
+        libmagick.ParseGeometry = None
         libmagick.ParseMetaGeometry = None
+
+
+def load_with_version(libmagick, IM_VERSION):
+    libmagick.AcquireKernelBuiltIn.argtypes = [c_void_p, c_void_p]
+    libmagick.AcquireKernelBuiltIn.restype = c_void_p
+    libmagick.AcquireKernelInfo.argtypes = [c_char_p]
+    libmagick.AcquireKernelInfo.restype = c_void_p
+    libmagick.DestroyKernelInfo.argtypes = [c_void_p]
+    libmagick.DestroyKernelInfo.restype = c_void_p

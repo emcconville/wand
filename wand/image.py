@@ -22,8 +22,9 @@ from .color import Color
 from .compat import (binary, binary_type, encode_filename, file_types,
                      string_type, text, xrange)
 from .exceptions import MissingDelegateError, WandException
-from .resource import DestroyedResourceError, Resource
 from .font import Font
+from .resource import DestroyedResourceError, Resource
+from .cdefs.structures import GeomertyInfo
 from .version import MAGICK_VERSION_NUMBER, MAGICK_HDRI
 
 
@@ -31,7 +32,8 @@ __all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COLORSPACE_TYPES',
            'COMPARE_METRICS', 'COMPOSITE_OPERATORS', 'COMPRESSION_TYPES',
            'DISPOSE_TYPES', 'DISTORTION_METHODS', 'EVALUATE_OPS',
            'FILTER_TYPES', 'FUNCTION_TYPES', 'GRAVITY_TYPES',
-           'IMAGE_LAYER_METHOD', 'IMAGE_TYPES', 'ORIENTATION_TYPES',
+           'IMAGE_LAYER_METHOD', 'IMAGE_TYPES', 'KERNEL_INFO_TYPES',
+           'MORPHOLOGY_METHODS', 'ORIENTATION_TYPES',
            'STORAGE_TYPES', 'VIRTUAL_PIXEL_METHOD', 'UNIT_TYPES',
            'BaseImage', 'ChannelDepthDict', 'ChannelImageDict',
            'ClosedImageError', 'HistogramDict', 'Image', 'ImageProperty',
@@ -599,6 +601,109 @@ if MAGICK_VERSION_NUMBER >= 0x700:
                    'palette', 'palettealpha', 'truecolor', 'truecoloralpha',
                    'colorseparation', 'colorseparationalpha', 'optimize',
                    'palettebilevelalpha')
+
+
+#: (:class:`tuple`) The list of builtin kernels.
+#:
+#: - ``'undefined'``
+#: - ``'unity'``
+#: - ``'gaussian'``
+#: - ``'dog'``
+#: - ``'log'``
+#: - ``'blur'``
+#: - ``'comet'``
+#: - ``'laplacian'``
+#: - ``'sobel'``
+#: - ``'frei_chen'``
+#: - ``'roberts'``
+#: - ``'prewitt'``
+#: - ``'compass'``
+#: - ``'kirsch'``
+#: - ``'diamond'``
+#: - ``'square'``
+#: - ``'rectangle'``
+#: - ``'octagon'``
+#: - ``'disk'``
+#: - ``'plus'``
+#: - ``'cross'``
+#: - ``'ring'``
+#: - ``'peaks'``
+#: - ``'edges'``
+#: - ``'corners'``
+#: - ``'diagonals'``
+#: - ``'line_ends'``
+#: - ``'line_junctions'``
+#: - ``'ridges'``
+#: - ``'convex_hull'``
+#: - ``'thin_se'``
+#: - ``'skeleton'``
+#: - ``'chebyshev'``
+#: - ``'manhattan'``
+#: - ``'octagonal'``
+#: - ``'euclidean'``
+#: - ``'user_defined'``
+#: - ``'binomial'``
+#:
+KERNEL_INFO_TYPES = ('undefined', 'unity', 'gaussian', 'dog', 'log', 'blur',
+                     'comet', 'laplacian', 'sobel', 'frei_chen', 'roberts',
+                     'prewitt', 'compass', 'kirsch', 'diamond', 'square',
+                     'rectangle', 'octagon', 'disk', 'plus', 'cross', 'ring',
+                     'peaks', 'edges', 'corners', 'diagonals', 'line_ends',
+                     'line_junctions', 'ridges', 'convex_hull', 'thin_se',
+                     'skeleton', 'chebyshev', 'manhattan', 'octagonal',
+                     'euclidean', 'user_defined', 'binomial')
+if MAGICK_VERSION_NUMBER >= 0x700:
+    KERNEL_INFO_TYPES = ('undefined', 'unity', 'gaussian', 'dog', 'log',
+                         'blur', 'comet', 'binomial', 'laplacian', 'sobel',
+                         'frei_chen', 'roberts', 'prewitt', 'compass',
+                         'kirsch', 'diamond', 'square', 'rectangle', 'octagon',
+                         'disk', 'plus', 'cross', 'ring', 'peaks', 'edges',
+                         'corners', 'diagonals', 'line_ends', 'line_junctions',
+                         'ridges', 'convex_hull', 'thin_se', 'skeleton',
+                         'chebyshev', 'manhattan', 'octagonal', 'euclidean',
+                         'user_defined')
+
+#: (:class:`tuple`) The list of morphology methods.
+#:
+#: - ``'undefined'``
+#: - ``'convolve'``
+#: - ``'correlate'``
+#: - ``'erode'``
+#: - ``'dilate'``
+#: - ``'erode_intensity'``
+#: - ``'dilate_intensity'``
+#: - ``'distance'``
+#: - ``'open'``
+#: - ``'close'``
+#: - ``'open_intensity'``
+#: - ``'close_intensity'``
+#: - ``'smooth'``
+#: - ``'edgein'``
+#: - ``'edgeout'``
+#: - ``'edge'``
+#: - ``'tophat'``
+#: - ``'bottom_hat'``
+#: - ``'hit_and_miss'``
+#: - ``'thinning'``
+#: - ``'thicken'``
+#: - ``'voronoi'``
+#: - ``'iterative_distance'``
+#:
+MORPHOLOGY_METHODS = ('undefined', 'convolve', 'correlate', 'erode', 'dilate',
+                      'erode_intensity', 'dilate_intensity', 'distance',
+                      'open', 'close', 'open_intensity', 'close_intensity',
+                      'smooth', 'edgein', 'edgeout', 'edge', 'tophat',
+                      'bottom_hat', 'hit_and_miss', 'thinning', 'thicken',
+                      'voronoi', 'iterative_distance')
+if MAGICK_VERSION_NUMBER >= 0x700:
+    MORPHOLOGY_METHODS = ('undefined', 'convolve', 'correlate', 'erode',
+                          'dilate', 'erode_intensity', 'dilate_intensity',
+                          'iterative_distance', 'open', 'close',
+                          'open_intensity', 'close_intensity', 'smooth',
+                          'edgein', 'edgeout', 'edge', 'tophat', 'bottom_hat',
+                          'hit_and_miss', 'thinning', 'thicken', 'distance',
+                          'voronoi')
+
 
 #: (:class:`collections.Set`) The set of available :attr:`~BaseImage.options`.
 #:
@@ -3099,6 +3204,89 @@ class BaseImage(Resource):
             saturation,
             hue
         )
+        if not r:
+            self.raise_exception()
+
+    @manipulative
+    def morphology(self, method=None, kernel=None, iterations=1):
+        """
+        """
+        buitin = None
+        geometry = None
+        parts = kernel.split(':')
+        if parts[0] in KERNEL_INFO_TYPES:
+            buitin = parts[0]
+            if len(parts) == 2:
+                geometry = parts[1]
+            else:
+                geometry = ''
+        exception_info = libmagick.AcquireExceptionInfo()
+        if buitin:
+            kernel_idx = KERNEL_INFO_TYPES.index(buitin)
+            geometry_info = GeomertyInfo()
+            flags = libmagick.ParseGeometry(binary(geometry),
+                                            ctypes.byref(geometry_info))
+            if buitin in ('unity',):
+                if (flags & 0x0004) == 0:
+                    geometry_info.rho = 1.0
+            elif buitin in ('square', 'diamond', 'octagon', 'disk',
+                            'plus', 'cross'):
+                if (flags & 0x0008) == 0:
+                    geometry_info.sigma = 1.0
+            elif buitin in ('ring',):
+                if (flags & 0x0001) == 0:
+                    geometry_info.xi = 1.0
+            elif buitin in ('rectangle',):
+                if (flags & 0x0004) == 0:
+                    geometry_info.rho = geometry_info.sigma
+                if geometry_info.rho < 1.0:
+                    geometry_info.rho = 3.0
+                if geometry_info.sigma < 1.0:
+                    geometry_info.sigma = geometry_info.rho
+                if (flags & 0x0001) == 0:
+                    geometry_info.xi = (geometry_info.rho - 1.0) / 2.0
+                if (flags & 0x0002) == 0:
+                    geometry_info.psi = (geometry_info.sigma - 1.0) / 2.0
+            elif buitin in ('chebyshev', 'manhattan', 'octagonal',
+                            'euclidean'):
+                if (flags & 0x0008) == 0:
+                    geometry_info.sigma = 100.0
+                elif (flags & 0x2000) != 0:
+                    geometry_info.sigma = (float(self.quantum_range) /
+                                           (geometry_info.sigma + 1.0))
+                elif (flags & 0x1000) != 0:
+                    geometry_info.sigma *= float(self.quantum_range) / 100.0
+            if MAGICK_VERSION_NUMBER < 0x700:
+                kernel_info = libmagick.AcquireKernelBuiltIn(
+                    kernel_idx,
+                    ctypes.byref(geometry_info)
+                )
+            else:
+                kernel_info = libmagick.AcquireKernelBuiltIn(
+                    kernel_idx,
+                    ctypes.byref(geometry_info),
+                    ctypes.byref(exception_info)
+                )
+        elif kernel:
+            if MAGICK_VERSION_NUMBER < 0x700:
+                kernel_info = libmagick.AcquireKernelInfo(
+                    binary(kernel)
+                )
+            else:
+                kernel_info = libmagick.AcquireKernelInfo(
+                    binary(kernel),
+                    ctypes.byref(exception_info)
+                )
+        r = None
+        exception_info = libmagick.DestroyExceptionInfo(exception_info)
+        if kernel_info:
+            method_idx = MORPHOLOGY_METHODS.index(method)
+            r = library.MagickMorphologyImage(self.wand, method_idx,
+                                              iterations, kernel_info)
+            kernel_info = libmagick.DestroyKernelInfo(kernel_info)
+        else:
+            raise ValueError('Unable to parse kernel info for ' +
+                             repr(kernel))
         if not r:
             self.raise_exception()
 
