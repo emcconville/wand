@@ -1095,6 +1095,54 @@ def test_rotate_gif(tmpdir, fx_asset):
     tmpdir.remove()
 
 
+def test_shade(fx_asset):
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.shade(gray=False, azimuth=10.0, elevation=10.0)
+        assert was != img.signature
+        with raises(TypeError):
+            img.shade(azimuth='hello')
+        with raises(TypeError):
+            img.shade(elevation='hello')
+
+
+def test_shadow(fx_asset):
+    with Image(filename='rose:') as img:
+        was = img.size
+        img.shadow(alpha=5.0, sigma=1.25, x=10, y=10)
+        assert was != img.size
+        with raises(TypeError):
+            img.shadow(alpha='hello')
+        with raises(TypeError):
+            img.shadow(sigma='hello')
+        with raises(TypeError):
+            img.shadow(x=None)
+        with raises(TypeError):
+            img.shadow(y=None)
+
+
+def test_sharpen(fx_asset):
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.sharpen(radius=10.0, sigma=2.0)
+        assert was != img.signature
+        with raises(TypeError):
+            img.sharpen(radius='hello')
+        with raises(TypeError):
+            img.sharpen(sigma='hello')
+
+
+def test_shave(fx_asset):
+    with Image(filename='rose:') as img:
+        was = img.size
+        img.shave(10, 10)
+        assert was != img.size
+        with raises(TypeError):
+            img.shave(None, 10)
+        with raises(TypeError):
+            img.shave(10, None)
+
+
 def test_transparent_color(fx_asset):
     """TransparentPaint test
     .. versionchanged:: 0.5.0

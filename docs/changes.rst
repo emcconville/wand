@@ -50,7 +50,11 @@ To be released.
 - Added :meth:`Image.despeckle() <wand.image.BaseImage.despeckle>` method.
 - Added :meth:`Image.edge() <wand.image.BaseImage.edge>` method.
 - Added :meth:`Image.emboss() <wand.image.BaseImage.emboss>` method. [:issue:`196`]
-- Added :meth:`Image.enhance() <wand.image.BaseImage.enhance>` method.
+- Added :meth:`Image.enhance() <wand.image.BaseImage.enhance>` method. [:issue:`132`]
+- Added :meth:`Image.shade() <wand.image.BaseImage.shade>` method.
+- Added :meth:`Image.shadow() <wand.image.BaseImage.shadow>` method.
+- Added :meth:`Image.sharpen() <wand.image.BaseImage.sharpen>` method. [:issue:`132`]
+- Added :meth:`Image.shave() <wand.image.BaseImage.shave>` method.
 - Method :meth:`Drawing.draw() <wand.drawing.Drawing.draw>` now accepts
   :class:`BaseImage <wand.image.BaseImage>` for folks extended classes.
 - Added :attr:`Image.loop <wand.image.BaseImage.loop>` property. [:issue:`227`]

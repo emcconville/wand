@@ -3491,6 +3491,114 @@ class BaseImage(Resource):
                 if reset_coords:
                     self.reset_coords()
 
+    @manipulative
+    def shade(self, gray=False, azimuth=0.0, elevation=0.0):
+        """Creates a 3D effect by simulating a light from an
+        elevated angle.
+
+        :param gray: Isolate the effect on pixel intensity.
+                     Default is False.
+        :type gray: :class:`bool`
+        :param azimuth: Angle from x-axis.
+        :type azimuth: :class:`numbers.Real`
+        :param elevation: Amount of pixels from the z-axis.
+        :type elevation: :class:`numbers.Real`
+
+        .. versionadded:: 0.5.0
+        """
+        if not isinstance(azimuth, numbers.Real):
+            raise TypeError('azimuth must be a real number, not ' +
+                            repr(azimuth))
+        if not isinstance(elevation, numbers.Real):
+            raise TypeError('elevation must be a real number, not ' +
+                            repr(elevation))
+        r = library.MagickShadeImage(self.wand, gray,
+                                     azimuth, elevation)
+        if not r:
+            self.raise_exception()
+
+    @manipulative
+    def shadow(self, alpha=0.0, sigma=0.0, x=0, y=0):
+        """Generates an image shadow.
+
+        :param alpha: Ratio of transparency.
+        :type alpha: :class:`numbers.Real`
+        :param sigma: Standard deviation of the gaussian filter.
+        :type sigma: :class:`numbers.Real`
+        :param x: x-offset.
+        :type x: :class:`numbers.Integral`
+        :param y: y-offset.
+        :type y: :class:`numbers.Integral`
+
+        .. versionadded:: 0.5.0
+        """
+        if not isinstance(alpha, numbers.Real):
+            raise TypeError('alpha must be a real number, not ' +
+                            repr(alpha))
+        if not isinstance(sigma, numbers.Real):
+            raise TypeError('sigma must be a real number, not ' +
+                            repr(sigma))
+        if not isinstance(x, numbers.Integral):
+            raise TypeError('x must be an integer, not ' +
+                            repr(x))
+        if not isinstance(y, numbers.Integral):
+            raise TypeError('y must be an integer, not ' +
+                            repr(y))
+        r = library.MagickShadowImage(self.wand, alpha, sigma, x, y)
+        if not r:
+            self.raise_exception()
+
+    @manipulative
+    def sharpen(self, radius=0.0, sigma=0.0):
+        """Applies a gaussian effect to enhance the sharpness of an
+        image.
+
+        .. note::
+
+            For best results, ensure ``radius`` is larger than
+            ``sigma``.
+
+            Defaults values of zero will have ImageMagick attempt
+            to auto-select suitable values.
+
+        :param radius: size of gaussian aperture.
+        :type radius: :class:`numbers.Real`
+        :param sigma: Standard deviation of the gaussian filter.
+        :type sigma: :class:`numbers.Real`
+
+        .. versionadded:: 0.5.0
+        """
+        if not isinstance(radius, numbers.Real):
+            raise TypeError('radius must be a real number, not ' +
+                            repr(radius))
+        if not isinstance(sigma, numbers.Real):
+            raise TypeError('sigma must be a real number, not ' +
+                            repr(sigma))
+        r = library.MagickSharpenImage(self.wand, radius, sigma)
+        if not r:
+            self.raise_exception()
+
+    @manipulative
+    def shave(self, columns=0, rows=0):
+        """Remove pixels from the edges.
+
+        :param columns: amount to shave off the x-axis.
+        :type columns: :class:`numbers.Integral`
+        :param rows: amount to shave off the y-axis.
+        :type rows: :class:`numbers.Integral`
+
+        .. versionadded:: 0.5.0
+        """
+        if not isinstance(columns, numbers.Integral):
+            raise TypeError('columns must be an integer, not ' +
+                            repr(columns))
+        if not isinstance(rows, numbers.Integral):
+            raise TypeError('rows must be an integer, not ' +
+                            repr(rows))
+        r = library.MagickShaveImage(self.wand, columns, rows)
+        if not r:
+            self.raise_exception()
+
     def strip(self):
         """Strips an image of all profiles and comments.
 
