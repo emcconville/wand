@@ -3209,17 +3209,65 @@ class BaseImage(Resource):
 
     @manipulative
     def morphology(self, method=None, kernel=None, iterations=1):
+        """Manipulate pixels based on the shape of neighboring pixels.
+
+        The ``method`` determines what type of effect to apply to matching
+        ``kernel`` shapes. Common methods can be add/remove,
+        or lighten/darken pixel values.
+
+        The ``kernel`` describes the shape of the matching neighbors. Common
+        shapes are provided as "built-in" kernels. See
+        :const`KERNEL_INFO_TYPES` for examples. The format for built-in kernels
+        is:
+
+        .. sourcecode:: text
+
+            label:geometry
+
+        Where `label` is the kernel name defined in :const:`KERNEL_INFO_TYPES`,
+        and `:geometry` is an optional geometry size. For example::
+
+            with Image(filename='rose:') as img:
+                img.morphology(method='dilate', kernel='octagon:3x3')
+                # or simply
+                img.morphology(method='edgein', kernel='octagon')
+
+        Custom kernels can be applied by following a similar format:
+
+        .. sourcecode:: text
+
+            geometry:args
+
+        Where `geometry` is the size of the custom kernel, and `args`
+        list a comma separated list of values. For example::
+
+            custom_kernel='5x3:nan,1,1,1,nan 1,1,1,1,1 nan,1,1,1,nan'
+            with Image(filename='rose:') as img:
+                img.morphology(method='dilate', kernel=custom_kernel)
+
+        :param method: effect function to apply. See
+                       :const:`MORPHOLOGY_METHODS` for a list of
+                       methods.
+        :type method: :class:`basestring`
+        :param kernel: shape to evaluate surrounding pixels. See
+                       :const:`KERNEL_INFO_TYPES` for a list of
+                       built-in shapes.
+        :type kernel: :class:`basestring`
         """
-        """
+        if not isinstance(method, string_type):
+            raise TypeError('method must be a string, not ' + repr(method))
+        if not isinstance(kernel, string_type):
+            raise TypeError('kernel must be a string, not ' + repr(kernel))
+        if not isinstance(iterations, numbers.Integral):
+            raise TypeError('iterations must be an integer, not' +
+                            repr(iterations))
         buitin = None
-        geometry = None
+        geometry = ''
         parts = kernel.split(':')
         if parts[0] in KERNEL_INFO_TYPES:
             buitin = parts[0]
             if len(parts) == 2:
                 geometry = parts[1]
-            else:
-                geometry = ''
         exception_info = libmagick.AcquireExceptionInfo()
         if buitin:
             kernel_idx = KERNEL_INFO_TYPES.index(buitin)
