@@ -1976,7 +1976,7 @@ def test_blur(fx_asset, display):
 def test_morphology_builtin(fx_asset):
     known = []
     args = (('erode', 'ring'),
-            ('dilate', 'disk:5' ),
+            ('dilate', 'disk:5'),
             ('open', 'octagon'),
             ('smooth', 'rectangle:x-1'),
             ('thinning', 'edges'),
@@ -2001,9 +2001,7 @@ def test_morphology_builtin(fx_asset):
                            iterations='p')
 
 
-
 def test_morphology_user_defined(fx_asset):
-    known = []
     with Image(filename='rose:') as img:
         was = img.signature
         img.morphology(method='dilate',

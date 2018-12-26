@@ -3253,6 +3253,13 @@ class BaseImage(Resource):
                        :const:`KERNEL_INFO_TYPES` for a list of
                        built-in shapes.
         :type kernel: :class:`basestring`
+        :param iterations: Number of times a morphology method should be
+                           applied to the image. Default ``1``. Use ``-1`` for
+                           unlimited iterations until the image is unchanged
+                           by the method operator.
+        :type iterations: :class:`numbers.Integral`
+
+        .. versionadded:: 0.5.0
         """
         if not isinstance(method, string_type):
             raise TypeError('method must be a string, not ' + repr(method))

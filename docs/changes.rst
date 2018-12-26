@@ -51,6 +51,7 @@ To be released.
 - Added :meth:`Image.edge() <wand.image.BaseImage.edge>` method.
 - Added :meth:`Image.emboss() <wand.image.BaseImage.emboss>` method. [:issue:`196`]
 - Added :meth:`Image.enhance() <wand.image.BaseImage.enhance>` method. [:issue:`132`]
+- Added :meth:`Image.morphology() <wand.image.BaseImage.morphology>` method. [:issue:`132`]
 - Added :meth:`Image.shade() <wand.image.BaseImage.shade>` method.
 - Added :meth:`Image.shadow() <wand.image.BaseImage.shadow>` method.
 - Added :meth:`Image.sharpen() <wand.image.BaseImage.sharpen>` method. [:issue:`132`]
