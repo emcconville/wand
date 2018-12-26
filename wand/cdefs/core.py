@@ -86,9 +86,16 @@ def load(libmagick):
 
 
 def load_with_version(libmagick, IM_VERSION):
-    libmagick.AcquireKernelBuiltIn.argtypes = [c_void_p, c_void_p]
-    libmagick.AcquireKernelBuiltIn.restype = c_void_p
-    libmagick.AcquireKernelInfo.argtypes = [c_char_p]
-    libmagick.AcquireKernelInfo.restype = c_void_p
+    if IM_VERSION < 0x700:
+        libmagick.AcquireKernelBuiltIn.argtypes = [c_int, c_void_p]
+        libmagick.AcquireKernelBuiltIn.restype = c_void_p
+        libmagick.AcquireKernelInfo.argtypes = [c_char_p]
+        libmagick.AcquireKernelInfo.restype = c_void_p
+    else:
+        libmagick.AcquireKernelBuiltIn.argtypes = [c_int, c_void_p,
+                                                   c_void_p]
+        libmagick.AcquireKernelBuiltIn.restype = c_void_p
+        libmagick.AcquireKernelInfo.argtypes = [c_char_p, c_void_p]
+        libmagick.AcquireKernelInfo.restype = c_void_p
     libmagick.DestroyKernelInfo.argtypes = [c_void_p]
     libmagick.DestroyKernelInfo.restype = c_void_p

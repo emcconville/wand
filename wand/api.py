@@ -184,7 +184,7 @@ try:
     libmagick.GetMagickQuantumDepth(ctypes.byref(IM_QUANTUM_DEPTH))
     # Does the library support HDRI?
     IM_HDRI = 'HDRI' in str(libmagick.GetMagickFeatures())
-    core.load_with_version(libmagick, IM_VERSION)
+    core.load_with_version(libmagick, IM_VERSION.value)
     magick_wand.load(library, IM_VERSION.value)
     magick_property.load(library, IM_VERSION.value)
     magick_image.load(library, IM_VERSION.value)
