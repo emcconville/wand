@@ -1973,6 +1973,47 @@ def test_blur(fx_asset, display):
         assert 0.655 <= after.blue < 0.67
 
 
+def test_morphology_builtin(fx_asset):
+    known = []
+    args = (('erode', 'ring'),
+            ('dilate', 'disk:5' ),
+            ('open', 'octagon'),
+            ('smooth', 'rectangle:x-1'),
+            ('thinning', 'edges'),
+            ('distance', 'euclidean:4,10!'),
+            ('thicken', 'unity:x5'),
+            ('close', 'manhattan:20x25%'),
+            ('hit_and_miss', 'chebyshev:5.0'))
+    for arg in args:
+        with Image(filename='rose:') as img:
+            img.morphology(*arg)
+            assert img.signature not in known
+            known.append(img.signature)
+    with Image(filename='rose:') as img:
+        with raises(TypeError):
+            img.morphology(method=0xDEADBEEF)
+        with raises(TypeError):
+            img.morphology(method='close',
+                           kernel=0xDEADBEEF)
+        with raises(TypeError):
+            img.morphology(method='close',
+                           kernel='1:0',
+                           iterations='p')
+
+
+
+def test_morphology_user_defined(fx_asset):
+    known = []
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.morphology(method='dilate',
+                       kernel='3x3: 0.3,0.6,0.3 0.6,1.0,0.6 0.3,0.6,0.3')
+        assert was != img.signature
+        with raises(ValueError):
+            img.morphology(method='dilate',
+                           kernel='junk:0')
+
+
 def test_modulate(fx_asset, display):
     with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
         before = img[100, 100]

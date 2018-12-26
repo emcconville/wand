@@ -3313,7 +3313,7 @@ class BaseImage(Resource):
                 kernel_info = libmagick.AcquireKernelBuiltIn(
                     kernel_idx,
                     ctypes.byref(geometry_info),
-                    ctypes.byref(exception_info)
+                    exception_info
                 )
         elif kernel:
             if MAGICK_VERSION_NUMBER < 0x700:
@@ -3323,7 +3323,7 @@ class BaseImage(Resource):
             else:
                 kernel_info = libmagick.AcquireKernelInfo(
                     binary(kernel),
-                    ctypes.byref(exception_info)
+                    exception_info
                 )
         r = None
         exception_info = libmagick.DestroyExceptionInfo(exception_info)
