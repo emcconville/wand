@@ -8,7 +8,7 @@ Evaluate Expression
 
 .. versionadded:: 0.4.1
 
-Pixel channels can be manipulated by applying a arithmetic, relational, or
+Pixel channels can be manipulated by applying an arithmetic, relational, or
 logical expression. See :const:`~wand.image.EVALUATE_OPS` for a list of valid
 operations.
 
@@ -42,7 +42,7 @@ Function Expression
 
 Similar to :meth:`~wand.image.BaseImage.evaluate()`,
 :meth:`~wand.image.BaseImage.function()` applies a multi-argument function to
-pixel channels. See :const:`~wand.image.FUNCTION_TYPES` for a list of avalible
+pixel channels. See :const:`~wand.image.FUNCTION_TYPES` for a list of available
 function formulas.
 
 For example, when given image :file:`enhancement.jpg`:
