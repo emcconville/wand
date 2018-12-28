@@ -1,0 +1,109 @@
+What's new in Wand 0.5?
+=======================
+
+This guide doesn't cover all changes in 0.5.  See also the full list of
+changes in :ref:`changelog-0.5.0`.
+
+
+ImageMagick-7 Support
+---------------------
+
+The release of Wand 0.5 now supports both versions of ImageMagick-6 &
+ImageMagick-7. ImageMagick-7 introduces some key behavior changes, and some
+care should go into any application that was previously written for
+ImageMagick-6 before upgrading system libraries.
+
+To understand the fundamental changes, please review
+`Porting to ImageMagick Version 7`_ for a more definitive overview.
+
+.. _Porting to ImageMagick Version 7: https://www.imagemagick.org/script/porting.php
+
+Notes on Porting 6 t0 7
+^^^^^^^^^^^^^^^^^^^^^^^
+
+A few key changes worth reviewing.
+
+
+HDRI by Default
+'''''''''''''''
+Vanilla installs of ImageMagick-7 include HDRI enabled by default. Users may
+experiences increase depth of color, but with reduced performances during
+certain color manipulation routines. Max color-values should never be
+hard-coded, but rely on :attr:`Image.quantum_range <wand.image.BaseImage.quantum_range>` to ensure
+consistent results. It is also possible to experiences color-value underflow /
+overflow during arithmetic operations when upgrading.
+
+An example of an underflow between versions::
+
+    # ImageMagick-6
+    with Image(width=1, height=1, background=Color("gray5")) as canvas:
+        canvas.evaluate("subtract", canvas.quantum_range * 0.07)
+        print(canvas[0, 0]) #=> srgb(0,0,0)
+
+    # ImageMagick-7
+    with Image(width=1, height=1, background=Color("gray5")) as canvas:
+        canvas.evaluate("subtract", canvas.quantum_range * 0.07)
+        print(canvas[0, 0]) #=> srgb(-1.90207%,-1.90207%,-1.90207%)
+
+The majority of the image-manipulation methods are guarded against overflows by
+internal clamping_ routines, but folks working directly with
+:meth:`Image.evaluate() <wand.image.BaseImage.evaluate>`,
+:meth:`Image.function() <wand.image.BaseImage.function>`, and
+:meth:`Image.composite_channel() <wand.image.BaseImage.composite_channel>` should take caution.
+Method :meth:`Image.clamp() <wand.image.BaseImage.clamp>` as been provided for
+this task.::
+
+    with Image(width=1, height=1, background=Color("gray5")) as canvas:
+        canvas.evaluate("subtract", canvas.quantum_range * 0.07)
+        canvas.clamp()
+        print(canvas[0, 0]) #=> srgb(0,0,0)
+
+
+.. _clamping: https://en.wikipedia.org/wiki/Clamping_(graphics)
+
+Image Color-Channel Awareness
+'''''''''''''''''''''''''''''
+With ImageMagick-7, colors have descriptive traits, and are managed through
+channel-masks. An elegant solution to manage active color channels, and
+simplify core library functions.
+
+Users implementing :meth:`Image.composite_channel() <wand.image.BaseImage.composite_channel>` should review
+previous solutions of composite ``"copy..."`` operators as the behavior may
+have changed.
+
+You can play around with the effects of channel masks with
+:c:func:`MagickSetImageChannelMask` function. For example::
+
+    from wand.image import Image, CHANNELS
+    from wand.api import library
+
+    with Image(filename="rose:") as img:
+        # Isolate only Red & Green channels
+        active_mask = CHANNELS["red"] | CHANNELS["green"]
+        previous_mask = library.MagickSetImageChannelMask(img.wand, active_mask)
+        img.evaluate("rightshift", 1)
+        # Restore previous channels
+        library.MagickSetImageChannelMask(img.wand, previous_mask)
+        img.save(filename="blue_rose.png")
+
+
+Alpha Replaces Opacity & Matte
+''''''''''''''''''''''''''''''
+Opacity methods & enumerated value have been renamed to alpha with
+ImageMagick-7. Although the majority of the functionalities are the same, user
+are responsible for checking the library version before calling an opacity
+method / enumerated value.
+
+For example::
+
+    from wand.version import MAGICK_VERSION_NUMBER
+    from wand.image import Image
+
+    with Image(filename="wizard:") as img:
+        image_type = "truecoloralpha"      # IM7 enum
+        if MAGICK_VERSION_NUMBER < 0x700:  # Backwards support for IM6
+            image_type = "truecolormatte"
+        img.type = image_type
+
+The reference documentation have been updated to note specific values
+available per ImageMagick versions.
