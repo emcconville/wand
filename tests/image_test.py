@@ -972,6 +972,17 @@ def test_resample_errors(fx_asset):
             img.resample(y_res=-5)
 
 
+def test_posterize(fx_asset):
+    with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
+        was = img.signature
+        img.posterize(levels=16, dither='no')
+        assert was != img.signature
+        with raises(TypeError):
+            img.posterize(levels='16')
+        with raises(ValueError):
+            img.posterize(levels=16, dither='manhatten')
+
+
 @mark.parametrize(('args', 'kwargs', 'expected_size'), [
     ((), {'resize': '200%'}, (1600, 1200)),
     ((), {'resize': '200%x100%'}, (1600, 600)),
@@ -1255,6 +1266,13 @@ def test_transparentize(fx_asset):
                     assert 0.69 < c.alpha < 0.71
 
 
+def test_unique_colors(fx_asset):
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.unique_colors()
+        assert was != img.signature
+
+
 def test_watermark(fx_asset):
     """Adds  watermark to an image."""
     with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
@@ -1475,6 +1493,25 @@ def test_caption_without_font(fx_asset):
                 width=134, height=20,
                 gravity='center'
             )
+
+
+def test_clut(fx_asset):
+    with Image(filename='rose:') as img:
+        was = img.signature
+        with Image(img) as clut:
+            clut.unique_colors()
+            clut.flop()
+            img.clut(clut)
+            assert was != img.signature
+
+
+def test_hald_clut(fx_asset):
+    with Image(filename='rose:') as img:
+        was = img.signature
+        with Image(filename='hald:3') as hald:
+            hald.gamma(0.367)
+            img.hald_clut(hald)
+            assert was != img.signature
 
 
 def test_setfont(fx_asset):

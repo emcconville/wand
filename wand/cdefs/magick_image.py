@@ -150,8 +150,12 @@ def load(lib, IM_VERSION):
     lib.MagickClipImage.restype = c_bool
     lib.MagickClipImagePath.argtypes = [c_void_p, c_char_p, c_bool]
     lib.MagickClipImagePath.restype = c_bool
-    lib.MagickClutImage.argtypes = [c_void_p, c_void_p]
-    lib.MagickClutImage.restype = c_bool
+    if is_im_7:
+        lib.MagickClutImage.argtypes = [c_void_p, c_void_p, c_int]
+        lib.MagickClutImage.restype = c_bool
+    else:
+        lib.MagickClutImage.argtypes = [c_void_p, c_void_p]
+        lib.MagickClutImage.restype = c_bool
     if is_im_6:
         lib.MagickClutImageChannel.argtypes = [c_void_p, c_int, c_void_p]
         lib.MagickClutImageChannel.restype = c_bool

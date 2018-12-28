@@ -4,6 +4,8 @@ Wand Changelog
 0.5 series
 ~~~~~~~~~~
 
+.. _changelog-0.5.0:
+
 Version 0.5.0
 -------------
 
@@ -44,18 +46,21 @@ To be released.
     - :meth:`Image.transverse() <wand.image.BaseImage.transverse>`
     - :meth:`Image.trim() <wand.image.BaseImage.trim>`
 
-- Added :meth:`Image.export_pixels() <wand.image.BaseImage.export_pixels>` method.
-- Added :meth:`Image.import_pixels() <wand.image.BaseImage.import_pixels>` method.
+- Added :meth:`Image.clut() <wand.image.BaseImage.clut>` method.
 - Added :meth:`Image.deskew() <wand.image.BaseImage.deskew>` method.
 - Added :meth:`Image.despeckle() <wand.image.BaseImage.despeckle>` method.
 - Added :meth:`Image.edge() <wand.image.BaseImage.edge>` method.
 - Added :meth:`Image.emboss() <wand.image.BaseImage.emboss>` method. [:issue:`196`]
 - Added :meth:`Image.enhance() <wand.image.BaseImage.enhance>` method. [:issue:`132`]
+- Added :meth:`Image.export_pixels() <wand.image.BaseImage.export_pixels>` method.
+- Added :meth:`Image.import_pixels() <wand.image.BaseImage.import_pixels>` method.
 - Added :meth:`Image.morphology() <wand.image.BaseImage.morphology>` method. [:issue:`132`]
+- Added :meth:`Image.posterize() <wand.image.BaseImage.posterize>` method.
 - Added :meth:`Image.shade() <wand.image.BaseImage.shade>` method.
 - Added :meth:`Image.shadow() <wand.image.BaseImage.shadow>` method.
 - Added :meth:`Image.sharpen() <wand.image.BaseImage.sharpen>` method. [:issue:`132`]
 - Added :meth:`Image.shave() <wand.image.BaseImage.shave>` method.
+- Added :meth:`Image.unique_colors() <wand.image.BaseImage.unique_colors>` method.
 - Method :meth:`Drawing.draw() <wand.drawing.Drawing.draw>` now accepts
   :class:`BaseImage <wand.image.BaseImage>` for folks extended classes.
 - Added :attr:`Image.loop <wand.image.BaseImage.loop>` property. [:issue:`227`]

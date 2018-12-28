@@ -30,10 +30,11 @@ from .version import MAGICK_VERSION_NUMBER, MAGICK_HDRI
 
 __all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COLORSPACE_TYPES',
            'COMPARE_METRICS', 'COMPOSITE_OPERATORS', 'COMPRESSION_TYPES',
-           'DISPOSE_TYPES', 'DISTORTION_METHODS', 'EVALUATE_OPS',
-           'FILTER_TYPES', 'FUNCTION_TYPES', 'GRAVITY_TYPES',
+           'DISPOSE_TYPES', 'DISTORTION_METHODS', 'DITHER_METHODS',
+           'EVALUATE_OPS', 'FILTER_TYPES', 'FUNCTION_TYPES', 'GRAVITY_TYPES',
            'IMAGE_LAYER_METHOD', 'IMAGE_TYPES', 'KERNEL_INFO_TYPES',
            'MORPHOLOGY_METHODS', 'ORIENTATION_TYPES',
+           'PIXEL_INTERPOLATE_METHODS',
            'STORAGE_TYPES', 'VIRTUAL_PIXEL_METHOD', 'UNIT_TYPES',
            'BaseImage', 'ChannelDepthDict', 'ChannelImageDict',
            'ClosedImageError', 'HistogramDict', 'Image', 'ImageProperty',
@@ -396,6 +397,17 @@ DISTORTION_METHODS = (
 )
 
 
+#: (:class:`tuple`) The list of Dither methods.
+#:
+#: - ``'undefined'``
+#: - ``'no'``
+#: - ``'riemersma'``
+#: - ``'floyd_steinberg'``
+#:
+#: .. versionadded:: 0.5.0
+DITHER_METHODS = ('undefined', 'no', 'riemersma', 'floyd_steinberg')
+
+
 #: (:class:`tuple`) The list of evaluation operators
 #:
 #: - ``'undefined'``
@@ -756,6 +768,27 @@ OPTIONS = frozenset([
 ORIENTATION_TYPES = ('undefined', 'top_left', 'top_right', 'bottom_right',
                      'bottom_left', 'left_top', 'right_top', 'right_bottom',
                      'left_bottom')
+
+
+#: (:class:`tuple`) List of interpolate pixel methods (ImageMagick-7 only.)
+#:
+#: - ``'undefined'``
+#: - ``'average'``
+#: - ``'average9'``
+#: - ``'average16'``
+#: - ``'background'``
+#: - ``'bilinear'``
+#: - ``'blend'``
+#: - ``'catrom'``
+#: - ``'integer'``
+#: - ``'mesh'``
+#: - ``'nearest'``
+#: - ``'spline'``
+#:
+#: .. versionadded:: 0.5.0
+PIXEL_INTERPOLATE_METHODS = ('undefined', 'average', 'average9', 'average16',
+                             'background', 'bilinear', 'blend', 'catrom',
+                             'integer', 'mesh', 'nearest', 'spline')
 
 
 #: (:class:`tuple`) The list of pixel storage types.
@@ -1143,22 +1176,6 @@ class BaseImage(Resource):
                                                            color.resource)
             if not result:
                 self.raise_exception()
-
-    def clone(self):
-        """Clones the image. It is equivalent to call :class:`Image` with
-        ``image`` parameter. ::
-
-            with img.clone() as cloned:
-                # manipulate the cloned image
-                pass
-
-        :returns: the cloned new image
-        :rtype: :class:`Image`
-
-        .. versionadded:: 0.1.1
-
-        """
-        return Image(image=self)
 
     @property
     def colorspace(self):
@@ -1992,6 +2009,58 @@ class BaseImage(Resource):
                                                  background_color.resource)
             textboard.read(filename=b'caption:' + text.encode('utf-8'))
             self.composite(textboard, left, top)
+
+    def clamp(self):
+        """Restrict color values between 0 and quantum range. This is useful
+        when applying arithmetic operations that could result in color values
+        over/underflowing.
+
+        .. versionadded:: 0.5.0
+        """
+        r = library.MagickClampImage(self.wand)
+        if not r:
+            self.raise_exception()
+
+    def clone(self):
+        """Clones the image. It is equivalent to call :class:`Image` with
+        ``image`` parameter. ::
+
+            with img.clone() as cloned:
+                # manipulate the cloned image
+                pass
+
+        :returns: the cloned new image
+        :rtype: :class:`Image`
+
+        .. versionadded:: 0.1.1
+
+        """
+        return Image(image=self)
+
+    @manipulative
+    def clut(self, image, method='undefined'):
+        """Replace color values by referencing another image as a Color
+        Look Up Table.
+
+        :param image: Color Look Up Table image.
+        :type image: :class:`wand.image.BaseImage`
+        :param method: Pixel Interpolate method. Only available with
+                       ImageMagick-7. See :const:`PIXEL_INTERPOLATE_METHODS`
+        :type method: :class:`basestring`
+
+        .. versionadded:: 0.5.0
+        """
+        if not isinstance(image, BaseImage):
+            raise TypeError('image must be a base image, not ' + repr(image))
+        if MAGICK_VERSION_NUMBER < 0x700:
+            r = library.MagickClutImage(self.wand, image.wand)
+        else:
+            if method not in PIXEL_INTERPOLATE_METHODS:
+                raise ValueError('Unrecognized pixel interpolate method.')
+            method_idx = PIXEL_INTERPOLATE_METHODS.index(method)
+            r = library.MagickClutImage(self.wand, image.wand, method_idx)
+        if not r:
+            self.raise_exception()
 
     @manipulative
     def coalesce(self):
@@ -2885,6 +2954,28 @@ class BaseImage(Resource):
         if not r:
             self.raise_exception()
 
+    @manipulative
+    def hald_clut(self, image):
+        """Replace color values by referencing a Higher And Lower Dimension
+        (HALD) Color Look Up Table (CLUT). You can generate a HALD image
+        by using ImageMagick's `hald:` protocol. ::
+
+            with Image(filename='rose:') as img:
+                with Image(filename='hald:3') as hald:
+                    hald.gamma(1.367)
+                    img.hald_clut(hald)
+
+        :param image: The HALD color matrix.
+        :type image: :class:`wand.image.BaseImage`
+
+        .. versionadded:: 0.5.0
+        """
+        if not isinstance(image, BaseImage):
+            raise TypeError('expecting a base image, not ' + repr(image))
+        r = library.MagickHaldClutImage(self.wand, image.wand)
+        if not r:
+            self.raise_exception()
+
     def import_pixels(self, x=0, y=0, width=None, height=None,
                       channel_map='RGB', storage='char', data=None):
         """Import pixel data from a byte-string to
@@ -3455,6 +3546,28 @@ class BaseImage(Resource):
             raise AttributeError('`MagickOptimizeImageTransparency\' not '
                                  'available on current version of MagickWand '
                                  'library.')
+
+    @manipulative
+    def posterize(self, levels=None, dither='no'):
+        """Reduce color levels per channel.
+
+        :param levels: Number of levels per channel.
+        :type levels: :class:`numbers.Integral`
+        :param dither: Dither method to apply.
+                       See :const:`DITHER_METHODS`.
+        :type dither: `basestring`
+
+        .. versionadded:: 0.5.0
+        """
+        if not isinstance(levels, numbers.Integral):
+            raise TypeError('levels must be an integer, not ' + repr(levels))
+        if dither not in DITHER_METHODS:
+            raise ValueError('dither must be no, riemersma, or floyd_steinberg'
+                             ' method')
+        dither_idx = DITHER_METHODS.index(dither)
+        r = library.MagickPosterizeImage(self.wand, levels, dither_idx)
+        if not r:
+            self.raise_exception()
 
     @manipulative
     def quantize(self, number_colors, colorspace_type,
@@ -4234,6 +4347,17 @@ class BaseImage(Resource):
             self.border(color, 1, 1, compose="copy")
         result = library.MagickTrimImage(self.wand, fuzz)
         if not result:
+            self.raise_exception()
+
+    @manipulative
+    def unique_colors(self):
+        """Discards all duplicate pixels, and rebuilds the image
+        as a single row.
+
+        .. versionadded:: 0.5.0
+        """
+        r = library.MagickUniqueImageColors(self.wand)
+        if not r:
             self.raise_exception()
 
     @manipulative
