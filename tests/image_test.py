@@ -179,6 +179,12 @@ def test_new_with_format(fx_asset):
         assert img.size == (16, 16)
 
 
+def test_new_from_pseudo(fx_asset):
+    with Image() as img:
+        img.pseudo(10, 10, 'xc:none')
+        assert img.size == (10, 10)
+
+
 def test_clone(fx_asset):
     """Clones the existing image."""
     funcs = (lambda img: Image(image=img),

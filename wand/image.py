@@ -4540,7 +4540,7 @@ class Image(BaseImage):
 
     def __init__(self, image=None, blob=None, file=None, filename=None,
                  format=None, width=None, height=None, depth=None,
-                 background=None, resolution=None):
+                 background=None, resolution=None, pseudo=None):
         new_args = width, height, background, depth
         open_args = blob, file, filename
         if any(a is not None for a in new_args) and image is not None:
@@ -4605,7 +4605,10 @@ class Image(BaseImage):
                 # format again.
                 library.MagickSetFormat(self.wand, binary(""))
             elif width is not None and height is not None:
-                self.blank(width, height, background)
+                if pseudo is None:
+                    self.blank(width, height, background)
+                else:
+                    self.pseudo(width, height, pseudo)
                 if depth:
                     r = library.MagickSetImageDepth(self.wand, depth)
                     if not r:
@@ -4807,6 +4810,34 @@ class Image(BaseImage):
             library.MagickRelinquishMemory(blob_p)
             return blob
         self.raise_exception()
+
+    def pseudo(self, width, height, pseudo='xc:'):
+        """Creates a new image from ImageMagick's internal protocol coders.
+
+        :param width: Total columns of the new image.
+        :type width: :class:`numbers.Integral`
+        :param height: Total rows of the new image.
+        :type height: :class:`numbers.Integral`
+        :param pseudo: The protocol & arguments for the pseudo image.
+        :type pseudo: :class:`basestring`
+
+        .. versionadded:: 0.5.0
+        """
+        if not isinstance(width, numbers.Integral) or width < 1:
+            raise TypeError('width must be a natural number, not ' +
+                            repr(width))
+        if not isinstance(height, numbers.Integral) or height < 1:
+            raise TypeError('height must be a natural number, not ' +
+                            repr(height))
+        if not isinstance(pseudo, string_type):
+            raise TypeError('pseudo must be a string type, not ' +
+                            repr(pseudo))
+        r = library.MagickSetSize(self.wand, width, height)
+        if not r:
+            self.raise_exception()
+        r = library.MagickReadImage(self.wand, encode_filename(pseudo))
+        if not r:
+            self.raise_exception()
 
     def read(self, file=None, filename=None, blob=None, resolution=None):
         """Read new image into Image() object.
