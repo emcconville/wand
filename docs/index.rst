@@ -87,6 +87,7 @@ User's guide
    guide/colorenhancement
    guide/exif
    guide/sequence
+   guide/layers
    guide/resource
    test
    roadmap
