@@ -5,6 +5,18 @@ This guide doesn't cover all changes in 0.5.  See also the full list of
 changes in :ref:`changelog-0.5.0`.
 
 
+Pseudo Images
+-------------
+
+The :class:`~wand.image.Image` constructor now accepts the ``pseudo`` paramater.
+This allows you to quickly read `Pseudo-image Formats`_, and `Built-in Patterns`_
+
+.. _Pseudo-image Formats: https://imagemagick.org/script/formats.php#pseudo
+.. _Built-in Patterns: https://imagemagick.org/script/formats.php#builtin-images
+
+Checkout :ref:`open_pseudo` for some examples.
+
+
 ImageMagick-7 Support
 ---------------------
 

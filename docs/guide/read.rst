@@ -160,6 +160,8 @@ argument as well::
    :class:`~wand.image.Image` constructor.
 
 
+.. _open_pseudo:
+
 Open a Pseudo Image
 -------------------
 
