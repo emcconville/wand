@@ -27,7 +27,6 @@ To be released.
     - Added :meth:`Image.optimize_layers() <wand.image.BaseImage.optimize_layers>` method.
     - Added :meth:`Image.optimize_transparency() <wand.image.BaseImage.optimize_transparency>` method.
 
-- Added :meth:`Image.append() <wand.image.BaseImage.append>` method. [:issue:`177`]
 - Implemented :meth:`__array_interface__` for NumPy [:issue:`65`]
 - Migrated the following methods & attributes from :class:`Image <wand.image.Image>`
   to :class:`BaseImage <wand.image.BaseImage>` for a more uniformed code-base.
@@ -47,6 +46,7 @@ To be released.
     - :meth:`Image.trim() <wand.image.BaseImage.trim>`
 
 - Added :meth:`Image.clut() <wand.image.BaseImage.clut>` method.
+- Added :meth:`Image.concat() <wand.image.BaseImage.concat>` method. [:issue:`177`]
 - Added :meth:`Image.deskew() <wand.image.BaseImage.deskew>` method.
 - Added :meth:`Image.despeckle() <wand.image.BaseImage.despeckle>` method.
 - Added :meth:`Image.edge() <wand.image.BaseImage.edge>` method.

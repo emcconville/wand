@@ -1824,21 +1824,6 @@ class BaseImage(Resource):
         library.MagickSetSize(self.wand, width, self.height)
 
     @manipulative
-    def append(self, stacked=False):
-        """Concatenates images in stack into a single image. Left-to-right
-        by default, top-to-bottom if ``stacked`` is True.
-
-        :param stacked: stack images in a column, or in a row (default)
-        :type stacked: :class:`bool`
-
-        .. versionadded:: 0.5.0
-        """
-        r = library.MagickAppendImages(self.wand, stacked)
-        if not r:
-            self.raise_exception()
-        self.wand = r
-
-    @manipulative
     def _auto_orient(self):
         """Fallback for :attr:`auto_orient()` method
         (which wraps :c:func:`MagickAutoOrientImage`),
@@ -1951,6 +1936,21 @@ class BaseImage(Resource):
                                                    width, height, compose_idx)
         if not result:
             self.raise_exception()
+
+    @manipulative
+    def concat(self, stacked=False):
+        """Concatenates images in stack into a single image. Left-to-right
+        by default, top-to-bottom if ``stacked`` is True.
+
+        :param stacked: stack images in a column, or in a row (default)
+        :type stacked: :class:`bool`
+
+        .. versionadded:: 0.5.0
+        """
+        r = library.MagickAppendImages(self.wand, stacked)
+        if not r:
+            self.raise_exception()
+        self.wand = r
 
     @manipulative
     def caption(self, text, left=0, top=0, width=None, height=None, font=None,

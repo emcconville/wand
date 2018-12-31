@@ -1462,14 +1462,14 @@ def test_border(fx_asset):
             assert img[-3, -6] == right_bottom
 
 
-def test_append():
+def test_concat():
     with Image(filename='rose:') as img:
         img.read(filename='rose:')
         with Image(img) as row:
-            row.append()
+            row.concat()
             assert row.size == (140, 46)
         with Image(img) as row:
-            row.append(True)
+            row.concat(True)
             assert row.size == (70, 92)
 
 
