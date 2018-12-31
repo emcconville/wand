@@ -107,3 +107,9 @@ For example::
 
 The reference documentation have been updated to note specific values
 available per ImageMagick versions.
+
+.. note::
+
+    For "What's New in Wand 0.4", see `previous announcements`_.
+
+    .. _previous announcements: 0.4.html

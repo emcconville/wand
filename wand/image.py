@@ -2397,8 +2397,8 @@ class BaseImage(Resource):
 
     @manipulative
     def deconstruct(self):
-        """Iterates over internal image stack, and adjust each frame
-        size to maximum bounding region.
+        """Iterates over internal image stack, and adjust each frame size to
+        minimum bounding region of any changes from the previous frame.
 
         .. versionadded:: 0.5.0
         """

@@ -175,7 +175,6 @@ Commun Pseudo images
 
 - ``'canvas:COLOR'``, or ``'xc:COLOR'``, where `COLOR` is any valid color value string.
 - ``'caption:TEXT'``, where `TEXT` is a string message.
-- ``'fractal:'``, generates a fractal image.
 - ``'gradient:START-END'``, generates a blended gradient between two colors, where
   both `START` and `END` are color value strings.
 - ``'hald:'``, creates a Higher And Lower Dimension matrix table.

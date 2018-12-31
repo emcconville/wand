@@ -9,7 +9,7 @@ Wand Changelog
 Version 0.5.0
 -------------
 
-To be released.
+Released on January 1, 2019.
 
 - Support for ImageMagick-7.
 - Improved support for 32-bit systems.

@@ -1,3 +1,5 @@
+:orphan:
+
 What's new in Wand 0.4?
 =======================
 
@@ -29,3 +31,9 @@ example, see the drawing guide:
 
 Eric McConville did whole of the work alone (:issue:`194`),
 huge thanks for his effort!
+
+.. note::
+
+    For "What's New in Wand 0.3", see `previous announcements`_.
+
+    .. _previous announcements: 0.3.html
