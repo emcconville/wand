@@ -4487,6 +4487,9 @@ class Image(BaseImage):
        with the ``filename``, ``file`` and ``blob`` parameters to load
        raw pixel data.
 
+    .. versionadded:: 0.5.0
+       The ``pseudo`` parameter.
+
     .. describe:: [left:right, top:bottom]
 
        Crops the image by its ``left``, ``right``, ``top`` and ``bottom``,
@@ -4652,7 +4655,7 @@ class Image(BaseImage):
 
         :param width: the width of new blank image.
         :type width: :class:`numbers.Integral`
-        :param height: the height of new blank imgage.
+        :param height: the height of new blank image.
         :type height: :class:`numbers.Integral`
         :param background: an optional background color.
                            default is transparent

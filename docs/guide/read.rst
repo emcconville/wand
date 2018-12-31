@@ -158,3 +158,41 @@ argument as well::
 .. versionadded:: 0.2.2
    The ``width``, ``height``, and ``background`` parameters to
    :class:`~wand.image.Image` constructor.
+
+
+Open a Pseudo Image
+-------------------
+
+A pseudo image can refer to any of ImageMagick's internal images that are
+accessable through coder protocols. ::
+
+    from wand.image import Image
+
+    with Image(width=100, height=100, pseudo='plasma:') as img:
+        img.save(filename='100x100-plasma.png')
+
+Commun Pseudo images
+
+- ``'canvas:COLOR'``, or ``'xc:COLOR'``, where `COLOR` is any valid color value string.
+- ``'caption:TEXT'``, where `TEXT` is a string message.
+- ``'fractal:'``, generates a fractal image.
+- ``'gradient:START-END'``, generates a blended gradient between two colors, where
+  both `START` and `END` are color value strings.
+- ``'hald:'``, creates a Higher And Lower Dimension matrix table.
+- ``'inline:VALUE'``, where VALUE is a data-url / base64 string value.
+- ``'label:TEXT'``, where `TEXT` is a string message.
+- ``'pattern:LABEL'``, generates a repeating pattern, where `LABEL` is the pattern
+  name. See `Built-in Patterns`_
+- ``'plasma:'``, generates a plasma fractal image.
+- ``'radial-gradient:'``, similar to `gradient:`, but generates a gradual blend
+  from center of the image.
+- ``'tile:FILENAME'``, generates a repeating tile effect from a given images, where
+  `FILENAME` is the path of a source image.
+
+A list of all pseudo images can be found at https://imagemagick.org/script/formats.php#pseudo
+
+.. versionadded:: 0.5.0
+   The ``pseudo`` parameter was added to the :class:`~wand.image.Image`
+   constructor.
+
+.. _Built-in Patterns: https://imagemagick.org/script/formats.php#builtin-patterns
