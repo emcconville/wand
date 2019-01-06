@@ -193,6 +193,14 @@ class Color(Resource):
             return library.PixelGetBlue(self.resource)
 
     @property
+    def black(self):
+        """(:class:`numbers.Real`) Black, index or `K' color channel.
+        Unused by RGB colorspace."""
+        with self:
+            return library.PixelGetBlack(self.resource)
+
+
+    @property
     def alpha(self):
         """(:class:`numbers.Real`) Alpha value, from 0.0 to 1.0."""
         with self:

@@ -4,6 +4,16 @@ Wand Changelog
 0.5 series
 ~~~~~~~~~~
 
+.. _changelog-0.5.1:
+
+Version 0.5.1
+-------------
+
+Unreleased.
+
+ - Added set pixel color via `Image[x, y] = Color('...')`. [:issue:`105`]
+
+
 .. _changelog-0.5.0:
 
 Version 0.5.0

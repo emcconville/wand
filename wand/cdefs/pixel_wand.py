@@ -78,6 +78,8 @@ def load(lib, IM_VERSION, IM_QUANTUM_DEPTH, IM_HDRI):
     lib.PixelGetAlpha.restype = c_double
     lib.PixelGetAlphaQuantum.argtypes = [c_void_p]
     lib.PixelGetAlphaQuantum.restype = QuantumType
+    lib.PixelGetBlack.argtypes = [c_void_p]
+    lib.PixelGetBlack.restype = c_double
     lib.PixelGetBlue.argtypes = [c_void_p]
     lib.PixelGetBlue.restype = c_double
     lib.PixelGetBlueQuantum.argtypes = [c_void_p]

@@ -871,7 +871,7 @@ def manipulative(function):
 class BaseImage(Resource):
     """The abstract base of :class:`Image` (container) and
     :class:`~wand.sequence.SingleImage`.  That means the most of
-    operations, defined in this abstract classs, are possible for
+    operations, defined in this abstract class, are possible for
     both :class:`Image` and :class:`~wand.sequence.SingleImage`.
 
     .. versionadded:: 0.3.0
@@ -980,6 +980,64 @@ class BaseImage(Resource):
         elif isinstance(idx, slice):
             return self[:, idx]
         raise TypeError('unsupported index type: ' + repr(idx))
+
+    def __setitem__(self, idx, color):
+        if not isinstance(color, Color):
+            raise TypeError('color must be in instance of Color, not ' +
+                            repr(color))
+        if not isinstance(idx, collections.Iterable):
+            raise TypeError('Expecting list of x,y coordinates, not ' +
+                            repr(idx))
+        idx = tuple(idx)
+        if len(idx) != 2:
+            msg = 'pixel index can not be {0}-dimensional'.format(len(idx))
+            raise ValueError(msg)
+        colorspace = self.colorspace
+        s_index = STORAGE_TYPES.index("double")
+        width, height = self.size
+        x1, y1 = idx
+        x2, y2 = 1, 1
+        if not (isinstance(x1, numbers.Integral) and
+                isinstance(y1, numbers.Integral)):
+            raise TypeError('Expecting x & y to be integers')
+        if x1 < 0:
+            x1 += width
+        if y1 < 0:
+            y1 += height
+        if x1 >= width:
+            raise ValueError('x must be less then image width')
+        elif y1 >= height:
+            raise ValueError('y must be less then image height')
+        if colorspace == 'gray':
+            channel_map = b'I'
+            pixel = (ctypes.c_double * 1)()
+            pixel[0] = color.red
+        elif colorspace == 'cmyk':
+            channel_map = b'CMYK'
+            pixel = (ctypes.c_double * 4)()
+            pixel[0] = color.red
+            pixel[1] = color.green
+            pixel[2] = color.blue
+            pixel[3] = color.black
+            if self.alpha_channel:
+                channel_map += b'A'
+                pixel[4] = color.alpha
+        else:
+            channel_map = b'RGB'
+            pixel = (ctypes.c_double * 4)()
+            pixel[0] = color.red
+            pixel[1] = color.green
+            pixel[2] = color.blue
+            if self.alpha_channel:
+                channel_map += b'A'
+                pixel[3] = color.alpha
+        r = library.MagickImportImagePixels(self.wand,
+                                            x1, y1, x2, y2,
+                                            channel_map,
+                                            s_index,
+                                            ctypes.byref(pixel))
+        if not r:
+            self.raise_exception()
 
     def __hash__(self):
         return hash(self.signature)

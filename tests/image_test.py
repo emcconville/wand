@@ -623,6 +623,13 @@ def test_index_pixel(fx_asset):
         assert img[-201, -201] == Color('transparent')
 
 
+def test_index_pixel_set(fx_asset):
+    with Image(filename='rose:') as img:
+        with Color('black') as dot:
+            img[0, 0] = dot
+            assert img[0, 0] == dot
+
+
 def test_index_row(fx_asset):
     """Gets a row."""
     with Color('transparent') as transparent:
@@ -2255,7 +2262,7 @@ def test_optimize_transparency(fx_asset):
                 assert img1.size == img2.size
             except AttributeError as e:
                 warnings.warn('MagickOptimizeImageTransparency not '
-                              'present on system.')
+                              'present on system. ' + repr(e))
 
 
 def test_page_basic(fx_asset):
