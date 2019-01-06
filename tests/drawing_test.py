@@ -294,7 +294,7 @@ def test_draw_comment():
             try:
                 blob = img.make_blob(format="mvg")
             except PolicyError as pe:
-                skip("MVG disabled by security polcies.")
+                skip('MVG disabled by security policies. ' + repr(pe))
             else:
                 assert expected == text(blob)
 
