@@ -1014,7 +1014,7 @@ class BaseImage(Resource):
             pixel[0] = color.red
         elif colorspace == 'cmyk':
             channel_map = b'CMYK'
-            pixel = (ctypes.c_double * 4)()
+            pixel = (ctypes.c_double * 5)()
             pixel[0] = color.red
             pixel[1] = color.green
             pixel[2] = color.blue

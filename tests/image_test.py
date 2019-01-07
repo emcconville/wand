@@ -628,6 +628,22 @@ def test_index_pixel_set(fx_asset):
         with Color('black') as dot:
             img[0, 0] = dot
             assert img[0, 0] == dot
+        img.colorspace = 'gray'
+        with Color('gray50') as dot:
+            img[0, 0] = dot
+            assert img[0, 0] == dot
+        img.colorspace = 'cmyk'
+        with Color('cmyk(255, 0, 0, 0') as dot:
+            img[0, 0] = dot
+            assert img[0, 0] == dot
+        with raises(TypeError):
+            img[0, 0] = 1
+        with raises(TypeError):
+            img[0xDEADBEEF] = Color('black')
+        with raises(ValueError):
+            img[1, 2, 3] = Color('black')
+        with raises(TypeError):
+            img[0.5, "d"] = Color('black')
 
 
 def test_index_row(fx_asset):
