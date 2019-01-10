@@ -91,7 +91,14 @@ class Color(Resource):
                 )
             with self:
                 # Create color from string.
-                library.PixelSetColor(self.resource, binary(string))
+                ok = library.PixelSetColor(self.resource, binary(string))
+                if not ok:
+                    # Could not understand color-input. Try sending
+                    # ImageMagick's exception.
+                    self.raise_exception()
+                    # That might be only a warning. Try a more generic message.
+                    msg = 'Unrecognized color string "{0}"'.format(string)
+                    raise ValueError(msg)
                 # Copy color value to structure buffer for future read.
                 library.PixelGetMagickColor(self.resource, self.raw)
         else:
@@ -198,7 +205,6 @@ class Color(Resource):
         Unused by RGB colorspace."""
         with self:
             return library.PixelGetBlack(self.resource)
-
 
     @property
     def alpha(self):

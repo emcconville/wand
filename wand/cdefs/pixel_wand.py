@@ -105,6 +105,7 @@ def load(lib, IM_VERSION, IM_QUANTUM_DEPTH, IM_HDRI):
     lib.PixelGetRedQuantum.argtypes = [c_void_p]
     lib.PixelGetRedQuantum.restype = QuantumType
     lib.PixelSetColor.argtypes = [c_void_p, c_char_p]
+    lib.PixelSetColor.restype = c_int
     if is_im_6:
         lib.PixelSetMagickColor.argtypes = [c_void_p, c_void_p]
         lib.PixelSetPixelColor = None

@@ -206,7 +206,7 @@ class Resource(object):
         desc = self.c_get_exception(self.resource, ctypes.byref(severity))
         if severity.value == 0:
             return
-        self.c_clear_exception(self.wand)
+        self.c_clear_exception(self.resource)
         exc_cls = TYPE_MAP[severity.value]
         message = desc.value
         if not isinstance(message, string_type):
