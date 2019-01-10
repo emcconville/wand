@@ -539,6 +539,7 @@ class Drawing(Resource):
         size = ctypes.sizeof(pixel_structure)
         buffer = ctypes.create_string_buffer(size)
         library.PixelGetMagickColor(pixel, buffer)
+        pixel = library.DestroyPixelWand(pixel)
         return Color(raw=buffer)
 
     @stroke_color.setter
