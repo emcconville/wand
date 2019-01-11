@@ -5179,7 +5179,7 @@ class OptionDict(ImageProperty, collections.MutableMapping):
         self[key] = ''
 
 
-class Metadata(ImageProperty, collections.Mapping):
+class Metadata(ImageProperty, collections.MutableMapping):
     """Class that implements dict-like read-only access to image metadata
     like EXIF or IPTC headers. Most WRITE encoders will ignore properties
     assigned here.
@@ -5267,7 +5267,7 @@ class Metadata(ImageProperty, collections.Mapping):
         return num.value
 
 
-class ArtifactTree(ImageProperty, collections.Mapping):
+class ArtifactTree(ImageProperty, collections.MutableMapping):
     """Splay tree to map image artifacts. Values defined here
     are intended to be used elseware, and will not be written
     to the encoded image.
