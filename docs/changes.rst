@@ -12,6 +12,8 @@ Version 0.5.1
 Unreleased.
 
  - Added set pixel color via `Image[x, y] = Color('...')`. [:issue:`105`]
+ - Added :class:`limits <wand.resource.ResourceLimits>` helper dictionary to
+   allows getting / setting ImageMagick's resource-limit policies. [:issue:`97`]
 
 
 .. _changelog-0.5.0:

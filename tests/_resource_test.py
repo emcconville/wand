@@ -76,3 +76,19 @@ def test_raises_exceptions(recwarn, code):
         assert w.category.__name__.endswith('Warning')
         assert "Dummy exception" in str(w.message)
         assert recwarn.list == []
+
+
+def test_limits():
+    area_was = resource.limits['area']  # Save state.
+    area_expected = area_was - 100
+    resource.limits['area'] = area_expected
+    assert resource.limits['area'] == area_expected
+    # We have no images loaded, so the current area should be zero.
+    assert resource.limits.resource('area') == 0
+    del resource.limits['area']
+    assert resource.limits['area'] == 0
+    resource.limits['area'] = area_was  # To restore for other tests.
+    # Non functional smoke test.
+    for _ in resource.limits:
+        pass
+    assert len(resource.limits) > 0

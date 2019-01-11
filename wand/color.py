@@ -201,7 +201,7 @@ class Color(Resource):
 
     @property
     def black(self):
-        """(:class:`numbers.Real`) Black, index or `K' color channel.
+        """(:class:`numbers.Real`) Black, index or ``'K'`` color channel.
         Unused by RGB colorspace."""
         with self:
             return library.PixelGetBlack(self.resource)

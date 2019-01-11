@@ -65,6 +65,10 @@ def load(libmagick):
     libmagick.GetMagickQuantumRange.restype = c_char_p
     libmagick.GetMagickReleaseDate.argtypes = []
     libmagick.GetMagickReleaseDate.restype = c_char_p
+    libmagick.GetMagickResource.argtypes = [c_int]
+    libmagick.GetMagickResource.restype = c_size_t
+    libmagick.GetMagickResourceLimit.argtypes = [c_int]
+    libmagick.GetMagickResourceLimit.restype = c_size_t
     libmagick.GetMagickVersion.argtypes = [POINTER(c_size_t)]
     libmagick.GetMagickVersion.restype = c_char_p
     libmagick.GetNextImageInList.argtypes = [c_void_p]
@@ -83,6 +87,8 @@ def load(libmagick):
     except AttributeError:
         libmagick.ParseGeometry = None
         libmagick.ParseMetaGeometry = None
+    libmagick.SetMagickResourceLimit.argtypes = [c_int, c_size_t]
+    libmagick.SetMagickResourceLimit.restype = c_int
 
 
 def load_with_version(libmagick, IM_VERSION):

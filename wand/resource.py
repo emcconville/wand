@@ -5,17 +5,18 @@ There is the global resource to manage in MagickWand API. This module
 implements automatic global resource management through reference counting.
 
 """
+import collections
 import contextlib
 import ctypes
 import warnings
 
-from .api import library
+from .api import libmagick, library
 from .compat import string_type
 from .exceptions import TYPE_MAP, WandException
-
+from .version import MAGICK_VERSION_NUMBER
 
 __all__ = ('genesis', 'terminus', 'increment_refcount', 'decrement_refcount',
-           'Resource', 'DestroyedResourceError')
+           'limits', 'Resource', 'ResourceLimits', 'DestroyedResourceError')
 
 
 def genesis():
@@ -242,3 +243,131 @@ class DestroyedResourceError(WandException, ReferenceError, AttributeError):
        It becomes a subtype of :exc:`wand.exceptions.WandException`.
 
     """
+
+
+class ResourceLimits(collections.MutableMapping):
+    """Wrapper for MagickCore resource limits.
+    Useful for dynamically reducing system resources before attempting risky,
+    or slow running, :class:`~wand.image.Image` operations.
+
+    For example::
+
+       from wand.image import Image
+       from wand.resource import limits
+
+       # Use 100MB of ram before writing temp data to disk.
+       limits['memory'] = 1024 * 1024 * 100
+       # Reject images larger than 1000x1000.
+       limits['width'] = 1000
+       limits['height'] = 1000
+
+       # Debug resources used.
+       with Image(filename='user.jpg') as img:
+           print('Using {0} of {1} memory'.format(limits.resource('memory'),
+                                                  limits['memory']))
+
+       # Dump list of all limits.
+       for label in limits:
+           print('{0} => {1}'.format(label, limits[label]))
+
+    Available resource keys:
+
+    - ``'area'`` - Maximum `width * height` of a pixel cache before writing to
+      disk.
+    - ``'disk'`` - Maximum bytes used by pixel cache on disk before exception
+      is thrown.
+    - ``'file'`` - Maximum cache files opened at any given time.
+    - ``'height'`` - Maximum height of image before exception is thrown.
+    - ``'list_length'`` - Maximum images in sequence. Only available with
+      recent version of ImageMagick.
+    - ``'map'`` - Maximum memory map in bytes to allocated for pixel cache
+      before using disk.
+    - ``'memory'`` - Maximum bytes to allocated for pixel cache before using
+      disk.
+    - ``'thread'`` - Maximum parallel task sub-routines can spawn - if using
+      OpenMP.
+    - ``'throttle'`` - Total milliseconds to yield to CPU - if possible.
+    - ``'time'`` - Maximum seconds before exception is thrown.
+    - ``'width'`` - Maximum width of image before exception is thrown.
+
+    .. versionadded:: 0.5.1
+    """
+
+    #: (:class:`tuple`) List of available resource types for ImageMagick-6.
+    _limits6 = ('undefined', 'area', 'disk', 'file', 'map', 'memory', 'thread',
+                'time', 'throttle', 'width', 'height')
+
+    #: (:class:`tuple`) List of available resource types for ImageMagick-7.
+    _limits7 = ('undefined', 'area', 'disk', 'file', 'height', 'map', 'memory',
+                'thread', 'throttle', 'time', 'width', 'list_length')
+
+    def __init__(self):
+        if MAGICK_VERSION_NUMBER < 0x700:
+            self.limits = self._limits6
+        else:
+            self.limits = self._limits7
+
+    def __getitem__(self, r):
+        return self.get_resource_limit(r)
+
+    def __setitem__(self, r, v):
+        self.set_resource_limit(r, v)
+
+    def __delitem__(self, r):
+        self[r] = 0
+
+    def __iter__(self):
+        return iter(self.limits)
+
+    def __len__(self):
+        return len(self.limits)
+
+    def _to_idx(self, resource):
+        """Helper method to map resource string to enum value."""
+        return self.limits.index(resource)
+
+    def resource(self, resource):
+        """Get the current value for the resource type.
+
+        :param resource: Resource type.
+        :type resource: :class:`basestring`
+        :rtype: :class:`numeric.Integral`
+
+        .. versionadded:: 0.5.1
+        """
+        return libmagick.GetMagickResource(self._to_idx(resource))
+
+    def get_resource_limit(self, resource):
+        """Get the current limit for the resource type.
+
+        :param resource: Resource type.
+        :type resource: :class:`basestring`
+        :rtype: :class:`numeric.Integral`
+
+        .. versionadded:: 0.5.1
+        """
+        return libmagick.GetMagickResourceLimit(self._to_idx(resource))
+
+    def set_resource_limit(self, resource, limit):
+        """Sets a new limit for resource type.
+
+        .. note::
+
+            The new limit value must be equal to, or less then, the maximum
+            limit defined by the :file:`policy.xml`. Any values set outside
+            normal bounds will be ignored silently.
+
+        :param resource: Resource type.
+        :type resource: :class:`basestring`
+        :param limit: New limit value.
+        :type limit: :class:`numeric.Integral`
+
+        .. versionadded:: 0.5.1
+        """
+        libmagick.SetMagickResourceLimit(self._to_idx(resource), int(limit))
+
+
+#: (:class:`ResourceLimits`) Helper to get & set Magick Resource Limits.
+#:
+#: .. versionadded:: 0.5.1
+limits = ResourceLimits()
