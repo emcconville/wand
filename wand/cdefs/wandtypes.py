@@ -5,9 +5,11 @@
 """
 import ctypes
 import os
+import platform
 import sys
 
-__all__ = ('c_magick_char_p', 'c_magick_real_t', 'c_ssize_t')
+__all__ = ('c_magick_char_p', 'c_magick_real_t', 'c_magick_size_t',
+           'c_ssize_t')
 
 
 class c_magick_char_p(ctypes.c_char_p):
@@ -58,3 +60,11 @@ else:
     else:
         c_magick_real_t = ctypes.c_longdouble
 del env_real
+
+
+if sys.maxsize > 2**32:
+    c_magick_size_t = ctypes.c_size_t
+elif platform.system() == "Windows":
+    c_magick_size_t = ctypes.c_ulonglong
+else:
+    c_magick_size_t = ctypes.c_size_t

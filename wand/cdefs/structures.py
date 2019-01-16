@@ -4,7 +4,7 @@
 .. versionadded:: 0.5.0
 """
 from ctypes import POINTER, Structure, c_double, c_int, c_size_t
-from wand.cdefs.wandtypes import c_ssize_t, c_magick_real_t
+from wand.cdefs.wandtypes import c_ssize_t, c_magick_real_t, c_magick_size_t
 
 __all__ = ('AffineMatrix', 'GeomertyInfo', 'KernelInfo', 'MagickPixelPacket',
            'PixelInfo', 'PointInfo')
@@ -75,7 +75,7 @@ class PixelInfo(Structure):
                 ('alpha_trait', c_int),
                 ('fuzz', c_double),
                 ('depth', c_size_t),
-                ('count', c_size_t),
+                ('count', c_magick_size_t),
                 ('red', c_magick_real_t),
                 ('green', c_magick_real_t),
                 ('blue', c_magick_real_t),
