@@ -62,6 +62,8 @@ else:
 del env_real
 
 
+# FIXME: Might need to rewrite to check against c_void_p size;
+# like `c_ssize_t` above, and not against window platform.
 if sys.maxsize > 2**32:
     c_magick_size_t = ctypes.c_size_t
 elif platform.system() == "Windows":

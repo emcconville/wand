@@ -14,6 +14,7 @@ Unreleased.
  - Added set pixel color via `Image[x, y] = Color('...')`. [:issue:`105`]
  - Added :class:`limits <wand.resource.ResourceLimits>` helper dictionary to
    allows getting / setting ImageMagick's resource-limit policies. [:issue:`97`]
+ - Fixed segmentation violation for win32 & ImageMagick-7. [:issue:`389`]
 
 
 .. _changelog-0.5.0:
