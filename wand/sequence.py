@@ -335,10 +335,19 @@ class SingleImage(BaseImage):
             library.MagickSetImageDelay(container.wand, delay)
         self._delay = delay
 
-    def __exit__(self, type_, value, traceback):
+    def _sync_container_sequence(self):
+        """If instances was flagged as :attr:`dirty` by any manipulation
+        methods, then this instance will overwrite :attr:`container` internal
+        version at :attr:`index`.
+
+        .. versionadded:: 0.5.1
+        """
         if self.dirty:
             self.container.sequence[self.index] = self
             self.dirty = False  # Reset dirty flag
+
+    def __exit__(self, type_, value, traceback):
+        self._sync_container_sequence()
         super(SingleImage, self).__exit__(type_, value, traceback)
 
     def __repr__(self):
