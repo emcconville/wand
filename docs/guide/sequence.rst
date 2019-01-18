@@ -86,3 +86,25 @@ In most cases, images don't have multiple images, so it's okay if you think
 that :class:`~wand.image.Image` and :class:`~wand.sequence.SingleImage` are
 the same, but be careful when you deal with animated :mimetype:`image/gif`
 files or :mimetype:`image/ico` files that contain multiple icons.
+
+Manipulating :attr:`~wand.sequence.SingleImage`
+-----------------------------------------------
+When working with :attr:`~wand.image.BaseImage.sequence`, it's important to
+remember that each instance of :class:`~wand.sequence.SingleImage` holds a
+*copy* of image data from the stack. Altering the copied data will not
+automatically sync back to the original image-stack.
+
+>>> with Image(filename='animation.gif') as image:
+...     # Changes on SingleImage are invisible to `image' container.
+...     image.sequence[2].negate()
+...     image.save(filename='output.gif')  # Changes ignored.
+
+If you intended to alter a :class:`~wand.sequence.SingleImage`, and have
+changes synchronized back to the parent image-stack, use an additional
+with-statement context manager.
+
+>>> with Image(filename='animation.gif') as image:
+...     # Changes on SingleImage are sync-ed after context manager closes.
+...     with image.sequence[2] as frame:
+...         frame.negate()
+...     image.save(filename='output.gif')  # Changes ignored.

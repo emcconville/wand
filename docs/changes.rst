@@ -15,6 +15,8 @@ Unreleased.
  - Added :class:`limits <wand.resource.ResourceLimits>` helper dictionary to
    allows getting / setting ImageMagick's resource-limit policies. [:issue:`97`]
  - Fixed segmentation violation for win32 & ImageMagick-7. [:issue:`389`]
+ - Fixed `AssertError` by moving :attr:`~wand.sequence.SingleImage` sync
+   behavior from ``destroy`` to context ``__exit__``. [:issue:`388`]
 
 
 .. _changelog-0.5.0:

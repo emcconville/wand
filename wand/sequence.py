@@ -268,11 +268,17 @@ class SingleImage(BaseImage):
     For example, it can be a frame of GIF animation.
 
     Note that all changes on single images are invisible to their
-    containers until they are :meth:`~wand.image.Image.close`\\ d
-    (:meth:`~wand.resource.Resource.destroy`\\ ed).
+    containers unless they are altered a ``with ...`` context manager.
+
+        with Image(filename='animation.gif') as container:
+            with container.sequence[0] as frame:
+                frame.negate()
 
     .. versionadded:: 0.3.0
 
+    .. versionchanged:: 0.5.1
+       Only sync changes of a :class:`SingleImage` when exiting a ``with ...``
+       context. Not when parent :class:`~wand.image.Image` closes.
     """
 
     #: (:class:`wand.image.Image`) The container image.
@@ -329,10 +335,11 @@ class SingleImage(BaseImage):
             library.MagickSetImageDelay(container.wand, delay)
         self._delay = delay
 
-    def destroy(self):
+    def __exit__(self, type_, value, traceback):
         if self.dirty:
             self.container.sequence[self.index] = self
-        super(SingleImage, self).destroy()
+            self.dirty = False  # Reset dirty flag
+        super(SingleImage, self).__exit__(type_, value, traceback)
 
     def __repr__(self):
         cls = type(self)
