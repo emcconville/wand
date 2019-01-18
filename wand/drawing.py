@@ -1231,7 +1231,8 @@ class Drawing(Resource):
             else:
                 text = binary(text)
         result = font_metrics_f(image.wand, self.resource, text)
-        args = (result[i] for i in xrange(13))
+        args = [result[i] for i in xrange(13)]
+        library.MagickRelinquishMemory(result)
         return FontMetrics(*args)
 
     def line(self, start, end):
