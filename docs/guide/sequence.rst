@@ -95,7 +95,7 @@ remember that each instance of :class:`~wand.sequence.SingleImage` holds a
 automatically sync back to the original image-stack.
 
 >>> with Image(filename='animation.gif') as image:
-...     # Changes on SingleImage are invisible to `image' container.
+...     # Changes on SingleImage are invisible to `image` container.
 ...     image.sequence[2].negate()
 ...     image.save(filename='output.gif')  # Changes ignored.
 
@@ -107,4 +107,4 @@ with-statement context manager.
 ...     # Changes on SingleImage are sync-ed after context manager closes.
 ...     with image.sequence[2] as frame:
 ...         frame.negate()
-...     image.save(filename='output.gif')  # Changes ignored.
+...     image.save(filename='output.gif')  # Changes applied.
