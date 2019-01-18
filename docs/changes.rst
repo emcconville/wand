@@ -17,6 +17,7 @@ Unreleased.
  - Fixed segmentation violation for win32 & ImageMagick-7. [:issue:`389`]
  - Fixed `AssertError` by moving :attr:`~wand.sequence.SingleImage` sync
    behavior from ``destroy`` to context ``__exit__``. [:issue:`388`]
+ - Fixed memory leak in :attr:`~wand.drawing.Drawing.get_font_metrics`. [:issue:`390`]
 
 
 .. _changelog-0.5.0:
