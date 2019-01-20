@@ -60,6 +60,9 @@ def test_blank_image():
     with Image(width=20, height=10, background=gray) as img:
         assert img.size == (20, 10)
         assert img[10, 5] == gray
+    with Image(width=20, height=10, background='#ccc') as img:
+        assert img.size == (20, 10)
+        assert img[10, 5] == gray
 
 
 def test_raw_image(fx_asset):
@@ -1114,6 +1117,19 @@ def test_rotate(fx_asset):
                     assert black == cloned[36, 39]
                     assert black == cloned[85, 88]
                     assert black == cloned[53, 120]
+        with Color('red') as bg:
+            with img.clone() as cloned:
+                cloned.rotate(45, 'red')
+                assert 176 <= cloned.width == cloned.height <= 178
+                assert bg == cloned[0, 0] == cloned[0, -1]
+                assert bg == cloned[-1, 0] == cloned[-1, -1]
+                with Color('black') as black:
+                    # Until we implement antialiasing, we need to evaluate
+                    # pixels next to corners.
+                    assert black == cloned[5, 70]
+                    assert black == cloned[36, 39]
+                    assert black == cloned[85, 88]
+                    assert black == cloned[53, 120]
 
 
 @mark.slow
@@ -1195,6 +1211,11 @@ def test_transparent_color(fx_asset):
             img.transparent_color(white, 0.0, 2, 0)
             assert img[75, 50].alpha == 0
             assert img[0, 50].alpha == 1.0
+    with Image(filename=str(fx_asset.join('rotatetest.gif'))) as img:
+        img.alpha_channel = 'set'
+        img.transparent_color('white', 0.0, 2, 0)
+        assert img[75, 50].alpha == 0
+        assert img[0, 50].alpha == 1.0
 
 
 def test_signature(fx_asset):
@@ -1271,6 +1292,8 @@ def test_set_background_color(fx_asset):
         with Color('red') as color:
             img.background_color = color
             assert img.background_color == color
+        img.background_color = 'green'
+        assert img.background_color == Color('green')
 
 
 def test_set_get_matte_color(fx_asset):
@@ -1878,6 +1901,10 @@ def test_frame(fx_asset):
     with Color('green') as green:
         with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
             img.frame(matte=green, width=2, height=2)
+            assert img[0, 0] == green
+            assert img[-1, -1] == green
+        with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+            img.frame(matte='green', width=2, height=2)
             assert img[0, 0] == green
             assert img[-1, -1] == green
 
