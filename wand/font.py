@@ -74,12 +74,17 @@ class Font(tuple):
             raise TypeError('size must be a real number, not ' + repr(size))
         if color is None:
             color = Color('black')
+        elif isinstance(color, string_type):
+            color = Color(color)
         elif not isinstance(color, Color):
             raise TypeError('color must be an instance of wand.color.Color, '
                             'not ' + repr(color))
-        if stroke_color and not isinstance(stroke_color, Color):
-            raise TypeError('stroke_color must be an instance of '
-                            'wand.color.Color, not ' + repr(stroke_color))
+        if stroke_color:
+            if isinstance(stroke_color, string_type):
+                stroke_color = Color(stroke_color)
+            elif not isinstance(stroke_color, Color):
+                raise TypeError('stroke_color must be an instance of '
+                                'wand.color.Color, not ' + repr(stroke_color))
         if stroke_width is not None and not isinstance(stroke_width,
                                                        numbers.Real):
             raise TypeError('stroke_width must be a number, not ' +

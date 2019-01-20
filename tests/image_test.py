@@ -1889,8 +1889,6 @@ def test_frame_error(fx_asset):
         with raises(TypeError):
             img.frame(height=3.5)
         with raises(TypeError):
-            img.frame(matte='green')
-        with raises(TypeError):
             img.frame(inner_bevel=None)
         with raises(TypeError):
             img.frame(outer_bevel='large')

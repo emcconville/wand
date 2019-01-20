@@ -982,7 +982,9 @@ class BaseImage(Resource):
         raise TypeError('unsupported index type: ' + repr(idx))
 
     def __setitem__(self, idx, color):
-        if not isinstance(color, Color):
+        if isinstance(color, string_type):
+            color = Color(color)
+        elif not isinstance(color, Color):
             raise TypeError('color must be in instance of Color, not ' +
                             repr(color))
         if not isinstance(idx, collections.Iterable):
@@ -1226,7 +1228,9 @@ class BaseImage(Resource):
     @background_color.setter
     @manipulative
     def background_color(self, color):
-        if not isinstance(color, Color):
+        if isinstance(color, string_type):
+            color = Color(color)
+        elif not isinstance(color, Color):
             raise TypeError('color must be a wand.color.Color object, not ' +
                             repr(color))
         with color:
@@ -1405,7 +1409,9 @@ class BaseImage(Resource):
     @font_color.setter
     @manipulative
     def font_color(self, color):
-        if not isinstance(color, Color):
+        if isinstance(color, string_type):
+            color = Color(color)
+        elif not isinstance(color, Color):
             raise TypeError('font_color must be a wand.color.Color, not ' +
                             repr(color))
         self.options['fill'] = color.string
@@ -1566,7 +1572,9 @@ class BaseImage(Resource):
     @matte_color.setter
     @manipulative
     def matte_color(self, color):
-        if not isinstance(color, Color):
+        if isinstance(color, string_type):
+            color = Color(color)
+        elif not isinstance(color, Color):
             raise TypeError('color must be a wand.color.Color object, not ' +
                             repr(color))
         with color:
@@ -1763,6 +1771,8 @@ class BaseImage(Resource):
     @stroke_color.setter
     @manipulative
     def stroke_color(self, color):
+        if isinstance(color, string_type):
+            color = Color(color)
         if isinstance(color, Color):
             self.options['stroke'] = color.string
         elif color is None:
@@ -1978,7 +1988,9 @@ class BaseImage(Resource):
         .. versionchanged:: 0.5.0
            Added ``compose`` paramater, and ImageMagick 7 support.
         """
-        if not isinstance(color, Color):
+        if isinstance(color, string_type):
+            color = Color(color)
+        elif not isinstance(color, Color):
             raise TypeError('color must be a wand.color.Color object, not ' +
                             repr(color))
         with color:
@@ -2818,7 +2830,9 @@ class BaseImage(Resource):
         """
         if matte is None:
             matte = Color('gray')
-        if not isinstance(matte, Color):
+        if isinstance(matte, string_type):
+            matte = Color(matte)
+        elif not isinstance(matte, Color):
             raise TypeError('Expecting instance of Color for matte, not ' +
                             repr(matte))
         if not isinstance(width, numbers.Integral):
@@ -3877,6 +3891,8 @@ class BaseImage(Resource):
         """
         if background is None:
             background = Color('transparent')
+        elif isinstance(background, string_type):
+            background = Color(background)
         elif not isinstance(background, Color):
             raise TypeError('background must be a wand.color.Color instance, '
                             'not ' + repr(background))
@@ -4316,8 +4332,10 @@ class BaseImage(Resource):
         """
         if not isinstance(alpha, numbers.Real):
             raise TypeError('alpha must be an float, not ' + repr(alpha))
-        elif not isinstance(fuzz, numbers.Integral):
+        if not isinstance(fuzz, numbers.Integral):
             raise TypeError('fuzz must be an integer, not ' + repr(fuzz))
+        if isinstance(color, string_type):
+            color = Color(color)
         elif not isinstance(color, Color):
             raise TypeError('color must be a wand.color.Color object, not ' +
                             repr(color))
@@ -4730,11 +4748,13 @@ class Image(BaseImage):
         if not isinstance(height, numbers.Integral) or height < 1:
             raise TypeError('height must be a natural number, not ' +
                             repr(height))
-        if background is not None and not isinstance(background, Color):
-            raise TypeError('background must be a wand.color.Color '
-                            'instance, not ' + repr(background))
         if background is None:
             background = Color('transparent')
+        elif isinstance(background, string_type):
+            background = Color(background)
+        elif not isinstance(background, Color):
+            raise TypeError('background must be a wand.color.Color '
+                            'instance, not ' + repr(background))
         with background:
             r = library.MagickNewImage(self.wand, width, height,
                                        background.resource)

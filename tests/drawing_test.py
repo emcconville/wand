@@ -350,14 +350,14 @@ def test_draw_line(fx_wand):
             reason='wand.drawing.Drawing.matte removed with IM 7.',
             rasies=AttributeError)
 def test_draw_matte():
-    with nested(Color('#fff'),
-                Color('transparent')) as (white, transparent):
-        with Image(width=50, height=50, background=white) as img:
-            with Drawing() as draw:
-                draw.fill_opacity = 0
-                draw.matte(25, 25, 'floodfill')
-                draw.draw(img)
-                assert img[25, 25] == transparent
+    white = Color('rgba(0, 255, 255, 5%)')
+    transparent = Color('transparent')
+    with Image(width=50, height=50, background=white) as img:
+        with Drawing() as draw:
+            draw.fill_opacity = 0.0
+            draw.matte(25, 25, 'floodfill')
+            draw.draw(img)
+            assert img[25, 25] == transparent
 
 
 @mark.xfail(MAGICK_VERSION_NUMBER >= 0x700,
@@ -814,11 +814,6 @@ def test_regression_issue_163(tmpdir):
             image.save(filename=str(tmpdir.join('out.jpg')))
 
 
-def test_set_get_fill_color_user_error(fx_wand):
-    with raises(TypeError):
-        fx_wand.fill_color = "green"
-
-
 def test_set_get_fill_opacity(fx_wand):
     fx_wand.fill_opacity = 1.0
     assert fx_wand.fill_opacity == 1.0
@@ -850,11 +845,6 @@ def test_set_get_opacity(fx_wand):
 def test_set_get_stroke_antialias(fx_wand):
     fx_wand.stroke_antialias = False
     assert not fx_wand.stroke_antialias
-
-
-def test_set_get_stroke_color_user_error(fx_wand):
-    with raises(TypeError):
-        fx_wand.stroke_color = '#333333'
 
 
 def test_set_get_stroke_dash_array(fx_wand):

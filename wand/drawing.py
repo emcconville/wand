@@ -206,12 +206,14 @@ class Drawing(Resource):
         return Color(raw=buffer)
 
     @border_color.setter
-    def border_color(self, border_color):
-        if not isinstance(border_color, Color):
+    def border_color(self, color):
+        if isinstance(color, string_type):
+            color = Color(color)
+        elif not isinstance(color, Color):
             raise ValueError('expected wand.color.Color, not ' +
-                             repr(border_color))
-        with border_color:
-            library.DrawSetBorderColor(self.resource, border_color.resource)
+                             repr(color))
+        with color:
+            library.DrawSetBorderColor(self.resource, color.resource)
 
     @property
     def clip_path(self):
@@ -293,7 +295,9 @@ class Drawing(Resource):
 
     @fill_color.setter
     def fill_color(self, color):
-        if not isinstance(color, Color):
+        if isinstance(color, string_type):
+            color = Color(color)
+        elif not isinstance(color, Color):
             raise TypeError('color must be a wand.color.Color object, not ' +
                             repr(color))
         with color:
@@ -544,7 +548,9 @@ class Drawing(Resource):
 
     @stroke_color.setter
     def stroke_color(self, color):
-        if not isinstance(color, Color):
+        if isinstance(color, string_type):
+            color = Color(color)
+        elif not isinstance(color, Color):
             raise TypeError('color must be a wand.color.Color object, not ' +
                             repr(color))
         with color:
@@ -868,7 +874,9 @@ class Drawing(Resource):
 
     @text_under_color.setter
     def text_under_color(self, color):
-        if not isinstance(color, Color):
+        if isinstance(color, string_type):
+            color = Color(color)
+        elif not isinstance(color, Color):
             raise TypeError('expected a wand.color.Color object, not ' +
                             repr(color))
         with color:
