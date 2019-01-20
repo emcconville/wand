@@ -4339,8 +4339,9 @@ class BaseImage(Resource):
         elif not isinstance(color, Color):
             raise TypeError('color must be a wand.color.Color object, not ' +
                             repr(color))
-        library.MagickTransparentPaintImage(self.wand, color.resource,
-                                            alpha, fuzz, invert)
+        with color:
+            library.MagickTransparentPaintImage(self.wand, color.resource,
+                                                alpha, fuzz, invert)
         self.raise_exception()
 
     @manipulative
