@@ -5,6 +5,7 @@
 
 """
 import ctypes
+import numbers
 
 from .api import library
 from .cdefs.structures import MagickPixelPacket, PixelInfo
@@ -64,6 +65,9 @@ class Color(Resource):
 
     """
 
+    #: (:class:`bool`) Whether the color has changed or not.
+    dirty = None
+
     c_is_resource = library.IsPixelWand
     c_destroy_resource = library.DestroyPixelWand
     c_get_exception = library.PixelGetException
@@ -78,7 +82,7 @@ class Color(Resource):
 
         # MagickPixelPacket has been deprecated, use PixelInfo
         self.use_pixel = library.PixelSetMagickColor is None
-
+        self.dirty = False
         self.allocated = 0
         if raw is None:
             if self.use_pixel:
@@ -122,28 +126,108 @@ class Color(Resource):
 
     def __exit__(self, type, value, traceback):
         self.allocated -= 1
+        if self.dirty:
+            library.PixelGetMagickColor(self.resource, self.raw)
+            self.dirty = False
         if not self.allocated:
             Resource.__exit__(self, type, value, traceback)
 
-    @property
-    def string(self):
-        """(:class:`basestring`) The string representation of the color."""
-        with self:
-            color_string = library.PixelGetColorAsString(self.resource)
-            return text(color_string.value)
+    def __eq__(self, other):
+        if not isinstance(other, Color):
+            return False
+        with self as this:
+            with other:
+                return self.c_equals(this.resource, other.resource)
 
-    @property
-    def normalized_string(self):
-        """(:class:`basestring`) The normalized string representation of
-        the color.  The same color is always represented to the same
-        string.
+    def __ne__(self, other):
+        return not (self == other)
 
-        .. versionadded:: 0.3.0
+    def __hash__(self):
+        if self.alpha:
+            return hash(self.normalized_string)
+        return hash(None)
 
+    def __str__(self):
+        return self.string
+
+    def __repr__(self):
+        c = type(self)
+        return '{0}.{1}({2!r})'.format(c.__module__, c.__name__, self.string)
+
+    def _assert_double(self, subject):
+        """Ensure the given ``subject`` is a float type, and value between
+        0.0 & 1.0.
+
+        :param subject: value to assert as a valid double.
+        :type subject: :class:`numbers.Real`
+        :raises ValueError: if the subject is not between 0.0 and 1.0
+        :raises TypeError: if the subject is not a float-point number.
+
+        ..versionadded:: 0.5.1
         """
-        with self:
-            string = library.PixelGetColorAsNormalizedString(self.resource)
-            return text(string.value)
+        if not isinstance(subject, numbers.Real):
+            raise TypeError('Expecting a float-point real number, not ' +
+                            repr(subject))
+        if subject < 0.0 or subject > 1.0:
+            raise ValueError('Expecting a real number between 0.0 & 1.0, not' +
+                             repr(subject))
+
+    def _assert_int8(self, subject):
+        """Ensure the given ``subject`` is a integer type, and value between
+        0 & 255.
+
+        :param subject: value to assert as a valid number.
+        :type subject: :class:`numbers.Integral`
+        :raises ValueError: if the subject is not between 0 and 255
+        :raises TypeError: if the subject is not a Integral number.
+
+        ..versionadded:: 0.5.1
+        """
+        if not isinstance(subject, numbers.Integral):
+            raise TypeError('Expecting an integer number, not ' +
+                            repr(subject))
+        if subject < 0 or subject > 255:
+            raise ValueError('Expecting a real number between 0 & 255, not' +
+                             repr(subject))
+
+    def _assert_quantum(self, subject):
+        """Ensure the given ``subject`` is a number, and value between
+        0.0 & QuantumRange.
+
+        The QuantumRange is the max value based on the QuantumDepth of the
+        ImageMagick library (i.e. Q16).
+
+        :param subject: value to assert as a valid double.
+        :type subject: :class:`numbers.Number`
+        :raises ValueError: if the subject is not between 0 and QuantumRange
+        :raises TypeError: if the subject is not a number.
+
+        ..versionadded:: 0.5.1
+        """
+        quantum_range = {
+            8: 255.0,
+            16: 65535.0,
+            32: 4294967295.0,
+            64: 18446744073709551615.0
+        }
+        if not isinstance(subject, numbers.Number):
+            raise TypeError('Expecting a number, not ' + repr(subject))
+        if subject < 0.0 or subject > quantum_range[QUANTUM_DEPTH]:
+            message = 'Expecting a number between 0 & {0}, not {1}'
+            raise ValueError(message.format(quantum_range[QUANTUM_DEPTH],
+                                            repr(subject)))
+
+    def _repr_html_(self):
+        html = """
+        <span style="background-color:#{red:02X}{green:02X}{blue:02X};
+                     display:inline-block;
+                     line-height:1em;
+                     width:1em;">&nbsp;</span>
+        <strong>#{red:02X}{green:02X}{blue:02X}</strong>
+        """
+        return html.format(red=self.red_int8,
+                           green=self.green_int8,
+                           blue=self.blue_int8)
 
     @staticmethod
     def c_equals(a, b):
@@ -166,84 +250,33 @@ class Color(Resource):
         return bool(library.IsPixelWandSimilar(a, b, 0) and
                     alpha(a) == alpha(b))
 
-    def __eq__(self, other):
-        if not isinstance(other, Color):
-            return False
-        with self as this:
-            with other:
-                return self.c_equals(this.resource, other.resource)
-
-    def __ne__(self, other):
-        return not (self == other)
-
-    def __hash__(self):
-        if self.alpha:
-            return hash(self.normalized_string)
-        return hash(None)
-
-    @property
-    def red(self):
-        """(:class:`numbers.Real`) Red, from 0.0 to 1.0."""
-        with self:
-            return library.PixelGetRed(self.resource)
-
-    @property
-    def green(self):
-        """(:class:`numbers.Real`) Green, from 0.0 to 1.0."""
-        with self:
-            return library.PixelGetGreen(self.resource)
-
-    @property
-    def blue(self):
-        """(:class:`numbers.Real`) Blue, from 0.0 to 1.0."""
-        with self:
-            return library.PixelGetBlue(self.resource)
-
-    @property
-    def black(self):
-        """(:class:`numbers.Real`) Black, index or ``'K'`` color channel.
-        Unused by RGB colorspace."""
-        with self:
-            return library.PixelGetBlack(self.resource)
-
     @property
     def alpha(self):
         """(:class:`numbers.Real`) Alpha value, from 0.0 to 1.0."""
         with self:
             return library.PixelGetAlpha(self.resource)
 
+    @alpha.setter
+    def alpha(self, value):
+        self._assert_double(value)
+        self.dirty = True
+        with self:
+            library.PixelSetAlpha(self.resource, value)
+
     @property
-    def red_quantum(self):
-        """(:class:`numbers.Integral`) Red.
-        Scale depends on :const:`~wand.version.QUANTUM_DEPTH`.
+    def alpha_int8(self):
+        """(:class:`numbers.Integral`) Alpha value as 8bit integer which is
+        a common style.  From 0 to 255.
 
         .. versionadded:: 0.3.0
 
         """
-        with self:
-            return library.PixelGetRedQuantum(self.resource)
+        return scale_quantum_to_int8(self.alpha_quantum)
 
-    @property
-    def green_quantum(self):
-        """(:class:`numbers.Integral`) Green.
-        Scale depends on :const:`~wand.version.QUANTUM_DEPTH`.
-
-        .. versionadded:: 0.3.0
-
-        """
-        with self:
-            return library.PixelGetGreenQuantum(self.resource)
-
-    @property
-    def blue_quantum(self):
-        """(:class:`numbers.Integral`) Blue.
-        Scale depends on :const:`~wand.version.QUANTUM_DEPTH`.
-
-        .. versionadded:: 0.3.0
-
-        """
-        with self:
-            return library.PixelGetBlueQuantum(self.resource)
+    @alpha_int8.setter
+    def alpha_int8(self, value):
+        self._assert_int8(value)
+        self.alpha = float(value) / 255.0
 
     @property
     def alpha_quantum(self):
@@ -256,25 +289,73 @@ class Color(Resource):
         with self:
             return library.PixelGetAlphaQuantum(self.resource)
 
+    @alpha_quantum.setter
+    def alpha_quantum(self, value):
+        self._assert_quantum(value)
+        self.dirty = True
+        with self:
+            library.PixelSetAlphaQuantum(self.resource, value)
+
     @property
-    def red_int8(self):
-        """(:class:`numbers.Integral`) Red as 8bit integer which is a common
-        style.  From 0 to 255.
+    def black(self):
+        """(:class:`numbers.Real`) Black, or ``'K'``, color channel in CMYK
+        colorspace. Unused by RGB colorspace.
 
-        .. versionadded:: 0.3.0
-
+        .. versionadded:: 0.5.1
         """
-        return scale_quantum_to_int8(self.red_quantum)
+        with self:
+            return library.PixelGetBlack(self.resource)
+
+    @black.setter
+    def black(self, value):
+        self._assert_double(value)
+        self.dirty = True
+        with self:
+            library.PixelSetBlack(self.resource, value)
 
     @property
-    def green_int8(self):
-        """(:class:`numbers.Integral`) Green as 8bit integer which is
+    def black_int8(self):
+        """(:class:`numbers.Integral`) Black value as 8bit integer which is
         a common style.  From 0 to 255.
 
-        .. versionadded:: 0.3.0
-
+        .. versionadded:: 0.5.1
         """
-        return scale_quantum_to_int8(self.green_quantum)
+        return scale_quantum_to_int8(self.black_quantum)
+
+    @black_int8.setter
+    def black_int8(self, value):
+        self._assert_int8(value)
+        self.black = float(value) / 255.0
+
+    @property
+    def black_quantum(self):
+        """(:class:`numbers.Integral`) Black.
+        Scale depends on :const:`~wand.version.QUANTUM_DEPTH`.
+
+        .. versionadded:: 0.5.1
+        """
+        with self:
+            return library.PixelGetBlackQuantum(self.resource)
+
+    @black_quantum.setter
+    def black_quantum(self, value):
+        self._assert_quantum(value)
+        self.dirty = True
+        with self:
+            library.PixelSetBlackQuantum(self.resource, value)
+
+    @property
+    def blue(self):
+        """(:class:`numbers.Real`) Blue, from 0.0 to 1.0."""
+        with self:
+            return library.PixelGetBlue(self.resource)
+
+    @blue.setter
+    def blue(self, value):
+        self._assert_double(value)
+        self.dirty = True
+        with self:
+            library.PixelSetBlue(self.resource, value)
 
     @property
     def blue_int8(self):
@@ -286,34 +367,321 @@ class Color(Resource):
         """
         return scale_quantum_to_int8(self.blue_quantum)
 
+    @blue_int8.setter
+    def blue_int8(self, value):
+        self._assert_int8(value)
+        self.blue = float(value) / 255.0
+
     @property
-    def alpha_int8(self):
-        """(:class:`numbers.Integral`) Alpha value as 8bit integer which is
+    def blue_quantum(self):
+        """(:class:`numbers.Integral`) Blue.
+        Scale depends on :const:`~wand.version.QUANTUM_DEPTH`.
+
+        .. versionadded:: 0.3.0
+
+        """
+        with self:
+            return library.PixelGetBlueQuantum(self.resource)
+
+    @blue_quantum.setter
+    def blue_quantum(self, value):
+        self._assert_quantum(value)
+        self.dirty = True
+        with self:
+            library.PixelSetBlueQuantum(self.resource, value)
+
+    @property
+    def cyan(self):
+        """(:class:`numbers.Real`) Cyan color channel in CMYK
+        colorspace. Unused by RGB colorspace.
+
+        .. versionadded:: 0.5.1
+        """
+        with self:
+            return library.PixelGetCyan(self.resource)
+
+    @cyan.setter
+    def cyan(self, value):
+        self._assert_double(value)
+        self.dirty = True
+        with self:
+            library.PixelSetCyan(self.resource, value)
+
+    @property
+    def cyan_int8(self):
+        """(:class:`numbers.Integral`) Cyan value as 8bit integer which is
+        a common style.  From 0 to 255.
+
+        .. versionadded:: 0.5.1
+        """
+        return scale_quantum_to_int8(self.cyan_quantum)
+
+    @cyan_int8.setter
+    def cyan_int8(self, value):
+        self._assert_int8(value)
+        self.cyan = float(value) / 255.0
+
+    @property
+    def cyan_quantum(self):
+        """(:class:`numbers.Integral`) Cyan.
+        Scale depends on :const:`~wand.version.QUANTUM_DEPTH`.
+
+        .. versionadded:: 0.5.1
+        """
+        with self:
+            return library.PixelGetCyanQuantum(self.resource)
+
+    @cyan_quantum.setter
+    def cyan_quantum(self, value):
+        self._assert_quantum(value)
+        self.dirty = True
+        with self:
+            library.PixelSetCyanQuantum(self.resource, value)
+
+    @property
+    def fuzz(self):
+        with self:
+            return library.PixelGetFuzz(self.resource)
+
+    @fuzz.setter
+    def fuzz(self, value):
+        if not isinstance(value, numbers.Real):
+            raise TypeError('Expecting a float-point real number, not ' +
+                            repr(value))
+        self.dirty = True
+        with self:
+            library.PixelSetFuzz(self.resource, value)
+
+    @property
+    def green(self):
+        """(:class:`numbers.Real`) Green, from 0.0 to 1.0."""
+        with self:
+            return library.PixelGetGreen(self.resource)
+
+    @green.setter
+    def green(self, value):
+        self._assert_double(value)
+        self.dirty = True
+        with self:
+            library.PixelSetGreen(self.resource, value)
+
+    @property
+    def green_int8(self):
+        """(:class:`numbers.Integral`) Green as 8bit integer which is
         a common style.  From 0 to 255.
 
         .. versionadded:: 0.3.0
 
         """
-        return scale_quantum_to_int8(self.alpha_quantum)
+        return scale_quantum_to_int8(self.green_quantum)
 
-    def __str__(self):
-        return self.string
+    @green_int8.setter
+    def green_int8(self, value):
+        self._assert_int8(value)
+        self.green = float(value) / 255.0
 
-    def __repr__(self):
-        c = type(self)
-        return '{0}.{1}({2!r})'.format(c.__module__, c.__name__, self.string)
+    @property
+    def green_quantum(self):
+        """(:class:`numbers.Integral`) Green.
+        Scale depends on :const:`~wand.version.QUANTUM_DEPTH`.
 
-    def _repr_html_(self):
-        html = """
-        <span style="background-color:#{red:02X}{green:02X}{blue:02X};
-                     display:inline-block;
-                     line-height:1em;
-                     width:1em;">&nbsp;</span>
-        <strong>#{red:02X}{green:02X}{blue:02X}</strong>
+        .. versionadded:: 0.3.0
+
         """
-        return html.format(red=self.red_int8,
-                           green=self.green_int8,
-                           blue=self.blue_int8)
+        with self:
+            return library.PixelGetGreenQuantum(self.resource)
+
+    @green_quantum.setter
+    def green_quantum(self, value):
+        self._assert_quantum(value)
+        self.dirty = True
+        with self:
+            library.PixelSetGreenQuantum(self.resource, value)
+
+    @property
+    def hsl(self):
+        hue = ctypes.c_double(0.0)
+        saturation = ctypes.c_double(0.0)
+        lightness = ctypes.c_double(0.0)
+        with self:
+            library.PixelGetHSL(self.resource,
+                                ctypes.byref(hue),
+                                ctypes.byref(saturation),
+                                ctypes.byref(lightness))
+        return (hue.value, saturation.value, lightness.value)
+
+    @hsl.setter
+    def hsl(self, value):
+        # FIXME : Assert list of 3
+        hue, saturation, lightness = value
+        self._assert_double(hue)
+        self._assert_double(saturation)
+        self._assert_double(lightness)
+        self.dirty = True
+        with self:
+            library.PixelSetHSL(self.resource, hue, saturation, lightness)
+
+    @property
+    def magenta(self):
+        """(:class:`numbers.Real`) Magenta color channel in CMYK
+        colorspace. Unused by RGB colorspace.
+
+        .. versionadded:: 0.5.1
+        """
+        with self:
+            return library.PixelGetMagenta(self.resource)
+
+    @magenta.setter
+    def magenta(self, value):
+        self._assert_double(value)
+        self.dirty = True
+        with self:
+            library.PixelSetMagenta(self.resource, value)
+
+    @property
+    def magenta_int8(self):
+        """(:class:`numbers.Integral`) Magenta value as 8bit integer which is
+        a common style.  From 0 to 255.
+
+        .. versionadded:: 0.5.1
+        """
+        return scale_quantum_to_int8(self.magenta_quantum)
+
+    @magenta_int8.setter
+    def magenta_int8(self, value):
+        self._assert_int8(value)
+        self.magenta = float(value) / 255.0
+
+    @property
+    def magenta_quantum(self):
+        with self:
+            return library.PixelGetMagentaQuantum(self.resource)
+
+    @magenta_quantum.setter
+    def magenta_quantum(self, value):
+        """(:class:`numbers.Integral`) Magenta.
+        Scale depends on :const:`~wand.version.QUANTUM_DEPTH`.
+
+        .. versionadded:: 0.5.1
+        """
+        self._assert_quantum(value)
+        self.dirty = True
+        with self:
+            library.PixelSetMagentaQuantum(self.resource, value)
+
+    @property
+    def normalized_string(self):
+        """(:class:`basestring`) The normalized string representation of
+        the color.  The same color is always represented to the same
+        string.
+
+        .. versionadded:: 0.3.0
+
+        """
+        with self:
+            string = library.PixelGetColorAsNormalizedString(self.resource)
+            return text(string.value)
+
+    @property
+    def red(self):
+        """(:class:`numbers.Real`) Red, from 0.0 to 1.0."""
+        with self:
+            return library.PixelGetRed(self.resource)
+
+    @red.setter
+    def red(self, value):
+        self._assert_double(value)
+        self.dirty = True
+        with self:
+            library.PixelSetRed(self.resource, value)
+
+    @property
+    def red_int8(self):
+        """(:class:`numbers.Integral`) Red as 8bit integer which is a common
+        style.  From 0 to 255.
+
+        .. versionadded:: 0.3.0
+
+        """
+        return scale_quantum_to_int8(self.red_quantum)
+
+    @red_int8.setter
+    def red_int8(self, value):
+        self._assert_int8(value)
+        self.red = float(value) / 255.0
+
+    @property
+    def red_quantum(self):
+        """(:class:`numbers.Integral`) Red.
+        Scale depends on :const:`~wand.version.QUANTUM_DEPTH`.
+
+        .. versionadded:: 0.3.0
+
+        """
+        with self:
+            return library.PixelGetRedQuantum(self.resource)
+
+    @red_quantum.setter
+    def red_quantum(self, value):
+        self._assert_quantum(value)
+        self.dirty = True
+        with self:
+            library.PixelSetRedQuantum(self.resource, value)
+
+    @property
+    def string(self):
+        """(:class:`basestring`) The string representation of the color."""
+        with self:
+            color_string = library.PixelGetColorAsString(self.resource)
+            return text(color_string.value)
+
+    @property
+    def yellow(self):
+        """(:class:`numbers.Real`) Yellow color channel in CMYK
+        colorspace. Unused by RGB colorspace.
+
+        .. versionadded:: 0.5.1
+        """
+        with self:
+            return library.PixelGetYellow(self.resource)
+
+    @yellow.setter
+    def yellow(self, value):
+        self._assert_double(value)
+        self.dirty = True
+        with self:
+            library.PixelSetYellow(self.resource, value)
+
+    @property
+    def yellow_int8(self):
+        """(:class:`numbers.Integral`) Yellow as 8bit integer which is a common
+        style. From 0 to 255.
+
+        .. versionadded:: 0.5.1
+        """
+        return scale_quantum_to_int8(self.yellow_quantum)
+
+    @yellow_int8.setter
+    def yellow_int8(self, value):
+        self._assert_int8(value)
+        self.yellow = float(value) / 255.0
+
+    @property
+    def yellow_quantum(self):
+        """(:class:`numbers.Integral`) Yellow.
+        Scale depends on :const:`~wand.version.QUANTUM_DEPTH`.
+
+        .. versionadded:: 0.5.1
+        """
+        with self:
+            return library.PixelGetYellowQuantum(self.resource)
+
+    @yellow_quantum.setter
+    def yellow_quantum(self, value):
+        self._assert_quantum(value)
+        self.dirty = True
+        with self:
+            library.PixelSetYellowQuantum(self.resource, value)
 
 
 def scale_quantum_to_int8(quantum):

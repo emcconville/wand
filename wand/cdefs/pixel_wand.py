@@ -67,6 +67,9 @@ def load(lib, IM_VERSION, IM_QUANTUM_DEPTH, IM_HDRI):
     elif IM_QUANTUM_DEPTH == 64:
         QuantumType = c_longdouble
 
+    lib.ClearPixelWand.argtypes = [c_void_p]
+    lib.ClonePixelWand.argtypes = [c_void_p]
+    lib.ClonePixelWand.restype = c_void_p
     lib.DestroyPixelWand.argtypes = [c_void_p]
     lib.DestroyPixelWand.restype = c_void_p
     lib.IsPixelWand.argtypes = [c_void_p]
@@ -74,12 +77,15 @@ def load(lib, IM_VERSION, IM_QUANTUM_DEPTH, IM_HDRI):
     lib.NewPixelWand.argtypes = []
     lib.NewPixelWand.restype = c_void_p
     lib.PixelClearException.argtypes = [c_void_p]
+    lib.PixelClearException.restype = c_int
     lib.PixelGetAlpha.argtypes = [c_void_p]
     lib.PixelGetAlpha.restype = c_double
     lib.PixelGetAlphaQuantum.argtypes = [c_void_p]
     lib.PixelGetAlphaQuantum.restype = QuantumType
     lib.PixelGetBlack.argtypes = [c_void_p]
     lib.PixelGetBlack.restype = c_double
+    lib.PixelGetBlackQuantum.argtypes = [c_void_p]
+    lib.PixelGetBlackQuantum.restype = QuantumType
     lib.PixelGetBlue.argtypes = [c_void_p]
     lib.PixelGetBlue.restype = c_double
     lib.PixelGetBlueQuantum.argtypes = [c_void_p]
@@ -90,12 +96,30 @@ def load(lib, IM_VERSION, IM_QUANTUM_DEPTH, IM_HDRI):
     lib.PixelGetColorAsString.restype = c_magick_char_p
     lib.PixelGetColorCount.argtypes = [c_void_p]
     lib.PixelGetColorCount.restype = c_size_t
+    lib.PixelGetCyan.argtypes = [c_void_p]
+    lib.PixelGetCyan.restype = c_double
+    lib.PixelGetCyanQuantum.argtypes = [c_void_p]
+    lib.PixelGetCyanQuantum.restype = QuantumType
     lib.PixelGetException.argtypes = [c_void_p, POINTER(c_int)]
     lib.PixelGetException.restype = c_magick_char_p
+    lib.PixelGetExceptionType.argtypes = [c_void_p]
+    lib.PixelGetExceptionType.restype = c_int
+    lib.PixelGetFuzz.argtypes = [c_void_p]
+    lib.PixelGetFuzz.restype = c_double
     lib.PixelGetGreen.argtypes = [c_void_p]
     lib.PixelGetGreen.restype = c_double
     lib.PixelGetGreenQuantum.argtypes = [c_void_p]
     lib.PixelGetGreenQuantum.restype = QuantumType
+    lib.PixelGetHSL.argtypes = [c_void_p,
+                                POINTER(c_double),
+                                POINTER(c_double),
+                                POINTER(c_double)]
+    lib.PixelGetIndex.argtypes = [c_void_p]
+    lib.PixelGetIndex.restype = QuantumType
+    lib.PixelGetMagenta.argtypes = [c_void_p]
+    lib.PixelGetMagenta.restype = c_double
+    lib.PixelGetMagentaQuantum.argtypes = [c_void_p]
+    lib.PixelGetMagentaQuantum.restype = QuantumType
     lib.PixelGetMagickColor.argtypes = [c_void_p, c_void_p]
     if is_im_7:
         lib.PixelGetPixel.argtypes = [c_void_p]
@@ -104,8 +128,40 @@ def load(lib, IM_VERSION, IM_QUANTUM_DEPTH, IM_HDRI):
     lib.PixelGetRed.restype = c_double
     lib.PixelGetRedQuantum.argtypes = [c_void_p]
     lib.PixelGetRedQuantum.restype = QuantumType
+    lib.PixelGetYellow.argtypes = [c_void_p]
+    lib.PixelGetYellow.restype = c_double
+    lib.PixelGetYellowQuantum.argtypes = [c_void_p]
+    lib.PixelGetYellowQuantum.restype = QuantumType
+    lib.PixelSetAlpha.argtypes = [c_void_p, c_double]
+    lib.PixelSetAlphaQuantum.argtypes = [c_void_p, QuantumType]
+    lib.PixelSetBlack.argtypes = [c_void_p, c_double]
+    lib.PixelSetBlackQuantum.argtypes = [c_void_p, QuantumType]
+    lib.PixelSetBlue.argtypes = [c_void_p, c_double]
+    lib.PixelSetBlueQuantum.argtypes = [c_void_p, QuantumType]
     lib.PixelSetColor.argtypes = [c_void_p, c_char_p]
     lib.PixelSetColor.restype = c_int
+    lib.PixelSetColorCount.argtypes = [c_void_p, c_size_t]
+    lib.PixelSetCyan.argtypes = [c_void_p, c_double]
+    lib.PixelSetCyanQuantum.argtypes = [c_void_p, QuantumType]
+    lib.PixelSetFuzz.argtypes = [c_void_p, c_double]
+    lib.PixelSetGreen.argtypes = [c_void_p, c_double]
+    lib.PixelSetGreenQuantum.argtypes = [c_void_p, QuantumType]
+    lib.PixelSetHSL.argtypes = [c_void_p, c_double, c_double, c_double]
+    lib.PixelSetIndex.argtypes = [c_void_p, QuantumType]
+    lib.PixelSetMagenta.argtypes = [c_void_p, c_double]
+    lib.PixelSetMagentaQuantum.argtypes = [c_void_p, QuantumType]
+    if is_im_6:
+        lib.PixelSetMagickColor.argtypes = [c_void_p, c_void_p]
+    else:
+        lib.PixelSetMagickColor = None
+    if is_im_7:
+        lib.PixelSetPixelColor.argtypes = [c_void_p, c_void_p]
+    else:
+        lib.PixelSetPixelColor = None
+    lib.PixelSetRed.argtypes = [c_void_p, c_double]
+    lib.PixelSetRedQuantum.argtypes = [c_void_p, QuantumType]
+    lib.PixelSetYellow.argtypes = [c_void_p, c_double]
+    lib.PixelSetYellowQuantum.argtypes = [c_void_p, QuantumType]
     if is_im_6:
         lib.PixelSetMagickColor.argtypes = [c_void_p, c_void_p]
         lib.PixelSetPixelColor = None

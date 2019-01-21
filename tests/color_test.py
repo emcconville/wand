@@ -6,7 +6,7 @@ from pytest import mark
 
 from wand.color import Color
 from wand.compat import xrange
-from wand.version import MAGICK_VERSION_INFO  # noqa
+from wand.version import QUANTUM_DEPTH, MAGICK_VERSION_INFO  # noqa
 
 
 def test_equals():
@@ -15,6 +15,7 @@ def test_equals():
     assert Color('#000') == Color('#000000') == Color('black')
     assert Color('rgba(0, 0, 0, 0)') == Color('rgba(0, 0, 0, 0)')
     assert Color('rgba(0, 0, 0, 0)') == Color('rgba(1, 1, 1, 0)')
+    assert Color('green') != 'green'
 
 
 def test_not_equals():
@@ -39,6 +40,9 @@ def test_red():
     assert Color('red').red == 1
     assert Color('white').red == 1
     assert 0.5 <= Color('rgba(128, 0, 0, 1)').red < 0.51
+    c = Color('none')
+    c.red = 1
+    assert c.red == 1
 
 
 def test_green():
@@ -46,6 +50,9 @@ def test_green():
     assert Color('#0f0').green == 1
     assert Color('white').green == 1
     assert 0.5 <= Color('rgba(0, 128, 0, 1)').green < 0.51
+    c = Color('none')
+    c.green = 1
+    assert c.green == 1
 
 
 def test_blue():
@@ -53,12 +60,129 @@ def test_blue():
     assert Color('blue').blue == 1
     assert Color('white').blue == 1
     assert 0.5 <= Color('rgba(0, 0, 128, 1)').blue < 0.51
+    c = Color('none')
+    c.blue = 1
+    assert c.blue == 1
 
 
 def test_alpha():
     assert Color('rgba(0, 0, 0, 1)').alpha == 1
     assert Color('rgba(0, 0, 0, 0)').alpha == 0
-    assert 0.49 <= Color('rgba(0, 0, 0, 0.5)').alpha <= 0.5
+    assert 0.49 <= Color('rgba(0, 0, 0, 0.5)').alpha <= 0.51
+    c = Color('none')
+    c.alpha = 1
+    assert c.alpha == 1
+
+
+def test_cyan():
+    assert Color('cmyk(100%, 0, 0, 0)').cyan == 1
+    assert Color('cmyk(0, 0, 0, 0)').cyan == 0
+    c = Color('none')
+    c.cyan = 1
+    assert c.cyan == 1
+
+
+def test_magenta():
+    assert Color('cmyk(0, 100%, 0, 0)').magenta == 1
+    assert Color('cmyk(0, 0, 0, 0)').magenta == 0
+    c = Color('none')
+    c.magenta = 1
+    assert c.magenta == 1
+
+
+def test_yellow():
+    assert Color('cmyk(0, 0, 100%, 0)').yellow == 1
+    assert Color('cmyk(0, 0, 0, 0)').yellow == 0
+    c = Color('none')
+    c.yellow = 1
+    assert c.yellow == 1
+
+
+def test_black():
+    assert Color('cmyk(0, 0, 0, 100%)').black == 1
+    assert Color('cmyk(0, 0, 0, 0)').black == 0
+    c = Color('none')
+    c.black = 1
+    assert c.black == 1
+
+
+def test_red_quantum():
+    q = 2 ** QUANTUM_DEPTH - 1
+    assert Color('black').red_quantum == 0
+    assert Color('red').red_quantum == q
+    assert Color('white').red_quantum == q
+    assert (0.49 * q) < Color('rgba(128, 0, 0, 1)').red_quantum < (0.51 * q)
+    c = Color('none')
+    c.red_quantum = q
+    assert c.red_quantum == q
+
+
+def test_green_quantum():
+    q = 2 ** QUANTUM_DEPTH - 1
+    assert Color('black').green_quantum == 0
+    assert Color('#0f0').green_quantum == q
+    assert Color('white').green_quantum == q
+    assert (0.49 * q) < Color('rgba(0, 128, 0, 1)').green_quantum < (0.51 * q)
+    c = Color('none')
+    c.green_quantum = q
+    assert c.green_quantum == q
+
+
+def test_blue_quantum():
+    q = 2 ** QUANTUM_DEPTH - 1
+    assert Color('black').blue_quantum == 0
+    assert Color('blue').blue_quantum == q
+    assert Color('white').blue_quantum == q
+    assert (0.49 * q) < Color('rgba(0, 0, 128, 1)').blue_quantum < (0.51 * q)
+    c = Color('none')
+    c.blue_quantum = q
+    assert c.blue_quantum == q
+
+
+def test_alpha_quantum():
+    q = 2 ** QUANTUM_DEPTH - 1
+    assert Color('rgba(0, 0, 0, 1)').alpha_quantum == q
+    assert Color('rgba(0, 0, 0, 0)').alpha_quantum == 0
+    assert (0.49 * q) < Color('rgba(0, 0, 0, 0.5)').alpha_quantum < (0.51 * q)
+    c = Color('none')
+    c.alpha_quantum = q
+    assert c.alpha_quantum == q
+
+
+def test_cyan_quantum():
+    q = 2 ** QUANTUM_DEPTH - 1
+    assert Color('cmyk(100%, 0, 0, 0)').cyan_quantum == q
+    assert Color('cmyk(0, 0, 0, 0)').cyan_quantum == 0
+    c = Color('none')
+    c.cyan_quantum = q
+    assert c.cyan_quantum == q
+
+
+def test_magenta_quantum():
+    q = 2 ** QUANTUM_DEPTH - 1
+    assert Color('cmyk(0, 100%, 0, 0)').magenta_quantum == q
+    assert Color('cmyk(0, 0, 0, 0)').magenta_quantum == 0
+    c = Color('none')
+    c.magenta_quantum = q
+    assert c.magenta_quantum == q
+
+
+def test_yellow_quantum():
+    q = 2 ** QUANTUM_DEPTH - 1
+    assert Color('cmyk(0, 0, 100%, 0)').yellow_quantum == q
+    assert Color('cmyk(0, 0, 0, 0)').yellow_quantum == 0
+    c = Color('none')
+    c.yellow_quantum = q
+    assert c.yellow_quantum == q
+
+
+def test_black_quantum():
+    q = 2 ** QUANTUM_DEPTH - 1
+    assert Color('cmyk(0, 0, 0, 100%)').black_quantum == q
+    assert Color('cmyk(0, 0, 0, 0)').black_quantum == 0
+    c = Color('none')
+    c.black_quantum = q
+    assert c.black_quantum == q
 
 
 def test_red_int8():
@@ -66,6 +190,9 @@ def test_red_int8():
     assert Color('red').red_int8 == 255
     assert Color('white').red_int8 == 255
     assert Color('rgba(128, 0, 0, 1)').red_int8 == 128
+    c = Color('none')
+    c.red_int8 = 255
+    assert c.red_int8 == 255
 
 
 def test_green_int8():
@@ -73,6 +200,9 @@ def test_green_int8():
     assert Color('#0f0').green_int8 == 255
     assert Color('white').green_int8 == 255
     assert Color('rgba(0, 128, 0, 1)').green_int8 == 128
+    c = Color('none')
+    c.green_int8 = 255
+    assert c.green_int8 == 255
 
 
 def test_blue_int8():
@@ -80,6 +210,9 @@ def test_blue_int8():
     assert Color('blue').blue_int8 == 255
     assert Color('white').blue_int8 == 255
     assert Color('rgba(0, 0, 128, 1)').blue_int8 == 128
+    c = Color('none')
+    c.blue_int8 = 255
+    assert c.blue_int8 == 255
 
 
 def test_alpha_int8():
@@ -93,11 +226,59 @@ def test_alpha_int8():
         #        functions in Travis CI.  We just skip the test in this case.
         return
     assert 127 <= Color('rgba(0, 0, 0, 0.5)').alpha_int8 <= 128
+    c = Color('none')
+    c.alpha_int8 = 255
+    assert c.alpha_int8 == 255
+
+
+def test_cyan_int8():
+    assert Color('cmyk(100%, 0, 0, 0)').cyan_int8 == 255
+    assert Color('cmyk(0, 0, 0, 0)').cyan_int8 == 0
+    c = Color('none')
+    c.cyan_int8 = 255
+    assert c.cyan_int8 == 255
+
+
+def test_magenta_int8():
+    assert Color('cmyk(0, 100%, 0, 0)').magenta_int8 == 255
+    assert Color('cmyk(0, 0, 0, 0)').magenta_int8 == 0
+    c = Color('none')
+    c.magenta_int8 = 255
+    assert c.magenta_int8 == 255
+
+
+def test_yellow_int8():
+    assert Color('cmyk(0, 0, 100%, 0)').yellow_int8 == 255
+    assert Color('cmyk(0, 0, 0, 0)').yellow_int8 == 0
+    c = Color('none')
+    c.yellow_int8 = 255
+    assert c.yellow_int8 == 255
+
+
+def test_black_int8():
+    assert Color('cmyk(0, 0, 0, 100%)').black_int8 == 255
+    assert Color('cmyk(0, 0, 0, 0)').black_int8 == 0
+    c = Color('none')
+    c.black_int8 = 255
+    assert c.black_int8 == 255
 
 
 def test_string():
     assert Color('black').string in ('rgb(0,0,0)', 'srgb(0,0,0)')
     assert str(Color('black')) in ('rgb(0,0,0)', 'srgb(0,0,0)')
+
+
+def test_fuzz():
+    c = Color('none')
+    c.fuzz = 55.5
+    assert c.fuzz == 55.5
+
+
+def test_hsl():
+    c = Color('#f00')
+    assert c.hsl == (0.0, 1.0, 0.5)
+    c.hsl = (0.6666666666666666, 1.0, 0.5)
+    assert Color('#00f') == c
 
 
 def color_memory_leak():
