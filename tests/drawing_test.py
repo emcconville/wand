@@ -32,6 +32,8 @@ def test_set_get_border_color(fx_wand):
     with Color("#0F0") as green:
         fx_wand.border_color = green
         assert green == fx_wand.border_color
+    fx_wand.border_color = 'orange'
+    assert fx_wand.border_color == Color('orange')
     # Assert user error
     with raises(ValueError):
         fx_wand.border_color = 0xDEADBEEF
@@ -125,12 +127,16 @@ def test_set_get_fill_color(fx_wand):
     with Color('#333333') as black:
         fx_wand.fill_color = black
     assert fx_wand.fill_color == Color('#333333')
+    fx_wand.fill_color = 'pink'
+    fx_wand.fill_color == Color('PINK')
 
 
 def test_set_get_stroke_color(fx_wand):
     with Color('#333333') as black:
         fx_wand.stroke_color = black
     assert fx_wand.stroke_color == Color('#333333')
+    fx_wand.stroke_color = 'skyblue'
+    assert fx_wand.stroke_color == Color('SkyBlue')
 
 
 def test_set_get_stroke_width(fx_wand):
