@@ -631,6 +631,8 @@ def test_index_pixel_set(fx_asset):
         with Color('black') as dot:
             img[0, 0] = dot
             assert img[0, 0] == dot
+            img[0, 0] = 'black'
+            assert img[0, 0] == dot
         img.colorspace = 'gray'
         with Color('gray50') as dot:
             img[0, 0] = dot
@@ -1303,6 +1305,8 @@ def test_set_get_matte_color(fx_asset):
             assert img.matte_color == color
             with raises(TypeError):
                 img.matte_color = False
+        img.matte_color = 'orange'
+        assert img.matte_color == Color('orange')
 
 
 def test_transparentize(fx_asset):
@@ -1588,6 +1592,18 @@ def test_setfont(fx_asset):
         img.font = fontStroke
         assert img.stroke_color == fontStroke.stroke_color
         assert img.stroke_width == fontStroke.stroke_width
+        img.font_color = 'gold'
+        assert img.font_color == Color('gold')
+        img.stroke_color = 'gold'
+        assert img.stroke_color == Color('gold')
+        fontColor = Font(
+            path=str(fx_asset.join('League_Gothic.otf')),
+            color='YELLOW',
+            stroke_color='PINK'
+        )
+        img.font = fontColor
+        assert img.font_color == Color('YELLOW')
+        assert img.stroke_color == Color('PINK')
 
 
 def test_setgravity():
