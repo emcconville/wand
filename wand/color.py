@@ -250,6 +250,38 @@ class Color(Resource):
         return bool(library.IsPixelWandSimilar(a, b, 0) and
                     alpha(a) == alpha(b))
 
+    @classmethod
+    def from_hsl(cls, hue=0.0, saturation=0.0, lightness=0.0):
+        """Creates a RGB color from HSL values. The ``hue``, ``saturation``,
+        and ``lightness`` must be normalized between 0.0 & 1.0.
+
+        .. code::
+
+            h=0.75  # 270 Degrees
+            s=1.0   # 100 Percent
+            l=0.5   # 50 Percent
+            with Color.from_hsl(hue=h, saturation=s, lightness=l) as color:
+                print(color)  #=> srgb(128,0,255)
+
+        :param hue: a normalized double between 0.0 & 1.0.
+        :type hue: :class:`numbers.Real`
+        :param saturation: a normalized double between 0.0 & 1.0.
+        :type saturation: :class:`numbers.Real`
+        :param lightness: a normalized double between 0.0 & 1.0.
+        :type lightness: :class:`numbers.Real`
+        :rtype: :class:`Color`
+
+        .. versionadded:: 0.5.1
+        """
+        color = cls('WHITE')
+        color._assert_double(hue)
+        color._assert_double(saturation)
+        color._assert_double(lightness)
+        color.dirty = True
+        with color:
+            library.PixelSetHSL(color.resource, hue, saturation, lightness)
+        return color
+
     @property
     def alpha(self):
         """(:class:`numbers.Real`) Alpha value, from 0.0 to 1.0."""
@@ -499,29 +531,6 @@ class Color(Resource):
             library.PixelSetGreenQuantum(self.resource, value)
 
     @property
-    def hsl(self):
-        hue = ctypes.c_double(0.0)
-        saturation = ctypes.c_double(0.0)
-        lightness = ctypes.c_double(0.0)
-        with self:
-            library.PixelGetHSL(self.resource,
-                                ctypes.byref(hue),
-                                ctypes.byref(saturation),
-                                ctypes.byref(lightness))
-        return (hue.value, saturation.value, lightness.value)
-
-    @hsl.setter
-    def hsl(self, value):
-        # FIXME : Assert list of 3
-        hue, saturation, lightness = value
-        self._assert_double(hue)
-        self._assert_double(saturation)
-        self._assert_double(lightness)
-        self.dirty = True
-        with self:
-            library.PixelSetHSL(self.resource, hue, saturation, lightness)
-
-    @property
     def magenta(self):
         """(:class:`numbers.Real`) Magenta color channel in CMYK
         colorspace. Unused by RGB colorspace.
@@ -682,6 +691,25 @@ class Color(Resource):
         self.dirty = True
         with self:
             library.PixelSetYellowQuantum(self.resource, value)
+
+    def hsl(self):
+        """Calculate the HSL color values from the RGB color.
+
+        :returns: Tuple containing three normalized doubles, between 0.0 &
+                  1.0, representing ``hue``, ``saturation``, and ``lightness``.
+        :rtype: :class:`collections.Sequence`
+
+        .. versionadded:: 0.5.1
+        """
+        hue = ctypes.c_double(0.0)
+        saturation = ctypes.c_double(0.0)
+        lightness = ctypes.c_double(0.0)
+        with self:
+            library.PixelGetHSL(self.resource,
+                                ctypes.byref(hue),
+                                ctypes.byref(saturation),
+                                ctypes.byref(lightness))
+        return (hue.value, saturation.value, lightness.value)
 
 
 def scale_quantum_to_int8(quantum):

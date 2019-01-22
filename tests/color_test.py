@@ -275,10 +275,10 @@ def test_fuzz():
 
 
 def test_hsl():
-    c = Color('#f00')
-    assert c.hsl == (0.0, 1.0, 0.5)
-    c.hsl = (0.6666666666666666, 1.0, 0.5)
-    assert Color('#00f') == c
+    with Color.from_hsl(hue=0.0, saturation=1.0, lightness=0.5) as c:
+        assert c == Color('#f00')
+    with Color('#00f') as c:
+        assert c.hsl() == (0.6666666666666666, 1.0, 0.5)
 
 
 def color_memory_leak():
