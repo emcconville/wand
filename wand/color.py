@@ -34,7 +34,7 @@ class Color(Resource):
                         if col == red:
                             red_count += 1
 
-    :param string: a color namel string e.g. ``'rgb(255, 255, 255)'``,
+    :param string: a color name string e.g. ``'rgb(255, 255, 255)'``,
                    ``'#fff'``, ``'white'``. see `ImageMagick Color Names`_
                    doc also
     :type string: :class:`basestring`
