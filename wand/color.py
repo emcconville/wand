@@ -43,9 +43,13 @@ class Color(Resource):
        :class:`Color` objects become hashable.
 
     .. versionchanged:: 0.5.1
-       Color-channel properties can now be set.
+       Color channel properties can now be set.
+
+    .. versionchanged:: 0.5.1
        Added :attr:`cyan`, :attr:`magenta`, :attr:`yellow`, & :attr:`black`
        properties for CMYK :class:`Color` instances.
+
+    .. versionchanged:: 0.5.1
        Method :meth:`Color.from_hsl()` can create a RGB color from ``hue``,
        ``saturation``, & ``lightness`` values.
 

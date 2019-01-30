@@ -11,13 +11,19 @@ Version 0.5.1
 
 Unreleased.
 
- - Added set pixel color via `Image[x, y] = Color('...')`. [:issue:`105`]
- - Added :class:`limits <wand.resource.ResourceLimits>` helper dictionary to
-   allows getting / setting ImageMagick's resource-limit policies. [:issue:`97`]
- - Fixed segmentation violation for win32 & ImageMagick-7. [:issue:`389`]
- - Fixed `AssertError` by moving :attr:`~wand.sequence.SingleImage` sync
-   behavior from ``destroy`` to context ``__exit__``. [:issue:`388`]
- - Fixed memory leak in :attr:`~wand.drawing.Drawing.get_font_metrics`. [:issue:`390`]
+- Added set pixel color via `Image[x, y] = Color('...')`. [:issue:`105`]
+- Added :class:`limits <wand.resource.ResourceLimits>` helper dictionary to
+  allows getting / setting ImageMagick's resource-limit policies. [:issue:`97`]
+- Fixed segmentation violation for win32 & ImageMagick-7. [:issue:`389`]
+- Fixed `AssertError` by moving :attr:`~wand.sequence.SingleImage` sync
+  behavior from ``destroy`` to context ``__exit__``. [:issue:`388`]
+- Fixed memory leak in :attr:`~wand.drawing.Drawing.get_font_metrics`. [:issue:`390`]
+- Added property setters for :class:`~wand.color.Color` attributes.
+- Added :attr:`~wand.color.Color.cyan`, :attr:`~wand.color.Color.magenta`,
+  :attr:`~wand.color.Color.yellow`, & :attr:`~wand.color.Color.black`
+  properties for CMYK :class:`~wand.color.Color` instances.
+- :class:`~wand.color.Color` instance can be created from HSL values with
+  :meth:`~wand.color.Color.from_hsl()` class method.
 
 
 .. _changelog-0.5.0:

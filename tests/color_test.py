@@ -282,7 +282,7 @@ def test_hsl():
 
 
 def color_memory_leak():
-    for i in xrange(5000):
+    for _ in xrange(5000):
         with Color('orange'):
             pass
     time.sleep(0.02)
