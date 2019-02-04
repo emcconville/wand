@@ -19,8 +19,9 @@ def test_version():
     assert all(isinstance(v, int) for v in MAGICK_VERSION_INFO)
     assert isinstance(MAGICK_VERSION_NUMBER, numbers.Integral)
     assert isinstance(MAGICK_RELEASE_DATE, datetime.date)
-    assert (MAGICK_RELEASE_DATE_STRING ==
-            MAGICK_RELEASE_DATE.strftime('%Y-%m-%d'))
+    date_strings = (MAGICK_RELEASE_DATE.strftime('%Y-%m-%d'),
+                    MAGICK_RELEASE_DATE.strftime('%Y%m%d'))
+    assert MAGICK_RELEASE_DATE_STRING in date_strings
 
 
 def test_quantum_depth():
