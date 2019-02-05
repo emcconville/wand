@@ -134,23 +134,26 @@ sindikat_'s contribution.
 .. _sindikat: http://stackoverflow.com/users/596361/sindikat
 
 
-Quora
-'''''
+Documentation
+'''''''''''''
 
-There's a Quora topic for Wand: `Wand (ImageMagick binding)`__.  Be free
-to add questions to the topic, though it's suitable for higher-level questions
-rather than troubleshooting.
+The documentation_ for Wand is hosted by `ReadTheDocs.org`_. The nightly
+development docs can be found under the latest_ version, and the most recent
+release under stable_.  Previous & maintenance releases are also available.
 
-__ https://www.quora.com/Wand-ImageMagick-binding
+.. _documentation: http://docs.wand-py.org
+.. _ReadTheDocs.org: https://readthedocs.org
+.. _latest: http://docs.wand-py.org/en/latest/
+.. _stable: http://docs.wand-py.org/en/stable/
 
 
 Open source
 -----------
 
-Wand is an open source software written by `Hong Minhee`_ (initially written
-for StyleShare_).  See also the complete list of contributors_ as well.
-The source code is distributed under `MIT license`_ and you can find it at
-`GitHub repository`_. Check out now:
+Wand is an open source software initially written by `Hong Minhee`_ (for
+StyleShare_), and is currently maintained by E. McConville.  See also the
+complete list of contributors_ as well. The source code is distributed under
+`MIT license`_ and you can find it at `GitHub repository`_. Check out now:
 
 .. sourcecode:: bash
 
