@@ -32,6 +32,17 @@ There are some time-consuming tests.  You can skip these tests using
 
    $ py.test --skip-slow
 
+Be default, tests include regression testing for the PDF format. Test cases
+will fail if the system does not include `Ghostscript`_ binaries. You can skip
+PDF dependent tests with ``--no-pdf`` option:
+
+.. sourcecode:: console
+
+    $ py.test --no-pdf
+
+.. _Ghostscript: https://www.ghostscript.com
+
+
 You can run only tests you want using ``-k`` option.
 
 .. sourcecode:: console
