@@ -24,6 +24,8 @@ Unreleased.
   properties for CMYK :class:`~wand.color.Color` instances.
 - :class:`~wand.color.Color` instance can be created from HSL values with
   :meth:`~wand.color.Color.from_hsl()` class method.
+- Added :attr:`Image.compose <wand.image.BaseImage.compose>` property for
+  identifying layer visibility.
 
 
 .. _changelog-0.5.0:

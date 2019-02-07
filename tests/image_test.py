@@ -2153,6 +2153,17 @@ def test_compression(fx_asset):
         assert img.compression in ('group4', 'jpeg')
 
 
+def test_compose(fx_asset):
+    with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
+        assert img.compose == 'over'
+        img.compose = 'blend'
+        assert img.compose == 'blend'
+        with raises(TypeError):
+            img.compose = 0xDEADBEEF
+        with raises(ValueError):
+            img.compose = 'none'
+
+
 def test_issue_150(fx_asset, tmpdir):
     """Should not be terminated with segmentation fault.
 

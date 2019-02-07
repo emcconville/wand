@@ -1270,6 +1270,27 @@ class BaseImage(Resource):
             self.raise_exception()
 
     @property
+    def compose(self):
+        """(:class:`basestring`) The type of image compose.
+        It's a string from :const:`COMPOSITE_OPERATORS` list.
+        It also can be set.
+
+        .. versionadded:: 0.5.1
+        """
+        compose_index = library.MagickGetImageCompose(self.wand)
+        return COMPOSITE_OPERATORS[compose_index]
+
+    @compose.setter
+    def compose(self, operator):
+        if not isinstance(operator, string_type):
+            raise TypeError('expected a string, not ' + repr(operator))
+        if operator not in COMPOSITE_OPERATORS:
+            raise ValueError('expected a value from COMPOSITE_OPERATORS, ' +
+                             'not ' + repr(operator))
+        library.MagickSetImageCompose(self.wand,
+                                      COMPOSITE_OPERATORS.index(operator))
+
+    @property
     def compression(self):
         """(:class:`basestring`) The type of image compression.
         It's a string from :const:`COMPRESSION_TYPES` list.
