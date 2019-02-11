@@ -20,7 +20,7 @@ from . import compat
 from .api import MagickPixelPacket, PixelInfo, libc, libmagick, library
 from .color import Color
 from .compat import (binary, binary_type, encode_filename, file_types,
-                     string_type, text, xrange)
+                     PY3, string_type, text, xrange)
 from .exceptions import MissingDelegateError, WandException
 from .font import Font
 from .resource import DestroyedResourceError, Resource
@@ -39,7 +39,7 @@ __all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COLORSPACE_TYPES',
            'BaseImage', 'ChannelDepthDict', 'ChannelImageDict',
            'ClosedImageError', 'HistogramDict', 'Image', 'ImageProperty',
            'Iterator', 'Metadata', 'OptionDict', 'manipulative',
-           'ArtifactTree')
+           'ArtifactTree', 'ProfileDict')
 
 
 #: (:class:`tuple`) The list of alpha channel types
@@ -4614,11 +4614,6 @@ class Image(BaseImage):
 
     """
 
-    #: (:class:`Metadata`) The metadata mapping of the image.  Read only.
-    #:
-    #: .. versionadded:: 0.3.0
-    metadata = None
-
     #: (:class:`ArtifactTree`) A dict mapping to image artifacts.
     #: Similar to :attr:`metadata`, but used to alter behavior of various
     #: internal operations.
@@ -4638,6 +4633,16 @@ class Image(BaseImage):
     #:
     #: .. versionadded:: 0.3.0
     channel_depths = None
+
+    #: (:class:`Metadata`) The metadata mapping of the image.  Read only.
+    #:
+    #: .. versionadded:: 0.3.0
+    metadata = None
+
+    #: (:class:`ProfileDict`) The mapping of image profiles.
+    #:
+    #: .. versionadded:: 0.5.1
+    profiles = None
 
     def __init__(self, image=None, blob=None, file=None, filename=None,
                  format=None, width=None, height=None, depth=None,
@@ -4718,6 +4723,7 @@ class Image(BaseImage):
             self.artifacts = ArtifactTree(self)
             from .sequence import Sequence
             self.sequence = Sequence(self)
+            self.profiles = ProfileDict(self)
         self.raise_exception()
 
     def __repr__(self):
@@ -5411,33 +5417,59 @@ class ArtifactTree(ImageProperty, collections.MutableMapping):
 
 
 class ProfileDict(ImageProperty, collections.MutableMapping):
-    """The mapping table of embedded image profiles. Incuding ICC, and EXIF
-    profile types.
+    """The mapping table of embedded image profiles.
 
-    Use this to get, set, and delete whole profile payloads on an image.
+    Use this to get, set, and delete whole profile payloads on an image. Each
+    payload is a raw binary string.
 
-    ..versionadded:: 0.5.1
+    For example::
+
+        with Image(filename='photo.jpg') as img:
+            # Extract EXIF
+            with open('exif.bin', 'wb') as payload:
+                payload.write(img.profiles['exif])
+            # Import ICC
+            with open('color_profile.icc', 'rb') as payload:
+                img.profiles['icc'] = payload.read()
+            # Remove XMP
+            del imp.profiles['xmp']
+
+    .. seealso::
+
+        `Embedded Image Profiles`__ for a list of supported profiles.
+
+        __ https://imagemagick.org/script/formats.php#embedded
+
+    .. versionadded:: 0.5.1
     """
     def __init__(self, image):
         if not isinstance(image, Image):
             raise TypeError('expected a wand.image.Image instance, '
                             'not ' + repr(image))
-        super(ArtifactTree, self).__init__(image)
+        super(ProfileDict, self).__init__(image)
 
     def __delitem__(self, k):
         if not isinstance(k, string_type):
             raise TypeError('key must be a string, not ' + repr(k))
         num = ctypes.c_size_t(0)
-        profile_p = library.MagickRemoveImageProfile(self.image.wand, k, num)
+        profile_p = library.MagickRemoveImageProfile(self.image.wand,
+                                                     binary(k), num)
         library.MagickRelinquishMemory(profile_p)
 
     def __getitem__(self, k):
         if not isinstance(k, string_type):
             raise TypeError('key must be a string, not ' + repr(k))
         num = ctypes.c_size_t(0)
-        profile_p = library.MagickGetImageProfile(self.image.wand, k, num)
-        return_profile = profile_p[0:num.value]
-        library.MagickRelinquishMemory(profile_p)
+        profile_p = library.MagickGetImageProfile(self.image.wand,
+                                                  binary(k), num)
+        if num.value > 0:
+            if PY3:
+                return_profile = bytes(profile_p[0:num.value])
+            else:
+                return_profile = str(bytearray(profile_p[0:num.value]))
+            library.MagickRelinquishMemory(profile_p)
+        else:
+            return_profile = None
         return return_profile
 
     def __iter__(self):
@@ -5458,7 +5490,8 @@ class ProfileDict(ImageProperty, collections.MutableMapping):
             raise TypeError('key must be a string, not ' + repr(k))
         if not isinstance(v, binary_type):
             raise TypeError('value must be a binary string, not ' + repr(v))
-        r = library.MagickSetImageProfile(self.image.wand, k, v, len(v))
+        r = library.MagickSetImageProfile(self.image.wand,
+                                          binary(k), v, len(v))
         if not r:
             self.image.raise_exception()
 

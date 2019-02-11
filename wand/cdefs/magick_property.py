@@ -3,8 +3,8 @@
 
 .. versionadded:: 0.5.0
 """
-from ctypes import (POINTER, c_void_p, c_char_p, c_size_t, c_uint, c_int,
-                    c_double)
+from ctypes import (POINTER, c_void_p, c_char_p, c_size_t, c_ubyte, c_uint,
+                    c_int, c_double)
 from wand.cdefs.wandtypes import c_magick_char_p
 
 __all__ = ('load',)
@@ -51,7 +51,14 @@ def load(lib, IM_VERSION):
         c_void_p, c_char_p, POINTER(c_size_t)
     ]
     lib.MagickGetImageArtifacts.restype = POINTER(c_char_p)
-
+    lib.MagickGetImageProfile.argtypes = [
+        c_void_p, c_char_p, POINTER(c_size_t)
+    ]
+    lib.MagickGetImageProfile.restype = POINTER(c_ubyte)
+    lib.MagickGetImageProfiles.argtypes = [
+        c_void_p, c_char_p, POINTER(c_size_t)
+    ]
+    lib.MagickGetImageProfiles.restype = POINTER(c_char_p)
     lib.MagickGetImageProperty.argtypes = [c_void_p, c_char_p]
     lib.MagickGetImageProperty.restype = c_magick_char_p
     lib.MagickGetImageProperties.argtypes = [
@@ -79,6 +86,10 @@ def load(lib, IM_VERSION):
         c_void_p, c_void_p, c_char_p
     ]
     lib.MagickQueryMultilineFontMetrics.restype = POINTER(c_double)
+    lib.MagickRemoveImageProfile.argtypes = [
+        c_void_p, c_char_p, POINTER(c_size_t)
+    ]
+    lib.MagickRemoveImageProfile.restype = POINTER(c_ubyte)
     lib.MagickSetAntialias.argtypes = [c_void_p, c_int]
     lib.MagickSetAntialias.restype = c_int
     lib.MagickSetBackgroundColor.argtypes = [c_void_p, c_void_p]
@@ -93,6 +104,10 @@ def load(lib, IM_VERSION):
     lib.MagickSetGravity.argtypes = [c_void_p, c_int]
     lib.MagickSetGravity.restype = c_int
     lib.MagickSetImageArtifact.argtypes = [c_void_p, c_char_p, c_char_p]
+    lib.MagickSetImageProfile.argtypes = [
+        c_void_p, c_char_p, c_void_p, c_size_t
+    ]
+    lib.MagickSetImageProfile.restype = c_int
     lib.MagickSetImageProperty.argtypes = [c_void_p, c_char_p, c_char_p]
     lib.MagickSetOption.argtypes = [c_void_p, c_char_p, c_char_p]
     lib.MagickSetOption.restype = c_int

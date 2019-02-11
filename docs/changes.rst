@@ -26,6 +26,7 @@ Unreleased.
   :meth:`~wand.color.Color.from_hsl()` class method.
 - Added :attr:`Image.compose <wand.image.BaseImage.compose>` property for
   identifying layer visibility.
+- Added :attr:`Image.profiles <wand.image.ProfileDict>` dictionary attribute. [:issue:`249`]
 
 
 .. _changelog-0.5.0:

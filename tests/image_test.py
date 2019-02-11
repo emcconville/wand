@@ -2440,3 +2440,23 @@ def test_import_pixels(fx_asset):
             dst.import_pixels(data=0xDEADBEEF)
         with raises(ValueError):
             dst.import_pixels(data=[0x00, 0xFF])
+
+
+def test_profiles(fx_asset):
+    with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
+        assert len(img.profiles) == 1
+        assert 'exif' in [d for d in img.profiles]
+        exif_data = img.profiles['exif']
+        assert exif_data is not None
+        del img.profiles['exif']
+        assert img.profiles['exif'] is None
+        img.profiles['exif'] = exif_data
+        assert img.profiles['exif'] == exif_data
+        with raises(TypeError):
+            img.profiles[0xDEADBEEF]
+        with raises(TypeError):
+            del img.profiles[0xDEADBEEF]
+        with raises(TypeError):
+            img.profiles[0xDEADBEEF] = 0xDEADBEEF
+        with raises(TypeError):
+            img.profiles['exif'] = 0xDEADBEEF
