@@ -5410,6 +5410,59 @@ class ArtifactTree(ImageProperty, collections.MutableMapping):
         return num.value
 
 
+class ProfileDict(ImageProperty, collections.MutableMapping):
+    """The mapping table of embedded image profiles. Incuding ICC, and EXIF
+    profile types.
+
+    Use this to get, set, and delete whole profile payloads on an image.
+
+    ..versionadded:: 0.5.1
+    """
+    def __init__(self, image):
+        if not isinstance(image, Image):
+            raise TypeError('expected a wand.image.Image instance, '
+                            'not ' + repr(image))
+        super(ArtifactTree, self).__init__(image)
+
+    def __delitem__(self, k):
+        if not isinstance(k, string_type):
+            raise TypeError('key must be a string, not ' + repr(k))
+        num = ctypes.c_size_t(0)
+        profile_p = library.MagickRemoveImageProfile(self.image.wand, k, num)
+        library.MagickRelinquishMemory(profile_p)
+
+    def __getitem__(self, k):
+        if not isinstance(k, string_type):
+            raise TypeError('key must be a string, not ' + repr(k))
+        num = ctypes.c_size_t(0)
+        profile_p = library.MagickGetImageProfile(self.image.wand, k, num)
+        return_profile = profile_p[0:num.value]
+        library.MagickRelinquishMemory(profile_p)
+        return return_profile
+
+    def __iter__(self):
+        num = ctypes.c_size_t(0)
+        profiles_p = library.MagickGetImageProfiles(self.image.wand, b'', num)
+        profiles = [text(profiles_p[i]) for i in xrange(num.value)]
+        library.MagickRelinquishMemory(profiles_p)
+        return iter(profiles)
+
+    def __len__(self):
+        num = ctypes.c_size_t(0)
+        profiles_p = library.MagickGetImageProfiles(self.image.wand, b'', num)
+        library.MagickRelinquishMemory(profiles_p)
+        return num.value
+
+    def __setitem__(self, k, v):
+        if not isinstance(k, string_type):
+            raise TypeError('key must be a string, not ' + repr(k))
+        if not isinstance(v, binary_type):
+            raise TypeError('value must be a binary string, not ' + repr(v))
+        r = library.MagickSetImageProfile(self.image.wand, k, v, len(v))
+        if not r:
+            self.image.raise_exception()
+
+
 class ChannelImageDict(ImageProperty, collections.Mapping):
     """The mapping table of separated images of the particular channel
     from the image.
