@@ -27,6 +27,7 @@ Unreleased.
 - Added :attr:`Image.compose <wand.image.BaseImage.compose>` property for
   identifying layer visibility.
 - Added :attr:`Image.profiles <wand.image.ProfileDict>` dictionary attribute. [:issue:`249`]
+- Moved :mod:`collections.abc` to :attr:`wand.compat.abc` for Python-3.8. [:issue:`394` by Tero Vuotila]
 
 
 .. _changelog-0.5.0:
