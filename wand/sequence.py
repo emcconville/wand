@@ -4,23 +4,22 @@
 .. versionadded:: 0.3.0
 
 """
-import collections
 import contextlib
 import ctypes
 import numbers
 
 from .api import libmagick, library
-from .compat import binary, xrange
+from .compat import abc, binary, xrange
 from .image import BaseImage, ImageProperty
 from .version import MAGICK_VERSION_INFO
 
 __all__ = 'Sequence', 'SingleImage'
 
 
-class Sequence(ImageProperty, collections.MutableSequence):
+class Sequence(ImageProperty, abc.MutableSequence):
     """The list-like object that contains every :class:`SingleImage`
     in the :class:`~wand.image.Image` container.  It implements
-    :class:`collections.Sequence` protocol.
+    :class:`collections.abc.Sequence` protocol.
 
     .. versionadded:: 0.3.0
 
