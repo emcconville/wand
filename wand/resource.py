@@ -5,13 +5,12 @@ There is the global resource to manage in MagickWand API. This module
 implements automatic global resource management through reference counting.
 
 """
-import collections
 import contextlib
 import ctypes
 import warnings
 
 from .api import libmagick, library
-from .compat import string_type
+from .compat import abc, string_type
 from .exceptions import TYPE_MAP, WandException
 from .version import MAGICK_VERSION_NUMBER
 
@@ -245,7 +244,7 @@ class DestroyedResourceError(WandException, ReferenceError, AttributeError):
     """
 
 
-class ResourceLimits(collections.MutableMapping):
+class ResourceLimits(abc.MutableMapping):
     """Wrapper for MagickCore resource limits.
     Useful for dynamically reducing system resources before attempting risky,
     or slow running, :class:`~wand.image.Image` operations.

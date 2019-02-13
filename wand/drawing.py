@@ -13,7 +13,7 @@ import numbers
 from .api import (AffineMatrix, MagickPixelPacket, PixelInfo, PointInfo,
                   library)
 from .color import Color
-from .compat import binary, string_type, text, text_type, xrange
+from .compat import abc, binary, string_type, text, text_type, xrange
 from .exceptions import WandLibraryVersionError
 from .image import BaseImage, COMPOSITE_OPERATORS
 from .sequence import SingleImage
@@ -27,7 +27,7 @@ __all__ = ('CLIP_PATH_UNITS', 'FILL_RULE_TYPES', 'FONT_METRICS_ATTRIBUTES',
            'TEXT_DIRECTION_TYPES', 'Drawing', 'FontMetrics')
 
 
-#: (:class:`collections.Sequence`) The list of clip path units
+#: (:class:`collections.abc.Sequence`) The list of clip path units
 #:
 #: - ``'undefined_path_units'``
 #: - ``'user_space'``
@@ -36,7 +36,7 @@ __all__ = ('CLIP_PATH_UNITS', 'FILL_RULE_TYPES', 'FONT_METRICS_ATTRIBUTES',
 CLIP_PATH_UNITS = ('undefined_path_units', 'user_space', 'user_space_on_use',
                    'object_bounding_box')
 
-#: (:class:`collections.Sequence`) The list of text align types.
+#: (:class:`collections.abc.Sequence`) The list of text align types.
 #:
 #: - ``'undefined'``
 #: - ``'left'``
@@ -44,7 +44,7 @@ CLIP_PATH_UNITS = ('undefined_path_units', 'user_space', 'user_space_on_use',
 #: - ``'right'``
 TEXT_ALIGN_TYPES = 'undefined', 'left', 'center', 'right'
 
-#: (:class:`collections.Sequence`) The list of text decoration types.
+#: (:class:`collections.abc.Sequence`) The list of text decoration types.
 #:
 #: - ``'undefined'``
 #: - ``'no'``
@@ -54,14 +54,14 @@ TEXT_ALIGN_TYPES = 'undefined', 'left', 'center', 'right'
 TEXT_DECORATION_TYPES = ('undefined', 'no', 'underline', 'overline',
                          'line_through')
 
-#: (:class:`collections.Sequence`) The list of text direction types.
+#: (:class:`collections.abc.Sequence`) The list of text direction types.
 #:
 #: - ``'undefined'``
 #: - ``'right_to_left'``
 #: - ``'left_to_right'``
 TEXT_DIRECTION_TYPES = ('undefined', 'right_to_left', 'left_to_right')
 
-#: (:class:`collections.Sequence`) The list of text gravity types.
+#: (:class:`collections.abc.Sequence`) The list of text gravity types.
 #:
 #: - ``'forget'``
 #: - ``'north_west'``
@@ -78,14 +78,14 @@ GRAVITY_TYPES = ('forget', 'north_west', 'north', 'north_east', 'west',
                  'center', 'east', 'south_west', 'south', 'south_east',
                  'static')
 
-#: (:class:`collections.Sequence`) The list of fill-rule types.
+#: (:class:`collections.abc.Sequence`) The list of fill-rule types.
 #:
 #: - ``'undefined'``
 #: - ``'evenodd'``
 #: - ``'nonzero'``
 FILL_RULE_TYPES = ('undefined', 'evenodd', 'nonzero')
 
-#: (:class:`collections.Sequence`) The attribute names of font metrics.
+#: (:class:`collections.abc.Sequence`) The attribute names of font metrics.
 FONT_METRICS_ATTRIBUTES = ('character_width', 'character_height', 'ascender',
                            'descender', 'text_width', 'text_height',
                            'maximum_horizontal_advance', 'x1', 'y1', 'x2',
@@ -94,7 +94,7 @@ FONT_METRICS_ATTRIBUTES = ('character_width', 'character_height', 'ascender',
 #: The tuple subtype which consists of font metrics data.
 FontMetrics = collections.namedtuple('FontMetrics', FONT_METRICS_ATTRIBUTES)
 
-#: (:class:`collections.Sequence`) The list of stretch types for fonts
+#: (:class:`collections.abc.Sequence`) The list of stretch types for fonts
 #:
 #: - ``'undefined;``
 #: - ``'normal'``
@@ -111,7 +111,7 @@ STRETCH_TYPES = ('undefined', 'normal', 'ultra_condensed', 'extra_condensed',
                  'condensed', 'semi_condensed', 'semi_expanded', 'expanded',
                  'extra_expanded', 'ultra_expanded', 'any')
 
-#: (:class:`collections.Sequence`) The list of style types for fonts
+#: (:class:`collections.abc.Sequence`) The list of style types for fonts
 #:
 #: - ``'undefined;``
 #: - ``'normal'``
@@ -120,7 +120,7 @@ STRETCH_TYPES = ('undefined', 'normal', 'ultra_condensed', 'extra_condensed',
 #: - ``'any'``
 STYLE_TYPES = ('undefined', 'normal', 'italic', 'oblique', 'any')
 
-#: (:class:`collections.Sequence`) The list of LineCap types
+#: (:class:`collections.abc.Sequence`) The list of LineCap types
 #:
 #: - ``'undefined;``
 #: - ``'butt'``
@@ -128,7 +128,7 @@ STYLE_TYPES = ('undefined', 'normal', 'italic', 'oblique', 'any')
 #: - ``'square'``
 LINE_CAP_TYPES = ('undefined', 'butt', 'round', 'square')
 
-#: (:class:`collections.Sequence`) The list of LineJoin types
+#: (:class:`collections.abc.Sequence`) The list of LineJoin types
 #:
 #: - ``'undefined'``
 #: - ``'miter'``
@@ -137,7 +137,7 @@ LINE_CAP_TYPES = ('undefined', 'butt', 'round', 'square')
 LINE_JOIN_TYPES = ('undefined', 'miter', 'round', 'bevel')
 
 
-#: (:class:`collections.Sequence`) The list of paint method types.
+#: (:class:`collections.abc.Sequence`) The list of paint method types.
 #:
 #: - ``'undefined'``
 #: - ``'point'``
@@ -381,7 +381,7 @@ class Drawing(Resource):
 
     @property
     def font_resolution(self):
-        """(:class:`~collections.Sequence`) The current font resolution. It also
+        """(:class:`~collections.abc.Sequence`) The current font resolution. It also
         can be set.
 
         .. versionadded:: 0.4.0
@@ -394,7 +394,7 @@ class Drawing(Resource):
 
     @font_resolution.setter
     def font_resolution(self, resolution):
-        if not isinstance(resolution, collections.Sequence):
+        if not isinstance(resolution, abc.Sequence):
             raise TypeError('expected sequence, not ' + repr(resolution))
         if len(resolution) != 2:
             raise ValueError('expected sequence of 2 floats')
@@ -558,7 +558,7 @@ class Drawing(Resource):
 
     @property
     def stroke_dash_array(self):
-        """(:class:`~collections.Sequence`) - (:class:`numbers.Real`) An array
+        """(:class:`~collections.abc.Sequence`) - (:class:`numbers.Real`) An array
         representing the pattern of dashes & gaps used to stroke paths.
         It also can be set.
 
@@ -929,12 +929,12 @@ class Drawing(Resource):
 
         :param matrix: a list of :class:`~numbers.Real` to define affine
                        matrix ``[sx, rx, ry, sy, tx, ty]``
-        :type matrix: :class:`collections.Sequence`
+        :type matrix: :class:`collections.abc.Sequence`
 
         .. versionadded:: 0.4.0
 
         """
-        if not isinstance(matrix, collections.Sequence) or len(matrix) != 6:
+        if not isinstance(matrix, abc.Sequence) or len(matrix) != 6:
             raise ValueError('matrix must be a list of size Real numbers')
         for idx, val in enumerate(matrix):
             if not isinstance(val, numbers.Real):
@@ -990,13 +990,13 @@ class Drawing(Resource):
 
         :param start: (:class:`~numbers.Real`, :class:`numbers.Real`)
                       pair which represents starting x and y of the arc
-        :type start: :class:`~collections.Sequence`
+        :type start: :class:`~collections.abc.Sequence`
         :param end: (:class:`~numbers.Real`, :class:`numbers.Real`)
                       pair which represents ending x and y of the arc
-        :type end: :class:`~collections.Sequence`
+        :type end: :class:`~collections.abc.Sequence`
         :param degree: (:class:`~numbers.Real`, :class:`numbers.Real`)
                       pair which represents starting degree, and ending degree
-        :type degree: :class:`~collections.Sequence`
+        :type degree: :class:`~collections.abc.Sequence`
 
         .. versionadded:: 0.4.0
 
@@ -1045,10 +1045,10 @@ class Drawing(Resource):
 
         :param origin: (:class:`~numbers.Real`, :class:`numbers.Real`)
                        pair which represents origin x and y of circle
-        :type origin: :class:`collections.Sequence`
+        :type origin: :class:`collections.abc.Sequence`
         :param perimeter: (:class:`~numbers.Real`, :class:`numbers.Real`)
                        pair which represents perimeter x and y of circle
-        :type perimeter: :class:`collections.Sequence`
+        :type perimeter: :class:`collections.abc.Sequence`
 
         .. versionadded:: 0.4.0
 
@@ -1193,14 +1193,14 @@ class Drawing(Resource):
 
         :param origin: (:class:`~numbers.Real`, :class:`numbers.Real`)
                        pair which represents origin x and y of circle
-        :type origin: :class:`collections.Sequence`
+        :type origin: :class:`collections.abc.Sequence`
         :param radius: (:class:`~numbers.Real`, :class:`numbers.Real`)
                        pair which represents radius x and radius y of circle
-        :type radius: :class:`collections.Sequence`
+        :type radius: :class:`collections.abc.Sequence`
         :param rotation: (:class:`~numbers.Real`, :class:`numbers.Real`)
                          pair which represents start and end of ellipse.
                          Default (0,360)
-        :type rotation: :class:`collections.Sequence`
+        :type rotation: :class:`collections.abc.Sequence`
 
         .. versionadded:: 0.4.0
 
@@ -1248,10 +1248,10 @@ class Drawing(Resource):
 
         :param start: (:class:`~numbers.Integral`, :class:`numbers.Integral`)
                       pair which represents starting x and y of the line
-        :type start: :class:`collections.Sequence`
+        :type start: :class:`collections.abc.Sequence`
         :param end: (:class:`~numbers.Integral`, :class:`numbers.Integral`)
                     pair which represents ending x and y of the line
-        :type end: :class:`collections.Sequence`
+        :type end: :class:`collections.abc.Sequence`
 
         """
         start_x, start_y = start
@@ -1321,10 +1321,10 @@ class Drawing(Resource):
 
         :param to: (:class:`~numbers.Real`, :class:`numbers.Real`)
                    pair which represents coordinates to draw to
-        :type to: :class:`collections.Sequence`
+        :type to: :class:`collections.abc.Sequence`
         :param controls: (:class:`~numbers.Real`, :class:`numbers.Real`)
                          coordinate to used to influence curve
-        :type controls: :class:`collections.Sequence`
+        :type controls: :class:`collections.abc.Sequence`
         :param smooth: :class:`bool` assume last defined control coordinate
         :type smooth: :class:`bool`
         :param relative: treat given coordinates as relative to current point
@@ -1372,10 +1372,10 @@ class Drawing(Resource):
 
         :param to: (:class:`~numbers.Real`, :class:`numbers.Real`)
                    pair which represents coordinates to draw to
-        :type to: :class:`collections.Sequence`
+        :type to: :class:`collections.abc.Sequence`
         :param control: (:class:`~numbers.Real`, :class:`numbers.Real`)
                         coordinate to used to influence curve
-        :type control: :class:`collections.Sequence`
+        :type control: :class:`collections.abc.Sequence`
         :param smooth: assume last defined control coordinate
         :type smooth: :class:`bool`
         :param relative: treat given coordinates as relative to current point
@@ -1433,10 +1433,10 @@ class Drawing(Resource):
 
         :param to: (:class:`~numbers.Real`, :class:`numbers.Real`)
                    pair which represents coordinates to draw to
-        :type to: :class:`collections.Sequence`
+        :type to: :class:`collections.abc.Sequence`
         :param radius: (:class:`~numbers.Real`, :class:`numbers.Real`)
                        pair which represents the radii of the ellipse to draw
-        :type radius: :class:`collections.Sequence`
+        :type radius: :class:`collections.abc.Sequence`
         :param rotate: degree to rotate ellipse on x-axis
         :type rotate: :class:`~numbers.Real`
         :param large_arc: draw largest available arc
@@ -1512,7 +1512,7 @@ class Drawing(Resource):
 
         :param to: (:class:`~numbers.Real`, :class:`numbers.Real`)
                       pair which represents coordinates to draw to.
-        :type to: :class:`collections.Sequence`
+        :type to: :class:`collections.abc.Sequence`
         :param relative: :class:`bool`
                     treat given coordinates as relative to current point
         :type relative: :class:`bool`
@@ -1536,7 +1536,7 @@ class Drawing(Resource):
 
         :param to: (:class:`~numbers.Real`, :class:`numbers.Real`)
                       pair which represents coordinates to draw to.
-        :type to: :class:`collections.Sequence`
+        :type to: :class:`collections.abc.Sequence`
         :param relative: :class:`bool`
                     treat given coordinates as relative to current point
         :type relative: :class:`bool`

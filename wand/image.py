@@ -10,7 +10,6 @@ error happened)::
         print('height =', i.height)
 
 """
-import collections
 import ctypes
 import functools
 import numbers
@@ -19,7 +18,7 @@ import weakref
 from . import compat
 from .api import MagickPixelPacket, PixelInfo, libc, libmagick, library
 from .color import Color
-from .compat import (binary, binary_type, encode_filename, file_types,
+from .compat import (abc, binary, binary_type, encode_filename, file_types,
                      PY3, string_type, text, xrange)
 from .exceptions import MissingDelegateError, WandException
 from .font import Font
@@ -717,7 +716,8 @@ if MAGICK_VERSION_NUMBER >= 0x700:
                           'voronoi')
 
 
-#: (:class:`collections.Set`) The set of available :attr:`~BaseImage.options`.
+#: (:class:`collections.abc.Set`) The set of available
+#: :attr:`~BaseImage.options`.
 #:
 #: .. versionadded:: 0.3.0
 #:
@@ -889,7 +889,7 @@ class BaseImage(Resource):
     #:    Added ``'pdf:use-cropbox'`` option.
     options = None
 
-    #: (:class:`collections.Sequence`) The list of
+    #: (:class:`collections.abc.Sequence`) The list of
     #: :class:`~wand.sequence.SingleImage`\ s that the image contains.
     #:
     #: .. versionadded:: 0.3.0
@@ -919,7 +919,7 @@ class BaseImage(Resource):
 
     def __getitem__(self, idx):
         if (not isinstance(idx, string_type) and
-                isinstance(idx, collections.Iterable)):
+                isinstance(idx, abc.Iterable)):
             idx = tuple(idx)
             d = len(idx)
             if not (1 <= d <= 2):
@@ -987,7 +987,7 @@ class BaseImage(Resource):
         elif not isinstance(color, Color):
             raise TypeError('color must be in instance of Color, not ' +
                             repr(color))
-        if not isinstance(idx, collections.Iterable):
+        if not isinstance(idx, abc.Iterable):
             raise TypeError('Expecting list of x,y coordinates, not ' +
                             repr(idx))
         idx = tuple(idx)
@@ -1653,7 +1653,7 @@ class BaseImage(Resource):
     @page.setter
     @manipulative
     def page(self, newpage):
-        if isinstance(newpage, collections.Sequence):
+        if isinstance(newpage, abc.Sequence):
             w, h, x, y = newpage
         else:
             raise TypeError("page layout must be 4-tuple")
@@ -1754,7 +1754,7 @@ class BaseImage(Resource):
     @resolution.setter
     @manipulative
     def resolution(self, geometry):
-        if isinstance(geometry, collections.Sequence):
+        if isinstance(geometry, abc.Sequence):
             x, y = geometry
         elif isinstance(geometry, numbers.Real):
             x, y = geometry, geometry
@@ -2533,7 +2533,7 @@ class BaseImage(Resource):
         :type method: :class:`basestring`
         :param arguments: List of distorting float arguments
                           unique to distortion method
-        :type arguments: :class:`collections.Sequence`
+        :type arguments: :class:`collections.abc.Sequence`
         :param best_fit: Attempt to resize resulting image fit distortion.
                          Defaults False
         :type best_fit: :class:`bool`
@@ -2543,7 +2543,7 @@ class BaseImage(Resource):
         if method not in DISTORTION_METHODS:
             raise ValueError('expected string from DISTORTION_METHODS, not ' +
                              repr(method))
-        if not isinstance(arguments, collections.Sequence):
+        if not isinstance(arguments, abc.Sequence):
             raise TypeError('expected sequence of doubles, not ' +
                             repr(arguments))
         argc = len(arguments)
@@ -2718,7 +2718,7 @@ class BaseImage(Resource):
                         be calculated as.
         :type storage: :class:`basestring`
         :returns: list of values.
-        :rtype: :class:`collections.Sequence`
+        :rtype: :class:`collections.abc.Sequence`
 
         .. versionadded:: 0.5.0
         """
@@ -2891,7 +2891,7 @@ class BaseImage(Resource):
         :param function: a string listed in :const:`FUNCTION_TYPES`
         :type function: :class:`basestring`
         :param arguments: a sequence of doubles to apply against ``function``
-        :type arguments: :class:`collections.Sequence`
+        :type arguments: :class:`collections.abc.Sequence`
         :param channel: optional :const:`CHANNELS`, defaults all
         :type channel: :class:`basestring`
         :raises ValueError: when a ``function``, or ``channel`` is not
@@ -2903,7 +2903,7 @@ class BaseImage(Resource):
         if function not in FUNCTION_TYPES:
             raise ValueError('expected string from FUNCTION_TYPES, not ' +
                              repr(function))
-        if not isinstance(arguments, collections.Sequence):
+        if not isinstance(arguments, abc.Sequence):
             raise TypeError('expecting sequence of arguments, not ' +
                             repr(arguments))
         argc = len(arguments)
@@ -3150,7 +3150,7 @@ class BaseImage(Resource):
             if channel not in valid_channels:
                 raise ValueError('Unknown channel label: ' +
                                  repr(channel))
-        if not isinstance(data, collections.Sequence):
+        if not isinstance(data, abc.Sequence):
             raise TypeError('data must list of values, not' +
                             repr(data))
         # Ensure enough data was given.
@@ -4559,7 +4559,7 @@ class Image(BaseImage):
     :type background: :class:`wand.color.Color`
     :param resolution: set a resolution value (dpi),
                        useful for vectorial formats (like pdf)
-    :type resolution: :class:`collections.Sequence`,
+    :type resolution: :class:`collections.abc.Sequence`,
                       :Class:`numbers.Integral`
 
     .. versionadded:: 0.1.5
@@ -4959,7 +4959,7 @@ class Image(BaseImage):
         :type filename: :class:`basestring`
         :param resolution: set a resolution value (DPI),
                            useful for vectorial formats (like PDF)
-        :type resolution: :class:`collections.Sequence`,
+        :type resolution: :class:`collections.abc.Sequence`,
                           :class:`numbers.Integral`
 
         .. versionadded:: 0.3.0
@@ -4968,7 +4968,7 @@ class Image(BaseImage):
         r = None
         # Resolution must be set after image reading.
         if resolution is not None:
-            if (isinstance(resolution, collections.Sequence) and
+            if (isinstance(resolution, abc.Sequence) and
                     len(resolution) == 2):
                 library.MagickSetResolution(self.wand, *resolution)
             elif isinstance(resolution, numbers.Integral):
@@ -4989,7 +4989,7 @@ class Image(BaseImage):
                 blob = file.read()
                 file = None
         if blob is not None:
-            if not isinstance(blob, collections.Iterable):
+            if not isinstance(blob, abc.Iterable):
                 raise TypeError('blob must be iterable, not ' +
                                 repr(blob))
             if not isinstance(blob, binary_type):
@@ -5053,7 +5053,7 @@ class Image(BaseImage):
                 self.raise_exception()
 
 
-class Iterator(Resource, collections.Iterator):
+class Iterator(Resource, abc.Iterator):
     """Row iterator for :class:`Image`. It shouldn't be instantiated
     directly; instead, it can be acquired through :class:`Image` instance::
 
@@ -5067,7 +5067,7 @@ class Iterator(Resource, collections.Iterator):
                 assert isinstance(col, wand.color.Color)
                 print(col)
 
-    Every row is a :class:`collections.Sequence` which consists of
+    Every row is a :class:`collections.abc.Sequence` which consists of
     one or more :class:`wand.color.Color` values.
 
     :param image: the image to get an iterator
@@ -5187,7 +5187,7 @@ class ImageProperty(object):
         )
 
 
-class OptionDict(ImageProperty, collections.MutableMapping):
+class OptionDict(ImageProperty, abc.MutableMapping):
     """Free-form mutable mapping of global internal settings.
 
     .. versionadded:: 0.3.0
@@ -5227,7 +5227,7 @@ class OptionDict(ImageProperty, collections.MutableMapping):
         self[key] = ''
 
 
-class Metadata(ImageProperty, collections.MutableMapping):
+class Metadata(ImageProperty, abc.MutableMapping):
     """Class that implements dict-like read-only access to image metadata
     like EXIF or IPTC headers. Most WRITE encoders will ignore properties
     assigned here.
@@ -5315,7 +5315,7 @@ class Metadata(ImageProperty, collections.MutableMapping):
         return num.value
 
 
-class ArtifactTree(ImageProperty, collections.MutableMapping):
+class ArtifactTree(ImageProperty, abc.MutableMapping):
     """Splay tree to map image artifacts. Values defined here
     are intended to be used elseware, and will not be written
     to the encoded image.
@@ -5416,7 +5416,7 @@ class ArtifactTree(ImageProperty, collections.MutableMapping):
         return num.value
 
 
-class ProfileDict(ImageProperty, collections.MutableMapping):
+class ProfileDict(ImageProperty, abc.MutableMapping):
     """The mapping table of embedded image profiles.
 
     Use this to get, set, and delete whole profile payloads on an image. Each
@@ -5496,7 +5496,7 @@ class ProfileDict(ImageProperty, collections.MutableMapping):
             self.image.raise_exception()
 
 
-class ChannelImageDict(ImageProperty, collections.Mapping):
+class ChannelImageDict(ImageProperty, abc.Mapping):
     """The mapping table of separated images of the particular channel
     from the image.
 
@@ -5534,7 +5534,7 @@ class ChannelImageDict(ImageProperty, collections.Mapping):
         return img
 
 
-class ChannelDepthDict(ImageProperty, collections.Mapping):
+class ChannelDepthDict(ImageProperty, abc.Mapping):
     """The mapping table of channels to their depth.
 
     :param image: an image instance
@@ -5569,7 +5569,7 @@ class ChannelDepthDict(ImageProperty, collections.Mapping):
         return int(depth)
 
 
-class HistogramDict(collections.Mapping):
+class HistogramDict(abc.Mapping):
     """Specialized mapping object to represent color histogram.
     Keys are colors, and values are the number of pixels.
 

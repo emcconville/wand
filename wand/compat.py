@@ -6,17 +6,23 @@ multiple Python versions (2.6, 2.7, 3.3+) and VM implementations
 (CPython, PyPy).
 
 """
+import collections
 import contextlib
 import io
 import sys
 import types
 
-__all__ = ('PY3', 'binary', 'binary_type', 'encode_filename', 'file_types',
-           'nested', 'string_type', 'text', 'text_type', 'xrange')
+__all__ = ('PY3', 'abc', 'binary', 'binary_type', 'encode_filename',
+           'file_types', 'nested', 'string_type', 'text', 'text_type',
+           'xrange')
 
 
 #: (:class:`bool`) Whether it is Python 3.x or not.
 PY3 = sys.version_info >= (3,)
+
+#: (:class:`module`) Module containing abstract base classes.
+#: :mod:`collections` in Python 2 and :mod:`collections.abc` in Python 3.
+abc = collections.abc if PY3 else collections
 
 #: (:class:`type`) Type for representing binary data.  :class:`str` in Python 2
 #: and :class:`bytes` in Python 3.
