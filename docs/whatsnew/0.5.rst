@@ -41,8 +41,8 @@ Embedded profiles, like ICC_, can be accessed via
 
 .. hint::
 
-    Each profile payload will be a raw binary blob. ImageMagick, and Wand,
-    will not edit payloads, but only get, set, and delete them from an image.
+    Each profile payload will be a raw binary blob. ImageMagick & Wand will not
+    edit payloads, but only get, set, and delete them from an image.
 
 See :class:`~wand.image.ProfileDict` for more details.
 
