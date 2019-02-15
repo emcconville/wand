@@ -9,7 +9,7 @@ Wand Changelog
 Version 0.5.1
 -------------
 
-Unreleased.
+Released on February 15, 2019.
 
 - Added set pixel color via `Image[x, y] = Color('...')`. [:issue:`105`]
 - Added :class:`limits <wand.resource.ResourceLimits>` helper dictionary to
