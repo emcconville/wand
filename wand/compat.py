@@ -19,10 +19,11 @@ __all__ = ('PY3', 'abc', 'binary', 'binary_type', 'encode_filename',
 
 #: (:class:`bool`) Whether it is Python 3.x or not.
 PY3 = sys.version_info >= (3,)
-
+#: (:class:`bool`) Whether it is Python 3.7 or not.
+PY3_latest = sys.version_info >= (3,7)
 #: (:class:`module`) Module containing abstract base classes.
 #: :mod:`collections` in Python 2 and :mod:`collections.abc` in Python 3.
-abc = collections.abc if PY3 else collections
+abc = collections.abc if PY3 and not PY3_latest else collections
 
 #: (:class:`type`) Type for representing binary data.  :class:`str` in Python 2
 #: and :class:`bytes` in Python 3.
