@@ -11,7 +11,7 @@ from .api import library
 from .cdefs.structures import MagickPixelPacket, PixelInfo
 from .compat import binary, text
 from .resource import Resource
-from .version import QUANTUM_DEPTH, MAGICK_HDRI
+from .version import MAGICK_VERSION_NUMBER, MAGICK_HDRI, QUANTUM_DEPTH
 
 __all__ = 'Color', 'scale_quantum_to_int8'
 
@@ -292,6 +292,18 @@ class Color(Resource):
         with color:
             library.PixelSetHSL(color.resource, hue, saturation, lightness)
         return color
+
+    @classmethod
+    def from_pixelwand(cls, pixelwand):
+        assert pixelwand
+        if MAGICK_VERSION_NUMBER < 0x700:
+            pixel_structure = MagickPixelPacket
+        else:
+            pixel_structure = PixelInfo
+        size = ctypes.sizeof(pixel_structure)
+        raw_buffer = ctypes.create_string_buffer(size)
+        library.PixelGetMagickColor(pixelwand, raw_buffer)
+        return cls(raw=raw_buffer)
 
     @property
     def alpha(self):

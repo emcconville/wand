@@ -5588,6 +5588,11 @@ class HistogramDict(abc.Mapping):
         )
         self.counts = None
 
+    def __del__(self):
+        if self.pixels:
+            self.pixels = library.DestroyPixelWands(self.pixels,
+                                                    self.size.value)
+
     def __len__(self):
         if self.counts is None:
             return self.size.value
@@ -5595,23 +5600,24 @@ class HistogramDict(abc.Mapping):
 
     def __iter__(self):
         if self.counts is None:
-            pixels = self.pixels
-            string = library.PixelGetColorAsString
-            return (Color(string(pixels[i]).value)
-                    for i in xrange(self.size.value))
-        return iter(Color(string=c) for c in self.counts)
+            self._build_counts()
+        return iter(self.counts)
 
     def __getitem__(self, color):
         if self.counts is None:
-            string = library.PixelGetColorAsNormalizedString
-            pixels = self.pixels
-            count = library.PixelGetColorCount
-            self.counts = dict(
-                (text(string(pixels[i]).value), count(pixels[i]))
-                for i in xrange(self.size.value)
-            )
-            del self.size, self.pixels
-        return self.counts[color.normalized_string]
+            self._build_counts()
+        if isinstance(color, string_type):
+            color = Color(color)
+        if not isinstance(color, Color):
+            raise KeyError('Expecting wand.color.Color, or string')
+        return self.counts[color]
+
+    def _build_counts(self):
+        self.counts = {}
+        for i in xrange(self.size.value):
+            color_count = library.PixelGetColorCount(self.pixels[i])
+            color = Color.from_pixelwand(self.pixels[i])
+            self.counts[color] = color_count
 
 
 class ClosedImageError(DestroyedResourceError):

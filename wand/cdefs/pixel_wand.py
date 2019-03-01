@@ -72,6 +72,8 @@ def load(lib, IM_VERSION, IM_QUANTUM_DEPTH, IM_HDRI):
     lib.ClonePixelWand.restype = c_void_p
     lib.DestroyPixelWand.argtypes = [c_void_p]
     lib.DestroyPixelWand.restype = c_void_p
+    lib.DestroyPixelWands.argtypes = [POINTER(c_void_p), c_size_t]
+    lib.DestroyPixelWands.restype = POINTER(c_void_p)
     lib.IsPixelWand.argtypes = [c_void_p]
     lib.IsPixelWandSimilar.argtypes = [c_void_p, c_void_p, c_double]
     lib.NewPixelWand.argtypes = []
