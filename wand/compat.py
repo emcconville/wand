@@ -7,6 +7,7 @@ multiple Python versions (2.6, 2.7, 3.3+) and VM implementations
 
 """
 import collections
+import collections.abc
 import contextlib
 import io
 import sys
