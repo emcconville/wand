@@ -4,6 +4,16 @@ Wand Changelog
 0.5 series
 ~~~~~~~~~~
 
+.. _changelog-0.5.2:
+
+Version 0.5.2
+-------------
+
+To be released.
+
+ - Import :mod:`collections.abc` explicitly. [:issue:`398` by Stefan Naumann]
+
+
 .. _changelog-0.5.1:
 
 Version 0.5.1
