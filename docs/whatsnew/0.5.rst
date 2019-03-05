@@ -4,9 +4,55 @@ What's new in Wand 0.5?
 This guide doesn't cover all changes in 0.5.  See also the full list of
 changes in :ref:`changelog-0.5.0`.
 
+Resource Limits
+---------------
+
+.. versionadded:: 0.5.1
+
+The :attr:`~wand.resource.limits` dictionary helper allows you to define run-time
+policies. Doing this allows your application to process images without consuming
+too much system resources.
+
+.. code-block:: python
+
+    from wand.image import Image
+    from wand.resource import limits
+
+    limits['thread'] = 1  # Only allow one CPU thread for raster.
+    with Image(filename='input.tif') as img:
+        pass
+
+See :class:`~wand.resource.ResourceLimits` for more details.
+
+
+Import & Extract Profiles
+-------------------------
+
+.. versionadded:: 0.5.1
+
+Embedded profiles, like ICC_, can be accessed via
+:attr:`Image.profiles <wand.image.Image.profiles>` dictionary.
+
+.. code-block:: python
+
+    with Image(filename='photo.jpg') as photo:
+        with open('color_profile.icc', 'rb') as profile:
+            photo.profiles['icc'] = profile.read()
+
+.. hint::
+
+    Each profile payload will be a raw binary blob. ImageMagick & Wand will not
+    edit payloads, but only get, set, and delete them from an image.
+
+See :class:`~wand.image.ProfileDict` for more details.
+
+.. _ICC: https://en.wikipedia.org/wiki/ICC_profile
+
 
 Pseudo Images
 -------------
+
+.. versionadded:: 0.5.0
 
 The :class:`~wand.image.Image` constructor now accepts the ``pseudo`` paramater.
 This allows you to quickly read `Pseudo-image Formats`_, and `Built-in Patterns`_
@@ -19,6 +65,8 @@ Checkout :ref:`open_pseudo` for some examples.
 
 ImageMagick-7 Support
 ---------------------
+
+.. versionadded:: 0.5.0
 
 The release of Wand 0.5 now supports both versions of ImageMagick-6 &
 ImageMagick-7. ImageMagick-7 introduces some key behavior changes, and some
