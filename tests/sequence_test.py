@@ -280,11 +280,11 @@ def test_index(fx_asset):
 def test_equals(cmp_name, f, fx_asset):
     with Image(filename=str(fx_asset.join('apple.ico'))) as a:
         with Image(filename=str(fx_asset.join('apple.ico'))) as b:
-                assert f(a) == f(b)
-                assert f(a.sequence[0]) == f(b.sequence[0])
-                assert f(a) != f(b.sequence[1])
-                assert f(a.sequence[0]) != f(b.sequence[1])
-                assert f(a.sequence[1]) == f(b.sequence[1])
+            assert f(a) == f(b)
+            assert f(a.sequence[0]) == f(b.sequence[0])
+            assert f(a) != f(b.sequence[1])
+            assert f(a.sequence[0]) != f(b.sequence[1])
+            assert f(a.sequence[1]) == f(b.sequence[1])
 
 
 def test_clone(fx_asset):

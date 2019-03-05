@@ -383,14 +383,13 @@ def test_draw_matte_user_error():
             reason='wand.drawing.Drawing.alpha was added with IM 7.',
             rasies=AttributeError)
 def test_draw_alpha():
-    with nested(Color('#fff'),
-                Color('transparent')) as (white, transparent):
-        with Image(width=50, height=50, background=white) as img:
-            with Drawing() as draw:
-                draw.fill_opacity = 0
-                draw.alpha(25, 25, 'floodfill')
-                draw.draw(img)
-                assert img[25, 25] == transparent
+    transparent = Color('transparent')
+    with Image(width=50, height=50, pseudo='xc:white') as img:
+        with Drawing() as draw:
+            draw.fill_color = transparent
+            draw.alpha(25, 25, 'floodfill')
+            draw.draw(img)
+        assert img[25, 25] == transparent
 
 
 @mark.xfail(MAGICK_VERSION_NUMBER < 0x700,

@@ -112,7 +112,7 @@ except AttributeError:
                 vars.append(enter())
                 exits.append(exit)
             yield vars
-        except:
+        except:  # noqa: E722
             exc = sys.exc_info()
         finally:
             while exits:
@@ -120,7 +120,7 @@ except AttributeError:
                 try:
                     if exit(*exc):
                         exc = (None, None, None)
-                except:
+                except:  # noqa: E722
                     exc = sys.exc_info()
             if exc != (None, None, None):
                 # PEP 3109

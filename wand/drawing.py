@@ -10,15 +10,13 @@ import collections
 import ctypes
 import numbers
 
-from .api import (AffineMatrix, MagickPixelPacket, PixelInfo, PointInfo,
-                  library)
+from .api import AffineMatrix, PointInfo, library
 from .color import Color
 from .compat import abc, binary, string_type, text, text_type, xrange
 from .exceptions import WandLibraryVersionError
 from .image import BaseImage, COMPOSITE_OPERATORS
 from .sequence import SingleImage
 from .resource import Resource
-from .version import MAGICK_VERSION_NUMBER
 
 __all__ = ('CLIP_PATH_UNITS', 'FILL_RULE_TYPES', 'FONT_METRICS_ATTRIBUTES',
            'GRAVITY_TYPES', 'LINE_CAP_TYPES', 'LINE_JOIN_TYPES',
@@ -195,15 +193,9 @@ class Drawing(Resource):
         """
         pixelwand = library.NewPixelWand()
         library.DrawGetBorderColor(self.resource, pixelwand)
-        if MAGICK_VERSION_NUMBER < 0x700:
-            pixel_structure = MagickPixelPacket
-        else:
-            pixel_structure = PixelInfo
-        size = ctypes.sizeof(pixel_structure)
-        buffer = ctypes.create_string_buffer(size)
-        library.PixelGetMagickColor(pixelwand, buffer)
+        color = Color.from_pixelwand(pixelwand)
         pixelwand = library.DestroyPixelWand(pixelwand)
-        return Color(raw=buffer)
+        return color
 
     @border_color.setter
     def border_color(self, color):
@@ -283,15 +275,9 @@ class Drawing(Resource):
         """
         pixel = library.NewPixelWand()
         library.DrawGetFillColor(self.resource, pixel)
-        if MAGICK_VERSION_NUMBER < 0x700:
-            pixel_structure = MagickPixelPacket
-        else:
-            pixel_structure = PixelInfo
-        size = ctypes.sizeof(pixel_structure)
-        buffer = ctypes.create_string_buffer(size)
-        library.PixelGetMagickColor(pixel, buffer)
+        color = Color.from_pixelwand(pixel)
         pixel = library.DestroyPixelWand(pixel)
-        return Color(raw=buffer)
+        return color
 
     @fill_color.setter
     def fill_color(self, color):
@@ -536,15 +522,9 @@ class Drawing(Resource):
         """
         pixel = library.NewPixelWand()
         library.DrawGetStrokeColor(self.resource, pixel)
-        if MAGICK_VERSION_NUMBER < 0x700:
-            pixel_structure = MagickPixelPacket
-        else:
-            pixel_structure = PixelInfo
-        size = ctypes.sizeof(pixel_structure)
-        buffer = ctypes.create_string_buffer(size)
-        library.PixelGetMagickColor(pixel, buffer)
+        color = Color.from_pixelwand(pixel)
         pixel = library.DestroyPixelWand(pixel)
-        return Color(raw=buffer)
+        return color
 
     @stroke_color.setter
     def stroke_color(self, color):
@@ -862,15 +842,9 @@ class Drawing(Resource):
         """
         pixel = library.NewPixelWand()
         library.DrawGetTextUnderColor(self.resource, pixel)
-        if MAGICK_VERSION_NUMBER < 0x700:
-            pixel_structure = MagickPixelPacket
-        else:
-            pixel_structure = PixelInfo
-        size = ctypes.sizeof(pixel_structure)
-        buffer = ctypes.create_string_buffer(size)
-        library.PixelGetMagickColor(pixel, buffer)
+        color = Color.from_pixelwand(pixel)
         pixel = library.DestroyPixelWand(pixel)
-        return Color(raw=buffer)
+        return color
 
     @text_under_color.setter
     def text_under_color(self, color):

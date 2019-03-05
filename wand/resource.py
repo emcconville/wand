@@ -181,7 +181,7 @@ class Resource(object):
         increment_refcount()
         try:
             yield self
-        except:
+        except:  # noqa: E722
             decrement_refcount()
             raise
 

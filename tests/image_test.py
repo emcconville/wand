@@ -1350,9 +1350,9 @@ def test_reset_coords(fx_asset):
 
     """
     with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
-            img.rotate(45, reset_coords=True)
-            img.crop(0, 0, 170, 170)
-            assert img[85, 85] == Color('transparent')
+        img.rotate(45, reset_coords=True)
+        img.crop(0, 0, 170, 170)
+        assert img[85, 85] == Color('transparent')
 
 
 def test_metadata(fx_asset):
@@ -2016,12 +2016,12 @@ def test_set_orientation(fx_asset):
 
 def test_auto_orientation(fx_asset):
     with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
-            # if orientation is undefined nothing should be changed
-            before = img[100, 100]
-            img.auto_orient()
-            after = img[100, 100]
-            assert before == after
-            assert img.orientation == 'top_left'
+        # if orientation is undefined nothing should be changed
+        before = img[100, 100]
+        img.auto_orient()
+        after = img[100, 100]
+        assert before == after
+        assert img.orientation == 'top_left'
 
     with Image(filename=str(fx_asset.join('orientationtest.jpg'))) as original:
         with original.clone() as img:
@@ -2224,14 +2224,14 @@ def test_coalesce(fx_asset):
 
 def test_merge_layers_basic(fx_asset):
     for method in ['merge', 'flatten', 'mosaic']:
-            with Image(filename=str(fx_asset.join('cmyk.jpg'))) as img1:
-                orig_size = img1.size
-                with Image(filename=str(fx_asset.join('cmyk.jpg'))) as img2:
-                    img1.sequence.append(img2)
-                    assert len(img1.sequence) == 2
-                    img1.merge_layers(method)
-                    assert len(img1.sequence) == 1
-                    assert img1.size == orig_size
+        with Image(filename=str(fx_asset.join('cmyk.jpg'))) as img1:
+            orig_size = img1.size
+            with Image(filename=str(fx_asset.join('cmyk.jpg'))) as img2:
+                img1.sequence.append(img2)
+                assert len(img1.sequence) == 2
+                img1.merge_layers(method)
+                assert len(img1.sequence) == 1
+                assert img1.size == orig_size
 
 
 def test_merge_layers_bad_method(fx_asset):
@@ -2418,6 +2418,7 @@ def test_import_pixels(fx_asset):
     with Image(width=4, height=1, background=Color('BLACK')) as dst:
         dst.depth = 8  # For safety
         with Image(filename=str(fx_asset.join('pixels.png'))) as expected:
+            expected.depth = 8  # For safety
             dst.import_pixels(x=0, y=0, width=4, height=1,
                               channel_map='RGBA', storage='char',
                               data=data)

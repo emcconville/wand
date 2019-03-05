@@ -16,7 +16,7 @@ import numbers
 import weakref
 
 from . import compat
-from .api import MagickPixelPacket, PixelInfo, libc, libmagick, library
+from .api import libc, libmagick, library
 from .color import Color
 from .compat import (abc, binary, binary_type, encode_filename, file_types,
                      PY3, string_type, text, xrange)
@@ -1214,15 +1214,9 @@ class BaseImage(Resource):
         pixel = library.NewPixelWand()
         result = library.MagickGetImageBackgroundColor(self.wand, pixel)
         if result:
-            if MAGICK_VERSION_NUMBER < 0x700:
-                pixel_structure = MagickPixelPacket
-            else:
-                pixel_structure = PixelInfo
-            size = ctypes.sizeof(pixel_structure)
-            buffer = ctypes.create_string_buffer(size)
-            library.PixelGetMagickColor(pixel, buffer)
+            color = Color.from_pixelwand(pixel)
             pixel = library.DestroyPixelWand(pixel)
-            return Color(raw=buffer)
+            return color
         self.raise_exception()
 
     @background_color.setter
@@ -1579,15 +1573,9 @@ class BaseImage(Resource):
         pixel = library.NewPixelWand()
         result = library.MagickGetImageMatteColor(self.wand, pixel)
         if result:
-            if MAGICK_VERSION_NUMBER < 0x700:
-                pixel_structure = MagickPixelPacket
-            else:
-                pixel_structure = PixelInfo
-            pixel_size = ctypes.sizeof(pixel_structure)
-            pixel_buffer = ctypes.create_string_buffer(pixel_size)
-            library.PixelGetMagickColor(pixel, pixel_buffer)
+            color = Color.from_pixelwand(pixel)
             pixel = library.DestroyPixelWand(pixel)
-            return Color(raw=pixel_buffer)
+            return color
         self.raise_exception()
 
     @matte_color.setter
@@ -5126,23 +5114,12 @@ class Iterator(Resource, abc.Iterator):
         width = ctypes.c_size_t()
         pixels = library.PixelGetNextIteratorRow(self.resource,
                                                  ctypes.byref(width))
-        get_color = library.PixelGetMagickColor
-        if MAGICK_VERSION_NUMBER < 0x700:
-            pixel_structure = MagickPixelPacket
-        else:
-            pixel_structure = PixelInfo
-        struct_size = ctypes.sizeof(pixel_structure)
         if x is None:
             r_pixels = [None] * width.value
             for x in xrange(width.value):
-                pc = pixels[x]
-                packet_buffer = ctypes.create_string_buffer(struct_size)
-                get_color(pc, packet_buffer)
-                r_pixels[x] = Color(raw=packet_buffer)
+                r_pixels[x] = Color.from_pixelwand(pixels[x])
             return r_pixels
-        packet_buffer = ctypes.create_string_buffer(struct_size)
-        get_color(pixels[x], packet_buffer)
-        return Color(raw=packet_buffer)
+        return Color.from_pixelwand(pixels[x])
 
     next = __next__  # Python 2 compatibility
 
