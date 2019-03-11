@@ -925,8 +925,12 @@ def load(lib, IM_VERSION):
         c_void_p, c_double, c_double, c_ssize_t, c_ssize_t
     ]
     lib.MagickVignetteImage.restype = c_bool
-    lib.MagickWaveImage.argtypes = [c_void_p, c_double, c_double]
-    lib.MagickWaveImage.restype = c_bool
+    if is_im_6:
+        lib.MagickWaveImage.argtypes = [c_void_p, c_double, c_double]
+        lib.MagickWaveImage.restype = c_bool
+    else:
+        lib.MagickWaveImage.argtypes = [c_void_p, c_double, c_double, c_int]
+        lib.MagickWaveImage.restype = c_bool
     lib.MagickWhiteThresholdImage.argtypes = [c_void_p, c_void_p]
     lib.MagickWhiteThresholdImage.restype = c_bool
     lib.MagickWriteImage.argtypes = [c_void_p, c_char_p]

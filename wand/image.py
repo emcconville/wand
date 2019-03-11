@@ -4496,6 +4496,33 @@ class BaseImage(Resource):
             self.raise_exception()
 
     @manipulative
+    def vignette(self, radius=0.0, sigma=0.0, x=0, y=0):
+        """Creates a soft vignette style effect on the image.
+
+        :param radius: the radius of the Gaussian blur effect.
+        :type radius: :class:`numbers.Real`
+        :param sigma: the standard deviation of the Gaussian effect.
+        :type sigma: :class:`numbers.Real`
+        :param x: Width of the oval effect.
+        :type x: :class:`numbers.Integral`
+        :param y: Height of the oval effect.
+        :type y: :class:`numbers.Integral`
+
+        .. versionadded:: 0.5.2
+        """
+        if not isinstance(radius, numbers.Real):
+            raise TypeError('expecting real number, not ' + repr(radius))
+        if not isinstance(sigma, numbers.Real):
+            raise TypeError('expecting real number, not ' + repr(sigma))
+        if not isinstance(x, numbers.Integral):
+            raise TypeError('expecting integer, not ' + repr(x))
+        if not isinstance(y, numbers.Integral):
+            raise TypeError('expecting integer, not ' + repr(y))
+        r = library.MagickVignetteImage(self.wand, radius, sigma, x, y)
+        if not r:
+            self.raise_exception()
+
+    @manipulative
     def watermark(self, image, transparency=0.0, left=0, top=0):
         """Transparentized the supplied ``image`` and places it over the
         current image, with the top left corner of ``image`` at coordinates
@@ -4526,6 +4553,56 @@ class BaseImage(Resource):
                 watermark_image.transparentize(transparency)
                 self.composite(watermark_image, left=left, top=top)
         self.raise_exception()
+
+    @manipulative
+    def wave(self, amplitude=0.0, wave_length=0.0, method='undefined'):
+        """Creates a ripple effect within the image.
+
+        :param amplitude: height of wave form.
+        :type amplitude: :class:`numbers.Real`
+        :param wave_length: width of wave form.
+        :type wave_length: :class:`numbers.Real`
+        :param method: pixel interpolation method. Only availabel with
+                       ImageMagick-7. See :const:`PIXEL_INTERPOLATE_METHODS`
+        :type method: :class:`basestring`
+
+        .. versionadded:: 0.5.2
+        """
+        if not isinstance(amplitude, numbers.Real):
+            raise TypeError('expecting real number, not ' + repr(amplitude))
+        if not isinstance(wave_length, numbers.Real):
+            raise TypeError('expecting real number, not ' + repr(wave_length))
+        if method not in PIXEL_INTERPOLATE_METHODS:
+            raise ValueError('method must be in PIXEL_INTERPOLATE_METHODS')
+        if MAGICK_VERSION_NUMBER < 0x700:
+            r = library.MagickWaveImage(self.wand, amplitude, wave_length)
+        else:
+            method_idx = PIXEL_INTERPOLATE_METHODS.index(method)
+            r = library.MagickWaveImage(self.wand, amplitude, wave_length,
+                                        method_idx)
+        if not r:
+            self.raise_exception()
+
+    @manipulative
+    def white_threshold(self, threshold):
+        """Forces all pixels above a given color as white. Leaves pixels
+        below threshold unaltered.
+
+        :param threshold: Color to be referenced as a threshold.
+        :type threshold: :class:`Color`
+
+        .. versionadded:: 0.5.2
+        """
+        if isinstance(threshold, string_type):
+            threshold = Color(threshold)
+        if not isinstance(threshold, Color):
+            raise TypeError('expecting a Color instance, not ' +
+                            repr(threshold))
+        with threshold:
+            r = library.MagickWhiteThresholdImage(self.wand,
+                                                  threshold.resource)
+        if not r:
+            self.raise_exception()
 
 
 class Image(BaseImage):

@@ -12,7 +12,10 @@ Version 0.5.2
 To be released.
 
  - Import :mod:`collections.abc` explicitly. [:issue:`398` by Stefan Naumann]
- - Fixed memory lead in :class:`~wand.image.HistogramDict`. [:issue:`397`]
+ - Fixed memory leak in :class:`~wand.image.HistogramDict`. [:issue:`397`]
+ - Added :meth:`Image.wave() <wand.image.BaseImage.wave>`.
+ - Added :meth:`Image.white_threshold() <wand.image.BaseImage.white_threshold>`.
+ - Added :meth:`Image.vignette() <wand.image.BaseImage.vignette>`.
 
 
 .. _changelog-0.5.1:

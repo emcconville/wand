@@ -1331,6 +1331,13 @@ def test_unique_colors(fx_asset):
         assert was != img.signature
 
 
+def test_vignette(fx_asset):
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.vignette(radius=3, sigma=3)
+        assert was != img.signature
+
+
 def test_watermark(fx_asset):
     """Adds  watermark to an image."""
     with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
@@ -1344,6 +1351,28 @@ def test_watermark(fx_asset):
             assert img[70, 84] != b
             assert img[623, 282] == c
             assert img[622, 281] != d
+
+
+def test_wave(fx_asset):
+    with Image(filename='rose:') as img:
+        was = img.size
+        img.wave(amplitude=img.height, wave_length=img.width/2)
+        assert was != img.size
+        with raises(TypeError):
+            img.wave(amplitude='img height')
+        with raises(TypeError):
+            img.wave(wave_length='img height')
+        with raises(ValueError):
+            img.wave(method=0xDEADBEEF)
+
+
+def test_white_threshold(fx_asset):
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.white_threshold(Color('gray(50%)'))
+        assert was != img.signature
+        with raises(TypeError):
+            img.white_threshold(0xDEADBEEF)
 
 
 def test_reset_coords(fx_asset):
