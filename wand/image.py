@@ -4423,13 +4423,22 @@ class BaseImage(Resource):
                      two colors as the same.
         :type fuzz: :class:`numbers.Integral`
 
-        .. versionadded:: 0.3.0
+        .. versionchanged:: 0.5.2
+           The ``color`` parameter may except color-compliant strings.
+
+        .. versionchanged:: 0.3.0
            Optional ``color`` and ``fuzz`` parameters.
 
         .. versionadded:: 0.2.1
 
         """
-        with color or self[0, 0] as color:
+        if color is None:
+            color = self[0, 0]
+        elif isinstance(color, string_type):
+            color = Color(color)
+        elif not isinstance(color, Color):
+            raise ValueError('expecting instance of Color, not ' + repr(color))
+        with color:
             self.border(color, 1, 1, compose="copy")
         result = library.MagickTrimImage(self.wand, fuzz)
         if not result:

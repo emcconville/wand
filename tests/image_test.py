@@ -521,6 +521,8 @@ def test_trim_color(fx_asset):
         with Color('blue') as blue:
             img.trim(blue)
             assert img.size == (50, 100)
+        img.trim('blue')
+        assert img.size == (50, 100)
         with Color('srgb(0,255,0)') as green:
             assert (img[0, 0] == img[0, -1] == img[-1, 0] == img[-1, -1] ==
                     green)
