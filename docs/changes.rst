@@ -12,6 +12,7 @@ Version 0.5.2
 To be released.
 
  - Import :mod:`collections.abc` explicitly. [:issue:`398` by Stefan Naumann]
+ - Fixed memory lead in :class:`~wand.image.HistogramDict`. [:issue:`397`]
 
 
 .. _changelog-0.5.1:
