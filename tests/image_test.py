@@ -2492,3 +2492,27 @@ def test_profiles(fx_asset):
             img.profiles[0xDEADBEEF] = 0xDEADBEEF
         with raises(TypeError):
             img.profiles['exif'] = 0xDEADBEEF
+
+
+def test_primary_points(fx_asset):
+    with Image(filename='rose:') as img:
+        blue = [d/2 for d in img.blue_primary]
+        img.blue_primary = blue
+        assert blue == list(img.blue_primary)
+        green = [d/2 for d in img.green_primary]
+        img.green_primary = green
+        assert green == list(img.green_primary)
+        red = [d/2 for d in img.red_primary]
+        img.red_primary = red
+        assert red == list(img.red_primary)
+        white = [d/2 for d in img.white_point]
+        img.white_point = white
+        assert white == list(img.white_point)
+        with raises(TypeError):
+            img.blue_primary = 0xDEADBEEF
+        with raises(TypeError):
+            img.green_primary = 0xDEADBEEF
+        with raises(TypeError):
+            img.red_primary = 0xDEADBEEF
+        with raises(TypeError):
+            img.white_point = 0xDEADBEEF

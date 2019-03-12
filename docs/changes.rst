@@ -16,6 +16,10 @@ To be released.
  - Added :meth:`Image.wave() <wand.image.BaseImage.wave>`.
  - Added :meth:`Image.white_threshold() <wand.image.BaseImage.white_threshold>`.
  - Added :meth:`Image.vignette() <wand.image.BaseImage.vignette>`.
+ - Added :attr:`Image.blue_primary <wand.image.BaseImage.blue_primary` attribute.
+ - Added :attr:`Image.green_primary <wand.image.BaseImage.green_primary` attribute.
+ - Added :attr:`Image.red_primary <wand.image.BaseImage.red_primary` attribute.
+ - Added :attr:`Image.white_point <wand.image.BaseImage.white_point` attribute.
 
 
 .. _changelog-0.5.1:

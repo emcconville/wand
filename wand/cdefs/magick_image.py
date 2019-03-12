@@ -352,9 +352,14 @@ def load(lib, IM_VERSION):
     lib.MagickGetImageBackgroundColor.restype = c_bool
     lib.MagickGetImageBlob.argtypes = [c_void_p, POINTER(c_size_t)]
     lib.MagickGetImageBlob.restype = POINTER(c_ubyte)
-    lib.MagickGetImageBluePrimary.argtypes = [
-        c_void_p, POINTER(c_double), POINTER(c_double)
-    ]
+    if is_im_6:
+        lib.MagickGetImageBluePrimary.argtypes = [
+            c_void_p, POINTER(c_double), POINTER(c_double)
+        ]
+    else:
+        lib.MagickGetImageBluePrimary.argtypes = [
+            c_void_p, POINTER(c_double), POINTER(c_double), POINTER(c_double)
+        ]
     lib.MagickGetImageBluePrimary.restype = c_bool
     lib.MagickGetImageBorderColor.argtypes = [c_void_p, c_void_p]
     lib.MagickGetImageBorderColor.restype = c_bool
@@ -406,9 +411,14 @@ def load(lib, IM_VERSION):
     lib.MagickGetImageGamma.restype = c_double
     lib.MagickGetImageGravity.argtypes = [c_void_p]
     lib.MagickGetImageGravity.restype = c_int
-    lib.MagickGetImageGreenPrimary.argtypes = [
-        c_void_p, POINTER(c_double), POINTER(c_double)
-    ]
+    if is_im_6:
+        lib.MagickGetImageGreenPrimary.argtypes = [
+            c_void_p, POINTER(c_double), POINTER(c_double)
+        ]
+    else:
+        lib.MagickGetImageGreenPrimary.argtypes = [
+            c_void_p, POINTER(c_double), POINTER(c_double), POINTER(c_double)
+        ]
     lib.MagickGetImageGreenPrimary.restype = c_bool
     lib.MagickGetImageHeight.argtypes = [c_void_p]
     lib.MagickGetImageHeight.restype = c_size_t
@@ -439,9 +449,14 @@ def load(lib, IM_VERSION):
         c_void_p, POINTER(c_double), POINTER(c_double)
     ]
     lib.MagickGetImageRange.restype = c_bool
-    lib.MagickGetImageRedPrimary.argtypes = [
-        c_void_p, POINTER(c_double), POINTER(c_double)
-    ]
+    if is_im_6:
+        lib.MagickGetImageRedPrimary.argtypes = [
+            c_void_p, POINTER(c_double), POINTER(c_double)
+        ]
+    else:
+        lib.MagickGetImageRedPrimary.argtypes = [
+            c_void_p, POINTER(c_double), POINTER(c_double), POINTER(c_double)
+        ]
     lib.MagickGetImageRedPrimary.restype = c_bool
     lib.MagickGetImageRegion.argtypes = [
         c_void_p, c_size_t, c_size_t, c_ssize_t, c_ssize_t
@@ -470,9 +485,14 @@ def load(lib, IM_VERSION):
     lib.MagickGetImageType.restype = c_int
     lib.MagickGetImageUnits.argtypes = [c_void_p]
     lib.MagickGetImageVirtualPixelMethod.argtypes = [c_void_p]
-    lib.MagickGetImageWhitePoint.argtypes = [
-        c_void_p, POINTER(c_double), POINTER(c_double)
-    ]
+    if is_im_6:
+        lib.MagickGetImageWhitePoint.argtypes = [
+            c_void_p, POINTER(c_double), POINTER(c_double)
+        ]
+    else:
+        lib.MagickGetImageWhitePoint.argtypes = [
+            c_void_p, POINTER(c_double), POINTER(c_double), POINTER(c_double)
+        ]
     lib.MagickGetImageWhitePoint.restype = c_bool
     lib.MagickGetImageWidth.argtypes = [c_void_p]
     lib.MagickGetImageWidth.restype = c_size_t
@@ -713,7 +733,14 @@ def load(lib, IM_VERSION):
         lib.MagickSetImageBias.restype = c_bool
     else:
         lib.MagickSetImageBias = None
-    lib.MagickSetImageBluePrimary.argtypes = [c_void_p, c_double, c_double]
+    if is_im_6:
+        lib.MagickSetImageBluePrimary.argtypes = [
+            c_void_p, c_double, c_double
+        ]
+    else:
+        lib.MagickSetImageBluePrimary.argtypes = [
+            c_void_p, c_double, c_double, c_double
+        ]
     lib.MagickSetImageBluePrimary.restype = c_bool
     lib.MagickSetImageBorderColor.argtypes = [c_void_p, c_void_p]
     lib.MagickSetImageBorderColor.restype = c_bool
@@ -762,7 +789,14 @@ def load(lib, IM_VERSION):
     lib.MagickSetImageGamma.restype = c_bool
     lib.MagickSetImageGravity.argtypes = [c_void_p, c_int]
     lib.MagickSetImageGravity.restype = c_bool
-    lib.MagickSetImageGreenPrimary.argtypes = [c_void_p, c_double, c_double]
+    if is_im_6:
+        lib.MagickSetImageGreenPrimary.argtypes = [
+            c_void_p, c_double, c_double
+        ]
+    else:
+        lib.MagickSetImageGreenPrimary.argtypes = [
+            c_void_p, c_double, c_double, c_double
+        ]
     lib.MagickSetImageGreenPrimary.restype = c_bool
     lib.MagickSetImageInterlaceScheme.argtypes = [c_void_p, c_int]
     lib.MagickSetImageInterlaceScheme.restype = c_bool
@@ -785,7 +819,14 @@ def load(lib, IM_VERSION):
     lib.MagickSetImageProgressMonitor.argtypes = [
         c_void_p, MagickProgressMonitor, c_void_p
     ]
-    lib.MagickSetImageRedPrimary.argtypes = [c_void_p, c_double, c_double]
+    if is_im_6:
+        lib.MagickSetImageRedPrimary.argtypes = [
+            c_void_p, c_double, c_double
+        ]
+    else:
+        lib.MagickSetImageRedPrimary.argtypes = [
+            c_void_p, c_double, c_double, c_double
+        ]
     lib.MagickSetImageRedPrimary.restype = c_bool
     lib.MagickSetImageRenderingIntent.argtypes = [c_void_p, c_int]
     lib.MagickSetImageRenderingIntent.restype = c_bool
@@ -797,7 +838,14 @@ def load(lib, IM_VERSION):
     lib.MagickSetImageType.argtypes = [c_void_p, c_int]
     lib.MagickSetImageUnits.argtypes = [c_void_p, c_int]
     lib.MagickSetImageVirtualPixelMethod.argtypes = [c_void_p, c_int]
-    lib.MagickSetImageWhitePoint.argtypes = [c_void_p, c_double, c_double]
+    if is_im_6:
+        lib.MagickSetImageWhitePoint.argtypes = [
+            c_void_p, c_double, c_double
+        ]
+    else:
+        lib.MagickSetImageWhitePoint.argtypes = [
+            c_void_p, c_double, c_double, c_double
+        ]
     lib.MagickSetImageWhitePoint.restype = c_bool
     try:
         lib.MagickSetResolution.argtypes = [c_void_p, c_double, c_double]

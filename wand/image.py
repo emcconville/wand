@@ -1234,6 +1234,43 @@ class BaseImage(Resource):
                 self.raise_exception()
 
     @property
+    def blue_primary(self):
+        """(:class:`tuple`) The chromatic blue primary point for the image.
+        With ImageMagick-6 the primary value is ``(x, y)`` coordinates;
+        however, ImageMagick-7 has ``(x, y, z)``.
+
+        .. versionadded:: 0.5.2
+        """
+        x = ctypes.c_double(0.0)
+        y = ctypes.c_double(0.0)
+        r = None
+        p = None
+        if MAGICK_VERSION_NUMBER < 0x700:
+            r = library.MagickGetImageBluePrimary(self.wand, x, y)
+            p = (x.value, y.value)
+        else:
+            z = ctypes.c_double(0.0)
+            r = library.MagickGetImageBluePrimary(self.wand, x, y, z)
+            p = (x.value, y.value, z.value)
+        if not r:
+            self.raise_exception()
+        return p
+
+    @blue_primary.setter
+    def blue_primary(self, coordinates):
+        r = None
+        if not isinstance(coordinates, abc.Sequence):
+            raise TypeError('Primary must be a tuple')
+        if MAGICK_VERSION_NUMBER < 0x700:
+            x, y = coordinates
+            r = library.MagickSetImageBluePrimary(self.wand, x, y)
+        else:
+            x, y, z = coordinates
+            r = library.MagickSetImageBluePrimary(self.wand, x, y, z)
+        if not r:
+            self.raise_exception()
+
+    @property
     def colorspace(self):
         """(:class:`basestring`) The image colorspace.
 
@@ -1526,6 +1563,43 @@ class BaseImage(Resource):
         library.MagickSetGravity(self.wand, GRAVITY_TYPES.index(value))
 
     @property
+    def green_primary(self):
+        """(:class:`tuple`) The chromatic green primary point for the image.
+        With ImageMagick-6 the primary value is ``(x, y)`` coordinates;
+        however, ImageMagick-7 has ``(x, y, z)``.
+
+        .. versionadded:: 0.5.2
+        """
+        x = ctypes.c_double(0.0)
+        y = ctypes.c_double(0.0)
+        r = None
+        p = None
+        if MAGICK_VERSION_NUMBER < 0x700:
+            r = library.MagickGetImageGreenPrimary(self.wand, x, y)
+            p = (x.value, y.value)
+        else:
+            z = ctypes.c_double(0.0)
+            r = library.MagickGetImageGreenPrimary(self.wand, x, y, z)
+            p = (x.value, y.value, z.value)
+        if not r:
+            self.raise_exception()
+        return p
+
+    @green_primary.setter
+    def green_primary(self, coordinates):
+        r = None
+        if not isinstance(coordinates, abc.Sequence):
+            raise TypeError('Primary must be a tuple')
+        if MAGICK_VERSION_NUMBER < 0x700:
+            x, y = coordinates
+            r = library.MagickSetImageGreenPrimary(self.wand, x, y)
+        else:
+            x, y, z = coordinates
+            r = library.MagickSetImageGreenPrimary(self.wand, x, y, z)
+        if not r:
+            self.raise_exception()
+
+    @property
     def height(self):
         """(:class:`numbers.Integral`) The height of this image."""
         return library.MagickGetImageHeight(self.wand)
@@ -1726,6 +1800,43 @@ class BaseImage(Resource):
         return result.value
 
     @property
+    def red_primary(self):
+        """(:class:`tuple`) The chromatic red primary point for the image.
+        With ImageMagick-6 the primary value is ``(x, y)`` coordinates;
+        however, ImageMagick-7 has ``(x, y, z)``.
+
+        .. versionadded:: 0.5.2
+        """
+        x = ctypes.c_double(0.0)
+        y = ctypes.c_double(0.0)
+        r = None
+        p = None
+        if MAGICK_VERSION_NUMBER < 0x700:
+            r = library.MagickGetImageRedPrimary(self.wand, x, y)
+            p = (x.value, y.value)
+        else:
+            z = ctypes.c_double(0.0)
+            r = library.MagickGetImageRedPrimary(self.wand, x, y, z)
+            p = (x.value, y.value, z.value)
+        if not r:
+            self.raise_exception()
+        return p
+
+    @red_primary.setter
+    def red_primary(self, coordinates):
+        r = None
+        if not isinstance(coordinates, abc.Sequence):
+            raise TypeError('Primary must be a tuple')
+        if MAGICK_VERSION_NUMBER < 0x700:
+            x, y = coordinates
+            r = library.MagickSetImageRedPrimary(self.wand, x, y)
+        else:
+            x, y, z = coordinates
+            r = library.MagickSetImageRedPrimary(self.wand, x, y, z)
+        if not r:
+            self.raise_exception()
+
+    @property
     def resolution(self):
         """(:class:`tuple`) Resolution of this image.
 
@@ -1899,6 +2010,43 @@ class BaseImage(Resource):
         if width is not None and not isinstance(width, numbers.Integral):
             raise TypeError('width must be a integral, not ' + repr(width))
         library.MagickSetSize(self.wand, width, self.height)
+
+    @property
+    def white_point(self):
+        """(:class:`tuple`) The chromatic white point for the image.
+        With ImageMagick-6 the primary value is ``(x, y)`` coordinates;
+        however, ImageMagick-7 has ``(x, y, z)``.
+
+        .. versionadded:: 0.5.2
+        """
+        x = ctypes.c_double(0.0)
+        y = ctypes.c_double(0.0)
+        r = None
+        p = None
+        if MAGICK_VERSION_NUMBER < 0x700:
+            r = library.MagickGetImageWhitePoint(self.wand, x, y)
+            p = (x.value, y.value)
+        else:
+            z = ctypes.c_double(0.0)
+            r = library.MagickGetImageWhitePoint(self.wand, x, y, z)
+            p = (x.value, y.value, z.value)
+        if not r:
+            self.raise_exception()
+        return p
+
+    @white_point.setter
+    def white_point(self, coordinates):
+        r = None
+        if not isinstance(coordinates, abc.Sequence):
+            raise TypeError('Primary must be a tuple')
+        if MAGICK_VERSION_NUMBER < 0x700:
+            x, y = coordinates
+            r = library.MagickSetImageWhitePoint(self.wand, x, y)
+        else:
+            x, y, z = coordinates
+            r = library.MagickSetImageWhitePoint(self.wand, x, y, z)
+        if not r:
+            self.raise_exception()
 
     @manipulative
     def _auto_orient(self):
