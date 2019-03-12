@@ -1601,6 +1601,13 @@ def test_hald_clut(fx_asset):
             assert was != img.signature
 
 
+def test_implode(fx_asset):
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.implode(amount=1.0)
+        assert was != img.signature
+
+
 def test_setfont(fx_asset):
     with Image(width=144, height=192, background=Color('#1e50a2')) as img:
         font = Font(

@@ -3205,6 +3205,31 @@ class BaseImage(Resource):
         if not r:
             self.raise_exception()
 
+    def implode(self, amount=0.0, method="undefined"):
+        """Creates a "imploding" effect by pulling pixels towards the center
+        of the image.
+
+        :param amount: Normalized degree of effect between `0.0` & `1.0`.
+        :type amount: :class:`numbers.Real`
+        :param method: Which interpolate method to apply to effected pixels.
+                       See :const:`PIXEL_INTERPOLATE_METHODS` for a list of
+                       options. Only available with ImageMagick-7.
+        :type method: :class:`basestring`
+
+        .. versionadded:: 0.5.2
+        """
+        if not isinstance(amount, numbers.Real):
+            raise TypeError('expecting real number, not ' + repr(amount))
+        if method not in PIXEL_INTERPOLATE_METHODS:
+            raise ValueError('method must be in PIXEL_INTERPOLATE_METHODS')
+        if MAGICK_VERSION_NUMBER < 0x700:
+            r = library.MagickImplodeImage(self.wand, amount)
+        else:
+            method_idx = PIXEL_INTERPOLATE_METHODS.index(method)
+            r = library.MagickImplodeImage(self.wand, amount, method_idx)
+        if not r:
+            self.raise_exception()
+
     def import_pixels(self, x=0, y=0, width=None, height=None,
                       channel_map='RGB', storage='char', data=None):
         """Import pixel data from a byte-string to

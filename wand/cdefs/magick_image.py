@@ -511,7 +511,10 @@ def load(lib, IM_VERSION):
     lib.MagickHasPreviousImage.restype = c_bool
     lib.MagickIdentifyImage.argtypes = [c_void_p]
     lib.MagickIdentifyImage.restype = c_magick_char_p
-    lib.MagickImplodeImage.argtypes = [c_void_p, c_double]
+    if is_im_6:
+        lib.MagickImplodeImage.argtypes = [c_void_p, c_double]
+    else:
+        lib.MagickImplodeImage.argtypes = [c_void_p, c_double, c_int]
     lib.MagickImplodeImage.restype = c_bool
     lib.MagickImportImagePixels.argtypes = [
         c_void_p, c_ssize_t, c_ssize_t, c_size_t, c_size_t, c_char_p, c_int,
