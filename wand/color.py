@@ -92,7 +92,7 @@ class Color(Resource):
             raise TypeError('expected one argument')
 
         # MagickPixelPacket has been deprecated, use PixelInfo
-        self.use_pixel = library.PixelSetMagickColor is None
+        self.use_pixel = MAGICK_VERSION_NUMBER >= 0x700
         self.dirty = False
         self.allocated = 0
         if raw is None:
@@ -123,7 +123,7 @@ class Color(Resource):
         return self.string, None
 
     def __enter__(self):
-        if not self.allocated:
+        if self.allocated < 1:
             with self.allocate():
                 # Initialize resource.
                 self.resource = library.NewPixelWand()
@@ -132,7 +132,9 @@ class Color(Resource):
                     library.PixelSetPixelColor(self.resource, self.raw)
                 else:
                     library.PixelSetMagickColor(self.resource, self.raw)
-        self.allocated += 1
+            self.allocated = 1
+        else:
+            self.allocated += 1
         return Resource.__enter__(self)
 
     def __exit__(self, type, value, traceback):
@@ -140,7 +142,7 @@ class Color(Resource):
         if self.dirty:
             library.PixelGetMagickColor(self.resource, self.raw)
             self.dirty = False
-        if not self.allocated:
+        if self.allocated < 1:
             Resource.__exit__(self, type, value, traceback)
 
     def __eq__(self, other):
