@@ -13,6 +13,7 @@ To be released.
 
  - Import :mod:`collections.abc` explicitly. [:issue:`398` by Stefan Naumann]
  - Fixed memory leak in :class:`~wand.image.HistogramDict`. [:issue:`397`]
+ - Fixed compression & compression quality bug. [:issue:`202` & :issue:`278`]
  - Added :meth:`Image.implode() <wand.image.BaseImage.implode>` method.
  - Added :meth:`Image.vignette() <wand.image.BaseImage.vignette>`.
  - Added :meth:`Image.wave() <wand.image.BaseImage.wave>`.

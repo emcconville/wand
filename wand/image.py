@@ -1344,7 +1344,9 @@ class BaseImage(Resource):
         It also can be set.
 
         .. versionadded:: 0.3.6
-
+        .. versionchanged:: 0.5.2
+           Setting :attr:`compression` now sets both `image_info`
+           and `images` in the internal image stack.
         """
         compression_index = library.MagickGetImageCompression(self.wand)
         return COMPRESSION_TYPES[compression_index]
@@ -1356,6 +1358,10 @@ class BaseImage(Resource):
         if value not in COMPRESSION_TYPES:
             raise ValueError('expected a string from COMPRESSION_TYPES, not ' +
                              repr(value))
+        library.MagickSetCompression(
+            self.wand,
+            COMPRESSION_TYPES.index(value)
+        )
         library.MagickSetImageCompression(
             self.wand,
             COMPRESSION_TYPES.index(value)
@@ -1366,7 +1372,9 @@ class BaseImage(Resource):
         """(:class:`numbers.Integral`) Compression quality of this image.
 
         .. versionadded:: 0.2.0
-
+        .. versionchanged:: 0.5.2
+           Setting :attr:`compression_quality` now sets both `image_info`
+           and `images` in the internal image stack.
         """
         return library.MagickGetImageCompressionQuality(self.wand)
 
@@ -1382,6 +1390,7 @@ class BaseImage(Resource):
         if not isinstance(quality, numbers.Integral):
             raise TypeError('compression quality must be a natural '
                             'number, not ' + repr(quality))
+        library.MagickSetCompressionQuality(self.wand, quality)
         r = library.MagickSetImageCompressionQuality(self.wand, quality)
         if not r:
             raise ValueError('Unable to set compression quality to ' +
