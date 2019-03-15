@@ -5306,6 +5306,10 @@ class Image(BaseImage):
             r = library.MagickReadImage(self.wand, filename)
         if not r:
             self.raise_exception()
+            msg = ('MagickReadImage returns false, but did raise ImageMagick '
+                   'exception. This can occurs when a delegate is missing, or '
+                   'returns EXIT_SUCCESS without generating a raster.')
+            raise RuntimeError(msg)
 
     def save(self, file=None, filename=None):
         """Saves the image into the ``file`` or ``filename``. It takes

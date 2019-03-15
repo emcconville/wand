@@ -14,16 +14,18 @@ To be released.
  - Import :mod:`collections.abc` explicitly. [:issue:`398` by Stefan Naumann]
  - Fixed memory leak in :class:`~wand.image.HistogramDict`. [:issue:`397`]
  - Fixed compression & compression quality bug. [:issue:`202` & :issue:`278`]
+ - :meth:`Image.read() <wand.image.Image.read>` will raise :class:`RuntimeError` if
+   :c:func:`MagickReadImage` returns :c:type:`MagickFalse`, but does not emit exception. [:issue:`319`]
  - Added :meth:`Image.implode() <wand.image.BaseImage.implode>` method.
- - Added :meth:`Image.vignette() <wand.image.BaseImage.vignette>`.
- - Added :meth:`Image.wave() <wand.image.BaseImage.wave>`.
- - Added :meth:`Image.white_threshold() <wand.image.BaseImage.white_threshold>`.
- - Added :attr:`Image.blue_primary <wand.image.BaseImage.blue_primary>` attribute.
- - Added :attr:`Image.green_primary <wand.image.BaseImage.green_primary>` attribute.
- - Added :attr:`Image.interlace_scheme <wand.image.BaseImage.interlace_scheme>` attribute.
- - Added :attr:`Image.interpolate_method <wand.image.BaseImage.interpolate_method>` attribute.
- - Added :attr:`Image.red_primary <wand.image.BaseImage.red_primary>` attribute.
- - Added :attr:`Image.white_point <wand.image.BaseImage.white_point>` attribute.
+ - Added :meth:`Image.vignette() <wand.image.BaseImage.vignette>` method.
+ - Added :meth:`Image.wave() <wand.image.BaseImage.wave>` method.
+ - Added :meth:`Image.white_threshold() <wand.image.BaseImage.white_threshold>` method.
+ - Added :attr:`Image.blue_primary <wand.image.BaseImage.blue_primary>` property.
+ - Added :attr:`Image.green_primary <wand.image.BaseImage.green_primary>` property.
+ - Added :attr:`Image.interlace_scheme <wand.image.BaseImage.interlace_scheme>` property.
+ - Added :attr:`Image.interpolate_method <wand.image.BaseImage.interpolate_method>` property.
+ - Added :attr:`Image.red_primary <wand.image.BaseImage.red_primary>` property.
+ - Added :attr:`Image.white_point <wand.image.BaseImage.white_point>` property.
 
 
 .. _changelog-0.5.1:
