@@ -1672,9 +1672,7 @@ def test_threshold(fx_asset):
     with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
         top = int(img.height * 0.25)
         btm = int(img.height * 0.75)
-        print(img[0, top], img[0, btm])
         img.threshold(0.5)
-        print(img[0, top], img[0, btm])
         with img[0, top] as white:
             assert white.red_int8 == white.green_int8 == white.blue_int8 == 255
         with img[0, btm] as black:
@@ -1685,11 +1683,9 @@ def test_threshold_channel(fx_asset):
     with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
         top = int(img.height * 0.25)
         btm = int(img.height * 0.75)
-        print(img[0, top], img[0, btm])
         img.threshold(0.0, 'red')
         img.threshold(0.5, 'green')
         img.threshold(1.0, 'blue')
-        print(img[0, top], img[0, btm])
         # The top half of the image should be yellow, and the bottom half red.
         with img[0, top] as yellow:
             assert (yellow.red_int8 == yellow.green_int8 == 255 and
@@ -1778,15 +1774,11 @@ def test_linear_stretch_user_error(fx_asset):
 
 def test_normalize_default(display, fx_asset):
     with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
-        display(img)
         left_top = img[0, 0]
         left_bottom = img[0, -1]
         right_top = img[-1, 0]
         right_bottom = img[-1, -1]
-        print(left_top, left_bottom, right_top, right_bottom)
         img.normalize()
-        display(img)
-        print(img[0, 0], img[0, -1], img[-1, 0], img[-1, -1])
         assert img[0, 0] != left_top
         assert img[0, -1] != left_bottom
         assert img[-1, 0] != right_top
@@ -1892,9 +1884,7 @@ def test_level_user_error(fx_asset):
 
 def test_equalize(fx_asset):
     with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
-        print(img[0, 0], img[0, -1])
         img.equalize()
-        print(img[0, 0], img[0, -1])
         # The top row should be nearly white, and the bottom nearly black.
         with img[0, 0] as light:
             assert light.red_int8 >= light.green_int8 >= light.blue_int8 >= 250

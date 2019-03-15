@@ -48,16 +48,11 @@ def test_setitem(fx_asset):
 def test_delitem(fx_asset):
     with Image(filename=str(fx_asset.join('apple.ico'))) as img:
         detached = img.sequence[0]
-        print("detached: %r" % detached)
-        print('a', img.sequence.instances)
         del img.sequence[0]
         assert len(img.sequence) == 3
         assert img.sequence[0] is not detached
         assert img.sequence[0].size == (16, 16)
-        print('b', img.sequence.instances)
         expire(img)
-        print('c', img.sequence.instances)
-        print([s.size for s in img.sequence])
         assert len(img.sequence) == 3
         assert img.sequence[0] is not detached
         assert img.sequence[0].size == (16, 16)
@@ -86,7 +81,6 @@ slice_items = list(sorted(slices.items(), key=lambda k: k[0]))
 
 @mark.parametrize(('slice_name', 'slice_'), slice_items)
 def test_getitem_slice(slice_name, slice_, fx_asset):
-    print(1, slice_)
     with Image(filename=str(fx_asset.join('apple.ico'))) as img:
         assert list(img.sequence[slice_]) == list(img.sequence)[slice_]
 
@@ -95,7 +89,6 @@ def test_getitem_slice(slice_name, slice_, fx_asset):
 def test_setitem_slice(slice_name, slice_, fx_asset):
     with Image(filename=str(fx_asset.join('apple.ico'))) as imga:
         instances = list(imga.sequence)
-        print(map(hash, instances))
         with Image(filename=str(fx_asset.join('github.ico'))) as imgg:
             instances[slice_] = imgg.sequence
             imga.sequence[slice_] = imgg.sequence
