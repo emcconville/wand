@@ -2523,3 +2523,29 @@ def test_primary_points(fx_asset):
             img.red_primary = 0xDEADBEEF
         with raises(TypeError):
             img.white_point = 0xDEADBEEF
+
+
+def test_get_interpolate_method(fx_asset):
+    with Image(filename='rose:') as img:
+        expected = 'undefined'
+        assert img.interpolate_method == expected
+
+
+def test_set_interpolate_method(fx_asset):
+    with Image(filename='rose:') as img:
+        expected = 'spline'
+        img.interpolate_method = expected
+        assert img.interpolate_method == expected
+
+
+def test_get_interlace_scheme(fx_asset):
+    with Image(filename='rose:') as img:
+        expected = 'no'
+        assert img.interlace_scheme == expected
+
+
+def test_set_interlace_scheme(fx_asset):
+    with Image(filename='rose:') as img:
+        expected = 'plane'
+        img.interlace_scheme = expected
+        assert img.interlace_scheme == expected

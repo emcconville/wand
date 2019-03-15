@@ -31,8 +31,8 @@ __all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COLORSPACE_TYPES',
            'COMPARE_METRICS', 'COMPOSITE_OPERATORS', 'COMPRESSION_TYPES',
            'DISPOSE_TYPES', 'DISTORTION_METHODS', 'DITHER_METHODS',
            'EVALUATE_OPS', 'FILTER_TYPES', 'FUNCTION_TYPES', 'GRAVITY_TYPES',
-           'IMAGE_LAYER_METHOD', 'IMAGE_TYPES', 'KERNEL_INFO_TYPES',
-           'MORPHOLOGY_METHODS', 'ORIENTATION_TYPES',
+           'IMAGE_LAYER_METHOD', 'IMAGE_TYPES', 'INTERLACE_TYPES',
+           'KERNEL_INFO_TYPES', 'MORPHOLOGY_METHODS', 'ORIENTATION_TYPES',
            'PIXEL_INTERPOLATE_METHODS',
            'STORAGE_TYPES', 'VIRTUAL_PIXEL_METHOD', 'UNIT_TYPES',
            'BaseImage', 'ChannelDepthDict', 'ChannelImageDict',
@@ -612,6 +612,22 @@ if MAGICK_VERSION_NUMBER >= 0x700:
                    'palette', 'palettealpha', 'truecolor', 'truecoloralpha',
                    'colorseparation', 'colorseparationalpha', 'optimize',
                    'palettebilevelalpha')
+
+
+#: (:class:`tuple`) The list of interlace schemes.
+#:
+#: - ``'undefined'``
+#: - ``'no'``
+#: - ``'line'``
+#: - ``'plane'``
+#: - ``'partition'``
+#: - ``'gif'``
+#: - ``'jpeg'``
+#: - ``'png'``
+#:
+#: .. versionadded:: 0.5.2
+INTERLACE_TYPES = ('undefined', 'no', 'line', 'plane', 'partition', 'gif',
+                   'jpeg', 'png')
 
 
 #: (:class:`tuple`) The list of builtin kernels.
@@ -1621,6 +1637,40 @@ class BaseImage(Resource):
 
         """
         return HistogramDict(self)
+
+    @property
+    def interlace_scheme(self):
+        """(:class:`basestring`) The interlace used by the image.
+        See :const:`INTERLACE_TYPES`.
+
+        .. versionadded:: 0.5.2
+        """
+        scheme_idx = library.MagickGetInterlaceScheme(self.wand)
+        return INTERLACE_TYPES[scheme_idx]
+
+    @interlace_scheme.setter
+    def interlace_scheme(self, scheme):
+        if scheme not in INTERLACE_TYPES:
+            raise ValueError('scheme must be in INTERLACE_TYPES')
+        scheme_idx = INTERLACE_TYPES.index(scheme)
+        library.MagickSetInterlaceScheme(self.wand, scheme_idx)
+
+    @property
+    def interpolate_method(self):
+        """(:class:`basestring`) The interpolation method of the image.
+        See :const:`PIXEL_INTERPOLATE_METHODS`.
+
+        .. versionadded:: 0.5.2
+        """
+        method_idx = library.MagickGetImageInterpolateMethod(self.wand)
+        return PIXEL_INTERPOLATE_METHODS[method_idx]
+
+    @interpolate_method.setter
+    def interpolate_method(self, method):
+        if method not in PIXEL_INTERPOLATE_METHODS:
+            raise ValueError('method must be in PIXEL_INTERPOLATE_METHOD')
+        method_idx = PIXEL_INTERPOLATE_METHODS.index(method)
+        library.MagickSetImageInterpolateMethod(self.wand, method_idx)
 
     @property
     def loop(self):
@@ -4735,7 +4785,7 @@ class BaseImage(Resource):
         :type amplitude: :class:`numbers.Real`
         :param wave_length: width of wave form.
         :type wave_length: :class:`numbers.Real`
-        :param method: pixel interpolation method. Only availabel with
+        :param method: pixel interpolation method. Only available with
                        ImageMagick-7. See :const:`PIXEL_INTERPOLATE_METHODS`
         :type method: :class:`basestring`
 

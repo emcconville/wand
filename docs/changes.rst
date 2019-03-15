@@ -14,13 +14,15 @@ To be released.
  - Import :mod:`collections.abc` explicitly. [:issue:`398` by Stefan Naumann]
  - Fixed memory leak in :class:`~wand.image.HistogramDict`. [:issue:`397`]
  - Added :meth:`Image.implode() <wand.image.BaseImage.implode>` method.
+ - Added :meth:`Image.vignette() <wand.image.BaseImage.vignette>`.
  - Added :meth:`Image.wave() <wand.image.BaseImage.wave>`.
  - Added :meth:`Image.white_threshold() <wand.image.BaseImage.white_threshold>`.
- - Added :meth:`Image.vignette() <wand.image.BaseImage.vignette>`.
- - Added :attr:`Image.blue_primary <wand.image.BaseImage.blue_primary` attribute.
- - Added :attr:`Image.green_primary <wand.image.BaseImage.green_primary` attribute.
- - Added :attr:`Image.red_primary <wand.image.BaseImage.red_primary` attribute.
- - Added :attr:`Image.white_point <wand.image.BaseImage.white_point` attribute.
+ - Added :attr:`Image.blue_primary <wand.image.BaseImage.blue_primary>` attribute.
+ - Added :attr:`Image.green_primary <wand.image.BaseImage.green_primary>` attribute.
+ - Added :attr:`Image.interlace_scheme <wand.image.BaseImage.interlace_scheme>` attribute.
+ - Added :attr:`Image.interpolate_method <wand.image.BaseImage.interpolate_method>` attribute.
+ - Added :attr:`Image.red_primary <wand.image.BaseImage.red_primary>` attribute.
+ - Added :attr:`Image.white_point <wand.image.BaseImage.white_point>` attribute.
 
 
 .. _changelog-0.5.1:
