@@ -14,7 +14,7 @@ To be released.
  - Import :mod:`collections.abc` explicitly. [:issue:`398` by Stefan Naumann]
  - Fixed memory leak in :class:`~wand.image.HistogramDict`. [:issue:`397`]
  - Fixed compression & compression quality bug. [:issue:`202` & :issue:`278`]
- - :meth:`Image.read() <wand.image.Image.read>` will raise :class:`RuntimeError` if
+ - :meth:`Image.read() <wand.image.Image.read>` will raise :class:`~wand.exceptions.WandRuntimeError` if
    :c:func:`MagickReadImage` returns :c:type:`MagickFalse`, but does not emit exception. [:issue:`319`]
  - Added :meth:`Image.implode() <wand.image.BaseImage.implode>` method.
  - Added :meth:`Image.vignette() <wand.image.BaseImage.vignette>` method.

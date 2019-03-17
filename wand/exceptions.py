@@ -50,6 +50,13 @@ class WandLibraryVersionError(WandException):
     """
 
 
+class WandRuntimeError(WandException, RuntimeError):
+    """Generic class for Wand-related runtime errors.
+
+    .. versionadded:: 0.5.2
+    """
+
+
 #: (:class:`list`) A list of error/warning domains, these descriptions and
 #: codes. The form of elements is like: (domain name, description, codes).
 DOMAIN_MAP = [

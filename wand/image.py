@@ -20,7 +20,7 @@ from .api import libc, libmagick, library
 from .color import Color
 from .compat import (abc, binary, binary_type, encode_filename, file_types,
                      PY3, string_type, text, xrange)
-from .exceptions import MissingDelegateError, WandException
+from .exceptions import MissingDelegateError, WandException, WandRuntimeError
 from .font import Font
 from .resource import DestroyedResourceError, Resource
 from .cdefs.structures import GeomertyInfo
@@ -5309,7 +5309,7 @@ class Image(BaseImage):
             msg = ('MagickReadImage returns false, but did raise ImageMagick '
                    'exception. This can occurs when a delegate is missing, or '
                    'returns EXIT_SUCCESS without generating a raster.')
-            raise RuntimeError(msg)
+            raise WandRuntimeError(msg)
 
     def save(self, file=None, filename=None):
         """Saves the image into the ``file`` or ``filename``. It takes
