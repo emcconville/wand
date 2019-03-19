@@ -9,7 +9,7 @@ except ImportError:
     import urllib2
 
 from py.path import local
-from pytest import fixture, hookimpl, skip
+from pytest import fixture, hookimpl, skip, mark
 
 from wand.display import display as display_fn
 from wand.image import Image
@@ -24,20 +24,22 @@ def pytest_addoption(parser):
                           'display() fixture if present.  Useful for '
                           'debugging on CI',
                      default=os.environ.get('IMGUR_CLIENT_ID'))
-    parser.addoption('--no-pdf', action='store_true', dest='nopdf',
-                     help='Skip any test with PDF documents.',
-                     default=False)
+    parser.addoption('--skip-pdf', action='store_true',
+                     help='Skip any test with PDF documents.')
 
 
-def pytest_runtest_setup(item):
-    if 'slow' in item.keywords:
-        try:
-            skip_value = item.config.getoption('--skip-slow')
-        except ValueError:
-            pass
-        else:
-            if skip_value:
-                skip('skipped; --skip-slow option is used')
+def pytest_collection_modifyitems(config, items):
+    skip_slow = False
+    skip_pdf = False
+    if config.getoption('--skip-slow'):
+        skip_slow = mark.skip('skipped; --skip-slow option is used')
+    if config.getoption('--skip-pdf'):
+        skip_pdf = mark.skip('skipped; --skip-pdf option is used')
+    for item in items:
+        if skip_slow and 'slow' in item.keywords:
+            item.add_marker(skip_slow)
+        if skip_pdf and 'pdf' in item.keywords:
+            item.add_marker(skip_pdf)
 
 
 @hookimpl(tryfirst=True, hookwrapper=True)
