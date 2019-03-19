@@ -1,6 +1,12 @@
-docs/_build
+bin
 build
 dist
+docs/_build
+htmlcov
+issues
+patches
+support
+run.py
 .tox
 *.pyc
 *.egg
