@@ -26,6 +26,8 @@ def pytest_addoption(parser):
                      default=os.environ.get('IMGUR_CLIENT_ID'))
     parser.addoption('--skip-pdf', action='store_true',
                      help='Skip any test with PDF documents.')
+    parser.addoption('--no-pdf', action='store_true',
+                     help='Alias to --skip-pdf.')
 
 
 def pytest_collection_modifyitems(config, items):
@@ -34,6 +36,8 @@ def pytest_collection_modifyitems(config, items):
     if config.getoption('--skip-slow'):
         skip_slow = mark.skip('skipped; --skip-slow option is used')
     if config.getoption('--skip-pdf'):
+        skip_pdf = mark.skip('skipped; --skip-pdf option is used')
+    if config.getoption('--no-pdf'):
         skip_pdf = mark.skip('skipped; --skip-pdf option is used')
     for item in items:
         if skip_slow and 'slow' in item.keywords:
