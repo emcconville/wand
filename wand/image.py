@@ -3387,7 +3387,7 @@ class BaseImage(Resource):
         expected_len = (width - x) * (height - y) * len(channel_map)
         given_len = len(data)
         if expected_len != given_len:
-            msg = 'data length should be {0}, not {0}.'.format(
+            msg = 'data length should be {0}, not {1}.'.format(
                 expected_len,
                 given_len
             )
