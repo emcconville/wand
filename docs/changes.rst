@@ -9,7 +9,7 @@ Wand Changelog
 Version 0.5.2
 -------------
 
-To be released.
+Released on March 24, 2019.
 
  - Import :mod:`collections.abc` explicitly. [:issue:`398` by Stefan Naumann]
  - Fixed memory leak in :class:`~wand.image.HistogramDict`. [:issue:`397`]
