@@ -1642,6 +1642,16 @@ class BaseImage(Resource):
         Keys are :class:`~wand.color.Color` objects, and values are
         the number of pixels.
 
+        .. tip::
+
+            True-color photos can have millions of color values. If performance
+            is more valuable than accuracy, remember to :meth:`quantize` the
+            image before generating a :class:`HistogramDict`.
+
+                with Image(filename='hd_photo.jpg') as img:
+                    img.quantize(255, 'RGB', 0, False, False)
+                    hist = img.histogram
+
         .. versionadded:: 0.3.0
 
         """
