@@ -3965,6 +3965,31 @@ class BaseImage(Resource):
             self.raise_exception()
 
     @manipulative
+    def remap(self, affinity=None, method='no'):
+        """Rebuild image palette with closest color from given affinity image.
+
+        :param affinity: reference image.
+        :type affinity: :class:`BaseImage`
+        :param method: dither method. See :const:`DITHER_METHODS`.
+                       Default is ``'no'`` dither.
+        :type method: :class:`basestring`
+
+        .. versionadded:: 0.5.3
+        """
+        if not isinstance(affinity, BaseImage):
+            raise TypeError('Expecting affinity to be a BaseImage, not ' +
+                            repr(affinity))
+        if not isinstance(method, string_type):
+            raise TypeError('expecting string, not ' + repr(method))
+        if method not in DITHER_METHODS:
+            raise ValueError("method must be 'no', 'riemersma', or " +
+                             "'floyd_steinberg'")
+        method_idx = DITHER_METHODS.index(method)
+        r = library.MagickRemapImage(self.wand, affinity.wand, method_idx)
+        if not r:
+            self.raise_exception()
+
+    @manipulative
     def resample(self, x_res=None, y_res=None, filter='undefined', blur=1):
         """Adjust the number of pixels in an image so that when displayed at
         the given Resolution or Density the image will still look the same size

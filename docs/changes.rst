@@ -4,6 +4,17 @@ Wand Changelog
 0.5 series
 ~~~~~~~~~~
 
+
+.. _changelog-0.5.3:
+
+Version 0.5.3
+-------------
+
+Unreleased.
+
+ - Added :meth:`Image.remap() <wand.image.BaseImage.remap>` method.
+
+
 .. _changelog-0.5.2:
 
 Version 0.5.2

@@ -1010,6 +1010,21 @@ def test_quantize(fx_asset):
         assert len(colors) <= number_colors
 
 
+def test_remap(fx_asset):
+    with Image(filename='rose:') as img:
+        was = img.signature
+        trim_path = str(fx_asset.join('trim-color-test.png'))
+        with Image(filename=trim_path) as palette:
+            img.remap(palette)
+        assert was != img.signature
+        with raises(TypeError):
+            img.remap(0xDEADBEEF)
+        with raises(TypeError):
+            img.remap(img, method=0xDEADBEEF)
+        with raises(ValueError):
+            img.remap(img, method='none')
+
+
 @mark.parametrize(('density', 'expected_size'), [
     ((72, 72), (800, 600)),
     ((36, 36), (400, 300)),
