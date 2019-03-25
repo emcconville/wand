@@ -113,6 +113,22 @@ def test_coalesce(fx_asset):
             assert img1.size == img2.size
 
 
+def test_color_matrix():
+    with Image(filename='rose:') as img:
+        was = img.signature
+        matrix = [
+            0.9, 0.0, 0.0,
+            0.0, 0.9, 0.0,
+            0.0, 0.0, 1.3
+        ]
+        img.color_matrix(matrix)
+        assert was != img.signature
+        with raises(TypeError):
+            img.color_matrix(0xDEADBEEF)
+        with raises(ValueError):
+            img.color_matrix((0,0,0,0,0))
+
+
 def test_compare(fx_asset):
     with Image(filename=str(fx_asset.join('beach.jpg'))) as orig:
         with Image(filename=str(fx_asset.join('watermark_beach.jpg'))) as img:

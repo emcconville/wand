@@ -2375,6 +2375,35 @@ class BaseImage(Resource):
         self.wand = r
 
     @manipulative
+    def color_matrix(self, matrix):
+        """Adjust color values by applying a matrix transform per pixel.
+
+        :param matrix: List of doubles.
+        :type matrix: :class:`Sequence`
+
+        .. versionadded:: 0.5.3
+        """
+        if not isinstance(matrix, abc.Sequence):
+            raise TypeError('matrix must be a sequence of real numbers, not ' +
+                            repr(matrix))
+        matrix_length = len(matrix)
+        # Validate it's a perfect square
+        side_length = int(matrix_length ** 0.5)
+        if matrix_length != (side_length ** 2):
+            raise ValueError('length of matrix must be square (e.g. 5*5=25)')
+        kernel = '{0}x{0}:{1}'.format(side_length, ','.join(map(str, matrix)))
+        kernel = binary(kernel)
+        exception_info = libmagick.AcquireExceptionInfo()
+        if MAGICK_VERSION_NUMBER < 0x700:
+            kernel_info = libmagick.AcquireKernelInfo(kernel)
+        else:
+            kernel_info = libmagick.AcquireKernelInfo(kernel, exception_info)
+        exception_info = libmagick.DestroyExceptionInfo(exception_info)
+        r = library.MagickColorMatrixImage(self.wand, kernel_info)
+        if not r:
+            self.raise_exception()
+
+    @manipulative
     def compare(self, image, metric='undefined'):
         """Compares an image to a reconstructed image.
 
