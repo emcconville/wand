@@ -590,7 +590,7 @@ IMAGE_LAYER_METHOD = ('undefined', 'coalesce', 'compareany', 'compareclear',
 #: - ``'truecoloralpha'`` - Only available with ImageMagick-7
 #: - ``'truecolormatte'`` - Only available with ImageMagick-6
 #: - ``'colorseparation'``
-#: - ``'colorseparationaplha'`` - Only available with ImageMagick-7
+#: - ``'colorseparationalpha'`` - Only available with ImageMagick-7
 #: - ``'colorseparationmatte'`` - Only available with ImageMagick-6
 #: - ``'optimize'``
 #: - ``'palettebilevelalpha'`` - Only available with ImageMagick-7
@@ -1285,6 +1285,15 @@ class BaseImage(Resource):
             r = library.MagickSetImageBluePrimary(self.wand, x, y, z)
         if not r:
             self.raise_exception()
+
+    @property
+    def colors(self):
+        """(:class:`numbers.Integral`) Count of unique colors used within the
+        image. This is READ ONLY property.
+
+        .. versionadded:: 0.5.2
+        """
+        return library.MagickGetImageColors(self.wand)
 
     @property
     def colorspace(self):
@@ -2374,25 +2383,99 @@ class BaseImage(Resource):
             self.raise_exception()
         self.wand = r
 
+    def color_map(self, index, color=None):
+        """Get & Set a color at a palette index. If ``color`` is given,
+        the color at the index location will be set & returned. Omitting the
+        ``color`` argument will only return the color value at index.
+
+        Valid indexes are between ``0`` and total :attr:`colors` of the image.
+
+        .. note::
+
+            Ensure the image type is set to ``'palette'`` before calling the
+            :meth:`color_map` method. For example::
+
+                with Image(filename='graph.png') as img:
+                    img.type = 'palette'
+                    palette = [img.color_map(idx) for idx in range(img.colors)]
+                    # ...
+
+        :param index: The color postion of the image palette.
+        :type index: :class:`numbers.Integral`
+        :param color: Optional color to _set_ at the given index.
+        :type color: :class:`wand.color.Color`
+        :returns: Color at index.
+        :rtype: :class:`wand.color.Color`
+
+        .. versionadded:: 0.5.3
+        """
+        if not isinstance(index, numbers.Integral):
+            raise TypeError('index most be an integer, not ' + repr(index))
+        if index < 0 or index >= self.colors:
+            raise ValueError('index is out of palette range')
+        if color:
+            if isinstance(color, string_type):
+                color = Color(color)
+            if not isinstance(color, Color):
+                raise TypeError('expecting in instance of Color, not ' +
+                                repr(color))
+            with color:
+                r = library.MagickSetImageColormapColor(self.wand,
+                                                        index,
+                                                        color.resource)
+                if not r:
+                    self.raise_exception()
+        else:
+            color_ptr = library.NewPixelWand()
+            r = library.MagickGetImageColormapColor(self.wand,
+                                                    index,
+                                                    color_ptr)
+            if not r:
+                color_ptr = library.DestroyPixelWand(color_ptr)
+                self.raise_exception()
+            color = Color.from_pixelwand(color_ptr)
+            color_ptr = library.DestroyPixelWand(color_ptr)
+        return color
+
     @manipulative
     def color_matrix(self, matrix):
         """Adjust color values by applying a matrix transform per pixel.
 
-        :param matrix: List of doubles.
-        :type matrix: :class:`Sequence`
+        Matrix should be given as 2D list, with a max size of 6x6::
+
+            matrix = [
+                [1.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0],
+                [0.0, 0.0, 1.0],
+            ]
+
+        See `color-matrix`__ for examples.
+
+        __ https://www.imagemagick.org/Usage/color_mods/#color-matrix
+
+        :param matrix: 2D List of doubles.
+        :type matrix: :class:`collections.abc.Sequence`
 
         .. versionadded:: 0.5.3
         """
         if not isinstance(matrix, abc.Sequence):
-            raise TypeError('matrix must be a sequence of real numbers, not ' +
-                            repr(matrix))
-        matrix_length = len(matrix)
-        # Validate it's a perfect square
-        side_length = int(matrix_length ** 0.5)
-        if matrix_length != (side_length ** 2):
-            raise ValueError('length of matrix must be square (e.g. 5*5=25)')
-        kernel = '{0}x{0}:{1}'.format(side_length, ','.join(map(str, matrix)))
-        kernel = binary(kernel)
+            raise TypeError('matrix must be a sequence, not ' + repr(matrix))
+        rows = len(matrix)
+        columns = None
+        values = []
+        for row in matrix:
+            if not isinstance(row, abc.Sequence):
+                raise TypeError('nested row must be a sequence, not ' +
+                                repr(row))
+            if columns is None:
+                columns = len(row)
+            elif columns != len(row):
+                raise ValueError('rows have diffrent column length')
+            for column in row:
+                values.append(str(column))
+        kernel = binary('{0}x{1}:{2}'.format(columns,
+                                             rows,
+                                             ','.join(values)))
         exception_info = libmagick.AcquireExceptionInfo()
         if MAGICK_VERSION_NUMBER < 0x700:
             kernel_info = libmagick.AcquireKernelInfo(kernel)
@@ -2719,6 +2802,20 @@ class BaseImage(Resource):
             self.raise_exception()
             if reset_coords:
                 self.reset_coords()
+
+    def cycle_color_map(self, offset=1):
+        """Shift the image color-map by a given offset.
+
+        :param offset: number of steps to rotate index by.
+        :type offset: :class:`numbers.Integral`
+
+        .. versionadded:: 0.5.3
+        """
+        if not isinstance(offset, numbers.Integral):
+            raise TypeError('offset must be an integer, not' + repr(offset))
+        r = library.MagickCycleColormapImage(self.wand, offset)
+        if not r:
+            self.raise_exception()
 
     @manipulative
     def deconstruct(self):

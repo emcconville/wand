@@ -113,20 +113,34 @@ def test_coalesce(fx_asset):
             assert img1.size == img2.size
 
 
+def test_color_map(fx_asset):
+    with Image(filename=str(fx_asset.join('trim-color-test.png'))) as img:
+        img.type = 'palette'
+        assert img[0, 0] == img.color_map(0)
+        orange = Color('ORANGE')
+        assert orange == img.color_map(0, orange)
+        assert orange == img.color_map(0, 'ORANGE')
+        assert orange == img.color_map(0)
+        with raises(TypeError):
+            img.color_map('NaN')
+        with raises(TypeError):
+            img.color_map(0, 0xDEADBEEF)
+
+
 def test_color_matrix():
     with Image(filename='rose:') as img:
         was = img.signature
         matrix = [
-            0.9, 0.0, 0.0,
-            0.0, 0.9, 0.0,
-            0.0, 0.0, 1.3
+            [0.9, 0.0, 0.0],
+            [0.0, 0.9, 0.0],
+            [0.0, 0.0, 1.3]
         ]
         img.color_matrix(matrix)
         assert was != img.signature
         with raises(TypeError):
             img.color_matrix(0xDEADBEEF)
-        with raises(ValueError):
-            img.color_matrix((0,0,0,0,0))
+        with raises(TypeError):
+            img.color_matrix((0, 0, 0, 0, 0))
 
 
 def test_compare(fx_asset):
@@ -328,6 +342,18 @@ def test_crop_issue367(fx_asset):
             with Image(img) as actual:
                 actual.crop(width=200, height=200, gravity=gravity)
                 assert actual.size == expected
+
+
+def test_cycle_color_map(fx_asset):
+    with Image(filename=str(fx_asset.join('trim-color-test.png'))) as img:
+        img.type = 'palette'
+        lime = img[0, 0]
+        img.cycle_color_map(1)
+        assert img[-1, 0] == lime
+        img.cycle_color_map(-1)
+        assert img[0, 0] == lime
+        with raises(TypeError):
+            img.cycle_color_map('NaN')
 
 
 def test_deskew(fx_asset):

@@ -12,7 +12,12 @@ Version 0.5.3
 
 Unreleased.
 
+ - Support color map / palette manipulation. [:issue:`403`]
+     - Added :attr:`Image.colors <wand.image.BaseImage.colors>` property.
+     - Added :meth:`Image.color_map() <wand.image.BaseImage.color_map>` method.
+     - Added :meth:`Image.cycle_color_map() <wand.image.BaseImage.cycle_color_map>` method.
  - Added :meth:`Image.remap() <wand.image.BaseImage.remap>` method.
+ - Added :meth:`Image.color_matrix() <wand.image.BaseImage.color_matrix>` method.
 
 
 .. _changelog-0.5.2:

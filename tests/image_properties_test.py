@@ -100,6 +100,11 @@ def test_channel_images(fx_asset):
                     assert i.channel_images[name] == expected
 
 
+def test_colors(fx_asset):
+    with Image(filename=str(fx_asset.join('trim-color-test.png'))) as img:
+        assert img.colors == 2
+
+
 def test_colorspace_get(fx_asset):
     """Gets the image colorspace"""
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
