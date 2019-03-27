@@ -1291,7 +1291,7 @@ class BaseImage(Resource):
         """(:class:`numbers.Integral`) Count of unique colors used within the
         image. This is READ ONLY property.
 
-        .. versionadded:: 0.5.2
+        .. versionadded:: 0.5.3
         """
         return library.MagickGetImageColors(self.wand)
 
@@ -2180,6 +2180,42 @@ class BaseImage(Resource):
             self._auto_orient()
 
     @manipulative
+    def black_threshold(self, threshold):
+        """Forces all pixels above a given color as black. Leaves pixels
+        above threshold unaltered.
+
+        :param threshold: Color to be referenced as a threshold.
+        :type threshold: :class:`Color`
+
+        .. versionadded:: 0.5.3
+        """
+        if isinstance(threshold, string_type):
+            threshold = Color(threshold)
+        if not isinstance(threshold, Color):
+            raise TypeError('expecting a Color instance, not ' +
+                            repr(threshold))
+        with threshold:
+            r = library.MagickBlackThresholdImage(self.wand,
+                                                  threshold.resource)
+        if not r:
+            self.raise_exception()
+
+    @manipulative
+    def blue_shift(self, factor=1.5):
+        """Mutes colors of the image by shifting blue values.
+
+        :param factor: Amount to adjust values.
+        :type factor: :class:`numbers.Real`
+
+        .. versionadded:: 0.5.3
+        """
+        if not isinstance(factor, numbers.Real):
+            raise TypeError('expecting real number, not ' + repr(factor))
+        r = library.MagickBlueShiftImage(self.wand, factor)
+        if not r:
+            self.raise_exception()
+
+    @manipulative
     def blur(self, radius, sigma):
         """Blurs the image.  We convolve the image with a gaussian operator
         of the given ``radius`` and standard deviation (``sigma``).
@@ -2483,6 +2519,36 @@ class BaseImage(Resource):
             kernel_info = libmagick.AcquireKernelInfo(kernel, exception_info)
         exception_info = libmagick.DestroyExceptionInfo(exception_info)
         r = library.MagickColorMatrixImage(self.wand, kernel_info)
+        if not r:
+            self.raise_exception()
+
+    @manipulative
+    def colorize(self, color=None, alpha=None):
+        """Blends a given fill color over the image. The amount of blend is
+        determined by the color channels given by the ``alpha`` argument.
+
+        :param color: Color to paint image with.
+        :type color: :class:`wand.color.Color`
+        :param alpha: Defines how to blend color.
+        :type alpha: :class:`wand.color.Color`
+
+        .. versionadded:: 0.5.3
+        """
+        if isinstance(color, string_type):
+            color = Color(color)
+        if not isinstance(color, Color):
+            raise TypeError('color must be an instance of Color, not ' +
+                            repr(color))
+        if isinstance(alpha, string_type):
+            alpha = Color(alpha)
+        if not isinstance(alpha, Color):
+            raise TypeError('color must be an instance of Color, not ' +
+                            repr(alpha))
+        with color:
+            with alpha:
+                r = library.MagickColorizeImage(self.wand,
+                                                color.resource,
+                                                alpha.resource)
         if not r:
             self.raise_exception()
 

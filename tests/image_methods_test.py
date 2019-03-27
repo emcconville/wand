@@ -39,6 +39,24 @@ def test_auto_orientation(fx_asset):
             assert img[-1, -1] == original[-1, 0]
 
 
+def test_black_threshold(fx_asset):
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.black_threshold(Color('gray(50%)'))
+        assert was != img.signature
+        with raises(TypeError):
+            img.white_threshold(0xDEADBEEF)
+
+
+def test_blue_shift(fx_asset):
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.blue_shift(1.5)
+        assert was != img.signature
+        with raises(TypeError):
+            img.blue_shift('NaN')
+
+
 def test_blur(fx_asset, display):
     with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
         before = img[100, 100]
@@ -141,6 +159,17 @@ def test_color_matrix():
             img.color_matrix(0xDEADBEEF)
         with raises(TypeError):
             img.color_matrix((0, 0, 0, 0, 0))
+
+
+def test_colorize():
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.colorize('blue', 'blue')
+        assert was != img.signature
+        with raises(TypeError):
+            img.colorize(0xDEADBEEF, Color('blue'))
+        with raises(TypeError):
+            img.colorize(Color('blue'), 0xDEADBEEF)
 
 
 def test_compare(fx_asset):

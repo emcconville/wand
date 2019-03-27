@@ -16,8 +16,11 @@ Unreleased.
      - Added :attr:`Image.colors <wand.image.BaseImage.colors>` property.
      - Added :meth:`Image.color_map() <wand.image.BaseImage.color_map>` method.
      - Added :meth:`Image.cycle_color_map() <wand.image.BaseImage.cycle_color_map>` method.
- - Added :meth:`Image.remap() <wand.image.BaseImage.remap>` method.
+ - Added :meth:`Image.black_threshold() <wand.image.BaseImage.black_threshold>` method.
+ - Added :meth:`Image.blue_shift() <wand.image.BaseImage.blue_shift>` method.
  - Added :meth:`Image.color_matrix() <wand.image.BaseImage.color_matrix>` method.
+ - Added :meth:`Image.colorize() <wand.image.BaseImage.colorize>` method.
+ - Added :meth:`Image.remap() <wand.image.BaseImage.remap>` method.
 
 
 .. _changelog-0.5.2:
