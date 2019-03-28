@@ -2506,7 +2506,7 @@ class BaseImage(Resource):
             if columns is None:
                 columns = len(row)
             elif columns != len(row):
-                raise ValueError('rows have diffrent column length')
+                raise ValueError('rows have different column length')
             for column in row:
                 values.append(str(column))
         kernel = binary('{0}x{1}:{2}'.format(columns,
@@ -2519,6 +2519,7 @@ class BaseImage(Resource):
             kernel_info = libmagick.AcquireKernelInfo(kernel, exception_info)
         exception_info = libmagick.DestroyExceptionInfo(exception_info)
         r = library.MagickColorMatrixImage(self.wand, kernel_info)
+        kernel_info = libmagick.DestroyKernelInfo(kernel_info)
         if not r:
             self.raise_exception()
 
