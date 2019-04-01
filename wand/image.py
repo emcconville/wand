@@ -5269,6 +5269,86 @@ class Image(BaseImage):
         with self.convert('png') as cloned:
             return cloned.make_blob()
 
+    @classmethod
+    def from_array(cls, array, channel_map=None, storage=None):
+        """Create an image instance from a :mod:`numpy` array, or any other datatype
+        that implements `__array_interface__`__ protocol.
+
+        Use the optional ``channel_map`` & ``storage`` arguments to specify
+        the order of color channels & data size. If ``channel_map`` is omitted,
+        this method will will guess ``"RGB"``, ``"I"``, or ``"CMYK"`` based on
+        array shape. If ``storage`` is omitted, this method will reference the
+        array's ``typestr`` value, and raise a :class:`ValueError` if
+        storage-type can not be mapped.
+
+        Float values must be normalized between `0.0` and `1.0`, and signed
+        integers should be converted to unsigned values between `0` and
+        max value of type.
+
+        __ https://docs.scipy.org/doc/numpy/reference/arrays.interface.html
+
+        :param array: Numpy array of pixel values.
+        :type array: :class:`numpy.array`
+        :param channel_map: Color channel layout.
+        :type channel_map: :class:`basestring`
+        :param storage: Datatype per pixel part.
+        :type storage: :class:`basestring`
+        :returns: New instance of an image.
+        :rtype: :class:`~wand.image.Image`
+
+        .. versionadded:: 0.5.3
+        """
+        arr_itr = array.__array_interface__
+        typestr = arr_itr['typestr']
+        shape = arr_itr['shape']
+        if storage is None:
+            # Attempt to guess storage
+            if 'u1' in typestr:
+                storage = 'char'
+            elif 'i1' in typestr:
+                storage = 'short'
+            elif 'u2' in typestr:
+                storage = 'short'
+            elif 'i2' in typestr:
+                storage = 'short'
+            elif 'u4' in typestr:
+                storage = 'integer'
+            elif 'i4' in typestr:
+                storage = 'integer'
+            elif 'u8' in typestr:
+                storage = 'long'
+            elif 'i8' in typestr:
+                storage = 'long'
+            elif 'f4' in typestr:
+                storage = 'float'
+            elif 'f8' in typestr:
+                storage = 'double'
+            else:
+                raise ValueError('Unable to guess storage type.')
+        if channel_map is None:
+            # Attempt to guess channel map
+            if len(shape) == 3:
+                if shape[2] < 5:
+                    channel_map = 'RGBA'[0:shape[2]]
+                else:
+                    channel_map = 'CMYKA'[0:shape[2]]
+            else:
+                channel_map = 'I'
+        storage_idx = STORAGE_TYPES.index(storage)
+        width, height = shape[:2]
+        wand = library.NewMagickWand()
+        data_ptr = array.ctypes.data_as(ctypes.c_void_p)
+        instance = cls(BaseImage(wand))
+        r = library.MagickConstituteImage(instance.wand,
+                                          width,
+                                          height,
+                                          binary(channel_map),
+                                          storage_idx,
+                                          data_ptr)
+        if not r:
+            instance.raise_exception(cls)
+        return instance
+
     @property
     def animation(self):
         return (self.mimetype in ('image/gif', 'image/x-gif') and
