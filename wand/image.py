@@ -1118,9 +1118,11 @@ class BaseImage(Resource):
                                             ctypes.byref(c_buffer))
         if not r:
             self.raise_exception()
-        return dict(data=c_buffer,
+        return dict(data=(ctypes.addressof(c_buffer), True),
                     shape=(width, height, channel_number),
-                    typestr='|u1')
+                    typestr='|u1',
+                    version=3,
+                    _c_buffer=c_buffer)  # Need to hold reference count.
 
     @property
     def alpha_channel(self):
@@ -5299,32 +5301,23 @@ class Image(BaseImage):
         .. versionadded:: 0.5.3
         """
         arr_itr = array.__array_interface__
-        typestr = arr_itr['typestr']
-        shape = arr_itr['shape']
+        typestr = arr_itr['typestr']  # Required by interface.
+        shape = arr_itr['shape']  # Required by interface.
+        data_ptr, flag = arr_itr.get('data', (None, False))  # Optional
+        strides = arr_itr.get('strides', None)  # Optional
         if storage is None:
             # Attempt to guess storage
-            if 'u1' in typestr:
-                storage = 'char'
-            elif 'i1' in typestr:
-                storage = 'short'
-            elif 'u2' in typestr:
-                storage = 'short'
-            elif 'i2' in typestr:
-                storage = 'short'
-            elif 'u4' in typestr:
-                storage = 'integer'
-            elif 'i4' in typestr:
-                storage = 'integer'
-            elif 'u8' in typestr:
-                storage = 'long'
-            elif 'i8' in typestr:
-                storage = 'long'
-            elif 'f4' in typestr:
-                storage = 'float'
-            elif 'f8' in typestr:
-                storage = 'double'
-            else:
-                raise ValueError('Unable to guess storage type.')
+            storage_map = dict(u1='char', i1='char',
+                               u2='short', i2='short',
+                               u4='integer', i4='integer',
+                               u8='long', i8='integer',
+                               f4='float', f8='double')
+            for token in storage_map:
+                if token in typestr:
+                    storage = storage_map[token]
+                    break
+            if storage is None:
+                raise ValueError('Unable to determine storage type.')
         if channel_map is None:
             # Attempt to guess channel map
             if len(shape) == 3:
@@ -5334,10 +5327,11 @@ class Image(BaseImage):
                     channel_map = 'CMYKA'[0:shape[2]]
             else:
                 channel_map = 'I'
+        if data_ptr is None or strides is not None:
+            data_ptr = array.ctypes.data_as(ctypes.c_void_p)
         storage_idx = STORAGE_TYPES.index(storage)
         width, height = shape[:2]
         wand = library.NewMagickWand()
-        data_ptr = array.ctypes.data_as(ctypes.c_void_p)
         instance = cls(BaseImage(wand))
         r = library.MagickConstituteImage(instance.wand,
                                           width,
