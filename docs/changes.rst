@@ -1,6 +1,8 @@
 Wand Changelog
 ==============
 
+.. _changelog-0.5:
+
 0.5 series
 ~~~~~~~~~~
 

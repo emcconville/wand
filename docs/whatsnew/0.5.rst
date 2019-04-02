@@ -2,7 +2,7 @@ What's new in Wand 0.5?
 =======================
 
 This guide doesn't cover all changes in 0.5.  See also the full list of
-changes in :ref:`changelog-0.5.0`.
+changes in :ref:`changelog-0.5`.
 
 Resource Limits
 ---------------

@@ -70,9 +70,6 @@ List archive
 Stack Overflow tag (Q&A)
    http://stackoverflow.com/questions/tagged/wand
 
-Quora topic (Q&A)
-   https://www.quora.com/Wand-ImageMagick-binding
-
 IRC
    `irc://irc.freenode.net/wand <http://webchat.freenode.net/?channels=wand>`_
 
