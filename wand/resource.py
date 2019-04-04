@@ -10,12 +10,13 @@ import ctypes
 import warnings
 
 from .api import libmagick, library
-from .compat import abc, string_type
+from .compat import abc, string_type, text
 from .exceptions import TYPE_MAP, WandException
 from .version import MAGICK_VERSION_NUMBER
 
 __all__ = ('genesis', 'terminus', 'increment_refcount', 'decrement_refcount',
-           'limits', 'Resource', 'ResourceLimits', 'DestroyedResourceError')
+           'limits', 'Resource', 'ResourceLimits', 'DestroyedResourceError',
+           'safe_copy')
 
 
 def genesis():
@@ -77,6 +78,23 @@ def decrement_refcount():
     reference_count -= 1
     if not reference_count:
         terminus()
+
+
+def safe_copy(ptr):
+    """Safely cast memory address to char pointer, convert to python string,
+    and immediately free resources.
+
+    :param ptr: The memory address to convert to text string.
+    :type ptr: :class:`ctypes.c_void_p`
+    :returns: :class:`tuple` (:class:`ctypes.c_void_p`, :class:`str`)
+
+    .. versionadded:: 0.5.3
+    """
+    string = ''
+    if bool(ptr):
+        string = ctypes.cast(ptr, ctypes.c_char_p).value
+        ptr = library.MagickRelinquishMemory(ptr)
+    return ptr, text(string)
 
 
 class Resource(object):
