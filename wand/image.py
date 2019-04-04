@@ -1089,7 +1089,7 @@ class BaseImage(Resource):
         """Allows image-data from :class:`Image <wand.image.BaseImage>`
         instances to be loaded into numpy's array.
 
-        .. example::
+        .. code::
 
             import numpy
             from wand.image import Image
@@ -5277,6 +5277,15 @@ class Image(BaseImage):
         """Create an image instance from a :mod:`numpy` array, or any other datatype
         that implements `__array_interface__`__ protocol.
 
+        .. code::
+
+            import numpy
+            from wand.image import Image
+
+            matrix = numpy.random.rand(100, 100, 3)
+            with Image.from_array(matrix) as img:
+                img.save(filename='noise.png')
+
         Use the optional ``channel_map`` & ``storage`` arguments to specify
         the order of color channels & data size. If ``channel_map`` is omitted,
         this method will will guess ``"RGB"``, ``"I"``, or ``"CMYK"`` based on
@@ -5287,6 +5296,11 @@ class Image(BaseImage):
         Float values must be normalized between `0.0` and `1.0`, and signed
         integers should be converted to unsigned values between `0` and
         max value of type.
+
+        Instances of :class:`Image` can also be exported to numpy arrays::
+
+            with Image(filename='rose:') as img:
+                matrix = numpy.array(img)
 
         __ https://docs.scipy.org/doc/numpy/reference/arrays.interface.html
 
