@@ -1165,11 +1165,12 @@ class BaseImage(Resource):
     @alpha_channel.setter
     @manipulative
     def alpha_channel(self, alpha_type):
+        is_im6 = MAGICK_VERSION_NUMBER < 0x700
         # Map common aliases for ``'deactivate'``
-        if alpha_type is False or alpha_type == 'off':
+        if alpha_type is False or (alpha_type == 'off' and is_im6):
             alpha_type = 'deactivate'
         # Map common aliases for ``'activate'``
-        elif alpha_type is True or alpha_type == 'on':
+        elif alpha_type is True or (alpha_type == 'on' and is_im6):
             alpha_type = 'activate'
         if alpha_type in ALPHA_CHANNEL_TYPES:
             alpha_index = ALPHA_CHANNEL_TYPES.index(alpha_type)
