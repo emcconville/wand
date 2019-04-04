@@ -15,6 +15,8 @@ Version 0.5.3
 Unreleased.
 
  - Fixed alpha channel set to "on" & "off" values for ImageMagick-7. [:issue:`404`]
+ - Support for numpy arrays. [:issue:`65`]
+     - Added :meth:`Image.from_array <wand.image.Image.from_array>` class method.
  - Support color map / palette manipulation. [:issue:`403`]
      - Added :attr:`Image.colors <wand.image.BaseImage.colors>` property.
      - Added :meth:`Image.color_map() <wand.image.BaseImage.color_map>` method.

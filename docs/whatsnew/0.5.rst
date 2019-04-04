@@ -4,6 +4,41 @@ What's new in Wand 0.5?
 This guide doesn't cover all changes in 0.5.  See also the full list of
 changes in :ref:`changelog-0.5`.
 
+
+Numpy I/O
+---------
+
+.. versionadded:: 0.5.3
+
+Instances of Wand's :class:`~wand.image.Image` can be created directly from
+a :class:`numpy.array` object, or other objects that implements
+`array interface`__ protocol.
+
+__ https://docs.scipy.org/doc/numpy/reference/arrays.interface.html
+
+.. code-block:: python
+
+    import numpy as np
+    from wand.image import Image
+
+    array = np.zeros([100, 100, 3], dtype=np.uint8)
+    array[:, :] = [0xff, 0x00, 0x00]
+
+    with Image.from_array(array) as img:
+        print(img[0, 0])  #=> srgb(255, 0, 0)
+
+You can also convert an instance of :class:`~wand.image.Image` into an array.
+
+.. code-block:: python
+
+    import numpy as np
+    from wand.image import Image
+
+    with Image(filename='rose:') as img:
+        array = np.array(img)
+        print(array.shape)  #=> (70, 46, 3)
+
+
 Resource Limits
 ---------------
 
