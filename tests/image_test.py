@@ -33,6 +33,11 @@ else:
             'mbcs'  # for Windows
         )
 
+try:
+    import numpy as np
+except ImportError:
+    np = None
+
 
 def test_empty_image():
     with Image() as img:
@@ -501,3 +506,39 @@ def test_issue_150(fx_asset, tmpdir):
         img.format = 'pjpeg'
         with open(str(tmpdir.join('out.jpg')), 'wb') as f:
             img.save(file=f)
+
+
+@mark.skipif(np is None, reason='Numpy not available.')
+def test_from_array():
+    # From float values.
+    rand = np.random.rand(10, 10, 4)
+    # We should have a 10x10 image with RGBA data created.
+    with Image.from_array(rand) as img:
+        assert img.size == (10, 10)
+        assert img.alpha_channel
+    # From char values
+    red8 = np.zeros([10, 10, 3], dtype=np.uint8)
+    red8[:, :] = [0xFF, 0x00, 0x00]
+    # We should have a RED image.
+    with Image.from_array(red8) as img:
+        assert img[0, 0] == Color('#F00')
+    # From short values.
+    green16 = np.zeros([10, 10, 3], dtype=np.uint16)
+    green16[:, :] = [0x0000, 0xFFFF, 0x0000]
+    # We should have a GREEN image.
+    with Image.from_array(green16) as img:
+        assert img[0, 0] == Color('#00FF00')
+
+
+@mark.skipif(np is None, reason='Numpy not available.')
+def test_array_interface():
+    with Image(filename='rose:') as img:
+        array = np.array(img)
+        assert array.shape == (70, 46, 3)
+
+
+@mark.skipif(np is None, reason='Numpy not available.')
+def test_numpy_array_hairpinning():
+    with Image(filename='rose:') as left:
+        with Image.from_array(left) as right:
+            assert left.size == right.size

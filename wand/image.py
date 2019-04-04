@@ -1118,9 +1118,11 @@ class BaseImage(Resource):
                                             ctypes.byref(c_buffer))
         if not r:
             self.raise_exception()
-        return dict(data=c_buffer,
+        return dict(data=(ctypes.addressof(c_buffer), True),
                     shape=(width, height, channel_number),
-                    typestr='|u1')
+                    typestr='|u1',
+                    version=3,
+                    _c_buffer=c_buffer)  # Need to hold reference count.
 
     @property
     def alpha_channel(self):
@@ -5269,6 +5271,78 @@ class Image(BaseImage):
     def _repr_png_(self):
         with self.convert('png') as cloned:
             return cloned.make_blob()
+
+    @classmethod
+    def from_array(cls, array, channel_map=None, storage=None):
+        """Create an image instance from a :mod:`numpy` array, or any other datatype
+        that implements `__array_interface__`__ protocol.
+
+        Use the optional ``channel_map`` & ``storage`` arguments to specify
+        the order of color channels & data size. If ``channel_map`` is omitted,
+        this method will will guess ``"RGB"``, ``"I"``, or ``"CMYK"`` based on
+        array shape. If ``storage`` is omitted, this method will reference the
+        array's ``typestr`` value, and raise a :class:`ValueError` if
+        storage-type can not be mapped.
+
+        Float values must be normalized between `0.0` and `1.0`, and signed
+        integers should be converted to unsigned values between `0` and
+        max value of type.
+
+        __ https://docs.scipy.org/doc/numpy/reference/arrays.interface.html
+
+        :param array: Numpy array of pixel values.
+        :type array: :class:`numpy.array`
+        :param channel_map: Color channel layout.
+        :type channel_map: :class:`basestring`
+        :param storage: Datatype per pixel part.
+        :type storage: :class:`basestring`
+        :returns: New instance of an image.
+        :rtype: :class:`~wand.image.Image`
+
+        .. versionadded:: 0.5.3
+        """
+        arr_itr = array.__array_interface__
+        typestr = arr_itr['typestr']  # Required by interface.
+        shape = arr_itr['shape']  # Required by interface.
+        data_ptr, flag = arr_itr.get('data', (None, False))  # Optional
+        strides = arr_itr.get('strides', None)  # Optional
+        if storage is None:
+            # Attempt to guess storage
+            storage_map = dict(u1='char', i1='char',
+                               u2='short', i2='short',
+                               u4='integer', i4='integer',
+                               u8='long', i8='integer',
+                               f4='float', f8='double')
+            for token in storage_map:
+                if token in typestr:
+                    storage = storage_map[token]
+                    break
+            if storage is None:
+                raise ValueError('Unable to determine storage type.')
+        if channel_map is None:
+            # Attempt to guess channel map
+            if len(shape) == 3:
+                if shape[2] < 5:
+                    channel_map = 'RGBA'[0:shape[2]]
+                else:
+                    channel_map = 'CMYKA'[0:shape[2]]
+            else:
+                channel_map = 'I'
+        if data_ptr is None or strides is not None:
+            data_ptr = array.ctypes.data_as(ctypes.c_void_p)
+        storage_idx = STORAGE_TYPES.index(storage)
+        width, height = shape[:2]
+        wand = library.NewMagickWand()
+        instance = cls(BaseImage(wand))
+        r = library.MagickConstituteImage(instance.wand,
+                                          width,
+                                          height,
+                                          binary(channel_map),
+                                          storage_idx,
+                                          data_ptr)
+        if not r:
+            instance.raise_exception(cls)
+        return instance
 
     @property
     def animation(self):
