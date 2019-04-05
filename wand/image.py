@@ -3779,7 +3779,8 @@ class BaseImage(Resource):
         r = library.MagickMergeImageLayers(self.wand, m)
         if not r:
             self.raise_exception()
-        self.wand = r
+        else:
+            self.wand = r
 
     @manipulative
     def modulate(self, brightness=100.0, saturation=100.0, hue=100.0):
