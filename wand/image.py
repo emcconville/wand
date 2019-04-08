@@ -1723,7 +1723,7 @@ class BaseImage(Resource):
         """(:class:`wand.color.Color`) The color value of the matte channel.
         This can also be set.
 
-        ..versionadded:: 0.4.1
+        .. versionadded:: 0.4.1
         """
         pixel = library.NewPixelWand()
         result = library.MagickGetImageMatteColor(self.wand, pixel)
@@ -2569,7 +2569,7 @@ class BaseImage(Resource):
                   (:class:`numbers.Integral`)
         :rtype: :class:`tuple`
 
-        ..versionadded:: 0.4.3
+        .. versionadded:: 0.4.3
         """
         if not isinstance(metric, string_type):
             raise TypeError('metric must be a string, not ' + repr(metric))
@@ -2581,7 +2581,7 @@ class BaseImage(Resource):
                                                      ctypes.byref(distortion))
         return Image(BaseImage(compared_image)), distortion.value
 
-    def composite(self, image, left, top):
+    def composite(self, image, left=0, top=0, operator='over', arguments=None):
         """Places the supplied ``image`` over the current image, with the top
         left corner of ``image`` at coordinates ``left``, ``top`` of the
         current image.  The dimensions of the current image are not changed.
@@ -2592,15 +2592,40 @@ class BaseImage(Resource):
         :type left: :class:`numbers.Integral`
         :param top: the y-coordinate where `image` will be placed
         :type top: :class:`numbers.Integral`
+        :param operator: the operator that affects how the composite
+                         is applied to the image.  available values
+                         can be found in the :const:`COMPOSITE_OPERATORS`
+                         list. Default is ``'over'``.
+        :type operator: :class:`basestring`
+        :param arguments: Additional numbers given as a geometry string, or
+                         comma delimited values. This is needed for
+                         ``'blend'``, ``'displace'``, ``'dissolve'``, and
+                         ``'modulate'`` operators.
+        :type arguments: :class:`basestring`
 
         .. versionadded:: 0.2.0
 
+        .. versionchanged:: 0.5.3
+           The operator can be set, as well as additional composite arguments.
         """
         if not isinstance(left, numbers.Integral):
             raise TypeError('left must be an integer, not ' + repr(left))
         elif not isinstance(top, numbers.Integral):
             raise TypeError('top must be an integer, not ' + repr(left))
-        op = COMPOSITE_OPERATORS.index('over')
+        try:
+            op = COMPOSITE_OPERATORS.index(operator)
+        except IndexError:
+            raise ValueError(repr(operator) + ' is an invalid composite '
+                             'operator type; see wand.image.COMPOSITE_'
+                             'OPERATORS dictionary')
+        if arguments:
+            if not isinstance(arguments, string_type):
+                raise TypeError('arguments must be a string, not ' + repr(v))
+            r = library.MagickSetImageArtifact(image.wand,
+                                               binary('compose:args'),
+                                               binary(arguments))
+            if not r:
+                self.raise_exception()
         if MAGICK_VERSION_NUMBER < 0x700:
             library.MagickCompositeImage(self.wand, image.wand, op,
                                          int(left), int(top))
@@ -2610,7 +2635,8 @@ class BaseImage(Resource):
         self.raise_exception()
 
     @manipulative
-    def composite_channel(self, channel, image, operator, left=0, top=0):
+    def composite_channel(self, channel, image, operator, left=0, top=0,
+                          arguments=None):
         """Composite two images using the particular ``channel``.
 
         :param channel: the channel type.  available values can be found
@@ -2622,15 +2648,23 @@ class BaseImage(Resource):
                          is applied to the image.  available values
                          can be found in the :const:`COMPOSITE_OPERATORS`
                          list
+        :type operator: :class:`basestring`
         :param left: the column offset of the composited source image
         :type left: :class:`numbers.Integral`
         :param top: the row offset of the composited source image
         :type top: :class:`numbers.Integral`
+        :param arguments: Additional numbers given as a geometry string, or
+                         comma delimited values. This is needed for
+                         ``'blend'``, ``'displace'``, ``'dissolve'``, and
+                         ``'modulate'`` operators.
+        :type arguments: :class:`basestring`
         :raises ValueError: when the given ``channel`` or
                             ``operator`` is invalid
 
         .. versionadded:: 0.3.0
 
+        .. versionchanged:: 0.5.3
+           Support for optional composite arguments has been added.
         """
         if not isinstance(channel, string_type):
             raise TypeError('channel must be a string, not ' +
@@ -2653,6 +2687,12 @@ class BaseImage(Resource):
             raise IndexError(repr(operator) + ' is an invalid composite '
                              'operator type; see wand.image.COMPOSITE_'
                              'OPERATORS dictionary')
+        if arguments:
+            if not isinstance(arguments, string_type):
+                raise TypeError('arguments must be a string, not ' + repr(v))
+            r = library.MagickSetImageArtifact(image.wand,
+                                               binary('compose:args'),
+                                               binary(arguments))
         if library.MagickCompositeImageChannel:
             library.MagickCompositeImageChannel(self.wand, ch_const,
                                                 image.wand, op, int(left),
@@ -2929,6 +2969,37 @@ class BaseImage(Resource):
     @manipulative
     def distort(self, method, arguments, best_fit=False):
         """Distorts an image using various distorting methods.
+
+        .. code:: python
+
+            from wand.image import Image
+            from wand.color import Color
+
+            with Image(filename='checks.png') as img:
+                img.virtual_pixel = 'background'
+                img.background_color = Color('green')
+                img.matte_color = Color('skyblue')
+                arguments = (0, 0, 20, 60,
+                             90, 0, 70, 63,
+                             0, 90, 5, 83,
+                             90, 90, 85, 88)
+                img.distort('perspective', arguments)
+                img.save(filename='checks_perspective.png')
+
+        .. image:: ../_images/wand/image/checks.png
+        .. image:: ../_images/wand/image/checks_perspective.png
+
+        Use :attr:`virtual_pixel`, :attr:`background_color`, and
+        :attr:`matte_color` properties to control the behavior of pixels
+        rendered outside of the image boundaries.
+
+        Use :attr:`interpolate_method` to control how images scale-up.
+
+        Distortion viewport, and scale, can be defined by using
+        :attr:`Image.artifacts` dictionary. For example::
+
+            img.artifacts['distort:viewport'] = '44x44+15+0'
+            img.artifacts['distort:scale'] = '10'
 
         :param method: Distortion method name from :const:`DISTORTION_METHODS`
         :type method: :class:`basestring`

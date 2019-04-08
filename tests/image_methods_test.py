@@ -200,6 +200,28 @@ def test_composite(fx_asset):
             assert img[130, 100].blue <= 1
 
 
+def test_composite_arguments():
+    with Image(filename='rose:') as img:
+        base = img.signature
+        left = base
+        right = base
+        with img.clone() as img1:
+            with Image(width=img.width,
+                       height=img.height,
+                       pseudo='gradient:') as mask:
+                img1.composite(mask, operator='blend')
+            left = img1.signature
+            assert base != left
+        with img.clone() as img2:
+            with Image(width=img.width,
+                       height=img.height,
+                       pseudo='gradient:') as mask:
+                img2.composite(mask, operator='blend', arguments='7,7')
+            right = img2.signature
+            assert base != right
+        assert left != right
+
+
 def test_composite_channel(fx_asset):
     with Image(filename=str(fx_asset.join('beach.jpg'))) as orig:
         w, h = orig.size
@@ -235,6 +257,30 @@ def test_composite_channel(fx_asset):
                         assert not ic.red
                         assert ic.green == oc.green
                         assert ic.blue == oc.blue
+
+
+def test_composite_channel_arguments():
+    channel_name = 'default_channels'
+    with Image(filename='rose:') as img:
+        base = img.signature
+        left = base
+        right = base
+        with img.clone() as img1:
+            with Image(width=img.width,
+                       height=img.height,
+                       pseudo='gradient:') as mask:
+                img1.composite_channel(channel_name, mask, 'blend')
+            left = img1.signature
+            assert base != left
+        with img.clone() as img2:
+            with Image(width=img.width,
+                       height=img.height,
+                       pseudo='gradient:') as mask:
+                img2.composite_channel(channel_name, mask, 'blend',
+                                       arguments='7,7')
+            right = img2.signature
+            assert base != right
+        assert left != right
 
 
 def test_concat():
