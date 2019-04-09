@@ -840,6 +840,7 @@ UNIT_TYPES = ('undefined', 'pixelsperinch', 'pixelspercentimeter')
 
 
 #: (:class:`tuple`) The list of :attr:`~BaseImage.virtual_pixel` types.
+#:
 #: - ``'undefined'``
 #: - ``'background'``
 #: - ``'constant'`` - Only available with ImageMagick-6
