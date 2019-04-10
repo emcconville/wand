@@ -2627,6 +2627,11 @@ class BaseImage(Resource):
                                                binary(arguments))
             if not r:
                 self.raise_exception()
+            r = library.MagickSetImageArtifact(self.wand,
+                                               binary('compose:args'),
+                                               binary(arguments))
+            if not r:
+                self.raise_exception()
         if MAGICK_VERSION_NUMBER < 0x700:
             library.MagickCompositeImage(self.wand, image.wand, op,
                                          int(left), int(top))
@@ -2692,6 +2697,9 @@ class BaseImage(Resource):
             if not isinstance(arguments, string_type):
                 raise TypeError('arguments must be a string, not ' + repr(v))
             r = library.MagickSetImageArtifact(image.wand,
+                                               binary('compose:args'),
+                                               binary(arguments))
+            r = library.MagickSetImageArtifact(self.wand,
                                                binary('compose:args'),
                                                binary(arguments))
         if library.MagickCompositeImageChannel:
