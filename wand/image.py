@@ -818,7 +818,7 @@ PIXEL_INTERPOLATE_METHODS = ('undefined', 'average', 'average9', 'average16',
 #: - ``'quantum'``
 #: - ``'short'``
 #:
-#: - .. versionadded:: 0.5.0
+#: .. versionadded:: 0.5.0
 STORAGE_TYPES = ('undefined', 'char', 'double', 'float', 'integer',
                  'long', 'quantum', 'short')
 
@@ -2165,6 +2165,40 @@ class BaseImage(Resource):
         fn()
         self.orientation = 'top_left'
 
+    def _gravity_to_offset(self, gravity, width, height):
+        """Calculate the top/left offset by a given gravity.
+
+        Some methods in MagickWand's C-API do not respect gravity, but
+        instead, expect a x/y offset. This is confusing to folks coming from
+        the CLI documentation that does respect gravity
+
+        :param gravity: Value from :const:`GRAVITY_TYPES`.
+        :type gravity: :class:`basestring`
+        :raises: :class:`ValueError` if gravity is no known.
+        :returns: :class:`numbers.Intergal` top, :class:`numbers.Intergal` left
+
+        .. versionadded:: 0.5.3
+        """
+        top, left = 0, 0
+        if gravity not in GRAVITY_TYPES:
+            raise ValueError('expected a string from GRAVITY_TYPES, not ' +
+                             repr(gravity))
+        # Set `top` based on given gravity
+        if gravity in ('north_west', 'north', 'north_east'):
+            top = 0
+        elif gravity in ('west', 'center', 'east'):
+            top = int(self.height / 2) - int(height / 2)
+        elif gravity in ('south_west', 'south', 'south_east'):
+            top = self.height - height
+        # Set `left` based on given gravity
+        if gravity in ('north_west', 'west', 'south_west'):
+            left = 0
+        elif gravity in ('north', 'center', 'south'):
+            left = int(self.width / 2) - int(width / 2)
+        elif gravity in ('north_east', 'east', 'south_east'):
+            left = self.width - width
+        return top, left
+
     @manipulative
     def auto_orient(self):
         """Adjusts an image so that its orientation is suitable
@@ -2582,7 +2616,8 @@ class BaseImage(Resource):
                                                      ctypes.byref(distortion))
         return Image(BaseImage(compared_image)), distortion.value
 
-    def composite(self, image, left=0, top=0, operator='over', arguments=None):
+    def composite(self, image, left=None, top=None, operator='over',
+                  arguments=None, gravity=None):
         """Places the supplied ``image`` over the current image, with the top
         left corner of ``image`` at coordinates ``left``, ``top`` of the
         current image.  The dimensions of the current image are not changed.
@@ -2603,12 +2638,28 @@ class BaseImage(Resource):
                          ``'blend'``, ``'displace'``, ``'dissolve'``, and
                          ``'modulate'`` operators.
         :type arguments: :class:`basestring`
+        :param gravity: Calculate the ``top`` & ``left`` values based on
+                        gravity value from :const:`GRAVITY_TYPES`.
+        :type: gravity: :class:`basestring`
 
         .. versionadded:: 0.2.0
 
         .. versionchanged:: 0.5.3
            The operator can be set, as well as additional composite arguments.
+
+        .. versionchanged:: 0.5.3
+           Optional ``gravity`` argument was added.
         """
+        if top is None and left is None:
+            if gravity is None:
+                gravity = self.gravity
+            top, left = self._gravity_to_offset(gravity,
+                                                image.width,
+                                                image.height)
+        elif gravity is not None:
+            raise TypeError('Can not use gravity if top & left are given')
+        else:
+            top, left = 0, 0
         if not isinstance(left, numbers.Integral):
             raise TypeError('left must be an integer, not ' + repr(left))
         elif not isinstance(top, numbers.Integral):
@@ -2641,8 +2692,8 @@ class BaseImage(Resource):
         self.raise_exception()
 
     @manipulative
-    def composite_channel(self, channel, image, operator, left=0, top=0,
-                          arguments=None):
+    def composite_channel(self, channel, image, operator, left=None, top=None,
+                          arguments=None, gravity=None):
         """Composite two images using the particular ``channel``.
 
         :param channel: the channel type.  available values can be found
@@ -2664,6 +2715,9 @@ class BaseImage(Resource):
                          ``'blend'``, ``'displace'``, ``'dissolve'``, and
                          ``'modulate'`` operators.
         :type arguments: :class:`basestring`
+        :param gravity: Calculate the ``top`` & ``left`` values based on
+                        gravity value from :const:`GRAVITY_TYPES`.
+        :type: gravity: :class:`basestring`
         :raises ValueError: when the given ``channel`` or
                             ``operator`` is invalid
 
@@ -2671,6 +2725,9 @@ class BaseImage(Resource):
 
         .. versionchanged:: 0.5.3
            Support for optional composite arguments has been added.
+
+        .. versionchanged:: 0.5.3
+           Optional ``gravity`` argument was added.
         """
         if not isinstance(channel, string_type):
             raise TypeError('channel must be a string, not ' +
@@ -2678,6 +2735,17 @@ class BaseImage(Resource):
         elif not isinstance(operator, string_type):
             raise TypeError('operator must be a string, not ' +
                             repr(operator))
+        if gravity:
+            if left is None and top is None:
+                top, left = self._gravity_to_offset(gravity,
+                                                    image.width,
+                                                    image.height)
+            else:
+                raise TypeError('Can not use gravity if top & left are given')
+        if top is None:
+            top = 0
+        if left is None:
+            left = 0
         elif not isinstance(left, numbers.Integral):
             raise TypeError('left must be an integer, not ' + repr(left))
         elif not isinstance(top, numbers.Integral):
@@ -2872,23 +2940,7 @@ class BaseImage(Resource):
                 raise TypeError(
                     'both width and height must be defined with gravity'
                 )
-            if gravity not in GRAVITY_TYPES:
-                raise ValueError('expected a string from GRAVITY_TYPES, not ' +
-                                 repr(gravity))
-            # Set `top` based on given gravity
-            if gravity in ('north_west', 'north', 'north_east'):
-                top = 0
-            elif gravity in ('west', 'center', 'east'):
-                top = int(self.height / 2) - int(height / 2)
-            elif gravity in ('south_west', 'south', 'south_east'):
-                top = self.height - height
-            # Set `left` based on given gravity
-            if gravity in ('north_west', 'west', 'south_west'):
-                left = 0
-            elif gravity in ('north', 'center', 'south'):
-                left = int(self.width / 2) - int(width / 2)
-            elif gravity in ('north_east', 'east', 'south_east'):
-                left = self.width - width
+            top, left = self._gravity_to_offset(gravity, width, height)
         else:
             left = abs_(left, self.width, 0)
             top = abs_(top, self.height, 0)

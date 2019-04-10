@@ -222,6 +222,16 @@ def test_composite_arguments():
         assert left != right
 
 
+def test_composite_gravity():
+    green = Color('GREEN')
+    red = Color('RED')
+    with Image(width=100, height=100, background=green) as src:
+        with Image(width=10, height=10, background=red) as dst:
+            src.composite(dst, gravity='east')
+        assert src[0, 50] == green
+        assert src[99, 50] == red
+
+
 def test_composite_channel(fx_asset):
     with Image(filename=str(fx_asset.join('beach.jpg'))) as orig:
         w, h = orig.size
@@ -281,6 +291,17 @@ def test_composite_channel_arguments():
             right = img2.signature
             assert base != right
         assert left != right
+
+
+def test_composite_channel_gravity():
+    green = Color('GREEN')
+    red = Color('RED')
+    channel_name = 'default_channels'
+    with Image(width=100, height=100, background=green) as src:
+        with Image(width=10, height=10, background=red) as dst:
+            src.composite_channel(channel_name, dst, 'over', gravity='east')
+        assert src[0, 50] == green
+        assert src[99, 50] == red
 
 
 def test_concat():
