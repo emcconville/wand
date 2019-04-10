@@ -82,12 +82,13 @@ User's guide
    guide/write
    guide/resizecrop
    guide/transform
-   guide/draw
    guide/colorspace
    guide/colorenhancement
+   guide/distortion
+   guide/draw
    guide/exif
-   guide/sequence
    guide/layers
+   guide/sequence
    guide/resource
    test
    roadmap

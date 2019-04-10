@@ -170,7 +170,7 @@ And three arguments would describe the origin of rotation::
 Perspective
 -----------
 
-Perspective distortion requires 4 points which is a total of 16 doubles.
+Perspective distortion requires 4 pairs of points which is a total of 16 doubles.
 The order of the ``arguments`` are groups of source & destination coordinate
 pairs.
 
@@ -208,4 +208,69 @@ For example::
         img.distort('perspective', arguments)
 
 .. image:: ../_images/distort-perspective.png
+
+
+Affine
+------
+
+Affine distortion performs a shear operation. The arguments are similar to
+perspective, but only need a pair of 3 points, or 12 real numbers.
+
+.. parsed-literal::
+
+    src1\ :sub:`x`, src1\ :sub:`y`, dst1\ :sub:`x`, dst1\ :sub:`y`,
+    src2\ :sub:`x`, src2\ :sub:`y`, dst2\ :sub:`x`, dst2\ :sub:`y`,
+    src3\ :sub:`x`, src3\ :sub:`y`, dst3\ :sub:`x`, dst3\ :sub:`y`
+
+For example::
+
+    from wand.color import Color
+    from wand.image import Image
+
+    with Image(filename='rose:') as img:
+        img.resize(140, 92)
+        img.background_color = Color('skyblue')
+        img.virtual_pixel = 'background'
+        args = (
+            10, 10, 15, 15,  # Point 1: (10, 10) => (15,  15)
+            139, 0, 100, 20, # Point 2: (139, 0) => (100, 20)
+            0, 92, 50, 80    # Point 3: (0,  92) => (50,  80)
+        )
+        img.distort('affine', args)
+
+.. image:: ../_images/distort-affine.png
+
+
+Affine Projection
+-----------------
+
+Affine projection is identical to `Scale Rotate Translate`, but requires exactly
+6 real numbers for the distortion arguments.
+
+.. parsed-literal::
+
+    Scale\ :sub:`x`, Rotate\ :sub:`x`, Rotate\ :sub:`y`, Scale\ :sub:`y`, Translate\ :sub:`x`, Translate\ :sub:`y`
+
+For example::
+
+    from collections import namedtuple
+    from wand.color import Color
+    from wand.image import Image
+
+    Point = namedtuple('Point', ['x', 'y'])
+
+    with Image(filename='rose:') as img:
+        img.resize(140, 92)
+        img.background_color = Color('skyblue')
+        img.virtual_pixel = 'background'
+        rotate = Point(0.1, 0)
+        scale = Point(0.7, 0.6)
+        translate = Point(5, 5)
+        args = (
+            scale.x, rotate.x, rotate.y,
+            scale.y, translate.x, translate.y
+        )
+        img.distort('affine_projection', args)
+
+.. image:: ../_images/distort-affine-projection.png
 
