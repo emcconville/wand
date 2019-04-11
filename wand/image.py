@@ -1596,6 +1596,20 @@ class BaseImage(Resource):
             self.raise_exception()
 
     @property
+    def fuzz(self):
+        """(:class:`numbers.Real`) The normalized real number between ``0.0``
+        and :attr:`quantum_range`. This property influences the accuracy of
+        :meth:`compare()`.
+        """
+        return library.MagickGetImageFuzz(self.wand)
+
+    @fuzz.setter
+    def fuzz(self, value):
+        if not isinstance(value, numbers.Real):
+            raise TypeError('expecting real number, not ' + repr(value))
+        library.MagickSetImageFuzz(self.wand, value)
+
+    @property
     def gravity(self):
         """(:class:`basestring`) The text placement gravity used when
         annotating with text.  It's a string from :const:`GRAVITY_TYPES`
@@ -2611,6 +2625,19 @@ class BaseImage(Resource):
     @manipulative
     def compare(self, image, metric='undefined'):
         """Compares an image to a reconstructed image.
+
+        Set :attr:`fuzz` property to adjust pixel-compare thresholds.
+
+        For example::
+
+            from wand.image import Image
+
+            with Image(filename='input.jpg') as base:
+                with Image(filename='subject.jpg') as img:
+                    base.fuzz = base.quantum_range * 0.20  # Threshold of 20%
+                    result_image, result_metric = base.compare(img)
+                    with result_image:
+                        result_image.save(filename='diff.jpg')
 
         :param image: The reference image
         :type image: :class:`wand.image.Image`
