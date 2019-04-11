@@ -1422,6 +1422,20 @@ def test_shave(fx_asset):
             img.shave(10, None)
 
 
+def test_sparse_color():
+    with Image(width=10, height=10, background=Color('WHITE')) as img:
+        colors = {'#F00': (0, 0), '#00F': (9, 9)}
+        img.sparse_color('barycentric', colors)
+        assert img[0, 0] == Color('#F00')
+        assert img[9, 9] == Color('#00F')
+        with raises(ValueError):
+            img.sparse_color(0xDEADBEEF, colors)
+        with raises(TypeError):
+            img.sparse_color('barycentric', 0xDEADBEEF)
+        with raises(TypeError):
+            img.sparse_color('barycentric', colors, channel_mask='red')
+
+
 def test_strip(fx_asset):
     """Strips the image of all profiles and comments."""
     with Image(filename=str(fx_asset.join('beach.jpg'))) as img:

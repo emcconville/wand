@@ -29,6 +29,7 @@ Unreleased.
  - Added :meth:`Image.color_matrix() <wand.image.BaseImage.color_matrix>` method.
  - Added :meth:`Image.colorize() <wand.image.BaseImage.colorize>` method.
  - Added :meth:`Image.remap() <wand.image.BaseImage.remap>` method.
+ - Added :meth:`Image.sparse_color() <wand.image.BaseImage.sparse_color>` method.
 
 
 .. _changelog-0.5.2:

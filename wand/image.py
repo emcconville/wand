@@ -33,7 +33,7 @@ __all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COLORSPACE_TYPES',
            'EVALUATE_OPS', 'FILTER_TYPES', 'FUNCTION_TYPES', 'GRAVITY_TYPES',
            'IMAGE_LAYER_METHOD', 'IMAGE_TYPES', 'INTERLACE_TYPES',
            'KERNEL_INFO_TYPES', 'MORPHOLOGY_METHODS', 'ORIENTATION_TYPES',
-           'PIXEL_INTERPOLATE_METHODS',
+           'PIXEL_INTERPOLATE_METHODS', 'SPARSE_COLOR_METHODS',
            'STORAGE_TYPES', 'VIRTUAL_PIXEL_METHOD', 'UNIT_TYPES',
            'BaseImage', 'ChannelDepthDict', 'ChannelImageDict',
            'ClosedImageError', 'HistogramDict', 'Image', 'ImageProperty',
@@ -805,6 +805,23 @@ ORIENTATION_TYPES = ('undefined', 'top_left', 'top_right', 'bottom_right',
 PIXEL_INTERPOLATE_METHODS = ('undefined', 'average', 'average9', 'average16',
                              'background', 'bilinear', 'blend', 'catrom',
                              'integer', 'mesh', 'nearest', 'spline')
+
+
+#: (:class:`tuple`) List of sparse color methods used by
+#: :class:`Image.sparse_color() <wand.image.BaseImage.sparse_color>`
+#:
+#: - ``'undefined'``
+#: - ``'barycentric'``
+#: - ``'bilinear'``
+#: - ``'shepards'``
+#: - ``'voronoi'``
+#: - ``'inverse'``
+#: - ``'manhattan'``
+#:
+#: .. versionadded:: 0.5.3
+SPARSE_COLOR_METHODS = dict(undefined=0, barycentric=1, bilinear=7,
+                            shepards=16, voronoi=18, inverse=19,
+                            manhattan=20)
 
 
 #: (:class:`tuple`) The list of pixel storage types.
@@ -2672,7 +2689,8 @@ class BaseImage(Resource):
                              'OPERATORS dictionary')
         if arguments:
             if not isinstance(arguments, string_type):
-                raise TypeError('arguments must be a string, not ' + repr(v))
+                raise TypeError('arguments must be a string, not ' +
+                                repr(arguments))
             r = library.MagickSetImageArtifact(image.wand,
                                                binary('compose:args'),
                                                binary(arguments))
@@ -2763,13 +2781,14 @@ class BaseImage(Resource):
                              'OPERATORS dictionary')
         if arguments:
             if not isinstance(arguments, string_type):
-                raise TypeError('arguments must be a string, not ' + repr(v))
-            r = library.MagickSetImageArtifact(image.wand,
-                                               binary('compose:args'),
-                                               binary(arguments))
-            r = library.MagickSetImageArtifact(self.wand,
-                                               binary('compose:args'),
-                                               binary(arguments))
+                raise TypeError('arguments must be a string, not ' +
+                                repr(arguments))
+            library.MagickSetImageArtifact(image.wand,
+                                           binary('compose:args'),
+                                           binary(arguments))
+            library.MagickSetImageArtifact(self.wand,
+                                           binary('compose:args'),
+                                           binary(arguments))
         if library.MagickCompositeImageChannel:
             library.MagickCompositeImageChannel(self.wand, ch_const,
                                                 image.wand, op, int(left),
@@ -4527,6 +4546,52 @@ class BaseImage(Resource):
                     self.reset_coords()
 
     @manipulative
+    def sample(self, width=None, height=None):
+        """Resizes the image by sampling the pixels.  It's basically quicker
+        than :meth:`resize()` except less quality as a tradeoff.
+
+        :param width: the width in the scaled image. default is the original
+                      width
+        :type width: :class:`numbers.Integral`
+        :param height: the height in the scaled image. default is the original
+                       height
+        :type height: :class:`numbers.Integral`
+
+        .. versionadded:: 0.3.4
+
+        """
+        if width is None:
+            width = self.width
+        if height is None:
+            height = self.height
+        if not isinstance(width, numbers.Integral):
+            raise TypeError('width must be a natural number, not ' +
+                            repr(width))
+        elif not isinstance(height, numbers.Integral):
+            raise TypeError('height must be a natural number, not ' +
+                            repr(height))
+        elif width < 1:
+            raise ValueError('width must be a natural number, not ' +
+                             repr(width))
+        elif height < 1:
+            raise ValueError('height must be a natural number, not ' +
+                             repr(height))
+        if self.animation:
+            self.wand = library.MagickCoalesceImages(self.wand)
+            library.MagickSetLastIterator(self.wand)
+            n = library.MagickGetIteratorIndex(self.wand)
+            library.MagickResetIterator(self.wand)
+            for i in xrange(n + 1):
+                library.MagickSetIteratorIndex(self.wand, i)
+                library.MagickSampleImage(self.wand, width, height)
+            library.MagickSetSize(self.wand, width, height)
+        else:
+            r = library.MagickSampleImage(self.wand, width, height)
+            library.MagickSetSize(self.wand, width, height)
+            if not r:
+                self.raise_exception()
+
+    @manipulative
     def shade(self, gray=False, azimuth=0.0, elevation=0.0):
         """Creates a 3D effect by simulating a light from an
         elevated angle.
@@ -4634,6 +4699,109 @@ class BaseImage(Resource):
         if not r:
             self.raise_exception()
 
+    @manipulative
+    def sparse_color(self, method, colors, channel_mask=0x7):
+        """Interpolates color values between points on an image.
+
+        The ``colors`` argument should be a dict mapping
+        :class:`~wand.color.Color` keys to coordinate tuples.
+
+        For example::
+
+            from wand.color import Color
+            from wand.image import Image
+
+            colors = {
+                Color('RED'): (10, 50),
+                Color('YELLOW'): (174, 32),
+                Color('ORANGE'): (74, 123)
+            }
+            with Image(filename='input.png') as img:
+                img.sparse_colors('bilinear', colors)
+
+        The available interpolate methods are:
+
+        - ``'barycentric'``
+        - ``'bilinear'``
+        - ``'shepards'``
+        - ``'voronoi'``
+        - ``'inverse'``
+        - ``'manhattan'``
+
+        You can control which color channels are effected by building a custom
+        channel mask. For example::
+
+            from wand.image import Image, CHANNELS
+
+            with Image(filename='input.png') as img:
+                colors = {
+                    img[50, 50]: (50, 50),
+                    img[100, 50]: (100, 50),
+                    img[50, 75]: (50, 75),
+                    img[100, 100]: (100, 100)
+                }
+                # Only apply Voronoi to Red & Alpha channels
+                mask = CHANNELS['red'] | CHANNELS['alpha']
+                img.sparse_colors('voronoi', colors, channel_mask=mask)
+
+        :param method: Interpolate method. See :const:`SPARSE_COLOR_METHODS`
+        :type method: :class:`basestring`
+        :param colors: A dictionary of :class:`~wand.color.Color` keys mapped
+                       to an (x, y) coordinate tuple.
+        :type colors: :class:`abc.Mapping`
+                      { :class:`~wand.color.Color`: (int, int) }
+        :param channel_mask: Isolate specific color channels to apply
+                             interpolation. Default to RGB channels.
+        :type channel_mask: :class:`numbers.Integral`
+
+        .. versionadded:: 0.5.3
+        """
+        if method not in SPARSE_COLOR_METHODS:
+            raise ValueError('method must be defined in ' +
+                             'SPARSE_COLOR_METHODS')
+        if not isinstance(colors, abc.Mapping):
+            raise TypeError('Colors must be a dict, not' + repr(colors))
+        if not isinstance(channel_mask, numbers.Integral):
+            raise TypeError('channel_mask should be a unsigned integer, not ' +
+                            repr(channel_mask))
+        method_idx = SPARSE_COLOR_METHODS[method]
+        arguments = list()
+        for color, point in colors.items():
+            if isinstance(color, string_type):
+                color = Color(color)
+            x, y = point
+            arguments.append(x)
+            arguments.append(y)
+            with color as c:
+                if channel_mask & CHANNELS['red']:
+                    arguments.append(c.red)
+                if channel_mask & CHANNELS['green']:
+                    arguments.append(c.green)
+                if channel_mask & CHANNELS['blue']:
+                    arguments.append(c.blue)
+                if channel_mask & CHANNELS['alpha']:
+                    arguments.append(c.alpha)
+        argc = len(arguments)
+        args = (ctypes.c_double * argc)(*arguments)
+        if MAGICK_VERSION_NUMBER < 0x700:
+            r = library.MagickSparseColorImage(self.wand,
+                                               channel_mask,
+                                               method_idx,
+                                               argc,
+                                               args)
+        else:
+            # Set active channel, and capture mask to restore.
+            channel_mask = library.MagickSetImageChannelMask(self.wand,
+                                                             channel_mask)
+            r = library.MagickSparseColorImage(self.wand,
+                                               method_idx,
+                                               argc,
+                                               args)
+            # Restore original state of channels
+            library.MagickSetImageChannelMask(self.wand, channel_mask)
+        if not r:
+            self.raise_exception()
+
     def strip(self):
         """Strips an image of all profiles and comments.
 
@@ -4643,52 +4811,6 @@ class BaseImage(Resource):
         result = library.MagickStripImage(self.wand)
         if not result:
             self.raise_exception()
-
-    @manipulative
-    def sample(self, width=None, height=None):
-        """Resizes the image by sampling the pixels.  It's basically quicker
-        than :meth:`resize()` except less quality as a tradeoff.
-
-        :param width: the width in the scaled image. default is the original
-                      width
-        :type width: :class:`numbers.Integral`
-        :param height: the height in the scaled image. default is the original
-                       height
-        :type height: :class:`numbers.Integral`
-
-        .. versionadded:: 0.3.4
-
-        """
-        if width is None:
-            width = self.width
-        if height is None:
-            height = self.height
-        if not isinstance(width, numbers.Integral):
-            raise TypeError('width must be a natural number, not ' +
-                            repr(width))
-        elif not isinstance(height, numbers.Integral):
-            raise TypeError('height must be a natural number, not ' +
-                            repr(height))
-        elif width < 1:
-            raise ValueError('width must be a natural number, not ' +
-                             repr(width))
-        elif height < 1:
-            raise ValueError('height must be a natural number, not ' +
-                             repr(height))
-        if self.animation:
-            self.wand = library.MagickCoalesceImages(self.wand)
-            library.MagickSetLastIterator(self.wand)
-            n = library.MagickGetIteratorIndex(self.wand)
-            library.MagickResetIterator(self.wand)
-            for i in xrange(n + 1):
-                library.MagickSetIteratorIndex(self.wand, i)
-                library.MagickSampleImage(self.wand, width, height)
-            library.MagickSetSize(self.wand, width, height)
-        else:
-            r = library.MagickSampleImage(self.wand, width, height)
-            library.MagickSetSize(self.wand, width, height)
-            if not r:
-                self.raise_exception()
 
     @manipulative
     def threshold(self, threshold=0.5, channel=None):

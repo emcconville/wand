@@ -899,9 +899,14 @@ def load(lib, IM_VERSION):
         lib.MagickSolarizeImageChannel.restype = c_bool
     except AttributeError:
         lib.MagickSolarizeImageChannel = None
-    lib.MagickSparseColorImage.argtypes = [
-        c_void_p, c_int, c_int, c_size_t, POINTER(c_double)
-    ]
+    if is_im_6:
+        lib.MagickSparseColorImage.argtypes = [
+            c_void_p, c_int, c_int, c_size_t, POINTER(c_double)
+        ]
+    else:
+        lib.MagickSparseColorImage.argtypes = [
+            c_void_p, c_int, c_size_t, POINTER(c_double)
+        ]
     lib.MagickSparseColorImage.restype = c_bool
     lib.MagickSpliceImage.argtypes = [
         c_void_p, c_size_t, c_size_t, c_ssize_t, c_ssize_t
