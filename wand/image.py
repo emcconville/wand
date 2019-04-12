@@ -4936,7 +4936,7 @@ class BaseImage(Resource):
 
             image.transform('300x300', '200%')
 
-        This method is a fairly thing wrapper for the C API, and does not
+        This method is a fairly thin wrapper for the C API, and does not
         perform any additional checking of the parameters except insofar as
         verifying that they are of the correct type.  Thus, like the C
         API function, the method is very permissive in terms of what
