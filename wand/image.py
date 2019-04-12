@@ -41,7 +41,8 @@ __all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COLORSPACE_TYPES',
            'ArtifactTree', 'ProfileDict')
 
 
-#: (:class:`tuple`) The list of alpha channel types
+#: (:class:`tuple`) The list of :attr:`~wand.image.BaseImage.alpha_channel`
+#: types.
 #:
 #: - ``'undefined'``
 #: - ``'activate'``
@@ -396,7 +397,9 @@ DISTORTION_METHODS = (
 )
 
 
-#: (:class:`tuple`) The list of Dither methods.
+#: (:class:`tuple`) The list of Dither methods. Used by
+#: :meth:`Image.posterize() <BaseImage.posterize>` and
+#: :meth:`Image.remap() <BaseImage.remap>` methods.
 #:
 #: - ``'undefined'``
 #: - ``'no'``
@@ -407,7 +410,8 @@ DISTORTION_METHODS = (
 DITHER_METHODS = ('undefined', 'no', 'riemersma', 'floyd_steinberg')
 
 
-#: (:class:`tuple`) The list of evaluation operators
+#: (:class:`tuple`) The list of evaluation operators. Used by
+#: :meth:`Image.evaluate() <BaseImage.evaluate>` method.
 #:
 #: - ``'undefined'``
 #: - ``'abs'``
@@ -466,7 +470,9 @@ if MAGICK_VERSION_NUMBER >= 0x700:
                     'threshold', 'thresholdwhite', 'uniformnoise', 'xor')
 
 
-#: (:class:`tuple`) The list of filter types.
+#: (:class:`tuple`) The list of filter types. Used by
+#: :meth:`Image.resample() <BaseImage.resample>` and
+#: :meth:`Image.resize() <BaseImage.resize>` methods.
 #:
 #: - ``'undefined'``
 #: - ``'point'``
@@ -515,7 +521,8 @@ FILTER_TYPES = ('undefined', 'point', 'box', 'triangle', 'hermite', 'hanning',
                 'robidouxsharp', 'cosine', 'spline', 'sentinel')
 
 
-#: (:class:`tuple`) The list of :attr:`Image.function` types.
+#: (:class:`tuple`) The list of :attr:`Image.function <BaseImage.function>`
+#: types.
 #:
 #: - ``'undefined'``
 #: - ``'arcsin'``
