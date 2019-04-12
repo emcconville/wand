@@ -30,6 +30,7 @@ Unreleased.
  - Added :meth:`Image.colorize() <wand.image.BaseImage.colorize>` method.
  - Added :attr:`Image.fuzz <wand.image.BaseImage.fuzz>` property.
  - Added :meth:`Image.remap() <wand.image.BaseImage.remap>` method.
+ - Added :meth:`Image.smush() <wand.image.BaseImage.smush>` method.
  - Added :meth:`Image.sparse_color() <wand.image.BaseImage.sparse_color>` method.
 
 

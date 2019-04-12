@@ -4726,6 +4726,27 @@ class BaseImage(Resource):
         if not r:
             self.raise_exception()
 
+    def smush(self, stacked=False, offset=0):
+        """Appends all images together. Similar behavior to :meth:`concat`,
+        but with an optional offset between images.
+
+        :param stacked: If True, will join top-to-bottom. If False, join images
+                        from left-to-right (default).
+        :type stacked: :class:`bool`
+        :param offset: Minimum space (in pixels) between each join.
+        :type offset: :class:`numbers.Integral`
+
+        .. versionadded:: 0.5.3
+        """
+        if not isinstance(offset, numbers.Integral):
+            raise TypeError('expecting integer, not ' + repr(offset))
+        library.MagickResetIterator(self.wand)
+        result = library.MagickSmushImages(self.wand, bool(stacked), offset)
+        if result:
+            self.wand = result
+        else:
+            self.raise_exception()
+
     @manipulative
     def sparse_color(self, method, colors, channel_mask=0x7):
         """Interpolates color values between points on an image.

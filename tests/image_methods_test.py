@@ -1422,6 +1422,23 @@ def test_shave(fx_asset):
             img.shave(10, None)
 
 
+def test_smush():
+    with Image(filename='rose:') as img:
+        width, height = img.size
+        with img.clone() as a:
+            with img.clone() as b:
+                a.sequence.append(b)
+                a.smush(False, 10)
+                assert a.size == (width * 2 + 10, height)
+        with img.clone() as a:
+            with img.clone() as b:
+                a.sequence.append(b)
+                a.smush(True, 0)
+                assert a.size == (width, height * 2)
+        with raises(TypeError):
+            img.smush(0xDEADBEEF, '0x0')
+
+
 def test_sparse_color():
     with Image(width=10, height=10, background=Color('WHITE')) as img:
         colors = {'#F00': (0, 0), '#00F': (9, 9)}
