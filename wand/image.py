@@ -2623,7 +2623,8 @@ class BaseImage(Resource):
             self.raise_exception()
 
     @manipulative
-    def compare(self, image, metric='undefined'):
+    def compare(self, image, metric='undefined', highlight=None,
+                lowlight=None):
         """Compares an image to a reconstructed image.
 
         Set :attr:`fuzz` property to adjust pixel-compare thresholds.
@@ -2643,16 +2644,36 @@ class BaseImage(Resource):
         :type image: :class:`wand.image.Image`
         :param metric: The metric type to use for comparing.
         :type metric: :class:`basestring`
+        :param highlight: Set the color of the delta pixels in the resulting
+                          difference image.
+        :type highlight: :class:`~wand.color.Color` or :class:`basestring`
+        :param lowlight: Set the color of the similar pixels in the resulting
+                          difference image.
+        :type lowlight: :class:`~wand.color.Color` or :class:`basestring`
         :returns: The difference image(:class:`wand.image.Image`),
                   the computed distortion between the images
                   (:class:`numbers.Integral`)
         :rtype: :class:`tuple`
 
         .. versionadded:: 0.4.3
+
+        .. versionchanged:: 0.5.3
+           Added support for ``highlight`` & ``lowlight``.
         """
         if not isinstance(metric, string_type):
             raise TypeError('metric must be a string, not ' + repr(metric))
-
+        if highlight:
+            if isinstance(highlight, Color):
+                highlight = highlight.string
+            library.MagickSetImageArtifact(self.wand,
+                                           b'compare:highlight-color',
+                                           binary(highlight))
+        if lowlight:
+            if isinstance(lowlight, Color):
+                lowlight = lowlight.string
+            library.MagickSetImageArtifact(self.wand,
+                                           b'compare:lowlight-color',
+                                           binary(lowlight))
         metric = COMPARE_METRICS.index(metric)
         distortion = ctypes.c_double()
         compared_image = library.MagickCompareImages(self.wand, image.wand,
