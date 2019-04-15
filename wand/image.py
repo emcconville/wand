@@ -32,8 +32,9 @@ __all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COLORSPACE_TYPES',
            'DISPOSE_TYPES', 'DISTORTION_METHODS', 'DITHER_METHODS',
            'EVALUATE_OPS', 'FILTER_TYPES', 'FUNCTION_TYPES', 'GRAVITY_TYPES',
            'IMAGE_LAYER_METHOD', 'IMAGE_TYPES', 'INTERLACE_TYPES',
-           'KERNEL_INFO_TYPES', 'MORPHOLOGY_METHODS', 'ORIENTATION_TYPES',
-           'PIXEL_INTERPOLATE_METHODS', 'SPARSE_COLOR_METHODS',
+           'KERNEL_INFO_TYPES', 'MORPHOLOGY_METHODS', 'NOISE_TYPES',
+           'ORIENTATION_TYPES', 'PIXEL_INTERPOLATE_METHODS',
+           'SPARSE_COLOR_METHODS', 'STATISTIC_TYPES',
            'STORAGE_TYPES', 'VIRTUAL_PIXEL_METHOD', 'UNIT_TYPES',
            'BaseImage', 'ChannelDepthDict', 'ChannelImageDict',
            'ClosedImageError', 'HistogramDict', 'Image', 'ImageProperty',
@@ -739,6 +740,23 @@ if MAGICK_VERSION_NUMBER >= 0x700:
                           'voronoi')
 
 
+#: (:class:`tuple`) The list of noise types used by
+#: :meth:`Image.noise() <wand.image.BaseImage.noise>` method.
+#:
+#: - ``'undefined'``
+#: - ``'uniform'``
+#: - ``'gaussian'``
+#: - ``'multiplicative_gaussian'``
+#: - ``'impulse'``
+#: - ``'laplacian'``
+#: - ``'poisson'``
+#: - ``'random'``
+#:
+#: .. versionadded:: 0.5.3
+NOISE_TYPES = ('undefined', 'uniform', 'gaussian', 'multiplicative_gaussian',
+               'impulse', 'laplacian', 'poisson', 'random')
+
+
 #: (:class:`collections.abc.Set`) The set of available
 #: :attr:`~BaseImage.options`.
 #:
@@ -829,6 +847,30 @@ PIXEL_INTERPOLATE_METHODS = ('undefined', 'average', 'average9', 'average16',
 SPARSE_COLOR_METHODS = dict(undefined=0, barycentric=1, bilinear=7,
                             shepards=16, voronoi=18, inverse=19,
                             manhattan=20)
+
+
+#: (:class:`tuple`) The list of statistic types used by
+#: :meth:`Image.statistic() <wand.image.BaseImage.statistic>`.
+#:
+#: - ``'undefined'``
+#: - ``'gradient'``
+#: - ``'maximum'``
+#: - ``'mean'``
+#: - ``'median'``
+#: - ``'minimum'``
+#: - ``'mode'``
+#: - ``'nonpeak'``
+#: - ``'root_mean_square'``
+#: - ``'standard_deviation'``
+#:
+#: .. versionadded:: 0.5.3
+STATISTIC_TYPES = ('undefined', 'gradient', 'maximum', 'mean', 'median',
+                   'minimum', 'mode', 'nonpeak', 'standard_deviation',
+                   'root_mean_square')
+if MAGICK_VERSION_NUMBER >= 0x700:
+    STATISTIC_TYPES = ('undefined', 'gradient', 'maximum', 'mean', 'median',
+                       'minimum', 'mode', 'nonpeak', 'root_mean_square',
+                       'standard_deviation')
 
 
 #: (:class:`tuple`) The list of pixel storage types.
@@ -4198,6 +4240,31 @@ class BaseImage(Resource):
             self.raise_exception()
 
     @manipulative
+    def noise(self, noise_type='uniform', attenuate=1.0):
+        """Adds noise to image.
+
+        :param noise_type: type of noise to apply. See :const:`NOISE_TYPES`.
+        :type noise_type: :class:`basestring`
+        :param attenuate: rate of distribution. Only available in
+                          ImageMagick-7. Default is ``1.0``.
+
+        .. versionadded:: 0.5.3
+        """
+        if noise_type not in NOISE_TYPES:
+            raise ValueError(repr(noise_type) + ' not defined in '
+                             'wand.image.NOISE_TYPE')
+        if not isinstance(attenuate, numbers.Real):
+            raise TypeError('expecting real number, not ' + repr(attenuate))
+        noise_type_idx = NOISE_TYPES.index(noise_type)
+        if MAGICK_VERSION_NUMBER < 0x700:
+            r = library.MagickAddNoiseImage(self.wand, noise_type_idx)
+        else:
+            r = library.MagickAddNoiseImage(self.wand, noise_type_idx,
+                                            attenuate)
+        if not r:
+            self.raise_exceptions()
+
+    @manipulative
     def normalize(self, channel=None):
         """Normalize color channels.
 
@@ -4754,6 +4821,33 @@ class BaseImage(Resource):
         if not r:
             self.raise_exception()
 
+    @manipulative
+    def sketch(self, radius=0.0, sigma=0.0, angle=0.0):
+        """Simulates a pencil sketch effect. For best results, ``radius``
+        value should be larger than ``sigma``.
+
+        :param radius: size of Gaussian apature.
+        :type radius: :class:`numbers.Real`
+        :param sigma: standard deviation of the Gaussian operator.
+        :type sigma: :class:`numbers.Real`
+        :param angle: direction of blur.
+        :type angle: :class:`numbers.Real`
+
+        .. versionadded:: 0.5.3
+        """
+        if not isinstance(radius, numbers.Real):
+            raise TypeError('radius should be a real number, not ' +
+                            repr(radius))
+        if not isinstance(sigma, numbers.Real):
+            raise TypeError('sigma should be a real number, not ' +
+                            repr(sigma))
+        if not isinstance(angle, numbers.Real):
+            raise TypeError('angle should be a real number, not ' +
+                            repr(angle))
+        r = library.MagickSketchImage(self.wand, radius, sigma, angle)
+        if not r:
+            self.raise_exception()
+
     def smush(self, stacked=False, offset=0):
         """Appends all images together. Similar behavior to :meth:`concat`,
         but with an optional offset between images.
@@ -4773,6 +4867,22 @@ class BaseImage(Resource):
         if result:
             self.wand = result
         else:
+            self.raise_exception()
+
+    @manipulative
+    def solarize(self, threshold=0.0):
+        """Simulates extreme overexposure.
+
+        :param threshold: between ``0.0`` and :attr:`quantum_range`.
+        :type threshold: :class:`numbers.Real`
+
+        .. versionadded:: 0.5.3
+        """
+        if not isinstance(threshold, numbers.Real):
+            raise TypeError('threshold should be a real number, not ' +
+                            repr(threshold))
+        r = library.MagickSolarizeImage(self.wand, threshold)
+        if not r:
             self.raise_exception()
 
     @manipulative
@@ -4878,11 +4988,78 @@ class BaseImage(Resource):
         if not r:
             self.raise_exception()
 
+    @manipulative
+    def splice(self, width=None, height=None, x=None, y=None):
+        """Partitions image by splicing a ``width`` x ``height`` rectangle at
+        (``x``, ``y``) offset coordinate. The space inserted will be replaced
+        by the :attr:`background_color` value.
+
+        :param width: number of pixel columns.
+        :type width: :class:`numbers.Integral`
+        :param height: number of pixel rows.
+        :type height: :class:`numbers.Integral`
+        :param x: offset on the X-axis.
+        :type x: :class:`numbers.Integral`
+        :param y: offset on the Y-axis.
+        :type y: :class:`numbers.Integral`
+
+        .. versionadded:: 0.5.3
+        """
+        r = library.MagickSpliceImage(self.wand, width, height, x, y)
+        if not r:
+            self.raise_exception()
+
+    @manipulative
+    def spread(self, radius, method='undefined'):
+        """Randomly displace pixels within a defined radius.
+
+        :param radius: Distance a pixel can be displaced from source.
+        :type radius: :class:`numbers.Real`
+        :param method: Interpolation method. Only available with ImageMagick-7.
+                       See :const:`PIXEL_INTERPOLATE_METHODS`.
+        """
+        if not isinstance(radius, numbers.Real):
+            raise TypeError('expecting real number, not ' + repr(radius))
+        if method not in PIXEL_INTERPOLATE_METHODS:
+            raise ValueError(repr(method) + ' not defined in '
+                             'PIXEL_INTERPOLATE_METHODS')
+        method_idx = PIXEL_INTERPOLATE_METHODS.index(method)
+        if MAGICK_VERSION_NUMBER < 0x700:
+            r = library.MagickSpreadImage(self.wand, radius)
+        else:
+            r = library.MagickSpreadImage(self.wand, method_idx, radius)
+        if not r:
+            self.raise_exception()
+
+    @manipulative
+    def statistic(self, stat='undefined', width=None, height=None):
+        """Replace wach pixel with the statistic results from neighboring pixel
+        values. The ``width`` & ``height`` defines the size, or apature, of
+        the neighboring pixels.
+
+        :param stat: The type of statistic to calculate. See
+                     :const:`STATISTIC_TYPES`.
+        :type stat: :class:`basestring`
+        :param width: The size of neighboring pixels on the X-axis.
+        :type width: :class:`numbers.Integral`
+        :param height: The size of neighboring pixels on the Y-axis.
+        :type height: :class:`numbers.Integral`
+        """
+        if stat not in STATISTIC_TYPES:
+            raise ValueError(repr(stat) + ' not defined in STATISTIC_TYPES')
+        if not isinstance(width, numbers.Integral):
+            raise TypeError('expecting integer, not ' + repr(width))
+        if not isinstance(height, numbers.Integral):
+            raise TypeError('expecting integer, not ' + repr(height))
+        stat_idx = STATISTIC_TYPES.index(stat)
+        r = library.MagickStatisticImage(self.wand, stat_idx, width, height)
+        if not r:
+            self.raise_exception()
+
     def strip(self):
         """Strips an image of all profiles and comments.
 
         .. versionadded:: 0.2.0
-
         """
         result = library.MagickStripImage(self.wand)
         if not result:
@@ -4921,6 +5098,35 @@ class BaseImage(Resource):
         else:
             r = library.MagickThresholdImage(self.wand,
                                              threshold * self.quantum_range)
+        if not r:
+            self.raise_exception()
+
+    @manipulative
+    def tint(self, color=None, alpha=None):
+        """Applies a color vector to each pixel in the image.
+
+        :param color: Color to calculate midtone.
+        :type color: :class:`~wand.color.Color`
+        :param alpha: Determine how to blend.
+        :type alpha: :class:`~wand.color.Color`
+
+        .. versionadded:: 0.5.3
+        """
+        if isinstance(color, string_type):
+            color = Color(color)
+        if not isinstance(color, Color):
+            raise TypeError('color must be an instance of Color, not ' +
+                            repr(color))
+        if isinstance(alpha, string_type):
+            alpha = Color(alpha)
+        if not isinstance(alpha, Color):
+            raise TypeError('color must be an instance of Color, not ' +
+                            repr(alpha))
+        with color:
+            with alpha:
+                r = library.MagickTintImage(self.wand,
+                                            color.resource,
+                                            alpha.resource)
         if not r:
             self.raise_exception()
 

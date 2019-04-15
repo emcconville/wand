@@ -31,9 +31,15 @@ Unreleased.
  - Added :meth:`Image.color_matrix() <wand.image.BaseImage.color_matrix>` method.
  - Added :meth:`Image.colorize() <wand.image.BaseImage.colorize>` method.
  - Added :attr:`Image.fuzz <wand.image.BaseImage.fuzz>` property.
+ - Added :meth:`Image.noise() <wand.image.BaseImage.noise>` method.
  - Added :meth:`Image.remap() <wand.image.BaseImage.remap>` method.
+ - Added :meth:`Image.sketch() <wand.image.BaseImage.sketch>` method.
  - Added :meth:`Image.smush() <wand.image.BaseImage.smush>` method.
  - Added :meth:`Image.sparse_color() <wand.image.BaseImage.sparse_color>` method.
+ - Added :meth:`Image.splice() <wand.image.BaseImage.splice>` method.
+ - Added :meth:`Image.spread() <wand.image.BaseImage.spread>` method.
+ - Added :meth:`Image.statistic() <wand.image.BaseImage.statistic>` method.
+ - Added :meth:`Image.tint() <wand.image.BaseImage.tint>` method.
 
 
 .. _changelog-0.5.2:

@@ -82,8 +82,12 @@ def load(lib, IM_VERSION):
     ]
     lib.MagickAdaptiveThresholdImage.restype = c_bool
     lib.MagickAddImage.argtypes = [c_void_p, c_void_p]
-    lib.MagickAddNoiseImage.argtypes = [c_void_p, c_int]
-    lib.MagickAddNoiseImage.restype = c_bool
+    if is_im_6:
+        lib.MagickAddNoiseImage.argtypes = [c_void_p, c_int]
+        lib.MagickAddNoiseImage.restype = c_bool
+    else:
+        lib.MagickAddNoiseImage.argtypes = [c_void_p, c_int, c_double]
+        lib.MagickAddNoiseImage.restype = c_bool
     if is_im_6:
         lib.MagickAddNoiseImageChannel.argtypes = [c_void_p, c_int, c_int]
         lib.MagickAddNoiseImageChannel.restype = c_bool
@@ -912,8 +916,12 @@ def load(lib, IM_VERSION):
         c_void_p, c_size_t, c_size_t, c_ssize_t, c_ssize_t
     ]
     lib.MagickSpliceImage.restype = c_bool
-    lib.MagickSpreadImage.argtypes = [c_void_p, c_double]
-    lib.MagickSpreadImage.restype = c_bool
+    if is_im_6:
+        lib.MagickSpreadImage.argtypes = [c_void_p, c_double]
+        lib.MagickSpreadImage.restype = c_bool
+    else:
+        lib.MagickSpreadImage.argtypes = [c_void_p, c_int, c_double]
+        lib.MagickSpreadImage.restype = c_bool
     lib.MagickStatisticImage.argtypes = [c_void_p, c_int, c_size_t, c_size_t]
     lib.MagickStatisticImage.restype = c_bool
     if is_im_6:

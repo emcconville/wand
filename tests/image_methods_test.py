@@ -1046,6 +1046,13 @@ def test_negate_default(fx_asset):
         test(right_bottom, img[-1, -1])
 
 
+def test_noise():
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.noise('gaussian', 1.0)
+        assert was != img.signature
+
+
 def test_normalize(display, fx_asset):
     with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
         left_top = img[0, 0]
@@ -1422,6 +1429,13 @@ def test_shave(fx_asset):
             img.shave(10, None)
 
 
+def test_sketch():
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.sketch(5.0, 3.0, 45.0)
+        assert was != img.signature
+
+
 def test_smush():
     with Image(filename='rose:') as img:
         width, height = img.size
@@ -1439,6 +1453,14 @@ def test_smush():
             img.smush(0xDEADBEEF, '0x0')
 
 
+def test_solarize():
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.alpha_channel = 'off'  # Needed for IM-7
+        img.solarize(0.5 * img.quantum_range)
+        assert was != img.signature
+
+
 def test_sparse_color():
     with Image(width=10, height=10, background=Color('WHITE')) as img:
         colors = {'#F00': (0, 0), '#00F': (9, 9)}
@@ -1451,6 +1473,30 @@ def test_sparse_color():
             img.sparse_color('barycentric', 0xDEADBEEF)
         with raises(TypeError):
             img.sparse_color('barycentric', colors, channel_mask='red')
+
+
+def test_splice(fx_asset):
+    green = Color('GREEN')
+    with Image(filename='rose:') as img:
+        width, height = img.size
+        img.background_color = green
+        img.splice(10, 10, 10, 10)
+        assert width+10, height+10 == img.size
+        assert img[15, 15] == green
+
+
+def test_spread(fx_asset):
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.spread(8.0)
+        assert was != img.signature
+
+
+def test_statistic(fx_asset):
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.statistic('median', 5, 5)
+        assert was != img.signature
 
 
 def test_strip(fx_asset):
@@ -1476,6 +1522,17 @@ def test_threshold(fx_asset):
             assert white.red_int8 == white.green_int8 == white.blue_int8 == 255
         with img[0, btm] as black:
             assert black.red_int8 == black.green_int8 == black.blue_int8 == 0
+
+
+def test_tint(fx_asset):
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.tint('blue', 'blue')
+        assert was != img.signature
+        with raises(TypeError):
+            img.colorize(0xDEADBEEF, Color('blue'))
+        with raises(TypeError):
+            img.colorize(Color('blue'), 0xDEADBEEF)
 
 
 def test_threshold_channel(fx_asset):
