@@ -2280,6 +2280,53 @@ class BaseImage(Resource):
         return top, left
 
     @manipulative
+    def adaptive_blur(self, radius=0.0, sigma=0.0):
+        """Adaptively blurs the image by decreasing Gaussian as the operator
+        approaches detected edges.
+
+        :param radius: size of gaussian aperture.
+        :type radius: :class:`numbers.Real`
+        :param sigma: Standard deviation of the gaussian filter.
+        :type sigma: :class:`numbers.Real`
+
+        .. versionadded:: 0.5.3
+        """
+        if not isinstance(radius, numbers.Real):
+            raise TypeError('radius has to be a numbers.Real, not ' +
+                            repr(radius))
+        elif not isinstance(sigma, numbers.Real):
+            raise TypeError('sigma has to be a numbers.Real, not ' +
+                            repr(sigma))
+        r = library.MagickAdaptiveBlurImage(self.wand, radius, sigma)
+        if not r:
+            self.raise_exception()
+
+    @manipulative
+    def adaptive_resize(self, columns=None, rows=None):
+        """Adaptively resize image by applying Mesh interpolation.
+
+        :param columns: width of resized image.
+        :type columns: :class:`numbers.Integral`
+        :param rows: hight of resized image.
+        :type rows: :class:`numbers.Integral`
+
+        .. versionadded:: 0.5.3
+        """
+        if columns is None:
+            columns = self.width
+        if rows is None:
+            rows = self.height
+        if not isinstance(columns, numbers.Integral):
+            raise TypeError('columns must be a natural number, not ' +
+                            repr(columns))
+        elif not isinstance(rows, numbers.Integral):
+            raise TypeError('rows must be a natural number, not ' +
+                            repr(rows))
+        r = library.MagickAdaptiveResizeImage(self.wand, columns, rows)
+        if not r:
+            self.raise_exception()
+
+    @manipulative
     def auto_orient(self):
         """Adjusts an image so that its orientation is suitable
         for viewing (i.e. top-left orientation). If available it uses
@@ -2468,6 +2515,26 @@ class BaseImage(Resource):
                                                  background_color.resource)
             textboard.read(filename=b'caption:' + text.encode('utf-8'))
             self.composite(textboard, left, top)
+
+    def charcoal(self, radius, sigma):
+        """Transform an image into a simulated charcoal drawing.
+
+        :param radius: The size of the Gaussian operator.
+        :type radius: :class:`numbers.Real`
+        :param sigma: The standard deviation of the Gaussian.
+        :type sigma: :class:`numbers.Real`
+
+        .. versionadded:: 0.5.3
+        """
+        if not isinstance(radius, numbers.Real):
+            raise TypeError('radius is expecting a real number, not ' +
+                            repr(radius))
+        if not isinstance(sigma, numbers.Real):
+            raise TypeError('sigma is expecting a real number, not ' +
+                            repr(sigma))
+        r = library.MagickCharcoalImage(self.wand, radius, sigma)
+        if not r:
+            self.raise_exception()
 
     def clamp(self):
         """Restrict color values between 0 and quantum range. This is useful
@@ -2772,8 +2839,10 @@ class BaseImage(Resource):
                                                 image.height)
         elif gravity is not None:
             raise TypeError('Can not use gravity if top & left are given')
-        else:
-            top, left = 0, 0
+        elif top is None:
+            top = 0
+        elif left is None:
+            left = 0
         if not isinstance(left, numbers.Integral):
             raise TypeError('left must be an integer, not ' + repr(left))
         elif not isinstance(top, numbers.Integral):
@@ -2861,9 +2930,9 @@ class BaseImage(Resource):
             top = 0
         if left is None:
             left = 0
-        elif not isinstance(left, numbers.Integral):
+        if not isinstance(left, numbers.Integral):
             raise TypeError('left must be an integer, not ' + repr(left))
-        elif not isinstance(top, numbers.Integral):
+        if not isinstance(top, numbers.Integral):
             raise TypeError('top must be an integer, not ' + repr(left))
         try:
             ch_const = CHANNELS[channel]
@@ -4714,6 +4783,45 @@ class BaseImage(Resource):
                 self.raise_exception()
 
     @manipulative
+    def selective_blur(self, radius, sigma, threshold):
+        """Blur an image within a given threshold.
+
+        For best effects, use a value between 10% and 50% of
+        :attr:`quantum_range`
+
+        .. code::
+
+            from wand.image import Image
+
+            with Image(filename='photo.jpg') as img:
+                # Apply 8x3 blur with a 10% threshold
+                img.selective_blur(8.0, 3.0, 0.1 * img.quantum_range)
+
+        :param radius: Size of gaussian apature.
+        :type radius: :class:`numbers.Real`
+        :param sigma: Standard deviation of gaussian operator.
+        :type sigma: :class:`numbers.Real`
+        :param threshold: Only pixels within contrast threshold are effected.
+                          Value should be between ``0.0`` and
+                          :attr:`quantum_range`.
+        :type threshold: :class:`numbers.Real`
+
+        .. versionadded:: 0.5.3
+        """
+        if not isinstance(radius, numbers.Real):
+            raise TypeError('expecting real number, not ' + repr(radius))
+        if not isinstance(sigma, numbers.Real):
+            raise TypeError('expecting real number, not ' + repr(sigma))
+        if not isinstance(threshold, numbers.Real):
+            raise TypeError('expecting real number, not ' + repr(threshold))
+        r = library.MagickSelectiveBlurImage(self.wand,
+                                             radius,
+                                             sigma,
+                                             threshold)
+        if not r:
+            self.raise_exception()
+
+    @manipulative
     def shade(self, gray=False, azimuth=0.0, elevation=0.0):
         """Creates a 3D effect by simulating a light from an
         elevated angle.
@@ -5033,7 +5141,7 @@ class BaseImage(Resource):
 
     @manipulative
     def statistic(self, stat='undefined', width=None, height=None):
-        """Replace wach pixel with the statistic results from neighboring pixel
+        """Replace each pixel with the statistic results from neighboring pixel
         values. The ``width`` & ``height`` defines the size, or apature, of
         the neighboring pixels.
 

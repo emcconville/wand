@@ -26,13 +26,17 @@ Unreleased.
      - Added :meth:`Image.cycle_color_map() <wand.image.BaseImage.cycle_color_map>` method.
  - Support for ``highlight`` & ``lowlight`` has been added to
    :meth:`Image.compare() <wand.image.BaseImage.compare>` method.
+ - Added :meth:`Image.adaptive_blur() <wand.image.BaseImage.adaptive_blur>` method.
+ - Added :meth:`Image.adaptive_resize() <wand.image.BaseImage.adaptive_resize>` method.
  - Added :meth:`Image.black_threshold() <wand.image.BaseImage.black_threshold>` method.
  - Added :meth:`Image.blue_shift() <wand.image.BaseImage.blue_shift>` method.
+ - Added :meth:`Image.charcoal() <wand.image.BaseImage.charcoal>`
  - Added :meth:`Image.color_matrix() <wand.image.BaseImage.color_matrix>` method.
  - Added :meth:`Image.colorize() <wand.image.BaseImage.colorize>` method.
  - Added :attr:`Image.fuzz <wand.image.BaseImage.fuzz>` property.
  - Added :meth:`Image.noise() <wand.image.BaseImage.noise>` method.
  - Added :meth:`Image.remap() <wand.image.BaseImage.remap>` method.
+ - Added :meth:`Image.selective_blur() <wand.image.BaseImage.selective_blur>` method.
  - Added :meth:`Image.sketch() <wand.image.BaseImage.sketch>` method.
  - Added :meth:`Image.smush() <wand.image.BaseImage.smush>` method.
  - Added :meth:`Image.sparse_color() <wand.image.BaseImage.sparse_color>` method.
