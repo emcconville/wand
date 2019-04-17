@@ -2327,6 +2327,46 @@ class BaseImage(Resource):
             self.raise_exception()
 
     @manipulative
+    def adaptive_threshold(self, width, height, offset=0, bias=0.0):
+        """Applies threshold for each pixel based on neighboring pixel values.
+
+        .. note::
+
+            In ImageMagick-6, the mean of the threshold was determined by a
+            signed integral, but in ImageMagick-7 this has changed to a double.
+
+        :param width: size of neighboring pixels on the X-axis.
+        :type width: :class:`numbers.Integral`
+        :param height: size of neighboring pixels on the Y-axis.
+        :type height: :class:`numbers.Integral`
+        :param offset: the mean offset. ImageMagick-6 only.
+        :type offset: :class:`numbers.Integral`
+        :param bias: the mean bias. ImageMagick-7 only.
+
+        .. versionadded:: 0.5.3
+        """
+        if not isinstance(width, numbers.Integral):
+            raise TypeError('expecting width to be an integer, not ' +
+                            repr(width))
+        if not isinstance(height, numbers.Integral):
+            raise TypeError('expecting height to be an integer, not ' +
+                            repr(height))
+        if not isinstance(offset, numbers.Integral):
+            raise TypeError('expecting offset to be an integer, not ' +
+                            repr(offset))
+        if not isinstance(bias, numbers.Real):
+            raise TypeError('expecting bias to be a real number, not ' +
+                            repr(bias))
+        if MAGICK_VERSION_NUMBER < 0x700:
+            mean = offset
+        else:
+            mean = bias
+        r = library.MagickAdaptiveThresholdImage(self.wand, width,
+                                                 height, mean)
+        if not r:
+            self.raise_exception()
+
+    @manipulative
     def auto_orient(self):
         """Adjusts an image so that its orientation is suitable
         for viewing (i.e. top-left orientation). If available it uses

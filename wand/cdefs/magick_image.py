@@ -77,10 +77,16 @@ def load(lib, IM_VERSION):
             c_void_p, c_int, c_double, c_double
         ]
         lib.MagickAdaptiveSharpenImageChannel.restype = c_bool
-    lib.MagickAdaptiveThresholdImage.argtypes = [
-        c_void_p, c_size_t, c_size_t, c_ssize_t
-    ]
-    lib.MagickAdaptiveThresholdImage.restype = c_bool
+    if is_im_6:
+        lib.MagickAdaptiveThresholdImage.argtypes = [
+            c_void_p, c_size_t, c_size_t, c_ssize_t
+        ]
+        lib.MagickAdaptiveThresholdImage.restype = c_bool
+    else:
+        lib.MagickAdaptiveThresholdImage.argtypes = [
+            c_void_p, c_size_t, c_size_t, c_double
+        ]
+        lib.MagickAdaptiveThresholdImage.restype = c_bool
     lib.MagickAddImage.argtypes = [c_void_p, c_void_p]
     if is_im_6:
         lib.MagickAddNoiseImage.argtypes = [c_void_p, c_int]
