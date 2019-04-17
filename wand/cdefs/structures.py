@@ -20,6 +20,46 @@ class AffineMatrix(Structure):
                 ('ty', c_double)]
 
 
+class ChannelFeature(Structure):
+    """
+    /*
+      Haralick texture features.
+    */
+    typedef struct _ChannelFeatures
+    {
+      double
+        angular_second_moment[4],
+        contrast[4],
+        correlation[4],
+        variance_sum_of_squares[4],
+        inverse_difference_moment[4],
+        sum_average[4],
+        sum_variance[4],
+        sum_entropy[4],
+        entropy[4],
+        difference_variance[4],
+        difference_entropy[4],
+        measure_of_correlation_1[4],
+        measure_of_correlation_2[4],
+        maximum_correlation_coefficient[4];
+    } ChannelFeatures;
+    """
+    _fields_ = [('angular_second_moment', c_double * 4),
+                ('contrast', c_double * 4),
+                ('correlation', c_double * 4),
+                ('variance_sum_of_squares', c_double * 4),
+                ('inverse_difference_moment', c_double * 4),
+                ('sum_average', c_double * 4),
+                ('sum_variance', c_double * 4),
+                ('sum_entropy', c_double * 4),
+                ('entropy', c_double * 4),
+                ('difference_variance', c_double * 4),
+                ('difference_entropy', c_double * 4),
+                ('measure_of_correlation_1', c_double * 4),
+                ('measure_of_correlation_2', c_double * 4),
+                ('maximum_correlation_coefficient', c_double * 4)]
+
+
 class GeomertyInfo(Structure):
 
     _fields_ = [('rho', c_double),

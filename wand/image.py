@@ -1785,6 +1785,32 @@ class BaseImage(Resource):
         library.MagickSetImageInterpolateMethod(self.wand, method_idx)
 
     @property
+    def kurtosis(self):
+        """(:class:`tuple`) The kurtosis and skewness of the image.
+
+        .. code:: python
+
+            from wand.image import Image
+
+            with Image(filename='input.jpg') as img:
+                kurtosis, skewness = img.kurtosis
+
+        .. versionadded:: 0.5.3
+        """
+        k = ctypes.c_double(0.0)
+        s = ctypes.c_double(0.0)
+        if MAGICK_VERSION_NUMBER < 0x700:
+            channel_idx = CHANNELS['default_channels']
+            library.MagickGetImageChannelKurtosis(self.wand, channel_idx,
+                                                  ctypes.byref(k),
+                                                  ctypes.byref(s))
+        else:
+            library.MagickGetImageKurtosis(self.wand,
+                                           ctypes.byref(k),
+                                           ctypes.byref(s))
+        return k.value, s.value
+
+    @property
     def loop(self):
         """(:class:`numbers.Integral`) Number of frame iterations.
         A value of ``0`` will loop forever."""
@@ -1827,6 +1853,32 @@ class BaseImage(Resource):
                                                       color.resource)
             if not result:
                 self.raise_exception()
+
+    @property
+    def mean(self):
+        """(:class:`tuple`) The mean and standard deviation of the image.
+
+        .. code:: python
+
+            from wand.image import Image
+
+            with Image(filename='input.jpg') as img:
+                mean, stddev = img.mean
+
+        .. versionadded:: 0.5.3
+        """
+        m = ctypes.c_double(0.0)
+        s = ctypes.c_double(0.0)
+        if MAGICK_VERSION_NUMBER < 0x700:
+            channel_idx = CHANNELS['default_channels']
+            library.MagickGetImageChannelMean(self.wand, channel_idx,
+                                              ctypes.byref(m),
+                                              ctypes.byref(s))
+        else:
+            library.MagickGetImageMean(self.wand,
+                                       ctypes.byref(m),
+                                       ctypes.byref(s))
+        return m.value, s.value
 
     @property
     def orientation(self):
@@ -1960,6 +2012,26 @@ class BaseImage(Resource):
         result = ctypes.c_size_t()
         library.MagickGetQuantumRange(ctypes.byref(result))
         return result.value
+
+    @property
+    def range(self):
+        """(:class:`tuple`) The minimum and maximum of quantum value in image.
+
+        .. code:: python
+
+            from wand.image import Image
+
+            with Image(filename='input.jpg') as img:
+                min_color, max_color = img.range
+
+        .. versionadded:: 0.5.3
+        """
+        min_color = ctypes.c_double(0.0)
+        max_color = ctypes.c_double(0.0)
+        library.MagickGetImageRange(self.wand,
+                                    ctypes.byref(min_color),
+                                    ctypes.byref(max_color))
+        return min_color.value, max_color.value
 
     @property
     def red_primary(self):

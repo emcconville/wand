@@ -3,6 +3,7 @@
 # These test cover the Image attributes that directly map to C-API functions.
 #
 import io
+import numbers
 import warnings
 from pytest import mark, raises
 
@@ -288,6 +289,15 @@ def test_interpolate_method_set(fx_asset):
         assert img.interpolate_method == expected
 
 
+def test_kurtosis():
+    with Image(filename='rose:') as img:
+        kurtosis, skewness = img.kurtosis
+        assert isinstance(kurtosis, numbers.Real)
+        assert kurtosis != 0.0
+        assert isinstance(skewness, numbers.Real)
+        assert skewness != 0.0
+
+
 def test_matte_color(fx_asset):
     with Image(filename='rose:') as img:
         with Color('navy') as color:
@@ -297,6 +307,15 @@ def test_matte_color(fx_asset):
                 img.matte_color = False
         img.matte_color = 'orange'
         assert img.matte_color == Color('orange')
+
+
+def test_mean():
+    with Image(filename='rose:') as img:
+        mean, stddev = img.mean
+        assert isinstance(mean, numbers.Real)
+        assert mean != 0.0
+        assert isinstance(stddev, numbers.Real)
+        assert stddev != 0.0
 
 
 def test_metadata(fx_asset):
@@ -425,6 +444,14 @@ def test_profiles(fx_asset):
             img.profiles[0xDEADBEEF] = 0xDEADBEEF
         with raises(TypeError):
             img.profiles['exif'] = 0xDEADBEEF
+
+
+def test_range():
+    with Image(filename='rose:') as img:
+        minq, maxq = img.range
+        assert isinstance(minq, numbers.Real)
+        assert isinstance(maxq, numbers.Real)
+        assert minq < maxq
 
 
 def test_resolution_get(fx_asset):

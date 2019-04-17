@@ -40,7 +40,10 @@ Unreleased.
  - Added :meth:`Image.color_matrix() <wand.image.BaseImage.color_matrix>` method.
  - Added :meth:`Image.colorize() <wand.image.BaseImage.colorize>` method.
  - Added :attr:`Image.fuzz <wand.image.BaseImage.fuzz>` property.
+ - Added :attr:`Image.kurtosis <wand.image.BaseImage.kurtosis>` property.
+ - Added :attr:`Image.mean <wand.image.BaseImage.mean>` property.
  - Added :meth:`Image.noise() <wand.image.BaseImage.noise>` method.
+ - Added :attr:`Image.range <wand.image.BaseImage.range>` property.
  - Added :meth:`Image.remap() <wand.image.BaseImage.remap>` method.
  - Added :meth:`Image.selective_blur() <wand.image.BaseImage.selective_blur>` method.
  - Added :meth:`Image.sketch() <wand.image.BaseImage.sketch>` method.

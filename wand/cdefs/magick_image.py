@@ -376,8 +376,16 @@ def load(lib, IM_VERSION):
     if is_im_6:
         lib.MagickGetImageChannelDepth.argtypes = [c_void_p, c_int]
         lib.MagickGetImageChannelDepth.restype = c_size_t
-        lib.MagickGetImageChannelFeatures.argtypes = [c_void_p]
+        lib.MagickGetImageChannelFeatures.argtypes = [c_void_p, c_size_t]
         lib.MagickGetImageChannelFeatures.restype = c_void_p
+        lib.MagickGetImageChannelKurtosis.argtypes = [
+            c_void_p, c_int, POINTER(c_double), POINTER(c_double)
+        ]
+        lib.MagickGetImageChannelKurtosis.restype = c_bool
+        lib.MagickGetImageChannelMean.argtypes = [
+            c_void_p, c_int, POINTER(c_double), POINTER(c_double)
+        ]
+        lib.MagickGetImageChannelMean.restype = c_bool
         lib.MagickGetImageChannelStatistics.argtypes = [c_void_p]
         lib.MagickGetImageChannelStatistics.restype = c_void_p
         lib.MagickGetImageClipMask.argtypes = [c_void_p]
@@ -440,10 +448,20 @@ def load(lib, IM_VERSION):
     lib.MagickGetImageIterations.restype = c_size_t
     lib.MagickGetImageInterpolateMethod.argtypes = [c_void_p]
     lib.MagickGetImageInterpolateMethod.restype = c_int
+    if is_im_7:
+        lib.MagickGetImageKurtosis.argtypes = [
+            c_void_p, POINTER(c_double), POINTER(c_double)
+        ]
+        lib.MagickGetImageKurtosis.restype = c_bool
     lib.MagickGetImageLength.argtypes = [c_void_p, POINTER(c_size_t)]
     lib.MagickGetImageLength.restype = c_bool
     lib.MagickGetImageMatteColor.argtypes = [c_void_p, c_void_p]
     lib.MagickGetImageMatteColor.restype = c_bool
+    if is_im_7:
+        lib.MagickGetImageMean.argtypes = [
+            c_void_p, POINTER(c_double), POINTER(c_double)
+        ]
+        lib.MagickGetImageMean.restype = c_bool
     lib.MagickGetImageOrientation.argtypes = [c_void_p]
     lib.MagickGetImageOrientation.restype = c_int
     lib.MagickGetImagePage.argtypes = [
