@@ -90,7 +90,11 @@ def encode_filename(filename):
     """If ``filename`` is a :data:`text_type`, encode it to
     :data:`binary_type` according to filesystem's default encoding.
 
+    .. versionchanged:: 0.5.3
+       Added support for PEP-519 https://github.com/emcconville/wand/pull/339
     """
+    if hasattr(filename, "__fspath__"):  # PEP 519
+        filename = filename.__fspath__()
     if isinstance(filename, text_type):
         return filename.encode(sys.getfilesystemencoding())
     return filename

@@ -29,6 +29,7 @@ Unreleased.
      - Added :meth:`Image.cycle_color_map() <wand.image.BaseImage.cycle_color_map>` method.
  - Support for ``highlight`` & ``lowlight`` has been added to
    :meth:`Image.compare() <wand.image.BaseImage.compare>` method.
+ - Support for PEP-519 for objects implementing :attr:`__fspath__`, in :meth:`~wand.compat.encode_filename`.
  - Added :meth:`Image.adaptive_blur() <wand.image.BaseImage.adaptive_blur>` method.
  - Added :meth:`Image.adaptive_resize() <wand.image.BaseImage.adaptive_resize>` method.
  - Added :meth:`Image.adaptive_sharpen() <wand.image.BaseImage.adaptive_sharpen>` method.
