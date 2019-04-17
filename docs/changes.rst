@@ -28,6 +28,8 @@ Unreleased.
    :meth:`Image.compare() <wand.image.BaseImage.compare>` method.
  - Added :meth:`Image.adaptive_blur() <wand.image.BaseImage.adaptive_blur>` method.
  - Added :meth:`Image.adaptive_resize() <wand.image.BaseImage.adaptive_resize>` method.
+ - Added :meth:`Image.adaptive_sharpen() <wand.image.BaseImage.adaptive_sharpen>` method.
+ - Added :meth:`Image.adaptive_threshold() <wand.image.BaseImage.adaptive_threshold>` method.
  - Added :meth:`Image.black_threshold() <wand.image.BaseImage.black_threshold>` method.
  - Added :meth:`Image.blue_shift() <wand.image.BaseImage.blue_shift>` method.
  - Added :meth:`Image.charcoal() <wand.image.BaseImage.charcoal>`

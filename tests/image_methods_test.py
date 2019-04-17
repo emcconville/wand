@@ -14,6 +14,34 @@ from wand.font import Font
 from wand.version import MAGICK_VERSION_NUMBER
 
 
+def test_adaptive_blur():
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.adaptive_blur(8, 3)
+        assert was != img.signature
+
+
+def test_adaptive_resize():
+    with Image(filename='rose:') as img:
+        img.adaptive_resize(140, 92)
+        assert 140, 92 == img.size
+
+
+def test_adaptive_sharpen():
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.adaptive_sharpen(8, 3)
+        assert was != img.signature
+
+
+def test_adaptive_threshold():
+    with Image(filename='rose:') as img:
+        was = img.signature
+        offset = 0.1 * img.quantum_range
+        img.adaptive_threshold(15, 15, offset)
+        assert was != img.signature
+
+
 def test_auto_orientation(fx_asset):
     with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
         # if orientation is undefined nothing should be changed

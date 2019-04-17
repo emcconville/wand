@@ -2327,21 +2327,39 @@ class BaseImage(Resource):
             self.raise_exception()
 
     @manipulative
-    def adaptive_threshold(self, width, height, offset=0, bias=0.0):
+    def adaptive_sharpen(self, radius=0.0, sigma=0.0):
+        """Adaptively sharpens the image by sharpening more intensely near
+        image edges and less intensely far from edges.
+
+        :param radius: size of gaussian aperture.
+        :type radius: :class:`numbers.Real`
+        :param sigma: Standard deviation of the gaussian filter.
+        :type sigma: :class:`numbers.Real`
+
+        .. versionadded:: 0.5.3
+        """
+        if not isinstance(radius, numbers.Real):
+            raise TypeError('radius has to be a numbers.Real, not ' +
+                            repr(radius))
+        elif not isinstance(sigma, numbers.Real):
+            raise TypeError('sigma has to be a numbers.Real, not ' +
+                            repr(sigma))
+        r = library.MagickAdaptiveSharpenImage(self.wand, radius, sigma)
+        if not r:
+            self.raise_exception()
+
+    @manipulative
+    def adaptive_threshold(self, width, height, offset=0.0):
         """Applies threshold for each pixel based on neighboring pixel values.
-
-        .. note::
-
-            In ImageMagick-6, the mean of the threshold was determined by a
-            signed integral, but in ImageMagick-7 this has changed to a double.
 
         :param width: size of neighboring pixels on the X-axis.
         :type width: :class:`numbers.Integral`
         :param height: size of neighboring pixels on the Y-axis.
         :type height: :class:`numbers.Integral`
-        :param offset: the mean offset. ImageMagick-6 only.
-        :type offset: :class:`numbers.Integral`
-        :param bias: the mean bias. ImageMagick-7 only.
+        :param offset: normalized number between `0.0` and
+                       :attr:`quantum_range`. Forces the pixels to black if
+                       values are below ``offset``.
+        :type offset: :class:`numbers.Real`
 
         .. versionadded:: 0.5.3
         """
@@ -2351,18 +2369,13 @@ class BaseImage(Resource):
         if not isinstance(height, numbers.Integral):
             raise TypeError('expecting height to be an integer, not ' +
                             repr(height))
-        if not isinstance(offset, numbers.Integral):
-            raise TypeError('expecting offset to be an integer, not ' +
+        if not isinstance(offset, numbers.Real):
+            raise TypeError('expecting offset to be a real number, not ' +
                             repr(offset))
-        if not isinstance(bias, numbers.Real):
-            raise TypeError('expecting bias to be a real number, not ' +
-                            repr(bias))
         if MAGICK_VERSION_NUMBER < 0x700:
-            mean = offset
-        else:
-            mean = bias
+            offset = int(offset)
         r = library.MagickAdaptiveThresholdImage(self.wand, width,
-                                                 height, mean)
+                                                 height, offset)
         if not r:
             self.raise_exception()
 
