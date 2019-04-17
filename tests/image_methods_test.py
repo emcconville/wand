@@ -28,9 +28,9 @@ def test_adaptive_resize():
 
 
 def test_adaptive_sharpen():
-    with Image(filename='rose:') as img:
+    with Image(width=100, height=100, pseudo='plasma:') as img:
         was = img.signature
-        img.adaptive_sharpen(8, 3)
+        img.adaptive_sharpen(15, 3)
         assert was != img.signature
 
 

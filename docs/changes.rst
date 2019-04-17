@@ -18,6 +18,9 @@ Unreleased.
  - Updated :meth:`Image.composite <wand.image.BaseImage.composite>` &
    :meth:`Image.composite_channel <wand.image.BaseImage.composite_channel>` to
    include optional arguments for composite methods that require extra controls.
+ - Updated :meth:`Image.composite <wand.image.BaseImage.composite>` &
+   :meth:`Image.composite_channel <wand.image.BaseImage.composite_channel>` to
+   include optional gravity argument.
  - Support for numpy arrays. [:issue:`65`]
      - Added :meth:`Image.from_array <wand.image.Image.from_array>` class method.
  - Support color map / palette manipulation. [:issue:`403`]
