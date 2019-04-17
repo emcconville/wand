@@ -27,6 +27,8 @@ def test_adaptive_resize():
         assert 140, 92 == img.size
 
 
+@mark.skipif(MAGICK_VERSION_NUMBER < 0x690,
+             reason='-adaptive-sharpen fixed in version 6.8.9-2')
 def test_adaptive_sharpen():
     with Image(width=100, height=100, pseudo='plasma:') as img:
         was = img.signature
