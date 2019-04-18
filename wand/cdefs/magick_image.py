@@ -386,6 +386,10 @@ def load(lib, IM_VERSION):
             c_void_p, c_int, POINTER(c_double), POINTER(c_double)
         ]
         lib.MagickGetImageChannelMean.restype = c_bool
+        lib.MagickGetImageChannelRange.argtypes = [
+            c_void_p, c_int, POINTER(c_double), POINTER(c_double)
+        ]
+        lib.MagickGetImageChannelRange.restype = c_bool
         lib.MagickGetImageChannelStatistics.argtypes = [c_void_p]
         lib.MagickGetImageChannelStatistics.restype = c_void_p
         lib.MagickGetImageClipMask.argtypes = [c_void_p]

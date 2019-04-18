@@ -291,11 +291,9 @@ def test_interpolate_method_set(fx_asset):
 
 def test_kurtosis():
     with Image(filename='rose:') as img:
-        kurtosis, skewness = img.kurtosis
+        kurtosis = img.kurtosis
         assert isinstance(kurtosis, numbers.Real)
         assert kurtosis != 0.0
-        assert isinstance(skewness, numbers.Real)
-        assert skewness != 0.0
 
 
 def test_matte_color(fx_asset):
@@ -311,11 +309,9 @@ def test_matte_color(fx_asset):
 
 def test_mean():
     with Image(filename='rose:') as img:
-        mean, stddev = img.mean
+        mean = img.mean
         assert isinstance(mean, numbers.Real)
         assert mean != 0.0
-        assert isinstance(stddev, numbers.Real)
-        assert stddev != 0.0
 
 
 def test_metadata(fx_asset):
@@ -336,6 +332,13 @@ def test_mimetype(fx_asset):
         assert img.mimetype in ('image/jpeg', 'image/x-jpeg')
     with Image(filename=str(fx_asset.join('croptest.png'))) as img:
         assert img.mimetype in ('image/png', 'image/x-png')
+
+
+def test_minimum_maximum_quantum():
+    with Image(filename='rose:') as img:
+        minq = img.minimum_quantum
+        maxq = img.maximum_quantum
+        assert minq < maxq
 
 
 def test_orientation_get(fx_asset):
@@ -446,14 +449,6 @@ def test_profiles(fx_asset):
             img.profiles['exif'] = 0xDEADBEEF
 
 
-def test_range():
-    with Image(filename='rose:') as img:
-        minq, maxq = img.range
-        assert isinstance(minq, numbers.Real)
-        assert isinstance(maxq, numbers.Real)
-        assert minq < maxq
-
-
 def test_resolution_get(fx_asset):
     """Gets image resolution."""
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
@@ -515,6 +510,20 @@ def test_size(fx_asset):
         assert img.width == 402
         assert img.height == 599
         assert len(img) == 599
+
+
+def test_skewness():
+    with Image(filename='rose:') as img:
+        skewness = img.skewness
+        assert isinstance(skewness, numbers.Real)
+        assert skewness != 0.0
+
+
+def test_standard_deviation():
+    with Image(filename='rose:') as img:
+        standard_deviation = img.standard_deviation
+        assert isinstance(standard_deviation, numbers.Real)
+        assert standard_deviation != 0.0
 
 
 def test_type_get(fx_asset):

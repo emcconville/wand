@@ -1786,29 +1786,17 @@ class BaseImage(Resource):
 
     @property
     def kurtosis(self):
-        """(:class:`tuple`) The kurtosis and skewness of the image.
+        """(:class:`numbers.Real`) The kurtosis of the image.
 
-        .. code:: python
+        .. tip::
 
-            from wand.image import Image
-
-            with Image(filename='input.jpg') as img:
-                kurtosis, skewness = img.kurtosis
+            If you want both :attr:`kurtosis` & :attr:`skewness`, it
+            would be faster to call :meth:`kurtosis_channel()` directly.
 
         .. versionadded:: 0.5.3
         """
-        k = ctypes.c_double(0.0)
-        s = ctypes.c_double(0.0)
-        if MAGICK_VERSION_NUMBER < 0x700:
-            channel_idx = CHANNELS['default_channels']
-            library.MagickGetImageChannelKurtosis(self.wand, channel_idx,
-                                                  ctypes.byref(k),
-                                                  ctypes.byref(s))
-        else:
-            library.MagickGetImageKurtosis(self.wand,
-                                           ctypes.byref(k),
-                                           ctypes.byref(s))
-        return k.value, s.value
+        k, _ = self.kurtosis_channel()
+        return k
 
     @property
     def loop(self):
@@ -1855,30 +1843,46 @@ class BaseImage(Resource):
                 self.raise_exception()
 
     @property
-    def mean(self):
-        """(:class:`tuple`) The mean and standard deviation of the image.
+    def maximum_quantum(self):
+        """(:class:`numbers.Real`) The maximum quantum value within the image.
 
-        .. code:: python
+        .. tip::
 
-            from wand.image import Image
-
-            with Image(filename='input.jpg') as img:
-                mean, stddev = img.mean
+            If you want both :attr:`maximum_quantum` & :attr:`minimum_quantum`,
+            it would be faster to call :meth:`range_channel()` directly.
 
         .. versionadded:: 0.5.3
         """
-        m = ctypes.c_double(0.0)
-        s = ctypes.c_double(0.0)
-        if MAGICK_VERSION_NUMBER < 0x700:
-            channel_idx = CHANNELS['default_channels']
-            library.MagickGetImageChannelMean(self.wand, channel_idx,
-                                              ctypes.byref(m),
-                                              ctypes.byref(s))
-        else:
-            library.MagickGetImageMean(self.wand,
-                                       ctypes.byref(m),
-                                       ctypes.byref(s))
-        return m.value, s.value
+        _, max_q = self.range_channel()
+        return max_q
+
+    @property
+    def mean(self):
+        """(:class:`numbers.Real`) The mean of the image.
+
+        .. tip::
+
+            If you want both :attr:`mean` & :attr:`standard_deviation`, it
+            would be faster to call :meth:`mean_channel()` directly.
+
+        .. versionadded:: 0.5.3
+        """
+        m, _ = self.mean_channel()
+        return m
+
+    @property
+    def minimum_quantum(self):
+        """(:class:`numbers.Real`) The minimum quantum value within the image.
+
+        .. tip::
+
+            If you want both :attr:`maximum_quantum` & :attr:`minimum_quantum`,
+            it would be faster to call :meth:`range_channel()` directly.
+
+        .. versionadded:: 0.5.3
+        """
+        min_q, _ = self.range_channel()
+        return min_q
 
     @property
     def orientation(self):
@@ -2014,26 +2018,6 @@ class BaseImage(Resource):
         return result.value
 
     @property
-    def range(self):
-        """(:class:`tuple`) The minimum and maximum of quantum value in image.
-
-        .. code:: python
-
-            from wand.image import Image
-
-            with Image(filename='input.jpg') as img:
-                min_color, max_color = img.range
-
-        .. versionadded:: 0.5.3
-        """
-        min_color = ctypes.c_double(0.0)
-        max_color = ctypes.c_double(0.0)
-        library.MagickGetImageRange(self.wand,
-                                    ctypes.byref(min_color),
-                                    ctypes.byref(max_color))
-        return min_color.value, max_color.value
-
-    @property
     def red_primary(self):
         """(:class:`tuple`) The chromatic red primary point for the image.
         With ImageMagick-6 the primary value is ``(x, y)`` coordinates;
@@ -2116,6 +2100,34 @@ class BaseImage(Resource):
     def size(self):
         """(:class:`tuple`) The pair of (:attr:`width`, :attr:`height`)."""
         return self.width, self.height
+
+    @property
+    def skewness(self):
+        """(:class:`numbers.Real`) The skewness of the image.
+
+        .. tip::
+
+            If you want both :attr:`kurtosis` & :attr:`skewness`, it
+            would be faster to call :meth:`kurtosis_channel()` directly.
+
+        .. versionadded:: 0.5.3
+        """
+        _, s = self.kurtosis_channel()
+        return s
+
+    @property
+    def standard_deviation(self):
+        """(:class:`numbers.Real`) The standard deviation of the image.
+
+        .. tip::
+
+            If you want both :attr:`mean` & :attr:`standard_deviation`, it
+            would be faster to call :meth:`mean_channel()` directly.
+
+        .. versionadded:: 0.5.3
+        """
+        _, s = self.mean_channel()
+        return s
 
     @property
     def stroke_color(self):
@@ -4051,6 +4063,47 @@ class BaseImage(Resource):
         if not r:
             self.raise_exception()
 
+    def kurtosis_channel(self, channel='default_channels'):
+        """Calculates the kurtosis and skewness of the image.
+
+        .. code:: python
+
+            from wand.image import Image
+
+            with Image(filename='input.jpg') as img:
+                kurtosis, skewness = img.kurtosis_channel()
+
+        :param channel: Select which color channel to evaluate. See
+                        :const:`CHANNELS`. Default ``'default_channels'``.
+        :type channel: :class:`basestring`
+        :returns: Tuple of :attr:`kurtosis` & :attr:`skewness`
+                  values.
+        :rtype: :class:`tuple`
+
+        .. versionadded:: 0.5.3
+        """
+        try:
+            ch_channel = CHANNELS[channel]
+        except IndexError:
+            raise TypeError('channel must be defined in '
+                            'wand.image.CHANNELS')
+        k = ctypes.c_double(0.0)
+        s = ctypes.c_double(0.0)
+        if MAGICK_VERSION_NUMBER < 0x700:
+            library.MagickGetImageChannelKurtosis(self.wand, ch_channel,
+                                                  ctypes.byref(k),
+                                                  ctypes.byref(s))
+        else:
+            # Set active channel, and capture mask to restore.
+            channel_mask = library.MagickSetImageChannelMask(self.wand,
+                                                             ch_channel)
+            library.MagickGetImageKurtosis(self.wand,
+                                           ctypes.byref(k),
+                                           ctypes.byref(s))
+            # Restore original state of channels
+            library.MagickSetImageChannelMask(self.wand, channel_mask)
+        return k.value, s.value
+
     def level(self, black=0.0, white=None, gamma=1.0, channel=None):
         """Adjusts the levels of an image by scaling the colors falling
         between specified black and white points to the full available
@@ -4191,6 +4244,47 @@ class BaseImage(Resource):
                 'impossible to load liblqr.  You might not install liblqr, '
                 'or ImageMagick may not compiled with liblqr.'
             )
+
+    def mean_channel(self, channel='default_channels'):
+        """Calculates the mean and standard deviation of the image.
+
+        .. code:: python
+
+            from wand.image import Image
+
+            with Image(filename='input.jpg') as img:
+                mean, stddev = img.mean_channel()
+
+        :param channel: Select which color channel to evaluate. See
+                        :const:`CHANNELS`. Default ``'default_channels'``.
+        :type channel: :class:`basestring`
+        :returns: Tuple of :attr:`mean` & :attr:`standard_deviation`
+                  values.
+        :rtype: :class:`tuple`
+
+        .. versionadded:: 0.5.3
+        """
+        try:
+            ch_channel = CHANNELS[channel]
+        except IndexError:
+            raise TypeError('channel must be defined in '
+                            'wand.image.CHANNELS')
+        m = ctypes.c_double(0.0)
+        s = ctypes.c_double(0.0)
+        if MAGICK_VERSION_NUMBER < 0x700:
+            library.MagickGetImageChannelMean(self.wand, ch_channel,
+                                              ctypes.byref(m),
+                                              ctypes.byref(s))
+        else:
+            # Set active channel, and capture mask to restore.
+            channel_mask = library.MagickSetImageChannelMask(self.wand,
+                                                             ch_channel)
+            library.MagickGetImageMean(self.wand,
+                                       ctypes.byref(m),
+                                       ctypes.byref(s))
+            # Restore original state of channels
+            library.MagickSetImageChannelMask(self.wand, channel_mask)
+        return m.value, s.value
 
     @manipulative
     def merge_layers(self, method):
@@ -4627,6 +4721,47 @@ class BaseImage(Resource):
         )
         if not r:
             self.raise_exception()
+
+    def range_channel(self, channel='default_channels'):
+        """Calculate the minimum and maximum of quantum values in image.
+
+        .. code:: python
+
+            from wand.image import Image
+
+            with Image(filename='input.jpg') as img:
+                min_quantum, max_quantum = img.range_channel()
+
+        :param channel: Select which color channel to evaluate. See
+                        :const:`CHANNELS`. Default ``'default_channels'``.
+        :type channel: :class:`basestring`
+        :returns: Tuple of :attr:`minimum_quantum` & :attr:`maximum_quantum`
+                  values.
+        :rtype: :class:`tuple`
+
+        .. versionadded:: 0.5.3
+        """
+        try:
+            ch_channel = CHANNELS[channel]
+        except IndexError:
+            raise TypeError('channel must be defined in '
+                            'wand.image.CHANNELS')
+        min_color = ctypes.c_double(0.0)
+        max_color = ctypes.c_double(0.0)
+        if MAGICK_VERSION_NUMBER < 0x700:
+            library.MagickGetImageChannelRange(self.wand, ch_channel,
+                                               ctypes.byref(min_color),
+                                               ctypes.byref(max_color))
+        else:
+            # Set active channel, and capture mask to restore.
+            channel_mask = library.MagickSetImageChannelMask(self.wand,
+                                                             ch_channel)
+            library.MagickGetImageRange(self.wand,
+                                        ctypes.byref(min_color),
+                                        ctypes.byref(max_color))
+            # Restore original state of channels
+            library.MagickSetImageChannelMask(self.wand, channel_mask)
+        return min_color.value, max_color.value
 
     @manipulative
     def remap(self, affinity=None, method='no'):
