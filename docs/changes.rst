@@ -42,10 +42,10 @@ Unreleased.
  - Added :attr:`Image.fuzz <wand.image.BaseImage.fuzz>` property.
  - Added :attr:`Image.kurtosis <wand.image.BaseImage.kurtosis>` property.
  - Added :meth:`Image.kurtosis_channel() <wand.image.BaseImage.kurtosis_channel>` method
- - Added :attr:`Image.maximum_quantum <wand.image.BaseImage.maximum_quantum>` property.
+ - Added :attr:`Image.maxima <wand.image.BaseImage.maxima>` property.
  - Added :attr:`Image.mean <wand.image.BaseImage.mean>` property.
  - Added :meth:`Image.mean_channel() <wand.image.BaseImage.mean_channel>` method
- - Added :attr:`Image.minimum_quantum <wand.image.BaseImage.minimum_quantum>` property.
+ - Added :attr:`Image.minima <wand.image.BaseImage.minima>` property.
  - Added :meth:`Image.noise() <wand.image.BaseImage.noise>` method.
  - Added :meth:`Image.range_channel() <wand.image.BaseImage.range_channel>` method
  - Added :meth:`Image.remap() <wand.image.BaseImage.remap>` method.

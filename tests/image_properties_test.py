@@ -334,10 +334,10 @@ def test_mimetype(fx_asset):
         assert img.mimetype in ('image/png', 'image/x-png')
 
 
-def test_minimum_maximum_quantum():
+def test_minima_maxima():
     with Image(filename='rose:') as img:
-        minq = img.minimum_quantum
-        maxq = img.maximum_quantum
+        minq = img.minima
+        maxq = img.maxima
         assert minq < maxq
 
 

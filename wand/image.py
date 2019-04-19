@@ -1843,12 +1843,12 @@ class BaseImage(Resource):
                 self.raise_exception()
 
     @property
-    def maximum_quantum(self):
+    def maxima(self):
         """(:class:`numbers.Real`) The maximum quantum value within the image.
 
         .. tip::
 
-            If you want both :attr:`maximum_quantum` & :attr:`minimum_quantum`,
+            If you want both :attr:`maxima` & :attr:`minima`,
             it would be faster to call :meth:`range_channel()` directly.
 
         .. versionadded:: 0.5.3
@@ -1871,12 +1871,12 @@ class BaseImage(Resource):
         return m
 
     @property
-    def minimum_quantum(self):
+    def minima(self):
         """(:class:`numbers.Real`) The minimum quantum value within the image.
 
         .. tip::
 
-            If you want both :attr:`maximum_quantum` & :attr:`minimum_quantum`,
+            If you want both :attr:`maxima` & :attr:`minima`,
             it would be faster to call :meth:`range_channel()` directly.
 
         .. versionadded:: 0.5.3
@@ -4730,12 +4730,12 @@ class BaseImage(Resource):
             from wand.image import Image
 
             with Image(filename='input.jpg') as img:
-                min_quantum, max_quantum = img.range_channel()
+                minima, maxima = img.range_channel()
 
         :param channel: Select which color channel to evaluate. See
                         :const:`CHANNELS`. Default ``'default_channels'``.
         :type channel: :class:`basestring`
-        :returns: Tuple of :attr:`minimum_quantum` & :attr:`maximum_quantum`
+        :returns: Tuple of :attr:`minima` & :attr:`maxima`
                   values.
         :rtype: :class:`tuple`
 

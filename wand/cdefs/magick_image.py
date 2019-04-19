@@ -423,6 +423,9 @@ def load(lib, IM_VERSION):
         c_void_p, c_void_p, c_int, POINTER(c_double)
     ]
     lib.MagickGetImageDistortion.restype = c_bool
+    if is_im_7:
+        lib.MagickGetImageFeatures.argtypes = [c_void_p, c_size_t]
+        lib.MagickGetImageFeatures.restype = c_void_p
     lib.MagickGetImageFilename.argtypes = [c_void_p]
     lib.MagickGetImageFilename.restype = c_magick_char_p
     lib.MagickGetImageFormat.argtypes = [c_void_p]
