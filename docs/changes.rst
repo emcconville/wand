@@ -12,7 +12,7 @@ Wand Changelog
 Version 0.5.3
 -------------
 
-Unreleased.
+Released on April 20, 2019.
 
  - Fixed alpha channel set to "on" & "off" values for ImageMagick-7. [:issue:`404`]
  - Updated :meth:`Image.composite <wand.image.BaseImage.composite>` &
