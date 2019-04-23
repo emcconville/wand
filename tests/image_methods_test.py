@@ -1504,7 +1504,7 @@ def test_sparse_color():
         img.sparse_color('barycentric', colors)
         assert img[0, 0] == Color('#F00')
         assert img[9, 9] == Color('#00F')
-        with raises(ValueError):
+        with raises(TypeError):
             img.sparse_color(0xDEADBEEF, colors)
         with raises(TypeError):
             img.sparse_color('barycentric', 0xDEADBEEF)
@@ -1615,6 +1615,8 @@ def test_transform(args, kwargs, expected_size, fx_asset):
 def test_transform_colorspace(fx_asset):
     with Image(filename=str(fx_asset.join('cmyk.jpg'))) as img:
         with raises(TypeError):
+            img.transform_colorspace(0xDEADBEEF)
+        with raises(ValueError):
             img.transform_colorspace('unknown')
 
         img.transform_colorspace('srgb')
@@ -1788,7 +1790,7 @@ def test_wave(fx_asset):
             img.wave(amplitude='img height')
         with raises(TypeError):
             img.wave(wave_length='img height')
-        with raises(ValueError):
+        with raises(TypeError):
             img.wave(method=0xDEADBEEF)
 
 

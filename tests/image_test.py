@@ -533,7 +533,7 @@ def test_from_array():
 @mark.skipif(np is None, reason='Numpy not available.')
 def test_array_interface():
     with Image(filename='rose:') as img:
-        img.alpha_channel = False
+        img.alpha_channel = 'off'
         array = np.array(img)
         assert array.shape == (70, 46, 3)
 

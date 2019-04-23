@@ -11,6 +11,7 @@ import numbers
 
 from .compat import string_type
 
+
 def assert_integer(subject, label=None):
     if not isinstance(subject, numbers.Integral):
         if label:
@@ -78,4 +79,19 @@ def assert_color(subject, label=None):
         raise TypeError(msg)
 
 
-from .color import Color
+def in_list(options, label, **kwargs):
+    for subject_label, subject in kwargs.items():
+        if subject not in options:
+            fmt = "{0} must be defined in {1}, not {2}"
+            msg = fmt.format(subject_label, label, repr(subject))
+            raise ValueError(msg)
+
+
+def string_in_list(options, label, **kwargs):
+    for subject_label, subject in kwargs.items():
+        assert_string(subject, subject_label)
+    in_list(options, label, **kwargs)
+
+
+# Lazy load recursive import
+from .color import Color  # noqa: E402

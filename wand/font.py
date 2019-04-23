@@ -34,8 +34,7 @@ name is a very complicated problem to achieve.
 .. _FontTools-TTX: http://sourceforge.net/projects/fonttools/
 
 """
-import numbers
-
+from . import assertions
 from .color import Color
 from .compat import string_type, text
 
@@ -68,27 +67,19 @@ class Font(tuple):
 
     def __new__(cls, path, size=0, color=None, antialias=True,
                 stroke_color=None, stroke_width=None):
-        if not isinstance(path, string_type):
-            raise TypeError('path must be a string, not ' + repr(path))
-        if not isinstance(size, numbers.Real):
-            raise TypeError('size must be a real number, not ' + repr(size))
+        assertions.assert_string(path, 'path')
+        assertions.assert_real(size, 'size')
         if color is None:
             color = Color('black')
         elif isinstance(color, string_type):
             color = Color(color)
-        elif not isinstance(color, Color):
-            raise TypeError('color must be an instance of wand.color.Color, '
-                            'not ' + repr(color))
+        assertions.assert_color(color, 'color')
         if stroke_color:
             if isinstance(stroke_color, string_type):
                 stroke_color = Color(stroke_color)
-            elif not isinstance(stroke_color, Color):
-                raise TypeError('stroke_color must be an instance of '
-                                'wand.color.Color, not ' + repr(stroke_color))
-        if stroke_width is not None and not isinstance(stroke_width,
-                                                       numbers.Real):
-            raise TypeError('stroke_width must be a number, not ' +
-                            repr(stroke_width))
+            assertions.assert_color(stroke_color, 'stroke_color')
+        if stroke_width is not None:
+            assertions.assert_real(stroke_width, 'stroke_width')
         path = text(path)
         return tuple.__new__(cls, (path, size, color, bool(antialias),
                                    stroke_color, stroke_width))

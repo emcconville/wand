@@ -300,7 +300,7 @@ class Color(Resource):
         assert pixelwand
         if MAGICK_VERSION_NUMBER < 0x700:
             pixel_structure = MagickPixelPacket
-        else:
+        else:  # pragma: no cover
             pixel_structure = PixelInfo
         size = ctypes.sizeof(pixel_structure)
         raw_buffer = ctypes.create_string_buffer(size)
