@@ -2429,7 +2429,7 @@ class BaseImage(Resource):
         """
         try:
             return library.MagickAutoOrientImage(self.wand)
-        except AttributeError:
+        except AttributeError:  # pragma: no cover
             self._auto_orient()
             return True
 
@@ -2532,7 +2532,7 @@ class BaseImage(Resource):
         .. versionadded:: 0.5.0
         """
         r = library.MagickAppendImages(self.wand, stacked)
-        if not r:
+        if not r:  # pragma: no cover
             self.raise_exception()
         self.wand = r
 
@@ -3193,11 +3193,8 @@ class BaseImage(Resource):
         if height is None:
             bottom = abs_(bottom, self.height)
             height = bottom - top
-        if width < 1:
-            raise ValueError('image width cannot be zero')
-        elif height < 1:
-            raise ValueError('image width cannot be zero')
-        elif (left == top == 0 and width == self.width and
+        assertions.counting_numbers(width=width, height=height)
+        if (left == top == 0 and width == self.width and
               height == self.height):
             return
         if self.animation:
@@ -3663,7 +3660,7 @@ class BaseImage(Resource):
                                                        index,
                                                        argc,
                                                        argv)
-            else:
+            else:  # pragma: no cover
                 # Set active channel, and capture mask to restore.
                 channel_mask = library.MagickSetImageChannelMask(self.wand,
                                                                  ch_channel)
@@ -3958,7 +3955,7 @@ class BaseImage(Resource):
         """
         try:
             ch_channel = CHANNELS[channel]
-        except IndexError:
+        except KeyError:
             raise TypeError('channel must be defined in '
                             'wand.image.CHANNELS')
         k = ctypes.c_double(0.0)
@@ -4130,7 +4127,7 @@ class BaseImage(Resource):
         """
         try:
             ch_channel = CHANNELS[channel]
-        except IndexError:
+        except KeyError:
             raise TypeError('channel must be defined in '
                             'wand.image.CHANNELS')
         m = ctypes.c_double(0.0)
@@ -4402,6 +4399,7 @@ class BaseImage(Resource):
         return r
 
     @manipulative
+    @trap_exception
     def normalize(self, channel=None):
         """Normalize color channels.
 
@@ -4438,8 +4436,7 @@ class BaseImage(Resource):
                                                  0)
         else:
             r = library.MagickNormalizeImage(self.wand)
-        if not r:
-            self.raise_exception()
+        return r
 
     @manipulative
     def optimize_layers(self):
@@ -4573,7 +4570,7 @@ class BaseImage(Resource):
         """
         try:
             ch_channel = CHANNELS[channel]
-        except IndexError:
+        except KeyError:
             raise TypeError('channel must be defined in '
                             'wand.image.CHANNELS')
         min_color = ctypes.c_double(0.0)
@@ -4720,16 +4717,9 @@ class BaseImage(Resource):
             width = self.width
         if height is None:
             height = self.height
-        assertions.assert_integer(width, 'width')
-        assertions.assert_integer(height, 'height')
+        assertions.counting_numbers(width=width, height=height)
         assertions.assert_real(blur, 'blur')
-        if width < 1:
-            raise ValueError('width must be a natural number, not ' +
-                             repr(width))
-        elif height < 1:
-            raise ValueError('height must be a natural number, not ' +
-                             repr(height))
-        elif not isinstance(filter, (string_type, numbers.Integral)):
+        if not isinstance(filter, (string_type, numbers.Integral)):
             raise TypeError('filter must be one string defined in wand.image.'
                             'FILTER_TYPES or an integer, not ' + repr(filter))
         if isinstance(filter, string_type):
@@ -4827,14 +4817,7 @@ class BaseImage(Resource):
             width = self.width
         if height is None:
             height = self.height
-        assertions.assert_integer(width, 'width')
-        assertions.assert_integer(height, 'height')
-        if width < 1:
-            raise ValueError('width must be a natural number, not ' +
-                             repr(width))
-        elif height < 1:
-            raise ValueError('height must be a natural number, not ' +
-                             repr(height))
+        assertions.counting_numbers(width=width, height=height)
         if self.animation:
             self.wand = library.MagickCoalesceImages(self.wand)
             library.MagickSetLastIterator(self.wand)
@@ -5412,7 +5395,7 @@ class BaseImage(Resource):
             self.sequence.instances = []
         else:
             new_wand = library.MagickTransformImage(self.wand, crop, resize)
-        if not new_wand:
+        if not new_wand:  # pragma: no cover
             self.raise_exception()
         self.wand = new_wand
 
@@ -5858,12 +5841,7 @@ class Image(BaseImage):
                 # allow setting the width, height and depth
                 # (needed for loading raw data)
                 if width is not None and height is not None:
-                    if not isinstance(width, numbers.Integral) or width < 1:
-                        raise TypeError('width must be a natural number, '
-                                        'not ' + repr(width))
-                    if not isinstance(height, numbers.Integral) or height < 1:
-                        raise TypeError('height must be a natural number, '
-                                        'not ' + repr(height))
+                    assertions.counting_numbers(width=width, height=height)
                     library.MagickSetSize(self.wand, width, height)
                 if depth is not None:
                     library.MagickSetDepth(self.wand, depth)
@@ -6028,19 +6006,12 @@ class Image(BaseImage):
         .. versionadded:: 0.3.0
 
         """
-        if not isinstance(width, numbers.Integral) or width < 1:
-            raise TypeError('width must be a natural number, not ' +
-                            repr(width))
-        if not isinstance(height, numbers.Integral) or height < 1:
-            raise TypeError('height must be a natural number, not ' +
-                            repr(height))
+        assertions.counting_numbers(width=width, height=height)
         if background is None:
             background = Color('transparent')
         elif isinstance(background, string_type):
             background = Color(background)
-        elif not isinstance(background, Color):
-            raise TypeError('background must be a wand.color.Color '
-                            'instance, not ' + repr(background))
+        assertions.assert_color(background, 'background')
         with background:
             r = library.MagickNewImage(self.wand, width, height,
                                        background.resource)
@@ -6176,7 +6147,8 @@ class Image(BaseImage):
             blob = ctypes.string_at(blob_p, length.value)
             library.MagickRelinquishMemory(blob_p)
             return blob
-        self.raise_exception()
+        else:  # pragma: no cover
+            self.raise_exception()
 
     def pseudo(self, width, height, pseudo='xc:'):
         """Creates a new image from ImageMagick's internal protocol coders.
@@ -6190,15 +6162,8 @@ class Image(BaseImage):
 
         .. versionadded:: 0.5.0
         """
-        if not isinstance(width, numbers.Integral) or width < 1:
-            raise TypeError('width must be a natural number, not ' +
-                            repr(width))
-        if not isinstance(height, numbers.Integral) or height < 1:
-            raise TypeError('height must be a natural number, not ' +
-                            repr(height))
-        if not isinstance(pseudo, string_type):
-            raise TypeError('pseudo must be a string type, not ' +
-                            repr(pseudo))
+        assertions.counting_numbers(width=width, height=height)
+        assertions.assert_string(pseudo, 'pseudo')
         r = library.MagickSetSize(self.wand, width, height)
         if not r:
             self.raise_exception()

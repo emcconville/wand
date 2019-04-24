@@ -46,6 +46,14 @@ def assert_unsigned_integer(subject, label=None):
         raise ValueError(msg)
 
 
+def assert_counting_number(subject, label):
+    assert_integer(subject, label)
+    if subject < 1:
+        fmt = "{0}={1} must be an natural number greater than 0"
+        msg = fmt.format(label, subject)
+        raise ValueError(msg)
+
+
 def assert_bool(subject, label=None):
     if not isinstance(subject, bool):
         if label:
@@ -77,6 +85,11 @@ def assert_color(subject, label=None):
             fmt = "Expecting an instance of wand.color.Color, not {0}"
             msg = fmt.format(repr(subject))
         raise TypeError(msg)
+
+
+def counting_numbers(**kwargs):
+    for label, subject in kwargs.items():
+        assert_counting_number(subject, label)
 
 
 def in_list(options, label, **kwargs):

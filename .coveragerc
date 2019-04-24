@@ -1,0 +1,6 @@
+[run]
+omit =
+    wand/cdefs/*
+    wand/api.py
+    wand/display.py
+
