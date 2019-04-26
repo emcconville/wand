@@ -204,21 +204,25 @@ libc = None
 if platform.system() == 'Windows':
     msvcrt = ctypes.util.find_msvcrt()
     # workaround -- the newest visual studio DLL is named differently:
-    if not msvcrt and "1900" in platform.python_compiler():
-        msvcrt = "vcruntime140.dll"
+    if not msvcrt and '1900' in platform.python_compiler():
+        msvcrt = 'vcruntime140.dll'
     if msvcrt:
         libc = ctypes.CDLL(msvcrt)
 else:
-    if platform.system() == 'Darwin':
-        try:
-            libc = ctypes.cdll.LoadLibrary('libc.dylib')
-        except OSError:
-            # In case of El Capitan SIP
-            libc = ctypes.cdll.LoadLibrary('/usr/lib/libc.dylib')
-    elif sys.platform.startswith(('dragonfly', 'freebsd')):
-        libc = ctypes.cdll.LoadLibrary(ctypes.util.find_library('c'))
+    libc_path = ctypes.util.find_library('c')
+    if libc_path:
+        libc = ctypes.cdll.LoadLibrary(libc_path)
     else:
-        libc = ctypes.cdll.LoadLibrary('libc.so.6')
-    libc.fdopen.argtypes = [ctypes.c_int, ctypes.c_char_p]
-    libc.fdopen.restype = ctypes.c_void_p
-    libc.fflush.argtypes = [ctypes.c_void_p]
+        # Attempt to guess popular versions of libc
+        libc_paths = ('libc.so.6', 'libc.so', 'libc.a', 'libc.dylib',
+                      '/usr/lib/libc.dylib')
+        for libc_path in libc_paths:
+            try:
+                libc = ctypes.cdll.LoadLibrary(libc_path)
+                break
+            except (IOError, OSError):
+                continue
+    if libc:
+        libc.fdopen.argtypes = [ctypes.c_int, ctypes.c_char_p]
+        libc.fdopen.restype = ctypes.c_void_p
+        libc.fflush.argtypes = [ctypes.c_void_p]
