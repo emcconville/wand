@@ -57,7 +57,7 @@ def test_image_invalid_params():
 def test_blank_image():
     gray = Color('#ccc')
     transparent = Color('transparent')
-    with raises(TypeError):
+    with raises(ValueError):
         Image(width=0, height=0)
     with Image(width=20, height=10) as img:
         assert img[10, 5] == transparent
@@ -74,7 +74,7 @@ def test_raw_image(fx_asset):
                   for i in range(256) for j in range(256)])
     with raises(ValueError):
         Image(blob=b, depth=6)
-    with raises(TypeError):
+    with raises(ValueError):
         Image(blob=b, depth=8, width=0, height=0, format="RGB")
     with raises(TypeError):
         Image(blob=b, depth=8, width=256, height=256, format=1)
@@ -330,11 +330,11 @@ def test_iterate(fx_asset):
             with Image(filename=str(fx_asset.join('croptest.png'))) as img:
                 for i, row in enumerate(img):
                     assert len(row) == 300
-                    if i % 3:
+                    if i % 30:
                         continue  # avoid slowness
                     if 100 <= i < 200:
                         for x, color in enumerate(row):
-                            if x % 3:
+                            if x % 30:
                                 continue  # avoid slowness
                             if 100 <= x < 200:
                                 assert color == black
@@ -533,7 +533,7 @@ def test_from_array():
 @mark.skipif(np is None, reason='Numpy not available.')
 def test_array_interface():
     with Image(filename='rose:') as img:
-        img.alpha_channel = False
+        img.alpha_channel = 'off'
         array = np.array(img)
         assert array.shape == (70, 46, 3)
 

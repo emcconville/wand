@@ -15,7 +15,7 @@ import functools
 import numbers
 import weakref
 
-from . import compat
+from . import assertions
 from .api import libc, libmagick, library
 from .color import Color
 from .compat import (abc, binary, binary_type, encode_filename, file_types,
@@ -72,7 +72,7 @@ ALPHA_CHANNEL_TYPES = ('undefined', 'activate', 'background', 'copy',
                        'deactivate', 'extract', 'opaque', 'reset', 'set',
                        'shape', 'transparent', 'flatten', 'remove',
                        'associate', 'disassociate')
-if MAGICK_VERSION_NUMBER >= 0x700:
+if MAGICK_VERSION_NUMBER >= 0x700:  # pragma: no cover
     ALPHA_CHANNEL_TYPES = ('undefined', 'activate', 'associate', 'background',
                            'copy', 'deactivate', 'discrete', 'disassociate',
                            'extract', 'off', 'on', 'opaque', 'remove', 'set',
@@ -112,7 +112,7 @@ CHANNELS = dict(undefined=0, red=1, gray=1, cyan=1, green=2, magenta=2,
                 composite_channels=47, all_channels=134217727, true_alpha=64,
                 rgb_channels=128, gray_channels=128, sync_channels=256,
                 default_channels=134217719)
-if MAGICK_VERSION_NUMBER >= 0x700:
+if MAGICK_VERSION_NUMBER >= 0x700:  # pragma: no cover
     CHANNELS = dict(undefined=0, red=1, gray=1, cyan=1, green=2, magenta=2,
                     blue=4, yellow=4, black=8, alpha=16, opacity=16, index=32,
                     readmask=0x0040, write_mask=128, meta=256,
@@ -173,7 +173,7 @@ COLORSPACE_TYPES = ('undefined', 'rgb', 'gray', 'transparent', 'ohta', 'lab',
                     'rec709luma', 'rec709ycbcr', 'log', 'cmy', 'luv', 'hcl',
                     'lch', 'lms', 'lchab', 'lchuv', 'scrgb', 'hsi', 'hsv',
                     'hclp', 'ydbdr')
-if MAGICK_VERSION_NUMBER >= 0x700:
+if MAGICK_VERSION_NUMBER >= 0x700:  # pragma: no cover
     COLORSPACE_TYPES = ('undefined', 'cmy', 'cmyk', 'gray', 'hcl', 'hclp',
                         'hsb', 'hsi', 'hsl', 'hsv', 'hwb', 'lab', 'lch',
                         'lchab', 'lchuv', 'log', 'lms', 'luv', 'ohta',
@@ -207,7 +207,7 @@ COMPARE_METRICS = ('undefined', 'absolute',
                    'mean_squared', 'normalized_cross_correlation',
                    'peak_absolute', 'peak_signal_to_noise_ratio',
                    'perceptual_hash', 'root_mean_square')
-if MAGICK_VERSION_NUMBER >= 0x700:
+if MAGICK_VERSION_NUMBER >= 0x700:  # pragma: no cover
     COMPARE_METRICS = ('undefined', 'absolute', 'fuzz', 'mean_absolute',
                        'mean_error_per_pixel', 'mean_squared',
                        'normalized_cross_correlation', 'peak_absolute',
@@ -320,7 +320,7 @@ COMPOSITE_OPERATORS = (
     'plus', 'replace', 'saturate', 'screen', 'soft_light', 'src_atop', 'src',
     'src_in', 'src_out', 'src_over', 'subtract', 'threshold', 'xor', 'divide'
 )
-if MAGICK_VERSION_NUMBER >= 0x700:
+if MAGICK_VERSION_NUMBER >= 0x700:  # pragma: no cover
     COMPOSITE_OPERATORS = (
         'undefined', 'alpha', 'atop', 'blend', 'blur', 'bumpmap',
         'change_mask', 'clear', 'color_burn', 'color_dodge', 'colorize',
@@ -348,7 +348,7 @@ COMPRESSION_TYPES = (
     'lzw', 'rle', 'zip', 'zips', 'piz', 'pxr24', 'b44',
     'b44a', 'lzma', 'jbig1', 'jbig2'
 )
-if MAGICK_VERSION_NUMBER >= 0x700:
+if MAGICK_VERSION_NUMBER >= 0x700:  # pragma: no cover
     COMPRESSION_TYPES = (
         'undefined', 'b44a', 'b44', 'bzip', 'dxt1', 'dxt3', 'dxt5', 'fax',
         'group4', 'jbig1', 'jbig2', 'jpeg2000', 'jpeg', 'losslessjpeg',
@@ -461,7 +461,7 @@ EVALUATE_OPS = ('undefined', 'add', 'and', 'divide', 'leftshift', 'max',
                 'laplaciannoise', 'multiplicativenoise', 'poissonnoise',
                 'uniformnoise', 'cosine', 'sine', 'addmodulus', 'mean',
                 'abs', 'exponential', 'median', 'sum', 'rootmeansquare')
-if MAGICK_VERSION_NUMBER >= 0x700:
+if MAGICK_VERSION_NUMBER >= 0x700:  # pragma: no cover
     EVALUATE_OPS = ('undefined', 'abs', 'add', 'addmodulus', 'and', 'cosine',
                     'divide', 'exponential', 'gaussiannoise', 'impulsenoise',
                     'laplaciannoise', 'leftshift', 'log', 'max', 'mean',
@@ -531,7 +531,7 @@ FILTER_TYPES = ('undefined', 'point', 'box', 'triangle', 'hermite', 'hanning',
 #: - ``'polynomial'``
 #: - ``'sinusoid'``
 FUNCTION_TYPES = ('undefined', 'polynomial', 'sinusoid', 'arcsin', 'arctan')
-if MAGICK_VERSION_NUMBER >= 0x700:
+if MAGICK_VERSION_NUMBER >= 0x700:  # pragma: no cover
     FUNCTION_TYPES = ('undefined', 'arcsin', 'arctan', 'polynomial',
                       'sinusoid')
 
@@ -615,7 +615,7 @@ IMAGE_TYPES = ('undefined', 'bilevel', 'grayscale', 'grayscalematte',
                'palette', 'palettematte', 'truecolor', 'truecolormatte',
                'colorseparation', 'colorseparationmatte', 'optimize',
                'palettebilevelmatte')
-if MAGICK_VERSION_NUMBER >= 0x700:
+if MAGICK_VERSION_NUMBER >= 0x700:  # pragma: no cover
     IMAGE_TYPES = ('undefined', 'bilevel', 'grayscale', 'grayscalemalpha',
                    'palette', 'palettealpha', 'truecolor', 'truecoloralpha',
                    'colorseparation', 'colorseparationalpha', 'optimize',
@@ -687,7 +687,7 @@ KERNEL_INFO_TYPES = ('undefined', 'unity', 'gaussian', 'dog', 'log', 'blur',
                      'line_junctions', 'ridges', 'convex_hull', 'thin_se',
                      'skeleton', 'chebyshev', 'manhattan', 'octagonal',
                      'euclidean', 'user_defined', 'binomial')
-if MAGICK_VERSION_NUMBER >= 0x700:
+if MAGICK_VERSION_NUMBER >= 0x700:  # pragma: no cover
     KERNEL_INFO_TYPES = ('undefined', 'unity', 'gaussian', 'dog', 'log',
                          'blur', 'comet', 'binomial', 'laplacian', 'sobel',
                          'frei_chen', 'roberts', 'prewitt', 'compass',
@@ -730,7 +730,7 @@ MORPHOLOGY_METHODS = ('undefined', 'convolve', 'correlate', 'erode', 'dilate',
                       'smooth', 'edgein', 'edgeout', 'edge', 'tophat',
                       'bottom_hat', 'hit_and_miss', 'thinning', 'thicken',
                       'voronoi', 'iterative_distance')
-if MAGICK_VERSION_NUMBER >= 0x700:
+if MAGICK_VERSION_NUMBER >= 0x700:  # pragma: no cover
     MORPHOLOGY_METHODS = ('undefined', 'convolve', 'correlate', 'erode',
                           'dilate', 'erode_intensity', 'dilate_intensity',
                           'iterative_distance', 'open', 'close',
@@ -867,7 +867,7 @@ SPARSE_COLOR_METHODS = dict(undefined=0, barycentric=1, bilinear=7,
 STATISTIC_TYPES = ('undefined', 'gradient', 'maximum', 'mean', 'median',
                    'minimum', 'mode', 'nonpeak', 'standard_deviation',
                    'root_mean_square')
-if MAGICK_VERSION_NUMBER >= 0x700:
+if MAGICK_VERSION_NUMBER >= 0x700:  # pragma: no cover
     STATISTIC_TYPES = ('undefined', 'gradient', 'maximum', 'mean', 'median',
                        'minimum', 'mode', 'nonpeak', 'root_mean_square',
                        'standard_deviation')
@@ -932,7 +932,7 @@ VIRTUAL_PIXEL_METHOD = ('undefined', 'background', 'constant', 'dither',
                         'mask', 'black', 'gray', 'white', 'horizontal_tile',
                         'vertical_tile', 'horizontal_tile_edge',
                         'vertical_tile_edge', 'checker_tile')
-if MAGICK_VERSION_NUMBER >= 0x700:
+if MAGICK_VERSION_NUMBER >= 0x700:  # pragma: no cover
     VIRTUAL_PIXEL_METHOD = ('undefined', 'background', 'dither',
                             'edge', 'mirror', 'random', 'tile', 'transparent',
                             'mask', 'black', 'gray', 'white',
@@ -947,6 +947,16 @@ def manipulative(function):
     def wrapped(self, *args, **kwargs):
         result = function(self, *args, **kwargs)
         self.dirty = True
+        return result
+    return wrapped
+
+
+def trap_exception(function):
+    @functools.wraps(function)
+    def wrapped(self, *args, **kwargs):
+        result = function(self, *args, **kwargs)
+        if not bool(result):
+            self.raise_exception()
         return result
     return wrapped
 
@@ -1067,9 +1077,7 @@ class BaseImage(Resource):
     def __setitem__(self, idx, color):
         if isinstance(color, string_type):
             color = Color(color)
-        elif not isinstance(color, Color):
-            raise TypeError('color must be in instance of Color, not ' +
-                            repr(color))
+        assertions.assert_color(color, 'color')
         if not isinstance(idx, abc.Iterable):
             raise TypeError('Expecting list of x,y coordinates, not ' +
                             repr(idx))
@@ -1241,14 +1249,11 @@ class BaseImage(Resource):
         # Map common aliases for ``'activate'``
         elif alpha_type is True or (alpha_type == 'on' and is_im6):
             alpha_type = 'activate'
-        if alpha_type in ALPHA_CHANNEL_TYPES:
-            alpha_index = ALPHA_CHANNEL_TYPES.index(alpha_type)
-            library.MagickSetImageAlphaChannel(self.wand,
-                                               alpha_index)
-            self.raise_exception()
-        else:
-            raise ValueError('expecting string from ALPHA_CHANNEL_TYPES, '
-                             'not ' + repr(alpha_type))
+        assertions.string_in_list(ALPHA_CHANNEL_TYPES,
+                                  'wand.image.ALPHA_CHANNEL_TYPES',
+                                  alpha_channel=alpha_type)
+        alpha_index = ALPHA_CHANNEL_TYPES.index(alpha_type)
+        library.MagickSetImageAlphaChannel(self.wand, alpha_index)
 
     @property
     def animation(self):
@@ -1284,9 +1289,7 @@ class BaseImage(Resource):
     @antialias.setter
     @manipulative
     def antialias(self, antialias):
-        if not isinstance(antialias, bool):
-            raise TypeError('antialias must be a bool, not ' +
-                            repr(antialias))
+        assertions.assert_bool(antialias, 'antialias')
         library.MagickSetAntialias(self.wand, antialias)
 
     @property
@@ -1299,24 +1302,23 @@ class BaseImage(Resource):
         """
         pixel = library.NewPixelWand()
         result = library.MagickGetImageBackgroundColor(self.wand, pixel)
-        if result:
+        if not result:  # pragma: no cover
+            self.raise_exception()
+        else:
             color = Color.from_pixelwand(pixel)
             pixel = library.DestroyPixelWand(pixel)
             return color
-        self.raise_exception()
 
     @background_color.setter
     @manipulative
     def background_color(self, color):
         if isinstance(color, string_type):
             color = Color(color)
-        elif not isinstance(color, Color):
-            raise TypeError('color must be a wand.color.Color object, not ' +
-                            repr(color))
+        assertions.assert_color(color, 'color')
         with color:
             result = library.MagickSetImageBackgroundColor(self.wand,
                                                            color.resource)
-            if not result:
+            if not result:  # pragma: no cover
                 self.raise_exception()
 
     @property
@@ -1334,11 +1336,11 @@ class BaseImage(Resource):
         if MAGICK_VERSION_NUMBER < 0x700:
             r = library.MagickGetImageBluePrimary(self.wand, x, y)
             p = (x.value, y.value)
-        else:
+        else:  # pragma: no cover
             z = ctypes.c_double(0.0)
             r = library.MagickGetImageBluePrimary(self.wand, x, y, z)
             p = (x.value, y.value, z.value)
-        if not r:
+        if not r:  # pragma: no cover
             self.raise_exception()
         return p
 
@@ -1350,10 +1352,10 @@ class BaseImage(Resource):
         if MAGICK_VERSION_NUMBER < 0x700:
             x, y = coordinates
             r = library.MagickSetImageBluePrimary(self.wand, x, y)
-        else:
+        else:  # pragma: no cover
             x, y, z = coordinates
             r = library.MagickSetImageBluePrimary(self.wand, x, y, z)
-        if not r:
+        if not r:  # pragma: no cover
             self.raise_exception()
 
     @property
@@ -1377,22 +1379,21 @@ class BaseImage(Resource):
 
         """
         colorspace_type_index = library.MagickGetImageColorspace(self.wand)
-        if not colorspace_type_index:
+        if not colorspace_type_index:  # pragma: no cover
             self.raise_exception()
         return COLORSPACE_TYPES[text(colorspace_type_index)]
 
     @colorspace.setter
     @manipulative
     def colorspace(self, colorspace_type):
-        if (not isinstance(colorspace_type, string_type) or
-                colorspace_type not in COLORSPACE_TYPES):
-            raise TypeError('Colorspace value must be a string from '
-                            'COLORSPACE_TYPES, not ' + repr(colorspace_type))
+        assertions.string_in_list(COLORSPACE_TYPES,
+                                  'wand.image.COLORSPACE_TYPES',
+                                  colorspace=colorspace_type)
         r = library.MagickSetImageColorspace(
             self.wand,
             COLORSPACE_TYPES.index(colorspace_type)
         )
-        if not r:
+        if not r:  # pragma: no cover
             self.raise_exception()
 
     @property
@@ -1408,11 +1409,9 @@ class BaseImage(Resource):
 
     @compose.setter
     def compose(self, operator):
-        if not isinstance(operator, string_type):
-            raise TypeError('expected a string, not ' + repr(operator))
-        if operator not in COMPOSITE_OPERATORS:
-            raise ValueError('expected a value from COMPOSITE_OPERATORS, ' +
-                             'not ' + repr(operator))
+        assertions.string_in_list(COMPOSITE_OPERATORS,
+                                  'wand.image.COMPOSITE_OPERATORS',
+                                  compose=operator)
         library.MagickSetImageCompose(self.wand,
                                       COMPOSITE_OPERATORS.index(operator))
 
@@ -1432,11 +1431,9 @@ class BaseImage(Resource):
 
     @compression.setter
     def compression(self, value):
-        if not isinstance(value, string_type):
-            raise TypeError('expected a string, not ' + repr(value))
-        if value not in COMPRESSION_TYPES:
-            raise ValueError('expected a string from COMPRESSION_TYPES, not ' +
-                             repr(value))
+        assertions.string_in_list(COMPRESSION_TYPES,
+                                  'wand.image.COMPRESSION_TYPES',
+                                  compression=value)
         library.MagickSetCompression(
             self.wand,
             COMPRESSION_TYPES.index(value)
@@ -1466,12 +1463,10 @@ class BaseImage(Resource):
         :type quality: :class:`numbers.Integral`
 
         """
-        if not isinstance(quality, numbers.Integral):
-            raise TypeError('compression quality must be a natural '
-                            'number, not ' + repr(quality))
+        assertions.assert_integer(quality, 'compression quality')
         library.MagickSetCompressionQuality(self.wand, quality)
         r = library.MagickSetImageCompressionQuality(self.wand, quality)
-        if not r:
+        if not r:  # pragma: no cover
             raise ValueError('Unable to set compression quality to ' +
                              repr(quality))
 
@@ -1488,7 +1483,7 @@ class BaseImage(Resource):
     @manipulative
     def depth(self, depth):
         r = library.MagickSetImageDepth(self.wand, depth)
-        if not r:
+        if not r:  # pragma: no cover
             raise self.raise_exception()
 
     @property
@@ -1513,11 +1508,9 @@ class BaseImage(Resource):
 
     @dispose.setter
     def dispose(self, value):
-        if not isinstance(value, string_type):
-            raise TypeError('expected a string, not ' + repr(value))
-        if value not in DISPOSE_TYPES:
-            raise ValueError('expected a string from DISPOSE_TYPES, not ' +
-                             repr(value))
+        assertions.string_in_list(DISPOSE_TYPES,
+                                  'wand.image.DISPOSE_TYPES',
+                                  dispose=value)
         library.MagickSetImageDispose(self.wand, DISPOSE_TYPES.index(value))
 
     @property
@@ -1567,9 +1560,7 @@ class BaseImage(Resource):
     def font_color(self, color):
         if isinstance(color, string_type):
             color = Color(color)
-        elif not isinstance(color, Color):
-            raise TypeError('font_color must be a wand.color.Color, not ' +
-                            repr(color))
+        assertions.assert_color(color, 'font_color')
         self.options['fill'] = color.string
 
     @property
@@ -1595,9 +1586,8 @@ class BaseImage(Resource):
     @font_size.setter
     @manipulative
     def font_size(self, size):
-        if not isinstance(size, numbers.Real):
-            raise TypeError('expected a numbers.Real, but got ' + repr(size))
-        elif size < 0.0:
+        assertions.assert_real(size, 'font_size')
+        if size < 0.0:
             raise ValueError('cannot be less then 0.0, but got ' + repr(size))
         elif library.MagickSetPointsize(self.wand, size) is False:
             raise ValueError('unexpected error is occur')
@@ -1628,20 +1618,19 @@ class BaseImage(Resource):
         fmt = library.MagickGetImageFormat(self.wand)
         if bool(fmt):
             return text(fmt.value)
-        self.raise_exception()
+        else:  # pragma: no cover
+            self.raise_exception()
 
     @format.setter
     def format(self, fmt):
-        if not isinstance(fmt, string_type):
-            raise TypeError("format must be a string like 'png' or 'jpeg'"
-                            ', not ' + repr(fmt))
+        assertions.assert_string(fmt, 'format')
         fmt = fmt.strip()
         r = library.MagickSetImageFormat(self.wand, binary(fmt.upper()))
         if not r:
             raise ValueError(repr(fmt) + ' is unsupported format')
         r = library.MagickSetFilename(self.wand,
                                       b'buffer.' + binary(fmt.lower()))
-        if not r:
+        if not r:  # pragma: no cover
             self.raise_exception()
 
     @property
@@ -1649,13 +1638,14 @@ class BaseImage(Resource):
         """(:class:`numbers.Real`) The normalized real number between ``0.0``
         and :attr:`quantum_range`. This property influences the accuracy of
         :meth:`compare()`.
+
+        .. versionadded:: 0.5.3
         """
         return library.MagickGetImageFuzz(self.wand)
 
     @fuzz.setter
     def fuzz(self, value):
-        if not isinstance(value, numbers.Real):
-            raise TypeError('expecting real number, not ' + repr(value))
+        assertions.assert_real(value, 'fuzz')
         library.MagickSetImageFuzz(self.wand, value)
 
     @property
@@ -1666,18 +1656,16 @@ class BaseImage(Resource):
 
         """
         gravity_index = library.MagickGetGravity(self.wand)
-        if not gravity_index:
+        if not gravity_index:  # pragma: no cover
             self.raise_exception()
         return GRAVITY_TYPES[gravity_index]
 
     @gravity.setter
     @manipulative
     def gravity(self, value):
-        if not isinstance(value, string_type):
-            raise TypeError('expected a string, not ' + repr(value))
-        if value not in GRAVITY_TYPES:
-            raise ValueError('expected a string from GRAVITY_TYPES, not ' +
-                             repr(value))
+        assertions.string_in_list(GRAVITY_TYPES,
+                                  'wand.image.GRAVITY_TYPES',
+                                  gravity=value)
         library.MagickSetGravity(self.wand, GRAVITY_TYPES.index(value))
 
     @property
@@ -1695,11 +1683,11 @@ class BaseImage(Resource):
         if MAGICK_VERSION_NUMBER < 0x700:
             r = library.MagickGetImageGreenPrimary(self.wand, x, y)
             p = (x.value, y.value)
-        else:
+        else:  # pragma: no cover
             z = ctypes.c_double(0.0)
             r = library.MagickGetImageGreenPrimary(self.wand, x, y, z)
             p = (x.value, y.value, z.value)
-        if not r:
+        if not r:  # pragma: no cover
             self.raise_exception()
         return p
 
@@ -1711,10 +1699,10 @@ class BaseImage(Resource):
         if MAGICK_VERSION_NUMBER < 0x700:
             x, y = coordinates
             r = library.MagickSetImageGreenPrimary(self.wand, x, y)
-        else:
+        else:  # pragma: no cover
             x, y, z = coordinates
             r = library.MagickSetImageGreenPrimary(self.wand, x, y, z)
-        if not r:
+        if not r:  # pragma: no cover
             self.raise_exception()
 
     @property
@@ -1725,8 +1713,7 @@ class BaseImage(Resource):
     @height.setter
     @manipulative
     def height(self, height):
-        if height is not None and not isinstance(height, numbers.Integral):
-            raise TypeError('height must be a integral, not ' + repr(height))
+        assertions.assert_unsigned_integer(height)
         library.MagickSetSize(self.wand, self.width, height)
 
     @property
@@ -1762,8 +1749,9 @@ class BaseImage(Resource):
 
     @interlace_scheme.setter
     def interlace_scheme(self, scheme):
-        if scheme not in INTERLACE_TYPES:
-            raise ValueError('scheme must be in INTERLACE_TYPES')
+        assertions.string_in_list(INTERLACE_TYPES,
+                                  'wand.image.INTERLACE_TYPES',
+                                  interlace_scheme=scheme)
         scheme_idx = INTERLACE_TYPES.index(scheme)
         library.MagickSetInterlaceScheme(self.wand, scheme_idx)
 
@@ -1779,8 +1767,9 @@ class BaseImage(Resource):
 
     @interpolate_method.setter
     def interpolate_method(self, method):
-        if method not in PIXEL_INTERPOLATE_METHODS:
-            raise ValueError('method must be in PIXEL_INTERPOLATE_METHOD')
+        assertions.string_in_list(PIXEL_INTERPOLATE_METHODS,
+                                  'wand.image.PIXEL_INTERPOLATE_METHODS',
+                                  interpolate_method=method)
         method_idx = PIXEL_INTERPOLATE_METHODS.index(method)
         library.MagickSetImageInterpolateMethod(self.wand, method_idx)
 
@@ -1806,11 +1795,7 @@ class BaseImage(Resource):
 
     @loop.setter
     def loop(self, iterations):
-        if not isinstance(iterations, numbers.Integral):
-            raise TypeError('iterations must be an integral, not ' +
-                            repr(iterations))
-        if iterations < 0:
-            raise ValueError('iterations value must be 0, or greater.')
+        assertions.assert_unsigned_integer(iterations, 'iterations')
         library.MagickSetImageIterations(self.wand, iterations)
 
     @property
@@ -1826,20 +1811,19 @@ class BaseImage(Resource):
             color = Color.from_pixelwand(pixel)
             pixel = library.DestroyPixelWand(pixel)
             return color
-        self.raise_exception()
+        else:  # pragma: no cover
+            self.raise_exception()
 
     @matte_color.setter
     @manipulative
     def matte_color(self, color):
         if isinstance(color, string_type):
             color = Color(color)
-        elif not isinstance(color, Color):
-            raise TypeError('color must be a wand.color.Color object, not ' +
-                            repr(color))
+        assertions.assert_color(color, 'matte color')
         with color:
             result = library.MagickSetImageMatteColor(self.wand,
                                                       color.resource)
-            if not result:
+            if not result:  # pragma: no cover
                 self.raise_exception()
 
     @property
@@ -1901,11 +1885,9 @@ class BaseImage(Resource):
     @orientation.setter
     @manipulative
     def orientation(self, value):
-        if not isinstance(value, string_type):
-            raise TypeError('expected a string, not ' + repr(value))
-        if value not in ORIENTATION_TYPES:
-            raise ValueError('expected a string from ORIENTATION_TYPES, not ' +
-                             repr(value))
+        assertions.string_in_list(ORIENTATION_TYPES,
+                                  'wand.image.ORIENTATION_TYPES',
+                                  orientation=value)
         index = ORIENTATION_TYPES.index(value)
         library.MagickSetImageOrientation(self.wand, index)
 
@@ -1926,7 +1908,7 @@ class BaseImage(Resource):
         x = ctypes.c_int()
         y = ctypes.c_int()
         r = library.MagickGetImagePage(self.wand, w, h, x, y)
-        if not r:
+        if not r:  # pragma: no cover
             self.raise_exception()
         return int(w.value), int(h.value), int(x.value), int(y.value)
 
@@ -1938,7 +1920,7 @@ class BaseImage(Resource):
         else:
             raise TypeError("page layout must be 4-tuple")
         r = library.MagickSetImagePage(self.wand, w, h, x, y)
-        if not r:
+        if not r:  # pragma: no cover
             self.raise_exception()
 
     @property
@@ -2032,11 +2014,11 @@ class BaseImage(Resource):
         if MAGICK_VERSION_NUMBER < 0x700:
             r = library.MagickGetImageRedPrimary(self.wand, x, y)
             p = (x.value, y.value)
-        else:
+        else:  # pragma: no cover
             z = ctypes.c_double(0.0)
             r = library.MagickGetImageRedPrimary(self.wand, x, y, z)
             p = (x.value, y.value, z.value)
-        if not r:
+        if not r:  # pragma: no cover
             self.raise_exception()
         return p
 
@@ -2048,10 +2030,10 @@ class BaseImage(Resource):
         if MAGICK_VERSION_NUMBER < 0x700:
             x, y = coordinates
             r = library.MagickSetImageRedPrimary(self.wand, x, y)
-        else:
+        else:  # pragma: no cover
             x, y, z = coordinates
             r = library.MagickSetImageRedPrimary(self.wand, x, y, z)
-        if not r:
+        if not r:  # pragma: no cover
             self.raise_exception()
 
     @property
@@ -2064,7 +2046,7 @@ class BaseImage(Resource):
         x = ctypes.c_double()
         y = ctypes.c_double()
         r = library.MagickGetImageResolution(self.wand, x, y)
-        if not r:
+        if not r:  # pragma: no cover
             self.raise_exception()
         return int(x.value), int(y.value)
 
@@ -2082,7 +2064,7 @@ class BaseImage(Resource):
             r = library.MagickSetResolution(self.wand, x, y)
         else:
             r = library.MagickSetImageResolution(self.wand, x, y)
-        if not r:
+        if not r:  # pragma: no cover
             self.raise_exception()
 
     @property
@@ -2155,9 +2137,7 @@ class BaseImage(Resource):
     @stroke_width.setter
     @manipulative
     def stroke_width(self, width):
-        if not isinstance(width, numbers.Real):
-            raise TypeError('stroke_width must be a real number, not ' +
-                            repr(width))
+        assertions.assert_real(width, 'stroke width')
         self.options['strokewidth'] = str(width)
 
     @property
@@ -2172,20 +2152,18 @@ class BaseImage(Resource):
 
         """
         image_type_index = library.MagickGetImageType(self.wand)
-        if not image_type_index:
+        if not image_type_index:  # pragma: no cover
             self.raise_exception()
         return IMAGE_TYPES[text(image_type_index)]
 
     @type.setter
     @manipulative
     def type(self, image_type):
-        if (not isinstance(image_type, string_type) or
-                image_type not in IMAGE_TYPES):
-            raise TypeError('Type value must be a string from IMAGE_TYPES'
-                            ', not ' + repr(image_type))
+        assertions.string_in_list(IMAGE_TYPES, 'wand.image.IMAGE_TYPES',
+                                  type=image_type)
         r = library.MagickSetImageType(self.wand,
                                        IMAGE_TYPES.index(image_type))
-        if not r:
+        if not r:  # pragma: no cover
             self.raise_exception()
 
     @property
@@ -2197,11 +2175,10 @@ class BaseImage(Resource):
     @units.setter
     @manipulative
     def units(self, units):
-        if not isinstance(units, string_type) or units not in UNIT_TYPES:
-            raise TypeError('Unit value must be a string from wand.images.'
-                            'UNIT_TYPES, not ' + repr(units))
+        assertions.string_in_list(UNIT_TYPES, 'wand.image.UNIT_TYPES',
+                                  units=units)
         r = library.MagickSetImageUnits(self.wand, UNIT_TYPES.index(units))
-        if not r:
+        if not r:  # pragma: no cover
             self.raise_exception()
 
     @property
@@ -2215,9 +2192,9 @@ class BaseImage(Resource):
 
     @virtual_pixel.setter
     def virtual_pixel(self, method):
-        if method not in VIRTUAL_PIXEL_METHOD:
-            raise ValueError('expected method from VIRTUAL_PIXEL_METHOD,'
-                             ' not ' + repr(method))
+        assertions.string_in_list(VIRTUAL_PIXEL_METHOD,
+                                  'wand.image.VIRTUAL_PIXEL_METHOD',
+                                  virtual_pixel=method)
         library.MagickSetImageVirtualPixelMethod(
             self.wand,
             VIRTUAL_PIXEL_METHOD.index(method)
@@ -2253,8 +2230,7 @@ class BaseImage(Resource):
     @width.setter
     @manipulative
     def width(self, width):
-        if width is not None and not isinstance(width, numbers.Integral):
-            raise TypeError('width must be a integral, not ' + repr(width))
+        assertions.assert_unsigned_integer(width)
         library.MagickSetSize(self.wand, width, self.height)
 
     @property
@@ -2272,11 +2248,11 @@ class BaseImage(Resource):
         if MAGICK_VERSION_NUMBER < 0x700:
             r = library.MagickGetImageWhitePoint(self.wand, x, y)
             p = (x.value, y.value)
-        else:
+        else:  # pragma: no cover
             z = ctypes.c_double(0.0)
             r = library.MagickGetImageWhitePoint(self.wand, x, y, z)
             p = (x.value, y.value, z.value)
-        if not r:
+        if not r:  # pragma: no cover
             self.raise_exception()
         return p
 
@@ -2288,10 +2264,10 @@ class BaseImage(Resource):
         if MAGICK_VERSION_NUMBER < 0x700:
             x, y = coordinates
             r = library.MagickSetImageWhitePoint(self.wand, x, y)
-        else:
+        else:  # pragma: no cover
             x, y, z = coordinates
             r = library.MagickSetImageWhitePoint(self.wand, x, y, z)
-        if not r:
+        if not r:  # pragma: no cover
             self.raise_exception()
 
     @manipulative
@@ -2344,9 +2320,8 @@ class BaseImage(Resource):
         .. versionadded:: 0.5.3
         """
         top, left = 0, 0
-        if gravity not in GRAVITY_TYPES:
-            raise ValueError('expected a string from GRAVITY_TYPES, not ' +
-                             repr(gravity))
+        assertions.string_in_list(GRAVITY_TYPES, 'wand.image.GRAVITY_TYPES',
+                                  gravity=gravity)
         # Set `top` based on given gravity
         if gravity in ('north_west', 'north', 'north_east'):
             top = 0
@@ -2364,6 +2339,7 @@ class BaseImage(Resource):
         return top, left
 
     @manipulative
+    @trap_exception
     def adaptive_blur(self, radius=0.0, sigma=0.0):
         """Adaptively blurs the image by decreasing Gaussian as the operator
         approaches detected edges.
@@ -2375,17 +2351,12 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.3
         """
-        if not isinstance(radius, numbers.Real):
-            raise TypeError('radius has to be a numbers.Real, not ' +
-                            repr(radius))
-        elif not isinstance(sigma, numbers.Real):
-            raise TypeError('sigma has to be a numbers.Real, not ' +
-                            repr(sigma))
-        r = library.MagickAdaptiveBlurImage(self.wand, radius, sigma)
-        if not r:
-            self.raise_exception()
+        assertions.assert_real(radius, 'radius')
+        assertions.assert_real(sigma, 'sigma')
+        return library.MagickAdaptiveBlurImage(self.wand, radius, sigma)
 
     @manipulative
+    @trap_exception
     def adaptive_resize(self, columns=None, rows=None):
         """Adaptively resize image by applying Mesh interpolation.
 
@@ -2400,17 +2371,12 @@ class BaseImage(Resource):
             columns = self.width
         if rows is None:
             rows = self.height
-        if not isinstance(columns, numbers.Integral):
-            raise TypeError('columns must be a natural number, not ' +
-                            repr(columns))
-        elif not isinstance(rows, numbers.Integral):
-            raise TypeError('rows must be a natural number, not ' +
-                            repr(rows))
-        r = library.MagickAdaptiveResizeImage(self.wand, columns, rows)
-        if not r:
-            self.raise_exception()
+        assertions.assert_integer(columns, 'columns')
+        assertions.assert_integer(rows, 'rows')
+        return library.MagickAdaptiveResizeImage(self.wand, columns, rows)
 
     @manipulative
+    @trap_exception
     def adaptive_sharpen(self, radius=0.0, sigma=0.0):
         """Adaptively sharpens the image by sharpening more intensely near
         image edges and less intensely far from edges.
@@ -2422,15 +2388,9 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.3
         """
-        if not isinstance(radius, numbers.Real):
-            raise TypeError('radius has to be a numbers.Real, not ' +
-                            repr(radius))
-        elif not isinstance(sigma, numbers.Real):
-            raise TypeError('sigma has to be a numbers.Real, not ' +
-                            repr(sigma))
-        r = library.MagickAdaptiveSharpenImage(self.wand, radius, sigma)
-        if not r:
-            self.raise_exception()
+        assertions.assert_real(radius, 'radius')
+        assertions.assert_real(sigma, 'sigma')
+        return library.MagickAdaptiveSharpenImage(self.wand, radius, sigma)
 
     @manipulative
     def adaptive_threshold(self, width, height, offset=0.0):
@@ -2447,23 +2407,16 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.3
         """
-        if not isinstance(width, numbers.Integral):
-            raise TypeError('expecting width to be an integer, not ' +
-                            repr(width))
-        if not isinstance(height, numbers.Integral):
-            raise TypeError('expecting height to be an integer, not ' +
-                            repr(height))
-        if not isinstance(offset, numbers.Real):
-            raise TypeError('expecting offset to be a real number, not ' +
-                            repr(offset))
+        assertions.assert_integer(width, 'width')
+        assertions.assert_integer(height, 'height')
+        assertions.assert_real(offset, 'offset')
         if MAGICK_VERSION_NUMBER < 0x700:
             offset = int(offset)
-        r = library.MagickAdaptiveThresholdImage(self.wand, width,
-                                                 height, offset)
-        if not r:
-            self.raise_exception()
+        return library.MagickAdaptiveThresholdImage(self.wand, width,
+                                                    height, offset)
 
     @manipulative
+    @trap_exception
     def auto_orient(self):
         """Adjusts an image so that its orientation is suitable
         for viewing (i.e. top-left orientation). If available it uses
@@ -2475,13 +2428,13 @@ class BaseImage(Resource):
 
         """
         try:
-            result = library.MagickAutoOrientImage(self.wand)
-            if not result:
-                self.raise_exception()
-        except AttributeError:
+            return library.MagickAutoOrientImage(self.wand)
+        except AttributeError:  # pragma: no cover
             self._auto_orient()
+            return True
 
     @manipulative
+    @trap_exception
     def black_threshold(self, threshold):
         """Forces all pixels above a given color as black. Leaves pixels
         above threshold unaltered.
@@ -2493,16 +2446,14 @@ class BaseImage(Resource):
         """
         if isinstance(threshold, string_type):
             threshold = Color(threshold)
-        if not isinstance(threshold, Color):
-            raise TypeError('expecting a Color instance, not ' +
-                            repr(threshold))
+        assertions.assert_color(threshold, 'threshold')
         with threshold:
             r = library.MagickBlackThresholdImage(self.wand,
                                                   threshold.resource)
-        if not r:
-            self.raise_exception()
+        return r
 
     @manipulative
+    @trap_exception
     def blue_shift(self, factor=1.5):
         """Mutes colors of the image by shifting blue values.
 
@@ -2511,13 +2462,11 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.3
         """
-        if not isinstance(factor, numbers.Real):
-            raise TypeError('expecting real number, not ' + repr(factor))
-        r = library.MagickBlueShiftImage(self.wand, factor)
-        if not r:
-            self.raise_exception()
+        assertions.assert_real(factor, 'factor')
+        return library.MagickBlueShiftImage(self.wand, factor)
 
     @manipulative
+    @trap_exception
     def blur(self, radius, sigma):
         """Blurs the image.  We convolve the image with a gaussian operator
         of the given ``radius`` and standard deviation (``sigma``).
@@ -2534,16 +2483,11 @@ class BaseImage(Resource):
         .. versionadded:: 0.4.5
 
         """
-        if not isinstance(radius, numbers.Real):
-            raise TypeError('radius has to be a numbers.Real, not ' +
-                            repr(radius))
-        elif not isinstance(sigma, numbers.Real):
-            raise TypeError('sigma has to be a numbers.Real, not ' +
-                            repr(sigma))
-        r = library.MagickBlurImage(self.wand, radius, sigma)
-        if not r:
-            self.raise_exception()
+        assertions.assert_real(radius, 'radius')
+        assertions.assert_real(sigma, 'sigma')
+        return library.MagickBlurImage(self.wand, radius, sigma)
 
+    @trap_exception
     def border(self, color, width, height, compose="copy"):
         """Surrounds the image with a border.
 
@@ -2563,22 +2507,19 @@ class BaseImage(Resource):
         """
         if isinstance(color, string_type):
             color = Color(color)
-        elif not isinstance(color, Color):
-            raise TypeError('color must be a wand.color.Color object, not ' +
-                            repr(color))
+        assertions.assert_color(color, 'color')
         with color:
             if MAGICK_VERSION_NUMBER < 0x700:
                 result = library.MagickBorderImage(self.wand, color.resource,
                                                    width, height)
-            else:
-                if compose not in COMPOSITE_OPERATORS:
-                    raise TypeError(repr(compose) + ' is an invalid type. ' +
-                                    'See wand.image.COMPOSITE_OPERATORS.')
+            else:  # pragma: no cover
+                assertions.string_in_list(COMPOSITE_OPERATORS,
+                                          'wand.image.COMPOSITE_OPERATORS',
+                                          compose=compose)
                 compose_idx = COMPOSITE_OPERATORS.index(compose)
                 result = library.MagickBorderImage(self.wand, color.resource,
                                                    width, height, compose_idx)
-        if not result:
-            self.raise_exception()
+        return result
 
     @manipulative
     def concat(self, stacked=False):
@@ -2591,7 +2532,7 @@ class BaseImage(Resource):
         .. versionadded:: 0.5.0
         """
         r = library.MagickAppendImages(self.wand, stacked)
-        if not r:
+        if not r:  # pragma: no cover
             self.raise_exception()
         self.wand = r
 
@@ -2622,22 +2563,22 @@ class BaseImage(Resource):
         .. versionadded:: 0.3.0
 
         """
-        if not isinstance(left, numbers.Integral):
-            raise TypeError('left must be an integer, not ' + repr(left))
-        elif not isinstance(top, numbers.Integral):
-            raise TypeError('top must be an integer, not ' + repr(top))
-        elif width is not None and not isinstance(width, numbers.Integral):
-            raise TypeError('width must be an integer, not ' + repr(width))
-        elif height is not None and not isinstance(height, numbers.Integral):
-            raise TypeError('height must be an integer, not ' + repr(height))
-        elif font is not None and not isinstance(font, Font):
+        assertions.assert_integer(left, 'left')
+        assertions.assert_integer(top, 'top')
+        if font is not None and not isinstance(font, Font):
             raise TypeError('font must be a wand.font.Font, not ' + repr(font))
-        elif gravity is not None and compat.text(gravity) not in GRAVITY_TYPES:
-            raise ValueError('invalid gravity value')
+        if gravity is not None:
+            assertions.string_in_list(GRAVITY_TYPES,
+                                      'wand.image.GRAVITY_TYPES',
+                                      gravity=gravity)
         if width is None:
             width = self.width - left
+        else:
+            assertions.assert_integer(width, 'width')
         if height is None:
             height = self.height - top
+        else:
+            assertions.assert_integer(height, 'height')
         if not font:
             try:
                 font = self.font
@@ -2653,6 +2594,7 @@ class BaseImage(Resource):
             textboard.read(filename=b'caption:' + text.encode('utf-8'))
             self.composite(textboard, left, top)
 
+    @trap_exception
     def charcoal(self, radius, sigma):
         """Transform an image into a simulated charcoal drawing.
 
@@ -2663,16 +2605,11 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.3
         """
-        if not isinstance(radius, numbers.Real):
-            raise TypeError('radius is expecting a real number, not ' +
-                            repr(radius))
-        if not isinstance(sigma, numbers.Real):
-            raise TypeError('sigma is expecting a real number, not ' +
-                            repr(sigma))
-        r = library.MagickCharcoalImage(self.wand, radius, sigma)
-        if not r:
-            self.raise_exception()
+        assertions.assert_real(radius, 'radius')
+        assertions.assert_real(sigma, 'sigma')
+        return library.MagickCharcoalImage(self.wand, radius, sigma)
 
+    @trap_exception
     def clamp(self):
         """Restrict color values between 0 and quantum range. This is useful
         when applying arithmetic operations that could result in color values
@@ -2680,9 +2617,7 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.0
         """
-        r = library.MagickClampImage(self.wand)
-        if not r:
-            self.raise_exception()
+        return library.MagickClampImage(self.wand)
 
     def clone(self):
         """Clones the image. It is equivalent to call :class:`Image` with
@@ -2701,6 +2636,7 @@ class BaseImage(Resource):
         return Image(image=self)
 
     @manipulative
+    @trap_exception
     def clut(self, image, method='undefined'):
         """Replace color values by referencing another image as a Color
         Look Up Table.
@@ -2717,13 +2653,13 @@ class BaseImage(Resource):
             raise TypeError('image must be a base image, not ' + repr(image))
         if MAGICK_VERSION_NUMBER < 0x700:
             r = library.MagickClutImage(self.wand, image.wand)
-        else:
-            if method not in PIXEL_INTERPOLATE_METHODS:
-                raise ValueError('Unrecognized pixel interpolate method.')
+        else:  # pragma: no cover
+            assertions.string_in_list(PIXEL_INTERPOLATE_METHODS,
+                                      'wand.image.PIXEL_INTERPOLATE_METHODS',
+                                      pixel_interpolate_method=method)
             method_idx = PIXEL_INTERPOLATE_METHODS.index(method)
             r = library.MagickClutImage(self.wand, image.wand, method_idx)
-        if not r:
-            self.raise_exception()
+        return r
 
     @manipulative
     def coalesce(self):
@@ -2737,7 +2673,7 @@ class BaseImage(Resource):
         .. versionadded:: 0.5.0
         """
         r = library.MagickCoalesceImages(self.wand)
-        if not r:
+        if not r:  # pragma: no cover
             self.raise_exception()
         self.wand = r
 
@@ -2781,7 +2717,7 @@ class BaseImage(Resource):
                 r = library.MagickSetImageColormapColor(self.wand,
                                                         index,
                                                         color.resource)
-                if not r:
+                if not r:  # pragma: no cover
                     self.raise_exception()
         else:
             color_ptr = library.NewPixelWand()
@@ -2796,6 +2732,7 @@ class BaseImage(Resource):
         return color
 
     @manipulative
+    @trap_exception
     def color_matrix(self, matrix):
         """Adjust color values by applying a matrix transform per pixel.
 
@@ -2837,15 +2774,15 @@ class BaseImage(Resource):
         exception_info = libmagick.AcquireExceptionInfo()
         if MAGICK_VERSION_NUMBER < 0x700:
             kernel_info = libmagick.AcquireKernelInfo(kernel)
-        else:
+        else:  # pragma: no cover
             kernel_info = libmagick.AcquireKernelInfo(kernel, exception_info)
         exception_info = libmagick.DestroyExceptionInfo(exception_info)
         r = library.MagickColorMatrixImage(self.wand, kernel_info)
         kernel_info = libmagick.DestroyKernelInfo(kernel_info)
-        if not r:
-            self.raise_exception()
+        return r
 
     @manipulative
+    @trap_exception
     def colorize(self, color=None, alpha=None):
         """Blends a given fill color over the image. The amount of blend is
         determined by the color channels given by the ``alpha`` argument.
@@ -2859,21 +2796,16 @@ class BaseImage(Resource):
         """
         if isinstance(color, string_type):
             color = Color(color)
-        if not isinstance(color, Color):
-            raise TypeError('color must be an instance of Color, not ' +
-                            repr(color))
         if isinstance(alpha, string_type):
             alpha = Color(alpha)
-        if not isinstance(alpha, Color):
-            raise TypeError('color must be an instance of Color, not ' +
-                            repr(alpha))
+        assertions.assert_color(color, 'color')
+        assertions.assert_color(alpha, 'alpha')
         with color:
             with alpha:
                 r = library.MagickColorizeImage(self.wand,
                                                 color.resource,
                                                 alpha.resource)
-        if not r:
-            self.raise_exception()
+        return r
 
     @manipulative
     def compare(self, image, metric='undefined', highlight=None,
@@ -2913,8 +2845,7 @@ class BaseImage(Resource):
         .. versionchanged:: 0.5.3
            Added support for ``highlight`` & ``lowlight``.
         """
-        if not isinstance(metric, string_type):
-            raise TypeError('metric must be a string, not ' + repr(metric))
+        assertions.assert_string(metric, 'metric')
         if highlight:
             if isinstance(highlight, Color):
                 highlight = highlight.string
@@ -2934,6 +2865,7 @@ class BaseImage(Resource):
                                                      ctypes.byref(distortion))
         return Image(BaseImage(compared_image)), distortion.value
 
+    @trap_exception
     def composite(self, image, left=None, top=None, operator='over',
                   arguments=None, gravity=None):
         """Places the supplied ``image`` over the current image, with the top
@@ -2980,10 +2912,8 @@ class BaseImage(Resource):
             top = 0
         elif left is None:
             left = 0
-        if not isinstance(left, numbers.Integral):
-            raise TypeError('left must be an integer, not ' + repr(left))
-        elif not isinstance(top, numbers.Integral):
-            raise TypeError('top must be an integer, not ' + repr(left))
+        assertions.assert_integer(left, 'left')
+        assertions.assert_integer(top, 'top')
         try:
             op = COMPOSITE_OPERATORS.index(operator)
         except IndexError:
@@ -2991,9 +2921,7 @@ class BaseImage(Resource):
                              'operator type; see wand.image.COMPOSITE_'
                              'OPERATORS dictionary')
         if arguments:
-            if not isinstance(arguments, string_type):
-                raise TypeError('arguments must be a string, not ' +
-                                repr(arguments))
+            assertions.assert_string(arguments, 'arguments')
             r = library.MagickSetImageArtifact(image.wand,
                                                binary('compose:args'),
                                                binary(arguments))
@@ -3002,17 +2930,18 @@ class BaseImage(Resource):
             r = library.MagickSetImageArtifact(self.wand,
                                                binary('compose:args'),
                                                binary(arguments))
-            if not r:
+            if not r:  # pragma: no cover
                 self.raise_exception()
         if MAGICK_VERSION_NUMBER < 0x700:
-            library.MagickCompositeImage(self.wand, image.wand, op,
-                                         int(left), int(top))
-        else:
-            library.MagickCompositeImage(self.wand, image.wand, op, True,
-                                         int(left), int(top))
-        self.raise_exception()
+            r = library.MagickCompositeImage(self.wand, image.wand, op,
+                                             int(left), int(top))
+        else:  # pragma: no cover
+            r = library.MagickCompositeImage(self.wand, image.wand, op, True,
+                                             int(left), int(top))
+        return r
 
     @manipulative
+    @trap_exception
     def composite_channel(self, channel, image, operator, left=None, top=None,
                           arguments=None, gravity=None):
         """Composite two images using the particular ``channel``.
@@ -3050,12 +2979,8 @@ class BaseImage(Resource):
         .. versionchanged:: 0.5.3
            Optional ``gravity`` argument was added.
         """
-        if not isinstance(channel, string_type):
-            raise TypeError('channel must be a string, not ' +
-                            repr(channel))
-        elif not isinstance(operator, string_type):
-            raise TypeError('operator must be a string, not ' +
-                            repr(operator))
+        assertions.assert_string(channel, 'channel')
+        assertions.assert_string(operator, 'operator')
         if gravity:
             if left is None and top is None:
                 top, left = self._gravity_to_offset(gravity,
@@ -3067,10 +2992,8 @@ class BaseImage(Resource):
             top = 0
         if left is None:
             left = 0
-        if not isinstance(left, numbers.Integral):
-            raise TypeError('left must be an integer, not ' + repr(left))
-        if not isinstance(top, numbers.Integral):
-            raise TypeError('top must be an integer, not ' + repr(left))
+        assertions.assert_integer(left, 'left')
+        assertions.assert_integer(top, 'top')
         try:
             ch_const = CHANNELS[channel]
         except KeyError:
@@ -3083,9 +3006,7 @@ class BaseImage(Resource):
                              'operator type; see wand.image.COMPOSITE_'
                              'OPERATORS dictionary')
         if arguments:
-            if not isinstance(arguments, string_type):
-                raise TypeError('arguments must be a string, not ' +
-                                repr(arguments))
+            assertions.assert_string(arguments, 'arguments')
             library.MagickSetImageArtifact(image.wand,
                                            binary('compose:args'),
                                            binary(arguments))
@@ -3093,17 +3014,18 @@ class BaseImage(Resource):
                                            binary('compose:args'),
                                            binary(arguments))
         if library.MagickCompositeImageChannel:
-            library.MagickCompositeImageChannel(self.wand, ch_const,
-                                                image.wand, op, int(left),
-                                                int(top))
-        else:
+            r = library.MagickCompositeImageChannel(self.wand, ch_const,
+                                                    image.wand, op, int(left),
+                                                    int(top))
+        else:  # pragma: no cover
             ch_mask = library.MagickSetImageChannelMask(self.wand, ch_const)
-            library.MagickCompositeImage(self.wand, image.wand, op, True,
-                                         int(left), int(top))
+            r = library.MagickCompositeImage(self.wand, image.wand, op, True,
+                                             int(left), int(top))
             library.MagickSetImageChannelMask(self.wand, ch_mask)
-        self.raise_exception()
+        return r
 
     @manipulative
+    @trap_exception
     def contrast_stretch(self, black_point=0.0, white_point=None,
                          channel=None):
         """Enhance contrast of image by adjusting the span of the available
@@ -3126,41 +3048,39 @@ class BaseImage(Resource):
         .. versionadded:: 0.4.1
 
         """
-        if not isinstance(black_point, numbers.Real):
-            raise TypeError('expecting float, not ' + repr(black_point))
-        if not (white_point is None or isinstance(white_point, numbers.Real)):
-            raise TypeError('expecting float, not ' + repr(white_point))
+        assertions.assert_real(black_point, 'black_point')
         # If only black-point is given, match CLI behavior by
         # calculating white point
         if white_point is None:
             white_point = 1.0 - black_point
+        assertions.assert_real(white_point, 'white_point')
         contrast_range = float(self.width * self.height)
         black_point *= contrast_range
         white_point *= contrast_range
         if channel in CHANNELS:
             ch_const = CHANNELS[channel]
             if library.MagickContrastStretchImageChannel:
-                library.MagickContrastStretchImageChannel(self.wand,
-                                                          ch_const,
-                                                          black_point,
-                                                          white_point)
-            else:
+                r = library.MagickContrastStretchImageChannel(self.wand,
+                                                              ch_const,
+                                                              black_point,
+                                                              white_point)
+            else:  # pragma: no cover
                 # Set active channel, and capture mask to restore.
                 channel_mask = library.MagickSetImageChannelMask(self.wand,
                                                                  ch_const)
-                library.MagickContrastStretchImage(self.wand,
-                                                   black_point,
-                                                   white_point)
+                r = library.MagickContrastStretchImage(self.wand,
+                                                       black_point,
+                                                       white_point)
                 # Restore original state of channels
                 library.MagickSetImageChannelMask(self.wand, channel_mask)
         elif channel is None:
-            library.MagickContrastStretchImage(self.wand,
-                                               black_point,
-                                               white_point)
+            r = library.MagickContrastStretchImage(self.wand,
+                                                   black_point,
+                                                   white_point)
         else:
             raise ValueError(repr(channel) + ' is an invalid channel type'
                              '; see wand.image.CHANNELS dictionary')
-        self.raise_exception()
+        return r
 
     @manipulative
     def crop(self, left=0, top=0, right=None, bottom=None,
@@ -3273,11 +3193,8 @@ class BaseImage(Resource):
         if height is None:
             bottom = abs_(bottom, self.height)
             height = bottom - top
-        if width < 1:
-            raise ValueError('image width cannot be zero')
-        elif height < 1:
-            raise ValueError('image width cannot be zero')
-        elif (left == top == 0 and width == self.width and
+        assertions.counting_numbers(width=width, height=height)
+        if (left == top == 0 and width == self.width and
               height == self.height):
             return
         if self.animation:
@@ -3296,6 +3213,7 @@ class BaseImage(Resource):
             if reset_coords:
                 self.reset_coords()
 
+    @trap_exception
     def cycle_color_map(self, offset=1):
         """Shift the image color-map by a given offset.
 
@@ -3304,11 +3222,8 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.3
         """
-        if not isinstance(offset, numbers.Integral):
-            raise TypeError('offset must be an integer, not' + repr(offset))
-        r = library.MagickCycleColormapImage(self.wand, offset)
-        if not r:
-            self.raise_exception()
+        assertions.assert_integer(offset, 'offset')
+        return library.MagickCycleColormapImage(self.wand, offset)
 
     @manipulative
     def deconstruct(self):
@@ -3323,6 +3238,7 @@ class BaseImage(Resource):
         self.wand = r
 
     @manipulative
+    @trap_exception
     def deskew(self, threshold):
         """Attempts to remove skew artifacts common with most
         scanning & optical import devices.
@@ -3332,24 +3248,20 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.0
         """
-        if not isinstance(threshold, numbers.Real):
-            raise TypeError('expecting float number, not ' +
-                            repr(threshold))
-        r = library.MagickDeskewImage(self.wand, threshold)
-        if not r:
-            self.raise_exception()
+        assertions.assert_real(threshold, 'threshold')
+        return library.MagickDeskewImage(self.wand, threshold)
 
     @manipulative
+    @trap_exception
     def despeckle(self):
         """Applies filter to reduce noise in image.
 
         .. versionadded:: 0.5.0
         """
-        r = library.MagickDespeckleImage(self.wand)
-        if not r:
-            self.raise_exception()
+        return library.MagickDespeckleImage(self.wand)
 
     @manipulative
+    @trap_exception
     def distort(self, method, arguments, best_fit=False):
         """Distorts an image using various distorting methods.
 
@@ -3395,20 +3307,20 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.4.1
         """
-        if method not in DISTORTION_METHODS:
-            raise ValueError('expected string from DISTORTION_METHODS, not ' +
-                             repr(method))
+        assertions.string_in_list(DISTORTION_METHODS,
+                                  'wand.image.DISTORTION_METHODS',
+                                  method=method)
         if not isinstance(arguments, abc.Sequence):
             raise TypeError('expected sequence of doubles, not ' +
                             repr(arguments))
         argc = len(arguments)
         argv = (ctypes.c_double * argc)(*arguments)
-        library.MagickDistortImage(self.wand,
-                                   DISTORTION_METHODS.index(method),
-                                   argc, argv, bool(best_fit))
-        self.raise_exception()
+        method_idx = DISTORTION_METHODS.index(method)
+        return library.MagickDistortImage(self.wand, method_idx,
+                                          argc, argv, bool(best_fit))
 
     @manipulative
+    @trap_exception
     def edge(self, radius=0.0):
         """Applies convolution filter to detect edges.
 
@@ -3417,14 +3329,11 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.0
         """
-        if not isinstance(radius, numbers.Real):
-            raise TypeError('expecting real number, not' +
-                            repr(radius))
-        r = library.MagickEdgeImage(self.wand, float(radius))
-        if not r:
-            self.raise_exception()
+        assertions.assert_real(radius, 'radius')
+        return library.MagickEdgeImage(self.wand, radius)
 
     @manipulative
+    @trap_exception
     def emboss(self, radius=0.0, sigma=0.0):
         """Applies convolution filter against gaussians filter.
 
@@ -3439,38 +3348,31 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.0
         """
-        if not isinstance(radius, numbers.Real):
-            raise TypeError('expecting radius as a real number, not' +
-                            repr(radius))
-        if not isinstance(sigma, numbers.Real):
-            raise TypeError('expecting sigma as a real number, not' +
-                            repr(radius))
-        r = library.MagickEmbossImage(self.wand, float(radius), float(sigma))
-        if not r:
-            self.raise_exception()
+        assertions.assert_real(radius, 'radius')
+        assertions.assert_real(sigma, 'sigma')
+        return library.MagickEmbossImage(self.wand, radius, sigma)
 
     @manipulative
+    @trap_exception
     def enhance(self):
         """Applies digital filter to reduce noise.
 
         .. versionadded:: 0.5.0
         """
-        r = library.MagickEnhanceImage(self.wand)
-        if not r:
-            self.raise_exception()
+        return library.MagickEnhanceImage(self.wand)
 
     @manipulative
+    @trap_exception
     def equalize(self):
         """Equalizes the image histogram
 
         .. versionadded:: 0.3.10
 
         """
-        result = library.MagickEqualizeImage(self.wand)
-        if not result:
-            self.raise_exception()
+        return library.MagickEqualizeImage(self.wand)
 
     @manipulative
+    @trap_exception
     def evaluate(self, operator=None, value=0.0, channel=None):
         """Apply arithmetic, relational, or logical expression to an image.
 
@@ -3492,11 +3394,9 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.4.1
         """
-        if operator not in EVALUATE_OPS:
-            raise ValueError('expected value from EVALUATE_OPS, not ' +
-                             repr(operator))
-        if not isinstance(value, numbers.Real):
-            raise TypeError('value must be real number, not ' + repr(value))
+        assertions.string_in_list(EVALUATE_OPS, 'wand.image.EVALUATE_OPS',
+                                  operator=operator)
+        assertions.assert_real(value, 'value')
         idx_op = EVALUATE_OPS.index(operator)
         if channel:
             if channel not in CHANNELS:
@@ -3505,20 +3405,20 @@ class BaseImage(Resource):
             ch_const = CHANNELS[channel]
             # Use channel method if IM6, else create channel mask for IM7.
             if library.MagickEvaluateImageChannel:
-                library.MagickEvaluateImageChannel(self.wand,
-                                                   ch_const,
-                                                   idx_op,
-                                                   value)
-            else:
+                r = library.MagickEvaluateImageChannel(self.wand,
+                                                       ch_const,
+                                                       idx_op,
+                                                       value)
+            else:  # pragma: no cover
                 # Set active channel, and capture mask to restore.
                 channel_mask = library.MagickSetImageChannelMask(self.wand,
                                                                  ch_const)
-                library.MagickEvaluateImage(self.wand, idx_op, value)
+                r = library.MagickEvaluateImage(self.wand, idx_op, value)
                 # Restore original state of channels
                 library.MagickSetImageChannelMask(self.wand, channel_mask)
         else:
-            library.MagickEvaluateImage(self.wand, idx_op, value)
-        self.raise_exception()
+            r = library.MagickEvaluateImage(self.wand, idx_op, value)
+        return r
 
     def export_pixels(self, x=0, y=0, width=None, height=None,
                       channel_map="RGBA", storage='char'):
@@ -3582,26 +3482,19 @@ class BaseImage(Resource):
             width = _w
         if height is None:
             height = _h
-        if not isinstance(x, numbers.Integral):
-            raise TypeError('expecting integer, not ' + repr(x))
-        if not isinstance(y, numbers.Integral):
-            raise TypeError('expecting integer, not ' + repr(y))
-        if not isinstance(width, numbers.Integral):
-            raise TypeError('expecting integer, not ' + repr(width))
-        if not isinstance(height, numbers.Integral):
-            raise TypeError('expecting integer, not ' + repr(height))
-        if not isinstance(channel_map, string_type):
-            raise TypeError('channel_map must be a string, not ' +
-                            repr(channel_map))
+        assertions.assert_integer(x, 'x')
+        assertions.assert_integer(y, 'y')
+        assertions.assert_integer(width, 'width')
+        assertions.assert_integer(height, 'height')
+        assertions.assert_string(channel_map, 'channel_map')
+        assertions.string_in_list(STORAGE_TYPES, 'wand.image.STORAGE_TYPES',
+                                  storage=storage)
         channel_map = channel_map.upper()
         valid_channels = 'RGBAOCYMKIP'
         for channel in channel_map:
             if channel not in valid_channels:
                 raise ValueError('Unknown channel label: ' +
                                  repr(channel))
-        if storage not in STORAGE_TYPES:
-            raise ValueError('storage must be a value from STORAGE_TYPES, '
-                             ' not ' + repr(storage))
         c_storage_types = [
             None,
             ctypes.c_ubyte,
@@ -3622,11 +3515,12 @@ class BaseImage(Resource):
                                             binary(channel_map),
                                             s_index,
                                             ctypes.byref(c_buffer))
-        if not r:
+        if not r:  # pragma: no cover
             self.raise_exception()
         return c_buffer[:c_buffer_size]
 
     @manipulative
+    @trap_exception
     def extent(self, width=None, height=None, x=0, y=0):
         """extends the image as defined by the geometry, gravity, and wand
         background color. Set the (x,y) offset of the geometry to move the
@@ -3656,11 +3550,10 @@ class BaseImage(Resource):
         elif height < 0:
             raise ValueError('image height cannot be negative integer')
 
-        result = library.MagickExtentImage(self.wand, width, height, x, y)
-        if not result:
-            self.raise_exception()
+        return library.MagickExtentImage(self.wand, width, height, x, y)
 
     @manipulative
+    @trap_exception
     def flip(self):
         """Creates a vertical mirror image by reflecting the pixels around
         the central x-axis.  It manipulates the image in place.
@@ -3668,11 +3561,10 @@ class BaseImage(Resource):
         .. versionadded:: 0.3.0
 
         """
-        result = library.MagickFlipImage(self.wand)
-        if not result:
-            self.raise_exception()
+        return library.MagickFlipImage(self.wand)
 
     @manipulative
+    @trap_exception
     def flop(self):
         """Creates a horizontal mirror image by reflecting the pixels around
         the central y-axis.  It manipulates the image in place.
@@ -3680,11 +3572,10 @@ class BaseImage(Resource):
         .. versionadded:: 0.3.0
 
         """
-        result = library.MagickFlopImage(self.wand)
-        if not result:
-            self.raise_exception()
+        return library.MagickFlopImage(self.wand)
 
     @manipulative
+    @trap_exception
     def frame(self, matte=None, width=1, height=1, inner_bevel=0,
               outer_bevel=0):
         """Creates a bordered frame around image.
@@ -3708,25 +3599,20 @@ class BaseImage(Resource):
             matte = Color('gray')
         if isinstance(matte, string_type):
             matte = Color(matte)
-        elif not isinstance(matte, Color):
-            raise TypeError('Expecting instance of Color for matte, not ' +
-                            repr(matte))
-        if not isinstance(width, numbers.Integral):
-            raise TypeError('Expecting integer for width, not ' + repr(width))
-        if not isinstance(height, numbers.Integral):
-            raise TypeError('Expecting integer for height, not ' +
-                            repr(height))
-        if not isinstance(inner_bevel, numbers.Real):
-            raise TypeError('Expecting real number, not ' + repr(inner_bevel))
-        if not isinstance(outer_bevel, numbers.Real):
-            raise TypeError('Expecting real number, not ' + repr(outer_bevel))
+        assertions.assert_color(matte, 'matte')
+        assertions.assert_integer(width, 'width')
+        assertions.assert_integer(height, 'height')
+        assertions.assert_real(inner_bevel, 'inner_bevel')
+        assertions.assert_real(outer_bevel, 'outer_bevel')
         with matte:
-            library.MagickFrameImage(self.wand,
-                                     matte.resource,
-                                     width, height,
-                                     inner_bevel, outer_bevel)
+            r = library.MagickFrameImage(self.wand,
+                                         matte.resource,
+                                         width, height,
+                                         inner_bevel, outer_bevel)
+        return r
 
     @manipulative
+    @trap_exception
     def function(self, function, arguments, channel=None):
         """Apply an arithmetic, relational, or logical expression to an image.
 
@@ -3755,9 +3641,8 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.4.1
         """
-        if function not in FUNCTION_TYPES:
-            raise ValueError('expected string from FUNCTION_TYPES, not ' +
-                             repr(function))
+        assertions.string_in_list(FUNCTION_TYPES, 'wand.image.FUNCTION_TYPES',
+                                  function=function)
         if not isinstance(arguments, abc.Sequence):
             raise TypeError('expecting sequence of arguments, not ' +
                             repr(arguments))
@@ -3765,27 +3650,27 @@ class BaseImage(Resource):
         argv = (ctypes.c_double * argc)(*arguments)
         index = FUNCTION_TYPES.index(function)
         if channel is None:
-            library.MagickFunctionImage(self.wand, index, argc, argv)
+            r = library.MagickFunctionImage(self.wand, index, argc, argv)
         elif channel in CHANNELS:
             ch_channel = CHANNELS[channel]
             # Use channel method if IM6, else create channel mask for IM7.
             if library.MagickFunctionImageChannel:
-                library.MagickFunctionImageChannel(self.wand,
-                                                   ch_channel,
-                                                   index,
-                                                   argc,
-                                                   argv)
-            else:
+                r = library.MagickFunctionImageChannel(self.wand,
+                                                       ch_channel,
+                                                       index,
+                                                       argc,
+                                                       argv)
+            else:  # pragma: no cover
                 # Set active channel, and capture mask to restore.
                 channel_mask = library.MagickSetImageChannelMask(self.wand,
                                                                  ch_channel)
-                library.MagickFunctionImage(self.wand, index, argc, argv)
+                r = library.MagickFunctionImage(self.wand, index, argc, argv)
                 # Restore original state of channels
                 library.MagickSetImageChannelMask(self.wand, channel_mask)
         else:
             raise ValueError('expected string from CHANNELS, not ' +
                              repr(channel))
-        self.raise_exception()
+        return r
 
     @manipulative
     def fx(self, expression, channel=None):
@@ -3810,9 +3695,7 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.4.1
         """
-        if not isinstance(expression, string_type):
-            raise TypeError('expected basestring for expression, not' +
-                            repr(expression))
+        assertions.assert_string(expression, 'expression')
         c_expression = binary(expression)
         if channel is None:
             new_wand = library.MagickFxImage(self.wand, c_expression)
@@ -3822,7 +3705,7 @@ class BaseImage(Resource):
                 new_wand = library.MagickFxImageChannel(self.wand,
                                                         ch_channel,
                                                         c_expression)
-            else:
+            else:  # pragma: no cover
                 # Set active channel, and capture mask to restore.
                 channel_mask = library.MagickSetImageChannelMask(self.wand,
                                                                  ch_channel)
@@ -3834,9 +3717,11 @@ class BaseImage(Resource):
                              repr(channel))
         if new_wand:
             return Image(image=BaseImage(new_wand))
-        self.raise_exception()
+        else:  # pragma: no cover
+            self.raise_exception()
 
     @manipulative
+    @trap_exception
     def gamma(self, adjustment_value, channel=None):
         """Gamma correct image.
 
@@ -3853,29 +3738,29 @@ class BaseImage(Resource):
         .. versionadded:: 0.4.1
 
         """
-        if not isinstance(adjustment_value, numbers.Real):
-            raise TypeError('expecting float, not ' + repr(adjustment_value))
+        assertions.assert_real(adjustment_value, 'adjustment_value')
         if channel in CHANNELS:
             ch_const = CHANNELS[channel]
             if library.MagickGammaImageChannel:
-                library.MagickGammaImageChannel(self.wand,
-                                                ch_const,
-                                                adjustment_value)
-            else:
+                r = library.MagickGammaImageChannel(self.wand,
+                                                    ch_const,
+                                                    adjustment_value)
+            else:  # pragma: no cover
                 # Set active channel, and capture mask to restore.
                 channel_mask = library.MagickSetImageChannelMask(self.wand,
                                                                  ch_const)
-                library.MagickGammaImage(self.wand, adjustment_value)
+                r = library.MagickGammaImage(self.wand, adjustment_value)
                 # Restore original state of channels
                 library.MagickSetImageChannelMask(self.wand, channel_mask)
         elif channel is None:
-            library.MagickGammaImage(self.wand, adjustment_value)
+            r = library.MagickGammaImage(self.wand, adjustment_value)
         else:
             raise ValueError(repr(channel) + ' is an invalid channel type'
                              '; see wand.image.CHANNELS dictionary')
-        self.raise_exception()
+        return r
 
     @manipulative
+    @trap_exception
     def gaussian_blur(self, radius, sigma):
         """Blurs the image.  We convolve the image with a gaussian operator
         of the given ``radius`` and standard deviation (``sigma``).
@@ -3892,17 +3777,12 @@ class BaseImage(Resource):
         .. versionadded:: 0.3.3
 
         """
-        if not isinstance(radius, numbers.Real):
-            raise TypeError('radius has to be a numbers.Real, not ' +
-                            repr(radius))
-        elif not isinstance(sigma, numbers.Real):
-            raise TypeError('sigma has to be a numbers.Real, not ' +
-                            repr(sigma))
-        r = library.MagickGaussianBlurImage(self.wand, radius, sigma)
-        if not r:
-            self.raise_exception()
+        assertions.assert_real(radius, 'radius')
+        assertions.assert_real(sigma, 'sigma')
+        return library.MagickGaussianBlurImage(self.wand, radius, sigma)
 
     @manipulative
+    @trap_exception
     def hald_clut(self, image):
         """Replace color values by referencing a Higher And Lower Dimension
         (HALD) Color Look Up Table (CLUT). You can generate a HALD image
@@ -3920,10 +3800,9 @@ class BaseImage(Resource):
         """
         if not isinstance(image, BaseImage):
             raise TypeError('expecting a base image, not ' + repr(image))
-        r = library.MagickHaldClutImage(self.wand, image.wand)
-        if not r:
-            self.raise_exception()
+        return library.MagickHaldClutImage(self.wand, image.wand)
 
+    @trap_exception
     def implode(self, amount=0.0, method="undefined"):
         """Creates a "imploding" effect by pulling pixels towards the center
         of the image.
@@ -3937,18 +3816,18 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.2
         """
-        if not isinstance(amount, numbers.Real):
-            raise TypeError('expecting real number, not ' + repr(amount))
-        if method not in PIXEL_INTERPOLATE_METHODS:
-            raise ValueError('method must be in PIXEL_INTERPOLATE_METHODS')
+        assertions.assert_real(amount, 'amount')
+        assertions.string_in_list(PIXEL_INTERPOLATE_METHODS,
+                                  'wand.image.PIXEL_INTERPOLATE_METHODS',
+                                  method=method)
         if MAGICK_VERSION_NUMBER < 0x700:
             r = library.MagickImplodeImage(self.wand, amount)
-        else:
+        else:  # pragma: no cover
             method_idx = PIXEL_INTERPOLATE_METHODS.index(method)
             r = library.MagickImplodeImage(self.wand, amount, method_idx)
-        if not r:
-            self.raise_exception()
+        return r
 
+    @trap_exception
     def import_pixels(self, x=0, y=0, width=None, height=None,
                       channel_map='RGB', storage='char', data=None):
         """Import pixel data from a byte-string to
@@ -4010,20 +3889,13 @@ class BaseImage(Resource):
             width = _w
         if height is None:
             height = _h
-        if not isinstance(x, numbers.Integral):
-            raise TypeError('expecting integer, not ' + repr(x))
-        if not isinstance(y, numbers.Integral):
-            raise TypeError('expecting integer, not ' + repr(y))
-        if not isinstance(width, numbers.Integral):
-            raise TypeError('expecting integer, not ' + repr(width))
-        if not isinstance(height, numbers.Integral):
-            raise TypeError('expecting integer, not ' + repr(height))
-        if storage not in STORAGE_TYPES:
-            raise ValueError('storage must be a value from STORAGE_TYPES, '
-                             ' not ' + repr(storage))
-        if not isinstance(channel_map, string_type):
-            raise TypeError('channel_map must be a string, not ' +
-                            repr(channel_map))
+        assertions.assert_integer(x, 'x')
+        assertions.assert_integer(y, 'y')
+        assertions.assert_integer(width, 'width')
+        assertions.assert_integer(height, 'height')
+        assertions.string_in_list(STORAGE_TYPES, 'wand.image.STORAGE_TYPES',
+                                  storage=storage)
+        assertions.assert_string(channel_map, 'channel_map')
         channel_map = channel_map.upper()
         valid_channels = 'RGBAOCYMKIP'
         for channel in channel_map:
@@ -4060,8 +3932,7 @@ class BaseImage(Resource):
                                             binary(channel_map),
                                             s_index,
                                             ctypes.byref(c_buffer))
-        if not r:
-            self.raise_exception()
+        return r
 
     def kurtosis_channel(self, channel='default_channels'):
         """Calculates the kurtosis and skewness of the image.
@@ -4084,7 +3955,7 @@ class BaseImage(Resource):
         """
         try:
             ch_channel = CHANNELS[channel]
-        except IndexError:
+        except KeyError:
             raise TypeError('channel must be defined in '
                             'wand.image.CHANNELS')
         k = ctypes.c_double(0.0)
@@ -4093,7 +3964,7 @@ class BaseImage(Resource):
             library.MagickGetImageChannelKurtosis(self.wand, ch_channel,
                                                   ctypes.byref(k),
                                                   ctypes.byref(s))
-        else:
+        else:  # pragma: no cover
             # Set active channel, and capture mask to restore.
             channel_mask = library.MagickSetImageChannelMask(self.wand,
                                                              ch_channel)
@@ -4104,6 +3975,7 @@ class BaseImage(Resource):
             library.MagickSetImageChannelMask(self.wand, channel_mask)
         return k.value, s.value
 
+    @trap_exception
     def level(self, black=0.0, white=None, gamma=1.0, channel=None):
         """Adjusts the levels of an image by scaling the colors falling
         between specified black and white points to the full available
@@ -4132,18 +4004,12 @@ class BaseImage(Resource):
         .. versionadded:: 0.4.1
 
         """
-        if not isinstance(black, numbers.Real):
-            raise TypeError('expecting real number, not' + repr(black))
-
+        assertions.assert_real(black, 'black')
         # If white is not given, mimic CLI behavior by reducing top point
         if white is None:
             white = 1.0 - black
-
-        if not isinstance(white, numbers.Real):
-            raise TypeError('expecting real number, not' + repr(white))
-
-        if not isinstance(gamma, numbers.Real):
-            raise TypeError('expecting real number, not' + repr(gamma))
+        assertions.assert_real(white, 'black')
+        assertions.assert_real(gamma, 'gamma')
 
         bp = float(self.quantum_range * black)
         wp = float(self.quantum_range * white)
@@ -4157,23 +4023,24 @@ class BaseImage(Resource):
                 raise ValueError(repr(channel) + ' is an invalid channel type'
                                  '; see wand.image.CHANNELS dictionary')
             if library.MagickLevelImageChannel:
-                library.MagickLevelImageChannel(self.wand,
-                                                ch_const,
-                                                bp,
-                                                gamma,
-                                                wp)
-            else:
+                r = library.MagickLevelImageChannel(self.wand,
+                                                    ch_const,
+                                                    bp,
+                                                    gamma,
+                                                    wp)
+            else:  # pragma: no cover
                 # Set active channel, and capture mask to restore.
                 channel_mask = library.MagickSetImageChannelMask(self.wand,
                                                                  ch_const)
-                library.MagickLevelImage(self.wand, bp, gamma, wp)
+                r = library.MagickLevelImage(self.wand, bp, gamma, wp)
                 # Restore original state of channels
                 library.MagickSetImageChannelMask(self.wand, channel_mask)
         else:
-            library.MagickLevelImage(self.wand, bp, gamma, wp)
-        self.raise_exception()
+            r = library.MagickLevelImage(self.wand, bp, gamma, wp)
+        return r
 
     @manipulative
+    @trap_exception
     def linear_stretch(self, black_point=0.0, white_point=1.0):
         """Enhance saturation intensity of an image.
 
@@ -4184,14 +4051,12 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.4.1
         """
-        if not isinstance(black_point, numbers.Real):
-            raise TypeError('expecting float, not ' + repr(black_point))
-        if not isinstance(white_point, numbers.Real):
-            raise TypeError('expecting float, not ' + repr(white_point))
+        assertions.assert_real(black_point, 'gamma')
+        assertions.assert_real(white_point, 'gamma')
         linear_range = float(self.width * self.height)
-        library.MagickLinearStretchImage(self.wand,
-                                         linear_range * black_point,
-                                         linear_range * white_point)
+        return library.MagickLinearStretchImage(self.wand,
+                                                linear_range * black_point,
+                                                linear_range * white_point)
 
     @manipulative
     def liquid_rescale(self, width, height, delta_x=0, rigidity=0):
@@ -4226,16 +4091,12 @@ class BaseImage(Resource):
         .. _Seam carving: http://en.wikipedia.org/wiki/Seam_carving
 
         """
-        if not isinstance(width, numbers.Integral):
-            raise TypeError('width must be an integer, not ' + repr(width))
-        elif not isinstance(height, numbers.Integral):
-            raise TypeError('height must be an integer, not ' + repr(height))
-        elif not isinstance(delta_x, numbers.Real):
-            raise TypeError('delta_x must be a float, not ' + repr(delta_x))
-        elif not isinstance(rigidity, numbers.Real):
-            raise TypeError('rigidity must be a float, not ' + repr(rigidity))
-        library.MagickLiquidRescaleImage(self.wand, int(width), int(height),
-                                         float(delta_x), float(rigidity))
+        assertions.assert_integer(width, 'width')
+        assertions.assert_integer(height, 'height')
+        assertions.assert_real(delta_x, 'delta_x')
+        assertions.assert_real(rigidity, 'rigidity')
+        library.MagickLiquidRescaleImage(self.wand, width, height,
+                                         delta_x, rigidity)
         try:
             self.raise_exception()
         except MissingDelegateError as e:
@@ -4266,7 +4127,7 @@ class BaseImage(Resource):
         """
         try:
             ch_channel = CHANNELS[channel]
-        except IndexError:
+        except KeyError:
             raise TypeError('channel must be defined in '
                             'wand.image.CHANNELS')
         m = ctypes.c_double(0.0)
@@ -4275,7 +4136,7 @@ class BaseImage(Resource):
             library.MagickGetImageChannelMean(self.wand, ch_channel,
                                               ctypes.byref(m),
                                               ctypes.byref(s))
-        else:
+        else:  # pragma: no cover
             # Set active channel, and capture mask to restore.
             channel_mask = library.MagickSetImageChannelMask(self.wand,
                                                              ch_channel)
@@ -4305,20 +4166,19 @@ class BaseImage(Resource):
         .. versionadded:: 0.4.3
 
         """
-        if not isinstance(method, string_type):
-            raise TypeError('method must be a string from IMAGE_LAYER_METHOD, '
-                            'not ' + repr(method))
+        assertions.assert_string(method, 'method')
         if method not in ('merge', 'flatten', 'mosaic', 'trimbounds'):
             raise ValueError('method can only be \'merge\', \'flatten\', '
                              '\'mosaic\', or \'trimbounds\'')
         m = IMAGE_LAYER_METHOD.index(method)
         r = library.MagickMergeImageLayers(self.wand, m)
-        if not r:
+        if not r:  # pragma: no cover
             self.raise_exception()
         else:
             self.wand = r
 
     @manipulative
+    @trap_exception
     def modulate(self, brightness=100.0, saturation=100.0, hue=100.0):
         """Changes the brightness, saturation and hue of an image.
         We modulate the image with the given ``brightness``, ``saturation``
@@ -4335,26 +4195,18 @@ class BaseImage(Resource):
         .. versionadded:: 0.3.4
 
         """
-        if not isinstance(brightness, numbers.Real):
-            raise TypeError('brightness has to be a numbers.Real, not ' +
-                            repr(brightness))
-
-        elif not isinstance(saturation, numbers.Real):
-            raise TypeError('saturation has to be a numbers.Real, not ' +
-                            repr(saturation))
-
-        elif not isinstance(hue, numbers.Real):
-            raise TypeError('hue has to be a numbers.Real, not ' + repr(hue))
-        r = library.MagickModulateImage(
+        assertions.assert_real(brightness, 'brightness')
+        assertions.assert_real(saturation, 'saturation')
+        assertions.assert_real(hue, 'hue')
+        return library.MagickModulateImage(
             self.wand,
             brightness,
             saturation,
             hue
         )
-        if not r:
-            self.raise_exception()
 
     @manipulative
+    @trap_exception
     def morphology(self, method=None, kernel=None, iterations=1):
         """Manipulate pixels based on the shape of neighboring pixels.
 
@@ -4408,13 +4260,9 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.0
         """
-        if not isinstance(method, string_type):
-            raise TypeError('method must be a string, not ' + repr(method))
-        if not isinstance(kernel, string_type):
-            raise TypeError('kernel must be a string, not ' + repr(kernel))
-        if not isinstance(iterations, numbers.Integral):
-            raise TypeError('iterations must be an integer, not' +
-                            repr(iterations))
+        assertions.assert_string(method, 'method')
+        assertions.assert_string(kernel, 'kernel')
+        assertions.assert_integer(iterations, 'iterations')
         buitin = None
         geometry = ''
         parts = kernel.split(':')
@@ -4463,7 +4311,7 @@ class BaseImage(Resource):
                     kernel_idx,
                     ctypes.byref(geometry_info)
                 )
-            else:
+            else:  # pragma: no cover
                 kernel_info = libmagick.AcquireKernelBuiltIn(
                     kernel_idx,
                     ctypes.byref(geometry_info),
@@ -4474,7 +4322,7 @@ class BaseImage(Resource):
                 kernel_info = libmagick.AcquireKernelInfo(
                     binary(kernel)
                 )
-            else:
+            else:  # pragma: no cover
                 kernel_info = libmagick.AcquireKernelInfo(
                     binary(kernel),
                     exception_info
@@ -4489,9 +4337,9 @@ class BaseImage(Resource):
         else:
             raise ValueError('Unable to parse kernel info for ' +
                              repr(kernel))
-        if not r:
-            self.raise_exception()
+        return r
 
+    @trap_exception
     def negate(self, grayscale=False, channel=None):
         """Negate the colors in the reference image.
 
@@ -4514,7 +4362,7 @@ class BaseImage(Resource):
             if library.MagickNegateImageChannel:
                 r = library.MagickNegateImageChannel(self.wand, ch_const,
                                                      grayscale)
-            else:
+            else:  # pragma: no cover
                 # Set active channel, and capture mask to restore.
                 channel_mask = library.MagickSetImageChannelMask(self.wand,
                                                                  ch_const)
@@ -4524,10 +4372,10 @@ class BaseImage(Resource):
 
         else:
             r = library.MagickNegateImage(self.wand, grayscale)
-        if not r:
-            self.raise_exception()
+        return r
 
     @manipulative
+    @trap_exception
     def noise(self, noise_type='uniform', attenuate=1.0):
         """Adds noise to image.
 
@@ -4535,24 +4383,23 @@ class BaseImage(Resource):
         :type noise_type: :class:`basestring`
         :param attenuate: rate of distribution. Only available in
                           ImageMagick-7. Default is ``1.0``.
+        :type attenuate: :class:`numbers.Real`
 
         .. versionadded:: 0.5.3
         """
-        if noise_type not in NOISE_TYPES:
-            raise ValueError(repr(noise_type) + ' not defined in '
-                             'wand.image.NOISE_TYPE')
-        if not isinstance(attenuate, numbers.Real):
-            raise TypeError('expecting real number, not ' + repr(attenuate))
+        assertions.string_in_list(NOISE_TYPES, 'wand.image.NOISE_TYPES',
+                                  noise_type=noise_type)
+        assertions.assert_real(attenuate, 'attenuate')
         noise_type_idx = NOISE_TYPES.index(noise_type)
         if MAGICK_VERSION_NUMBER < 0x700:
             r = library.MagickAddNoiseImage(self.wand, noise_type_idx)
-        else:
+        else:  # pragma: no cover
             r = library.MagickAddNoiseImage(self.wand, noise_type_idx,
                                             attenuate)
-        if not r:
-            self.raise_exceptions()
+        return r
 
     @manipulative
+    @trap_exception
     def normalize(self, channel=None):
         """Normalize color channels.
 
@@ -4570,7 +4417,7 @@ class BaseImage(Resource):
                                  '; see wand.image.CHANNELS dictionary')
             if library.MagickNormalizeImageChannel:
                 r = library.MagickNormalizeImageChannel(self.wand, ch_const)
-            else:
+            else:  # pragma: no cover
                 with Image(image=self) as mask:
                     # Set active channel, and capture mask to restore.
                     channel_mask = library.MagickSetImageChannelMask(mask.wand,
@@ -4589,8 +4436,7 @@ class BaseImage(Resource):
                                                  0)
         else:
             r = library.MagickNormalizeImage(self.wand)
-        if not r:
-            self.raise_exception()
+        return r
 
     @manipulative
     def optimize_layers(self):
@@ -4604,11 +4450,12 @@ class BaseImage(Resource):
         .. versionadded:: 0.5.0
         """
         r = library.MagickOptimizeImageLayers(self.wand)
-        if not r:
+        if not r:  # pragma: no cover
             self.raise_exception()
         self.wand = r
 
     @manipulative
+    @trap_exception
     def optimize_transparency(self):
         """Iterates over frames, and sets transparent values for each
         pixel unchanged by previous frame.
@@ -4620,15 +4467,14 @@ class BaseImage(Resource):
         .. versionadded:: 0.5.0
         """
         if library.MagickOptimizeImageTransparency:
-            r = library.MagickOptimizeImageTransparency(self.wand)
-            if not r:
-                self.raise_exception()
-        else:
+            return library.MagickOptimizeImageTransparency(self.wand)
+        else:  # pragma: no cover
             raise AttributeError('`MagickOptimizeImageTransparency\' not '
                                  'available on current version of MagickWand '
                                  'library.')
 
     @manipulative
+    @trap_exception
     def posterize(self, levels=None, dither='no'):
         """Reduce color levels per channel.
 
@@ -4640,17 +4486,14 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.0
         """
-        if not isinstance(levels, numbers.Integral):
-            raise TypeError('levels must be an integer, not ' + repr(levels))
-        if dither not in DITHER_METHODS:
-            raise ValueError('dither must be no, riemersma, or floyd_steinberg'
-                             ' method')
+        assertions.assert_integer(levels, 'levels')
+        assertions.string_in_list(DITHER_METHODS, 'wand.image.DITHER_METHODS',
+                                  dither=dither)
         dither_idx = DITHER_METHODS.index(dither)
-        r = library.MagickPosterizeImage(self.wand, levels, dither_idx)
-        if not r:
-            self.raise_exception()
+        return library.MagickPosterizeImage(self.wand, levels, dither_idx)
 
     @manipulative
+    @trap_exception
     def quantize(self, number_colors, colorspace_type,
                  treedepth, dither, measure_error):
         """`quantize` analyzes the colors within a sequence of images and
@@ -4693,34 +4536,18 @@ class BaseImage(Resource):
         .. versionadded:: 0.4.2
 
         """
-        if not isinstance(number_colors, numbers.Integral):
-            raise TypeError('number_colors must be integral, '
-                            'not ' + repr(number_colors))
-
-        if not isinstance(colorspace_type, string_type) \
-                or colorspace_type not in COLORSPACE_TYPES:
-            raise TypeError('Colorspace value must be a string from '
-                            'COLORSPACE_TYPES, not ' + repr(colorspace_type))
-
-        if not isinstance(treedepth, numbers.Integral):
-            raise TypeError('treedepth must be integral, '
-                            'not ' + repr(treedepth))
-
-        if not isinstance(dither, bool):
-            raise TypeError('dither must be a bool, not ' +
-                            repr(dither))
-
-        if not isinstance(measure_error, bool):
-            raise TypeError('measure_error must be a bool, not ' +
-                            repr(measure_error))
-
-        r = library.MagickQuantizeImage(
+        assertions.assert_integer(number_colors, 'number_colors')
+        assertions.string_in_list(COLORSPACE_TYPES,
+                                  'wand.image.COLORSPACE_TYPES',
+                                  colorspace_type=colorspace_type)
+        assertions.assert_integer(treedepth, 'treedepth')
+        assertions.assert_bool(dither, 'dither')
+        assertions.assert_bool(measure_error, 'measure_error')
+        return library.MagickQuantizeImage(
             self.wand, number_colors,
             COLORSPACE_TYPES.index(colorspace_type),
             treedepth, dither, measure_error
         )
-        if not r:
-            self.raise_exception()
 
     def range_channel(self, channel='default_channels'):
         """Calculate the minimum and maximum of quantum values in image.
@@ -4743,7 +4570,7 @@ class BaseImage(Resource):
         """
         try:
             ch_channel = CHANNELS[channel]
-        except IndexError:
+        except KeyError:
             raise TypeError('channel must be defined in '
                             'wand.image.CHANNELS')
         min_color = ctypes.c_double(0.0)
@@ -4752,7 +4579,7 @@ class BaseImage(Resource):
             library.MagickGetImageChannelRange(self.wand, ch_channel,
                                                ctypes.byref(min_color),
                                                ctypes.byref(max_color))
-        else:
+        else:  # pragma: no cover
             # Set active channel, and capture mask to restore.
             channel_mask = library.MagickSetImageChannelMask(self.wand,
                                                              ch_channel)
@@ -4764,6 +4591,7 @@ class BaseImage(Resource):
         return min_color.value, max_color.value
 
     @manipulative
+    @trap_exception
     def remap(self, affinity=None, method='no'):
         """Rebuild image palette with closest color from given affinity image.
 
@@ -4778,15 +4606,10 @@ class BaseImage(Resource):
         if not isinstance(affinity, BaseImage):
             raise TypeError('Expecting affinity to be a BaseImage, not ' +
                             repr(affinity))
-        if not isinstance(method, string_type):
-            raise TypeError('expecting string, not ' + repr(method))
-        if method not in DITHER_METHODS:
-            raise ValueError("method must be 'no', 'riemersma', or " +
-                             "'floyd_steinberg'")
+        assertions.string_in_list(DITHER_METHODS, 'wand.image.DITHER_METHODS',
+                                  method=method)
         method_idx = DITHER_METHODS.index(method)
-        r = library.MagickRemapImage(self.wand, affinity.wand, method_idx)
-        if not r:
-            self.raise_exception()
+        return library.MagickRemapImage(self.wand, affinity.wand, method_idx)
 
     @manipulative
     def resample(self, x_res=None, y_res=None, filter='undefined', blur=1):
@@ -4814,20 +4637,15 @@ class BaseImage(Resource):
             x_res, _ = self.resolution
         if y_res is None:
             _, y_res = self.resolution
-        if not isinstance(x_res, numbers.Real):
-            raise TypeError('x_res must be a Real number, not ' +
-                            repr(x_res))
-        elif not isinstance(y_res, numbers.Real):
-            raise TypeError('y_res must be a Real number, not ' +
-                            repr(y_res))
-        elif x_res < 1:
+        assertions.assert_real(x_res, 'x_res')
+        assertions.assert_real(y_res, 'y_res')
+        assertions.assert_real(blur, 'blur')
+        if x_res < 1:
             raise ValueError('x_res must be a Real number, not ' +
                              repr(x_res))
         elif y_res < 1:
             raise ValueError('y_res must be a Real number, not ' +
                              repr(y_res))
-        elif not isinstance(blur, numbers.Real):
-            raise TypeError('blur must be numbers.Real , not ' + repr(blur))
         elif not isinstance(filter, (string_type, numbers.Integral)):
             raise TypeError('filter must be one string defined in wand.image.'
                             'FILTER_TYPES or an integer, not ' + repr(filter))
@@ -4899,21 +4717,9 @@ class BaseImage(Resource):
             width = self.width
         if height is None:
             height = self.height
-        if not isinstance(width, numbers.Integral):
-            raise TypeError('width must be a natural number, not ' +
-                            repr(width))
-        elif not isinstance(height, numbers.Integral):
-            raise TypeError('height must be a natural number, not ' +
-                            repr(height))
-        elif width < 1:
-            raise ValueError('width must be a natural number, not ' +
-                             repr(width))
-        elif height < 1:
-            raise ValueError('height must be a natural number, not ' +
-                             repr(height))
-        elif not isinstance(blur, numbers.Real):
-            raise TypeError('blur must be numbers.Real , not ' + repr(blur))
-        elif not isinstance(filter, (string_type, numbers.Integral)):
+        assertions.counting_numbers(width=width, height=height)
+        assertions.assert_real(blur, 'blur')
+        if not isinstance(filter, (string_type, numbers.Integral)):
             raise TypeError('filter must be one string defined in wand.image.'
                             'FILTER_TYPES or an integer, not ' + repr(filter))
         if isinstance(filter, string_type):
@@ -4940,7 +4746,7 @@ class BaseImage(Resource):
             r = library.MagickResizeImage(self.wand, width, height,
                                           filter, blur)
             library.MagickSetSize(self.wand, width, height)
-            if not r:
+            if not r:  # pragma: no cover
                 self.raise_exception()
 
     @manipulative
@@ -4968,12 +4774,8 @@ class BaseImage(Resource):
             background = Color('transparent')
         elif isinstance(background, string_type):
             background = Color(background)
-        elif not isinstance(background, Color):
-            raise TypeError('background must be a wand.color.Color instance, '
-                            'not ' + repr(background))
-        if not isinstance(degree, numbers.Real):
-            raise TypeError('degree must be a numbers.Real value, not ' +
-                            repr(degree))
+        assertions.assert_color(background, 'background')
+        assertions.assert_real(degree, 'degree')
         with background:
             if self.animation:
                 self.wand = library.MagickCoalesceImages(self.wand)
@@ -4991,7 +4793,7 @@ class BaseImage(Resource):
                 result = library.MagickRotateImage(self.wand,
                                                    background.resource,
                                                    degree)
-                if not result:
+                if not result:  # pragma: no cover
                     self.raise_exception()
                 if reset_coords:
                     self.reset_coords()
@@ -5015,18 +4817,7 @@ class BaseImage(Resource):
             width = self.width
         if height is None:
             height = self.height
-        if not isinstance(width, numbers.Integral):
-            raise TypeError('width must be a natural number, not ' +
-                            repr(width))
-        elif not isinstance(height, numbers.Integral):
-            raise TypeError('height must be a natural number, not ' +
-                            repr(height))
-        elif width < 1:
-            raise ValueError('width must be a natural number, not ' +
-                             repr(width))
-        elif height < 1:
-            raise ValueError('height must be a natural number, not ' +
-                             repr(height))
+        assertions.counting_numbers(width=width, height=height)
         if self.animation:
             self.wand = library.MagickCoalesceImages(self.wand)
             library.MagickSetLastIterator(self.wand)
@@ -5039,10 +4830,11 @@ class BaseImage(Resource):
         else:
             r = library.MagickSampleImage(self.wand, width, height)
             library.MagickSetSize(self.wand, width, height)
-            if not r:
+            if not r:  # pragma: no cover
                 self.raise_exception()
 
     @manipulative
+    @trap_exception
     def selective_blur(self, radius, sigma, threshold):
         """Blur an image within a given threshold.
 
@@ -5068,20 +4860,16 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.3
         """
-        if not isinstance(radius, numbers.Real):
-            raise TypeError('expecting real number, not ' + repr(radius))
-        if not isinstance(sigma, numbers.Real):
-            raise TypeError('expecting real number, not ' + repr(sigma))
-        if not isinstance(threshold, numbers.Real):
-            raise TypeError('expecting real number, not ' + repr(threshold))
-        r = library.MagickSelectiveBlurImage(self.wand,
-                                             radius,
-                                             sigma,
-                                             threshold)
-        if not r:
-            self.raise_exception()
+        assertions.assert_real(radius, 'radius')
+        assertions.assert_real(sigma, 'sigma')
+        assertions.assert_real(threshold, 'threshold')
+        return library.MagickSelectiveBlurImage(self.wand,
+                                                radius,
+                                                sigma,
+                                                threshold)
 
     @manipulative
+    @trap_exception
     def shade(self, gray=False, azimuth=0.0, elevation=0.0):
         """Creates a 3D effect by simulating a light from an
         elevated angle.
@@ -5096,18 +4884,13 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.0
         """
-        if not isinstance(azimuth, numbers.Real):
-            raise TypeError('azimuth must be a real number, not ' +
-                            repr(azimuth))
-        if not isinstance(elevation, numbers.Real):
-            raise TypeError('elevation must be a real number, not ' +
-                            repr(elevation))
-        r = library.MagickShadeImage(self.wand, gray,
-                                     azimuth, elevation)
-        if not r:
-            self.raise_exception()
+        assertions.assert_real(azimuth, 'azimuth')
+        assertions.assert_real(elevation, 'elevation')
+        return library.MagickShadeImage(self.wand, gray,
+                                        azimuth, elevation)
 
     @manipulative
+    @trap_exception
     def shadow(self, alpha=0.0, sigma=0.0, x=0, y=0):
         """Generates an image shadow.
 
@@ -5122,23 +4905,14 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.0
         """
-        if not isinstance(alpha, numbers.Real):
-            raise TypeError('alpha must be a real number, not ' +
-                            repr(alpha))
-        if not isinstance(sigma, numbers.Real):
-            raise TypeError('sigma must be a real number, not ' +
-                            repr(sigma))
-        if not isinstance(x, numbers.Integral):
-            raise TypeError('x must be an integer, not ' +
-                            repr(x))
-        if not isinstance(y, numbers.Integral):
-            raise TypeError('y must be an integer, not ' +
-                            repr(y))
-        r = library.MagickShadowImage(self.wand, alpha, sigma, x, y)
-        if not r:
-            self.raise_exception()
+        assertions.assert_real(alpha, 'alpha')
+        assertions.assert_real(sigma, 'sigma')
+        assertions.assert_integer(x, 'x')
+        assertions.assert_integer(y, 'y')
+        return library.MagickShadowImage(self.wand, alpha, sigma, x, y)
 
     @manipulative
+    @trap_exception
     def sharpen(self, radius=0.0, sigma=0.0):
         """Applies a gaussian effect to enhance the sharpness of an
         image.
@@ -5158,17 +4932,12 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.0
         """
-        if not isinstance(radius, numbers.Real):
-            raise TypeError('radius must be a real number, not ' +
-                            repr(radius))
-        if not isinstance(sigma, numbers.Real):
-            raise TypeError('sigma must be a real number, not ' +
-                            repr(sigma))
-        r = library.MagickSharpenImage(self.wand, radius, sigma)
-        if not r:
-            self.raise_exception()
+        assertions.assert_real(radius, 'radius')
+        assertions.assert_real(sigma, 'sigma')
+        return library.MagickSharpenImage(self.wand, radius, sigma)
 
     @manipulative
+    @trap_exception
     def shave(self, columns=0, rows=0):
         """Remove pixels from the edges.
 
@@ -5179,17 +4948,12 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.0
         """
-        if not isinstance(columns, numbers.Integral):
-            raise TypeError('columns must be an integer, not ' +
-                            repr(columns))
-        if not isinstance(rows, numbers.Integral):
-            raise TypeError('rows must be an integer, not ' +
-                            repr(rows))
-        r = library.MagickShaveImage(self.wand, columns, rows)
-        if not r:
-            self.raise_exception()
+        assertions.assert_integer(columns, 'columns')
+        assertions.assert_integer(rows, 'rows')
+        return library.MagickShaveImage(self.wand, columns, rows)
 
     @manipulative
+    @trap_exception
     def sketch(self, radius=0.0, sigma=0.0, angle=0.0):
         """Simulates a pencil sketch effect. For best results, ``radius``
         value should be larger than ``sigma``.
@@ -5203,18 +4967,10 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.3
         """
-        if not isinstance(radius, numbers.Real):
-            raise TypeError('radius should be a real number, not ' +
-                            repr(radius))
-        if not isinstance(sigma, numbers.Real):
-            raise TypeError('sigma should be a real number, not ' +
-                            repr(sigma))
-        if not isinstance(angle, numbers.Real):
-            raise TypeError('angle should be a real number, not ' +
-                            repr(angle))
-        r = library.MagickSketchImage(self.wand, radius, sigma, angle)
-        if not r:
-            self.raise_exception()
+        assertions.assert_real(radius, 'radius')
+        assertions.assert_real(sigma, 'sigma')
+        assertions.assert_real(angle, 'angle')
+        return library.MagickSketchImage(self.wand, radius, sigma, angle)
 
     def smush(self, stacked=False, offset=0):
         """Appends all images together. Similar behavior to :meth:`concat`,
@@ -5228,16 +4984,16 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.3
         """
-        if not isinstance(offset, numbers.Integral):
-            raise TypeError('expecting integer, not ' + repr(offset))
+        assertions.assert_integer(offset, 'offset')
         library.MagickResetIterator(self.wand)
         result = library.MagickSmushImages(self.wand, bool(stacked), offset)
         if result:
             self.wand = result
-        else:
+        else:  # pragma: no cover
             self.raise_exception()
 
     @manipulative
+    @trap_exception
     def solarize(self, threshold=0.0):
         """Simulates extreme overexposure.
 
@@ -5246,14 +5002,11 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.3
         """
-        if not isinstance(threshold, numbers.Real):
-            raise TypeError('threshold should be a real number, not ' +
-                            repr(threshold))
-        r = library.MagickSolarizeImage(self.wand, threshold)
-        if not r:
-            self.raise_exception()
+        assertions.assert_real(threshold, 'threshold')
+        return library.MagickSolarizeImage(self.wand, threshold)
 
     @manipulative
+    @trap_exception
     def sparse_color(self, method, colors, channel_mask=0x7):
         """Interpolates color values between points on an image.
 
@@ -5310,14 +5063,12 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.3
         """
-        if method not in SPARSE_COLOR_METHODS:
-            raise ValueError('method must be defined in ' +
-                             'SPARSE_COLOR_METHODS')
+        assertions.string_in_list(SPARSE_COLOR_METHODS,
+                                  'wand.image.SPARSE_COLOR_METHODS',
+                                  method=method)
         if not isinstance(colors, abc.Mapping):
             raise TypeError('Colors must be a dict, not' + repr(colors))
-        if not isinstance(channel_mask, numbers.Integral):
-            raise TypeError('channel_mask should be a unsigned integer, not ' +
-                            repr(channel_mask))
+        assertions.assert_unsigned_integer(channel_mask, 'channel_mask')
         method_idx = SPARSE_COLOR_METHODS[method]
         arguments = list()
         for color, point in colors.items():
@@ -5343,7 +5094,7 @@ class BaseImage(Resource):
                                                method_idx,
                                                argc,
                                                args)
-        else:
+        else:  # pragma: no cover
             # Set active channel, and capture mask to restore.
             channel_mask = library.MagickSetImageChannelMask(self.wand,
                                                              channel_mask)
@@ -5353,10 +5104,10 @@ class BaseImage(Resource):
                                                args)
             # Restore original state of channels
             library.MagickSetImageChannelMask(self.wand, channel_mask)
-        if not r:
-            self.raise_exception()
+        return r
 
     @manipulative
+    @trap_exception
     def splice(self, width=None, height=None, x=None, y=None):
         """Partitions image by splicing a ``width`` x ``height`` rectangle at
         (``x``, ``y``) offset coordinate. The space inserted will be replaced
@@ -5373,11 +5124,14 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.3
         """
-        r = library.MagickSpliceImage(self.wand, width, height, x, y)
-        if not r:
-            self.raise_exception()
+        assertions.assert_integer(width, 'width')
+        assertions.assert_integer(height, 'height')
+        assertions.assert_integer(x, 'x')
+        assertions.assert_integer(y, 'y')
+        return library.MagickSpliceImage(self.wand, width, height, x, y)
 
     @manipulative
+    @trap_exception
     def spread(self, radius, method='undefined'):
         """Randomly displace pixels within a defined radius.
 
@@ -5386,20 +5140,19 @@ class BaseImage(Resource):
         :param method: Interpolation method. Only available with ImageMagick-7.
                        See :const:`PIXEL_INTERPOLATE_METHODS`.
         """
-        if not isinstance(radius, numbers.Real):
-            raise TypeError('expecting real number, not ' + repr(radius))
-        if method not in PIXEL_INTERPOLATE_METHODS:
-            raise ValueError(repr(method) + ' not defined in '
-                             'PIXEL_INTERPOLATE_METHODS')
+        assertions.assert_real(radius, 'radius')
+        assertions.string_in_list(PIXEL_INTERPOLATE_METHODS,
+                                  'wand.image.PIXEL_INTERPOLATE_METHODS',
+                                  method=method)
         method_idx = PIXEL_INTERPOLATE_METHODS.index(method)
         if MAGICK_VERSION_NUMBER < 0x700:
             r = library.MagickSpreadImage(self.wand, radius)
-        else:
+        else:  # pragma: no cover
             r = library.MagickSpreadImage(self.wand, method_idx, radius)
-        if not r:
-            self.raise_exception()
+        return r
 
     @manipulative
+    @trap_exception
     def statistic(self, stat='undefined', width=None, height=None):
         """Replace each pixel with the statistic results from neighboring pixel
         values. The ``width`` & ``height`` defines the size, or apature, of
@@ -5413,27 +5166,24 @@ class BaseImage(Resource):
         :param height: The size of neighboring pixels on the Y-axis.
         :type height: :class:`numbers.Integral`
         """
-        if stat not in STATISTIC_TYPES:
-            raise ValueError(repr(stat) + ' not defined in STATISTIC_TYPES')
-        if not isinstance(width, numbers.Integral):
-            raise TypeError('expecting integer, not ' + repr(width))
-        if not isinstance(height, numbers.Integral):
-            raise TypeError('expecting integer, not ' + repr(height))
+        assertions.string_in_list(STATISTIC_TYPES,
+                                  'wand.image.STATISTIC_TYPES',
+                                  statistic=stat)
+        assertions.assert_integer(width, 'width')
+        assertions.assert_integer(height, 'height')
         stat_idx = STATISTIC_TYPES.index(stat)
-        r = library.MagickStatisticImage(self.wand, stat_idx, width, height)
-        if not r:
-            self.raise_exception()
+        return library.MagickStatisticImage(self.wand, stat_idx, width, height)
 
+    @trap_exception
     def strip(self):
         """Strips an image of all profiles and comments.
 
         .. versionadded:: 0.2.0
         """
-        result = library.MagickStripImage(self.wand)
-        if not result:
-            self.raise_exception()
+        return library.MagickStripImage(self.wand)
 
     @manipulative
+    @trap_exception
     def threshold(self, threshold=0.5, channel=None):
         """Changes the value of individual pixels based on the intensity
         of each pixel compared to threshold. The result is a high-contrast,
@@ -5449,10 +5199,7 @@ class BaseImage(Resource):
         .. versionadded:: 0.3.10
 
         """
-        if not isinstance(threshold, numbers.Real):
-            raise TypeError('threshold has to be a numbers.Real, not ' +
-                            repr(threshold))
-
+        assertions.assert_real(threshold, 'threshold')
         if channel:
             try:
                 ch_const = CHANNELS[channel]
@@ -5466,10 +5213,10 @@ class BaseImage(Resource):
         else:
             r = library.MagickThresholdImage(self.wand,
                                              threshold * self.quantum_range)
-        if not r:
-            self.raise_exception()
+        return r
 
     @manipulative
+    @trap_exception
     def tint(self, color=None, alpha=None):
         """Applies a color vector to each pixel in the image.
 
@@ -5482,21 +5229,16 @@ class BaseImage(Resource):
         """
         if isinstance(color, string_type):
             color = Color(color)
-        if not isinstance(color, Color):
-            raise TypeError('color must be an instance of Color, not ' +
-                            repr(color))
+        assertions.assert_color(color, 'color')
         if isinstance(alpha, string_type):
             alpha = Color(alpha)
-        if not isinstance(alpha, Color):
-            raise TypeError('color must be an instance of Color, not ' +
-                            repr(alpha))
+        assertions.assert_color(alpha, 'alpha')
         with color:
             with alpha:
                 r = library.MagickTintImage(self.wand,
                                             color.resource,
                                             alpha.resource)
-        if not r:
-            self.raise_exception()
+        return r
 
     @manipulative
     def transform(self, crop='', resize=''):
@@ -5591,10 +5333,8 @@ class BaseImage(Resource):
         # Check that the values given are the correct types.  ctypes will do
         # this automatically, but we can make the error message more friendly
         # here.
-        if not isinstance(crop, string_type):
-            raise TypeError("crop must be a string, not " + repr(crop))
-        if not isinstance(resize, string_type):
-            raise TypeError("resize must be a string, not " + repr(resize))
+        assertions.assert_string(crop, 'crop')
+        assertions.assert_string(resize, 'resize')
         # Also verify that only ASCII characters are included
         try:
             crop = crop.encode('ascii')
@@ -5655,11 +5395,12 @@ class BaseImage(Resource):
             self.sequence.instances = []
         else:
             new_wand = library.MagickTransformImage(self.wand, crop, resize)
-        if not new_wand:
+        if not new_wand:  # pragma: no cover
             self.raise_exception()
         self.wand = new_wand
 
     @manipulative
+    @trap_exception
     def transform_colorspace(self, colorspace_type):
         """Transform image's colorspace.
 
@@ -5670,18 +5411,16 @@ class BaseImage(Resource):
         .. versionadded:: 0.4.2
 
         """
-        if not isinstance(colorspace_type, string_type) \
-                or colorspace_type not in COLORSPACE_TYPES:
-            raise TypeError('Colorspace value must be a string from '
-                            'COLORSPACE_TYPES, not ' + repr(colorspace_type))
-        r = library.MagickTransformImageColorspace(
+        assertions.string_in_list(COLORSPACE_TYPES,
+                                  'wand.image.COLORSPACE_TYPES',
+                                  colorspace=colorspace_type)
+        return library.MagickTransformImageColorspace(
             self.wand,
             COLORSPACE_TYPES.index(colorspace_type)
         )
-        if not r:
-            self.raise_exception()
 
     @manipulative
+    @trap_exception
     def transparent_color(self, color, alpha, fuzz=0, invert=False):
         """Makes the color ``color`` a transparent color with a tolerance of
         fuzz. The ``alpha`` parameter specify the transparency level and the
@@ -5707,19 +5446,15 @@ class BaseImage(Resource):
         .. versionadded:: 0.3.0
 
         """
-        if not isinstance(alpha, numbers.Real):
-            raise TypeError('alpha must be an float, not ' + repr(alpha))
-        if not isinstance(fuzz, numbers.Integral):
-            raise TypeError('fuzz must be an integer, not ' + repr(fuzz))
+        assertions.assert_real(alpha, 'alpha')
+        assertions.assert_integer(fuzz, 'fuzz')
         if isinstance(color, string_type):
             color = Color(color)
-        elif not isinstance(color, Color):
-            raise TypeError('color must be a wand.color.Color object, not ' +
-                            repr(color))
+        assertions.assert_color(color, 'color')
         with color:
-            library.MagickTransparentPaintImage(self.wand, color.resource,
-                                                alpha, fuzz, invert)
-        self.raise_exception()
+            r = library.MagickTransparentPaintImage(self.wand, color.resource,
+                                                    alpha, fuzz, invert)
+        return r
 
     @manipulative
     def transparentize(self, transparency):
@@ -5747,7 +5482,7 @@ class BaseImage(Resource):
             # to RGB with an alpha channel
             if MAGICK_VERSION_NUMBER < 0x700:
                 image_type = 'truecolormatte'
-            else:
+            else:  # pragma: no cover
                 image_type = 'truecoloralpha'
             library.MagickSetImageType(self.wand,
                                        IMAGE_TYPES.index(image_type))
@@ -5758,28 +5493,27 @@ class BaseImage(Resource):
             self.raise_exception()
 
     @manipulative
+    @trap_exception
     def transpose(self):
         """Creates a vertical mirror image by reflecting the pixels around
         the central x-axis while rotating them 90-degrees.
 
         .. versionadded:: 0.4.1
         """
-        result = library.MagickTransposeImage(self.wand)
-        if not result:
-            self.raise_exception()
+        return library.MagickTransposeImage(self.wand)
 
     @manipulative
+    @trap_exception
     def transverse(self):
         """Creates a horizontal mirror image by reflecting the pixels around
         the central y-axis while rotating them 270-degrees.
 
         .. versionadded:: 0.4.1
         """
-        result = library.MagickTransverseImage(self.wand)
-        if not result:
-            self.raise_exception()
+        return library.MagickTransverseImage(self.wand)
 
     @manipulative
+    @trap_exception
     def trim(self, color=None, fuzz=0):
         """Remove solid border from image. Uses top left pixel as a guide
         by default, or you can also specify the ``color`` to remove.
@@ -5804,26 +5538,23 @@ class BaseImage(Resource):
             color = self[0, 0]
         elif isinstance(color, string_type):
             color = Color(color)
-        elif not isinstance(color, Color):
-            raise ValueError('expecting instance of Color, not ' + repr(color))
+        assertions.assert_color(color, 'color')
         with color:
             self.border(color, 1, 1, compose="copy")
-        result = library.MagickTrimImage(self.wand, fuzz)
-        if not result:
-            self.raise_exception()
+        return library.MagickTrimImage(self.wand, fuzz)
 
     @manipulative
+    @trap_exception
     def unique_colors(self):
         """Discards all duplicate pixels, and rebuilds the image
         as a single row.
 
         .. versionadded:: 0.5.0
         """
-        r = library.MagickUniqueImageColors(self.wand)
-        if not r:
-            self.raise_exception()
+        return library.MagickUniqueImageColors(self.wand)
 
     @manipulative
+    @trap_exception
     def unsharp_mask(self, radius, sigma, amount, threshold):
         """Sharpens the image using unsharp mask filter. We convolve the image
         with a Gaussian operator of the given ``radius`` and standard deviation
@@ -5846,24 +5577,15 @@ class BaseImage(Resource):
         .. versionadded:: 0.3.4
 
         """
-        if not isinstance(radius, numbers.Real):
-            raise TypeError('radius has to be a numbers.Real, not ' +
-                            repr(radius))
-        elif not isinstance(sigma, numbers.Real):
-            raise TypeError('sigma has to be a numbers.Real, not ' +
-                            repr(sigma))
-        elif not isinstance(amount, numbers.Real):
-            raise TypeError('amount has to be a numbers.Real, not ' +
-                            repr(amount))
-        elif not isinstance(threshold, numbers.Real):
-            raise TypeError('threshold has to be a numbers.Real, not ' +
-                            repr(threshold))
-        r = library.MagickUnsharpMaskImage(self.wand, radius, sigma,
-                                           amount, threshold)
-        if not r:
-            self.raise_exception()
+        assertions.assert_real(radius, 'radius')
+        assertions.assert_real(sigma, 'sigma')
+        assertions.assert_real(amount, 'amount')
+        assertions.assert_real(threshold, 'threshold')
+        return library.MagickUnsharpMaskImage(self.wand, radius, sigma,
+                                              amount, threshold)
 
     @manipulative
+    @trap_exception
     def vignette(self, radius=0.0, sigma=0.0, x=0, y=0):
         """Creates a soft vignette style effect on the image.
 
@@ -5878,17 +5600,11 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.2
         """
-        if not isinstance(radius, numbers.Real):
-            raise TypeError('expecting real number, not ' + repr(radius))
-        if not isinstance(sigma, numbers.Real):
-            raise TypeError('expecting real number, not ' + repr(sigma))
-        if not isinstance(x, numbers.Integral):
-            raise TypeError('expecting integer, not ' + repr(x))
-        if not isinstance(y, numbers.Integral):
-            raise TypeError('expecting integer, not ' + repr(y))
-        r = library.MagickVignetteImage(self.wand, radius, sigma, x, y)
-        if not r:
-            self.raise_exception()
+        assertions.assert_real(radius, 'radius')
+        assertions.assert_real(sigma, 'sigma')
+        assertions.assert_integer(x, 'x')
+        assertions.assert_integer(y, 'y')
+        return library.MagickVignetteImage(self.wand, radius, sigma, x, y)
 
     @manipulative
     def watermark(self, image, transparency=0.0, left=0, top=0):
@@ -5923,6 +5639,7 @@ class BaseImage(Resource):
         self.raise_exception()
 
     @manipulative
+    @trap_exception
     def wave(self, amplitude=0.0, wave_length=0.0, method='undefined'):
         """Creates a ripple effect within the image.
 
@@ -5936,22 +5653,21 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.2
         """
-        if not isinstance(amplitude, numbers.Real):
-            raise TypeError('expecting real number, not ' + repr(amplitude))
-        if not isinstance(wave_length, numbers.Real):
-            raise TypeError('expecting real number, not ' + repr(wave_length))
-        if method not in PIXEL_INTERPOLATE_METHODS:
-            raise ValueError('method must be in PIXEL_INTERPOLATE_METHODS')
+        assertions.assert_real(amplitude, 'amplitude')
+        assertions.assert_real(wave_length, 'wave_length')
+        assertions.string_in_list(PIXEL_INTERPOLATE_METHODS,
+                                  'wand.image.PIXEL_INTERPOLATE_METHODS',
+                                  method=method)
         if MAGICK_VERSION_NUMBER < 0x700:
             r = library.MagickWaveImage(self.wand, amplitude, wave_length)
-        else:
+        else:  # pragma: no cover
             method_idx = PIXEL_INTERPOLATE_METHODS.index(method)
             r = library.MagickWaveImage(self.wand, amplitude, wave_length,
                                         method_idx)
-        if not r:
-            self.raise_exception()
+        return r
 
     @manipulative
+    @trap_exception
     def white_threshold(self, threshold):
         """Forces all pixels above a given color as white. Leaves pixels
         below threshold unaltered.
@@ -5963,14 +5679,11 @@ class BaseImage(Resource):
         """
         if isinstance(threshold, string_type):
             threshold = Color(threshold)
-        if not isinstance(threshold, Color):
-            raise TypeError('expecting a Color instance, not ' +
-                            repr(threshold))
+        assertions.assert_color(threshold, 'threshold')
         with threshold:
             r = library.MagickWhiteThresholdImage(self.wand,
                                                   threshold.resource)
-        if not r:
-            self.raise_exception()
+        return r
 
 
 class Image(BaseImage):
@@ -6128,12 +5841,7 @@ class Image(BaseImage):
                 # allow setting the width, height and depth
                 # (needed for loading raw data)
                 if width is not None and height is not None:
-                    if not isinstance(width, numbers.Integral) or width < 1:
-                        raise TypeError('width must be a natural number, '
-                                        'not ' + repr(width))
-                    if not isinstance(height, numbers.Integral) or height < 1:
-                        raise TypeError('height must be a natural number, '
-                                        'not ' + repr(height))
+                    assertions.counting_numbers(width=width, height=height)
                     library.MagickSetSize(self.wand, width, height)
                 if depth is not None:
                     library.MagickSetDepth(self.wand, depth)
@@ -6298,19 +6006,12 @@ class Image(BaseImage):
         .. versionadded:: 0.3.0
 
         """
-        if not isinstance(width, numbers.Integral) or width < 1:
-            raise TypeError('width must be a natural number, not ' +
-                            repr(width))
-        if not isinstance(height, numbers.Integral) or height < 1:
-            raise TypeError('height must be a natural number, not ' +
-                            repr(height))
+        assertions.counting_numbers(width=width, height=height)
         if background is None:
             background = Color('transparent')
         elif isinstance(background, string_type):
             background = Color(background)
-        elif not isinstance(background, Color):
-            raise TypeError('background must be a wand.color.Color '
-                            'instance, not ' + repr(background))
+        assertions.assert_color(background, 'background')
         with background:
             r = library.MagickNewImage(self.wand, width, height,
                                        background.resource)
@@ -6368,7 +6069,7 @@ class Image(BaseImage):
                              '\'compareclear\', or \'compareoverlay\'')
         r = None
         m = IMAGE_LAYER_METHOD.index(method)
-        if MAGICK_VERSION_NUMBER >= 0x700:
+        if MAGICK_VERSION_NUMBER >= 0x700:  # pragma: no cover
             r = library.MagickCompareImagesLayers(self.wand, m)
         elif library.MagickCompareImageLayers:
             r = library.MagickCompareImageLayers(self.wand, m)
@@ -6446,7 +6147,8 @@ class Image(BaseImage):
             blob = ctypes.string_at(blob_p, length.value)
             library.MagickRelinquishMemory(blob_p)
             return blob
-        self.raise_exception()
+        else:  # pragma: no cover
+            self.raise_exception()
 
     def pseudo(self, width, height, pseudo='xc:'):
         """Creates a new image from ImageMagick's internal protocol coders.
@@ -6460,15 +6162,8 @@ class Image(BaseImage):
 
         .. versionadded:: 0.5.0
         """
-        if not isinstance(width, numbers.Integral) or width < 1:
-            raise TypeError('width must be a natural number, not ' +
-                            repr(width))
-        if not isinstance(height, numbers.Integral) or height < 1:
-            raise TypeError('height must be a natural number, not ' +
-                            repr(height))
-        if not isinstance(pseudo, string_type):
-            raise TypeError('pseudo must be a string type, not ' +
-                            repr(pseudo))
+        assertions.counting_numbers(width=width, height=height)
+        assertions.assert_string(pseudo, 'pseudo')
         r = library.MagickSetSize(self.wand, width, height)
         if not r:
             self.raise_exception()

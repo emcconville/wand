@@ -192,6 +192,7 @@ def test_font_set(fx_asset):
         assert img.font_color == font.color
         assert img.antialias == font.antialias
         assert img.font == font
+        assert repr(img.font)
         fontStroke = Font(
             path=str(fx_asset.join('League_Gothic.otf')),
             stroke_color=Color('ORANGE'),

@@ -9,7 +9,7 @@ except ImportError:
     import urllib2
 
 from py.path import local
-from pytest import fixture, hookimpl, skip, mark
+from pytest import fixture, hookimpl, mark
 
 from wand.display import display as display_fn
 from wand.image import Image

@@ -35,7 +35,7 @@ def test_set_get_border_color(fx_wand):
     fx_wand.border_color = 'orange'
     assert fx_wand.border_color == Color('orange')
     # Assert user error
-    with raises(ValueError):
+    with raises(TypeError):
         fx_wand.border_color = 0xDEADBEEF
 
 

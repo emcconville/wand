@@ -10,6 +10,7 @@ import collections
 import ctypes
 import numbers
 
+from . import assertions
 from .api import AffineMatrix, PointInfo, library
 from .color import Color
 from .compat import abc, binary, string_type, text, text_type, xrange
@@ -201,9 +202,7 @@ class Drawing(Resource):
     def border_color(self, color):
         if isinstance(color, string_type):
             color = Color(color)
-        elif not isinstance(color, Color):
-            raise ValueError('expected wand.color.Color, not ' +
-                             repr(color))
+        assertions.assert_color(color, 'border_color')
         with color:
             library.DrawSetBorderColor(self.resource, color.resource)
 
@@ -223,8 +222,7 @@ class Drawing(Resource):
 
     @clip_path.setter
     def clip_path(self, path):
-        if not isinstance(path, string_type):
-            raise TypeError('expected a string, not ' + repr(path))
+        assertions.assert_string(path, 'clip_path')
         library.DrawSetClipPath(self.resource, binary(path))
 
     @property
@@ -239,11 +237,9 @@ class Drawing(Resource):
 
     @clip_rule.setter
     def clip_rule(self, clip_rule):
-        if not isinstance(clip_rule, string_type):
-            raise TypeError('expected a string, not ' + repr(clip_rule))
-        elif clip_rule not in FILL_RULE_TYPES:
-            raise ValueError('expected a string from FILE_RULE_TYPES, not' +
-                             repr(clip_rule))
+        assertions.string_in_list(FILL_RULE_TYPES,
+                                  'wand.drawing.FILL_RULE_TYPES',
+                                  clip_rule=clip_rule)
         library.DrawSetClipRule(self.resource,
                                 FILL_RULE_TYPES.index(clip_rule))
 
@@ -259,11 +255,9 @@ class Drawing(Resource):
 
     @clip_units.setter
     def clip_units(self, clip_unit):
-        if not isinstance(clip_unit, string_type):
-            raise TypeError('expected a string, not ' + repr(clip_unit))
-        elif clip_unit not in CLIP_PATH_UNITS:
-            raise ValueError('expected a string from CLIP_PATH_UNITS, not' +
-                             repr(clip_unit))
+        assertions.string_in_list(CLIP_PATH_UNITS,
+                                  'wand.drawing.CLIP_PATH_UNITS',
+                                  clip_unit=clip_unit)
         library.DrawSetClipUnits(self.resource,
                                  CLIP_PATH_UNITS.index(clip_unit))
 
@@ -283,9 +277,7 @@ class Drawing(Resource):
     def fill_color(self, color):
         if isinstance(color, string_type):
             color = Color(color)
-        elif not isinstance(color, Color):
-            raise TypeError('color must be a wand.color.Color object, not ' +
-                            repr(color))
+        assertions.assert_color(color, 'fill_color')
         with color:
             library.DrawSetFillColor(self.resource, color.resource)
 
@@ -300,9 +292,7 @@ class Drawing(Resource):
 
     @fill_opacity.setter
     def fill_opacity(self, opacity):
-        if not isinstance(opacity, numbers.Real):
-            raise TypeError('opacity must be a double, not ' +
-                            repr(opacity))
+        assertions.assert_real(opacity, 'fill_opacity')
         library.DrawSetFillOpacity(self.resource, opacity)
 
     @property
@@ -319,11 +309,9 @@ class Drawing(Resource):
 
     @fill_rule.setter
     def fill_rule(self, fill_rule):
-        if not isinstance(fill_rule, string_type):
-            raise TypeError('expected a string, not ' + repr(fill_rule))
-        elif fill_rule not in FILL_RULE_TYPES:
-            raise ValueError('expected a string from FILE_RULE_TYPES, not' +
-                             repr(fill_rule))
+        assertions.string_in_list(FILL_RULE_TYPES,
+                                  'wand.drawing.FILL_RULE_TYPES',
+                                  fill_rule=fill_rule)
         library.DrawSetFillRule(self.resource,
                                 FILL_RULE_TYPES.index(fill_rule))
 
@@ -341,8 +329,7 @@ class Drawing(Resource):
 
     @font.setter
     def font(self, font):
-        if not isinstance(font, string_type):
-            raise TypeError('expected a string, not ' + repr(font))
+        assertions.assert_string(font, 'font')
         library.DrawSetFont(self.resource, binary(font))
 
     @property
@@ -361,8 +348,7 @@ class Drawing(Resource):
 
     @font_family.setter
     def font_family(self, family):
-        if not isinstance(family, string_type):
-            raise TypeError('expected a string, not ' + repr(family))
+        assertions.assert_string(family, 'font_family')
         library.DrawSetFontFamily(self.resource, binary(family))
 
     @property
@@ -393,9 +379,8 @@ class Drawing(Resource):
 
     @font_size.setter
     def font_size(self, size):
-        if not isinstance(size, numbers.Real):
-            raise TypeError('expected a numbers.Real, but got ' + repr(size))
-        elif size < 0.0:
+        assertions.assert_real(size, 'font_size')
+        if size < 0.0:
             raise ValueError('cannot be less then 0.0, but got ' + repr(size))
         library.DrawSetFontSize(self.resource, size)
 
@@ -412,11 +397,9 @@ class Drawing(Resource):
 
     @font_stretch.setter
     def font_stretch(self, stretch):
-        if not isinstance(stretch, string_type):
-            raise TypeError('expected a string, not ' + repr(stretch))
-        elif stretch not in STRETCH_TYPES:
-            raise ValueError('expected a string from STRETCH_TYPES, not' +
-                             repr(stretch))
+        assertions.string_in_list(STRETCH_TYPES,
+                                  'wand.drawing.STRETCH_TYPES',
+                                  font_stretch=stretch)
         library.DrawSetFontStretch(self.resource,
                                    STRETCH_TYPES.index(stretch))
 
@@ -433,11 +416,9 @@ class Drawing(Resource):
 
     @font_style.setter
     def font_style(self, style):
-        if not isinstance(style, string_type):
-            raise TypeError('expected a string, not ' + repr(style))
-        elif style not in STYLE_TYPES:
-            raise ValueError('expected a string from STYLE_TYPES, not' +
-                             repr(style))
+        assertions.string_in_list(STYLE_TYPES,
+                                  'wand.drawing.STYLE_TYPES',
+                                  font_style=style)
         library.DrawSetFontStyle(self.resource,
                                  STYLE_TYPES.index(style))
 
@@ -452,21 +433,8 @@ class Drawing(Resource):
 
     @font_weight.setter
     def font_weight(self, weight):
-        if not isinstance(weight, numbers.Integral):
-            raise TypeError('expected a integral, not ' + repr(weight))
+        assertions.assert_integer(weight, 'font_weight')
         library.DrawSetFontWeight(self.resource, weight)
-
-    @property
-    def opacity(self):
-        """(:class:`~numbers.Real`) returns the opacity used when drawing with
-        the fill or stroke color or texture. Fully opaque is 1.0. This method
-        only affects vector graphics, and is experimental. To set the opacity
-        of a drawing, use
-        :attr:`Drawing.fill_opacity` & :attr:`Drawing.stroke_opacity`
-
-        .. versionadded:: 0.4.0
-        """
-        return library.DrawGetOpacity(self.resource)
 
     @property
     def gravity(self):
@@ -482,16 +450,27 @@ class Drawing(Resource):
 
     @gravity.setter
     def gravity(self, value):
-        if not isinstance(value, string_type):
-            raise TypeError('expected a string, not ' + repr(value))
-        elif value not in GRAVITY_TYPES:
-            raise ValueError('expected a string from GRAVITY_TYPES, not ' +
-                             repr(value))
+        assertions.string_in_list(GRAVITY_TYPES,
+                                  'wand.drawing.GRAVITY_TYPES',
+                                  gravity=value)
         library.DrawSetGravity(self.resource, GRAVITY_TYPES.index(value))
+
+    @property
+    def opacity(self):
+        """(:class:`~numbers.Real`) returns the opacity used when drawing with
+        the fill or stroke color or texture. Fully opaque is 1.0. This method
+        only affects vector graphics, and is experimental. To set the opacity
+        of a drawing, use
+        :attr:`Drawing.fill_opacity` & :attr:`Drawing.stroke_opacity`
+
+        .. versionadded:: 0.4.0
+        """
+        return library.DrawGetOpacity(self.resource)
 
     @opacity.setter
     def opacity(self, opaque):
-        library.DrawSetOpacity(self.resource, ctypes.c_double(opaque))
+        assertions.assert_real(opaque, 'opacity')
+        library.DrawSetOpacity(self.resource, opaque)
 
     @property
     def stroke_antialias(self):
@@ -510,7 +489,8 @@ class Drawing(Resource):
 
     @stroke_antialias.setter
     def stroke_antialias(self, stroke_antialias):
-        library.DrawSetStrokeAntialias(self.resource, bool(stroke_antialias))
+        assertions.assert_bool(stroke_antialias, 'stroke_antialias')
+        library.DrawSetStrokeAntialias(self.resource, stroke_antialias)
 
     @property
     def stroke_color(self):
@@ -530,9 +510,7 @@ class Drawing(Resource):
     def stroke_color(self, color):
         if isinstance(color, string_type):
             color = Color(color)
-        elif not isinstance(color, Color):
-            raise TypeError('color must be a wand.color.Color object, not ' +
-                            repr(color))
+        assertions.assert_color(color, 'stroke_color')
         with color:
             library.DrawSetStrokeColor(self.resource, color.resource)
 
@@ -578,7 +556,8 @@ class Drawing(Resource):
 
     @stroke_dash_offset.setter
     def stroke_dash_offset(self, offset):
-        library.DrawSetStrokeDashOffset(self.resource, float(offset))
+        assertions.assert_real(offset, 'stroke_dash_offset')
+        library.DrawSetStrokeDashOffset(self.resource, offset)
 
     @property
     def stroke_line_cap(self):
@@ -593,11 +572,9 @@ class Drawing(Resource):
 
     @stroke_line_cap.setter
     def stroke_line_cap(self, line_cap):
-        if not isinstance(line_cap, string_type):
-            raise TypeError('expected a string, not ' + repr(line_cap))
-        elif line_cap not in LINE_CAP_TYPES:
-            raise ValueError('expected a string from LINE_CAP_TYPES, not' +
-                             repr(line_cap))
+        assertions.string_in_list(LINE_CAP_TYPES,
+                                  'wand.drawing.LINE_CAP_TYPES',
+                                  stroke_line_cap=line_cap)
         library.DrawSetStrokeLineCap(self.resource,
                                      LINE_CAP_TYPES.index(line_cap))
 
@@ -614,11 +591,9 @@ class Drawing(Resource):
 
     @stroke_line_join.setter
     def stroke_line_join(self, line_join):
-        if not isinstance(line_join, string_type):
-            raise TypeError('expected a string, not ' + repr(line_join))
-        elif line_join not in LINE_JOIN_TYPES:
-            raise ValueError('expected a string from LINE_JOIN_TYPES, not' +
-                             repr(line_join))
+        assertions.string_in_list(LINE_JOIN_TYPES,
+                                  'wand.drawing.LINE_JOIN_TYPES',
+                                  stroke_line_join=line_join)
         library.DrawSetStrokeLineJoin(self.resource,
                                       LINE_JOIN_TYPES.index(line_join))
 
@@ -633,9 +608,7 @@ class Drawing(Resource):
 
     @stroke_miter_limit.setter
     def stroke_miter_limit(self, miter_limit):
-        if not isinstance(miter_limit, numbers.Integral):
-            raise TypeError('opacity must be a integer, not ' +
-                            repr(miter_limit))
+        assertions.assert_integer(miter_limit, 'stroke_miter_limit')
         library.DrawSetStrokeMiterLimit(self.resource, miter_limit)
 
     @property
@@ -649,9 +622,7 @@ class Drawing(Resource):
 
     @stroke_opacity.setter
     def stroke_opacity(self, opacity):
-        if not isinstance(opacity, numbers.Real):
-            raise TypeError('opacity must be a double, not ' +
-                            repr(opacity))
+        assertions.assert_real(opacity, 'stroke_opacity')
         library.DrawSetStrokeOpacity(self.resource, opacity)
 
     @property
@@ -665,9 +636,8 @@ class Drawing(Resource):
 
     @stroke_width.setter
     def stroke_width(self, width):
-        if not isinstance(width, numbers.Real):
-            raise TypeError('expected a numbers.Real, but got ' + repr(width))
-        elif width < 0.0:
+        assertions.assert_real(width, 'stroke_width')
+        if width < 0.0:
             raise ValueError('cannot be less then 0.0, but got ' + repr(width))
         library.DrawSetStrokeWidth(self.resource, width)
 
@@ -685,11 +655,9 @@ class Drawing(Resource):
 
     @text_alignment.setter
     def text_alignment(self, align):
-        if not isinstance(align, string_type):
-            raise TypeError('expected a string, not ' + repr(align))
-        elif align not in TEXT_ALIGN_TYPES:
-            raise ValueError('expected a string from TEXT_ALIGN_TYPES, not ' +
-                             repr(align))
+        assertions.string_in_list(TEXT_ALIGN_TYPES,
+                                  'wand.drawing.TEXT_ALIGN_TYPES',
+                                  text_alignment=align)
         library.DrawSetTextAlignment(self.resource,
                                      TEXT_ALIGN_TYPES.index(align))
 
@@ -705,7 +673,8 @@ class Drawing(Resource):
 
     @text_antialias.setter
     def text_antialias(self, value):
-        library.DrawSetTextAntialias(self.resource, bool(value))
+        assertions.assert_bool(value, 'text_antialias')
+        library.DrawSetTextAntialias(self.resource, value)
 
     @property
     def text_decoration(self):
@@ -720,11 +689,9 @@ class Drawing(Resource):
 
     @text_decoration.setter
     def text_decoration(self, decoration):
-        if not isinstance(decoration, string_type):
-            raise TypeError('expected a string, not ' + repr(decoration))
-        elif decoration not in TEXT_DECORATION_TYPES:
-            raise ValueError('expected a string from TEXT_DECORATION_TYPES, '
-                             'not ' + repr(decoration))
+        assertions.string_in_list(TEXT_DECORATION_TYPES,
+                                  'wand.drawing.TEXT_DECORATION_TYPES',
+                                  text_decoration=decoration)
         library.DrawSetTextDecoration(self.resource,
                                       TEXT_DECORATION_TYPES.index(decoration))
 
@@ -749,11 +716,9 @@ class Drawing(Resource):
                 'The installed version of ImageMagick does not support '
                 'this feature'
             )
-        if not isinstance(direction, string_type):
-            raise TypeError('expected a string, not ' + repr(direction))
-        elif direction not in TEXT_DIRECTION_TYPES:
-            raise ValueError('expected a string from TEXT_DIRECTION_TYPES, '
-                             'not ' + repr(direction))
+        assertions.string_in_list(TEXT_DIRECTION_TYPES,
+                                  'wand.drawing.TEXT_DIRECTION_TYPES',
+                                  text_direction=direction)
         library.DrawSetTextDirection(self.resource,
                                      TEXT_DIRECTION_TYPES.index(direction))
 
@@ -772,13 +737,12 @@ class Drawing(Resource):
 
     @text_encoding.setter
     def text_encoding(self, encoding):
-        if encoding is not None and not isinstance(encoding, string_type):
-            raise TypeError('expected a string, not ' + repr(encoding))
-        elif encoding is None:
+        if encoding is None:
             # encoding specify an empty string to set text encoding
             # to system's default.
             encoding = b''
         else:
+            assertions.assert_string(encoding, 'text_encoding')
             encoding = binary(encoding)
         library.DrawSetTextEncoding(self.resource, encoding)
 
@@ -800,9 +764,7 @@ class Drawing(Resource):
             raise WandLibraryVersionError('The installed version of '
                                           'ImageMagick does not support '
                                           'this feature')
-        if not isinstance(spacing, numbers.Real):
-            raise TypeError('expected a numbers.Real, but got ' +
-                            repr(spacing))
+        assertions.assert_real(spacing, 'text_interline_spacing')
         library.DrawSetTextInterlineSpacing(self.resource, spacing)
 
     @property
@@ -815,8 +777,7 @@ class Drawing(Resource):
 
     @text_interword_spacing.setter
     def text_interword_spacing(self, spacing):
-        if not isinstance(spacing, numbers.Real):
-            raise TypeError('expeted a numbers.Real, but got ' + repr(spacing))
+        assertions.assert_real(spacing, 'text_interword_spacing')
         library.DrawSetTextInterwordSpacing(self.resource, spacing)
 
     @property
@@ -829,9 +790,7 @@ class Drawing(Resource):
 
     @text_kerning.setter
     def text_kerning(self, kerning):
-        if not isinstance(kerning, numbers.Real):
-            raise TypeError('expected a numbers.Real, but got ' +
-                            repr(kerning))
+        assertions.assert_real(kerning, 'text_kerning')
         library.DrawSetTextKerning(self.resource, kerning)
 
     @property
@@ -850,9 +809,7 @@ class Drawing(Resource):
     def text_under_color(self, color):
         if isinstance(color, string_type):
             color = Color(color)
-        elif not isinstance(color, Color):
-            raise TypeError('expected a wand.color.Color object, not ' +
-                            repr(color))
+        assertions.assert_color(color, 'text_under_color')
         with color:
             library.DrawSetTextUnderColor(self.resource, color.resource)
 
@@ -948,13 +905,9 @@ class Drawing(Resource):
             )
         if x is None or y is None:
             raise TypeError('Both x & y coordinates need to be defined')
-        if not isinstance(paint_method, string_type):
-            raise TypeError('expected a string, not ' + repr(paint_method))
-        elif paint_method not in PAINT_METHOD_TYPES:
-            raise ValueError(
-                'expected a string from PAINT_METHOD_TYPES, not ' +
-                repr(paint_method)
-            )
+        assertions.string_in_list(PAINT_METHOD_TYPES,
+                                  'wand.drawing.PAINT_METHOD_TYPES',
+                                  paint_method=paint_method)
         library.DrawAlpha(self.resource, float(x), float(y),
                           PAINT_METHOD_TYPES.index(paint_method))
 
@@ -1063,13 +1016,9 @@ class Drawing(Resource):
         """
         if x is None or y is None:
             raise TypeError('Both x & y coordinates need to be defined')
-        if not isinstance(paint_method, string_type):
-            raise TypeError('expected a string, not ' + repr(paint_method))
-        elif paint_method not in PAINT_METHOD_TYPES:
-            raise ValueError(
-                'expected a string from PAINT_METHOD_TYPES, not ' +
-                repr(paint_method)
-            )
+        assertions.string_in_list(PAINT_METHOD_TYPES,
+                                  'wand.drawing.PAINT_METHOD_TYPES',
+                                  paint_method=paint_method)
         library.DrawColor(self.resource, float(x), float(y),
                           PAINT_METHOD_TYPES.index(paint_method))
 
@@ -1081,11 +1030,10 @@ class Drawing(Resource):
 
         .. versionadded:: 0.4.0
         """
-        if message is not None and not isinstance(message, string_type):
-            raise TypeError('expected a string, not ' + repr(message))
-        elif message is None:
+        if message is None:
             message = b''
         else:
+            assertions.assert_string(message)
             message = binary(message)
         library.DrawComment(self.resource, message)
 
@@ -1110,17 +1058,11 @@ class Drawing(Resource):
         .. versionadded:: 0.4.0
 
         """
-        if not isinstance(operator, string_type):
-            raise TypeError('operator must be a string, not ' +
-                            repr(operator))
-        elif not isinstance(left, numbers.Real):
-            raise TypeError('left must be an integer, not ' + repr(left))
-        elif not isinstance(top, numbers.Real):
-            raise TypeError('top must be an integer, not ' + repr(left))
-        elif not isinstance(width, numbers.Real):
-            raise TypeError('width must be an integer, not ' + repr(left))
-        elif not isinstance(height, numbers.Real):
-            raise TypeError('height must be an integer, not ' + repr(left))
+        assertions.assert_string(operator, 'operator')
+        assertions.assert_real(left, 'left')
+        assertions.assert_real(top, 'top')
+        assertions.assert_real(width, 'width')
+        assertions.assert_real(height, 'height')
         try:
             op = COMPOSITE_OPERATORS.index(operator)
         except IndexError:
@@ -1201,8 +1143,7 @@ class Drawing(Resource):
         if not isinstance(image, BaseImage):
             raise TypeError('image must be a wand.image.BaseImage instance,'
                             ' not ' + repr(image))
-        if not isinstance(text, string_type):
-            raise TypeError('text must be a string, not ' + repr(text))
+        assertions.assert_string(text, 'text')
         if multiline:
             font_metrics_f = library.MagickQueryMultilineFontMetrics
         else:
@@ -1263,13 +1204,9 @@ class Drawing(Resource):
             )
         if x is None or y is None:
             raise TypeError('Both x & y coordinates need to be defined')
-        if not isinstance(paint_method, string_type):
-            raise TypeError('expected a string, not ' + repr(paint_method))
-        elif paint_method not in PAINT_METHOD_TYPES:
-            raise ValueError(
-                'expected a string from PAINT_METHOD_TYPES, not ' +
-                repr(paint_method)
-            )
+        assertions.string_in_list(PAINT_METHOD_TYPES,
+                                  'wand.drawing.PAINT_METHOD_TYPES',
+                                  paint_method=paint_method)
         library.DrawMatte(self.resource, float(x), float(y),
                           PAINT_METHOD_TYPES.index(paint_method))
 
@@ -1764,17 +1701,11 @@ class Drawing(Resource):
         .. versionadded:: 0.4.0
 
         """
-        if not isinstance(pattern_id, string_type):
-            raise TypeError('pattern_id must be a string, not ' +
-                            repr(pattern_id))
-        elif not isinstance(left, numbers.Real):
-            raise TypeError('left must be numbers.Real, not ' + repr(left))
-        elif not isinstance(top, numbers.Real):
-            raise TypeError('top must be numbers.Real, not ' + repr(top))
-        elif not isinstance(width, numbers.Real):
-            raise TypeError('width must be numbers.Real, not ' + repr(width))
-        elif not isinstance(height, numbers.Real):
-            raise TypeError('height must be numbers.Real, not ' + repr(height))
+        assertions.assert_string(pattern_id, 'pattern_id')
+        assertions.assert_real(left, 'left')
+        assertions.assert_real(top, 'top')
+        assertions.assert_real(width, 'width')
+        assertions.assert_real(height, 'height')
         okay = library.DrawPushPattern(self.resource, binary(pattern_id),
                                        left, top,
                                        width, height)
@@ -1886,12 +1817,8 @@ class Drawing(Resource):
                 xradius = 0.0
             if yradius is None:
                 yradius = 0.0
-            if not isinstance(xradius, numbers.Real):
-                raise TypeError('xradius must be numbers.Real, not ' +
-                                repr(xradius))
-            if not isinstance(yradius, numbers.Real):
-                raise TypeError('yradius must be numbers.Real, not ' +
-                                repr(xradius))
+            assertions.assert_real(xradius, 'xradius')
+            assertions.assert_real(yradius, 'yradius')
             library.DrawRoundRectangle(self.resource, left, top, right, bottom,
                                        xradius, yradius)
         else:
@@ -1907,7 +1834,8 @@ class Drawing(Resource):
         .. versionadded:: 0.4.0
 
         """
-        library.DrawRotate(self.resource, float(degree))
+        assertions.assert_real(degree, 'degree')
+        library.DrawRotate(self.resource, degree)
 
     def scale(self, x=None, y=None):
         """
@@ -1922,10 +1850,8 @@ class Drawing(Resource):
         .. versionadded:: 0.4.0
 
         """
-        if not isinstance(x, numbers.Real):
-            raise TypeError('expecting numbers.Real, not ' + repr(x))
-        if not isinstance(y, numbers.Real):
-            raise TypeError('expecting numbers.Real, not ' + repr(y))
+        assertions.assert_real(x, 'x')
+        assertions.assert_real(y, 'y')
         library.DrawScale(self.resource, x, y)
 
     def set_fill_pattern_url(self, url):
@@ -1940,8 +1866,7 @@ class Drawing(Resource):
         .. versionadded:: 0.4.0
 
         """
-        if not isinstance(url, string_type):
-            raise TypeError('expecting basestring, not ' + repr(url))
+        assertions.assert_string(url, 'url')
         if url[0] != '#':
             raise ValueError('value not a relative URL, '
                              'expecting "#identifier"')
@@ -1962,8 +1887,7 @@ class Drawing(Resource):
         .. versionadded:: 0.4.0
 
         """
-        if not isinstance(url, string_type):
-            raise TypeError('expecting basestring, not ' + repr(url))
+        assertions.assert_string(url, 'url')
         if url[0] != '#':
             raise ValueError('value not a relative URL, '
                              'expecting "#identifier"')
@@ -2000,15 +1924,10 @@ class Drawing(Resource):
         :type body: :class:`basestring`
 
         """
-        if not isinstance(x, numbers.Integral) or x < 0:
-            exc = ValueError if x < 0 else TypeError
-            raise exc('x must be a natural number, not ' + repr(x))
-        elif not isinstance(y, numbers.Integral) or y < 0:
-            exc = ValueError if y < 0 else TypeError
-            raise exc('y must be a natural number, not ' + repr(y))
-        elif not isinstance(body, string_type):
-            raise TypeError('body must be a string, not ' + repr(body))
-        elif not body:
+        assertions.assert_unsigned_integer(x, 'x')
+        assertions.assert_unsigned_integer(y, 'y')
+        assertions.assert_string(body, 'body')
+        if not body:
             raise ValueError('body string cannot be empty')
         if isinstance(body, text_type):
             # According to ImageMagick C API docs, we can use only UTF-8
@@ -2057,14 +1976,10 @@ class Drawing(Resource):
         .. versionadded:: 0.4.0
 
         """
-        if not isinstance(left, numbers.Integral):
-            raise TypeError('left must be an integer, not ' + repr(left))
-        if not isinstance(top, numbers.Integral):
-            raise TypeError('top must be an integer, not ' + repr(top))
-        if not isinstance(right, numbers.Integral):
-            raise TypeError('right must be an integer, not ' + repr(right))
-        if not isinstance(bottom, numbers.Integral):
-            raise TypeError('bottom must be an integer, not ' + repr(bottom))
+        assertions.assert_integer(left, 'left')
+        assertions.assert_integer(top, 'top')
+        assertions.assert_integer(right, 'right')
+        assertions.assert_integer(bottom, 'bottom')
         library.DrawSetViewbox(self.resource, left, top, right, bottom)
 
     def __call__(self, image):

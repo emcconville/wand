@@ -499,13 +499,12 @@ def test_despeckle(fx_asset):
 @mark.slow
 def test_distort(fx_asset):
     """Distort image."""
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+    with Image(filename=str(fx_asset.join('checks.png'))) as img:
         with Color('skyblue') as color:
             img.matte_color = color
             img.virtual_pixel = 'tile'
-            img.distort('perspective', (0, 0, 20, 60, 90, 0,
-                                        70, 63, 0, 90, 5, 83,
-                                        90, 90, 85, 88))
+            img.distort('perspective', (0, 0, 20, 60, 90, 0, 70, 63,
+                                        0, 90, 5, 83, 90, 90, 85, 88))
             assert img[img.width - 1, 0] == color
 
 
@@ -811,6 +810,14 @@ def test_import_pixels(fx_asset):
             dst.import_pixels(data=[0x00, 0xFF])
 
 
+def test_kurtosis_channel():
+    with Image(filename='rose:') as img:
+        r = img.kurtosis_channel('red')
+        assert len(r) == 2
+        with raises(TypeError):
+            img.kurtosis_channel('unknown')
+
+
 def test_level(fx_asset):
     with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
         # Adjust the levels to make this image entirely black
@@ -917,6 +924,14 @@ def test_liquid_rescale(fx_asset):
                 for x in 0, -1:
                     for y in 0, -1:
                         assert_equal_except_alpha(img[x, y], img[x, y])
+
+
+def test_mean_channel():
+    with Image(filename='rose:') as img:
+        r = img.mean_channel('red')
+        assert len(r) == 2
+        with raises(TypeError):
+            img.mean_channel('unknown')
 
 
 def test_merge_layers(fx_asset):
@@ -1074,6 +1089,9 @@ def test_negate_default(fx_asset):
         test(left_bottom, img[0, -1])
         test(right_top, img[-1, 0])
         test(right_bottom, img[-1, -1])
+        assert img.negate(False, 'red')
+        with raises(ValueError):
+            img.negate(True, 'unknown')
 
 
 def test_noise():
@@ -1099,6 +1117,8 @@ def test_normalize(display, fx_asset):
         with img[-1, -1] as right_bottom:
             assert (right_bottom.red == right_bottom.green ==
                     right_bottom.blue == 0)
+        with raises(ValueError):
+            img.normalize('unknown')
 
 
 def test_normalize_channel(fx_asset):
@@ -1159,11 +1179,10 @@ def test_posterize(fx_asset):
 @mark.slow
 def test_quantize(fx_asset):
     number_colors = 64
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
-        colors = set([color for row in img for color in row])
-        assert len(colors) > number_colors
+    with Image(width=100, height=100, pseudo='PLASMA:') as img:
+        assert img.colors > number_colors
 
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+    with Image(width=100, height=100, pseudo='PLASMA:') as img:
         with raises(TypeError):
             img.quantize(str(number_colors), 'undefined', 0, True, True)
 
@@ -1180,9 +1199,15 @@ def test_quantize(fx_asset):
             img.quantize(number_colors, 'undefined', 0, True, 1)
 
         img.quantize(number_colors, 'undefined', 0, True, True)
-        colors = set([color for row in img for color in row])
-        assert colors
-        assert len(colors) <= number_colors
+        assert img.colors <= number_colors
+
+
+def test_range_channel():
+    with Image(filename='rose:') as img:
+        minima, maxima = img.range_channel('red')
+        assert minima < maxima
+        with raises(TypeError):
+            img.range_channel('unknown')
 
 
 def test_remap(fx_asset):
@@ -1504,7 +1529,7 @@ def test_sparse_color():
         img.sparse_color('barycentric', colors)
         assert img[0, 0] == Color('#F00')
         assert img[9, 9] == Color('#00F')
-        with raises(ValueError):
+        with raises(TypeError):
             img.sparse_color(0xDEADBEEF, colors)
         with raises(TypeError):
             img.sparse_color('barycentric', 0xDEADBEEF)
@@ -1559,17 +1584,8 @@ def test_threshold(fx_asset):
             assert white.red_int8 == white.green_int8 == white.blue_int8 == 255
         with img[0, btm] as black:
             assert black.red_int8 == black.green_int8 == black.blue_int8 == 0
-
-
-def test_tint(fx_asset):
-    with Image(filename='rose:') as img:
-        was = img.signature
-        img.tint('blue', 'blue')
-        assert was != img.signature
-        with raises(TypeError):
-            img.colorize(0xDEADBEEF, Color('blue'))
-        with raises(TypeError):
-            img.colorize(Color('blue'), 0xDEADBEEF)
+        with raises(ValueError):
+            img.threshold(0.5, channel='unknown')
 
 
 def test_threshold_channel(fx_asset):
@@ -1586,6 +1602,17 @@ def test_threshold_channel(fx_asset):
         with img[0, btm] as red:
             assert (red.red_int8 == 255 and
                     red.green_int8 == red.blue_int8 == 0)
+
+
+def test_tint(fx_asset):
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.tint('blue', 'blue')
+        assert was != img.signature
+        with raises(TypeError):
+            img.colorize(0xDEADBEEF, Color('blue'))
+        with raises(TypeError):
+            img.colorize(Color('blue'), 0xDEADBEEF)
 
 
 @mark.parametrize(('args', 'kwargs', 'expected_size'), [
@@ -1615,6 +1642,8 @@ def test_transform(args, kwargs, expected_size, fx_asset):
 def test_transform_colorspace(fx_asset):
     with Image(filename=str(fx_asset.join('cmyk.jpg'))) as img:
         with raises(TypeError):
+            img.transform_colorspace(0xDEADBEEF)
+        with raises(ValueError):
             img.transform_colorspace('unknown')
 
         img.transform_colorspace('srgb')
@@ -1690,6 +1719,8 @@ def test_transparentize(fx_asset):
                 with im[100, 100] as c:
                     assert c.red == c.green == c.blue == 0
                     assert 0.69 < c.alpha < 0.71
+        with raises(ValueError):
+            im.transparentize(-9)
 
 
 def test_transpose(fx_asset):
@@ -1788,7 +1819,7 @@ def test_wave(fx_asset):
             img.wave(amplitude='img height')
         with raises(TypeError):
             img.wave(wave_length='img height')
-        with raises(ValueError):
+        with raises(TypeError):
             img.wave(method=0xDEADBEEF)
 
 
@@ -1797,5 +1828,6 @@ def test_white_threshold(fx_asset):
         was = img.signature
         img.white_threshold(Color('gray(50%)'))
         assert was != img.signature
+        assert img.white_threshold('gray(50%)')
         with raises(TypeError):
             img.white_threshold(0xDEADBEEF)
