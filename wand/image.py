@@ -2080,7 +2080,17 @@ class BaseImage(Resource):
 
     @property
     def size(self):
-        """(:class:`tuple`) The pair of (:attr:`width`, :attr:`height`)."""
+        """(:class:`tuple`) The pair of (:attr:`width`, :attr:`height`).
+
+        .. note::
+
+            When working with animations, or other layer-based image formats,
+            the :attr:`width` & :attr:`height` properties are referencing the
+            last frame read into the image stack. To get the :attr:`size`
+            of the entire animated images, call
+            :meth:`Image.coalesce() <wand.image.BaseImage.coalesce>` method
+            immediately after reading the image.
+        """
         return self.width, self.height
 
     @property
