@@ -7,12 +7,14 @@ Wand Changelog
 ~~~~~~~~~~
 
 
-.. _changelog-0.5.3:
+.. _changelog-0.5.4:
 
 Version 0.5.4
 -------------
 
 Unreleased.
+
+ - Rewrote :attr:`~wand.api.libc` library loader. [:issue:`409`]
 
 
 .. _changelog-0.5.3:
