@@ -115,6 +115,13 @@ def test_border(fx_asset):
             assert img[-3, -6] == right_bottom
 
 
+def test_brightness_contrast():
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.brightness_contrast(-10.0, 50)
+        assert was != img.signature
+
+
 def test_caption(fx_asset):
     with Image(width=144, height=192, background=Color('#1e50a2')) as img:
         font = Font(
@@ -1520,6 +1527,22 @@ def test_shave(fx_asset):
             img.shave(None, 10)
         with raises(TypeError):
             img.shave(10, None)
+
+
+def test_shear():
+    green = Color('GREEN')
+    with Image(filename='rose:') as img:
+        img.shear(background='green', x=10, y=10)
+        assert img[0, 0] == green
+
+
+def test_sigmoidal_contrast():
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.sigmoidal_contrast(sharpen=True,
+                               strength=3,
+                               midpoint=0.65 * img.quantum_range)
+        assert was != img.signature
 
 
 def test_sketch():

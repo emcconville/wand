@@ -2532,6 +2532,27 @@ class BaseImage(Resource):
         return result
 
     @manipulative
+    @trap_exception
+    def brightness_contrast(self, brightness=0.0, contrast=0.0):
+        """Converts ``brightness`` & ``contrast`` paramaters into a slope &
+        intercept, and applies a polynomial function.
+
+        :param brightness: between ``-100.0`` and ``100.0``. Default is ``0.0``
+                           for unchanged.
+        :type brightness: :class:`numbers.Real`
+        :param contrast: between ``-100.0`` and ``100.0``. Default is ``0.0``
+                         for unchanged.
+        :type contrast: :class:`numbers.Real`
+
+        .. versionadded:: 0.5.4
+        """
+        assertions.assert_real(brightness, 'brightness')
+        assertions.assert_real(contrast, 'contrast')
+        return library.MagickBrightnessContrastImage(self.wand,
+                                                     brightness,
+                                                     contrast)
+
+    @manipulative
     def concat(self, stacked=False):
         """Concatenates images in stack into a single image. Left-to-right
         by default, top-to-bottom if ``stacked`` is True.
@@ -5050,6 +5071,64 @@ class BaseImage(Resource):
         assertions.assert_integer(columns, 'columns')
         assertions.assert_integer(rows, 'rows')
         return library.MagickShaveImage(self.wand, columns, rows)
+
+    @manipulative
+    @trap_exception
+    def shear(self, background='WHITE', x=0.0, y=0.0):
+        """Shears the image to create a parallelogram, and fill the space
+        created with a ``background`` color.
+
+        :param background: Color to fill the void created by shearing the
+                           image.
+        :type background: :class:`wand.color.Color`
+        :param x: Slide the image along the X-axis.
+        :type x: :class:`numbers.Real`
+        :param y: Slide the image along the Y-axis.
+        :type y: :class:`numbers.Real`
+
+        .. versionadded:: 0.5.4
+        """
+        if isinstance(background, string_type):
+            background=Color(background)
+        assertions.assert_color(background, 'background')
+        assertions.assert_real(x, 'x')
+        assertions.assert_real(y, 'y')
+        with background:
+            r = library.MagickShearImage(self.wand, background.resource, x, y)
+        return r
+
+    @manipulative
+    @trap_exception
+    def sigmoidal_contrast(self, sharpen=True, strength=0.0, midpoint=0.0):
+        """Modifies the contrast of the image by applying non-linear sigmoidal
+        algorithm.
+
+        .. code:: python
+
+            with Image(filename='photo.jpg') as img:
+                img.sigmoidal_contrast(sharpen=True,
+                                       strength=3,
+                                       midpoint=0.65 * img.quantum_range)
+
+        :param sharpen: Increase the contrast when ``True`` (default), else
+                        reduces contrast.
+        :type sharpen: :class:`bool`
+        :param strength: How much to adjust the contrast. Where a value of
+                         ``0.0`` has no effect, ``3.0`` is typical, and
+                         ``20.0`` is extreme.
+        :type strength: :class:`numbers.Real`
+        :param midpoint: Normalized value between `0.0` & :attr:`quantum_range`
+        :type midpoint: :class:`numbers.Real`
+
+        .. versionadded:: 0.5.4
+        """
+        assertions.assert_bool(sharpen, 'sharpen')
+        assertions.assert_real(strength, 'strength')
+        assertions.assert_real(midpoint, 'midpoint')
+        return library.MagickSigmoidalContrastImage(self.wand,
+                                                    sharpen,
+                                                    strength,
+                                                    midpoint)
 
     @manipulative
     @trap_exception
