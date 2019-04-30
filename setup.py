@@ -44,6 +44,7 @@ setup(
     version=VERSION,
     description='Ctypes-based simple MagickWand API binding for Python',
     long_description=readme(),
+    long_description_content_type='text/x-rst',
     license='MIT License',
     author='Hong Minhee',
     author_email='hongminhee' '@' 'member.fsf.org',
@@ -69,5 +70,11 @@ setup(
         'Programming Language :: Python :: Implementation :: Stackless',
         'Topic :: Multimedia :: Graphics'
     ],
-    cmdclass=cmdclass
+    keywords='ImageMagick ctypes',
+    cmdclass=cmdclass,
+    project_urls={
+        'Documentation': 'http://docs.wand-py.org',
+        'Source': 'https://github.com/emcconville/wand',
+        'Tracker': 'https://github.com/emcconville/wand/issues',
+    }
 )
