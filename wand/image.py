@@ -4450,6 +4450,28 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
+    def oil_paint(self, radius=0.0, sigma=0.0):
+        """Simulates an oil painting by replace each pixel with most frequent
+        surrounding color.
+
+        :param radius: The size of the surrounding neighbors.
+        :type radius: :class:`numbers.Real`
+        :param sigma: The standard deviation used by the Gaussian operator.
+                      This is only available with ImageMagick-7.
+        :type sigma: :class:`numbers.Real`
+
+        .. versionadded:: 0.5.4
+        """
+        assertions.assert_real(radius, 'radius')
+        assertions.assert_real(sigma, 'sigma')
+        if MAGICK_VERSION_NUMBER < 0x700:
+            r = library.MagickOilPaintImage(self.wand, radius)
+        else:
+            r = library.MagickOilPaintImage(self.wand, radius, sigma)
+        return r
+
+    @manipulative
+    @trap_exception
     def opaque_paint(self, target=None, fill=None, fuzz=0.0, invert=False):
         """Replace any color that matches ``target`` with ``fill``. Use
         ``fuzz`` to control the threshold of the target match.

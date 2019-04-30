@@ -1145,6 +1145,13 @@ def test_normalize_channel(fx_asset):
             assert getattr(img[-1, -1], c) == getattr(right_bottom, c)
 
 
+def test_oil_paint():
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.oil_paint(5)
+        assert was != img.signature
+
+
 def test_opaque_paint():
     pink = Color('pink')
     white = Color('white')
