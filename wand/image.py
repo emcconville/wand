@@ -4449,6 +4449,44 @@ class BaseImage(Resource):
         return r
 
     @manipulative
+    @trap_exception
+    def opaque_paint(self, target=None, fill=None, fuzz=0.0, invert=False):
+        """Replace any color that matches ``target`` with ``fill``. Use
+        ``fuzz`` to control the threshold of the target match.
+        The ``invert`` will replace all colors *but* the  pixels matching
+        the ``target`` color.
+
+        :param target: The color to match.
+        :type target: :class:`wand.color.Color`
+        :param fill: The color to paint with.
+        :type fill: :class:`wand.color.Color`
+        :param fuzz: Normalized real number between `0.0` and
+                     :attr:`quantum_range`. Default is `0.0`.
+        :type fuzz: class:`numbers.Real`
+        :param invert: Replace all colors that do not match target.
+                       Default is ``False``.
+        :type invert: :class:`bool`
+
+        .. versionadded:: 0.5.4
+        """
+        if isinstance(target, string_type):
+            target = Color(target)
+        if isinstance(fill, string_type):
+            fill = Color(fill)
+        assertions.assert_color(target, 'target')
+        assertions.assert_color(fill, 'fill')
+        assertions.assert_real(fuzz, 'fuzz')
+        assertions.assert_bool(invert, 'invert')
+        with target:
+            with fill:
+                r = library.MagickOpaquePaintImage(self.wand,
+                                                   target.resource,
+                                                   fill.resource,
+                                                   fuzz,
+                                                   invert)
+        return r
+
+    @manipulative
     def optimize_layers(self):
         """Attempts to crop each frame to the smallest image without altering
         the animation.

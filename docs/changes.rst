@@ -15,6 +15,7 @@ Version 0.5.4
 Unreleased.
 
  - Rewrote :attr:`~wand.api.libc` library loader. [:issue:`409`]
+ - Added :meth:`Image.opaque_paint() <wand.image.BaseImage.opaque_paint>` method.
 
 
 .. _changelog-0.5.3:

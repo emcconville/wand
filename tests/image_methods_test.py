@@ -1145,6 +1145,19 @@ def test_normalize_channel(fx_asset):
             assert getattr(img[-1, -1], c) == getattr(right_bottom, c)
 
 
+def test_opaque_paint():
+    pink = Color('pink')
+    white = Color('white')
+    with Image(filename='WIZARD:') as img:
+        img.opaque_paint(target=white, fill=pink,
+                         fuzz=0.25*img.quantum_range)
+        assert img[0, 0] == pink
+    with Image(filename='WIZARD:') as img:
+        img.opaque_paint(target='white', fill='pink',
+                         fuzz=0.25*img.quantum_range, invert=True)
+        assert img[0, 0] == white
+
+
 def test_optimize_layers(fx_asset):
     with Image(filename=str(fx_asset.join('nocomments.gif'))) as img1:
         with Image(img1) as img2:
