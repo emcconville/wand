@@ -637,8 +637,12 @@ def load(lib, IM_VERSION):
         lib.MagickNormalizeImageChannel.restype = c_bool
     else:
         lib.MagickNormalizeImageChannel = None
-    lib.MagickOilPaintImage.argtypes = [c_void_p, c_double]
-    lib.MagickOilPaintImage.restype = c_bool
+    if is_im_6:
+        lib.MagickOilPaintImage.argtypes = [c_void_p, c_double]
+        lib.MagickOilPaintImage.restype = c_bool
+    else:
+        lib.MagickOilPaintImage.argtypes = [c_void_p, c_double, c_double]
+        lib.MagickOilPaintImage.restype = c_bool
     lib.MagickOpaquePaintImage.argtypes = [
         c_void_p, c_void_p, c_void_p, c_double, c_bool
     ]

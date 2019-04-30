@@ -17,6 +17,7 @@ Unreleased.
  - Rewrote :attr:`~wand.api.libc` library loader. [:issue:`409`]
  - Added :meth:`Image.oil_paint() <wand.image.BaseImage.oil_paint>` method.
  - Added :meth:`Image.opaque_paint() <wand.image.BaseImage.opaque_paint>` method.
+ - Added :meth:`Image.rotational_blur() <wand.image.BaseImage.rotational_blur>` method.
 
 
 .. _changelog-0.5.3:

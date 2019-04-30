@@ -4869,6 +4869,35 @@ class BaseImage(Resource):
                     self.reset_coords()
 
     @manipulative
+    @trap_exception
+    def rotational_blur(self, angle=0.0, channel=None):
+        """Blur an image in a radius around the center of an image.
+
+        :param angle: Degrees of rotation to blur with.
+        :type angle: :class:`numbers.Real`
+        :param channel: Optional channel to apply the effect against. See
+                        :const:`CHANNELS` for a list of possible values.
+        :type channel: :class:`basestring`
+
+        .. versionadded:: 0.5.3
+        """
+        assertions.assert_real(angle, 'angle')
+        if channel:
+            channel_ch = CHANNELS[channel]
+            if MAGICK_VERSION_NUMBER < 0x700:
+                r = library.MagickRotationalBlurImageChannel(self.wand,
+                                                             channel_ch,
+                                                             angle)
+            else:  # pragma: no cover
+                channel_mask = library.MagickSetImageChannelMask(self.wand,
+                                                                 channel_ch)
+                r = library.MagickRotationalBlurImage(self.wand, angle)
+                library.MagickSetImageChannelMask(self.wand, channel_mask)
+        else:
+            r = library.MagickRotationalBlurImage(self.wand, angle)
+        return r
+
+    @manipulative
     def sample(self, width=None, height=None):
         """Resizes the image by sampling the pixels.  It's basically quicker
         than :meth:`resize()` except less quality as a tradeoff.

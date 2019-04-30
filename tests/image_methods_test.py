@@ -1456,6 +1456,17 @@ def test_rotate_reset_coords(fx_asset):
         assert img[85, 85] == Color('transparent')
 
 
+def test_rotational_blur():
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.rotational_blur(45.0)
+        now = img.signature
+        assert was != now
+        was = now
+        img.rotational_blur(180, 'blue')
+        assert was != img.signature
+
+
 def test_selective_blur():
     with Image(filename='rose:') as img:
         was = img.signature
