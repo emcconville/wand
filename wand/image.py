@@ -20,7 +20,8 @@ from .api import libc, libmagick, library
 from .color import Color
 from .compat import (abc, binary, binary_type, encode_filename, file_types,
                      PY3, string_type, text, xrange)
-from .exceptions import MissingDelegateError, WandException, WandRuntimeError
+from .exceptions import (MissingDelegateError, WandException,
+                         WandRuntimeError, WandLibraryVersionError)
 from .font import Font
 from .resource import DestroyedResourceError, Resource
 from .cdefs.structures import GeomertyInfo
@@ -4894,14 +4895,22 @@ class BaseImage(Resource):
     def rotational_blur(self, angle=0.0, channel=None):
         """Blur an image in a radius around the center of an image.
 
+        ..warning:: Requires ImageMagick-6.8.8 or greater.
+
         :param angle: Degrees of rotation to blur with.
         :type angle: :class:`numbers.Real`
         :param channel: Optional channel to apply the effect against. See
                         :const:`CHANNELS` for a list of possible values.
         :type channel: :class:`basestring`
+        :raises WandLibraryVersionError: If system's version of ImageMagick
+                                         does not support this method.
 
         .. versionadded:: 0.5.3
         """
+        if not library.MagickRotationalBlurImage:
+            msg = ("Method `rotational_blur` not available on version "
+                   "of MagickWand library. ")
+            raise WandLibraryVersionError(msg)
         assertions.assert_real(angle, 'angle')
         if channel:
             channel_ch = CHANNELS[channel]

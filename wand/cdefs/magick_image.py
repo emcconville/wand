@@ -736,6 +736,7 @@ def load(lib, IM_VERSION):
             ]
             lib.MagickRotationalBlurImageChannel.restype = c_bool
     except AttributeError:
+        lib.MagickRotationalBlurImage = None
         pass
     lib.MagickSampleImage.argtypes = [c_void_p, c_size_t, c_size_t]
     lib.MagickSampleImage.restype = c_bool
