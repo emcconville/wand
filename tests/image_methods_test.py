@@ -1463,6 +1463,8 @@ def test_rotate_reset_coords(fx_asset):
         assert img[85, 85] == Color('transparent')
 
 
+@mark.skipif(MAGICK_VERSION_NUMBER < 0x688,
+             reason="Not supported until after ImageMagick-6.8.8")
 def test_rotational_blur():
     with Image(filename='rose:') as img:
         was = img.signature
