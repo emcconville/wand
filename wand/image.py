@@ -2143,7 +2143,7 @@ class BaseImage(Resource):
     @property
     def stroke_width(self):
         strokewidth = self.options['strokewidth']
-        return float(strokewidth) if strokewidth else None
+        return float(strokewidth) if strokewidth else 0
 
     @stroke_width.setter
     @manipulative
@@ -3226,8 +3226,11 @@ class BaseImage(Resource):
             bottom = abs_(bottom, self.height)
             height = bottom - top
         assertions.counting_numbers(width=width, height=height)
-        if (left == top == 0 and width == self.width and
-              height == self.height):
+        if (
+            left == top == 0 and
+            width == self.width and
+            height == self.height
+        ):
             return
         if self.animation:
             self.wand = library.MagickCoalesceImages(self.wand)
@@ -4210,6 +4213,23 @@ class BaseImage(Resource):
             self.wand = r
 
     @manipulative
+    def mode(self, width, height=None):
+        """Replace each pixel with the mathematical mode of the neighboring
+        colors. This is an alias of the :meth:`statistic` method.
+
+        :param width: Number of neighboring pixels to include in mode.
+        :type width: :class:`numbers.Integral`
+        :param height: Optional height of neighboring pixels, defaults to the
+                       same value as ``width``.
+        :type height: :class:`numbers.Integral`
+
+        .. versionadded:: 0.5.4
+        """
+        if height is None:
+            height = width
+        self.statistic('mode', width, height)
+
+    @manipulative
     @trap_exception
     def modulate(self, brightness=100.0, saturation=100.0, hue=100.0):
         """Changes the brightness, saturation and hue of an image.
@@ -4567,6 +4587,58 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
+    def polaroid(self, angle=0.0, caption=None, font=None, method='undefined'):
+        """Creates a special effect simulating a Polaroid photo.
+
+        :param angle: applies a shadow effect along this angle.
+        :type angle: :class:`numbers.Real`
+        :param caption: Writes a message at the bottom of the photo's border.
+        :type caption: :class:`basestring`
+        :param font: Specify font style.
+        :type font: :class:`wand.font.Font`
+        :param method: Interpolation method. ImageMagick-7 only.
+        :type method: :class:`basestring`
+
+        .. versionadded:: 0.5.4
+        """
+        assertions.assert_real(angle, 'angle')
+        assertions.string_in_list(PIXEL_INTERPOLATE_METHODS,
+                                  'wand.image.PIXEL_INTERPOLATE_METHODS',
+                                  method=method)
+        ctx_ptr = library.NewDrawingWand()
+        if caption:
+            assertions.assert_string(caption, 'caption')
+            library.MagickSetImageProperty(self.wand, b'Caption',
+                                           binary(caption))
+            if isinstance(font, Font):
+                if font.path:
+                    library.DrawSetFont(ctx_ptr, binary(font.path))
+                if font.size:
+                    library.DrawSetFontSize(ctx_ptr, font.size)
+                if font.color:
+                    with font.color:
+                        library.DrawSetFillColor(ctx_ptr, font.color.resource)
+                library.DrawSetTextAntialias(ctx_ptr, font.antialias)
+                if font.stroke_color:
+                    with font.stroke_color:
+                        library.DrawSetStrokeColor(ctx_ptr,
+                                                   font.stroke_color.resource)
+                if font.stroke_width:
+                    library.DrawSetStrokeWidth(ctx_ptr, font.stroke_width)
+            else:
+                raise TypeError('font must be in instance of '
+                                'wand.font.Font, not ' + repr(font))
+        if MAGICK_VERSION_NUMBER < 0x700:
+            r = library.MagickPolaroidImage(self.wand, ctx_ptr, angle)
+        else:
+            method_idx = PIXEL_INTERPOLATE_METHODS.index(method)
+            r = library.MagickPolaroidImage(self.wand, ctx_ptr, caption, angle,
+                                            method_idx)
+        ctx_ptr = library.DestroyDrawingWand(ctx_ptr)
+        return r
+
+    @manipulative
+    @trap_exception
     def posterize(self, levels=None, dither='no'):
         """Reduce color levels per channel.
 
@@ -4895,7 +4967,7 @@ class BaseImage(Resource):
     def rotational_blur(self, angle=0.0, channel=None):
         """Blur an image in a radius around the center of an image.
 
-        ..warning:: Requires ImageMagick-6.8.8 or greater.
+        .. warning:: Requires ImageMagick-6.8.8 or greater.
 
         :param angle: Degrees of rotation to blur with.
         :type angle: :class:`numbers.Real`
@@ -4905,11 +4977,11 @@ class BaseImage(Resource):
         :raises WandLibraryVersionError: If system's version of ImageMagick
                                          does not support this method.
 
-        .. versionadded:: 0.5.3
+        .. versionadded:: 0.5.4
         """
         if not library.MagickRotationalBlurImage:
-            msg = ("Method `rotational_blur` not available on version "
-                   "of MagickWand library. ")
+            msg = ("Method `rotational_blur` not available on installed "
+                   "version of ImageMagick library. ")
             raise WandLibraryVersionError(msg)
         assertions.assert_real(angle, 'angle')
         if channel:
@@ -5098,7 +5170,7 @@ class BaseImage(Resource):
         .. versionadded:: 0.5.4
         """
         if isinstance(background, string_type):
-            background=Color(background)
+            background = Color(background)
         assertions.assert_color(background, 'background')
         assertions.assert_real(x, 'x')
         assertions.assert_real(y, 'y')
@@ -5337,6 +5409,43 @@ class BaseImage(Resource):
         else:  # pragma: no cover
             r = library.MagickSpreadImage(self.wand, method_idx, radius)
         return r
+
+    @manipulative
+    def stegano(self, watermark, offset=0):
+        """Hide a digital watermark of an image within the image.
+
+        .. code-block:: python
+
+            from wand.image import Image
+
+            # Embed watermark
+            with Image(filename='source.png') as img:
+                with Image(filename='gray_watermark.png') as watermark:
+                    print('watermark size (for recovery)', watermark.size)
+                    img.stegano(watermark)
+                img.save(filename='public.png')
+
+            # Recover watermark
+            with Image(width=w, height=h, pseudo='stegano:public.png') as img:
+                img.save(filename='recovered_watermark.png')
+
+        :param watermark: Image to hide within image.
+        :type watermark: :class:`wand.image.Image`
+        :param offset: Start embedding image after a number of pixels.
+        :type offset: :class:`numbers.Integral`
+
+        .. versionadded:: 0.5.4
+        """
+        if not isinstance(watermark, BaseImage):
+            raise TypeError('Watermark image must be in instance of '
+                            'wand.image.Image, not ' + repr(watermark))
+        assertions.assert_integer(offset, 'offset')
+        new_wand = library.MagickSteganoImage(self.wand, watermark.wand,
+                                              offset)
+        if new_wand:
+            self.wand = new_wand
+        else:  # pragma: no cover
+            self.raise_exception()
 
     @manipulative
     @trap_exception
@@ -6157,6 +6266,28 @@ class Image(BaseImage):
         if not r:
             instance.raise_exception(cls)
         return instance
+
+    @classmethod
+    def stereogram(cls, left, right):
+        """Create a new stereogram image from two existing images.
+
+        :param left: Left-eye image.
+        :type left: :class:`wand.image.Image`
+        :param right: Right-eye image.
+        :type right: :class:`wand.image.Image`
+
+        .. versionadded:: 0.5.4
+        """
+        if not isinstance(left, BaseImage):
+            raise TypeError('Left image must be in instance of '
+                            'wand.image.Image, not ' + repr(left))
+        if not isinstance(right, BaseImage):
+            raise TypeError('Right image must be in instance of '
+                            'wand.image.Image, not ' + repr(right))
+        wand = library.MagickStereoImage(left.wand, right.wand)
+        if not wand:  # pragma: no cover
+            left.raise_exception()
+        return cls(BaseImage(wand))
 
     @property
     def animation(self):

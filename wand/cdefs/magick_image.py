@@ -672,8 +672,14 @@ def load(lib, IM_VERSION):
     lib.MagickPingImageBlob.restype = c_bool
     lib.MagickPingImageFile.argtypes = [c_void_p, c_void_p]
     lib.MagickPingImageFile.restype = c_bool
-    lib.MagickPolaroidImage.argtypes = [c_void_p, c_void_p, c_double]
-    lib.MagickPolaroidImage.restype = c_bool
+    if is_im_6:
+        lib.MagickPolaroidImage.argtypes = [c_void_p, c_void_p, c_double]
+        lib.MagickPolaroidImage.restype = c_bool
+    else:
+        lib.MagickPolaroidImage.argtypes = [
+            c_void_p, c_void_p, c_double, c_int
+        ]
+        lib.MagickPolaroidImage.restype = c_bool
     lib.MagickPosterizeImage.argtypes = [c_void_p, c_size_t, c_bool]
     lib.MagickPosterizeImage.restype = c_bool
     lib.MagickPreviewImages.argtypes = [c_void_p, c_int]

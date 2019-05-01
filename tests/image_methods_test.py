@@ -1027,6 +1027,13 @@ def test_merge_layers_method_mosaic_neg_offset(fx_asset):
             assert img1.size == (16, 16)
 
 
+def test_mode(fx_asset):
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.mode(5)
+        assert was != img.signature
+
+
 def test_modulate(fx_asset, display):
     with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
         before = img[100, 100]
@@ -1614,6 +1621,14 @@ def test_statistic(fx_asset):
     with Image(filename='rose:') as img:
         was = img.signature
         img.statistic('median', 5, 5)
+        assert was != img.signature
+
+
+def test_stegano():
+    with Image(filename='wizard:') as img:
+        was = img.signature
+        with Image(filename='rose:') as watermark:
+            img.stegano(watermark)
         assert was != img.signature
 
 
