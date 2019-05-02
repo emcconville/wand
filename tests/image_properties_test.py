@@ -58,6 +58,13 @@ def test_background_color_set(fx_asset):
         assert img.background_color == Color('green')
 
 
+def test_border_color():
+    green = Color('green')
+    with Image(filename='rose:') as img:
+        img.border_color = 'green'
+        assert img.border_color == green
+
+
 @mark.xfail(MAGICK_VERSION_NUMBER >= 0x700,
             reason="Channel traits are not implemented in IM7.")
 def test_channel_depths(fx_asset):
@@ -450,6 +457,13 @@ def test_profiles(fx_asset):
             img.profiles['exif'] = 0xDEADBEEF
 
 
+def test_rendering_intent(fx_asset):
+    with Image(filename=str(fx_asset.join('trimtest.png'))) as img:
+        assert img.rendering_intent == 'perceptual'
+        img.rendering_intent = 'relative'
+        assert img.rendering_intent == 'relative'
+
+
 def test_resolution_get(fx_asset):
     """Gets image resolution."""
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
@@ -490,6 +504,12 @@ def test_resolution_set_04(fx_asset):
             assert img.resolution == (100, 100)
     except DelegateError:
         warnings.warn('PDF delegate could not be found.')
+
+
+def test_scene():
+    with Image(filename='rose:') as img:
+        img.scene = 4
+        assert img.scene == 4
 
 
 def test_signature(fx_asset):

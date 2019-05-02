@@ -35,7 +35,7 @@ __all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COLORSPACE_TYPES',
            'IMAGE_LAYER_METHOD', 'IMAGE_TYPES', 'INTERLACE_TYPES',
            'KERNEL_INFO_TYPES', 'MORPHOLOGY_METHODS', 'NOISE_TYPES',
            'ORIENTATION_TYPES', 'PIXEL_INTERPOLATE_METHODS',
-           'SPARSE_COLOR_METHODS', 'STATISTIC_TYPES',
+           'RENDERING_INTENT_TYPES', 'SPARSE_COLOR_METHODS', 'STATISTIC_TYPES',
            'STORAGE_TYPES', 'VIRTUAL_PIXEL_METHOD', 'UNIT_TYPES',
            'BaseImage', 'ChannelDepthDict', 'ChannelImageDict',
            'ClosedImageError', 'HistogramDict', 'Image', 'ImageProperty',
@@ -833,6 +833,21 @@ PIXEL_INTERPOLATE_METHODS = ('undefined', 'average', 'average9', 'average16',
                              'integer', 'mesh', 'nearest', 'spline')
 
 
+#: (:class:`tuple`) List of rendering intent types used for
+#: :attr:`Image.rendering_intent <wand.image.BaseImage.rendering_intent>`
+#: property.
+#:
+#: - ``'undefined'``
+#: - ``'saturation'``
+#: - ``'perceptual'``
+#: - ``'absolute'``
+#: - ``'relative'``
+#:
+#: .. versionadded:: 0.5.4
+RENDERING_INTENT_TYPES = ('undefined', 'saturation', 'perceptual', 'absolute',
+                          'relative')
+
+
 #: (:class:`tuple`) List of sparse color methods used by
 #: :class:`Image.sparse_color() <wand.image.BaseImage.sparse_color>`
 #:
@@ -1358,6 +1373,32 @@ class BaseImage(Resource):
             r = library.MagickSetImageBluePrimary(self.wand, x, y, z)
         if not r:  # pragma: no cover
             self.raise_exception()
+
+    @property
+    def border_color(self):
+        """(:class:`wand.color.Color`) The image border color. Used for
+        special effects like :meth:`polaroid()`.
+
+        .. versionadded:: 0.5.4
+        """
+        pixel = library.NewPixelWand()
+        result = library.MagickGetImageBorderColor(self.wand, pixel)
+        if not result:  # pragma: no cover
+            self.raise_exception()
+        else:
+            color = Color.from_pixelwand(pixel)
+            pixel = library.DestroyPixelWand(pixel)
+            return color
+
+    @border_color.setter
+    def border_color(self, color):
+        if isinstance(color, string_type):
+            color = Color(color)
+        assertions.assert_color(color, 'border_color')
+        with color:
+            r = library.MagickSetImageBorderColor(self.wand, color.resource)
+            if not r:  # pragma: no cover
+                self.raise_exception()
 
     @property
     def colors(self):
@@ -2038,6 +2079,24 @@ class BaseImage(Resource):
             self.raise_exception()
 
     @property
+    def rendering_intent(self):
+        """(:class:`basestring`) PNG rendering intent. See
+        :const:`RENDERING_INTENT_TYPES` for valid options.
+
+        .. versionadded:: 0.5.4
+        """
+        ri_index = library.MagickGetImageRenderingIntent(self.wand)
+        return RENDERING_INTENT_TYPES[ri_index]
+
+    @rendering_intent.setter
+    def rendering_intent(self, value):
+        assertions.string_in_list(RENDERING_INTENT_TYPES,
+                                  'wand.image.RENDERING_INTENT_TYPES',
+                                  rendering_intent=value)
+        ri_index = RENDERING_INTENT_TYPES.index(value)
+        library.MagickSetImageRenderingIntent(self.wand, ri_index)
+
+    @property
     def resolution(self):
         """(:class:`tuple`) Resolution of this image.
 
@@ -2067,6 +2126,20 @@ class BaseImage(Resource):
             r = library.MagickSetImageResolution(self.wand, x, y)
         if not r:  # pragma: no cover
             self.raise_exception()
+
+    @property
+    def scene(self):
+        """(:class:`numbers.Integral`) The scene number of the current frame
+        within an animated image.
+
+        .. versionadded:: 0.5.4
+        """
+        return library.MagickGetImageScene(self.wand)
+
+    @scene.setter
+    def scene(self, value):
+        assertions.assert_unsigned_integer(value, 'scene')
+        library.MagickSetImageScene(self.wand, value)
 
     @property
     def signature(self):
@@ -4608,8 +4681,9 @@ class BaseImage(Resource):
         ctx_ptr = library.NewDrawingWand()
         if caption:
             assertions.assert_string(caption, 'caption')
+            caption = binary(caption)
             library.MagickSetImageProperty(self.wand, b'Caption',
-                                           binary(caption))
+                                           caption)
             if isinstance(font, Font):
                 if font.path:
                     library.DrawSetFont(ctx_ptr, binary(font.path))
@@ -4625,12 +4699,12 @@ class BaseImage(Resource):
                                                    font.stroke_color.resource)
                 if font.stroke_width:
                     library.DrawSetStrokeWidth(ctx_ptr, font.stroke_width)
-            else:
+            elif font:
                 raise TypeError('font must be in instance of '
                                 'wand.font.Font, not ' + repr(font))
         if MAGICK_VERSION_NUMBER < 0x700:
             r = library.MagickPolaroidImage(self.wand, ctx_ptr, angle)
-        else:
+        else:  # pragma: no cover
             method_idx = PIXEL_INTERPOLATE_METHODS.index(method)
             r = library.MagickPolaroidImage(self.wand, ctx_ptr, caption, angle,
                                             method_idx)

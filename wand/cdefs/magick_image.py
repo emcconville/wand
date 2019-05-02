@@ -677,7 +677,7 @@ def load(lib, IM_VERSION):
         lib.MagickPolaroidImage.restype = c_bool
     else:
         lib.MagickPolaroidImage.argtypes = [
-            c_void_p, c_void_p, c_double, c_int
+            c_void_p, c_void_p, c_char_p, c_double, c_int
         ]
         lib.MagickPolaroidImage.restype = c_bool
     lib.MagickPosterizeImage.argtypes = [c_void_p, c_size_t, c_bool]

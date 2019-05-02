@@ -1199,6 +1199,19 @@ def test_optimize_transparency(fx_asset):
                               'present on system. ' + repr(e))
 
 
+def test_polaroid(fx_asset):
+    # For testing polaroid method, we can't really identify if somethings
+    # has changed correctly.
+    with Image(filename='rose:') as img:
+        img.polaroid()
+    with Image(filename='rose:') as img:
+        img.polaroid(caption='hello')
+    with Image(filename='rose:') as img:
+        font = Font(str(fx_asset.join('League_Gothic.otf')), 12,
+                    Color('orange'), True, Color('pink'), 1)
+        img.polaroid(caption='hello', font=font)
+
+
 def test_posterize(fx_asset):
     with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
         was = img.signature
