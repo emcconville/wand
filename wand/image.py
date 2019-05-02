@@ -2143,7 +2143,7 @@ class BaseImage(Resource):
     @property
     def stroke_width(self):
         strokewidth = self.options['strokewidth']
-        return float(strokewidth) if strokewidth else 0
+        return float(strokewidth) if strokewidth else None
 
     @stroke_width.setter
     @manipulative
