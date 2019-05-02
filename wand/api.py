@@ -38,7 +38,7 @@ def library_paths():
     """
     libwand = None
     libmagick = None
-    versions = '', '-6', '-Q16', '-Q8', '-6.Q16', '-7', '-7.Q8', '-7.Q16'
+    versions = '', '-7', '-7.Q8', '-7.Q16', '-6', '-Q16', '-Q8', '-6.Q16'
     options = '', 'HDRI', 'HDRI-2'
     system = platform.system()
     magick_home = os.environ.get('MAGICK_HOME')
