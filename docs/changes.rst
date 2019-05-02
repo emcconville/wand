@@ -15,6 +15,7 @@ Version 0.5.4
 Unreleased.
 
  - Rewrote :attr:`~wand.api.libc` library loader. [:issue:`409`]
+ - Respect ``background`` paramater in :meth:`Image.__new__() <wand.image.Image.__init__>` constructor. [:issue:`410`]
  - Added :meth:`Image.brightness_contrast() <wand.image.BaseImage.brightness_contrast>` method.
  - Added :meth:`Image.mode() <wand.image.BaseImage.mode>` method.
  - Added :meth:`Image.oil_paint() <wand.image.BaseImage.oil_paint>` method.

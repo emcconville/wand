@@ -6039,6 +6039,11 @@ class Image(BaseImage):
     .. versionadded:: 0.5.0
        The ``pseudo`` parameter.
 
+    .. versionchanged:: 0.5.4
+       Read constructor no longer sets "transparent" background by default.
+       Use the ``background`` paramater to specify canvas color when reading
+       in image.
+
     .. describe:: [left:right, top:bottom]
 
        Crops the image by its ``left``, ``right``, ``top`` and ``bottom``,
@@ -6128,14 +6133,17 @@ class Image(BaseImage):
             elif any(a is not None for a in open_args):
                 if format:
                     format = binary(format)
-                with Color('transparent') as bg:  # FIXME: parameterize this
-                    result = library.MagickSetBackgroundColor(self.wand,
-                                                              bg.resource)
-                    if not result:
-                        self.raise_exception()
-
-                # allow setting the width, height and depth
-                # (needed for loading raw data)
+                if background:
+                    if isinstance(background, string_type):
+                        background = Color(background)
+                    assertions.assert_color(background, 'background')
+                    with background:
+                        r = library.MagickSetBackgroundColor(
+                            self.wand,
+                            background.resource
+                        )
+                        if not r:
+                            self.raise_exception()
                 if width is not None and height is not None:
                     assertions.counting_numbers(width=width, height=height)
                     library.MagickSetSize(self.wand, width, height)
