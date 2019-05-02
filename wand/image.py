@@ -1558,6 +1558,8 @@ class BaseImage(Resource):
     @property
     def font(self):
         """(:class:`wand.font.Font`) The current font options."""
+        if not self.font_path:
+            return None
         return Font(
             path=text(self.font_path),
             size=self.font_size,

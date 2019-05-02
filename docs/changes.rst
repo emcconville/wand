@@ -15,8 +15,8 @@ Version 0.5.4
 Unreleased.
 
  - Rewrote :attr:`~wand.api.libc` library loader. [:issue:`409`]
- - Respect ``background`` paramater in :meth:`Image.__new__() <wand.image.Image.__init__>` constructor. [:issue:`410`]
- - Added :attr:`Image.border_color` property.
+ - Respect ``background`` paramater in :meth:`Image.__init__() <wand.image.Image.__init__>` constructor. [:issue:`410`]
+ - Added :attr:`Image.border_color <wand.image.BaseImage.border_color>` property.
  - Added :meth:`Image.brightness_contrast() <wand.image.BaseImage.brightness_contrast>` method.
  - Added :meth:`Image.mode() <wand.image.BaseImage.mode>` method.
  - Added :meth:`Image.oil_paint() <wand.image.BaseImage.oil_paint>` method.
@@ -24,6 +24,7 @@ Unreleased.
  - Added :meth:`Image.polaroid() <wand.image.BaseImage.polaroid>` method.
  - Added :attr:`Image.rendering_intent <wand.image.BaseImage.rendering_intent>` property.
  - Added :meth:`Image.rotational_blur() <wand.image.BaseImage.rotational_blur>` method.
+ - Added :attr:`Image.scene <wand.image.BaseImage.scene>` property.
  - Added :meth:`Image.shear() <wand.image.BaseImage.shear>` method.
  - Added :meth:`Image.sigmoidal_contrast() <wand.image.BaseImage.sigmoidal_contrast>` method.
  - Added :meth:`Image.stegano() <wand.image.BaseImage.stegano>` method.
