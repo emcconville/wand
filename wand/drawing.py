@@ -202,7 +202,7 @@ class Drawing(Resource):
     def border_color(self, color):
         if isinstance(color, string_type):
             color = Color(color)
-        assertions.assert_color(color, 'border_color')
+        assertions.assert_color(border_color=color)
         with color:
             library.DrawSetBorderColor(self.resource, color.resource)
 
@@ -222,7 +222,7 @@ class Drawing(Resource):
 
     @clip_path.setter
     def clip_path(self, path):
-        assertions.assert_string(path, 'clip_path')
+        assertions.assert_string(clip_path=path)
         library.DrawSetClipPath(self.resource, binary(path))
 
     @property
@@ -277,7 +277,7 @@ class Drawing(Resource):
     def fill_color(self, color):
         if isinstance(color, string_type):
             color = Color(color)
-        assertions.assert_color(color, 'fill_color')
+        assertions.assert_color(fill_color=color)
         with color:
             library.DrawSetFillColor(self.resource, color.resource)
 
@@ -292,7 +292,7 @@ class Drawing(Resource):
 
     @fill_opacity.setter
     def fill_opacity(self, opacity):
-        assertions.assert_real(opacity, 'fill_opacity')
+        assertions.assert_real(fill_opacity=opacity)
         library.DrawSetFillOpacity(self.resource, opacity)
 
     @property
@@ -329,7 +329,7 @@ class Drawing(Resource):
 
     @font.setter
     def font(self, font):
-        assertions.assert_string(font, 'font')
+        assertions.assert_string(font=font)
         library.DrawSetFont(self.resource, binary(font))
 
     @property
@@ -348,7 +348,7 @@ class Drawing(Resource):
 
     @font_family.setter
     def font_family(self, family):
-        assertions.assert_string(family, 'font_family')
+        assertions.assert_string(font_family=family)
         library.DrawSetFontFamily(self.resource, binary(family))
 
     @property
@@ -379,7 +379,7 @@ class Drawing(Resource):
 
     @font_size.setter
     def font_size(self, size):
-        assertions.assert_real(size, 'font_size')
+        assertions.assert_real(font_size=size)
         if size < 0.0:
             raise ValueError('cannot be less then 0.0, but got ' + repr(size))
         library.DrawSetFontSize(self.resource, size)
@@ -433,7 +433,7 @@ class Drawing(Resource):
 
     @font_weight.setter
     def font_weight(self, weight):
-        assertions.assert_integer(weight, 'font_weight')
+        assertions.assert_integer(font_weight=weight)
         library.DrawSetFontWeight(self.resource, weight)
 
     @property
@@ -469,7 +469,7 @@ class Drawing(Resource):
 
     @opacity.setter
     def opacity(self, opaque):
-        assertions.assert_real(opaque, 'opacity')
+        assertions.assert_real(opacity=opaque)
         library.DrawSetOpacity(self.resource, opaque)
 
     @property
@@ -489,7 +489,7 @@ class Drawing(Resource):
 
     @stroke_antialias.setter
     def stroke_antialias(self, stroke_antialias):
-        assertions.assert_bool(stroke_antialias, 'stroke_antialias')
+        assertions.assert_bool(stroke_antialias=stroke_antialias)
         library.DrawSetStrokeAntialias(self.resource, stroke_antialias)
 
     @property
@@ -510,7 +510,7 @@ class Drawing(Resource):
     def stroke_color(self, color):
         if isinstance(color, string_type):
             color = Color(color)
-        assertions.assert_color(color, 'stroke_color')
+        assertions.assert_color(stroke_color=color)
         with color:
             library.DrawSetStrokeColor(self.resource, color.resource)
 
@@ -556,7 +556,7 @@ class Drawing(Resource):
 
     @stroke_dash_offset.setter
     def stroke_dash_offset(self, offset):
-        assertions.assert_real(offset, 'stroke_dash_offset')
+        assertions.assert_real(stroke_dash_offset=offset)
         library.DrawSetStrokeDashOffset(self.resource, offset)
 
     @property
@@ -608,7 +608,7 @@ class Drawing(Resource):
 
     @stroke_miter_limit.setter
     def stroke_miter_limit(self, miter_limit):
-        assertions.assert_integer(miter_limit, 'stroke_miter_limit')
+        assertions.assert_integer(stroke_miter_limit=miter_limit)
         library.DrawSetStrokeMiterLimit(self.resource, miter_limit)
 
     @property
@@ -622,7 +622,7 @@ class Drawing(Resource):
 
     @stroke_opacity.setter
     def stroke_opacity(self, opacity):
-        assertions.assert_real(opacity, 'stroke_opacity')
+        assertions.assert_real(stroke_opacity=opacity)
         library.DrawSetStrokeOpacity(self.resource, opacity)
 
     @property
@@ -636,7 +636,7 @@ class Drawing(Resource):
 
     @stroke_width.setter
     def stroke_width(self, width):
-        assertions.assert_real(width, 'stroke_width')
+        assertions.assert_real(stroke_width=width)
         if width < 0.0:
             raise ValueError('cannot be less then 0.0, but got ' + repr(width))
         library.DrawSetStrokeWidth(self.resource, width)
@@ -673,7 +673,7 @@ class Drawing(Resource):
 
     @text_antialias.setter
     def text_antialias(self, value):
-        assertions.assert_bool(value, 'text_antialias')
+        assertions.assert_bool(text_antialias=value)
         library.DrawSetTextAntialias(self.resource, value)
 
     @property
@@ -742,7 +742,7 @@ class Drawing(Resource):
             # to system's default.
             encoding = b''
         else:
-            assertions.assert_string(encoding, 'text_encoding')
+            assertions.assert_string(text_encoding=encoding)
             encoding = binary(encoding)
         library.DrawSetTextEncoding(self.resource, encoding)
 
@@ -764,7 +764,7 @@ class Drawing(Resource):
             raise WandLibraryVersionError('The installed version of '
                                           'ImageMagick does not support '
                                           'this feature')
-        assertions.assert_real(spacing, 'text_interline_spacing')
+        assertions.assert_real(text_interline_spacing=spacing)
         library.DrawSetTextInterlineSpacing(self.resource, spacing)
 
     @property
@@ -777,7 +777,7 @@ class Drawing(Resource):
 
     @text_interword_spacing.setter
     def text_interword_spacing(self, spacing):
-        assertions.assert_real(spacing, 'text_interword_spacing')
+        assertions.assert_real(text_interword_spacing=spacing)
         library.DrawSetTextInterwordSpacing(self.resource, spacing)
 
     @property
@@ -790,7 +790,7 @@ class Drawing(Resource):
 
     @text_kerning.setter
     def text_kerning(self, kerning):
-        assertions.assert_real(kerning, 'text_kerning')
+        assertions.assert_real(text_kerning=kerning)
         library.DrawSetTextKerning(self.resource, kerning)
 
     @property
@@ -809,7 +809,7 @@ class Drawing(Resource):
     def text_under_color(self, color):
         if isinstance(color, string_type):
             color = Color(color)
-        assertions.assert_color(color, 'text_under_color')
+        assertions.assert_color(text_under_color=color)
         with color:
             library.DrawSetTextUnderColor(self.resource, color.resource)
 
@@ -1058,11 +1058,8 @@ class Drawing(Resource):
         .. versionadded:: 0.4.0
 
         """
-        assertions.assert_string(operator, 'operator')
-        assertions.assert_real(left, 'left')
-        assertions.assert_real(top, 'top')
-        assertions.assert_real(width, 'width')
-        assertions.assert_real(height, 'height')
+        assertions.assert_string(operator=operator)
+        assertions.assert_real(left=left, top=top, width=width, height=height)
         try:
             op = COMPOSITE_OPERATORS.index(operator)
         except IndexError:
@@ -1143,7 +1140,7 @@ class Drawing(Resource):
         if not isinstance(image, BaseImage):
             raise TypeError('image must be a wand.image.BaseImage instance,'
                             ' not ' + repr(image))
-        assertions.assert_string(text, 'text')
+        assertions.assert_string(text=text)
         if multiline:
             font_metrics_f = library.MagickQueryMultilineFontMetrics
         else:
@@ -1701,11 +1698,8 @@ class Drawing(Resource):
         .. versionadded:: 0.4.0
 
         """
-        assertions.assert_string(pattern_id, 'pattern_id')
-        assertions.assert_real(left, 'left')
-        assertions.assert_real(top, 'top')
-        assertions.assert_real(width, 'width')
-        assertions.assert_real(height, 'height')
+        assertions.assert_string(pattern_id=pattern_id)
+        assertions.assert_real(left=left, top=top, width=width, height=height)
         okay = library.DrawPushPattern(self.resource, binary(pattern_id),
                                        left, top,
                                        width, height)
@@ -1817,8 +1811,7 @@ class Drawing(Resource):
                 xradius = 0.0
             if yradius is None:
                 yradius = 0.0
-            assertions.assert_real(xradius, 'xradius')
-            assertions.assert_real(yradius, 'yradius')
+            assertions.assert_real(xradius=xradius, yradius=yradius)
             library.DrawRoundRectangle(self.resource, left, top, right, bottom,
                                        xradius, yradius)
         else:
@@ -1834,7 +1827,7 @@ class Drawing(Resource):
         .. versionadded:: 0.4.0
 
         """
-        assertions.assert_real(degree, 'degree')
+        assertions.assert_real(degree=degree)
         library.DrawRotate(self.resource, degree)
 
     def scale(self, x=None, y=None):
@@ -1850,8 +1843,7 @@ class Drawing(Resource):
         .. versionadded:: 0.4.0
 
         """
-        assertions.assert_real(x, 'x')
-        assertions.assert_real(y, 'y')
+        assertions.assert_real(x=x, y=y)
         library.DrawScale(self.resource, x, y)
 
     def set_fill_pattern_url(self, url):
@@ -1866,7 +1858,7 @@ class Drawing(Resource):
         .. versionadded:: 0.4.0
 
         """
-        assertions.assert_string(url, 'url')
+        assertions.assert_string(url=url)
         if url[0] != '#':
             raise ValueError('value not a relative URL, '
                              'expecting "#identifier"')
@@ -1887,7 +1879,7 @@ class Drawing(Resource):
         .. versionadded:: 0.4.0
 
         """
-        assertions.assert_string(url, 'url')
+        assertions.assert_string(url=url)
         if url[0] != '#':
             raise ValueError('value not a relative URL, '
                              'expecting "#identifier"')
@@ -1924,9 +1916,8 @@ class Drawing(Resource):
         :type body: :class:`basestring`
 
         """
-        assertions.assert_unsigned_integer(x, 'x')
-        assertions.assert_unsigned_integer(y, 'y')
-        assertions.assert_string(body, 'body')
+        assertions.assert_unsigned_integer(x=x, y=y)
+        assertions.assert_string(body=body)
         if not body:
             raise ValueError('body string cannot be empty')
         if isinstance(body, text_type):
@@ -1976,10 +1967,8 @@ class Drawing(Resource):
         .. versionadded:: 0.4.0
 
         """
-        assertions.assert_integer(left, 'left')
-        assertions.assert_integer(top, 'top')
-        assertions.assert_integer(right, 'right')
-        assertions.assert_integer(bottom, 'bottom')
+        assertions.assert_integer(left=left, top=top,
+                                  right=right, bottom=bottom)
         library.DrawSetViewbox(self.resource, left, top, right, bottom)
 
     def __call__(self, image):

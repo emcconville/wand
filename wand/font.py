@@ -67,19 +67,19 @@ class Font(tuple):
 
     def __new__(cls, path, size=0, color=None, antialias=True,
                 stroke_color=None, stroke_width=None):
-        assertions.assert_string(path, 'path')
-        assertions.assert_real(size, 'size')
+        assertions.assert_string(path=path)
+        assertions.assert_real(size=size)
         if color is None:
             color = Color('black')
         elif isinstance(color, string_type):
             color = Color(color)
-        assertions.assert_color(color, 'color')
+        assertions.assert_color(color=color)
         if stroke_color:
             if isinstance(stroke_color, string_type):
                 stroke_color = Color(stroke_color)
-            assertions.assert_color(stroke_color, 'stroke_color')
+            assertions.assert_color(stroke_color=stroke_color)
         if stroke_width is not None:
-            assertions.assert_real(stroke_width, 'stroke_width')
+            assertions.assert_real(stroke_width=stroke_width)
         path = text(path)
         return tuple.__new__(cls, (path, size, color, bool(antialias),
                                    stroke_color, stroke_width))
