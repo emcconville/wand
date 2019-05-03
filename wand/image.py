@@ -1832,6 +1832,18 @@ class BaseImage(Resource):
         return k
 
     @property
+    def length_of_bytes(self):
+        """(:class:`numbers.Integral`) The original size, in bytes,
+        of the image read. This will return `0` if the image was modified in
+        a way that would invalidate the original length value.
+
+        .. versionadded:: 0.5.4
+        """
+        size_ptr = ctypes.c_size_t(0)
+        library.MagickGetImageLength(self.wand, ctypes.byref(size_ptr))
+        return size_ptr.value
+
+    @property
     def loop(self):
         """(:class:`numbers.Integral`) Number of frame iterations.
         A value of ``0`` will loop forever."""
@@ -2225,6 +2237,20 @@ class BaseImage(Resource):
     def stroke_width(self, width):
         assertions.assert_real(width, 'stroke width')
         self.options['strokewidth'] = str(width)
+
+    @property
+    def ticks_per_second(self):
+        """(:class:`numbers.Integral`) Internal clock for animated images.
+        .. versionadded:: 0.5.4
+        """
+        return library.MagickGetImageTicksPerSecond(self.wand)
+
+    @ticks_per_second.setter
+    def ticks_per_second(self, value):
+        assertions.assert_unsigned_integer(value, 'ticks_per_second')
+        r = library.MagickSetImageTicksPerSecond(self.wand, value)
+        if not r:  # pragma: no cover
+            self.raise_exception()
 
     @property
     def type(self):

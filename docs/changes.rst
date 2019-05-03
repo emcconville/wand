@@ -30,6 +30,7 @@ Unreleased.
  - Added :meth:`Image.stegano() <wand.image.BaseImage.stegano>` method.
  - Added :meth:`Image.stereogram() <wand.image.Image.stereogram>` class method.
  - Added :meth:`Image.thumbnail() <wand.image.BaseImage.thumbnail>` method. [:issue:`357` by yoch]
+ - Added :attr:`Image.ticks_per_second <wand.image.BaseImage.ticks_per_second>` property.
 
 
 .. _changelog-0.5.3:

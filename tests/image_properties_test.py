@@ -304,6 +304,13 @@ def test_kurtosis():
         assert kurtosis != 0.0
 
 
+def test_length_of_bytes():
+    with Image(filename='rose:') as img:
+        assert img.length_of_bytes > 0
+        img.resample(300, 300)
+        assert img.length_of_bytes == 0
+
+
 def test_matte_color(fx_asset):
     with Image(filename='rose:') as img:
         with Color('navy') as color:
@@ -564,6 +571,13 @@ def test_type_set(fx_asset):
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         img.type = "grayscale"
         assert img.type == "grayscale"
+
+
+def test_ticks_per_second(fx_asset):
+    with Image(filename=str(fx_asset.join('nocomments.gif'))) as img:
+        assert img.ticks_per_second == 100
+        img.ticks_per_second = 10
+        assert img.ticks_per_second == 10
 
 
 def test_units_get(fx_asset):
