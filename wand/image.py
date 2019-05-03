@@ -5589,6 +5589,30 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
+    def thumbnail(self, width=None, height=None):
+        """Changes the size of an image to the given dimensions and removes any
+        associated profiles.  The goal is to produce small low cost thumbnail
+        images suited for display on the
+
+        :param width: the width in the scaled image. default is the original
+                      width
+        :type width: :class:`numbers.Integral`
+        :param height: the height in the scaled image. default is the original
+                       height
+        :type height: :class:`numbers.Integral`
+
+        .. versionadded:: 0.5.4
+        """
+        if width is None:
+            width = self.width
+        if height is None:
+            height = self.height
+        assertions.assert_unsigned_integer(width, 'width')
+        assertions.assert_unsigned_integer(height, 'height')
+        return library.MagickThumbnailImage(self.wand, width, height)
+
+    @manipulative
+    @trap_exception
     def tint(self, color=None, alpha=None):
         """Applies a color vector to each pixel in the image.
 

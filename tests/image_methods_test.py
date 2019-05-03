@@ -1688,6 +1688,18 @@ def test_threshold_channel(fx_asset):
                     red.green_int8 == red.blue_int8 == 0)
 
 
+def test_thumbnail():
+    with Image(filename='rose:') as img:
+        img.thumbnail(50, 20)
+        assert (50, 20) == img.size
+    with Image(filename='rose:') as img:
+        img.thumbnail(width=50)
+        assert (50, img.height) == img.size
+    with Image(filename='rose:') as img:
+        img.thumbnail(height=20)
+        assert (img.width, 20) == img.size
+
+
 def test_tint(fx_asset):
     with Image(filename='rose:') as img:
         was = img.signature

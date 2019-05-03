@@ -29,6 +29,7 @@ Unreleased.
  - Added :meth:`Image.sigmoidal_contrast() <wand.image.BaseImage.sigmoidal_contrast>` method.
  - Added :meth:`Image.stegano() <wand.image.BaseImage.stegano>` method.
  - Added :meth:`Image.stereogram() <wand.image.Image.stereogram>` class method.
+ - Added :meth:`Image.thumbnail() <wand.image.BaseImage.thumbnail>` method. [:issue:`357` by yoch]
 
 
 .. _changelog-0.5.3:
