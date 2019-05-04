@@ -1,7 +1,10 @@
 import ctypes
 import time
 
-from memory_profiler import memory_usage
+try:
+    from memory_profiler import memory_usage
+except ImportError:
+    memory_usage = None
 from pytest import mark
 
 from wand.color import Color
@@ -288,7 +291,8 @@ def color_memory_leak():
     time.sleep(0.02)
 
 
-@mark.skipif('MAGICK_VERSION_INFO <= (6, 6, 9, 7)')
+@mark.skipif(memory_usage is None or MAGICK_VERSION_INFO <= (6, 6, 9, 7),
+             reason='memory_usage is unavailable, or untestable')
 def test_memory_leak():
     """https://github.com/emcconville/wand/pull/127"""
     minimum = 1.0

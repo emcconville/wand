@@ -16,4 +16,7 @@ run.py
 .coverage
 .DS_Store
 .pytest_cache
+.project
+.pydevproject
+.settings/*
 
