@@ -649,7 +649,7 @@ class Drawing(Resource):
 
         """
         text_alignment_index = library.DrawGetTextAlignment(self.resource)
-        if not text_alignment_index:
+        if not text_alignment_index:  # pragma: no cover
             self.raise_exception()
         return text(TEXT_ALIGN_TYPES[text_alignment_index])
 
@@ -683,7 +683,7 @@ class Drawing(Resource):
 
         """
         text_decoration_index = library.DrawGetTextDecoration(self.resource)
-        if not text_decoration_index:
+        if not text_decoration_index:  # pragma: no cover
             self.raise_exception()
         return text(TEXT_DECORATION_TYPES[text_decoration_index])
 
@@ -699,19 +699,19 @@ class Drawing(Resource):
     def text_direction(self):
         """(:class:`basestring`) The text direction setting. a string
         from :const:`TEXT_DIRECTION_TYPES` list. It also can be set."""
-        if library.DrawGetTextDirection is None:
+        if library.DrawGetTextDirection is None:  # pragma: no cover
             raise WandLibraryVersionError(
                 'the installed version of ImageMagick does not support '
                 'this feature'
             )
         text_direction_index = library.DrawGetTextDirection(self.resource)
-        if not text_direction_index:
+        if not text_direction_index:  # pragma: no cover
             self.raise_exception()
         return text(TEXT_DIRECTION_TYPES[text_direction_index])
 
     @text_direction.setter
     def text_direction(self, direction):
-        if library.DrawGetTextDirection is None:
+        if library.DrawGetTextDirection is None:  # pragma: no cover
             raise WandLibraryVersionError(
                 'The installed version of ImageMagick does not support '
                 'this feature'
@@ -752,7 +752,7 @@ class Drawing(Resource):
         It also can be set.
 
         """
-        if library.DrawGetTextInterlineSpacing is None:
+        if library.DrawGetTextInterlineSpacing is None:  # pragma: no cover
             raise WandLibraryVersionError('The installed version of '
                                           'ImageMagick does not support '
                                           'this feature')
@@ -760,7 +760,7 @@ class Drawing(Resource):
 
     @text_interline_spacing.setter
     def text_interline_spacing(self, spacing):
-        if library.DrawSetTextInterlineSpacing is None:
+        if library.DrawSetTextInterlineSpacing is None:  # pragma: no cover
             raise WandLibraryVersionError('The installed version of '
                                           'ImageMagick does not support '
                                           'this feature')
@@ -844,7 +844,7 @@ class Drawing(Resource):
             vector_graphics = binary(vector_graphics)
             okay = library.DrawSetVectorGraphics(self.resource,
                                                  vector_graphics)
-            if okay == 0:
+            if okay == 0:  # pragma: no cover
                 raise ValueError("Vector graphic not understood.")
 
     def affine(self, matrix):

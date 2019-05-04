@@ -153,7 +153,7 @@ def test_set_get_text_alignment(fx_wand):
         fx_wand.text_alignment = 'not-a-text-alignment-type'
 
 
-def set_get_text_antialias(fx_wand):
+def test_set_get_text_antialias(fx_wand):
     fx_wand.text_antialias = True
     assert fx_wand.text_antialias is True
 
@@ -178,6 +178,7 @@ def test_set_get_text_direction(fx_wand):
 def test_set_get_text_encoding(fx_wand):
     fx_wand.text_encoding = 'UTF-8'
     assert fx_wand.text_encoding == 'UTF-8'
+    fx_wand.text_encoding = None
 
 
 def test_set_get_text_interline_spacing(fx_wand):
@@ -205,6 +206,7 @@ def test_set_get_text_under_color(fx_wand):
     with Color('#333333') as black:
         fx_wand.text_under_color = black
     assert fx_wand.text_under_color == Color('#333333')
+    fx_wand.text_under_color = '#333'  # Smoke test
     with raises(TypeError):
         fx_wand.text_under_color = 0xDEADBEEF
 
@@ -217,6 +219,8 @@ def test_set_get_vector_graphics(fx_wand):
                                '8</stroke-width></wand>')
     xml = fx_wand.vector_graphics
     assert xml.index("<stroke-width>8</stroke-width>") > 0
+    with raises(TypeError):
+        fx_wand.vector_graphics = 0xDEADBEEF
 
 
 def test_set_get_gravity(fx_wand):
@@ -587,26 +591,27 @@ def test_draw_path_elliptic_arc_user_error():
 
 
 def test_draw_path_line():
-    with nested(Color('#fff'),
-                Color('#f00'),
-                Color('#00f')) as (white, red, blue):
-        with Image(width=50, height=50, background=white) as img:
-            with Drawing() as draw:
-                draw.fill_color = blue
-                draw.stroke_color = red
-                draw = draw.path_start() \
-                           .path_move(to=(5, 5)) \
-                           .path_move(to=(5, 5), relative=True) \
-                           .path_line(to=(40, 40)) \
-                           .path_line(to=(0, -10), relative=True) \
-                           .path_horizontal_line(x=45) \
-                           .path_vertical_line(y=25) \
-                           .path_horizontal_line(x=-5, relative=True) \
-                           .path_vertical_line(y=-5, relative=True) \
-                           .path_finish()
-                draw.draw(img)
-                assert img[40, 40] == img[40, 30] == red
-                assert img[45, 25] == img[40, 20] == red
+    white = Color('#FFF')
+    red = Color('#F00')
+    blue = Color('#00F')
+    with Image(width=50, height=50, background=white) as img:
+        with Drawing() as draw:
+            draw.fill_color = blue
+            draw.stroke_color = red
+            draw.stroke_width = 10
+            draw = draw.path_start() \
+                       .path_move(to=(5, 5)) \
+                       .path_move(to=(5, 5), relative=True) \
+                       .path_line(to=(40, 40)) \
+                       .path_line(to=(0, -10), relative=True) \
+                       .path_horizontal_line(x=45) \
+                       .path_vertical_line(y=25) \
+                       .path_horizontal_line(x=-5, relative=True) \
+                       .path_vertical_line(y=-5, relative=True) \
+                       .path_finish()
+            draw.draw(img)
+        assert img[40, 40] == img[40, 30] == red
+        assert img[45, 25] == img[40, 20] == red
 
 
 def test_draw_path_line_user_error():
@@ -843,6 +848,7 @@ def test_set_get_fill_rule(fx_wand):
 
 
 def test_set_get_opacity(fx_wand):
+    assert fx_wand.opacity == 1.0
     fx_wand.opacity = 0.3456
     skip('DrawGetOpacity always returns 1.0')
 
@@ -915,16 +921,20 @@ def test_set_get_stroke_width_user_error(fx_wand):
 
 
 def test_draw_affine(display, fx_wand):
-    with nested(Color('skyblue'),
-                Color('black')) as (skyblue, black):
-        with Image(width=100, height=100, background=skyblue) as img:
-            img.format = 'png'
-            fx_wand.affine([1.5, 0.5, 0, 1.5, 45, 25])
-            fx_wand.rectangle(top=5, left=5, width=25, height=25)
-            fx_wand.draw(img)
-            display(img)
-            assert img[25, 25] == skyblue
-            assert img[75, 75] == black
+    skyblue = Color('skyblue')
+    black = Color('black')
+    with Image(width=100, height=100, background=skyblue) as img:
+        img.format = 'png'
+        fx_wand.affine([1.5, 0.5, 0, 1.5, 45, 25])
+        fx_wand.rectangle(top=5, left=5, width=25, height=25)
+        fx_wand.draw(img)
+        display(img)
+        assert img[25, 25] == skyblue
+        assert img[75, 75] == black
+        with raises(ValueError):
+            fx_wand.affine([1.0])
+        with raises(TypeError):
+            fx_wand.affine(['a', 'b', 'c', 'd', 'e', 'f'])
 
 
 @mark.skipif(MAGICK_VERSION_NUMBER >= 0x700,
