@@ -99,7 +99,7 @@ if libmagick:
     #: ImageMagick-6, or does not support :c:func:`GetMagickDelegates`.
     #:
     #: .. versionadded:: 0.5.0
-    if libmagick.GetMagickDelegates:
+    if libmagick.GetMagickDelegates:  # pragma: no cover
         MAGICK_VERSION_DELEGATES = text(libmagick.GetMagickDelegates())
     else:
         MAGICK_VERSION_DELEGATES = ""
@@ -267,7 +267,7 @@ if __doc__ is not None:
 del libmagick
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     options = frozenset(sys.argv[1:])
     if '-v' in options or '--verbose' in options:
         print('Wand', VERSION)

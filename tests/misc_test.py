@@ -1,7 +1,7 @@
 import datetime
 import numbers
 import re
-from py.test import mark
+from py.test import mark, raises
 
 from wand.version import (MAGICK_VERSION, MAGICK_VERSION_INFO,
                           MAGICK_VERSION_NUMBER, MAGICK_RELEASE_DATE,
@@ -31,6 +31,8 @@ def test_quantum_depth():
 
 def test_configure_options():
     assert 'RELEASE_DATE' in configure_options('RELEASE_DATE')
+    with raises(TypeError):
+        configure_options(0xDEADBEEF)
 
 
 def test_fonts():
@@ -39,8 +41,12 @@ def test_fonts():
     first_font = font_list[0]
     first_font_part = first_font[1:-1]
     assert first_font in fonts('*{0}*'.format(first_font_part))
+    with raises(TypeError):
+        fonts(0xDEADBEEF)
 
 
 def test_formats():
     xc = 'XC'
     assert formats(xc) == [xc]
+    with raises(TypeError):
+        formats(0xDEADBEEF)
