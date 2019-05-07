@@ -180,7 +180,7 @@ class Sequence(ImageProperty, abc.MutableSequence):
                 if MAGICK_VERSION_INFO >= (6, 7, 6, 0):
                     library.MagickSetFirstIterator(self_wand)
                     library.MagickAddImage(self_wand, wand)
-                else:
+                else:  # pragma: no cover
                     self.current_index = 0
                     library.MagickAddImage(self_wand,
                                            self.image.sequence[0].wand)
@@ -248,7 +248,7 @@ class Sequence(ImageProperty, abc.MutableSequence):
         else:
             self.instances[offset:offset] = null_list
 
-    def _repr_png_(self):
+    def _repr_png_(self):  # pragma: no cover
         library.MagickResetIterator(self.image.wand)
         repr_wand = library.MagickAppendImages(self.image.wand, 1)
         length = ctypes.c_size_t()
