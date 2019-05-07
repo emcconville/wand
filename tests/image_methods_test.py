@@ -44,6 +44,20 @@ def test_adaptive_threshold():
         assert was != img.signature
 
 
+def test_auto_gamma():
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.auto_gamma()
+        assert was != img.signature
+
+
+def test_auto_level():
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.auto_level()
+        assert was != img.signature
+
+
 def test_auto_orientation(fx_asset):
     with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
         # if orientation is undefined nothing should be changed
@@ -1088,6 +1102,17 @@ def test_morphology_user_defined(fx_asset):
                            kernel='junk:0')
 
 
+def test_motion_blur():
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.motion_blur(8, 6, 45)
+        result = img.signature
+        assert was != result
+        was = result
+        img.motion_blur(8, 6, -45, channel='blue')
+        assert was != img.signature
+
+
 def test_negate_default(fx_asset):
     def test(c1, c2):
         assert (c1.red_int8 + c2.red_int8 == 255 and
@@ -1657,6 +1682,16 @@ def test_strip(fx_asset):
         img.save(file=strio)
         len_stripped = strio.tell()
         assert len_unstripped > len_stripped
+
+
+def test_texture():
+    with Image(filename='rose:') as img:
+        was = img.signature
+        with Image(width=1, height=10, pseudo='gradient:') as tile:
+            img.texture(tile)
+        assert was != img.signature
+        with raises(TypeError):
+            img.texture(0xDEADBEEF)
 
 
 def test_threshold(fx_asset):

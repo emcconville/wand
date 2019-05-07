@@ -16,9 +16,12 @@ Unreleased.
 
  - Rewrote :attr:`~wand.api.libc` library loader. [:issue:`409`]
  - Respect ``background`` paramater in :meth:`Image.__init__() <wand.image.Image.__init__>` constructor. [:issue:`410`]
+ - Added :meth:`Image.auto_gamma() <wand.image.BaseImage.auto_gamma>` method.
+ - Added :meth:`Image.auto_level() <wand.image.BaseImage.auto_level>` method.
  - Added :attr:`Image.border_color <wand.image.BaseImage.border_color>` property.
  - Added :meth:`Image.brightness_contrast() <wand.image.BaseImage.brightness_contrast>` method.
  - Added :meth:`Image.mode() <wand.image.BaseImage.mode>` method.
+ - Added :meth:`Image.motion_blur() <wand.image.BaseImage.motion_blur>` method.
  - Added :meth:`Image.oil_paint() <wand.image.BaseImage.oil_paint>` method.
  - Added :meth:`Image.opaque_paint() <wand.image.BaseImage.opaque_paint>` method.
  - Added :meth:`Image.polaroid() <wand.image.BaseImage.polaroid>` method.
@@ -29,6 +32,7 @@ Unreleased.
  - Added :meth:`Image.sigmoidal_contrast() <wand.image.BaseImage.sigmoidal_contrast>` method.
  - Added :meth:`Image.stegano() <wand.image.BaseImage.stegano>` method.
  - Added :meth:`Image.stereogram() <wand.image.Image.stereogram>` class method.
+ - Added :meth:`Image.texture() <wand.image.BaseImage.texture>` method.
  - Added :meth:`Image.thumbnail() <wand.image.BaseImage.thumbnail>` method. [:issue:`357` by yoch]
  - Added :attr:`Image.ticks_per_second <wand.image.BaseImage.ticks_per_second>` property.
 
@@ -62,7 +66,7 @@ Released on April 20, 2019.
  - Added :meth:`Image.adaptive_threshold() <wand.image.BaseImage.adaptive_threshold>` method.
  - Added :meth:`Image.black_threshold() <wand.image.BaseImage.black_threshold>` method.
  - Added :meth:`Image.blue_shift() <wand.image.BaseImage.blue_shift>` method.
- - Added :meth:`Image.charcoal() <wand.image.BaseImage.charcoal>`
+ - Added :meth:`Image.charcoal() <wand.image.BaseImage.charcoal>` method.
  - Added :meth:`Image.color_matrix() <wand.image.BaseImage.color_matrix>` method.
  - Added :meth:`Image.colorize() <wand.image.BaseImage.colorize>` method.
  - Added :attr:`Image.fuzz <wand.image.BaseImage.fuzz>` property.
@@ -85,6 +89,9 @@ Released on April 20, 2019.
  - Added :attr:`Image.standard_deviation <wand.image.BaseImage.standard_deviation>` property.
  - Added :meth:`Image.statistic() <wand.image.BaseImage.statistic>` method.
  - Added :meth:`Image.tint() <wand.image.BaseImage.tint>` method.
+
+
+*Special thanks to Fred Weinhaus for helping test this release.*
 
 
 .. _changelog-0.5.2:

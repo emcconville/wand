@@ -2525,6 +2525,24 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
+    def auto_gamma(self):
+        """Adjust the gamma level of an image.
+
+        .. versionadded:: 0.5.4
+        """
+        return library.MagickAutoGammaImage(self.wand)
+
+    @manipulative
+    @trap_exception
+    def auto_level(self):
+        """Scale the minimum and maximum values to a full quantum range.
+
+        .. versionadded:: 0.5.4
+        """
+        return library.MagickAutoLevelImage(self.wand)
+
+    @manipulative
+    @trap_exception
     def auto_orient(self):
         """Adjusts an image so that its orientation is suitable
         for viewing (i.e. top-left orientation). If available it uses
@@ -4467,6 +4485,46 @@ class BaseImage(Resource):
                              repr(kernel))
         return r
 
+    @manipulative
+    @trap_exception
+    def motion_blur(self, radius=0.0, sigma=0.0, angle=0.0, channel=None):
+        """Apply a Gaussian blur along an ``angle`` direction. This
+        simulates motion movement.
+
+        :param radius: Apature size of the Gaussian operator.
+        :type radius: :class:`numbers.Real`
+        :param sigma: Standard deviation of the Gaussian operator.
+        :type sigma: :class:`numbers.Real`
+        :param angle: Apply the effect along this angle.
+        :type angle: :class:`numbers.Real`
+
+        .. versionadded:: 0.5.4
+        """
+        assertions.assert_real(radius=radius, sigma=sigma, angle=angle)
+        if channel:
+            try:
+                ch_const = CHANNELS[channel]
+            except KeyError:
+                raise ValueError(repr(channel) + ' is an invalid channel type'
+                                 '; see wand.image.CHANNELS dictionary')
+            if MAGICK_VERSION_NUMBER < 0x700:
+                r = library.MagickMotionBlurImageChannel(self.wand,
+                                                         ch_const,
+                                                         radius,
+                                                         sigma,
+                                                         angle)
+            else:  # pragma: no cover
+                # Set active channel, and capture mask to restore.
+                channel_mask = library.MagickSetImageChannelMask(self.wand,
+                                                                 ch_const)
+                r = library.MagickMotionBlurImage(self.wand, radius, sigma,
+                                                  angle)
+                # Restore original state of channels
+                library.MagickSetImageChannelMask(self.wand, channel_mask)
+        else:
+            r = library.MagickMotionBlurImage(self.wand, radius, sigma, angle)
+        return r
+
     @trap_exception
     def negate(self, grayscale=False, channel=None):
         """Negate the colors in the reference image.
@@ -5534,6 +5592,33 @@ class BaseImage(Resource):
         .. versionadded:: 0.2.0
         """
         return library.MagickStripImage(self.wand)
+
+    @manipulative
+    def texture(self, tile):
+        """Repeat tile-image across the width & height of the image.
+
+        .. code:: python
+
+            from wand.image import Image
+
+            with Image(width=100, height=100) as canvas:
+                with Image(filename='tile.png') as tile:
+                    canvas.texture(tile)
+                canvas.save(filename='output.png')
+
+        :param tile: image to repeat across canvas.
+        :type tile: :class:`Image <wand.image.BaseImage>`
+
+        .. versionadded:: 0.5.4
+        """
+        if not isinstance(tile, BaseImage):
+            raise TypeError('Tile image must be an instance of '
+                            'wand.image.Image, not ' + repr(tile))
+        r = library.MagickTextureImage(self.wand, tile.wand)
+        if not bool(r):  # pragma: no cover
+            self.raise_exception()
+        else:
+            self.wand = r
 
     @manipulative
     @trap_exception
