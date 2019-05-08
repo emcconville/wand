@@ -34,7 +34,10 @@ def load(lib, IM_VERSION):
     .. versionadded:: 0.5.0
 
     """
+    lib.MagickDeleteImageArtifact.argtypes = [c_void_p, c_char_p]
+    lib.MagickDeleteImageArtifact.restype = c_int
     lib.MagickDeleteImageProperty.argtypes = [c_void_p, c_char_p]
+    lib.MagickDeleteImageProperty.restype = c_int
     lib.MagickDeleteOption.argtypes = [c_void_p, c_char_p]
     lib.MagickDeleteOption.restype = c_int
     lib.MagickGetAntialias.argtypes = [c_void_p]

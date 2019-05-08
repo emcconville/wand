@@ -1545,7 +1545,7 @@ class BaseImage(Resource):
         dispose_idx = library.MagickGetImageDispose(self.wand)
         try:
             return DISPOSE_TYPES[dispose_idx]
-        except IndexError:
+        except IndexError:  # pragma: no cover
             return DISPOSE_TYPES[0]
 
     @dispose.setter
@@ -1619,8 +1619,9 @@ class BaseImage(Resource):
     @manipulative
     def font_path(self, font):
         font = binary(font)
-        if library.MagickSetFont(self.wand, font) is False:
-            raise ValueError('font is invalid')
+        r = library.MagickSetFont(self.wand, font)
+        if not r:  # pragma: no cover
+            self.raise_exception()
 
     @property
     def font_size(self):
@@ -1633,8 +1634,9 @@ class BaseImage(Resource):
         assertions.assert_real(font_size=size)
         if size < 0.0:
             raise ValueError('cannot be less then 0.0, but got ' + repr(size))
-        elif library.MagickSetPointsize(self.wand, size) is False:
-            raise ValueError('unexpected error is occur')
+        r = library.MagickSetPointsize(self.wand, size)
+        if not r:  # pragma: no cover
+            self.raise_exception()
 
     @property
     def format(self):
@@ -1757,7 +1759,7 @@ class BaseImage(Resource):
     @height.setter
     @manipulative
     def height(self, height):
-        assertions.assert_unsigned_integer(height)
+        assertions.assert_unsigned_integer(height=height)
         library.MagickSetSize(self.wand, self.width, height)
 
     @property
@@ -1935,7 +1937,7 @@ class BaseImage(Resource):
         orientation_index = library.MagickGetImageOrientation(self.wand)
         try:
             return ORIENTATION_TYPES[orientation_index]
-        except IndexError:
+        except IndexError:  # pragma: no cover
             return ORIENTATION_TYPES[0]
 
     @orientation.setter
@@ -2342,7 +2344,7 @@ class BaseImage(Resource):
     @width.setter
     @manipulative
     def width(self, width):
-        assertions.assert_unsigned_integer(width)
+        assertions.assert_unsigned_integer(width=width)
         library.MagickSetSize(self.wand, width, self.height)
 
     @property
@@ -6816,11 +6818,8 @@ class Iterator(Resource, abc.Iterator):
         return self
 
     def seek(self, y):
-        if not isinstance(y, numbers.Integral):
-            raise TypeError('expected an integer, but got ' + repr(y))
-        elif y < 0:
-            raise ValueError('cannot be less than 0, but got ' + repr(y))
-        elif y > self.height:
+        assertions.assert_unsigned_integer(seek=y)
+        if y > self.height:
             raise ValueError('canot be greater than height')
         self.cursor = y
         if y == 0:
@@ -6905,21 +6904,12 @@ class OptionDict(ImageProperty, abc.MutableMapping):
         return len(OPTIONS)
 
     def __getitem__(self, key):
-        if not isinstance(key, string_type):
-            raise TypeError('option name must be a string, not ' + repr(key))
-        # if key not in OPTIONS:
-        #     raise ValueError('invalid option: ' + repr(key))
+        assertions.assert_string(key=key)
         image = self.image
         return text(library.MagickGetOption(image.wand, binary(key)))
 
     def __setitem__(self, key, value):
-        if not isinstance(key, string_type):
-            raise TypeError('option name must be a string, not ' + repr(key))
-        if not isinstance(value, string_type):
-            raise TypeError('option value must be a string, not ' +
-                            repr(value))
-        # if key not in OPTIONS:
-        #     raise ValueError('invalid option: ' + repr(key))
+        assertions.assert_string(key=key, value=value)
         image = self.image
         library.MagickSetOption(image.wand, binary(key), binary(value))
 
@@ -6957,9 +6947,8 @@ class Metadata(ImageProperty, abc.MutableMapping):
         :returns: a header value string
         :rtype: :class:`str`
         """
+        assertions.assert_string(key=k)
         image = self.image
-        if not isinstance(k, string_type):
-            raise TypeError('k must be a string, not ' + repr(k))
         v = library.MagickGetImageProperty(image.wand, binary(k))
         if bool(v) is False:
             raise KeyError(k)
@@ -6975,11 +6964,8 @@ class Metadata(ImageProperty, abc.MutableMapping):
 
         .. versionadded: 0.5.0
         """
+        assertions.assert_string(key=k, value=v)
         image = self.image
-        if not isinstance(k, string_type):
-            raise TypeError('k must be a string, not ' + repr(k))
-        if not isinstance(v, string_type):
-            raise TypeError('v must be a string, not ' + repr(v))
         r = library.MagickSetImageProperty(image.wand, binary(k), binary(v))
         if not r:
             image.raise_exception()
@@ -6992,9 +6978,8 @@ class Metadata(ImageProperty, abc.MutableMapping):
 
         .. versionadded: 0.5.0
         """
+        assertions.assert_string(key=k)
         image = self.image
-        if not isinstance(k, string_type):
-            raise TypeError('k must be a string, not ' + repr(k))
         r = library.MagickDeleteImageProperty(image.wand, binary(k))
         if not r:
             image.raise_exception()
@@ -7053,15 +7038,14 @@ class ArtifactTree(ImageProperty, abc.MutableMapping):
 
         .. versionadded: 0.5.0
         """
+        assertions.assert_string(key=k)
         image = self.image
-        if not isinstance(k, string_type):
-            raise TypeError('k must be a string, not ' + repr(k))
         v = library.MagickGetImageArtifact(image.wand, binary(k))
         if bool(v) is False:
             try:
                 v = library.MagickGetImageProperty(image.wand, binary(k))
                 value = v.value
-            except KeyError:
+            except KeyError:  # pragma: no cover
                 value = ""
         else:
             value = v.value
@@ -7076,13 +7060,10 @@ class ArtifactTree(ImageProperty, abc.MutableMapping):
 
         .. versionadded: 0.5.0
         """
+        assertions.assert_string(key=k, value=v)
         image = self.image
-        if not isinstance(k, string_type):
-            raise TypeError('k must be a string, not ' + repr(k))
-        if not isinstance(v, string_type):
-            raise TypeError('v must be a string, not ' + repr(v))
         r = library.MagickSetImageArtifact(image.wand, binary(k), binary(v))
-        if not r:
+        if not r:  # pragma: no cover
             image.raise_exception()
         return v
 
@@ -7093,11 +7074,10 @@ class ArtifactTree(ImageProperty, abc.MutableMapping):
 
         .. versionadded: 0.5.0
         """
+        assertions.assert_string(key=k)
         image = self.image
-        if not isinstance(k, string_type):
-            raise TypeError('k must be a string, not ' + repr(k))
         r = library.MagickDeleteImageArtifact(image.wand, binary(k))
-        if not r:
+        if not r:  # pragma: no cover
             image.raise_exception()
 
     def __iter__(self):
@@ -7149,16 +7129,14 @@ class ProfileDict(ImageProperty, abc.MutableMapping):
         super(ProfileDict, self).__init__(image)
 
     def __delitem__(self, k):
-        if not isinstance(k, string_type):
-            raise TypeError('key must be a string, not ' + repr(k))
+        assertions.assert_string(key=k)
         num = ctypes.c_size_t(0)
         profile_p = library.MagickRemoveImageProfile(self.image.wand,
                                                      binary(k), num)
         library.MagickRelinquishMemory(profile_p)
 
     def __getitem__(self, k):
-        if not isinstance(k, string_type):
-            raise TypeError('key must be a string, not ' + repr(k))
+        assertions.assert_string(key=k)
         num = ctypes.c_size_t(0)
         profile_p = library.MagickGetImageProfile(self.image.wand,
                                                   binary(k), num)
@@ -7186,8 +7164,7 @@ class ProfileDict(ImageProperty, abc.MutableMapping):
         return num.value
 
     def __setitem__(self, k, v):
-        if not isinstance(k, string_type):
-            raise TypeError('key must be a string, not ' + repr(k))
+        assertions.assert_string(key=k)
         if not isinstance(v, binary_type):
             raise TypeError('value must be a binary string, not ' + repr(v))
         r = library.MagickSetImageProfile(self.image.wand,
@@ -7308,8 +7285,7 @@ class HistogramDict(abc.Mapping):
             self._build_counts()
         if isinstance(color, string_type):
             color = Color(color)
-        if not isinstance(color, Color):
-            raise KeyError('Expecting wand.color.Color, or string')
+        assertions.assert_color(color=color)
         return self.counts[color]
 
     def _build_counts(self):

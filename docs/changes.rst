@@ -16,6 +16,7 @@ Unreleased.
 
  - Rewrote :attr:`~wand.api.libc` library loader. [:issue:`409`]
  - Respect ``background`` paramater in :meth:`Image.__init__() <wand.image.Image.__init__>` constructor. [:issue:`410`]
+ - Fixed deleting image artifact value.
  - Added :meth:`Image.auto_gamma() <wand.image.BaseImage.auto_gamma>` method.
  - Added :meth:`Image.auto_level() <wand.image.BaseImage.auto_level>` method.
  - Added :attr:`Image.border_color <wand.image.BaseImage.border_color>` property.

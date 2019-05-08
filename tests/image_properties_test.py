@@ -42,6 +42,18 @@ def test_alpha_channel_set(fx_asset):
             img.alpha_channel = 'watermark'
 
 
+def test_artifacts():
+    with Image(filename='rose:') as img:
+        img.artifacts['key'] = 'value'
+        assert 'date:create' in img.artifacts
+        assert img.artifacts['key'] == 'value'
+        assert img.artifacts['novalue'] == None
+        assert len(img.artifacts) > 0
+        for key, value in img.artifacts.items():
+            pass
+        del img.artifacts['key']
+
+
 def test_background_color_get(fx_asset):
     """Gets the background color."""
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
@@ -143,6 +155,10 @@ def test_compression(fx_asset):
         # IM 7 will correctly report ``'jpeg'``, but ``'group4'`` should
         # still be apart of regression acceptance.
         assert img.compression in ('group4', 'jpeg')
+        img.compression = 'zip'
+        assert img.compression == 'zip'
+        with raises(TypeError):
+            img.compression = 0x60
 
 
 def test_compression_quality_get(fx_asset):
@@ -220,6 +236,8 @@ def test_font_set(fx_asset):
         img.font = fontColor
         assert img.font_color == Color('YELLOW')
         assert img.stroke_color == Color('PINK')
+        with raises(ValueError):
+            img.font_size = -99
 
 
 def test_format_get(fx_asset):
@@ -244,6 +262,13 @@ def test_format_set(fx_asset):
             img.format = 'HONG'
         with raises(TypeError):
             img.format = 123
+
+
+def test_fuzz():
+    with Image(filename='rose:') as img:
+        assert img.fuzz == 0.0
+        img.fuzz = img.quantum_range
+        assert img.fuzz == img.quantum_range
 
 
 def test_gravity_set():
@@ -309,6 +334,13 @@ def test_length_of_bytes():
         assert img.length_of_bytes > 0
         img.resample(300, 300)
         assert img.length_of_bytes == 0
+
+
+def test_loop(fx_asset):
+    with Image(filename=str(fx_asset.join('nocomments.gif'))) as img:
+        assert img.loop == 0
+        img.loop = 1
+        assert img.loop == 1
 
 
 def test_matte_color(fx_asset):
@@ -377,6 +409,8 @@ def test_page_basic(fx_asset):
         assert img1.page_height == 480
         assert img1.page_x == 0
         assert img1.page_y == 0
+        with raises(TypeError):
+            img1.page = 640
 
 
 def test_page_offset(fx_asset):
@@ -552,6 +586,15 @@ def test_standard_deviation():
         standard_deviation = img.standard_deviation
         assert isinstance(standard_deviation, numbers.Real)
         assert standard_deviation != 0.0
+
+
+def test_stroke_color_user_error():
+    with Image(filename='rose:') as img:
+        img.stroke_color = 'green'
+        img.stroke_color = None
+        assert img.stroke_color is None
+        with raises(TypeError):
+            img.stroke_color = 0xDEADBEEF
 
 
 def test_type_get(fx_asset):

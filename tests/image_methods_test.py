@@ -25,6 +25,12 @@ def test_adaptive_resize():
     with Image(filename='rose:') as img:
         img.adaptive_resize(140, 92)
         assert 140, 92 == img.size
+    with Image(filename='rose:') as img:
+        w, h = img.size
+        img.adaptive_resize(columns=140)
+        assert img.size == (140, h)
+        img.adaptive_resize(rows=92)
+        assert img.size == (140, 92)
 
 
 @mark.skipif(MAGICK_VERSION_NUMBER < 0x690,
@@ -87,6 +93,7 @@ def test_black_threshold(fx_asset):
     with Image(filename='rose:') as img:
         was = img.signature
         img.black_threshold(Color('gray(50%)'))
+        img.black_threshold('gray(50%)')
         assert was != img.signature
         with raises(TypeError):
             img.white_threshold(0xDEADBEEF)

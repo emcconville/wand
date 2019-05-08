@@ -1033,7 +1033,7 @@ class Drawing(Resource):
         if message is None:
             message = b''
         else:
-            assertions.assert_string(message)
+            assertions.assert_string(message=message)
             message = binary(message)
         library.DrawComment(self.resource, message)
 
