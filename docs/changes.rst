@@ -16,6 +16,7 @@ Unreleased.
 
  - Rewrote :attr:`~wand.api.libc` library loader. [:issue:`409`]
  - Respect ``background`` paramater in :meth:`Image.__init__() <wand.image.Image.__init__>` constructor. [:issue:`410`]
+ - Fixed :meth:`Drawing.get_font_metrics() <wand.drawing.Drawing.get_font_metrics>` not raising internal ImageMagick exception on rendering error. [:issue:`411`]
  - Fixed deleting image artifact value.
  - Added :meth:`Image.auto_gamma() <wand.image.BaseImage.auto_gamma>` method.
  - Added :meth:`Image.auto_level() <wand.image.BaseImage.auto_level>` method.

@@ -1151,6 +1151,13 @@ class Drawing(Resource):
             else:
                 text = binary(text)
         result = font_metrics_f(image.wand, self.resource, text)
+        if not result:  # pragma: no cover
+            # Error on drawing context
+            self.raise_exception()
+            # Or error on image canvas
+            image.raise_exception()
+            # Generate a generic error if ImageMagick couldn't emit one.
+            raise ValueError('Unable to render text with current font.')
         args = [result[i] for i in xrange(13)]
         library.MagickRelinquishMemory(result)
         return FontMetrics(*args)
