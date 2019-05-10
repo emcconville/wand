@@ -24,7 +24,7 @@ from .exceptions import (MissingDelegateError, WandException,
                          WandRuntimeError, WandLibraryVersionError)
 from .font import Font
 from .resource import DestroyedResourceError, Resource
-from .cdefs.structures import GeomertyInfo
+from .cdefs.structures import GeomertyInfo, RectangleInfo
 from .version import MAGICK_VERSION_NUMBER, MAGICK_HDRI
 
 
@@ -5333,6 +5333,80 @@ class BaseImage(Resource):
                                                     sharpen,
                                                     strength,
                                                     midpoint)
+
+    def similarity(self, reference, threshold=0.0, metric='undefined'):
+        """Scan image for best matching ``reference`` image, and
+        return location & similarity.
+
+        .. code:: python
+
+            from wand.image import Image
+
+            with Image(filename='subject.jpg') as img:
+                with Image(filename='object.jpg') as reference:
+                    location, diff = img.similarity(reference)
+                    if diff == 0.0:
+                        print('Exact match @ {left}x{top}'.format(**location))
+                    elif diff < 0.1:
+                        print('Close match @ {left}x{top}'.format(**location))
+                    else:
+                        # Difference not meaningful.
+                        print('Not found')
+
+        .. warning::
+
+            This operation can be slow to complete.
+
+        :param reference: Image to search for.
+        :type reference: :class:`wand.image.Image`
+        :param threshold: Stop scanning if reference similarity is below
+                          given threshold. Default is ``0.0``.
+        :type threshold: :class:`numbers.Real`
+        :param metric: specify which comparison algorithm to use. See
+                       :const:`COMPARE_METRICS` for a list of values.
+                       This for ImageMagick-7 only.
+        :type metric: :class:`basestring`
+        :returns: List of location & similarity value. Location being a
+                  dictionary of ``width``, ``height``, ``left``, & ``top``.
+                  The similarity value is the compare distance, so a value of
+                  ``0.0`` means an exact match.
+        :rtype: :class:``tuple`` (:class:`dict`, :class:`numbers.Real`)
+
+        .. versionadded:: 0.5.4
+        """
+        assertions.assert_real(threshold=threshold)
+        if not isinstance(reference, BaseImage):
+            raise TypeError('reference must be in instance of '
+                            'wand.image.Image, not ' + repr(reference))
+        rio = RectangleInfo(0, 0, 0, 0)
+        diff = ctypes.c_double(0.0)
+        if MAGICK_VERSION_NUMBER < 0x700:
+            artifact_value = binary(str(threshold))  # FIXME
+            library.MagickSetImageArtifact(self.wand,
+                                           b'compare:similarity-threshold',
+                                           artifact_value)
+            r = library.MagickSimilarityImage(self.wand,
+                                              reference.wand,
+                                              ctypes.byref(rio),
+                                              ctypes.byref(diff))
+        else:  # pragma: no cover
+            assertions.string_in_list(COMPARE_METRICS,
+                                      'wand.image.COMPARE_METRICS',
+                                      metric=metric)
+            metric_idx = COMPARE_METRICS.index(metric)
+            r = library.MagickSimilarityImage(self.wand,
+                                              reference.wand,
+                                              metric_idx,
+                                              threshold,
+                                              ctypes.byref(rio),
+                                              ctypes.byref(diff))
+        if not r:  # pragma: no cover
+            self.raise_exception()
+        else:
+            r = library.DestroyMagickWand(r)
+        location = dict(width=rio.width, height=rio.height,
+                        top=rio.y, left=rio.x)
+        return (location, diff.value)
 
     @manipulative
     @trap_exception
