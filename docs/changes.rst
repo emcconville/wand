@@ -32,6 +32,7 @@ Unreleased.
  - Added :attr:`Image.scene <wand.image.BaseImage.scene>` property.
  - Added :meth:`Image.shear() <wand.image.BaseImage.shear>` method.
  - Added :meth:`Image.sigmoidal_contrast() <wand.image.BaseImage.sigmoidal_contrast>` method.
+ - Added :meth:`Image.similarity() <wand.image.BaseImage.similarity>` method.
  - Added :meth:`Image.stegano() <wand.image.BaseImage.stegano>` method.
  - Added :meth:`Image.stereogram() <wand.image.Image.stereogram>` class method.
  - Added :meth:`Image.texture() <wand.image.BaseImage.texture>` method.

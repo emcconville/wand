@@ -5364,13 +5364,13 @@ class BaseImage(Resource):
         :type threshold: :class:`numbers.Real`
         :param metric: specify which comparison algorithm to use. See
                        :const:`COMPARE_METRICS` for a list of values.
-                       This for ImageMagick-7 only.
+                       Only used by ImageMagick-7.
         :type metric: :class:`basestring`
         :returns: List of location & similarity value. Location being a
                   dictionary of ``width``, ``height``, ``left``, & ``top``.
                   The similarity value is the compare distance, so a value of
                   ``0.0`` means an exact match.
-        :rtype: :class:``tuple`` (:class:`dict`, :class:`numbers.Real`)
+        :rtype: :class:`tuple` (:class:`dict`, :class:`numbers.Real`)
 
         .. versionadded:: 0.5.4
         """
