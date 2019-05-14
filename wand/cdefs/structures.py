@@ -7,7 +7,7 @@ from ctypes import POINTER, Structure, c_double, c_int, c_size_t
 from wand.cdefs.wandtypes import c_ssize_t, c_magick_real_t, c_magick_size_t
 
 __all__ = ('AffineMatrix', 'ChannelFeature', 'GeomertyInfo', 'KernelInfo',
-           'MagickPixelPacket', 'PixelInfo', 'PointInfo')
+           'MagickPixelPacket', 'PixelInfo', 'PointInfo', 'RectangleInfo')
 
 
 class AffineMatrix(Structure):

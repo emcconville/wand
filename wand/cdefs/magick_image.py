@@ -930,10 +930,16 @@ def load(lib, IM_VERSION):
         lib.MagickSigmoidalContrastImageChannel.restype = c_bool
     else:
         lib.MagickSigmoidalContrastImageChannel = None
-    lib.MagickSimilarityImage.argtypes = [
-        c_void_p, c_void_p, c_void_p, c_double
-    ]
-    lib.MagickSimilarityImage.restype = c_void_p
+    if is_im_6:
+        lib.MagickSimilarityImage.argtypes = [
+            c_void_p, c_void_p, c_void_p, POINTER(c_double)
+        ]
+        lib.MagickSimilarityImage.restype = c_void_p
+    else:
+        lib.MagickSimilarityImage.argtypes = [
+            c_void_p, c_void_p, c_int, c_double, c_void_p, POINTER(c_double)
+        ]
+        lib.MagickSimilarityImage.restype = c_void_p
     lib.MagickSketchImage.argtypes = [c_void_p, c_double, c_double, c_double]
     lib.MagickSketchImage.restype = c_bool
     lib.MagickSmushImages.argtypes = [c_void_p, c_bool, c_ssize_t]
