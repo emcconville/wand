@@ -182,19 +182,23 @@ if MAGICK_VERSION_NUMBER >= 0x700:  # pragma: no cover
                         'transparent', 'xyy', 'xyz', 'ycbcr', 'ycc', 'ydbdr',
                         'yiq', 'ypbpr', 'yuv')
 
-#: (:class:`tuple`) The list of compare metric types
+#: (:class:`tuple`) The list of compare metric types used by
+#: :meth:`Image.compare() <wand.image.BaseImage.compare>` and
+#: :meth:`Image.similarity() <wand.image.BaseImage.similarity>` methods.
 #:
 #: - ``'undefined'``
 #: - ``'absolute'``
-#: - ``'fuzz'`` - Only available with ImageMagick-7
+#: - ``'fuzz'``
 #: - ``'mean_absolute'``
 #: - ``'mean_error_per_pixel'``
 #: - ``'mean_squared'``
 #: - ``'normalized_cross_correlation'``
 #: - ``'peak_absolute'``
 #: - ``'peak_signal_to_noise_ratio'``
-#: - ``'perceptual_hash'``
+#: - ``'perceptual_hash'`` - Available with ImageMagick-7
 #: - ``'root_mean_square'``
+#: - ``'structural_similarity'`` - Available with ImageMagick-7
+#: - ``'structural_dissimilarity'`` - Available with ImageMagick-7
 #:
 #: .. seealso::
 #:
@@ -203,17 +207,20 @@ if MAGICK_VERSION_NUMBER >= 0x700:  # pragma: no cover
 #:    __ http://www.imagemagick.org/Usage/compare/
 #:
 #: .. versionadded:: 0.4.3
+#:
+#: .. versionchanged:: 0.5.4 - Remapped :c:data:`MetricType` enum.
 COMPARE_METRICS = ('undefined', 'absolute',
                    'mean_absolute', 'mean_error_per_pixel',
-                   'mean_squared', 'normalized_cross_correlation',
-                   'peak_absolute', 'peak_signal_to_noise_ratio',
-                   'perceptual_hash', 'root_mean_square')
+                   'mean_squared', 'peak_absolute',
+                   'peak_signal_to_noise_ratio', 'root_mean_square',
+                   'normalized_cross_correlation', 'fuzz')
 if MAGICK_VERSION_NUMBER >= 0x700:  # pragma: no cover
     COMPARE_METRICS = ('undefined', 'absolute', 'fuzz', 'mean_absolute',
                        'mean_error_per_pixel', 'mean_squared',
                        'normalized_cross_correlation', 'peak_absolute',
                        'peak_signal_to_noise_ratio', 'perceptual_hash',
-                       'root_mean_square')
+                       'root_mean_square', 'structural_similarity',
+                       'structural_dissimilarity')
 
 
 #: (:class:`tuple`) The list of composition operators
@@ -2972,7 +2979,8 @@ class BaseImage(Resource):
 
         :param image: The reference image
         :type image: :class:`wand.image.Image`
-        :param metric: The metric type to use for comparing.
+        :param metric: The metric type to use for comparing. See
+                       :const:`COMPARE_METRICS`
         :type metric: :class:`basestring`
         :param highlight: Set the color of the delta pixels in the resulting
                           difference image.
@@ -2990,7 +2998,9 @@ class BaseImage(Resource):
         .. versionchanged:: 0.5.3
            Added support for ``highlight`` & ``lowlight``.
         """
-        assertions.assert_string(metric=metric)
+        assertions.string_in_list(COMPARE_METRICS,
+                                  'wand.image.COMPARE_METRICS',
+                                  metric)
         if highlight:
             if isinstance(highlight, Color):
                 highlight = highlight.string
