@@ -1075,7 +1075,7 @@ def test_morphology_builtin(fx_asset):
     args = (('erode', 'ring'),
             ('dilate', 'disk:5'),
             ('open', 'octagon'),
-            ('smooth', 'rectangle:x-1'),
+            ('smooth', 'rectangle:0x-1'),
             ('thinning', 'edges'),
             ('distance', 'euclidean:4,10!'),
             ('thicken', 'unity:x5'),

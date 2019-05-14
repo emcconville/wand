@@ -47,7 +47,7 @@ def test_artifacts():
         img.artifacts['key'] = 'value'
         assert 'date:create' in img.artifacts
         assert img.artifacts['key'] == 'value'
-        assert img.artifacts['novalue'] == None
+        assert img.artifacts['novalue'] is None
         assert len(img.artifacts) > 0
         for key, value in img.artifacts.items():
             pass

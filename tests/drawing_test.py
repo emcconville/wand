@@ -599,16 +599,17 @@ def test_draw_path_line():
             draw.fill_color = blue
             draw.stroke_color = red
             draw.stroke_width = 10
-            draw = draw.path_start() \
-                       .path_move(to=(5, 5)) \
-                       .path_move(to=(5, 5), relative=True) \
-                       .path_line(to=(40, 40)) \
-                       .path_line(to=(0, -10), relative=True) \
-                       .path_horizontal_line(x=45) \
-                       .path_vertical_line(y=25) \
-                       .path_horizontal_line(x=-5, relative=True) \
-                       .path_vertical_line(y=-5, relative=True) \
-                       .path_finish()
+            draw.path_start()
+            draw.path_move(to=(5, 5))
+            draw.path_move(to=(5, 5), relative=True)
+            draw.path_line(to=(40, 40))
+            draw.path_line(to=(0, -10), relative=True)
+            draw.path_horizontal_line(x=45)
+            draw.path_vertical_line(y=25)
+            draw.path_horizontal_line(x=-5, relative=True)
+            draw.path_vertical_line(y=-5, relative=True)
+            draw.path_close()
+            draw.path_finish()
             draw.draw(img)
         assert img[40, 40] == img[40, 30] == red
         assert img[45, 25] == img[40, 20] == red
