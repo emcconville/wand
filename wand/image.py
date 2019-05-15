@@ -3000,7 +3000,7 @@ class BaseImage(Resource):
         """
         assertions.string_in_list(COMPARE_METRICS,
                                   'wand.image.COMPARE_METRICS',
-                                  metric)
+                                  metric=metric)
         if highlight:
             if isinstance(highlight, Color):
                 highlight = highlight.string

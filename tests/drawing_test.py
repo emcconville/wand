@@ -4,7 +4,6 @@ from pytest import fixture, mark, raises, skip
 
 from wand.image import Image
 from wand.color import Color
-from wand.compat import nested, text
 from wand.api import library
 from wand.drawing import Drawing
 from wand.exceptions import PolicyError, WandLibraryVersionError
@@ -250,47 +249,47 @@ def test_clear_drawing_wand(fx_wand):
 
 
 def test_composite(fx_wand):
-    with nested(Color('#fff'),
-                Color('#000')) as (white, black):
-        with Image(width=50, height=50, background=white) as img:
-            fx_wand.fill_color = black
-            fx_wand.stroke_color = black
-            fx_wand.rectangle(25, 25, 49, 49)
-            fx_wand.draw(img)
-            fx_wand.composite("replace", 0, 0, 25, 25, img)
-            fx_wand.draw(img)
-            assert img[45, 45] == img[20, 20] == black
-            assert img[45, 20] == img[20, 45] == white
+    white = Color('WHITE')
+    black = Color('BLACK')
+    with Image(width=50, height=50, background=white) as img:
+        fx_wand.fill_color = black
+        fx_wand.stroke_color = black
+        fx_wand.rectangle(25, 25, 49, 49)
+        fx_wand.draw(img)
+        fx_wand.composite("replace", 0, 0, 25, 25, img)
+        fx_wand.draw(img)
+        assert img[45, 45] == img[20, 20] == black
+        assert img[45, 20] == img[20, 45] == white
 
 
 def test_draw_arc(fx_asset):
-    with nested(Color('#fff'),
-                Color('#f00'),
-                Color('#000')) as (white, red, black):
-        with Image(width=50, height=50, background=white) as img:
-            with Drawing() as draw:
-                draw.fill_color = red
-                draw.stroke_color = black
-                draw.arc((10, 10),   # Start
-                         (40, 40),   # End
-                         (-90, 90))  # Degree
-                draw.draw(img)
-                assert img[20, 25] == white
-                assert img[30, 25] == red
-                assert img[40, 25] == black
+    white = Color('WHITE')
+    red = Color('RED')
+    black = Color('BLACK')
+    with Image(width=50, height=50, background=white) as img:
+        with Drawing() as draw:
+            draw.fill_color = red
+            draw.stroke_color = black
+            draw.arc((10, 10),   # Start
+                     (40, 40),   # End
+                     (-90, 90))  # Degree
+            draw.draw(img)
+            assert img[20, 25] == white
+            assert img[30, 25] == red
+            assert img[40, 25] == black
 
 
 def test_draw_circle(fx_asset):
-    with nested(Color('#fff'),
-                Color('#000')) as (white, black):
-        with Image(width=50, height=50, background=white) as img:
-            with Drawing() as draw:
-                draw.fill_color = black
-                draw.circle((25, 25),  # Origin
-                            (40, 40))  # Perimeter
-                draw.draw(img)
-                assert img[5, 5] == img[45, 45] == white
-                assert img[25, 25] == black
+    white = Color('WHITE')
+    black = Color('BLACK')
+    with Image(width=50, height=50, background=white) as img:
+        with Drawing() as draw:
+            draw.fill_color = black
+            draw.circle((25, 25),  # Origin
+                        (40, 40))  # Perimeter
+            draw.draw(img)
+            assert img[5, 5] == img[45, 45] == white
+            assert img[25, 25] == black
 
 
 def test_draw_comment():
@@ -306,18 +305,18 @@ def test_draw_comment():
             except PolicyError as pe:
                 skip('MVG disabled by security policies. ' + repr(pe))
             else:
-                assert expected == text(blob)
+                assert expected == blob
 
 
 def test_draw_color():
-    with nested(Color('#fff'),
-                Color('#000')) as (white, black):
-        with Image(width=50, height=50, background=white) as img:
-            with Drawing() as draw:
-                draw.fill_color = black
-                draw.color(25, 25, 'floodfill')
-                draw.draw(img)
-                assert img[25, 25] == black
+    white = Color('WHITE')
+    black = Color('BLACK')
+    with Image(width=50, height=50, background=white) as img:
+        with Drawing() as draw:
+            draw.fill_color = black
+            draw.color(25, 25, 'floodfill')
+            draw.draw(img)
+            assert img[25, 25] == black
 
 
 def test_draw_color_user_error():
@@ -410,44 +409,45 @@ def test_draw_alpha_user_error():
 
 
 def test_draw_point():
-    with nested(Color('#fff'), Color('#000')) as (white, black):
-        with Image(width=5, height=5, background=white) as img:
-            with Drawing() as draw:
-                draw.stroke_color = black
-                draw.point(2, 2)
-                draw.draw(img)
-                assert img[2, 2] == black
+    white = Color('WHITE')
+    black = Color('BLACK')
+    with Image(width=5, height=5, background=white) as img:
+        with Drawing() as draw:
+            draw.stroke_color = black
+            draw.point(2, 2)
+            draw.draw(img)
+            assert img[2, 2] == black
 
 
 def test_draw_polygon(fx_wand):
-    with nested(Color('#fff'),
-                Color('#f00'),
-                Color('#00f')) as (white, red, blue):
-        with Image(width=50, height=50, background=white) as img:
-            with Drawing() as draw:
-                draw.fill_color = blue
-                draw.stroke_color = red
-                draw.polygon([(10, 10),
-                              (40, 25),
-                              (10, 40)])
-                draw.draw(img)
-                assert img[10, 25] == red
-                assert img[25, 25] == blue
-                assert img[35, 15] == img[35, 35] == white
+    white = Color('WHITE')
+    red = Color('RED')
+    blue = Color('BLUE')
+    with Image(width=50, height=50, background=white) as img:
+        with Drawing() as draw:
+            draw.fill_color = blue
+            draw.stroke_color = red
+            draw.polygon([(10, 10),
+                          (40, 25),
+                          (10, 40)])
+            draw.draw(img)
+            assert img[10, 25] == red
+            assert img[25, 25] == blue
+            assert img[35, 15] == img[35, 35] == white
 
 
 def test_draw_polyline(fx_wand):
-    with nested(Color('#fff'),
-                Color('#f00'),
-                Color('#00f')) as (white, red, blue):
-        with Image(width=50, height=50, background=white) as img:
-            with Drawing() as draw:
-                draw.fill_color = blue
-                draw.stroke_color = red
-                draw.polyline([(10, 10), (40, 25), (10, 40)])
-                draw.draw(img)
-                assert img[10, 25] == img[25, 25] == blue
-                assert img[35, 15] == img[35, 35] == white
+    white = Color('WHITE')
+    red = Color('RED')
+    blue = Color('BLUE')
+    with Image(width=50, height=50, background=white) as img:
+        with Drawing() as draw:
+            draw.fill_color = blue
+            draw.stroke_color = red
+            draw.polyline([(10, 10), (40, 25), (10, 40)])
+            draw.draw(img)
+            assert img[10, 25] == img[25, 25] == blue
+            assert img[35, 15] == img[35, 35] == white
 
 
 def test_draw_push_pop():
@@ -461,43 +461,43 @@ def test_draw_push_pop():
 
 
 def test_draw_bezier(fx_wand):
-    with nested(Color('#fff'),
-                Color('#f00'),
-                Color('#00f')) as (white, red, blue):
-        with Image(width=50, height=50, background=white) as img:
-            with Drawing() as draw:
-                draw.fill_color = blue
-                draw.stroke_color = red
-                draw.bezier([(10, 10),
-                             (10, 40),
-                             (40, 10),
-                             (40, 40)])
-                draw.draw(img)
-                assert img[10, 10] == img[25, 25] == img[40, 40] == red
-                assert img[34, 32] == img[15, 18] == blue
-                assert img[34, 38] == img[15, 12] == white
+    white = Color('WHITE')
+    red = Color('RED')
+    blue = Color('BLUE')
+    with Image(width=50, height=50, background=white) as img:
+        with Drawing() as draw:
+            draw.fill_color = blue
+            draw.stroke_color = red
+            draw.bezier([(10, 10),
+                         (10, 40),
+                         (40, 10),
+                         (40, 40)])
+            draw.draw(img)
+            assert img[10, 10] == img[25, 25] == img[40, 40] == red
+            assert img[34, 32] == img[15, 18] == blue
+            assert img[34, 38] == img[15, 12] == white
 
 
 def test_path_curve():
-    with nested(Color('#fff'),
-                Color('#f00'),
-                Color('#00f')) as (white, red, blue):
-        with Image(width=50, height=50, background=white) as img:
-            with Drawing() as draw:
-                draw.fill_color = blue
-                draw.stroke_color = red
-                draw = draw.path_start() \
-                           .path_move(to=(0, 25), relative=True) \
-                           .path_curve(to=(25, 25),
-                                       controls=((0, 0), (25, 0))) \
-                           .path_curve(to=(25, 0),
-                                       controls=((0, 25), (25, 25)),
-                                       relative=True) \
-                           .path_finish()
-                draw.draw(img)
-                assert img[25, 25] == red
-                assert img[35, 35] == img[35, 35] == blue
-                assert img[35, 15] == img[15, 35] == white
+    white = Color('WHITE')
+    red = Color('RED')
+    blue = Color('BLUE')
+    with Image(width=50, height=50, background=white) as img:
+        with Drawing() as draw:
+            draw.fill_color = blue
+            draw.stroke_color = red
+            draw.path_start()
+            draw.path_move(to=(0, 25), relative=True)
+            draw.path_curve(to=(25, 25),
+                            controls=((0, 0), (25, 0)))
+            draw.path_curve(to=(25, 0),
+                            controls=((0, 25), (25, 25)),
+                            relative=True)
+            draw.path_finish()
+            draw.draw(img)
+            assert img[25, 25] == red
+            assert img[35, 35] == img[35, 35] == blue
+            assert img[35, 15] == img[15, 35] == white
 
 
 def test_path_curve_user_error():
@@ -509,49 +509,49 @@ def test_path_curve_user_error():
 
 
 def test_path_curve_to_quadratic_bezier():
-    with nested(Color('#fff'),
-                Color('#f00'),
-                Color('#00f')) as (white, red, blue):
-        with Image(width=50, height=50, background=white) as img:
-            with Drawing() as draw:
-                draw.fill_color = blue
-                draw.stroke_color = red
-                draw = draw.path_start() \
-                           .path_move(to=(0, 25), relative=True) \
-                           .path_curve_to_quadratic_bezier(to=(50, 25),
-                                                           control=(25, 50)) \
-                           .path_curve_to_quadratic_bezier(to=(-20, -20),
-                                                           control=(-25, 0),
-                                                           relative=True) \
-                           .path_finish()
-                draw.draw(img)
-                assert img[30, 5] == red
+    white = Color('WHITE')
+    red = Color('RED')
+    blue = Color('BLUE')
+    with Image(width=50, height=50, background=white) as img:
+        with Drawing() as draw:
+            draw.fill_color = blue
+            draw.stroke_color = red
+            draw.path_start()
+            draw.path_move(to=(0, 25), relative=True)
+            draw.path_curve_to_quadratic_bezier(to=(50, 25),
+                                                control=(25, 50))
+            draw.path_curve_to_quadratic_bezier(to=(-20, -20),
+                                                control=(-25, 0),
+                                                relative=True)
+            draw.path_finish()
+            draw.draw(img)
+            assert img[30, 5] == red
 
 
 def test_path_curve_to_quadratic_bezier_smooth():
-    with nested(Color('#fff'),
-                Color('#f00'),
-                Color('#00f')) as (white, red, blue):
-        with Image(width=50, height=50, background=white) as img:
-            with Drawing() as draw:
-                draw.fill_color = blue
-                draw.stroke_color = red
-                draw = draw.path_start() \
-                           .path_curve_to_quadratic_bezier(to=(25, 25),
-                                                           control=(25, 25)) \
-                           .path_curve_to_quadratic_bezier(to=(10, -10),
-                                                           smooth=True,
-                                                           relative=True) \
-                           .path_curve_to_quadratic_bezier(to=(35, 35),
-                                                           smooth=True,
-                                                           relative=False) \
-                           .path_curve_to_quadratic_bezier(to=(-10, -10),
-                                                           smooth=True,
-                                                           relative=True) \
-                           .path_finish()
-                draw.draw(img)
-                assert img[25, 25] == red
-                assert img[30, 30] == blue
+    white = Color('WHITE')
+    red = Color('RED')
+    blue = Color('BLUE')
+    with Image(width=50, height=50, background=white) as img:
+        with Drawing() as draw:
+            draw.fill_color = blue
+            draw.stroke_color = red
+            draw.path_start()
+            draw.path_curve_to_quadratic_bezier(to=(25, 25),
+                                                control=(25, 25))
+            draw.path_curve_to_quadratic_bezier(to=(10, -10),
+                                                smooth=True,
+                                                relative=True)
+            draw.path_curve_to_quadratic_bezier(to=(35, 35),
+                                                smooth=True,
+                                                relative=False)
+            draw.path_curve_to_quadratic_bezier(to=(-10, -10),
+                                                smooth=True,
+                                                relative=True)
+            draw.path_finish()
+            draw.draw(img)
+            assert img[25, 25] == red
+            assert img[30, 30] == blue
 
 
 def test_path_curve_quadratic_bezier_user_error():
@@ -563,23 +563,23 @@ def test_path_curve_quadratic_bezier_user_error():
 
 
 def test_draw_path_elliptic_arc():
-    with nested(Color('#fff'),
-                Color('#f00'),
-                Color('#00f')) as (white, red, blue):
-        with Image(width=50, height=50, background=white) as img:
-            with Drawing() as draw:
-                draw.fill_color = blue
-                draw.stroke_color = red
-                draw = draw.path_start() \
-                           .path_move(to=(25, 0)) \
-                           .path_elliptic_arc(to=(25, 50), radius=(15, 25)) \
-                           .path_elliptic_arc(to=(0, -15), radius=(5, 5),
-                                              clockwise=False, relative=True) \
-                           .path_close() \
-                           .path_finish()
-                draw.draw(img)
-                assert img[25, 35] == img[25, 20] == red
-                assert img[15, 25] == img[30, 45] == blue
+    white = Color('WHITE')
+    red = Color('RED')
+    blue = Color('BLUE')
+    with Image(width=50, height=50, background=white) as img:
+        with Drawing() as draw:
+            draw.fill_color = blue
+            draw.stroke_color = red
+            draw.path_start()
+            draw.path_move(to=(25, 0))
+            draw.path_elliptic_arc(to=(25, 50), radius=(15, 25))
+            draw.path_elliptic_arc(to=(0, -15), radius=(5, 5),
+                                   clockwise=False, relative=True)
+            draw.path_close()
+            draw.path_finish()
+            draw.draw(img)
+            assert img[25, 35] == img[25, 20] == red
+            assert img[15, 25] == img[30, 45] == blue
 
 
 def test_draw_path_elliptic_arc_user_error():
@@ -638,20 +638,20 @@ def test_draw_move_user_error():
     [('bottom', 40), ('height', 30)]
 ))
 def test_draw_rectangle(kwargs, display, fx_wand):
-    with nested(Color('#fff'),
-                Color('#333'),
-                Color('#ccc')) as (white, black, gray):
-        with Image(width=50, height=50, background=white) as img:
-            fx_wand.stroke_width = 2
-            fx_wand.fill_color = black
-            fx_wand.stroke_color = gray
-            fx_wand.rectangle(left=10, top=10, **dict(kwargs))
-            fx_wand.draw(img)
-            display(img)
-            assert (img[7, 7] == img[7, 42] == img[42, 7] ==
-                    img[42, 42] == img[0, 0] == img[49, 49] == white)
-            assert (img[12, 12] == img[12, 38] == img[38, 12] ==
-                    img[38, 38] == black)
+    white = Color('WHITE')
+    black = Color('BLACK')
+    gray = Color('#ccc')
+    with Image(width=50, height=50, background=white) as img:
+        fx_wand.stroke_width = 2
+        fx_wand.fill_color = black
+        fx_wand.stroke_color = gray
+        fx_wand.rectangle(left=10, top=10, **dict(kwargs))
+        fx_wand.draw(img)
+        display(img)
+        assert (img[7, 7] == img[7, 42] == img[42, 7] ==
+                img[42, 42] == img[0, 0] == img[49, 49] == white)
+        assert (img[12, 12] == img[12, 38] == img[38, 12] ==
+                img[38, 38] == black)
 
 
 @mark.parametrize('kwargs', itertools.product(
@@ -661,122 +661,122 @@ def test_draw_rectangle(kwargs, display, fx_wand):
     [('radius', 10)]
 ))
 def test_draw_rectangle_with_radius(kwargs, display, fx_wand):
-    with nested(Color('#fff'),
-                Color('#333'),
-                Color('#ccc')) as (white, black, gray):
-        with Image(width=50, height=50, background=white) as img:
-            fx_wand.stroke_width = 2
-            fx_wand.fill_color = black
-            fx_wand.stroke_color = gray
-            fx_wand.rectangle(left=10, top=10,
-                              width=30, height=30, **dict(kwargs))
-            fx_wand.draw(img)
-            display(img)
-            assert img[10, 10] == img[40, 40] == white
-            assert img[26, 12] == img[26, 36] == black
+    white = Color('WHITE')
+    black = Color('BLACK')
+    gray = Color('#ccc')
+    with Image(width=50, height=50, background=white) as img:
+        fx_wand.stroke_width = 2
+        fx_wand.fill_color = black
+        fx_wand.stroke_color = gray
+        fx_wand.rectangle(left=10, top=10,
+                          width=30, height=30, **dict(kwargs))
+        fx_wand.draw(img)
+        display(img)
+        assert img[10, 10] == img[40, 40] == white
+        assert img[26, 12] == img[26, 36] == black
 
 
 def test_draw_rotate():
-    with nested(Color('#fff'),
-                Color('#000')) as (white, black):
-        with Image(width=50, height=50, background=white) as img:
-            with Drawing() as draw:
-                draw.stroke_color = black
-                draw.rotate(45)
-                draw.line((3, 3), (35, 35))
-                draw.draw(img)
-                assert img[0, 49] == black
+    white = Color('WHITE')
+    black = Color('BLACK')
+    with Image(width=50, height=50, background=white) as img:
+        with Drawing() as draw:
+            draw.stroke_color = black
+            draw.rotate(45)
+            draw.line((3, 3), (35, 35))
+            draw.draw(img)
+            assert img[0, 49] == black
 
 
 def test_draw_scale(display, fx_wand):
-    with nested(Color("#fff"),
-                Color("#000")) as (white, black):
-        with Image(width=50, height=50, background=white) as img:
-            fx_wand.fill_color = black
-            fx_wand.scale(x=2.0, y=0.5)
-            fx_wand.rectangle(top=5, left=5, width=20, height=20)
-            fx_wand.draw(img)
-            display(img)
-            # if width was scaled up by 200%
-            assert img[45, 10] == black
-            # if height was scaled down by 50%
-            assert img[20, 20] == white
+    white = Color('WHITE')
+    black = Color('BLACK')
+    with Image(width=50, height=50, background=white) as img:
+        fx_wand.fill_color = black
+        fx_wand.scale(x=2.0, y=0.5)
+        fx_wand.rectangle(top=5, left=5, width=20, height=20)
+        fx_wand.draw(img)
+        display(img)
+        # if width was scaled up by 200%
+        assert img[45, 10] == black
+        # if height was scaled down by 50%
+        assert img[20, 20] == white
 
 
 def test_set_fill_pattern_url(display, fx_wand):
-    with nested(Color("#fff"),
-                Color("#0f0"),
-                Color("#000")) as (white, green, black):
-        with Image(width=50, height=50, background=white) as img:
-            fx_wand.push_pattern('green_circle', 0, 0, 10, 10)
-            fx_wand.fill_color = green
-            fx_wand.stroke_color = black
-            fx_wand.circle(origin=(5, 5), perimeter=(5, 0))
-            fx_wand.pop_pattern()
-            fx_wand.set_fill_pattern_url('#green_circle')
-            fx_wand.rectangle(top=5, left=5, width=40, height=40)
-            fx_wand.draw(img)
-            display(img)
-            assert img[17, 17] == green
+    white = Color('#fff')
+    green = Color('#0f0')
+    black = Color('#000')
+    with Image(width=50, height=50, background=white) as img:
+        fx_wand.push_pattern('green_circle', 0, 0, 10, 10)
+        fx_wand.fill_color = green
+        fx_wand.stroke_color = black
+        fx_wand.circle(origin=(5, 5), perimeter=(5, 0))
+        fx_wand.pop_pattern()
+        fx_wand.set_fill_pattern_url('#green_circle')
+        fx_wand.rectangle(top=5, left=5, width=40, height=40)
+        fx_wand.draw(img)
+        display(img)
+        assert img[17, 17] == green
 
 
 def test_set_stroke_pattern_url(display, fx_wand):
-    with nested(Color("#fff"),
-                Color("#0f0"),
-                Color("#000")) as (white, green, black):
-        with Image(width=50, height=50, background=white) as img:
-            fx_wand.push_pattern('green_ring', 0, 0, 6, 6)
-            fx_wand.fill_color = green
-            fx_wand.stroke_color = white
-            fx_wand.circle(origin=(3, 3), perimeter=(3, 0))
-            fx_wand.pop_pattern()
-            fx_wand.set_stroke_pattern_url('#green_ring')
-            fx_wand.stroke_width = 6
-            fx_wand.rectangle(top=5, left=5, width=40, height=40)
-            fx_wand.draw(img)
-            display(img)
-            assert img[45, 45] == green
+    white = Color('#fff')
+    green = Color('#0f0')
+    with Image(width=50, height=50, background=white) as img:
+        fx_wand.push_pattern('green_ring', 0, 0, 6, 6)
+        fx_wand.fill_color = green
+        fx_wand.stroke_color = white
+        fx_wand.circle(origin=(3, 3), perimeter=(3, 0))
+        fx_wand.pop_pattern()
+        fx_wand.set_stroke_pattern_url('#green_ring')
+        fx_wand.stroke_width = 6
+        fx_wand.rectangle(top=5, left=5, width=40, height=40)
+        fx_wand.draw(img)
+        display(img)
+        assert img[45, 45] == green
 
 
 def test_draw_skew():
-    with nested(Color('#fff'),
-                Color('#000')) as (white, black):
-        with Image(width=50, height=50, background=white) as img:
-            with Drawing() as draw:
-                draw.stroke_color = black
-                draw.skew(x=11, y=-24)
-                draw.line((3, 3), (35, 35))
-                draw.draw(img)
-                assert img[43, 42] == black
+    white = Color('#fff')
+    black = Color('#000')
+    with Image(width=50, height=50, background=white) as img:
+        with Drawing() as draw:
+            draw.stroke_color = black
+            draw.skew(x=11, y=-24)
+            draw.line((3, 3), (35, 35))
+            draw.draw(img)
+            assert img[43, 42] == black
 
 
 def test_draw_translate():
-    with nested(Color('#fff'),
-                Color('#000')) as (white, black):
-        with Image(width=50, height=50, background=white) as img:
-            with Drawing() as draw:
-                draw.stroke_color = black
-                draw.translate(x=5, y=5)
-                draw.line((3, 3), (35, 35))
-                draw.draw(img)
-                assert img[40, 40] == black
+    white = Color('#fff')
+    black = Color('#000')
+    with Image(width=50, height=50, background=white) as img:
+        with Drawing() as draw:
+            draw.stroke_color = black
+            draw.translate(x=5, y=5)
+            draw.line((3, 3), (35, 35))
+            draw.draw(img)
+            assert img[40, 40] == black
 
 
 def test_draw_text(fx_asset):
-    with Color('#fff') as white:
-        with Image(width=100, height=100, background=white) as img:
-            with Drawing() as draw:
-                draw.font = str(fx_asset.join('League_Gothic.otf'))
-                draw.font_size = 25
-                with Color('#000') as bk:
-                    draw.fill_color = bk
-                draw.gravity = 'west'
-                draw.text(0, 0, 'Hello Wand')
-                draw.draw(img)
-            assert (img[0, 0] == img[0, -1] == img[-1, 0] == img[-1, -1] ==
-                    img[77, 39] == img[77, 57] == white)
-            assert (img[2, 40] == img[2, 57] == img[75, 40] == img[75, 57] ==
-                    Color('black'))
+    white = Color('#fff')
+    black = Color('#000')
+    with Image(width=100, height=100, background=white) as img:
+        with Drawing() as draw:
+            draw.font = str(fx_asset.join('League_Gothic.otf'))
+            draw.font_size = 25
+            with Color('#000') as bk:
+                draw.fill_color = bk
+            draw.gravity = 'west'
+            draw.text(0, 0, 'Hello Wand')
+            draw.draw(img)
+        assert (img[0, 0] == img[0, -1] == img[-1, 0] == img[-1, -1] ==
+                img[77, 39] == img[77, 57] == white)
+        assert (img[2, 40] == img[2, 57] == img[75, 40] == img[75, 57] ==
+                black)
 
 
 def test_get_font_metrics_test(fx_asset):
@@ -941,23 +941,23 @@ def test_draw_affine(display, fx_wand):
 @mark.skipif(MAGICK_VERSION_NUMBER >= 0x700,
              reason="Needs to be rewritten/simplified.")
 def test_draw_clip_path(display, fx_wand):
-    with nested(Color('skyblue'),
-                Color('orange')) as (skyblue, orange):
-        with Image(width=100, height=100, background=skyblue) as img:
-            fx_wand.push_defs()
-            fx_wand.push_clip_path("eyes_only")
-            fx_wand.push()
-            fx_wand.rectangle(top=0, left=0, width=50, height=50)
-            fx_wand.pop()
-            fx_wand.pop_clip_path()
-            fx_wand.pop_defs()
+    skyblue = Color('skyblue')
+    orange = Color('orange')
+    with Image(width=100, height=100, background=skyblue) as img:
+        fx_wand.push_defs()
+        fx_wand.push_clip_path("eyes_only")
+        fx_wand.push()
+        fx_wand.rectangle(top=0, left=0, width=50, height=50)
+        fx_wand.pop()
+        fx_wand.pop_clip_path()
+        fx_wand.pop_defs()
 
-            fx_wand.clip_path = "eyes_only"
-            fx_wand.clip_rule = "nonzero"
-            fx_wand.clip_path_units = "object_bounding_box"
-            fx_wand.fill_color = orange
-            fx_wand.rectangle(top=5, left=5, width=90, height=90)
-            fx_wand.draw(img)
-            display(img)
-            assert img[25, 25] == orange
-            assert img[75, 75] == skyblue
+        fx_wand.clip_path = "eyes_only"
+        fx_wand.clip_rule = "nonzero"
+        fx_wand.clip_path_units = "object_bounding_box"
+        fx_wand.fill_color = orange
+        fx_wand.rectangle(top=5, left=5, width=90, height=90)
+        fx_wand.draw(img)
+        display(img)
+        assert img[25, 25] == orange
+        assert img[75, 75] == skyblue
