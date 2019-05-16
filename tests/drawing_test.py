@@ -600,8 +600,7 @@ def test_draw_path_line():
             draw.stroke_color = red
             draw.stroke_width = 10
             draw.path_start()
-            draw.path_move(to=(5, 5))
-            draw.path_move(to=(5, 5), relative=True)
+            draw.path_move(to=(10, 10))
             draw.path_line(to=(40, 40))
             draw.path_line(to=(0, -10), relative=True)
             draw.path_horizontal_line(x=45)
