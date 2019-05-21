@@ -18,6 +18,8 @@ Unreleased.
  - Respect ``background`` paramater in :meth:`Image.__init__() <wand.image.Image.__init__>` constructor. [:issue:`410`]
  - Fixed :meth:`Drawing.get_font_metrics() <wand.drawing.Drawing.get_font_metrics>` not raising internal ImageMagick exception on rendering error. [:issue:`411`]
  - Fixed deleting image artifact value.
+ - Fixed offset memory calculation in :meth:`Image.export_pixels() <wand.image.BaseImage.export_pixels>`
+   & :meth:`Image.import_pixels() <wand.image.BaseImage.import_pixels>` methods. [:issue:`413`]
  - Added :meth:`Image.auto_gamma() <wand.image.BaseImage.auto_gamma>` method.
  - Added :meth:`Image.auto_level() <wand.image.BaseImage.auto_level>` method.
  - Added :attr:`Image.border_color <wand.image.BaseImage.border_color>` property.

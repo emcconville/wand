@@ -628,6 +628,20 @@ def test_export_pixels(fx_asset):
             img.export_pixels(storage='NaN')
 
 
+def test_export_pixels_issue_413():
+    x = 10
+    y = 10
+    width = 20
+    height = 10
+    with Image(width=50, height=50, background=Color('GREEN')) as img:
+        export = img.export_pixels(x=x, y=y,
+                                   width=width, height=height)
+        assert export
+        export = img.export_pixels(x=x, y=y,
+                                   width=width + x, height=height + y)
+        assert export
+
+
 def test_extent(fx_asset):
     with Image(filename=str(fx_asset.join('croptest.png'))) as img:
         with img.clone() as extended:
@@ -836,6 +850,26 @@ def test_import_pixels(fx_asset):
             dst.import_pixels(data=0xDEADBEEF)
         with raises(ValueError):
             dst.import_pixels(data=[0x00, 0xFF])
+
+
+def test_import_pixels_issue_413():
+    x = 10
+    y = 10
+    width = 20
+    height = 10
+    with Image(width=50, height=50, background=Color('GREEN')) as img:
+        blank = [0xFF] * 600
+        img.import_pixels(x=x, y=y,
+                          width=width, height=height,
+                          channel_map='RGB',
+                          data=blank)
+        assert img
+        blank = [0xFF] * 1800
+        img.import_pixels(x=x, y=y,
+                          width=width + x, height=height + y,
+                          channel_map='RGB',
+                          data=blank)
+        assert img
 
 
 def test_kurtosis_channel():

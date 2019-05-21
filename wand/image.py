@@ -3658,7 +3658,7 @@ class BaseImage(Resource):
         ]
         s_index = STORAGE_TYPES.index(storage)
         c_storage = c_storage_types[s_index]
-        total_pixels = (width - x) * (height - y)
+        total_pixels = width * height
         c_buffer_size = total_pixels * len(channel_map)
         c_buffer = (c_buffer_size * c_storage)()
         r = library.MagickExportImagePixels(self.wand,
@@ -4052,7 +4052,7 @@ class BaseImage(Resource):
             raise TypeError('data must list of values, not' +
                             repr(data))
         # Ensure enough data was given.
-        expected_len = (width - x) * (height - y) * len(channel_map)
+        expected_len = width * height * len(channel_map)
         given_len = len(data)
         if expected_len != given_len:
             msg = 'data length should be {0}, not {1}.'.format(
