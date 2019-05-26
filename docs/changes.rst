@@ -7,12 +7,20 @@ Wand Changelog
 ~~~~~~~~~~
 
 
+.. _changelog-0.5.5:
+
+Version 0.5.5
+-------------
+
+Unreleased.
+
+
 .. _changelog-0.5.4:
 
 Version 0.5.4
 -------------
 
-Unreleased.
+Released on May 25th, 2019.
 
  - Rewrote :attr:`~wand.api.libc` library loader. [:issue:`409`]
  - Respect ``background`` paramater in :meth:`Image.__init__() <wand.image.Image.__init__>` constructor. [:issue:`410`]
