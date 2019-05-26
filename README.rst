@@ -83,6 +83,5 @@ Continuous Integration (Travis CI)
 Code Coverage
    https://coveralls.io/r/emcconville/wand
 
-   .. image:: https://img.shields.io/coveralls/emcconville/wand.svg?style=flat
-      :alt: Coverage Status
-      :target: https://coveralls.io/r/emcconville/wand
+   .. image:: https://coveralls.io/repos/github/emcconville/wand/badge.svg?branch=master
+      :target: https://coveralls.io/github/emcconville/wand?branch=master
