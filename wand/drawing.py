@@ -1506,7 +1506,7 @@ class Drawing(Resource):
         return self
 
     def polygon(self, points=None):
-        """Draws a polygon using the current :attr:`stoke_color`,
+        """Draws a polygon using the current :attr:`stroke_color`,
         :attr:`stroke_width`, and :attr:`fill_color`, using the specified
         array of coordinates.
 
@@ -1529,7 +1529,7 @@ class Drawing(Resource):
                             ctypes.cast(points_p, ctypes.POINTER(PointInfo)))
 
     def polyline(self, points=None):
-        """Draws a polyline using the current :attr:`stoke_color`,
+        """Draws a polyline using the current :attr:`stroke_color`,
         :attr:`stroke_width`, and :attr:`fill_color`, using the specified
         array of coordinates.
 
