@@ -14,6 +14,8 @@ Version 0.5.5
 
 Unreleased.
 
+ - Rewrote :meth:`Image.contrast_stretch() <wand.image.BaseImage.contrast_stretch>`
+   method to follow modern CLI behavior.
 
 .. _changelog-0.5.4:
 
@@ -23,7 +25,7 @@ Version 0.5.4
 Released on May 25th, 2019.
 
  - Rewrote :attr:`~wand.api.libc` library loader. [:issue:`409`]
- - Respect ``background`` paramater in :meth:`Image.__init__() <wand.image.Image.__init__>` constructor. [:issue:`410`]
+ - Respect ``background`` parameter in :meth:`Image.__init__() <wand.image.Image.__init__>` constructor. [:issue:`410`]
  - Fixed :meth:`Drawing.get_font_metrics() <wand.drawing.Drawing.get_font_metrics>` not raising internal ImageMagick exception on rendering error. [:issue:`411`]
  - Fixed deleting image artifact value.
  - Fixed offset memory calculation in :meth:`Image.export_pixels() <wand.image.BaseImage.export_pixels>`

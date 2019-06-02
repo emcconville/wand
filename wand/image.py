@@ -3183,15 +3183,11 @@ class BaseImage(Resource):
         """Enhance contrast of image by adjusting the span of the available
         colors.
 
-        If only ``black_point`` is given, match the CLI behavior by assuming
-        the ``white_point`` has the same delta percentage off the top
-        e.g. contrast stretch of 15% is calculated as ``black_point`` = 0.15
-        and ``white_point`` = 0.85.
-
         :param black_point: black point between 0.0 and 1.0.  default is 0.0
         :type black_point: :class:`numbers.Real`
         :param white_point: white point between 0.0 and 1.0.
-                            default value of 1.0 minus ``black_point``
+                            Defaults to the same value given to the
+                            ``black_point`` argument.
         :type white_point: :class:`numbers.Real`
         :param channel: optional color channel to apply contrast stretch
         :type channel: :const:`CHANNELS`
@@ -3199,16 +3195,22 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.4.1
 
+        .. versionchanged:: 0.5.5
+           The ``white_point`` argument will now default to the value given
+           by the ``black_point`` argument.
         """
         assertions.assert_real(black_point=black_point)
         # If only black-point is given, match CLI behavior by
         # calculating white point
         if white_point is None:
-            white_point = 1.0 - black_point
+            white_point = black_point
         assertions.assert_real(white_point=white_point)
         contrast_range = float(self.width * self.height)
-        black_point *= contrast_range
-        white_point *= contrast_range
+        if 0.0 < black_point <= 1.0:
+            black_point *= contrast_range
+        if 0.0 < white_point <= 1.0:
+            white_point *= contrast_range
+        white_point = contrast_range - white_point
         if channel in CHANNELS:
             ch_const = CHANNELS[channel]
             if library.MagickContrastStretchImageChannel:
