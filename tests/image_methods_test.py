@@ -1638,7 +1638,7 @@ def test_similarity():
         with img.clone() as sub_img:
             location, diff = img.similarity(sub_img)
             assert location['top'] == 0 and location['left'] == 0
-            assert diff == 0.0
+            assert diff < 0.001
 
 
 def test_sketch():
