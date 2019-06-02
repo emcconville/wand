@@ -47,7 +47,7 @@ if os.environ.get('READTHEDOCS', 0):
     mockapi.libc = Mock('wand.api.libc')
     sys.modules['wand'].api = sys.modules['wand.api'] = mockapi
     sys.modules['wand.version'].MAGICK_VERSION = None
-    sys.modules['wand.version'].MAGICK_VERSION_NUMBER = None
+    sys.modules['wand.version'].MAGICK_VERSION_NUMBER = 0x700  # Not break rtd
     sys.modules['wand.version'].MAGICK_VERSION_INFO = None
     sys.modules['wand.version'].MAGICK_RELEASE_DATE_STRING = None
     sys.modules['wand.version'].MAGICK_RELEASE_DATE = None
