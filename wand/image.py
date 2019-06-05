@@ -2461,7 +2461,7 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def adaptive_blur(self, radius=0.0, sigma=0.0):
+    def adaptive_blur(self, radius=0.0, sigma=0.0, channel=None):
         """Adaptively blurs the image by decreasing Gaussian as the operator
         approaches detected edges.
 
@@ -2469,11 +2469,31 @@ class BaseImage(Resource):
         :type radius: :class:`numbers.Real`
         :param sigma: Standard deviation of the gaussian filter.
         :type sigma: :class:`numbers.Real`
+        :param channel: Apply the blur effect on a specific channel.
+                        See :const:`wand.image.CHANNELS`.
+        :type channel: :class:`basestring`
 
         .. versionadded:: 0.5.3
+
+        .. versionchanged:: 0.5.5
+           Added optional ``channel`` argument
         """
         assertions.assert_real(radius=radius, sigma=sigma)
-        return library.MagickAdaptiveBlurImage(self.wand, radius, sigma)
+        if channel is None:
+            r = library.MagickAdaptiveBlurImage(self.wand, radius, sigma)
+        else:
+            channel_ch = CHANNELS[channel]
+            if MAGICK_VERSION_NUMBER < 0x700:
+                r = library.MagickAdaptiveBlurImageChannel(self.wand,
+                                                           channel_ch,
+                                                           radius,
+                                                           sigma)
+            else:  # pragma: no cover
+                mask = library.MagickSetImageChannelMask(self.wand,
+                                                         channel_ch)
+                r = library.MagickAdaptiveBlurImage(self.wand, radius, sigma)
+                library.MagickSetImageChannelMask(self.wand, mask)
+        return r
 
     @manipulative
     @trap_exception
@@ -2496,7 +2516,7 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def adaptive_sharpen(self, radius=0.0, sigma=0.0):
+    def adaptive_sharpen(self, radius=0.0, sigma=0.0, channel=None):
         """Adaptively sharpens the image by sharpening more intensely near
         image edges and less intensely far from edges.
 
@@ -2504,11 +2524,33 @@ class BaseImage(Resource):
         :type radius: :class:`numbers.Real`
         :param sigma: Standard deviation of the gaussian filter.
         :type sigma: :class:`numbers.Real`
+        :param channel: Apply the sharpen effect on a specific channel.
+                        See :const:`wand.image.CHANNELS`.
+        :type channel: :class:`basestring`
 
         .. versionadded:: 0.5.3
+
+        .. versionchanged:: 0.5.5
+           Added optional ``channel`` argument
         """
         assertions.assert_real(radius=radius, sigma=sigma)
-        return library.MagickAdaptiveSharpenImage(self.wand, radius, sigma)
+        if channel is None:
+            r = library.MagickAdaptiveSharpenImage(self.wand, radius, sigma)
+        else:
+            channel_ch = CHANNELS[channel]
+            if MAGICK_VERSION_NUMBER < 0x700:
+                r = library.MagickAdaptiveSharpenImageChannel(self.wand,
+                                                              channel_ch,
+                                                              radius,
+                                                              sigma)
+            else:  # pragma: no cover
+                mask = library.MagickSetImageChannelMask(self.wand,
+                                                         channel_ch)
+                r = library.MagickAdaptiveSharpenImage(self.wand,
+                                                       radius,
+                                                       sigma)
+                library.MagickSetImageChannelMask(self.wand, mask)
+        return r
 
     @manipulative
     def adaptive_threshold(self, width, height, offset=0.0):
@@ -2602,7 +2644,7 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def blur(self, radius, sigma):
+    def blur(self, radius, sigma, channel=None):
         """Blurs the image.  We convolve the image with a gaussian operator
         of the given ``radius`` and standard deviation (``sigma``).
         For reasonable results, the ``radius`` should be larger
@@ -2614,12 +2656,30 @@ class BaseImage(Resource):
         :type radius: :class:`numbers.Real`
         :param sigma: the standard deviation of the, in pixels
         :type sigma: :class:`numbers.Real`
+        :param channel: Optional color channel to apply blur. See
+                        :const:`wand.image.CHANNELS`.
+        :type channel: :class:`basestring`
 
         .. versionadded:: 0.4.5
 
+        .. versionchanged:: 0.5.5
+           Added optional ``channel`` argument.
         """
         assertions.assert_real(radius=radius, sigma=sigma)
-        return library.MagickBlurImage(self.wand, radius, sigma)
+        if channel is None:
+            r = library.MagickBlurImage(self.wand, radius, sigma)
+        else:
+            channel_ch = CHANNELS[channel]
+            if MAGICK_VERSION_NUMBER < 0x700:
+                r = library.MagickBlurImageChannel(self.wand,
+                                                   channel_ch,
+                                                   radius,
+                                                   sigma)
+            else:  # pragma: no cover
+                mask = library.MagickSetImageChannelMask(self.wand, channel_ch)
+                r = library.MagickBlurImage(self.wand, radius, sigma)
+                library.MagickSetImageChannelMask(self.wand, mask)
+        return r
 
     @trap_exception
     def border(self, color, width, height, compose="copy"):
@@ -2657,7 +2717,7 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def brightness_contrast(self, brightness=0.0, contrast=0.0):
+    def brightness_contrast(self, brightness=0.0, contrast=0.0, channel=None):
         """Converts ``brightness`` & ``contrast`` paramaters into a slope &
         intercept, and applies a polynomial function.
 
@@ -2667,13 +2727,33 @@ class BaseImage(Resource):
         :param contrast: between ``-100.0`` and ``100.0``. Default is ``0.0``
                          for unchanged.
         :type contrast: :class:`numbers.Real`
+        :param channel: Isolate a single color channel to apply contrast.
+                        See :const:`wand.image.CHANNELS`.
 
         .. versionadded:: 0.5.4
+
+        .. versionchanged:: 0.5.5
+           Optional ``channel`` argument added.
         """
         assertions.assert_real(brightness=brightness, contrast=contrast)
-        return library.MagickBrightnessContrastImage(self.wand,
-                                                     brightness,
-                                                     contrast)
+        if channel is None:
+            r = library.MagickBrightnessContrastImage(self.wand,
+                                                      brightness,
+                                                      contrast)
+        else:
+            channel_ch = CHANNELS[channel]
+            if MAGICK_VERSION_NUMBER < 0x700:
+                r = library.MagickBrightnessContrastImageChannel(self.wand,
+                                                                 channel_ch,
+                                                                 brightness,
+                                                                 contrast)
+            else:  # pragma: no cover
+                mask = library.MagickSetImageChannelMask(self.wand, channel_ch)
+                r = library.MagickBrightnessContrastImage(self.wand,
+                                                          brightness,
+                                                          contrast)
+                library.MagickSetImageChannelMask(self.wand, mask)
+        return r
 
     @manipulative
     def concat(self, stacked=False):
@@ -2763,14 +2843,30 @@ class BaseImage(Resource):
         return library.MagickCharcoalImage(self.wand, radius, sigma)
 
     @trap_exception
-    def clamp(self):
+    def clamp(self, channel=None):
         """Restrict color values between 0 and quantum range. This is useful
         when applying arithmetic operations that could result in color values
         over/underflowing.
 
+        :param channel: Optional color channel.
+        :type channel: :class:`basestring`
+
         .. versionadded:: 0.5.0
+
+        .. versionchanged:: 0.5.5
+           Added ``channel`` argument.
         """
-        return library.MagickClampImage(self.wand)
+        if channel is None:
+            r = library.MagickClampImage(self.wand)
+        else:
+            channel_ch = CHANNELS[channel]
+            if MAGICK_VERSION_NUMBER < 0x700:
+                r = library.MagickClampImageChannel(self.wand, channel_ch)
+            else:  # pragma: no cover
+                mask = library.MagickSetImageChannelMask(self.wand, channel_ch)
+                r = library.MagickClampImage(self.wand)
+                library.MagickSetImageChannelMask(self.wand, mask)
+        return r
 
     def clone(self):
         """Clones the image. It is equivalent to call :class:`Image` with
@@ -2790,7 +2886,7 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def clut(self, image, method='undefined'):
+    def clut(self, image, method='undefined', channel=None):
         """Replace color values by referencing another image as a Color
         Look Up Table.
 
@@ -2799,19 +2895,37 @@ class BaseImage(Resource):
         :param method: Pixel Interpolate method. Only available with
                        ImageMagick-7. See :const:`PIXEL_INTERPOLATE_METHODS`
         :type method: :class:`basestring`
+        :param channel: Optional color channel to target. See
+                        :const:`wand.image.CHANNELS`
+        :type channel: :class:`basestring`
 
         .. versionadded:: 0.5.0
+
+        .. versionchanged:: 0.5.5
+           Added optional ``channel`` argument.
         """
         if not isinstance(image, BaseImage):
             raise TypeError('image must be a base image, not ' + repr(image))
         if MAGICK_VERSION_NUMBER < 0x700:
-            r = library.MagickClutImage(self.wand, image.wand)
+            if channel is None:
+                r = library.MagickClutImage(self.wand, image.wand)
+            else:
+                channel_ch = CHANNELS[channel]
+                r = library.MagickClutImageChannel(self.wand,
+                                                   channel_ch,
+                                                   image.wand)
         else:  # pragma: no cover
             assertions.string_in_list(PIXEL_INTERPOLATE_METHODS,
                                       'wand.image.PIXEL_INTERPOLATE_METHODS',
                                       pixel_interpolate_method=method)
             method_idx = PIXEL_INTERPOLATE_METHODS.index(method)
-            r = library.MagickClutImage(self.wand, image.wand, method_idx)
+            if channel is None:
+                r = library.MagickClutImage(self.wand, image.wand, method_idx)
+            else:
+                channel_ch = CHANNELS[channel]
+                mask = library.MagickSetImageChannelMask(self.wand, channel_ch)
+                r = library.MagickClutImage(self.wand, image.wand, method_idx)
+                library.MagickSetImageChannelMask(self.wand, mask)
         return r
 
     @manipulative
@@ -3519,13 +3633,28 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def equalize(self):
+    def equalize(self, channel=None):
         """Equalizes the image histogram
+
+        :param channel: Optional channel. See :const:`wand.image.CHANNELS`.
+        :type channel: :class:`basestring`
 
         .. versionadded:: 0.3.10
 
+        .. versionchanged:: 0.5.5
+           Added optional ``channel`` argument.
         """
-        return library.MagickEqualizeImage(self.wand)
+        if channel is None:
+            r = library.MagickEqualizeImage(self.wand)
+        else:
+            channel_ch = CHANNELS[channel]
+            if MAGICK_VERSION_NUMBER < 0x700:
+                r = library.MagickEqualizeImageChannel(self.wand, channel_ch)
+            else:  # pragma: no cover
+                mask = library.MagickSetImageChannelMask(self.wand, channel_ch)
+                r = library.MagickEqualizeImage(self.wand)
+                library.MagickSetImageChannelMask(self.wand, mask)
+        return r
 
     @manipulative
     @trap_exception
@@ -3913,7 +4042,7 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def gaussian_blur(self, radius, sigma):
+    def gaussian_blur(self, radius, sigma, channel=None):
         """Blurs the image.  We convolve the image with a gaussian operator
         of the given ``radius`` and standard deviation (``sigma``).
         For reasonable results, the ``radius`` should be larger
@@ -3925,12 +4054,30 @@ class BaseImage(Resource):
         :type radius: :class:`numbers.Real`
         :param sigma: the standard deviation of the, in pixels
         :type sigma: :class:`numbers.Real`
+        :param channel: Optional color channel to target. See
+                        :const:`wand.image.CHANNELS`
+        :type channel: :class:`basestring`
 
         .. versionadded:: 0.3.3
 
+        .. versionchanged:: 0.5.5
+           Added ``channel`` argument.
         """
         assertions.assert_real(radius=radius, sigma=sigma)
-        return library.MagickGaussianBlurImage(self.wand, radius, sigma)
+        if channel is None:
+            r = library.MagickGaussianBlurImage(self.wand, radius, sigma)
+        else:
+            channel_ch = CHANNELS[channel]
+            if MAGICK_VERSION_NUMBER < 0x700:
+                r = library.MagickGaussianBlurImageChannel(self.wand,
+                                                           channel_ch,
+                                                           radius,
+                                                           sigma)
+            else:  # pragma: no cover
+                mask = library.MagickSetImageChannelMask(self.wand, channel_ch)
+                r = library.MagickGaussianBlurImage(self.wand, radius, sigma)
+                library.MagickSetImageChannelMask(self.wand, mask)
+        return r
 
     @manipulative
     @trap_exception
@@ -4576,7 +4723,7 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def noise(self, noise_type='uniform', attenuate=1.0):
+    def noise(self, noise_type='uniform', attenuate=1.0, channel=None):
         """Adds noise to image.
 
         :param noise_type: type of noise to apply. See :const:`NOISE_TYPES`.
@@ -4584,18 +4731,38 @@ class BaseImage(Resource):
         :param attenuate: rate of distribution. Only available in
                           ImageMagick-7. Default is ``1.0``.
         :type attenuate: :class:`numbers.Real`
+        :param channel: Optionally target a color channel to apply noise to.
+                        See :const:`wand.image.CHANNELS`.
+        :type channel: :class:`basestring`
 
         .. versionadded:: 0.5.3
+
+        .. versionchanged:: 0.5.5
+           Added optional ``channel`` argument.
         """
         assertions.string_in_list(NOISE_TYPES, 'wand.image.NOISE_TYPES',
                                   noise_type=noise_type)
         assertions.assert_real(attenuate=attenuate)
         noise_type_idx = NOISE_TYPES.index(noise_type)
         if MAGICK_VERSION_NUMBER < 0x700:
-            r = library.MagickAddNoiseImage(self.wand, noise_type_idx)
+            if channel is None:
+                r = library.MagickAddNoiseImage(self.wand, noise_type_idx)
+            else:
+                channel_ch = CHANNELS[channel]
+                r = library.MagickAddNoiseImageChannel(self.wand,
+                                                       channel_ch,
+                                                       noise_type_idx)
         else:  # pragma: no cover
-            r = library.MagickAddNoiseImage(self.wand, noise_type_idx,
-                                            attenuate)
+            if channel is None:
+                r = library.MagickAddNoiseImage(self.wand, noise_type_idx,
+                                                attenuate)
+            else:
+                channel_ch = CHANNELS[channel]
+                mask = library.MagickSetImageChannelMask(self.wand,
+                                                         channel_ch)
+                r = library.MagickAddNoiseImage(self.wand, noise_type_idx,
+                                                attenuate)
+                library.MagickSetImageChannelMask(self.wand, mask)
         return r
 
     @manipulative

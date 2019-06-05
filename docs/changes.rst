@@ -16,6 +16,19 @@ Unreleased.
 
  - Rewrote :meth:`Image.contrast_stretch() <wand.image.BaseImage.contrast_stretch>`
    method to follow modern CLI behavior.
+ - Added support for optional color channels to isolate. The following methods
+   will now accept the ``channel`` kwarg.
+
+   - :meth:`Image.adaptive_blur() <wand.image.BaseImage.adaptive_blur>`
+   - :meth:`Image.adaptive_sharpen() <wand.image.BaseImage.adaptive_sharpen>`
+   - :meth:`Image.blur() <wand.image.BaseImage.blur>`
+   - :meth:`Image.brightness_contrast() <wand.image.BaseImage.brightness_contrast>`
+   - :meth:`Image.clamp() <wand.image.BaseImage.clamp>`
+   - :meth:`Image.clut() <wand.image.BaseImage.clut>`
+   - :meth:`Image.equalize() <wand.image.BaseImage.equalize>`
+   - :meth:`Image.gaussian_blur() <wand.image.BaseImage.gaussian_blur>`
+   - :meth:`Image.noise() <wand.image.BaseImage.noise>`
+
 
 .. _changelog-0.5.4:
 

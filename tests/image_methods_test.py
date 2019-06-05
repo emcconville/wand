@@ -19,6 +19,9 @@ def test_adaptive_blur():
         was = img.signature
         img.adaptive_blur(8, 3)
         assert was != img.signature
+        was = img.signature
+        img.adaptive_blur(8, 3, channel='red')
+        assert was != img.signature
 
 
 def test_adaptive_resize():
@@ -39,6 +42,10 @@ def test_adaptive_sharpen():
     with Image(width=100, height=100, pseudo='plasma:') as img:
         was = img.signature
         img.adaptive_sharpen(15, 3)
+        assert was != img.signature
+    with Image(width=100, height=100, pseudo='plasma:') as img:
+        was = img.signature
+        img.adaptive_sharpen(15, 3, channel='red')
         assert was != img.signature
 
 
@@ -117,6 +124,10 @@ def test_blur(fx_asset, display):
         assert 0.84 <= after.red <= 0.851
         assert 0.74 <= after.green <= 0.75
         assert 0.655 <= after.blue < 0.67
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.blur(30, 10, 'red')
+        assert was != img.signature
 
 
 def test_border(fx_asset):
@@ -140,6 +151,10 @@ def test_brightness_contrast():
     with Image(filename='rose:') as img:
         was = img.signature
         img.brightness_contrast(-10.0, 50)
+        assert was != img.signature
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.brightness_contrast(-10.0, 50, 'red')
         assert was != img.signature
 
 
@@ -178,6 +193,13 @@ def test_clut(fx_asset):
             clut.unique_colors()
             clut.flop()
             img.clut(clut)
+            assert was != img.signature
+    with Image(filename='rose:') as img:
+        was = img.signature
+        with Image(img) as clut:
+            clut.unique_colors()
+            clut.flop()
+            img.clut(clut, channel='red')
             assert was != img.signature
 
 
@@ -574,6 +596,10 @@ def test_equalize(fx_asset):
             assert light.red >= light.green >= light.blue >= 0.9
         with img[0, -1] as dark:
             assert dark.red <= dark.green <= dark.blue <= 0.1
+    with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
+        was = img.signature
+        img.equalize(channel='red')
+        assert was != img.signature
 
 
 def test_evaluate(fx_asset):
@@ -801,6 +827,10 @@ def test_gaussian_blur(fx_asset, display):
         assert 0.84 <= after.red <= 0.851
         assert 0.74 <= after.green <= 0.75
         assert 0.655 <= after.blue < 0.67
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.gaussian_blur(30, 10, channel='red')
+        assert was != img.signature
 
 
 def test_hald_clut(fx_asset):
@@ -1178,6 +1208,10 @@ def test_noise():
     with Image(filename='rose:') as img:
         was = img.signature
         img.noise('gaussian', 1.0)
+        assert was != img.signature
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.noise('gaussian', 1.0, channel='red')
         assert was != img.signature
 
 
