@@ -2470,7 +2470,7 @@ class BaseImage(Resource):
         :param sigma: Standard deviation of the gaussian filter.
         :type sigma: :class:`numbers.Real`
         :param channel: Apply the blur effect on a specific channel.
-                        See :const:`wand.image.CHANNELS`.
+                        See :const:`CHANNELS`.
         :type channel: :class:`basestring`
 
         .. versionadded:: 0.5.3
@@ -2525,7 +2525,7 @@ class BaseImage(Resource):
         :param sigma: Standard deviation of the gaussian filter.
         :type sigma: :class:`numbers.Real`
         :param channel: Apply the sharpen effect on a specific channel.
-                        See :const:`wand.image.CHANNELS`.
+                        See :const:`CHANNELS`.
         :type channel: :class:`basestring`
 
         .. versionadded:: 0.5.3
@@ -2657,7 +2657,7 @@ class BaseImage(Resource):
         :param sigma: the standard deviation of the, in pixels
         :type sigma: :class:`numbers.Real`
         :param channel: Optional color channel to apply blur. See
-                        :const:`wand.image.CHANNELS`.
+                        :const:`CHANNELS`.
         :type channel: :class:`basestring`
 
         .. versionadded:: 0.4.5
@@ -2728,7 +2728,7 @@ class BaseImage(Resource):
                          for unchanged.
         :type contrast: :class:`numbers.Real`
         :param channel: Isolate a single color channel to apply contrast.
-                        See :const:`wand.image.CHANNELS`.
+                        See :const:`CHANNELS`.
 
         .. versionadded:: 0.5.4
 
@@ -2896,7 +2896,7 @@ class BaseImage(Resource):
                        ImageMagick-7. See :const:`PIXEL_INTERPOLATE_METHODS`
         :type method: :class:`basestring`
         :param channel: Optional color channel to target. See
-                        :const:`wand.image.CHANNELS`
+                        :const:`CHANNELS`
         :type channel: :class:`basestring`
 
         .. versionadded:: 0.5.0
@@ -3636,7 +3636,7 @@ class BaseImage(Resource):
     def equalize(self, channel=None):
         """Equalizes the image histogram
 
-        :param channel: Optional channel. See :const:`wand.image.CHANNELS`.
+        :param channel: Optional channel. See :const:`CHANNELS`.
         :type channel: :class:`basestring`
 
         .. versionadded:: 0.3.10
@@ -4055,7 +4055,7 @@ class BaseImage(Resource):
         :param sigma: the standard deviation of the, in pixels
         :type sigma: :class:`numbers.Real`
         :param channel: Optional color channel to target. See
-                        :const:`wand.image.CHANNELS`
+                        :const:`CHANNELS`
         :type channel: :class:`basestring`
 
         .. versionadded:: 0.3.3
@@ -4081,7 +4081,7 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def hald_clut(self, image):
+    def hald_clut(self, image, channel=None):
         """Replace color values by referencing a Higher And Lower Dimension
         (HALD) Color Look Up Table (CLUT). You can generate a HALD image
         by using ImageMagick's `hald:` protocol. ::
@@ -4093,12 +4093,29 @@ class BaseImage(Resource):
 
         :param image: The HALD color matrix.
         :type image: :class:`wand.image.BaseImage`
+        :param channel: Optional color channel to target. See
+                        :const:`CHANNELS`
+        :type channel: :class:`basestring`
 
         .. versionadded:: 0.5.0
+
+        .. versionchanged:: 0.5.5
+           Added ``channel`` argument.
         """
         if not isinstance(image, BaseImage):
             raise TypeError('expecting a base image, not ' + repr(image))
-        return library.MagickHaldClutImage(self.wand, image.wand)
+        if channel is None:
+            r = library.MagickHaldClutImage(self.wand, image.wand)
+        else:
+            channel_ch = CHANNELS[channel]
+            if MAGICK_VERSION_NUMBER < 0x700:
+                r = library.MagickHaldClutImageChannel(self.wand, channel_ch,
+                                                       image.wand)
+            else:  # pragma: no cover
+                mask = library.MagickSetImageChannelMask(self.wand, channel_ch)
+                r = library.MagickHaldClutImage(self.wand, image.wand)
+                library.MagickSetImageChannelMask(self.wand, mask)
+        return r
 
     @trap_exception
     def implode(self, amount=0.0, method="undefined"):
@@ -4515,7 +4532,7 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def morphology(self, method=None, kernel=None, iterations=1):
+    def morphology(self, method=None, kernel=None, iterations=1, channel=None):
         """Manipulate pixels based on the shape of neighboring pixels.
 
         The ``method`` determines what type of effect to apply to matching
@@ -4565,8 +4582,14 @@ class BaseImage(Resource):
                            unlimited iterations until the image is unchanged
                            by the method operator.
         :type iterations: :class:`numbers.Integral`
+        :param channel: Optional color channel to target. See
+                        :const:`CHANNELS`
+        :type channel: `basestring`
 
         .. versionadded:: 0.5.0
+
+        .. versionchanged:: 0.5.5
+           Added ``channel`` argument.
         """
         assertions.assert_string(method=method, kernel=kernel)
         assertions.assert_integer(iterations=iterations)
@@ -4638,8 +4661,23 @@ class BaseImage(Resource):
         exception_info = libmagick.DestroyExceptionInfo(exception_info)
         if kernel_info:
             method_idx = MORPHOLOGY_METHODS.index(method)
-            r = library.MagickMorphologyImage(self.wand, method_idx,
-                                              iterations, kernel_info)
+            if channel is None:
+                r = library.MagickMorphologyImage(self.wand, method_idx,
+                                                  iterations, kernel_info)
+            else:
+                channel_ch = CHANNELS[channel]
+                if MAGICK_VERSION_NUMBER < 0x700:
+                    r = library.MagickMorphologyImageChannel(self.wand,
+                                                             channel_ch,
+                                                             method_idx,
+                                                             iterations,
+                                                             kernel_info)
+                else:  # pragma: no cover
+                    mask = library.MagickSetImageChannelMask(self.wand,
+                                                             channel_ch)
+                    r = library.MagickMorphologyImage(self.wand, method_idx,
+                                                      iterations, kernel_info)
+                    library.MagickSetImageChannelMask(self.wand, mask)
             kernel_info = libmagick.DestroyKernelInfo(kernel_info)
         else:
             raise ValueError('Unable to parse kernel info for ' +
@@ -4732,7 +4770,7 @@ class BaseImage(Resource):
                           ImageMagick-7. Default is ``1.0``.
         :type attenuate: :class:`numbers.Real`
         :param channel: Optionally target a color channel to apply noise to.
-                        See :const:`wand.image.CHANNELS`.
+                        See :const:`CHANNELS`.
         :type channel: :class:`basestring`
 
         .. versionadded:: 0.5.3
@@ -4828,7 +4866,8 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def opaque_paint(self, target=None, fill=None, fuzz=0.0, invert=False):
+    def opaque_paint(self, target=None, fill=None, fuzz=0.0, invert=False,
+                     channel=None):
         """Replace any color that matches ``target`` with ``fill``. Use
         ``fuzz`` to control the threshold of the target match.
         The ``invert`` will replace all colors *but* the  pixels matching
@@ -4844,8 +4883,14 @@ class BaseImage(Resource):
         :param invert: Replace all colors that do not match target.
                        Default is ``False``.
         :type invert: :class:`bool`
+        :param channel: Optional color channel to target. See
+                        :const:`CHANNELS`
+        :type channel: :class:`basestring`
 
         .. versionadded:: 0.5.4
+
+        .. versionchanged:: 0.5.5
+           Added ``channel`` paramater.
         """
         if isinstance(target, string_type):
             target = Color(target)
@@ -4856,11 +4901,28 @@ class BaseImage(Resource):
         assertions.assert_bool(invert=invert)
         with target:
             with fill:
-                r = library.MagickOpaquePaintImage(self.wand,
-                                                   target.resource,
-                                                   fill.resource,
-                                                   fuzz,
-                                                   invert)
+                if channel is None:
+                    r = library.MagickOpaquePaintImage(self.wand,
+                                                       target.resource,
+                                                       fill.resource,
+                                                       fuzz,
+                                                       invert)
+                else:
+                    channel_ch = CHANNELS[channel]
+                    if MAGICK_VERSION_NUMBER < 0x700:
+                        r = library.MagickOpaquePaintImageChannel(
+                            self.wand, channel_ch, target.resource,
+                            fill.resource, fuzz, invert
+                        )
+                    else:  # pragma: no cover
+                        mask = library.MagickSetImageChannelMask(self.wand,
+                                                                 channel_ch)
+                        r = library.MagickOpaquePaintImage(self.wand,
+                                                           target.resource,
+                                                           fill.resource,
+                                                           fuzz,
+                                                           invert)
+                        library.MagickSetImageChannelMask(self.wand, mask)
         return r
 
     @manipulative
@@ -5347,7 +5409,7 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def selective_blur(self, radius, sigma, threshold):
+    def selective_blur(self, radius, sigma, threshold, channel=None):
         """Blur an image within a given threshold.
 
         For best effects, use a value between 10% and 50% of
@@ -5369,14 +5431,37 @@ class BaseImage(Resource):
                           Value should be between ``0.0`` and
                           :attr:`quantum_range`.
         :type threshold: :class:`numbers.Real`
+        :param channel: Optional color channel to target. See
+                        :const:`CHANNELS`
+        :type channel: :class:`basestring`
 
         .. versionadded:: 0.5.3
+
+        .. versionchanged:: 0.5.5
+           Added ``channel`` argument.
         """
         assertions.assert_real(radius=radius, sigma=sigma, threshold=threshold)
-        return library.MagickSelectiveBlurImage(self.wand,
-                                                radius,
-                                                sigma,
-                                                threshold)
+        if channel is None:
+            r = library.MagickSelectiveBlurImage(self.wand,
+                                                 radius,
+                                                 sigma,
+                                                 threshold)
+        else:
+            channel_ch = CHANNELS[channel]
+            if MAGICK_VERSION_NUMBER < 0x700:
+                r = library.MagickSelectiveBlurImageChannel(self.wand,
+                                                            channel_ch,
+                                                            radius,
+                                                            sigma,
+                                                            threshold)
+            else:  # pragma: no cover
+                mask = library.MagickSetImageChannelMask(self.wand, channel_ch)
+                r = library.MagickSelectiveBlurImage(self.wand,
+                                                     radius,
+                                                     sigma,
+                                                     threshold)
+                library.MagickSetImageChannelMask(self.wand, mask)
+        return r
 
     @manipulative
     @trap_exception
@@ -5437,7 +5522,7 @@ class BaseImage(Resource):
         :param sigma: Standard deviation of the gaussian filter.
         :type sigma: :class:`numbers.Real`
         :param channel: Optional color channel to target. See
-                        :const:`wand.image.CHANNELS`.
+                        :const:`CHANNELS`.
         :type channel: :class:`basestring`
 
         .. versionadded:: 0.5.0
@@ -5523,7 +5608,7 @@ class BaseImage(Resource):
         :param midpoint: Normalized value between `0.0` & :attr:`quantum_range`
         :type midpoint: :class:`numbers.Real`
         :param channel: Optional color channel to target. See
-                        :const:`wand.image.CHANNELS`.
+                        :const:`CHANNELS`.
         :type channel: :class:`basestring`
 
         .. versionadded:: 0.5.4
@@ -5673,7 +5758,7 @@ class BaseImage(Resource):
         :param threshold: between ``0.0`` and :attr:`quantum_range`.
         :type threshold: :class:`numbers.Real`
         :param channel: Optional color channel to target. See
-                        :const:`wand.image.CHANNELS`
+                        :const:`CHANNELS`
         :type channel: :class:`basestring`
 
         .. versionadded:: 0.5.3
@@ -5892,7 +5977,7 @@ class BaseImage(Resource):
         :param height: The size of neighboring pixels on the Y-axis.
         :type height: :class:`numbers.Integral`
         :param channel: Optional color channel to target. See
-                        :const:`wand.image.CHANNELS`
+                        :const:`CHANNELS`
         :type channel: :class:`basestring`
 
         .. versionadded:: 0.5.3
@@ -6372,7 +6457,7 @@ class BaseImage(Resource):
                           the diffence amount
         :type threshold: :class:`numbers.Real`
         :param channel: Optional color channel to target. See
-                        :const:`wand.image.CHANNELS`
+                        :const:`CHANNELS`
         :type channel: :class:`basestring`
 
         .. versionadded:: 0.3.4

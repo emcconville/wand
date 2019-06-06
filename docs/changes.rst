@@ -26,7 +26,11 @@ Unreleased.
    - :meth:`Image.clut() <wand.image.BaseImage.clut>`
    - :meth:`Image.equalize() <wand.image.BaseImage.equalize>`
    - :meth:`Image.gaussian_blur() <wand.image.BaseImage.gaussian_blur>`
+   - :meth:`Image.hald_clut() <wand.image.BaseImage.hald_clut>`
    - :meth:`Image.noise() <wand.image.BaseImage.noise>`
+   - :meth:`Image.morphology() <wand.image.BaseImage.morphology>`
+   - :meth:`Image.opaque_paint() <wand.image.BaseImage.opaque_paint>`
+   - :meth:`Image.selective_blur() <wand.image.BaseImage.selective_blur>`
    - :meth:`Image.sharpen() <wand.image.BaseImage.sharpen>`
    - :meth:`Image.sigmoidal_contrast() <wand.image.BaseImage.sigmoidal_contrast>`
    - :meth:`Image.solarize() <wand.image.BaseImage.solarize>`
