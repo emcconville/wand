@@ -1634,6 +1634,9 @@ def test_sharpen(fx_asset):
         was = img.signature
         img.sharpen(radius=10.0, sigma=2.0)
         assert was != img.signature
+        was = img.signature
+        img.sharpen(radius=10.0, sigma=2.0, channel='red')
+        assert was != img.signature
         with raises(TypeError):
             img.sharpen(radius='hello')
         with raises(TypeError):
@@ -1664,6 +1667,12 @@ def test_sigmoidal_contrast():
         img.sigmoidal_contrast(sharpen=True,
                                strength=3,
                                midpoint=0.65 * img.quantum_range)
+        assert was != img.signature
+        was = img.signature
+        img.sigmoidal_contrast(sharpen=True,
+                               strength=3,
+                               midpoint=0.65 * img.quantum_range,
+                               channel='red')
         assert was != img.signature
 
 
@@ -1705,6 +1714,9 @@ def test_solarize():
         img.alpha_channel = 'off'  # Needed for IM-7
         img.solarize(0.5 * img.quantum_range)
         assert was != img.signature
+        was = img.signature
+        img.solarize(0.25 * img.quantum_range, channel='blue')
+        assert was != img.signature
 
 
 def test_sparse_color():
@@ -1742,6 +1754,9 @@ def test_statistic(fx_asset):
     with Image(filename='rose:') as img:
         was = img.signature
         img.statistic('median', 5, 5)
+        assert was != img.signature
+        was = img.signature
+        img.statistic('maximum', 5, 5, channel='red')
         assert was != img.signature
 
 
@@ -2000,6 +2015,10 @@ def test_unsharp_mask(fx_asset, display):
         assert 0.89 <= after.red <= 0.90
         assert 0.82 <= after.green <= 0.83
         assert 0.72 <= after.blue < 0.74
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.unsharp_mask(1.1, 1, 0.5, 0.001, channel='red')
+        assert was != img.signature
 
 
 def test_vignette(fx_asset):

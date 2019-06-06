@@ -5420,7 +5420,7 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def sharpen(self, radius=0.0, sigma=0.0):
+    def sharpen(self, radius=0.0, sigma=0.0, channel=None):
         """Applies a gaussian effect to enhance the sharpness of an
         image.
 
@@ -5436,11 +5436,29 @@ class BaseImage(Resource):
         :type radius: :class:`numbers.Real`
         :param sigma: Standard deviation of the gaussian filter.
         :type sigma: :class:`numbers.Real`
+        :param channel: Optional color channel to target. See
+                        :const:`wand.image.CHANNELS`.
+        :type channel: :class:`basestring`
 
         .. versionadded:: 0.5.0
+
+        .. versionchanged:: 0.5.5
+           Added ``channel`` argument.
         """
         assertions.assert_real(radius=radius, sigma=sigma)
-        return library.MagickSharpenImage(self.wand, radius, sigma)
+        if channel is None:
+            r = library.MagickSharpenImage(self.wand, radius, sigma)
+        else:
+            channel_ch = CHANNELS[channel]
+            if MAGICK_VERSION_NUMBER < 0x700:
+                r = library.MagickSharpenImageChannel(self.wand,
+                                                      channel_ch,
+                                                      radius, sigma)
+            else:  # pragma: no cover
+                mask = library.MagickSetImageChannelMask(self.wand, channel_ch)
+                r = library.MagickSharpenImage(self.wand, radius, sigma)
+                library.MagickSetImageChannelMask(self.wand, mask)
+        return r
 
     @manipulative
     @trap_exception
@@ -5483,7 +5501,8 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def sigmoidal_contrast(self, sharpen=True, strength=0.0, midpoint=0.0):
+    def sigmoidal_contrast(self, sharpen=True, strength=0.0, midpoint=0.0,
+                           channel=None):
         """Modifies the contrast of the image by applying non-linear sigmoidal
         algorithm.
 
@@ -5503,15 +5522,36 @@ class BaseImage(Resource):
         :type strength: :class:`numbers.Real`
         :param midpoint: Normalized value between `0.0` & :attr:`quantum_range`
         :type midpoint: :class:`numbers.Real`
+        :param channel: Optional color channel to target. See
+                        :const:`wand.image.CHANNELS`.
+        :type channel: :class:`basestring`
 
         .. versionadded:: 0.5.4
+
+        .. versionchanged:: 0.5.5
+           Added ``channel`` argument.
         """
         assertions.assert_bool(sharpen=sharpen)
         assertions.assert_real(strength=strength, midpoint=midpoint)
-        return library.MagickSigmoidalContrastImage(self.wand,
-                                                    sharpen,
-                                                    strength,
-                                                    midpoint)
+        if channel is None:
+            r = library.MagickSigmoidalContrastImage(self.wand,
+                                                     sharpen,
+                                                     strength,
+                                                     midpoint)
+        else:
+            channel_ch = CHANNELS[channel]
+            if MAGICK_VERSION_NUMBER < 0x700:
+                r = library.MagickSigmoidalContrastImageChannel(
+                    self.wand, channel_ch, sharpen, strength, midpoint
+                )
+            else:  # pragma: no cover
+                mask = library.MagickSetImageChannelMask(self.wand, channel_ch)
+                r = library.MagickSigmoidalContrastImage(self.wand,
+                                                         sharpen,
+                                                         strength,
+                                                         midpoint)
+                library.MagickSetImageChannelMask(self.wand, mask)
+        return r
 
     def similarity(self, reference, threshold=0.0, metric='undefined'):
         """Scan image for best matching ``reference`` image, and
@@ -5627,16 +5667,34 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def solarize(self, threshold=0.0):
+    def solarize(self, threshold=0.0, channel=None):
         """Simulates extreme overexposure.
 
         :param threshold: between ``0.0`` and :attr:`quantum_range`.
         :type threshold: :class:`numbers.Real`
+        :param channel: Optional color channel to target. See
+                        :const:`wand.image.CHANNELS`
+        :type channel: :class:`basestring`
 
         .. versionadded:: 0.5.3
+
+        .. versionchanged:: 0.5.5
+           Added ``channel`` argument.
         """
         assertions.assert_real(threshold=threshold)
-        return library.MagickSolarizeImage(self.wand, threshold)
+        if channel is None:
+            r = library.MagickSolarizeImage(self.wand, threshold)
+        else:
+            channel_ch = CHANNELS[channel]
+            if MAGICK_VERSION_NUMBER < 0x700:
+                r = library.MagickSolarizeImageChannel(self.wand,
+                                                       channel_ch,
+                                                       threshold)
+            else:  # pragma: no cover
+                mask = library.MagickSetImageChannelMask(self.wand, channel_ch)
+                r = library.MagickSolarizeImage(self.wand, threshold)
+                library.MagickSetImageChannelMask(self.wand, mask)
+        return r
 
     @manipulative
     @trap_exception
@@ -5820,7 +5878,8 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def statistic(self, stat='undefined', width=None, height=None):
+    def statistic(self, stat='undefined', width=None, height=None,
+                  channel=None):
         """Replace each pixel with the statistic results from neighboring pixel
         values. The ``width`` & ``height`` defines the size, or apature, of
         the neighboring pixels.
@@ -5832,13 +5891,38 @@ class BaseImage(Resource):
         :type width: :class:`numbers.Integral`
         :param height: The size of neighboring pixels on the Y-axis.
         :type height: :class:`numbers.Integral`
+        :param channel: Optional color channel to target. See
+                        :const:`wand.image.CHANNELS`
+        :type channel: :class:`basestring`
+
+        .. versionadded:: 0.5.3
+
+        .. versionchanged:: 0.5.5
+           Added optional ``channel`` argument.
         """
         assertions.string_in_list(STATISTIC_TYPES,
                                   'wand.image.STATISTIC_TYPES',
                                   statistic=stat)
         assertions.assert_integer(width=width, height=height)
         stat_idx = STATISTIC_TYPES.index(stat)
-        return library.MagickStatisticImage(self.wand, stat_idx, width, height)
+        if channel is None:
+            r = library.MagickStatisticImage(self.wand, stat_idx,
+                                             width, height)
+        else:
+            channel_ch = CHANNELS[channel]
+            if MAGICK_VERSION_NUMBER < 0x700:
+                r = library.MagickStatisticImageChannel(self.wand,
+                                                        channel_ch,
+                                                        stat_idx,
+                                                        width,
+                                                        height)
+            else:  # pragma: no cover
+                mask = library.MagickSetImageChannelMask(self.wand,
+                                                         channel_ch)
+                r = library.MagickStatisticImage(self.wand, stat_idx,
+                                                 width, height)
+                library.MagickSetImageChannelMask(self.wand, mask)
+        return r
 
     @trap_exception
     def strip(self):
@@ -6269,7 +6353,7 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def unsharp_mask(self, radius, sigma, amount, threshold):
+    def unsharp_mask(self, radius, sigma, amount, threshold, channel=None):
         """Sharpens the image using unsharp mask filter. We convolve the image
         with a Gaussian operator of the given ``radius`` and standard deviation
         (``sigma``). For reasonable results, ``radius`` should be larger than
@@ -6287,14 +6371,32 @@ class BaseImage(Resource):
         :param threshold: the threshold in pixels needed to apply
                           the diffence amount
         :type threshold: :class:`numbers.Real`
+        :param channel: Optional color channel to target. See
+                        :const:`wand.image.CHANNELS`
+        :type channel: :class:`basestring`
 
         .. versionadded:: 0.3.4
 
+        .. versionchanged:: 0.5.5
+           Added optional ``channel`` argument.
         """
         assertions.assert_real(radius=radius, sigma=sigma,
                                amount=amount, threshold=threshold)
-        return library.MagickUnsharpMaskImage(self.wand, radius, sigma,
-                                              amount, threshold)
+        if channel is None:
+            r = library.MagickUnsharpMaskImage(self.wand, radius, sigma,
+                                               amount, threshold)
+        else:
+            channel_ch = CHANNELS[channel]
+            if MAGICK_VERSION_NUMBER < 0x700:
+                r = library.MagickUnsharpMaskImageChannel(
+                    self.wand, channel_ch, radius, sigma, amount, threshold
+                )
+            else:  # pragma: no cover
+                mask = library.MagickSetImageChannelMask(self.wand, channel_ch)
+                r = library.MagickUnsharpMaskImage(self.wand, radius, sigma,
+                                                   amount, threshold)
+                library.MagickSetImageChannelMask(self.wand, mask)
+        return r
 
     @manipulative
     @trap_exception
