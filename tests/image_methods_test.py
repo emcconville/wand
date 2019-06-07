@@ -781,7 +781,7 @@ def test_fx_error(fx_asset):
         with raises(TypeError):
             with xc.fx(('p[0,0]',)):
                 pass
-        with raises(ValueError):
+        with raises(TypeError):
             with xc.fx('p[0,0]', True):
                 pass
 
@@ -911,7 +911,7 @@ def test_kurtosis_channel():
     with Image(filename='rose:') as img:
         r = img.kurtosis_channel('red')
         assert len(r) == 2
-        with raises(TypeError):
+        with raises(ValueError):
             img.kurtosis_channel('unknown')
 
 
@@ -1027,7 +1027,7 @@ def test_mean_channel():
     with Image(filename='rose:') as img:
         r = img.mean_channel('red')
         assert len(r) == 2
-        with raises(TypeError):
+        with raises(ValueError):
             img.mean_channel('unknown')
 
 
@@ -1368,7 +1368,7 @@ def test_range_channel():
     with Image(filename='rose:') as img:
         minima, maxima = img.range_channel('red')
         assert minima < maxima
-        with raises(TypeError):
+        with raises(ValueError):
             img.range_channel('unknown')
 
 

@@ -76,6 +76,11 @@ def load(libmagick):
     libmagick.MagickToMime.argtypes = [c_char_p]
     libmagick.MagickToMime.restype = c_magick_char_p
     try:
+        libmagick.ParseChannelOption.argtypes = [c_char_p]
+        libmagick.ParseChannelOption.restypes = c_ssize_t
+    except AttributeError:
+        libmagick.ParseChannelOption = None
+    try:
         libmagick.ParseGeometry.argtypes = [c_char_p, c_void_p]
         libmagick.ParseGeometry.restype = c_int
         libmagick.ParseMetaGeometry.argtypes = [c_char_p,
