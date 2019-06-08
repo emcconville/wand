@@ -37,6 +37,9 @@ Unreleased.
    - :meth:`Image.statistic() <wand.image.BaseImage.statistic>`
    - :meth:`Image.unsharp_mask() <wand.image.BaseImage.unsharp_mask>`
 
+ - Created helper function :func:`color_channel_resolver() <wand.image.color_channel_resolver>`
+   to build :c:type:`ChannelType` bit-mask.
+
 
 .. _changelog-0.5.4:
 

@@ -7693,7 +7693,7 @@ class ClosedImageError(DestroyedResourceError):
 
 
 def color_channel_resolver(value):
-    """Attempts to resolve user input into a :c:type:`ChannelType` bitmask.
+    """Attempts to resolve user input into a :c:type:`ChannelType` bit-mask.
     User input can be an integer, a string defined in :const:`CHANNELS`,
     or a string following ImageMagick's `CLI format`__.
 
