@@ -3248,7 +3248,8 @@ class BaseImage(Resource):
         .. versionchanged:: 0.5.3
            Optional ``gravity`` argument was added.
         """
-        assertions.assert_string(channel=channel, operator=operator)
+        assertions.assert_string(operator=operator)
+        ch_const = color_channel_resolver(channel)
         if gravity:
             if left is None and top is None:
                 top, left = self._gravity_to_offset(gravity,
@@ -3261,11 +3262,6 @@ class BaseImage(Resource):
         if left is None:
             left = 0
         assertions.assert_integer(left=left, top=top)
-        try:
-            ch_const = CHANNELS[channel]
-        except KeyError:
-            raise ValueError(repr(channel) + ' is an invalid channel type'
-                             '; see wand.image.CHANNELS dictionary')
         try:
             op = COMPOSITE_OPERATORS.index(operator)
         except IndexError:
@@ -7697,12 +7693,12 @@ class ClosedImageError(DestroyedResourceError):
 
 
 def color_channel_resolver(value):
-    """Attempts to resolve user input into a :c:`ChannelType` bitmask.
+    """Attempts to resolve user input into a :c:type:`ChannelType` bitmask.
     User input can be an integer, a string defined in :const:`CHANNELS`,
     or a string following ImageMagick's `CLI format`__.
-    
+
     __ https://imagemagick.org/script/command-line-options.php#channel
-    
+
     .. code::
 
         # User generated bit-mask.
