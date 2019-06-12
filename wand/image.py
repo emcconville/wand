@@ -7716,7 +7716,7 @@ def color_channel_resolver(value):
     elif isinstance(value, string_type):
         if value in CHANNELS:
             mask = CHANNELS[value]
-        else:
+        elif libmagick.ParseChannelOption:
             mask = libmagick.ParseChannelOption(binary(value))
     else:
         raise TypeError(repr(value) + ' is an invalid channel type'
