@@ -97,9 +97,6 @@ if MAGICK_VERSION_NUMBER >= 0x700:  # pragma: no cover
 #: - ``'index'``
 #: - ``'composite_channels'``
 #: - ``'all_channels'``
-#: - ``'true_alpha'``
-#: - ``'rgb_channels'``
-#: - ``'gray_channels'``
 #: - ``'sync_channels'``
 #: - ``'default_channels'``
 #:
@@ -109,17 +106,22 @@ if MAGICK_VERSION_NUMBER >= 0x700:  # pragma: no cover
 #:       Lists the various channel types with descriptions of each
 #:
 #:    __ http://www.imagemagick.org/Magick++/Enumerations.html#ChannelType
+#:
+#: .. versionchanged:: 0.5.5
+#:    Deprecated ``true_alpha``, ``rgb_channels``, and ``gray_channels``
+#:    values in favor of MagickCore channel parser.
+#:
 CHANNELS = dict(undefined=0, red=1, gray=1, cyan=1, green=2, magenta=2,
                 blue=4, yellow=4, alpha=8, opacity=8, black=32, index=32,
                 composite_channels=47, all_channels=134217727, true_alpha=64,
-                rgb_channels=128, gray_channels=128, sync_channels=256,
+                rgb=7, rgb_channels=7, gray_channels=1, sync_channels=256,
                 default_channels=134217719)
 if MAGICK_VERSION_NUMBER >= 0x700:  # pragma: no cover
     CHANNELS = dict(undefined=0, red=1, gray=1, cyan=1, green=2, magenta=2,
                     blue=4, yellow=4, black=8, alpha=16, opacity=16, index=32,
                     readmask=0x0040, write_mask=128, meta=256,
                     composite_channels=31, all_channels=134217727,
-                    true_alpha=256, rgb_channels=512, gray_channels=1024,
+                    true_alpha=256, rgb=7, rgb_channels=7, gray_channels=1,
                     sync_channels=131072, default_channels=134217727)
 
 

@@ -84,18 +84,18 @@ def test_channel_depths(fx_asset):
         assert dict(i.channel_depths) == {
             'blue': 8, 'gray': 8, 'true_alpha': 1, 'opacity': 1,
             'undefined': 1, 'composite_channels': 8, 'index': 1,
-            'rgb_channels': 1, 'alpha': 1, 'yellow': 8, 'sync_channels': 1,
+            'rgb_channels': 8, 'alpha': 1, 'yellow': 8, 'sync_channels': 1,
             'default_channels': 8, 'black': 1, 'cyan': 8,
             'all_channels': 8, 'green': 8, 'magenta': 8, 'red': 8,
-            'gray_channels': 1
+            'gray_channels': 8, 'rgb': 8
         }
     with Image(filename=str(fx_asset.join('google.ico'))) as i:
         assert dict(i.channel_depths) == {
             'blue': 8, 'gray': 8, 'true_alpha': 1, 'opacity': 1,
             'undefined': 1, 'composite_channels': 8, 'index': 1,
-            'rgb_channels': 1, 'alpha': 1, 'yellow': 8, 'sync_channels': 1,
+            'rgb_channels': 8, 'alpha': 1, 'yellow': 8, 'sync_channels': 1,
             'default_channels': 8, 'black': 1, 'cyan': 8, 'all_channels': 8,
-            'green': 8, 'magenta': 8, 'red': 8, 'gray_channels': 1
+            'green': 8, 'magenta': 8, 'red': 8, 'gray_channels': 8, 'rgb': 8
         }
 
 
