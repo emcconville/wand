@@ -3349,6 +3349,7 @@ class BaseImage(Resource):
         return r
 
     @manipulative
+    @trap_exception
     def crop(self, left=0, top=0, right=None, bottom=None,
              width=None, height=None, reset_coords=True,
              gravity=None):
@@ -3465,7 +3466,7 @@ class BaseImage(Resource):
             width == self.width and
             height == self.height
         ):
-            return
+            return True
         if self.animation:
             self.wand = library.MagickCoalesceImages(self.wand)
             library.MagickSetLastIterator(self.wand)
@@ -3473,14 +3474,16 @@ class BaseImage(Resource):
             library.MagickResetIterator(self.wand)
             for i in xrange(0, n + 1):
                 library.MagickSetIteratorIndex(self.wand, i)
-                library.MagickCropImage(self.wand, width, height, left, top)
+                r = library.MagickCropImage(self.wand,
+                                            width, height,
+                                            left, top)
                 if reset_coords:
-                    library.MagickResetImagePage(self.wand, None)
+                    self.reset_coords()
         else:
-            library.MagickCropImage(self.wand, width, height, left, top)
-            self.raise_exception()
+            r = library.MagickCropImage(self.wand, width, height, left, top)
             if reset_coords:
                 self.reset_coords()
+        return r
 
     @trap_exception
     def cycle_color_map(self, offset=1):
