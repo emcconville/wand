@@ -40,8 +40,7 @@ __all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COLORSPACE_TYPES',
            'BaseImage', 'ChannelDepthDict', 'ChannelImageDict',
            'ClosedImageError', 'HistogramDict', 'Image', 'ImageProperty',
            'Iterator', 'Metadata', 'OptionDict', 'manipulative',
-           'ArtifactTree', 'ProfileDict',
-           'color_channel_resolver')
+           'ArtifactTree', 'ProfileDict')
 
 
 #: (:class:`tuple`) The list of :attr:`~wand.image.BaseImage.alpha_channel`
@@ -2429,6 +2428,45 @@ class BaseImage(Resource):
         fn()
         self.orientation = 'top_left'
 
+    def _channel_to_mask(self, value):
+        """Attempts to resolve user input into a :c:type:`ChannelType` bit-mask.
+        User input can be an integer, a string defined in :const:`CHANNELS`,
+        or a string following ImageMagick's `CLI format`__.
+
+        __ https://imagemagick.org/script/command-line-options.php#channel
+
+        .. code::
+
+            # User generated bit-mask.
+            mask = self._channel_to_mask(CHANNELS['red'] | CHANNELS['green'])
+            # Defined constant.
+            mask = self._channel_to_mask('red')
+            # CLI format.
+            mask = self._channel_to_mask('RGB,Sync')
+
+        :param value: Mixed user input.
+        :type value: :class:`numbers.Integral` or :class:`basestring`
+        :returns: Bit-mask constant.
+        :rtype: :class:`numbers.Integral`
+
+        .. versionadded:: 0.5.5
+        """
+        mask = -1
+        if isinstance(value, numbers.Integral) and not isinstance(value, bool):
+            mask = value
+        elif isinstance(value, string_type):
+            if value in CHANNELS:
+                mask = CHANNELS[value]
+            elif libmagick.ParseChannelOption:
+                mask = libmagick.ParseChannelOption(binary(value))
+        else:
+            raise TypeError(repr(value) + ' is an invalid channel type'
+                            '; see wand.image.CHANNELS dictionary')
+        if mask < 0:
+            raise ValueError('expected value from wand.image.CHANNELS, not '
+                             + repr(value))
+        return mask
+
     def _gravity_to_offset(self, gravity, width, height):
         """Calculate the top/left offset by a given gravity.
 
@@ -2485,7 +2523,7 @@ class BaseImage(Resource):
         if channel is None:
             r = library.MagickAdaptiveBlurImage(self.wand, radius, sigma)
         else:
-            channel_ch = color_channel_resolver(channel)
+            channel_ch = self._channel_to_mask(channel)
             if MAGICK_VERSION_NUMBER < 0x700:
                 r = library.MagickAdaptiveBlurImageChannel(self.wand,
                                                            channel_ch,
@@ -2540,7 +2578,7 @@ class BaseImage(Resource):
         if channel is None:
             r = library.MagickAdaptiveSharpenImage(self.wand, radius, sigma)
         else:
-            channel_ch = color_channel_resolver(channel)
+            channel_ch = self._channel_to_mask(channel)
             if MAGICK_VERSION_NUMBER < 0x700:
                 r = library.MagickAdaptiveSharpenImageChannel(self.wand,
                                                               channel_ch,
@@ -2672,7 +2710,7 @@ class BaseImage(Resource):
         if channel is None:
             r = library.MagickBlurImage(self.wand, radius, sigma)
         else:
-            channel_ch = color_channel_resolver(channel)
+            channel_ch = self._channel_to_mask(channel)
             if MAGICK_VERSION_NUMBER < 0x700:
                 r = library.MagickBlurImageChannel(self.wand,
                                                    channel_ch,
@@ -2744,7 +2782,7 @@ class BaseImage(Resource):
                                                       brightness,
                                                       contrast)
         else:
-            channel_ch = color_channel_resolver(channel)
+            channel_ch = self._channel_to_mask(channel)
             if MAGICK_VERSION_NUMBER < 0x700:
                 r = library.MagickBrightnessContrastImageChannel(self.wand,
                                                                  channel_ch,
@@ -2862,7 +2900,7 @@ class BaseImage(Resource):
         if channel is None:
             r = library.MagickClampImage(self.wand)
         else:
-            channel_ch = color_channel_resolver(channel)
+            channel_ch = self._channel_to_mask(channel)
             if MAGICK_VERSION_NUMBER < 0x700:
                 r = library.MagickClampImageChannel(self.wand, channel_ch)
             else:  # pragma: no cover
@@ -2913,7 +2951,7 @@ class BaseImage(Resource):
             if channel is None:
                 r = library.MagickClutImage(self.wand, image.wand)
             else:
-                channel_ch = color_channel_resolver(channel)
+                channel_ch = self._channel_to_mask(channel)
                 r = library.MagickClutImageChannel(self.wand,
                                                    channel_ch,
                                                    image.wand)
@@ -2925,7 +2963,7 @@ class BaseImage(Resource):
             if channel is None:
                 r = library.MagickClutImage(self.wand, image.wand, method_idx)
             else:
-                channel_ch = color_channel_resolver(channel)
+                channel_ch = self._channel_to_mask(channel)
                 mask = library.MagickSetImageChannelMask(self.wand, channel_ch)
                 r = library.MagickClutImage(self.wand, image.wand, method_idx)
                 library.MagickSetImageChannelMask(self.wand, mask)
@@ -3251,7 +3289,7 @@ class BaseImage(Resource):
            Optional ``gravity`` argument was added.
         """
         assertions.assert_string(operator=operator)
-        ch_const = color_channel_resolver(channel)
+        ch_const = self._channel_to_mask(channel)
         if gravity:
             if left is None and top is None:
                 top, left = self._gravity_to_offset(gravity,
@@ -3329,7 +3367,7 @@ class BaseImage(Resource):
                                                    black_point,
                                                    white_point)
         else:
-            ch_const = color_channel_resolver(channel)
+            ch_const = self._channel_to_mask(channel)
             if library.MagickContrastStretchImageChannel:
                 r = library.MagickContrastStretchImageChannel(self.wand,
                                                               ch_const,
@@ -3646,7 +3684,7 @@ class BaseImage(Resource):
         if channel is None:
             r = library.MagickEqualizeImage(self.wand)
         else:
-            channel_ch = color_channel_resolver(channel)
+            channel_ch = self._channel_to_mask(channel)
             if MAGICK_VERSION_NUMBER < 0x700:
                 r = library.MagickEqualizeImageChannel(self.wand, channel_ch)
             else:  # pragma: no cover
@@ -3685,7 +3723,7 @@ class BaseImage(Resource):
         if channel is None:
             r = library.MagickEvaluateImage(self.wand, idx_op, value)
         else:
-            ch_const = color_channel_resolver(channel)
+            ch_const = self._channel_to_mask(channel)
             # Use channel method if IM6, else create channel mask for IM7.
             if library.MagickEvaluateImageChannel:
                 r = library.MagickEvaluateImageChannel(self.wand,
@@ -3929,7 +3967,7 @@ class BaseImage(Resource):
         if channel is None:
             r = library.MagickFunctionImage(self.wand, index, argc, argv)
         else:
-            ch_channel = color_channel_resolver(channel)
+            ch_channel = self._channel_to_mask(channel)
             # Use channel method if IM6, else create channel mask for IM7.
             if library.MagickFunctionImageChannel:
                 r = library.MagickFunctionImageChannel(self.wand,
@@ -3974,7 +4012,7 @@ class BaseImage(Resource):
         if channel is None:
             new_wand = library.MagickFxImage(self.wand, c_expression)
         else:
-            ch_channel = color_channel_resolver(channel)
+            ch_channel = self._channel_to_mask(channel)
             if library.MagickFxImageChannel:
                 new_wand = library.MagickFxImageChannel(self.wand,
                                                         ch_channel,
@@ -4013,7 +4051,7 @@ class BaseImage(Resource):
         if channel is None:
             r = library.MagickGammaImage(self.wand, adjustment_value)
         else:
-            ch_const = color_channel_resolver(channel)
+            ch_const = self._channel_to_mask(channel)
             if library.MagickGammaImageChannel:
                 r = library.MagickGammaImageChannel(self.wand,
                                                     ch_const,
@@ -4054,7 +4092,7 @@ class BaseImage(Resource):
         if channel is None:
             r = library.MagickGaussianBlurImage(self.wand, radius, sigma)
         else:
-            channel_ch = color_channel_resolver(channel)
+            channel_ch = self._channel_to_mask(channel)
             if MAGICK_VERSION_NUMBER < 0x700:
                 r = library.MagickGaussianBlurImageChannel(self.wand,
                                                            channel_ch,
@@ -4094,7 +4132,7 @@ class BaseImage(Resource):
         if channel is None:
             r = library.MagickHaldClutImage(self.wand, image.wand)
         else:
-            channel_ch = color_channel_resolver(channel)
+            channel_ch = self._channel_to_mask(channel)
             if MAGICK_VERSION_NUMBER < 0x700:
                 r = library.MagickHaldClutImageChannel(self.wand, channel_ch,
                                                        image.wand)
@@ -4252,7 +4290,7 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.3
         """
-        ch_channel = color_channel_resolver(channel)
+        ch_channel = self._channel_to_mask(channel)
         k = ctypes.c_double(0.0)
         s = ctypes.c_double(0.0)
         if MAGICK_VERSION_NUMBER < 0x700:
@@ -4313,7 +4351,7 @@ class BaseImage(Resource):
         if channel is None:
             r = library.MagickLevelImage(self.wand, bp, gamma, wp)
         else:
-            ch_const = color_channel_resolver(channel)
+            ch_const = self._channel_to_mask(channel)
             if library.MagickLevelImageChannel:
                 r = library.MagickLevelImageChannel(self.wand,
                                                     ch_const,
@@ -4413,7 +4451,7 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.3
         """
-        ch_channel = color_channel_resolver(channel)
+        ch_channel = self._channel_to_mask(channel)
         m = ctypes.c_double(0.0)
         s = ctypes.c_double(0.0)
         if MAGICK_VERSION_NUMBER < 0x700:
@@ -4640,7 +4678,7 @@ class BaseImage(Resource):
                 r = library.MagickMorphologyImage(self.wand, method_idx,
                                                   iterations, kernel_info)
             else:
-                channel_ch = color_channel_resolver(channel)
+                channel_ch = self._channel_to_mask(channel)
                 if MAGICK_VERSION_NUMBER < 0x700:
                     r = library.MagickMorphologyImageChannel(self.wand,
                                                              channel_ch,
@@ -4678,7 +4716,7 @@ class BaseImage(Resource):
         if channel is None:
             r = library.MagickMotionBlurImage(self.wand, radius, sigma, angle)
         else:
-            ch_const = color_channel_resolver(channel)
+            ch_const = self._channel_to_mask(channel)
             if MAGICK_VERSION_NUMBER < 0x700:
                 r = library.MagickMotionBlurImageChannel(self.wand,
                                                          ch_const,
@@ -4712,7 +4750,7 @@ class BaseImage(Resource):
         if channel is None:
             r = library.MagickNegateImage(self.wand, grayscale)
         else:
-            ch_const = color_channel_resolver(channel)
+            ch_const = self._channel_to_mask(channel)
             if library.MagickNegateImageChannel:
                 r = library.MagickNegateImageChannel(self.wand, ch_const,
                                                      grayscale)
@@ -4752,7 +4790,7 @@ class BaseImage(Resource):
             if channel is None:
                 r = library.MagickAddNoiseImage(self.wand, noise_type_idx)
             else:
-                channel_ch = color_channel_resolver(channel)
+                channel_ch = self._channel_to_mask(channel)
                 r = library.MagickAddNoiseImageChannel(self.wand,
                                                        channel_ch,
                                                        noise_type_idx)
@@ -4761,7 +4799,7 @@ class BaseImage(Resource):
                 r = library.MagickAddNoiseImage(self.wand, noise_type_idx,
                                                 attenuate)
             else:
-                channel_ch = color_channel_resolver(channel)
+                channel_ch = self._channel_to_mask(channel)
                 mask = library.MagickSetImageChannelMask(self.wand,
                                                          channel_ch)
                 r = library.MagickAddNoiseImage(self.wand, noise_type_idx,
@@ -4783,7 +4821,7 @@ class BaseImage(Resource):
         if channel is None:
             r = library.MagickNormalizeImage(self.wand)
         else:
-            ch_const = color_channel_resolver(channel)
+            ch_const = self._channel_to_mask(channel)
             if library.MagickNormalizeImageChannel:
                 r = library.MagickNormalizeImageChannel(self.wand, ch_const)
             else:  # pragma: no cover
@@ -4870,7 +4908,7 @@ class BaseImage(Resource):
                                                        fuzz,
                                                        invert)
                 else:
-                    channel_ch = color_channel_resolver(channel)
+                    channel_ch = self._channel_to_mask(channel)
                     if MAGICK_VERSION_NUMBER < 0x700:
                         r = library.MagickOpaquePaintImageChannel(
                             self.wand, channel_ch, target.resource,
@@ -5069,7 +5107,7 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.3
         """
-        ch_channel = color_channel_resolver(channel)
+        ch_channel = self._channel_to_mask(channel)
         min_color = ctypes.c_double(0.0)
         max_color = ctypes.c_double(0.0)
         if MAGICK_VERSION_NUMBER < 0x700:
@@ -5316,7 +5354,7 @@ class BaseImage(Resource):
             raise WandLibraryVersionError(msg)
         assertions.assert_real(angle=angle)
         if channel:
-            channel_ch = color_channel_resolver(channel)
+            channel_ch = self._channel_to_mask(channel)
             if MAGICK_VERSION_NUMBER < 0x700:
                 r = library.MagickRotationalBlurImageChannel(self.wand,
                                                              channel_ch,
@@ -5405,7 +5443,7 @@ class BaseImage(Resource):
                                                  sigma,
                                                  threshold)
         else:
-            channel_ch = color_channel_resolver(channel)
+            channel_ch = self._channel_to_mask(channel)
             if MAGICK_VERSION_NUMBER < 0x700:
                 r = library.MagickSelectiveBlurImageChannel(self.wand,
                                                             channel_ch,
@@ -5492,7 +5530,7 @@ class BaseImage(Resource):
         if channel is None:
             r = library.MagickSharpenImage(self.wand, radius, sigma)
         else:
-            channel_ch = color_channel_resolver(channel)
+            channel_ch = self._channel_to_mask(channel)
             if MAGICK_VERSION_NUMBER < 0x700:
                 r = library.MagickSharpenImageChannel(self.wand,
                                                       channel_ch,
@@ -5582,7 +5620,7 @@ class BaseImage(Resource):
                                                      strength,
                                                      midpoint)
         else:
-            channel_ch = color_channel_resolver(channel)
+            channel_ch = self._channel_to_mask(channel)
             if MAGICK_VERSION_NUMBER < 0x700:
                 r = library.MagickSigmoidalContrastImageChannel(
                     self.wand, channel_ch, sharpen, strength, midpoint
@@ -5728,7 +5766,7 @@ class BaseImage(Resource):
         if channel is None:
             r = library.MagickSolarizeImage(self.wand, threshold)
         else:
-            channel_ch = color_channel_resolver(channel)
+            channel_ch = self._channel_to_mask(channel)
             if MAGICK_VERSION_NUMBER < 0x700:
                 r = library.MagickSolarizeImageChannel(self.wand,
                                                        channel_ch,
@@ -5952,7 +5990,7 @@ class BaseImage(Resource):
             r = library.MagickStatisticImage(self.wand, stat_idx,
                                              width, height)
         else:
-            channel_ch = color_channel_resolver(channel)
+            channel_ch = self._channel_to_mask(channel)
             if MAGICK_VERSION_NUMBER < 0x700:
                 r = library.MagickStatisticImageChannel(self.wand,
                                                         channel_ch,
@@ -6024,7 +6062,7 @@ class BaseImage(Resource):
             r = library.MagickThresholdImage(self.wand,
                                              threshold * self.quantum_range)
         else:
-            ch_const = color_channel_resolver(channel)
+            ch_const = self._channel_to_mask(channel)
             r = library.MagickThresholdImageChannel(
                 self.wand, ch_const,
                 threshold * self.quantum_range
@@ -6425,7 +6463,7 @@ class BaseImage(Resource):
             r = library.MagickUnsharpMaskImage(self.wand, radius, sigma,
                                                amount, threshold)
         else:
-            channel_ch = color_channel_resolver(channel)
+            channel_ch = self._channel_to_mask(channel)
             if MAGICK_VERSION_NUMBER < 0x700:
                 r = library.MagickUnsharpMaskImageChannel(
                     self.wand, channel_ch, radius, sigma, amount, threshold
@@ -6477,15 +6515,9 @@ class BaseImage(Resource):
 
         """
         with image.clone() as watermark_image:
-            if MAGICK_VERSION_NUMBER >= 0x700 and transparency:
-                # With IM7, evaluation returns signed values that can
-                # cause composite issues.
-                expression = 'max(0, u - {0:g})'.format(transparency)
-                with watermark_image.fx(expression, channel='alpha') as fx:
-                    self.composite(fx, left=left, top=top)
-            else:
-                watermark_image.transparentize(transparency)
-                self.composite(watermark_image, left=left, top=top)
+            watermark_image.transparentize(transparency)
+            watermark_image.clamp()
+            self.composite(watermark_image, left=left, top=top)
         self.raise_exception()
 
     @manipulative
@@ -7695,38 +7727,3 @@ class ClosedImageError(DestroyedResourceError):
     image.
 
     """
-
-
-def color_channel_resolver(value):
-    """Attempts to resolve user input into a :c:type:`ChannelType` bit-mask.
-    User input can be an integer, a string defined in :const:`CHANNELS`,
-    or a string following ImageMagick's `CLI format`__.
-
-    __ https://imagemagick.org/script/command-line-options.php#channel
-
-    .. code::
-
-        # User generated bit-mask.
-        bitmask = color_channel_resolver(CHANNELS['red'] | CHANNELS['green'])
-        # Defined constant.
-        bitmask = color_channel_resolver('red')
-        # CLI format.
-        bitmask = color_channel_resolver('RGB,Sync')
-
-    .. versionadded:: 0.5.5
-    """
-    mask = -1
-    if isinstance(value, numbers.Integral) and not isinstance(value, bool):
-        mask = value
-    elif isinstance(value, string_type):
-        if value in CHANNELS:
-            mask = CHANNELS[value]
-        elif libmagick.ParseChannelOption:
-            mask = libmagick.ParseChannelOption(binary(value))
-    else:
-        raise TypeError(repr(value) + ' is an invalid channel type'
-                        '; see wand.image.CHANNELS dictionary')
-    if mask < 0:
-        raise ValueError('expected value from wand.image.CHANNELS, not '
-                         + repr(value))
-    return mask

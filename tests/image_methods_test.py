@@ -776,7 +776,7 @@ def test_fx_error(fx_asset):
                 pass
     with Image(filename='rose:') as xc:
         with raises(OptionError):
-            with xc.fx('/0'):
+            with xc.fx('NULL'):
                 pass
         with raises(TypeError):
             with xc.fx(('p[0,0]',)):
