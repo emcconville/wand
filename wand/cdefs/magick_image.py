@@ -123,6 +123,14 @@ def load(lib, IM_VERSION):
         # MagickAutoOrientImage was added in 6.8.9+, we have a fallback
         # function, so we pass silently if we cannot import it.
         pass
+    if IM_VERSION >= 0x708:
+        try:
+            lib.MagickAutoThresholdImage.argtypes = [c_void_p, c_int]
+            lib.MagickAutoThresholdImage.restype = c_bool
+        except AttributeError:
+            lib.MagickAutoThresholdImage = None
+    else:
+        lib.MagickAutoThresholdImage = None
     lib.MagickBlackThresholdImage.argtypes = [c_void_p, c_void_p]
     lib.MagickBlackThresholdImage.restype = c_bool
     lib.MagickBlueShiftImage.argtypes = [c_void_p, c_double]
@@ -145,6 +153,15 @@ def load(lib, IM_VERSION):
             c_void_p, c_int, c_double, c_double
         ]
         lib.MagickBrightnessContrastImageChannel.restype = c_bool
+    if IM_VERSION >= 0x708:
+        try:
+            lib.MagickCannyEdgeImage.argtypes = [c_void_p, c_double, c_double,
+                                                 c_double, c_double]
+            lib.MagickCannyEdgeImage.restype = c_bool
+        except AttributeError:
+            lib.MagickCannyEdgeImage = None
+    else:
+        lib.MagickCannyEdgeImage = None
     lib.MagickCharcoalImage.argtypes = [c_void_p, c_double, c_double]
     lib.MagickCharcoalImage.restype = c_bool
     lib.MagickChopImage.argtypes = [
@@ -201,6 +218,14 @@ def load(lib, IM_VERSION):
     else:
         lib.MagickCompareImagesLayers.argtypes = [c_void_p, c_int]
         lib.MagickCompareImagesLayers.restype = c_void_p
+    if IM_VERSION >= 0x708:
+        try:
+            lib.MagickComplexImages.argtypes = [c_void_p, c_int]
+            lib.MagickComplexImages.restype = c_void_p
+        except AttributeError:
+            lib.MagickComplexImages = None
+    else:
+        lib.MagickComplexImages = None
     if is_im_6:
         lib.MagickCompositeImage.argtypes = [
             c_void_p, c_void_p, c_int, c_ssize_t, c_ssize_t
@@ -544,6 +569,15 @@ def load(lib, IM_VERSION):
     lib.MagickHasNextImage.restype = c_bool
     lib.MagickHasPreviousImage.argtypes = [c_void_p]
     lib.MagickHasPreviousImage.restype = c_bool
+    if IM_VERSION >= 0x708:
+        try:
+            lib.MagickHoughLineImage.argtypes = [c_void_p, c_size_t, c_size_t,
+                                                 c_size_t]
+            lib.MagickHoughLineImage.restype = c_bool
+        except AttributeError:
+            lib.MagickHoughLineImage = None
+    else:
+        lib.MagickHoughLineImage = None
     lib.MagickIdentifyImage.argtypes = [c_void_p]
     lib.MagickIdentifyImage.restype = c_magick_char_p
     if is_im_6:
@@ -560,6 +594,14 @@ def load(lib, IM_VERSION):
         c_void_p, c_void_p, c_double
     ]
     lib.MagickInverseFourierTransformImage.restype = c_bool
+    if IM_VERSION >= 0x708:
+        try:
+            lib.MagickKuwaharaImage.argtypes = [c_void_p, c_double, c_double]
+            lib.MagickKuwaharaImage.restype = c_bool
+        except AttributeError:
+            lib.MagickKuwaharaImage = None
+    else:
+        lib.MagickKuwaharaImage = None
     lib.MagickLabelImage.argtypes = [c_void_p, c_char_p]
     lib.MagickLabelImage.restype = c_bool
     lib.MagickLevelImage.argtypes = [c_void_p, c_double, c_double, c_double]
@@ -579,6 +621,15 @@ def load(lib, IM_VERSION):
     lib.MagickLiquidRescaleImage.restype = c_bool
     lib.MagickMagnifyImage.argtypes = [c_void_p]
     lib.MagickMagnifyImage.restype = c_bool
+    if IM_VERSION >= 0x708:
+        try:
+            lib.MagickMeanShiftImage.argtypes = [c_void_p, c_size_t, c_size_t,
+                                                 c_double]
+            lib.MagickMeanShiftImage.restype = c_bool
+        except AttributeError:
+            lib.MagickMeanShiftImage = None
+    else:
+        lib.MagickMeanShiftImage = None
     if is_im_6:
         lib.MagickMedianFilterImage.argtypes = [c_void_p, c_double]
         lib.MagickMedianFilterImage.restype = c_bool
@@ -680,6 +731,14 @@ def load(lib, IM_VERSION):
             c_void_p, c_void_p, c_char_p, c_double, c_int
         ]
         lib.MagickPolaroidImage.restype = c_bool
+    if IM_VERSION >= 0x708:
+        try:
+            lib.MagickPolynomialImage.argtypes = [c_void_p, c_size_t, c_double]
+            lib.MagickPolynomialImage.restype = c_bool
+        except AttributeError:
+            lib.MagickPolynomialImage = None
+    else:
+        lib.MagickPolynomialImage = None
     lib.MagickPosterizeImage.argtypes = [c_void_p, c_size_t, c_bool]
     lib.MagickPosterizeImage.restype = c_bool
     lib.MagickPreviewImages.argtypes = [c_void_p, c_int]
@@ -704,6 +763,16 @@ def load(lib, IM_VERSION):
             c_void_p, c_int, c_double, c_double
         ]
         lib.MagickRandomThresholdImageChannel.restype = c_bool
+    if IM_VERSION >= 0x708:
+        try:
+            lib.MagickRangeThresholdImage.argtypes = [c_void_p, c_double,
+                                                      c_double, c_double,
+                                                      c_double]
+            lib.MagickRangeThresholdImage.restype = c_bool
+        except AttributeError:
+            lib.MagickRangeThresholdImage = None
+    else:
+        lib.MagickRangeThresholdImage = None
     lib.MagickReadImage.argtypes = [c_void_p, c_char_p]
     lib.MagickReadImage.restype = c_bool
     lib.MagickReadImageBlob.argtypes = [c_void_p, c_void_p, c_size_t]

@@ -4,7 +4,7 @@
 .. versionadded:: 0.5.0
 """
 from ctypes import (POINTER, c_void_p, c_char_p, c_size_t, c_ubyte, c_uint,
-                    c_int, c_double)
+                    c_int, c_ulong, c_double)
 from wand.cdefs.wandtypes import c_magick_char_p
 
 __all__ = ('load',)
@@ -128,5 +128,12 @@ def load(lib, IM_VERSION):
     lib.MagickSetOption.restype = c_int
     lib.MagickSetPointsize.argtypes = [c_void_p, c_double]
     lib.MagickSetPointsize.restype = c_int
+    if IM_VERSION >= 0x708:
+        try:
+            lib.MagickSetSeed.argtypes = [c_void_p, c_ulong]
+        except AttributeError:
+            lib.MagickSetSeed = None
+    else:
+        lib.MagickSetSeed = None
     lib.MagickSetSize.argtypes = [c_void_p, c_uint, c_uint]
     lib.MagickSetSize.restype = c_int

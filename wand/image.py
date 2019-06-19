@@ -28,13 +28,13 @@ from .cdefs.structures import GeomertyInfo, RectangleInfo
 from .version import MAGICK_VERSION_NUMBER, MAGICK_HDRI
 
 
-__all__ = ('ALPHA_CHANNEL_TYPES', 'CHANNELS', 'COLORSPACE_TYPES',
-           'COMPARE_METRICS', 'COMPOSITE_OPERATORS', 'COMPRESSION_TYPES',
-           'DISPOSE_TYPES', 'DISTORTION_METHODS', 'DITHER_METHODS',
-           'EVALUATE_OPS', 'FILTER_TYPES', 'FUNCTION_TYPES', 'GRAVITY_TYPES',
-           'IMAGE_LAYER_METHOD', 'IMAGE_TYPES', 'INTERLACE_TYPES',
-           'KERNEL_INFO_TYPES', 'MORPHOLOGY_METHODS', 'NOISE_TYPES',
-           'ORIENTATION_TYPES', 'PIXEL_INTERPOLATE_METHODS',
+__all__ = ('ALPHA_CHANNEL_TYPES', 'AUTO_THRESHOLD_METHODS', 'CHANNELS',
+           'COLORSPACE_TYPES', 'COMPARE_METRICS', 'COMPOSITE_OPERATORS',
+           'COMPRESSION_TYPES', 'DISPOSE_TYPES', 'DISTORTION_METHODS',
+           'DITHER_METHODS', 'EVALUATE_OPS', 'FILTER_TYPES', 'FUNCTION_TYPES',
+           'GRAVITY_TYPES', 'IMAGE_LAYER_METHOD', 'IMAGE_TYPES',
+           'INTERLACE_TYPES', 'KERNEL_INFO_TYPES', 'MORPHOLOGY_METHODS',
+           'NOISE_TYPES', 'ORIENTATION_TYPES', 'PIXEL_INTERPOLATE_METHODS',
            'RENDERING_INTENT_TYPES', 'SPARSE_COLOR_METHODS', 'STATISTIC_TYPES',
            'STORAGE_TYPES', 'VIRTUAL_PIXEL_METHOD', 'UNIT_TYPES',
            'BaseImage', 'ChannelDepthDict', 'ChannelImageDict',
@@ -78,6 +78,18 @@ if MAGICK_VERSION_NUMBER >= 0x700:  # pragma: no cover
                            'copy', 'deactivate', 'discrete', 'disassociate',
                            'extract', 'off', 'on', 'opaque', 'remove', 'set',
                            'shape', 'transparent')
+
+
+#: (:class:`tuple`) The list of methods used by
+#: :meth:`Image.auto_threshold() <wand.image.BaseImage.auto_threshold>`
+#:
+#: - ``'undefined'``
+#: - ``'kapur'``
+#: - ``'otsu'``
+#: - ``'triangle'``
+#:
+#: .. versionadded:: 0.5.5
+AUTO_THRESHOLD_METHODS = ('undefined', 'kapur', 'otsu', 'triangle')
 
 
 #: (:class:`dict`) The dictionary of channel types.
@@ -2653,6 +2665,36 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
+    def auto_threshold(self, method='kapur'):
+        """Automatically performs threshold method to reduce grayscale data
+        down to a binary black & white image. Included algorithms are
+        Kepur, Otsu, and Triangle methods.
+
+        .. warning::
+
+            This class method is only available with ImageMagick 7.0.8-41, or
+            greater.
+
+        :param method: Which threshold method to apply.
+                       See :const:`AUTO_THRESHOLD_METHODS`.
+                       Defaults to ``'kapur'``.
+        :type method: :class:`basestring`
+        :raises WandLibraryVersionError: if function is not available on
+                                         system's library.
+
+        .. versionadded:: 0.5.5
+        """
+        if library.MagickAutoThresholdImage is None:
+            msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
+            raise WandLibraryVersionError(msg)
+        assertions.string_in_list(AUTO_THRESHOLD_METHODS,
+                                  'wand.image.AUTO_THRESHOLD_METHODS',
+                                  method=method)
+        method_idx = AUTO_THRESHOLD_METHODS.index(method)
+        return library.MagickAutoThresholdImage(self.wand, method_idx)
+
+    @manipulative
+    @trap_exception
     def black_threshold(self, threshold):
         """Forces all pixels above a given color as black. Leaves pixels
         above threshold unaltered.
@@ -2795,6 +2837,37 @@ class BaseImage(Resource):
                                                           contrast)
                 library.MagickSetImageChannelMask(self.wand, mask)
         return r
+
+    @manipulative
+    @trap_exception
+    def canny(self, radius=0.0, sigma=1.0, lower_percent=0.1,
+              upper_percent=0.3):
+        """Detect edges by leveraging a multi-stage Canny algorithm.
+
+        .. warning::
+
+            This class method is only available with ImageMagick 7.0.8-41, or
+            greater.
+
+        :param radius: Size of gaussian filter.
+        :type radius: :class:`numbers.Real`
+        :param sigma: Standard deviation of gaussian filter.
+        :type sigma: :class:`numbers.Real`
+        :param lower_percent: Normalized lower threshold.
+        :type lower_percent: :class:`numbers.Real`
+        :param upper_percent: Normalized upper threshold.
+        :type upper_percent: :class:`numbers.Real`
+        :raises WandLibraryVersionError: if function is not available on
+                                         system's library.
+        """
+        if library.MagickCannyEdgeImage is None:
+            msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
+            raise WandLibraryVersionError(msg)
+        assertions.assert_real(radius=radius, sigma=sigma,
+                               lower_percent=lower_percent,
+                               upper_percent=upper_percent)
+        return library.MagickCannyEdgeImage(self.wand, radius, sigma,
+                                            lower_percent, upper_percent)
 
     @manipulative
     def concat(self, stacked=False):
