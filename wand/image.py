@@ -1028,6 +1028,12 @@ class BaseImage(Resource):
     #: (:class:`bool`) Whether the image is changed or not.
     dirty = None
 
+    #: (:class:`numbers.Integral`) Internal placeholde for
+    #: :attr:`seed` property.
+    #:
+    #: .. versionadded:: 0.5.5
+    _seed = None
+
     c_is_resource = library.IsMagickWand
     c_destroy_resource = library.DestroyMagickWand
     c_get_exception = library.MagickGetException
@@ -2163,6 +2169,28 @@ class BaseImage(Resource):
             r = library.MagickSetImageResolution(self.wand, x, y)
         if not r:  # pragma: no cover
             self.raise_exception()
+
+    @property
+    def seed(self):
+        """(:class:`numbers.Integral`) The seed for random number generator.
+
+        .. warning::
+
+            This property is only available with ImageMagick 7.0.8-41, or
+            greater.
+
+        .. versionadded:: 0.5.5
+        """
+        return self._seed
+
+    @seed.setter
+    def seed(self, value):
+        if library.MagickSetSeed is None:
+            msg = 'Property requires ImageMagick version 7.0.8-41 or greater.'
+            raise WandLibraryVersionError(msg)
+        assertions.assert_unsigned_integer(seed=value)
+        self._seed = value
+        library.MagickSetSeed(self.wand, value)
 
     @property
     def scene(self):
@@ -4543,6 +4571,39 @@ class BaseImage(Resource):
         return m.value, s.value
 
     @manipulative
+    @trap_exception
+    def mean_shift(self, width, height, color_distance=0.1):
+        """Recalculates pixel value by comparing neighboring pixels within a
+        color distance, and replacing with a mean value. Works best with
+        Gray, YCbCr, YIQ, or YUV colorspaces.
+
+        .. warning::
+
+            This class method is only available with ImageMagick 7.0.8-41, or
+            greater.
+
+        :param width: Size of the neighborhood window in pixels.
+        :type width: :class:`numbers.Integral`
+        :param height: Size of the neighborhood window in pixels.
+        :type height: :class:`numbers.Integral`
+        :param color_distance: Include pixel values within this color distance.
+        :type color_distance: :class:`numbers.Real`
+        :raises WandLibraryVersionError: If system's version of ImageMagick
+                                         does not support this method.
+
+        .. versionadded:: 0.5.5
+        """
+        if library.MagickMeanShiftImage is None:
+            msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
+            raise WandLibraryVersionError(msg)
+        assertions.assert_counting_number(width=width, height=height)
+        assertions.assert_real(color_distance=color_distance)
+        if 0 < color_distance <= 1.0:
+            color_distance *= self.quantum_range
+        return library.MagickMeanShiftImage(self.wand, width, height,
+                                            color_distance)
+
+    @manipulative
     def merge_layers(self, method):
         """Composes all the image layers from the current given image onward
         to produce a single image of the merged layers.
@@ -5088,6 +5149,46 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
+    def polynomial(self, arguments):
+        """Replace image with the sum of all images in a sequence by
+        calculating the pixel values a coefficient-weight value, and a
+        polynomial-exponent.
+
+        For example::
+
+            with Image(filename='rose:') as img:
+                img.polynomial(arguments=[0.5, 1.0])
+
+        The output image will be calculated as:
+
+            output = 0.5 * image ^ 1.0
+
+        .. warning::
+
+            This class method is only available with ImageMagick 7.0.8-41, or
+            greater.
+
+        :param arguments: A list of real numbers where at least two numbers
+                         (weight & exponent) are need for each image in the
+                         sequence.
+        :type arguments: :class:`collections.abc.Sequence`
+        :raises WandLibraryVersionError: If system's version of ImageMagick
+                                         does not support this method.
+
+        .. versionadded:: 0.5.5
+        """
+        if library.MagickPolynomialImage is None:
+            msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
+            raise WandLibraryVersionError(msg)
+        if not isinstance(arguments, abc.Sequence):
+            raise TypeError('expected sequence of doubles, not ' +
+                            repr(arguments))
+        argc = len(arguments)
+        argv = (ctypes.c_double * argc)(*arguments)
+        return library.MagickPolynomialImage(self.wand, (argc>>1), argv)
+
+    @manipulative
+    @trap_exception
     def posterize(self, levels=None, dither='no'):
         """Reduce color levels per channel.
 
@@ -5197,6 +5298,64 @@ class BaseImage(Resource):
             # Restore original state of channels
             library.MagickSetImageChannelMask(self.wand, channel_mask)
         return min_color.value, max_color.value
+
+    @manipulative
+    @trap_exception
+    def range_threshold(self, low_black=0.0, low_white=None, high_white=None,
+                        high_black=None):
+        """Applies soft & hard thresholding.
+
+        For a soft thresholding, parameters should be monotonically increasing:
+
+            with Image(filename='text.png') as img:
+                img.range_threshold(0.2, 0.4, 0.6, 0.8)
+
+        For a hard thresholding, parameters should be the same:
+
+            with Image(filename='text.png') as img:
+                img.range_threshold(0.4, 0.4, 0.6, 0.6)
+
+        .. warning::
+
+            This class method is only available with ImageMagick 7.0.8-41, or
+            greater.
+
+        :param low_black: Define the minimum threshold value.
+        :type low_black: :class:`numbers.Real`
+        :param low_white: Define the minimum threshold value.
+        :type low_white: :class:`numbers.Real`
+        :param high_white: Define the maximum threshold value.
+        :type high_white: :class:`numbers.Real`
+        :param high_black: Define the maximum threshold value.
+        :type high_black: :class:`numbers.Real`
+        :raises WandLibraryVersionError: If system's version of ImageMagick
+                                         does not support this method.
+
+        .. versionadded:: 0.5.5
+        """
+        if library.MagickRangeThresholdImage is None:
+            msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
+            raise WandLibraryVersionError(msg)
+        # Populate defaults to follow CLI behavior
+        if low_white is None:
+            low_white = low_black
+        if high_white is None:
+            high_white = low_white
+        if high_black is None:
+            high_black = high_white
+        assertions.assert_real(low_black=low_black, low_white=low_white,
+                               high_white=high_white, high_black=high_black)
+        if 0 < low_black <= 1.0:
+            low_black *= self.quantum_range
+        if 0 < low_white <= 1.0:
+            low_white *= self.quantum_range
+        if 0 < high_white <= 1.0:
+            high_white *= self.quantum_range
+        if 0 < high_black <= 1.0:
+            high_black *= self.quantum_range
+        return library.MagickRangeThresholdImage(self.wand,
+                                                 low_black, low_white,
+                                                 high_white, high_black)
 
     @manipulative
     @trap_exception

@@ -733,7 +733,8 @@ def load(lib, IM_VERSION):
         lib.MagickPolaroidImage.restype = c_bool
     if IM_VERSION >= 0x708:
         try:
-            lib.MagickPolynomialImage.argtypes = [c_void_p, c_size_t, c_double]
+            lib.MagickPolynomialImage.argtypes = [c_void_p, c_size_t,
+                                                  POINTER(c_double)]
             lib.MagickPolynomialImage.restype = c_bool
         except AttributeError:
             lib.MagickPolynomialImage = None
