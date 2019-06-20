@@ -1112,6 +1112,15 @@ def load(lib, IM_VERSION):
     else:
         lib.MagickWaveImage.argtypes = [c_void_p, c_double, c_double, c_int]
         lib.MagickWaveImage.restype = c_bool
+    if IM_VERSION >= 0x708:
+        try:
+            lib.MagickWaveletDenoiseImage.argtypes = [c_void_p, c_double,
+                                                      c_double]
+            lib.MagickWaveletDenoiseImage.restype = c_bool
+        except AttributeError:
+            lib.MagickWaveletDenoiseImage = None
+    else:
+        lib.MagickWaveletDenoiseImage = None
     lib.MagickWhiteThresholdImage.argtypes = [c_void_p, c_void_p]
     lib.MagickWhiteThresholdImage.restype = c_bool
     lib.MagickWriteImage.argtypes = [c_void_p, c_char_p]

@@ -6622,6 +6622,40 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
+    def wavelet_denoise(self, threshold=0.0, softness=0.0):
+        """Removes noise by applying a `wavelet transform`_.
+
+        .. _`wavelet transform`:
+           https://en.wikipedia.org/wiki/Wavelet_transform
+
+        .. warning::
+
+            This class method is only available with ImageMagick 7.0.8-41, or
+            greater.
+
+        :param threshold: Smoothing limit.
+        :type threshold: :class:`numbers.Real`
+        :param softness: Attenuate of the smoothing threshold.
+        :type softness: :class:`numbers.Real`
+        :raises WandLibraryVersionError: If system's version of ImageMagick
+                                         does not support this method.
+
+        .. versionadded:: 0.5.5
+        """
+        if library.MagickWaveletDenoiseImage is None:
+            msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
+            raise WandLibraryVersionError(msg)
+        assertions.assert_real(threshold=threshold, softness=softness)
+        if 0.0 < threshold <= 1.0:
+            threshold *= self.quantum_range
+        if 0.0 < softness <= 1.0:
+            softness *= self.quantum_range
+
+        return library.MagickWaveletDenoiseImage(self.wand, threshold,
+                                                 softness)
+
+    @manipulative
+    @trap_exception
     def white_threshold(self, threshold):
         """Forces all pixels above a given color as white. Leaves pixels
         below threshold unaltered.
