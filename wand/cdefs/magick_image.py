@@ -613,6 +613,15 @@ def load(lib, IM_VERSION):
         lib.MagickLevelImageChannel.restype = c_bool
     else:
         lib.MagickLevelImageChannel = None
+    if IM_VERSION >= 0x708:
+        try:
+            lib.MagickLevelizeImage.argtypes = [c_void_p, c_double, c_double,
+                                                c_double]
+            lib.MagickLevelizeImage.restype = c_bool
+        except AttributeError:
+            lib.MagickLevelizeImage = None
+    else:
+        lib.MagickLevelizeImage = None
     lib.MagickLinearStretchImage.argtypes = [c_void_p, c_double, c_double]
     lib.MagickLinearStretchImage.restype = c_bool
     lib.MagickLiquidRescaleImage.argtypes = [

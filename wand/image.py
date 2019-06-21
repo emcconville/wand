@@ -4243,6 +4243,38 @@ class BaseImage(Resource):
                 library.MagickSetImageChannelMask(self.wand, mask)
         return r
 
+    @manipulative
+    @trap_exception
+    def hough_lines(self, width, height=None, threshold=40):
+        """Identify lines within an image. Use :meth:`canny` to reduce image
+        to a binary edge before calling this method.
+
+        .. warning::
+
+            This class method is only available with ImageMagick 7.0.8-41, or
+            greater.
+
+        :param width: Local maxima of neighboring pixels.
+        :type width: :class:`numbers.Integral`
+        :param height: Local maxima of neighboring pixels.
+        :type height: :class:`numbers.Integral`
+        :param threshold: Line count to limit. Default to 40.
+        :type threshold: :class:`numbers.Integral`
+        :raises WandLibraryVersionError: If system's version of ImageMagick
+                                         does not support this method.
+
+        .. versionadded:: 0.5.5
+        """
+        if library.MagickHoughLineImage is None:
+            msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
+            raise WandLibraryVersionError(msg)
+        if height is None:
+            height = width
+        assertions.assert_unsigned_integer(width=width, height=height,
+                                           threshold=threshold)
+        return library.MagickHoughLineImage(self.wand, width, height,
+                                            threshold)
+
     @trap_exception
     def implode(self, amount=0.0, method="undefined"):
         """Creates a "imploding" effect by pulling pixels towards the center
@@ -4409,6 +4441,44 @@ class BaseImage(Resource):
             library.MagickSetImageChannelMask(self.wand, channel_mask)
         return k.value, s.value
 
+    @manipulative
+    @trap_exception
+    def kuwahara(self, radius=1.0, sigma=None):
+        """Edge preserving noise reduction filter.
+
+        https://en.wikipedia.org/wiki/Kuwahara_filter
+
+        If ``sigma`` is not given, the value will be calculated as:
+
+            sigma = radius - 0.5
+
+        To match original algorithm's behavior, increase ``radius`` value by
+        one:
+
+            myImage.kuwahara(myRadius + 1, mySigma)
+
+        .. warning::
+
+            This class method is only available with ImageMagick 7.0.8-41, or
+            greater.
+
+        :param radius: Size of the filter aperture.
+        :type radius: :class:`numbers.Real`
+        :param sigma: Standard deviation of Gaussian filter.
+        :type sigma: :class:`numbers.Real`
+        :raises WandLibraryVersionError: If system's version of ImageMagick
+                                         does not support this method.
+
+        .. versionadded:: 0.5.5
+        """
+        if library.MagickKuwaharaImage is None:
+            msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
+            raise WandLibraryVersionError(msg)
+        if sigma is None:
+            sigma = radius - 0.5
+        assertions.assert_real(radius=radius, sigma=sigma)
+        return library.MagickKuwaharaImage(self.wand, radius, sigma)
+
     @trap_exception
     def level(self, black=0.0, white=None, gamma=1.0, channel=None):
         """Adjusts the levels of an image by scaling the colors falling
@@ -4466,6 +4536,57 @@ class BaseImage(Resource):
                 r = library.MagickLevelImage(self.wand, bp, gamma, wp)
                 # Restore original state of channels
                 library.MagickSetImageChannelMask(self.wand, channel_mask)
+        return r
+
+    @manipulative
+    @trap_exception
+    def levelize(self, black=0.0, white=None, gamma=1.0, channel=None):
+        """Reverse of :meth:`level()`, this method compresses the range of
+        colors between ``black`` & ``white`` values.
+
+        If only ``black`` is given, ``white`` will be adjusted inward.
+
+        .. warning::
+
+            This class method is only available with ImageMagick 7.0.8-41, or
+            greater.
+
+        :param black: Black point, as a percentage of the system's quantum
+                      range. Defaults to 0.
+        :type black: :class:`numbers.Real`
+        :param white: White point, as a percentage of the system's quantum
+                      range. Defaults to 1.0.
+        :type white: :class:`numbers.Real`
+        :param gamma: Optional gamma adjustment. Values > 1.0 lighten the
+                      image's midtones while values < 1.0 darken them.
+        :type gamma: :class:`numbers.Real`
+        :param channel: The channel type. Available values can be found
+                        in the :const:`CHANNELS` mapping. If ``None``,
+                        normalize all channels.
+        :type channel: :const:`CHANNELS`
+        :raises WandLibraryVersionError: If system's version of ImageMagick
+                                         does not support this method.
+
+        .. versionadded:: 0.5.5
+        """
+        if library.MagickLevelizeImage is None:
+            msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
+            raise WandLibraryVersionError(msg)
+        if white is None:
+            white = float(self.quantum_range)
+        assertions.assert_real(black=black, white=white, gamma=gamma)
+        if 0 < black <= 1.0:
+            black *= self.quantum_range
+        if 0 < white <= 1.0:
+            white *= self.quantum_range
+        if channel is None:
+            r = library.MagickLevelizeImage(self.wand, black, gamma, white)
+        else:
+            ch_const = self._channel_to_mask(channel)
+            channel_mask = library.MagickSetImageChannelMask(self.wand,
+                                                             ch_const)
+            r = library.MagickLevelizeImage(self.wand, black, gamma, white)
+            library.MagickSetImageChannelMask(self.wand, channel_mask)
         return r
 
     @manipulative
@@ -5185,7 +5306,7 @@ class BaseImage(Resource):
                             repr(arguments))
         argc = len(arguments)
         argv = (ctypes.c_double * argc)(*arguments)
-        return library.MagickPolynomialImage(self.wand, (argc>>1), argv)
+        return library.MagickPolynomialImage(self.wand, (argc >> 1), argv)
 
     @manipulative
     @trap_exception
