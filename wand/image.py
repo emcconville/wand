@@ -24,7 +24,7 @@ from .exceptions import (MissingDelegateError, WandException,
                          WandRuntimeError, WandLibraryVersionError)
 from .font import Font
 from .resource import DestroyedResourceError, Resource
-from .cdefs.structures import GeomertyInfo, RectangleInfo
+from .cdefs.structures import CCObjectInfo, GeomertyInfo, PixelInfo, RectangleInfo
 from .version import MAGICK_VERSION_NUMBER, MAGICK_HDRI
 
 
@@ -3427,6 +3427,51 @@ class BaseImage(Resource):
                                              int(left), int(top))
             library.MagickSetImageChannelMask(self.wand, ch_mask)
         return r
+
+    def connected_components(self, connectivity=4):
+        """Evaluates binary image, and groups connected objects by filling
+        each component with a mean-gray color. This method will also
+        return a list of :class:`ConnectedComponentObject` instances
+        that will describe a component features.
+
+        .. warning::
+
+            This class method is only available with ImageMagick 7.0.8-41, or
+            greater.
+
+        :param connectivity: Either ``4``, or ``8``. A value of ``4`` will
+                            evaluate each pixels top-bottom, & left-right
+                            neighbors. A value of ``8`` will include the four
+                            corners of each pixel. Set :attr:`fuzz` property
+                            to increase pixel matching.
+        :type connectivity: :class:`numbers.Integral`
+        :returns: A list of :class:`ConnectedComponentObject`.
+        :rtype: class:`list` < :class:`ConnectedComponentObject` >
+        :raises WandLibraryVersionError: If system's version of ImageMagick
+                                         does not support this method.
+
+        .. versionadded:: 0.5.5
+        """
+        if library.MagickConnectedComponentsImage is None:
+            msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
+            raise WandLibraryVersionError(msg)
+        if connectivity not in (4, 8):
+            raise ValueError('connectivity must be 4, or 8.')
+        objects_ptr = ctypes.c_void_p(0)
+        ccoi_mem_size = ctypes.sizeof(CCObjectInfo)
+        r = library.MagickConnectedComponentsImage(self.wand, connectivity,
+                                                   ctypes.byref(objects_ptr))
+        objects = []
+        if r and objects_ptr.value:
+            for i in range(self.colors):
+                temp = CCObjectInfo()
+                src_addr = objects_ptr.value + (i * ccoi_mem_size)
+                ctypes.memmove(ctypes.addressof(temp), src_addr, ccoi_mem_size)
+                objects.append(ConnectedComponentObject(temp))
+            libmagick.RelinquishMagickMemory(objects_ptr)
+        else:
+            self.raise_exception()
+        return objects
 
     @manipulative
     @trap_exception
@@ -8108,6 +8153,42 @@ class HistogramDict(abc.Mapping):
             color = Color.from_pixelwand(self.pixels[i])
             self.counts[color] = color_count
 
+
+class ConnectedComponentObject(object):
+    _id = None
+    width = None
+    height = None
+    left = None
+    top = None
+    center_x = None
+    center_y = None
+    area = None
+    mean_color = None
+
+    def __init__(self, cc_object=None):
+        if isinstance(cc_object, CCObjectInfo):
+            self.clone_from_cc_object_info(cc_object)
+
+    def clone_from_cc_object_info(self, cc_object):
+            self._id = cc_object._id
+            self.width = cc_object.bounding_box.width
+            self.height = cc_object.bounding_box.height
+            self.left = cc_object.bounding_box.x
+            self.top = cc_object.bounding_box.y
+            self.center_x = cc_object.centroid.x
+            self.center_y = cc_object.centroid.y
+            self.area = cc_object.area
+            pinfo_size = ctypes.sizeof(PixelInfo)
+            raw_buffer = ctypes.create_string_buffer(pinfo_size)
+            ctypes.memmove(raw_buffer,
+                           ctypes.byref(cc_object.color),
+                           pinfo_size)
+            self.mean_color = Color(raw=raw_buffer)
+
+    def __repr__(self):
+        fmt = ("{name}({_id}: {width}x{height}+{left}+{top} {center_x:.2f},"
+               "{center_y:.2f} {area:.0f} {mean_color})")
+        return fmt.format(name=self.__class__.__name__, **self.__dict__)
 
 class ClosedImageError(DestroyedResourceError):
     """An error that rises when some code tries access to an already closed

@@ -138,6 +138,15 @@ class RectangleInfo(Structure):
                 ('y', c_ssize_t)]
 
 
+class CCObjectInfo(Structure):
+    _fields_ = [('_id', c_ssize_t),
+                ('bounding_box', RectangleInfo),
+                ('color', PixelInfo),
+                ('centroid', PointInfo),
+                ('area', c_double),
+                ('census', c_double)]
+
+
 # All this will change with IM7, so let's not implement this just yet.
 #
 # class ImageChannelStatistics(Structure):

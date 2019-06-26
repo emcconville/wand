@@ -249,6 +249,16 @@ def load(lib, IM_VERSION):
         lib.MagickCompositeImageChannel.restype = c_bool
     else:
         lib.MagickCompositeImageChannel = None
+    if IM_VERSION >= 0x708:
+        try:
+            lib.MagickConnectedComponentsImage.argtypes = [
+                c_void_p, c_size_t, POINTER(c_void_p)
+            ]
+            lib.MagickConnectedComponentsImage.restype = c_bool
+        except AttributeError:
+            lib.MagickConnectedComponentsImage = None
+    else:
+        lib.MagickConnectedComponentsImage = None
     lib.MagickConstituteImage.argtypes = [
         c_void_p, c_size_t, c_size_t, c_char_p, c_int, c_void_p
     ]
