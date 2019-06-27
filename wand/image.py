@@ -24,7 +24,8 @@ from .exceptions import (MissingDelegateError, WandException,
                          WandRuntimeError, WandLibraryVersionError)
 from .font import Font
 from .resource import DestroyedResourceError, Resource
-from .cdefs.structures import CCObjectInfo, GeomertyInfo, PixelInfo, RectangleInfo
+from .cdefs.structures import (CCObjectInfo, GeomertyInfo, PixelInfo,
+                               RectangleInfo)
 from .version import MAGICK_VERSION_NUMBER, MAGICK_HDRI
 
 
@@ -40,7 +41,7 @@ __all__ = ('ALPHA_CHANNEL_TYPES', 'AUTO_THRESHOLD_METHODS', 'CHANNELS',
            'BaseImage', 'ChannelDepthDict', 'ChannelImageDict',
            'ClosedImageError', 'HistogramDict', 'Image', 'ImageProperty',
            'Iterator', 'Metadata', 'OptionDict', 'manipulative',
-           'ArtifactTree', 'ProfileDict')
+           'ArtifactTree', 'ProfileDict', 'ConnectedComponentObject')
 
 
 #: (:class:`tuple`) The list of :attr:`~wand.image.BaseImage.alpha_channel`
@@ -3441,13 +3442,14 @@ class BaseImage(Resource):
 
         :param connectivity: Either ``4``, or ``8``. A value of ``4`` will
                             evaluate each pixels top-bottom, & left-right
-                            neighbors. A value of ``8`` will include the four
-                            corners of each pixel. Set :attr:`fuzz` property
-                            to increase pixel matching.
+                            neighbors. A value of ``8`` will use the same
+                            pixels as with ``4``, but will also include the
+                            four corners of each pixel. Set :attr:`fuzz`
+                            property to increase pixel matching.
         :type connectivity: :class:`numbers.Integral`
         :returns: A list of :class:`ConnectedComponentObject`.
-        :rtype: class:`list` < :class:`ConnectedComponentObject` >
-        :raises WandLibraryVersionError: If system's version of ImageMagick
+        :rtype: :class:`list` [:class:`ConnectedComponentObject`]
+        :raises WandLibraryVersionError: If ImageMagick library
                                          does not support this method.
 
         .. versionadded:: 0.5.5
@@ -3468,7 +3470,7 @@ class BaseImage(Resource):
                 src_addr = objects_ptr.value + (i * ccoi_mem_size)
                 ctypes.memmove(ctypes.addressof(temp), src_addr, ccoi_mem_size)
                 objects.append(ConnectedComponentObject(temp))
-            libmagick.RelinquishMagickMemory(objects_ptr)
+            objects_ptr = libmagick.RelinquishMagickMemory(objects_ptr)
         else:
             self.raise_exception()
         return objects
@@ -8155,19 +8157,67 @@ class HistogramDict(abc.Mapping):
 
 
 class ConnectedComponentObject(object):
+    """Generic Python wrapper to translate
+    :c:type:`CCObjectInfo` structure into a class with
+    documentation.
+
+    .. versionadded:: 0.5.5
+    """
+    #: (:class:`numbers.Integral`) Serialized object identifier
+    #: starting at `0`.
     _id = None
+
+    #: (:class:`numbers.Integral`) Width of objects minimum
+    #: bounding rectangle.
     width = None
+
+    #: (:class:`numbers.Integral`) Height of objects minimum
+    #: bounding rectangle.
     height = None
+
+    #: (:class:`numbers.Integral`) X offset of objects minimum
+    #: bounding rectangle.
     left = None
+
+    #: (:class:`numbers.Integral`) Y offset of objects minimum
+    #: bounding rectangle.
     top = None
+
+    #: (:class:`numbers.Real`) X offset of objects centroid.
     center_x = None
+
+    #: (:class:`numbers.Real`) Y offset of objects centroid.
     center_y = None
+
+    #: (:class:`numbers.Real`) Quantity of pixels that make-up
+    #: the objects shape.
     area = None
+
+    #: (:class:`~wand.color.Color`) The average color of the
+    #: shape.
     mean_color = None
 
     def __init__(self, cc_object=None):
         if isinstance(cc_object, CCObjectInfo):
             self.clone_from_cc_object_info(cc_object)
+
+    @property
+    def size(self):
+        """(:class:`tuple` (:attr:`width`, :attr:`height`))
+        Minimum bounding rectangle."""
+        return self.width, self.height
+
+    @property
+    def offset(self):
+        """(:class:`tuple` (:attr:`left`, :attr:`top`))
+        Position of objects minimum bounding rectangle."""
+        return self.left, self.top
+
+    @property
+    def centroid(self):
+        """(:class:`tuple` (:attr:`center_x`, :attr:`center_y`))
+        Center of object."""
+        return self.center_x, self.center_y
 
     def clone_from_cc_object_info(self, cc_object):
             self._id = cc_object._id
@@ -8189,6 +8239,7 @@ class ConnectedComponentObject(object):
         fmt = ("{name}({_id}: {width}x{height}+{left}+{top} {center_x:.2f},"
                "{center_y:.2f} {area:.0f} {mean_color})")
         return fmt.format(name=self.__class__.__name__, **self.__dict__)
+
 
 class ClosedImageError(DestroyedResourceError):
     """An error that rises when some code tries access to an already closed
