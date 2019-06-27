@@ -238,6 +238,23 @@ if MAGICK_VERSION_NUMBER >= 0x700:  # pragma: no cover
                        'structural_dissimilarity')
 
 
+#: (:class:`tuple`) The list of complext operators used by
+#: :meth:`Image.complex() <wand.image.BaseImage.complex>`.
+#:
+#: - ``'undefined'``
+#: - ``'add'``
+#: - ``'conjugate'``
+#: - ``'divide'``
+#: - ``'magnitude',``
+#: - ``'multiply'``
+#: - ``'real_imaginary'``
+#: - ``'subtract'``
+#:
+#: .. versionadded:: 0.5.5
+COMPLEX_OPERATORS = ('undefined', 'add', 'conjugate', 'divide', 'magnitude',
+                     'multiply', 'real_imaginary', 'subtract')
+
+
 #: (:class:`tuple`) The list of composition operators
 #:
 #: - ``'undefined'``
@@ -2189,6 +2206,7 @@ class BaseImage(Resource):
         if library.MagickSetSeed is None:
             msg = 'Property requires ImageMagick version 7.0.8-41 or greater.'
             raise WandLibraryVersionError(msg)
+        # pragma: no cover
         assertions.assert_unsigned_integer(seed=value)
         self._seed = value
         library.MagickSetSeed(self.wand, value)
@@ -2716,6 +2734,7 @@ class BaseImage(Resource):
         if library.MagickAutoThresholdImage is None:
             msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
             raise WandLibraryVersionError(msg)
+        # pragma: no cover
         assertions.string_in_list(AUTO_THRESHOLD_METHODS,
                                   'wand.image.AUTO_THRESHOLD_METHODS',
                                   method=method)
@@ -2892,6 +2911,7 @@ class BaseImage(Resource):
         if library.MagickCannyEdgeImage is None:
             msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
             raise WandLibraryVersionError(msg)
+        # pragma: no cover
         assertions.assert_real(radius=radius, sigma=sigma,
                                lower_percent=lower_percent,
                                upper_percent=upper_percent)
@@ -3277,6 +3297,41 @@ class BaseImage(Resource):
                                                      ctypes.byref(distortion))
         return Image(BaseImage(compared_image)), distortion.value
 
+    @manipulative
+    def complex(self, operator='add', snr=None):
+        """Preforms complex mathematics against two images in a sequence,
+        and generates a new image with results.
+
+        .. warning::
+
+            This class method is only available with ImageMagick 7.0.8-41, or
+            greater.
+
+        :param operator: Define which mathematic operator to perform. See
+                         :const:`COMPLEX_OPERATORS`. Default is ``'add'``.
+        :type operator: :class:`basestring`
+        :param snr: Optional ``SNR`` parameter for ``'divide'`` operator.
+        :type snr: :class:`basestring`
+        :raises WandLibraryVersionError: If ImageMagick library does not
+                                         support this function.
+
+        .. versionadded:: 0.5.5
+        """
+        if library.MagickComplexImages is None:
+            msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
+            raise WandLibraryVersionError(msg)
+        # pragma: no cover
+        assertions.string_in_list(COMPLEX_OPERATORS,
+                                  'wand.image.COMPLEX_OPERATORS',
+                                  operator=operator)
+        if snr is not None:
+            self.artifacts['complex:snr=float'] = str(snr)
+        operator_idx = COMPLEX_OPERATORS.index(operator)
+        wand = library.MagickComplexImages(self.wand, operator_idx)
+        if not bool(wand):
+            self.raise_exception()
+        return Image(BaseImage(wand))
+
     @trap_exception
     def composite(self, image, left=None, top=None, operator='over',
                   arguments=None, gravity=None):
@@ -3429,24 +3484,53 @@ class BaseImage(Resource):
             library.MagickSetImageChannelMask(self.wand, ch_mask)
         return r
 
-    def connected_components(self, connectivity=4):
-        """Evaluates binary image, and groups connected objects by filling
-        each component with a mean-gray color. This method will also
-        return a list of :class:`ConnectedComponentObject` instances
-        that will describe a component features.
+    def connected_components(self, connectivity=4, area_threshold=None):
+        """Evaluates binary image, and groups connected pixels into objects.
+        This method will also return a list of
+        :class:`ConnectedComponentObject` instances that will describe an
+        object's features.
+
+        .. code::
+
+            from wand.image import Image
+
+            with Image(filename='objects.gif') as img:
+                objects = img.connected_components()
+            for cc_obj in objects:
+                print("{0._id}: {0.size} {0.offset}".format(cc_obj))
+
+            #=> 0: (256, 171) (0, 0)
+            #=> 2: (120, 135) (104, 18)
+            #=> 3: (50, 36) (129, 44)
+            #=> 4: (21, 23) (0, 45)
+            #=> 1: (4, 10) (252, 0)
 
         .. warning::
 
             This class method is only available with ImageMagick 7.0.8-41, or
             greater.
 
+        .. tip::
+
+            Set :attr:`fuzz` property to increase pixel matching by reducing
+            tolerance of color-value comparisons::
+
+                from wand.image import Image
+                from wand.version import QUANTUM_RANGE
+
+                with Image(filename='objects.gif') as img:
+                    img.fuzz = 0.1 * QUANTUM_RANGE  # 10%
+                    objects = img.connected_components()
+
         :param connectivity: Either ``4``, or ``8``. A value of ``4`` will
                             evaluate each pixels top-bottom, & left-right
                             neighbors. A value of ``8`` will use the same
                             pixels as with ``4``, but will also include the
-                            four corners of each pixel. Set :attr:`fuzz`
-                            property to increase pixel matching.
+                            four corners of each pixel.
         :type connectivity: :class:`numbers.Integral`
+        :param area_threshold: Optional argument to exclude objects under an
+                               area size.
+        :type area_threshold: :class:`basestring`
         :returns: A list of :class:`ConnectedComponentObject`.
         :rtype: :class:`list` [:class:`ConnectedComponentObject`]
         :raises WandLibraryVersionError: If ImageMagick library
@@ -3459,6 +3543,9 @@ class BaseImage(Resource):
             raise WandLibraryVersionError(msg)
         if connectivity not in (4, 8):
             raise ValueError('connectivity must be 4, or 8.')
+        if area_threshold is not None:
+            key = 'connected-components:area-threshold'
+            self.artifacts[key] = str(area_threshold)
         objects_ptr = ctypes.c_void_p(0)
         ccoi_mem_size = ctypes.sizeof(CCObjectInfo)
         r = library.MagickConnectedComponentsImage(self.wand, connectivity,
@@ -4315,6 +4402,7 @@ class BaseImage(Resource):
         if library.MagickHoughLineImage is None:
             msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
             raise WandLibraryVersionError(msg)
+        # pragma: no cover
         if height is None:
             height = width
         assertions.assert_unsigned_integer(width=width, height=height,
@@ -4521,6 +4609,7 @@ class BaseImage(Resource):
         if library.MagickKuwaharaImage is None:
             msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
             raise WandLibraryVersionError(msg)
+        # pragma: no cover
         if sigma is None:
             sigma = radius - 0.5
         assertions.assert_real(radius=radius, sigma=sigma)
@@ -4619,6 +4708,7 @@ class BaseImage(Resource):
         if library.MagickLevelizeImage is None:
             msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
             raise WandLibraryVersionError(msg)
+        # pragma: no cover
         if white is None:
             white = float(self.quantum_range)
         assertions.assert_real(black=black, white=white, gamma=gamma)
@@ -4764,6 +4854,7 @@ class BaseImage(Resource):
         if library.MagickMeanShiftImage is None:
             msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
             raise WandLibraryVersionError(msg)
+        # pragma: no cover
         assertions.assert_counting_number(width=width, height=height)
         assertions.assert_real(color_distance=color_distance)
         if 0 < color_distance <= 1.0:
@@ -5348,6 +5439,7 @@ class BaseImage(Resource):
         if library.MagickPolynomialImage is None:
             msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
             raise WandLibraryVersionError(msg)
+        # pragma: no cover
         if not isinstance(arguments, abc.Sequence):
             raise TypeError('expected sequence of doubles, not ' +
                             repr(arguments))
@@ -5504,6 +5596,7 @@ class BaseImage(Resource):
         if library.MagickRangeThresholdImage is None:
             msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
             raise WandLibraryVersionError(msg)
+        # pragma: no cover
         # Populate defaults to follow CLI behavior
         if low_white is None:
             low_white = low_black
@@ -6972,12 +7065,12 @@ class BaseImage(Resource):
         if library.MagickWaveletDenoiseImage is None:
             msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
             raise WandLibraryVersionError(msg)
+        # pragma: no cover
         assertions.assert_real(threshold=threshold, softness=softness)
         if 0.0 < threshold <= 1.0:
             threshold *= self.quantum_range
         if 0.0 < softness <= 1.0:
             softness *= self.quantum_range
-
         return library.MagickWaveletDenoiseImage(self.wand, threshold,
                                                  softness)
 
@@ -8158,8 +8251,10 @@ class HistogramDict(abc.Mapping):
 
 class ConnectedComponentObject(object):
     """Generic Python wrapper to translate
-    :c:type:`CCObjectInfo` structure into a class with
-    documentation.
+    :c:type:`CCObjectInfo` structure into a class describing objects found
+    within an image. This class is generated by
+    :meth:`Image.connected_components()
+    <wand.image.BaseImage.connected_components>` method.
 
     .. versionadded:: 0.5.5
     """
@@ -8220,20 +8315,21 @@ class ConnectedComponentObject(object):
         return self.center_x, self.center_y
 
     def clone_from_cc_object_info(self, cc_object):
-            self._id = cc_object._id
-            self.width = cc_object.bounding_box.width
-            self.height = cc_object.bounding_box.height
-            self.left = cc_object.bounding_box.x
-            self.top = cc_object.bounding_box.y
-            self.center_x = cc_object.centroid.x
-            self.center_y = cc_object.centroid.y
-            self.area = cc_object.area
-            pinfo_size = ctypes.sizeof(PixelInfo)
-            raw_buffer = ctypes.create_string_buffer(pinfo_size)
-            ctypes.memmove(raw_buffer,
-                           ctypes.byref(cc_object.color),
-                           pinfo_size)
-            self.mean_color = Color(raw=raw_buffer)
+        """Copy data from :class:`~wand.cdefs.structures.CCObjectInfo`."""
+        self._id = cc_object._id
+        self.width = cc_object.bounding_box.width
+        self.height = cc_object.bounding_box.height
+        self.left = cc_object.bounding_box.x
+        self.top = cc_object.bounding_box.y
+        self.center_x = cc_object.centroid.x
+        self.center_y = cc_object.centroid.y
+        self.area = cc_object.area
+        pinfo_size = ctypes.sizeof(PixelInfo)
+        raw_buffer = ctypes.create_string_buffer(pinfo_size)
+        ctypes.memmove(raw_buffer,
+                       ctypes.byref(cc_object.color),
+                       pinfo_size)
+        self.mean_color = Color(raw=raw_buffer)
 
     def __repr__(self):
         fmt = ("{name}({_id}: {width}x{height}+{left}+{top} {center_x:.2f},"

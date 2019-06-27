@@ -37,6 +37,22 @@ Unreleased.
    - :meth:`Image.statistic() <wand.image.BaseImage.statistic>`
    - :meth:`Image.unsharp_mask() <wand.image.BaseImage.unsharp_mask>`
 
+ - Added support for new methods introduced with ImageMagick 7.0.8-41. Upgrade to
+   the latest ImageMagick version to take advantage of the following features.
+
+   - :meth:`Image.auto_threshold() <wand.image.BaseImage.auto_threshold>`
+   - :meth:`Image.canny() <wand.image.BaseImage.canny>`
+   - :meth:`Image.complex() <wand.image.BaseImage.complex>`
+   - :meth:`Image.connected_components() <wand.image.BaseImage.connected_components>`
+   - :meth:`Image.hough_lines() <wand.image.BaseImage.hough_lines>`
+   - :meth:`Image.kuwahara() <wand.image.BaseImage.kuwahara>`
+   - :meth:`Image.levelize() <wand.image.BaseImage.levelize>`
+   - :meth:`Image.mean_shift() <wand.image.BaseImage.mean_shift>`
+   - :meth:`Image.polynomial() <wand.image.BaseImage.polynomial>`
+   - :meth:`Image.range_threshold() <wand.image.BaseImage.range_threshold>`
+   - :attr:`Image.seed <wand.image.BaseImage.seed>`
+   - :meth:`Image.wavelet_denoise() <wand.image.BaseImage.wavelet_denoise>`
+
 
 .. _changelog-0.5.4:
 
