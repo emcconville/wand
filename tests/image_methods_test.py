@@ -8,7 +8,8 @@ import warnings
 from pytest import mark, raises
 
 from wand.color import Color
-from wand.exceptions import MissingDelegateError, OptionError
+from wand.exceptions import (MissingDelegateError, OptionError,
+                             WandLibraryVersionError)
 from wand.image import Image
 from wand.font import Font
 from wand.version import MAGICK_VERSION_NUMBER
@@ -94,6 +95,17 @@ def test_auto_orientation(fx_asset):
             assert img[0, -1] == original[0, 0]
             assert img[-1, 0] == original[-1, -1]
             assert img[-1, -1] == original[-1, 0]
+
+
+def test_auto_threshold():
+    with Image(filename='rose:') as img:
+        if MAGICK_VERSION_NUMBER < 0x708:
+            with raises(WandLibraryVersionError):
+                img.auto_threshold()
+        else:
+            was = img.signature
+            img.auto_threshold()
+            assert was != img.signature
 
 
 def test_black_threshold(fx_asset):
@@ -260,6 +272,18 @@ def test_compare(fx_asset):
             cmp_img, err = orig.compare(img, 'root_mean_square')
 
 
+def test_complex():
+    with Image(width=1, height=1, pseudo='xc:gray25') as a:
+        with Image(width=1, height=1, pseudo='xc:gray50') as b:
+            a.sequence.append(b)
+        if MAGICK_VERSION_NUMBER < 0x708:
+            with raises(WandLibraryVersionError):
+                a.complex('add')
+        else:
+            with a.complex('add') as img:
+                assert 2 == len(img.sequence)
+
+
 def test_composite(fx_asset):
     with Image(filename=str(fx_asset.join('beach.jpg'))) as orig:
         with orig.clone() as img:
@@ -393,6 +417,16 @@ def test_concat():
         with Image(img) as row:
             row.concat(True)
             assert row.size == (70, 92)
+
+
+def test_connected_components(fx_asset):
+    with Image(filename=str(fx_asset.join('ccobject.png'))) as img:
+        if MAGICK_VERSION_NUMBER < 0x708:
+            with raises(WandLibraryVersionError):
+                _ = img.connected_components()
+        else:
+            objects = img.connected_components()
+            assert 2 == len(objects)
 
 
 def test_contrast_stretch(fx_asset):
@@ -709,6 +743,13 @@ def test_flop(fx_asset):
             assert flopped[-1, -1] == img[0, -1]
 
 
+def test_forward_fourier_transform():
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.forward_fourier_transform()
+        assert was != img.signature
+
+
 def test_frame(fx_asset):
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         img.frame(width=4, height=4)
@@ -847,6 +888,17 @@ def test_hald_clut(fx_asset):
         assert was != img.signature
 
 
+def test_hough_lines(fx_asset):
+    with Image(filename=str(fx_asset.join('ccobject.png'))) as img:
+        if MAGICK_VERSION_NUMBER < 0x708:
+            with raises(WandLibraryVersionError):
+                img.hough_lines(width=3, height=3)
+        else:
+            was = img.signature
+            img.hough_lines(width=3, height=3)
+            assert was != img.signature
+
+
 def test_implode(fx_asset):
     with Image(filename='rose:') as img:
         was = img.signature
@@ -907,12 +959,31 @@ def test_import_pixels_issue_413():
         assert img
 
 
+def test_inverse_fourier_transform(fx_asset):
+    with Image(filename=str(fx_asset.join('ccobject_magnitude.png'))) as a:
+        was = a.signature
+        with Image(filename=str(fx_asset.join('ccobject_phase.png'))) as b:
+            a.inverse_fourier_transform(b)
+        assert was != a.signature
+
+
 def test_kurtosis_channel():
     with Image(filename='rose:') as img:
         r = img.kurtosis_channel('red')
         assert len(r) == 2
         with raises(ValueError):
             img.kurtosis_channel('unknown')
+
+
+def test_kuwahara():
+    with Image(filename='rose:') as img:
+        if MAGICK_VERSION_NUMBER < 0x708:
+            with raises(WandLibraryVersionError):
+                img.kuwahara(3.0)
+        else:
+            was = img.signature
+            img.kuwahara(3.0)
+            assert was != img.signature
 
 
 def test_level(fx_asset):
@@ -983,6 +1054,17 @@ def test_level_user_error(fx_asset):
             img.level(channel='404')
 
 
+def test_levelize():
+    with Image(filename='rose:') as img:
+        if MAGICK_VERSION_NUMBER < 0x708:
+            with raises(WandLibraryVersionError):
+                img.levelize(3.0)
+        else:
+            was = img.signature
+            img.levelize(3.0)
+            assert was != img.signature
+
+
 def test_linear_stretch(fx_asset):
     with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
         img.linear_stretch(black_point=0.15,
@@ -1029,6 +1111,17 @@ def test_mean_channel():
         assert len(r) == 2
         with raises(ValueError):
             img.mean_channel('unknown')
+
+
+def test_mean_shift():
+    with Image(filename='rose:') as img:
+        if MAGICK_VERSION_NUMBER < 0x708:
+            with raises(WandLibraryVersionError):
+                img.mean_shift(width=5, height=5)
+        else:
+            was = img.signature
+            img.mean_shift(width=5, height=5)
+            assert was != img.signature
 
 
 def test_merge_layers(fx_asset):
@@ -1327,6 +1420,17 @@ def test_polaroid(fx_asset):
         img.polaroid(caption='hello', font=font)
 
 
+def test_polynomial():
+    with Image(filename='rose:') as img:
+        if MAGICK_VERSION_NUMBER < 0x708:
+            with raises(WandLibraryVersionError):
+                img.polynomial(arguments=(0.5, 1.0))
+        else:
+            was = img.signature
+            img.polynomial(arguments=(0.5, 1.0))
+            assert was != img.signature
+
+
 def test_posterize(fx_asset):
     with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
         was = img.signature
@@ -1370,6 +1474,21 @@ def test_range_channel():
         assert minima < maxima
         with raises(ValueError):
             img.range_channel('unknown')
+
+
+def test_range_threshold():
+    with Image(filename='rose:') as img:
+        if MAGICK_VERSION_NUMBER < 0x708:
+            with raises(WandLibraryVersionError):
+                img.range_threshold(20)
+        else:
+            was = img.signature
+            img.range_threshold(20, 40, 60, 80)
+            assert was != img.signature
+            # Smoke test
+            img.range_threshold(20)
+            img.range_threshold(20, 40)
+            img.range_threshold(20, 40, 60)
 
 
 def test_remap(fx_asset):
@@ -2053,6 +2172,17 @@ def test_wave(fx_asset):
             img.wave(wave_length='img height')
         with raises(TypeError):
             img.wave(method=0xDEADBEEF)
+
+
+def test_wavelet_denoise():
+    with Image(filename='rose:') as img:
+        if MAGICK_VERSION_NUMBER < 0x708:
+            with raises(WandLibraryVersionError):
+                img.wavelet_denoise(0.2, 0.3)
+        else:
+            was = img.signature
+            img.wavelet_denoise(0.2, 0.3)
+            assert was != img.signature
 
 
 def test_white_threshold(fx_asset):
