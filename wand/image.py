@@ -3302,6 +3302,11 @@ class BaseImage(Resource):
         """Performs `complex`_ mathematics against two images in a sequence,
         and generates a new image with two results.
 
+        .. seealso::
+
+            :meth:`forward_fourier_transform` &
+            :meth:`inverse_fourier_transform`
+
         .. code::
 
             from wand.image import Image
@@ -4137,6 +4142,23 @@ class BaseImage(Resource):
         """
         return library.MagickFlopImage(self.wand)
 
+    @trap_exception
+    def forward_fourier_transform(self, magnitude=False):
+        """Performs a discrete Fourier transform. The image stack is replaced
+        with the results. Either a pair of magnitude & phase images, or
+        real & imaginary.
+
+        .. seealso:: :meth:`inverse_fourier_transform` & :meth:`complex`
+
+        :param magnitude: If ``True``, generate magnitude & phase, else
+                          real & imaginary. Default ``False``
+        :type magnitude: :class:`bool`
+
+        .. versionadded:: 0.5.5
+        """
+        assertions.assert_bool(magnitude=magnitude)
+        return library.MagickForwardFourierTransformImage(self.wand, magnitude)
+
     @manipulative
     @trap_exception
     def frame(self, matte=None, width=1, height=1, inner_bevel=0,
@@ -4550,6 +4572,30 @@ class BaseImage(Resource):
                                             s_index,
                                             ctypes.byref(c_buffer))
         return r
+
+    @trap_exception
+    def inverse_fourier_transform(self, phase, magnitude=False):
+        """Applies the inverse of a discrete Fourier transform. The image stack
+        is replaced with the results. Either a pair of magnitude & phase
+        images, or real & imaginary.
+
+        .. seealso:: :meth:`forward_fourier_transform` & :meth:`complex`
+
+        :param phase: Second part (image) of the transform. Either the phase,
+                      or the imaginary part.
+        :type phase: :class:`BaseImage`
+        :param magnitude: If ``True``, accept magnitude & phase input, else
+                          real & imaginary. Default ``False``
+        :type magnitude: :class:`bool`
+
+        .. versionadded:: 0.5.5
+        """
+        if not isinstance(phase, BaseImage):
+            raise TypeError('phase must be an image, not ' + repr(phase))
+        assertions.assert_bool(magnitude)
+        return library.MagickInverseFourierTransformImage(self.wand,
+                                                          phase.wand,
+                                                          magnitude)
 
     def kurtosis_channel(self, channel='default_channels'):
         """Calculates the kurtosis and skewness of the image.
