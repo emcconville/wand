@@ -3298,7 +3298,7 @@ class BaseImage(Resource):
         return Image(BaseImage(compared_image)), distortion.value
 
     @manipulative
-    def complex(self, operator='add', snr=None):
+    def complex(self, operator='undefined', snr=None):
         """Performs `complex`_ mathematics against two images in a sequence,
         and generates a new image with two results.
 
@@ -3325,7 +3325,7 @@ class BaseImage(Resource):
             greater.
 
         :param operator: Define which mathematic operator to perform. See
-                         :const:`COMPLEX_OPERATORS`. Default is ``'add'``.
+                         :const:`COMPLEX_OPERATORS`.
         :type operator: :class:`basestring`
         :param snr: Optional ``SNR`` parameter for ``'divide'`` operator.
         :type snr: :class:`basestring`
@@ -4143,15 +4143,25 @@ class BaseImage(Resource):
         return library.MagickFlopImage(self.wand)
 
     @trap_exception
-    def forward_fourier_transform(self, magnitude=False):
+    def forward_fourier_transform(self, magnitude=True):
         """Performs a discrete Fourier transform. The image stack is replaced
         with the results. Either a pair of magnitude & phase images, or
         real & imaginary.
 
+        .. code::
+
+            from wand.image import Image
+            from wand.version import QUANTUM_RANGE
+
+            with Image(filename='source.png') as img:
+                img.forward_fourier_transform()
+                img.depth = QUANTUM_RANGE
+                img.save(filename='fft_%02d.png')
+
         .. seealso:: :meth:`inverse_fourier_transform` & :meth:`complex`
 
         :param magnitude: If ``True``, generate magnitude & phase, else
-                          real & imaginary. Default ``False``
+                          real & imaginary. Default ``True``
         :type magnitude: :class:`bool`
 
         .. versionadded:: 0.5.5
@@ -4574,10 +4584,19 @@ class BaseImage(Resource):
         return r
 
     @trap_exception
-    def inverse_fourier_transform(self, phase, magnitude=False):
+    def inverse_fourier_transform(self, phase, magnitude=True):
         """Applies the inverse of a discrete Fourier transform. The image stack
         is replaced with the results. Either a pair of magnitude & phase
         images, or real & imaginary.
+
+        .. code::
+
+            from wand.image import Image
+
+            with Image(filename='magnitude.png') as img:
+                with Image(filename='phase.png') as phase:
+                    img.inverse_fourier_transform(phase)
+                img.save(filename='output.png')
 
         .. seealso:: :meth:`forward_fourier_transform` & :meth:`complex`
 
@@ -4585,14 +4604,14 @@ class BaseImage(Resource):
                       or the imaginary part.
         :type phase: :class:`BaseImage`
         :param magnitude: If ``True``, accept magnitude & phase input, else
-                          real & imaginary. Default ``False``
+                          real & imaginary. Default ``True``
         :type magnitude: :class:`bool`
 
         .. versionadded:: 0.5.5
         """
         if not isinstance(phase, BaseImage):
             raise TypeError('phase must be an image, not ' + repr(phase))
-        assertions.assert_bool(magnitude)
+        assertions.assert_bool(magnitude=magnitude)
         return library.MagickInverseFourierTransformImage(self.wand,
                                                           phase.wand,
                                                           magnitude)
