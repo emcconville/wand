@@ -3299,8 +3299,20 @@ class BaseImage(Resource):
 
     @manipulative
     def complex(self, operator='add', snr=None):
-        """Preforms complex mathematics against two images in a sequence,
-        and generates a new image with results.
+        """Performs `complex`_ mathematics against two images in a sequence,
+        and generates a new image with two results.
+
+        .. code::
+
+            from wand.image import Image
+
+            with Image(filename='real_part.png') as imgA:
+                with Image(filename='imaginary_part.png') as imgB:
+                    imgA.sequence.append(imgB)
+                with imgA.complex('conjugate') as results:
+                    results.save(filename='output-%02d.png')
+
+        .. _complex: https://en.wikipedia.org/wiki/Complex_number
 
         .. warning::
 
