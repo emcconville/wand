@@ -17,6 +17,7 @@ Unreleased.
 
  - Rewrote :meth:`Image.contrast_stretch() <wand.image.BaseImage.contrast_stretch>`
    method to follow modern CLI behavior.
+ - Added :meth:`Image.features() <wand.image.BaseImage.features>` method.
  - Added :meth:`Image.forward_fourier_transform() <wand.image.BaseImage.forward_fourier_transform>` method.
  - Added :meth:`Image.inverse_fourier_transform() <wand.image.BaseImage.inverse_fourier_transform>` method.
  - Added ``channel`` parameter support for the following methods.

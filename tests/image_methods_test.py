@@ -723,6 +723,14 @@ def test_extent(fx_asset):
             img.extent(height=-10)
 
 
+def test_features():
+    with Image(filename='rose:') as img:
+        cf = img.features(10)
+        assert 'red' in cf
+        assert 'contrast' in cf['red']
+        assert 'horizontal' in cf['red']['contrast']
+
+
 def test_flip(fx_asset):
     with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
         with img.clone() as flipped:

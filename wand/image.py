@@ -24,8 +24,8 @@ from .exceptions import (MissingDelegateError, WandException,
                          WandRuntimeError, WandLibraryVersionError)
 from .font import Font
 from .resource import DestroyedResourceError, Resource
-from .cdefs.structures import (CCObjectInfo, GeomertyInfo, PixelInfo,
-                               RectangleInfo)
+from .cdefs.structures import (CCObjectInfo, ChannelFeature, GeomertyInfo,
+                               PixelInfo, RectangleInfo)
 from .version import MAGICK_VERSION_NUMBER, MAGICK_HDRI
 
 
@@ -4119,6 +4119,87 @@ class BaseImage(Resource):
             raise ValueError('image height cannot be negative integer')
 
         return library.MagickExtentImage(self.wand, width, height, x, y)
+
+    def features(self, distance):
+        """Calculate directional image features for each color channel.
+        Feature metrics including:
+
+        - angular second moment
+        - contrast
+        - correlation
+        - variance sum of squares
+        - inverse difference moment
+        - sum average
+        - sum varience
+        - sum entropy
+        - entropy
+        - difference variance
+        - difference entropy
+        - information measures of correlation 1
+        - information measures of correlation 2
+        - maximum correlation coefficient
+
+        With each metric containing horizontal, vertical, left & right
+        diagonal values.
+
+        .. code::
+
+            from wand.image import Image
+
+            with Image(filename='rose:') as img:
+                channel_features = img.features(distance=32)
+                for channels, features in channel_features.items():
+                    print(channels)
+                    for feature, directions in features.items():
+                        print('  ', feature)
+                        for name, value in directions.items():
+                            print('    ', name, value)
+
+        :param distance: Define the distance if pixels to calculate.
+        :type distance: :class:`numbers.Integral`
+        :returns: a dict mapping each color channel with a dict of each
+                  feature.
+        :rtype: :class:`dict`
+
+        .. versionadded:: 0.5.5
+        """
+        def build_channel(address, channel):
+            feature = ChannelFeature()
+            size = ctypes.sizeof(feature)
+            ctypes.memmove(ctypes.addressof(feature),
+                           feature_ptr + (CHANNELS[channel] * size),
+                           size)
+            keys = ('horizontal', 'vertical',
+                    'left_diagonal', 'right_diagonal')
+            feature_dict = {}
+            for k in feature._fields_:
+                a = k[0]
+                feature_dict[a] = dict(zip(keys, getattr(feature, a)))
+            return feature_dict
+        if MAGICK_VERSION_NUMBER < 0x700:
+            method = library.MagickGetImageChannelFeatures
+        else:  # pragma: no cover
+            method = library.MagickGetImageFeatures
+        assertions.assert_unsigned_integer(distance=distance)
+        feature_ptr = method(self.wand, distance)
+        response = {}
+        if feature_ptr:
+            colorspace = self.colorspace
+            if self.alpha_channel:
+                response['alpha'] = build_channel(feature_ptr, 'alpha')
+            if colorspace == 'gray':
+                response['gray'] = build_channel(feature_ptr, 'gray')
+            elif colorspace == 'cmyk':
+                response['cyan'] = build_channel(feature_ptr, 'cyan')
+                response['magenta'] = build_channel(feature_ptr, 'magenta')
+                response['yellow'] = build_channel(feature_ptr, 'yellow')
+                response['black'] = build_channel(feature_ptr, 'black')
+            else:
+                response['red'] = build_channel(feature_ptr, 'red')
+                response['green'] = build_channel(feature_ptr, 'green')
+                response['blue'] = build_channel(feature_ptr, 'blue')
+            feature_ptr = library.MagickRelinquishMemory(feature_ptr)
+        return response
 
     @manipulative
     @trap_exception
