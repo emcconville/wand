@@ -198,6 +198,14 @@ def test_caption_without_font(fx_asset):
             )
 
 
+def test_chop():
+    with Image(filename='rose:') as img:
+        w, h = img.size
+        img.chop(10, 10, 10, 10)
+        assert img.width == (w - 10)
+        assert img.height == (h - 10)
+
+
 def test_clut(fx_asset):
     with Image(filename='rose:') as img:
         was = img.signature
@@ -423,7 +431,7 @@ def test_connected_components(fx_asset):
     with Image(filename=str(fx_asset.join('ccobject.png'))) as img:
         if MAGICK_VERSION_NUMBER < 0x708:
             with raises(WandLibraryVersionError):
-                _ = img.connected_components()
+                img.connected_components()
         else:
             objects = img.connected_components()
             assert 2 == len(objects)

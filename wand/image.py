@@ -3005,6 +3005,27 @@ class BaseImage(Resource):
         assertions.assert_real(radius=radius, sigma=sigma)
         return library.MagickCharcoalImage(self.wand, radius, sigma)
 
+    @manipulative
+    @trap_exception
+    def chop(self, width, height, x=0, y=0):
+        """Removes a region of an image, and reduces the image size
+        accordingly.
+
+        :param width: Size of region.
+        :type width: :class:`numbers.Integral`
+        :param height: Size of region.
+        :type height: :class:`numbers.Integral`
+        :param x: Offset on the X-axis.
+        :type x: :class:`numbers.Integral`
+        :param y: Offset on the Y-axis.
+        :type y: :class:`numbers.Integral`
+
+        .. versionadded:: 0.5.5
+        """
+        assertions.assert_unsigned_integer(width=width, height=height)
+        assertions.assert_integer(x=x, y=y)
+        return library.MagickChopImage(self.wand, width, height, x, y)
+
     @trap_exception
     def clamp(self, channel=None):
         """Restrict color values between 0 and quantum range. This is useful
