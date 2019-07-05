@@ -168,6 +168,15 @@ def load(lib, IM_VERSION):
         c_void_p, c_size_t, c_size_t, c_ssize_t, c_ssize_t
     ]
     lib.MagickChopImage.restype = c_bool
+    if is_im_7:
+        try:
+            lib.MagickCLAHEImage.argtypes = [c_void_p, c_size_t, c_size_t,
+                                             c_double, c_double]
+            lib.MagickCLAHEImage.restype = c_bool
+        except AttributeError:
+            lib.MagickCLAHEImage = None
+    else:
+        lib.MagickCLAHEImage = None
     lib.MagickClampImage.argtypes = [c_void_p]
     lib.MagickClampImage.restype = c_bool
     if is_im_6:

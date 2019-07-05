@@ -3026,11 +3026,41 @@ class BaseImage(Resource):
         assertions.assert_integer(x=x, y=y)
         return library.MagickChopImage(self.wand, width, height, x, y)
 
+    @manipulative
+    @trap_exception
+    def clahe(self, width, height, number_bins, clip_limit):
+        """Contrast limited adaptive histogram equalization.
+
+        .. warning::
+
+            The CLAHE method is only available with ImageMagick-7.
+
+        :param width: Tile division width.
+        :type width: :class:`numbers.Integral`
+        :param height: Tile division height.
+        :type height: :class:`numbers.Integral`
+        :param number_bins: Histogram bins.
+        :type number_bins: :class:`numbers.Real`
+        :param clip_limit: contrast limit.
+        :type clip_limit: :class:`numbers.Real`
+        :raises WandLibraryVersionError: If system's version of ImageMagick
+                                         does not support this method.
+
+        .. versionadded:: 0.5.5
+        """
+        if library.MagickCLAHEImage is None:
+            msg = 'CLAHE method not defined in ImageMagick library.'
+            raise WandLibraryVersionError(msg)
+        assertions.assert_unsigned_integer(width=width, height=height)
+        assertions.assert_real(number_bins=number_bins, clip_limit=clip_limit)
+        return library.MagickCLAHEImage(self.wand, width, height,
+                                        number_bins, clip_limit)
+
     @trap_exception
     def clamp(self, channel=None):
         """Restrict color values between 0 and quantum range. This is useful
         when applying arithmetic operations that could result in color values
-        over/underflowing.
+        over/under-flowing.
 
         :param channel: Optional color channel.
         :type channel: :class:`basestring`
