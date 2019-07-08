@@ -5000,6 +5000,17 @@ class BaseImage(Resource):
                 'or ImageMagick may not compiled with liblqr.'
             )
 
+    @manipulative
+    @trap_exception
+    def magnify(self):
+        """Quickly double an image in size. This is a convenience method.
+        Use :meth:`resize()`, :meth:`resample()`, or :meth:`sample()` for
+        more control.
+
+        .. versionadded:: 0.5.5
+        """
+        return library.MagickMagnifyImage(self.wand)
+
     def mean_channel(self, channel='default_channels'):
         """Calculates the mean and standard deviation of the image.
 

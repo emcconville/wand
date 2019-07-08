@@ -22,6 +22,7 @@ Unreleased.
  - Added :meth:`Image.features() <wand.image.BaseImage.features>` method.
  - Added :meth:`Image.forward_fourier_transform() <wand.image.BaseImage.forward_fourier_transform>` method.
  - Added :meth:`Image.inverse_fourier_transform() <wand.image.BaseImage.inverse_fourier_transform>` method.
+ - Added :meth:`Image.magnify() <wand.image.BaseImage.magnify>` method.
  - Added ``channel`` parameter support for the following methods.
 
    - :meth:`Image.adaptive_blur() <wand.image.BaseImage.adaptive_blur>`

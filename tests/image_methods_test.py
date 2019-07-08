@@ -1141,6 +1141,13 @@ def test_mean_channel():
             img.mean_channel('unknown')
 
 
+def test_magnify():
+    with Image(filename='rose:') as img:
+        expected = img.width * 2
+        img.magnify()
+        assert expected == img.width
+
+
 def test_mean_shift():
     with Image(filename='rose:') as img:
         if MAGICK_VERSION_NUMBER < 0x708:
