@@ -12,8 +12,7 @@ Wand Changelog
 Version 0.5.5
 -------------
 
-
-Unreleased.
+Released on July 8th, 2019.
 
  - Rewrote :meth:`Image.contrast_stretch() <wand.image.BaseImage.contrast_stretch>`
    method to follow modern CLI behavior.
