@@ -5565,6 +5565,41 @@ class BaseImage(Resource):
                                  'available on current version of MagickWand '
                                  'library.')
 
+    def percent_escape(self, string_format):
+        """Convenience method that expands ImageMagick's `Percent Escape`_
+        characters into image attribute values.
+
+        .. Percent Escape: https://imagemagick.org/script/escape.php
+
+        .. code::
+
+            with wand.image import Image
+
+            with Image(filename='tests/assets/sasha.jpg ') as img:
+                print(img.percent_escape('%f %wx%h'))
+                #=> sasha.jpg 204x247
+
+        .. note::
+
+            Not all percent escaped values can be populated as I/O operations
+            are managed by Python, and not the CLI utility.
+
+        :param string_format: The precent escaped string to be translated.
+        :type string_format: :class:`basestring`
+        :returns: String of expanded values.
+        :rtype: :class:`basestring`
+
+        .. versionadded:: 0.5.6
+        """
+        local_overwrites = {
+            '%m': self.format,
+            '%[magick]': self.format
+        }
+        for k, v in local_overwrites.items():
+            string_format = string_format.replace(k, v)
+        self.options['format'] = string_format
+        return text(self.make_blob('INFO'))
+
     @manipulative
     @trap_exception
     def polaroid(self, angle=0.0, caption=None, font=None, method='undefined'):
