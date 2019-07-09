@@ -7,6 +7,14 @@ Wand Changelog
 ~~~~~~~~~~
 
 
+.. _changelog-0.5.6:
+
+Version 0.5.6
+-------------
+
+Unreleased.
+
+
 .. _changelog-0.5.5:
 
 Version 0.5.5
