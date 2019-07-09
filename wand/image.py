@@ -2206,7 +2206,6 @@ class BaseImage(Resource):
         if library.MagickSetSeed is None:
             msg = 'Property requires ImageMagick version 7.0.8-41 or greater.'
             raise WandLibraryVersionError(msg)
-        # pragma: no cover
         assertions.assert_unsigned_integer(seed=value)
         self._seed = value
         library.MagickSetSeed(self.wand, value)
@@ -2734,7 +2733,6 @@ class BaseImage(Resource):
         if library.MagickAutoThresholdImage is None:
             msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
             raise WandLibraryVersionError(msg)
-        # pragma: no cover
         assertions.string_in_list(AUTO_THRESHOLD_METHODS,
                                   'wand.image.AUTO_THRESHOLD_METHODS',
                                   method=method)
@@ -2911,7 +2909,6 @@ class BaseImage(Resource):
         if library.MagickCannyEdgeImage is None:
             msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
             raise WandLibraryVersionError(msg)
-        # pragma: no cover
         assertions.assert_real(radius=radius, sigma=sigma,
                                lower_percent=lower_percent,
                                upper_percent=upper_percent)
@@ -3388,7 +3385,6 @@ class BaseImage(Resource):
         if library.MagickComplexImages is None:
             msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
             raise WandLibraryVersionError(msg)
-        # pragma: no cover
         assertions.string_in_list(COMPLEX_OPERATORS,
                                   'wand.image.COMPLEX_OPERATORS',
                                   operator=operator)
@@ -4578,7 +4574,6 @@ class BaseImage(Resource):
         if library.MagickHoughLineImage is None:
             msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
             raise WandLibraryVersionError(msg)
-        # pragma: no cover
         if height is None:
             height = width
         assertions.assert_unsigned_integer(width=width, height=height,
@@ -4818,7 +4813,6 @@ class BaseImage(Resource):
         if library.MagickKuwaharaImage is None:
             msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
             raise WandLibraryVersionError(msg)
-        # pragma: no cover
         if sigma is None:
             sigma = radius - 0.5
         assertions.assert_real(radius=radius, sigma=sigma)
@@ -4917,7 +4911,6 @@ class BaseImage(Resource):
         if library.MagickLevelizeImage is None:
             msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
             raise WandLibraryVersionError(msg)
-        # pragma: no cover
         if white is None:
             white = float(self.quantum_range)
         assertions.assert_real(black=black, white=white, gamma=gamma)
@@ -5074,7 +5067,6 @@ class BaseImage(Resource):
         if library.MagickMeanShiftImage is None:
             msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
             raise WandLibraryVersionError(msg)
-        # pragma: no cover
         assertions.assert_counting_number(width=width, height=height)
         assertions.assert_real(color_distance=color_distance)
         if 0 < color_distance <= 1.0:
@@ -5659,7 +5651,6 @@ class BaseImage(Resource):
         if library.MagickPolynomialImage is None:
             msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
             raise WandLibraryVersionError(msg)
-        # pragma: no cover
         if not isinstance(arguments, abc.Sequence):
             raise TypeError('expected sequence of doubles, not ' +
                             repr(arguments))
@@ -5816,7 +5807,6 @@ class BaseImage(Resource):
         if library.MagickRangeThresholdImage is None:
             msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
             raise WandLibraryVersionError(msg)
-        # pragma: no cover
         # Populate defaults to follow CLI behavior
         if low_white is None:
             low_white = low_black
@@ -7285,7 +7275,6 @@ class BaseImage(Resource):
         if library.MagickWaveletDenoiseImage is None:
             msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
             raise WandLibraryVersionError(msg)
-        # pragma: no cover
         assertions.assert_real(threshold=threshold, softness=softness)
         if 0.0 < threshold <= 1.0:
             threshold *= self.quantum_range
