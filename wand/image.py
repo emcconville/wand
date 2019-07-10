@@ -1932,6 +1932,7 @@ class BaseImage(Resource):
     @property
     def maxima(self):
         """(:class:`numbers.Real`) The maximum quantum value within the image.
+        Value between 0.0 and :attr:`quantum_range`
 
         .. tip::
 
@@ -1945,7 +1946,8 @@ class BaseImage(Resource):
 
     @property
     def mean(self):
-        """(:class:`numbers.Real`) The mean of the image.
+        """(:class:`numbers.Real`) The mean of the image, and have a value
+        between 0.0 and :attr:`quantum_range`
 
         .. tip::
 
@@ -1960,6 +1962,7 @@ class BaseImage(Resource):
     @property
     def minima(self):
         """(:class:`numbers.Real`) The minimum quantum value within the image.
+        Value between 0.0 and :attr:`quantum_range`
 
         .. tip::
 
@@ -4274,7 +4277,7 @@ class BaseImage(Resource):
     def forward_fourier_transform(self, magnitude=True):
         """Performs a discrete Fourier transform. The image stack is replaced
         with the results. Either a pair of magnitude & phase images, or
-        real & imaginary.
+        real & imaginary (HDRI).
 
         .. code::
 
@@ -4287,6 +4290,11 @@ class BaseImage(Resource):
                 img.save(filename='fft_%02d.png')
 
         .. seealso:: :meth:`inverse_fourier_transform` & :meth:`complex`
+
+        .. note::
+
+            ImageMagick must have HDRI support to compute real & imaginary
+            components (i.e. ``magnitude=False``).
 
         :param magnitude: If ``True``, generate magnitude & phase, else
                           real & imaginary. Default ``True``
@@ -4714,7 +4722,7 @@ class BaseImage(Resource):
     def inverse_fourier_transform(self, phase, magnitude=True):
         """Applies the inverse of a discrete Fourier transform. The image stack
         is replaced with the results. Either a pair of magnitude & phase
-        images, or real & imaginary.
+        images, or real & imaginary (HDRI).
 
         .. code::
 
@@ -4726,6 +4734,11 @@ class BaseImage(Resource):
                 img.save(filename='output.png')
 
         .. seealso:: :meth:`forward_fourier_transform` & :meth:`complex`
+
+        .. note::
+
+            ImageMagick must have HDRI support to compute real & imaginary
+            components (i.e. ``magnitude=False``).
 
         :param phase: Second part (image) of the transform. Either the phase,
                       or the imaginary part.
@@ -5018,7 +5031,8 @@ class BaseImage(Resource):
                         :const:`CHANNELS`. Default ``'default_channels'``.
         :type channel: :class:`basestring`
         :returns: Tuple of :attr:`mean` & :attr:`standard_deviation`
-                  values.
+                  values. The ``mean`` value will be between 0.0 &
+                  :attr:`quantum_range`
         :rtype: :class:`tuple`
 
         .. versionadded:: 0.5.3
@@ -5569,7 +5583,7 @@ class BaseImage(Resource):
         """Convenience method that expands ImageMagick's `Percent Escape`_
         characters into image attribute values.
 
-        .. Percent Escape: https://imagemagick.org/script/escape.php
+        .. _Percent Escape: https://imagemagick.org/script/escape.php
 
         .. code::
 
@@ -5782,7 +5796,8 @@ class BaseImage(Resource):
                         :const:`CHANNELS`. Default ``'default_channels'``.
         :type channel: :class:`basestring`
         :returns: Tuple of :attr:`minima` & :attr:`maxima`
-                  values.
+                  values. Each value will be between 0.0 &
+                  :attr:`quantum_range`.
         :rtype: :class:`tuple`
 
         .. versionadded:: 0.5.3
