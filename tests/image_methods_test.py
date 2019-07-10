@@ -1442,6 +1442,11 @@ def test_optimize_transparency(fx_asset):
                               'present on system. ' + repr(e))
 
 
+def test_percent_escape(fx_asset):
+    with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
+        assert 'sasha.jpg 204x247' == img.percent_escape('%f %wx%h')
+
+
 def test_polaroid(fx_asset):
     # For testing polaroid method, we can't really identify if somethings
     # has changed correctly.
