@@ -5589,7 +5589,7 @@ class BaseImage(Resource):
 
             with wand.image import Image
 
-            with Image(filename='tests/assets/sasha.jpg ') as img:
+            with Image(filename='tests/assets/sasha.jpg') as img:
                 print(img.percent_escape('%f %wx%h'))
                 #=> sasha.jpg 204x247
 
