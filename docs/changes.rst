@@ -14,7 +14,7 @@ Version 0.5.6
 
 Unreleased.
 
- - Added :meth:`Image.percent_escape() <wand.image.BaseImage.percent_escape>` helper method.
+ - Added :meth:`Image.percent_escape() <wand.image.BaseImage.percent_escape>` helper method. [:issue:`421`]
 
 
 .. _changelog-0.5.5:
