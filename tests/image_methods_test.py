@@ -58,11 +58,12 @@ def test_adaptive_threshold():
         assert was != img.signature
 
 
-def test_annotate():
+def test_annotate(fx_asset):
     from wand.drawing import Drawing
     with Image(filename='rose:') as img:
         was = img.signature
         with Drawing() as ctx:
+            ctx.font = str(fx_asset.join('League_Gothic.otf'))
             ctx.font_size = 32
             img.annotate('Hello', ctx, left=10, baseline=img.height-10)
         assert was != img.signature
