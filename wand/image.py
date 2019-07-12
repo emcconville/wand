@@ -2678,6 +2678,49 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
+    def annotate(self, text, drawing_wand, left=0, baseline=0, angle=0):
+        """Draws text on an image. This method differs from :meth:`caption()`
+        as it uses :class:`~wand.drawing.Drawing` class to manage the
+        font configuration & style context.
+
+        .. code::
+
+            from wand.drawing import Drawing
+            from wand.image import Image
+
+            with Image(filename='input.jpg') as img:
+                with Drawing() as ctx:
+                    ctx.font_family = 'Times New Roman, Nimbus Roman No9'
+                    ctx.font_size = 18
+                    ctx.text_decoration = 'underline'
+                    ctx.text_kerning = -1
+                    img.annotate('Hello World', ctx, left=20, top=50)
+                img.save(filename='output.jpg')
+
+        :param text: String to annotate on image.
+        :type text: :class:`basestring`
+        :param drawing_wand: Font configuration & style context.
+        :type text: :class:`wand.drawing.Drawing`
+        :param left: X-axis offset of the text baseline.
+        :type left: :class:`numbers.Real`
+        :param baseline: Y-axis offset of the bottom of the text.
+        :type baseline: :class:`numbers.Real`
+        :param angle: Degree rotation to draw text at.
+        :type angle: :class:`numbers.Real`
+
+        .. versionadded:: 0.5.6
+        """
+        from .drawing import Drawing
+        if not isinstance(drawing_wand, Drawing):
+            raise TypeError('drawing_wand must be in instances of ' +
+                            'wand.drawing.Drawing, not ' + repr(drawing_wand))
+        assertions.assert_real(left=left, baseline=baseline, angle=angle)
+        btext = binary(text)
+        return library.MagickAnnotateImage(self.wand, drawing_wand.resource,
+                                           left, baseline, angle, btext)
+
+    @manipulative
+    @trap_exception
     def auto_gamma(self):
         """Adjust the gamma level of an image.
 
