@@ -258,12 +258,10 @@ COMPLEX_OPERATORS = ('undefined', 'add', 'conjugate', 'divide', 'magnitude',
 #: (:class:`tuple`) The list of composition operators
 #:
 #: - ``'undefined'``
-#: - ``'no'``
-#: - ``'add'`` - Only available with ImageMagick-6
 #: - ``'alpha'`` - Only available with ImageMagick-7
 #: - ``'atop'``
 #: - ``'blend'``
-#: - ``'blur'`` - Only available with ImageMagick-7
+#: - ``'blur'``
 #: - ``'bumpmap'``
 #: - ``'change_mask'``
 #: - ``'clear'``
@@ -281,41 +279,43 @@ COMPLEX_OPERATORS = ('undefined', 'add', 'conjugate', 'divide', 'magnitude',
 #: - ``'copy_red'``
 #: - ``'copy_yellow'``
 #: - ``'darken'``
-#: - ``'darken_intensity'`` - Only available with ImageMagick-7
+#: - ``'darken_intensity'``
+#: - ``'difference'``
+#: - ``'displace'``
+#: - ``'dissolve'``
+#: - ``'distort'``
+#: - ``'divide_dst'``
+#: - ``'divide_src'``
 #: - ``'dst_atop'``
 #: - ``'dst'``
 #: - ``'dst_in'``
 #: - ``'dst_out'``
 #: - ``'dst_over'``
-#: - ``'difference'``
-#: - ``'displace'``
-#: - ``'dissolve'``
-#: - ``'distort'`` - Only available with ImageMagick-7
-#: - ``'divide'`` - Only available with ImageMagick-6
 #: - ``'exclusion'``
 #: - ``'hard_light'``
-#: - ``'head_mix'`` - Only available with ImageMagick-7
+#: - ``'hard_mix'``
 #: - ``'hue'``
 #: - ``'in'``
 #: - ``'intensity'`` - Only available with ImageMagick-7
 #: - ``'lighten'``
-#: - ``'lighten_intensity'`` - Only available with ImageMagick-7
-#: - ``'linear_burn'`` - Only available with ImageMagick-7
-#: - ``'linear_dodge'`` - Only available with ImageMagick-7
+#: - ``'lighten_intensity'``
+#: - ``'linear_burn'``
+#: - ``'linear_dodge'``
 #: - ``'linear_light'``
 #: - ``'luminize'``
-#: - ``'mathematics'`` - Only available with ImageMagick-7
-#: - ``'minus'`` - Only available with ImageMagick-6
-#: - ``'minus_dst'`` - Only available with ImageMagick-7
-#: - ``'minus_src'`` - Only available with ImageMagick-7
+#: - ``'mathematics'``
+#: - ``'minus_dst'``
+#: - ``'minus_src'``
 #: - ``'modulate'``
-#: - ``'modulate_add'`` - Only available with ImageMagick-7
-#: - ``'modulate_subtract'`` - Only available with ImageMagick-7
+#: - ``'modulus_add'``
+#: - ``'modulus_subtract'``
 #: - ``'multiply'``
+#: - ``'no'``
 #: - ``'out'``
 #: - ``'over'``
 #: - ``'overlay'``
-#: - ``'pegtop_light'`` - Only available with ImageMagick-7
+#: - ``'pegtop_light'``
+#: - ``'pin_light'``
 #: - ``'plus'``
 #: - ``'replace'``
 #: - ``'saturate'``
@@ -326,13 +326,20 @@ COMPLEX_OPERATORS = ('undefined', 'add', 'conjugate', 'divide', 'magnitude',
 #: - ``'src_in'``
 #: - ``'src_out'``
 #: - ``'src_over'``
-#: - ``'subtract'`` - Only available with ImageMagick-6
 #: - ``'threshold'``
-#: - ``'vivid_light'`` - Only available with ImageMagick-7
+#: - ``'vivid_light'``
 #: - ``'xor'``
+#: - ``'stereo'``
 #:
 #: .. versionchanged:: 0.3.0
 #:    Renamed from :const:`COMPOSITE_OPS` to :const:`COMPOSITE_OPERATORS`.
+#:
+#: .. versionchanged:: 0.5.6
+#:    Operators have been updated to reflect latest changes in C-API.
+#     For ImageMagick-6, ``'add'`` has been renamed to ``'modulus_add'``,
+#:    ``'subtract'`` has been renamed to ``'modulus_subtract'``,
+#:    ``'divide'`` has been split into ``'divide_dst'`` & ``'divide_src'``, and
+#:    ``'minus'`` has been split into ``'minus_dst'`` & ``'minus_src'``.
 #:
 #: .. seealso::
 #:
@@ -350,15 +357,19 @@ COMPLEX_OPERATORS = ('undefined', 'add', 'conjugate', 'divide', 'magnitude',
 #:    __ http://www.imagemagick.org/Usage/compose/
 #:    __ http://www.rubblewebs.co.uk/imagemagick/operators/compose.php
 COMPOSITE_OPERATORS = (
-    'undefined', 'no', 'add', 'atop', 'blend', 'bumpmap', 'change_mask',
-    'clear', 'color_burn', 'color_dodge', 'colorize', 'copy_black',
-    'copy_blue', 'copy', 'copy_cyan', 'copy_green', 'copy_magenta',
-    'copy_opacity', 'copy_red', 'copy_yellow', 'darken', 'dst_atop', 'dst',
-    'dst_in', 'dst_out', 'dst_over', 'difference', 'displace', 'dissolve',
-    'exclusion', 'hard_light', 'hue', 'in', 'lighten', 'linear_light',
-    'luminize', 'minus', 'modulate', 'multiply', 'out', 'over', 'overlay',
-    'plus', 'replace', 'saturate', 'screen', 'soft_light', 'src_atop', 'src',
-    'src_in', 'src_out', 'src_over', 'subtract', 'threshold', 'xor', 'divide'
+    'undefined', 'no', 'modulus_add', 'atop', 'blend', 'bumpmap',
+    'change_mask', 'clear', 'color_burn', 'color_dodge', 'colorize',
+    'copy_black', 'copy_blue', 'copy', 'copy_cyan', 'copy_green',
+    'copy_magenta', 'copy_opacity', 'copy_red', 'copy_yellow', 'darken',
+    'dst_atop', 'dst', 'dst_in', 'dst_out', 'dst_over', 'difference',
+    'displace', 'dissolve', 'exclusion', 'hard_light', 'hue', 'in', 'lighten',
+    'linear_light', 'luminize', 'minus_dst', 'modulate', 'multiply', 'out',
+    'over', 'overlay', 'plus', 'replace', 'saturate', 'screen', 'soft_light',
+    'src_atop', 'src', 'src_in', 'src_out', 'src_over', 'modulus_subtract',
+    'threshold', 'xor', 'divide_dst', 'distort', 'blur', 'pegtop_light',
+    'vivid_light', 'pin_light', 'linear_dodge', 'linear_burn', 'mathematics',
+    'divide_src', 'minus_src', 'darken_intensity', 'lighten_intensity',
+    'hard_mix', 'stereo'
 )
 if MAGICK_VERSION_NUMBER >= 0x700:  # pragma: no cover
     COMPOSITE_OPERATORS = (
@@ -374,7 +385,8 @@ if MAGICK_VERSION_NUMBER >= 0x700:  # pragma: no cover
         'minus_src', 'modulate', 'modulus_add', 'modulus_subtract', 'multiply',
         'no', 'out', 'over', 'overlay', 'pegtop_light', 'pin_light', 'plus',
         'replace', 'saturate', 'screen', 'soft_light', 'src_atop', 'src',
-        'src_in', 'src_out', 'src_over', 'threshold', 'vivid_light', 'xor'
+        'src_in', 'src_out', 'src_over', 'threshold', 'vivid_light', 'xor',
+        'stereo'
     )
 
 #: (:class:`tuple`) The list of :attr:`Image.compression` types.
