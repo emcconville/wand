@@ -7205,7 +7205,8 @@ class BaseImage(Resource):
                       if it's omitted top left pixel is used by default
         :type color: :class:`~wand.color.Color`
         :param fuzz: Defines how much tolerance is acceptable to consider
-                     two colors as the same.
+                     two colors as the same. Value can be between ``0``,
+                     and :attr:`quantum_range`.
         :type fuzz: :class:`numbers.Integral`
 
         .. versionchanged:: 0.5.2
