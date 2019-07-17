@@ -6468,7 +6468,8 @@ class BaseImage(Resource):
         :param reference: Image to search for.
         :type reference: :class:`wand.image.Image`
         :param threshold: Stop scanning if reference similarity is below
-                          given threshold. Default is ``0.0``.
+                          given threshold. Value can be between ``0.0`` and
+                          :attr:`quantum_range`. Default is ``0.0``.
         :type threshold: :class:`numbers.Real`
         :param metric: specify which comparison algorithm to use. See
                        :const:`COMPARE_METRICS` for a list of values.
@@ -6855,7 +6856,8 @@ class BaseImage(Resource):
         of each pixel compared to threshold. The result is a high-contrast,
         two color image. It manipulates the image in place.
 
-        :param threshold: threshold as a factor of quantum
+        :param threshold: threshold as a factor of quantum. A normalized float
+                          between ``0.0`` and ``1.0``.
         :type threshold: :class:`numbers.Real`
         :param channel: the channel type.  available values can be found
                         in the :const:`CHANNELS` mapping.  If ``None``,
@@ -7255,7 +7257,7 @@ class BaseImage(Resource):
                        and the blur image that is added back into the original
         :type amount: :class:`numbers.Real`
         :param threshold: the threshold in pixels needed to apply
-                          the diffence amount
+                          the difference amount.
         :type threshold: :class:`numbers.Real`
         :param channel: Optional color channel to target. See
                         :const:`CHANNELS`
