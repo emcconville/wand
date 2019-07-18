@@ -197,3 +197,40 @@ A list of all pseudo images can be found at https://imagemagick.org/script/forma
    constructor.
 
 .. _Built-in Patterns: https://imagemagick.org/script/formats.php#builtin-patterns
+
+
+.. _read_mods:
+
+Read Modifiers
+--------------
+
+Opening an image with the `filename` property allows for ImageMagick's
+`Read Modifiers`_ to be processed.
+
+Single, or groups of, frames can be read without decoding all data. This can
+be useful to quick load the first page in a PDF::
+
+    with Image(filename='document.pdf[0]') as first_page:
+        pass
+
+Or a range of frames::
+
+    with Image(filename='animation.gif[0-11]') as first_dozen:
+        pass
+
+Or specific frames::
+
+    with Image(filename='animation.gif[0,2]') as first_and_third:
+        pass
+
+You can also use ``[WxH]`` format to resize the input image during read::
+
+    with Image(filename='logo.png[400x300]') as four_three_aspect:
+        pass
+
+Cropping an image can be achieved by following the ``[WxH+x+y]`` modifier::
+
+    with Image(filename='logo.png[100x100+50+75]') as sub_image:
+        pass
+
+.. _Read Modifiers: https://www.imagemagick.org/Usage/files/#read_mods

@@ -7420,7 +7420,8 @@ class Image(BaseImage):
     :type blob: :class:`bytes`
     :param file: opens an image of the ``file`` object
     :type file: file object
-    :param filename: opens an image of the ``filename`` string
+    :param filename: opens an image of the ``filename`` string. Additional
+                     :ref:`read_mods` are supported.
     :type filename: :class:`basestring`
     :param format: forces filename to  buffer. ``format`` to help
                    ImageMagick detect the file format. Used only in
@@ -8012,7 +8013,8 @@ class Image(BaseImage):
         :type blob: :class:`bytes`
         :param file: reads an image from the ``file`` object
         :type file: file object
-        :param filename: reads an image from the ``filename`` string
+        :param filename: reads an image from the ``filename`` string.
+                         Additional :ref:`read_mods` are supported.
         :type filename: :class:`basestring`
         :param resolution: set a resolution value (DPI),
                            useful for vectorial formats (like PDF)
