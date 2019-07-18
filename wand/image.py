@@ -3606,7 +3606,8 @@ class BaseImage(Resource):
             library.MagickSetImageChannelMask(self.wand, ch_mask)
         return r
 
-    def connected_components(self, connectivity=4, area_threshold=None):
+    def connected_components(self, connectivity=4, area_threshold=None,
+                             mean_color=False, keep=None, remove=None):
         """Evaluates binary image, and groups connected pixels into objects.
         This method will also return a list of
         :class:`ConnectedComponentObject` instances that will describe an
@@ -3653,12 +3654,24 @@ class BaseImage(Resource):
         :param area_threshold: Optional argument to exclude objects under an
                                area size.
         :type area_threshold: :class:`basestring`
+        :param mean_color: Optional argument. Replace object color with mean
+                           color of the source image.
+        :type mean_color: :class:`bool`
+        :param keep: Comma separated list of object IDs to isolate, the reset
+                     are converted to transparent.
+        :type keep: :class:`basestring`
+        :param remove: Comma separated list of object IDs to ignore, and
+                       converte to transparent.
+        :type remove: :class:`basestring`
         :returns: A list of :class:`ConnectedComponentObject`.
         :rtype: :class:`list` [:class:`ConnectedComponentObject`]
         :raises WandLibraryVersionError: If ImageMagick library
                                          does not support this method.
 
         .. versionadded:: 0.5.5
+
+        .. versionchanged:: 0.5.6
+           Added ``mean_color``, ``keep``, & ``remove`` optional arguments.
         """
         if library.MagickConnectedComponentsImage is None:
             msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
@@ -3668,6 +3681,15 @@ class BaseImage(Resource):
         if area_threshold is not None:
             key = 'connected-components:area-threshold'
             self.artifacts[key] = str(area_threshold)
+        if mean_color:
+            key = 'connected-components:mean-color'
+            self.artifacts[key] = 'true'
+        if keep is not None:
+            key = 'connected-components:keep'
+            self.artifacts[key] = str(keep)
+        if remove is not None:
+            key = 'connected-components:remove'
+            self.artifacts[key] = str(remove)
         objects_ptr = ctypes.c_void_p(0)
         ccoi_mem_size = ctypes.sizeof(CCObjectInfo)
         r = library.MagickConnectedComponentsImage(self.wand, connectivity,
