@@ -207,6 +207,24 @@ def test_clone(fx_asset):
         img.wand
 
 
+def test_ping_from_filename(fx_asset):
+    file_path = str(fx_asset.join('mona-lisa.jpg'))
+    with Image.ping(filename=file_path) as img:
+        assert img.size == (402, 599)
+
+
+def test_ping_from_blob(fx_asset):
+    blob = fx_asset.join('mona-lisa.jpg').read('rb')
+    with Image.ping(blob=blob) as img:
+        assert img.size == (402, 599)
+
+
+def test_ping_from_file(fx_asset):
+    with fx_asset.join('mona-lisa.jpg').open('rb') as fd:
+        with Image.ping(file=fd) as img:
+            assert img.size == (402, 599)
+
+
 def test_save_to_filename(fx_asset):
     """Saves an image to the filename."""
     savefile = os.path.join(tempfile.mkdtemp(), 'savetest.jpg')

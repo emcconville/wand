@@ -7706,6 +7706,84 @@ class Image(BaseImage):
         return instance
 
     @classmethod
+    def ping(cls, file=None, filename=None, blob=None, resolution=None,
+             format=None):
+        """Ping image header into Image() object, but without any pixel data.
+        This is useful for inspecting image meta-data without decoding the
+        whole image.
+
+        :param blob: reads an image from the ``blob`` byte array
+        :type blob: :class:`bytes`
+        :param file: reads an image from the ``file`` object
+        :type file: file object
+        :param filename: reads an image from the ``filename`` string
+        :type filename: :class:`basestring`
+        :param resolution: set a resolution value (DPI),
+                           useful for vector formats (like PDF)
+        :type resolution: :class:`collections.abc.Sequence`,
+                          :class:`numbers.Integral`
+        :param format: suggest image file format when reading from a ``blob``,
+                       or ``file`` property.
+        :type format: :class:`basestring`
+
+        .. versionadded:: 0.5.6
+
+        """
+        r = None
+        instance = cls()
+        # Resolution must be set after image reading.
+        if resolution is not None:
+            if (isinstance(resolution, abc.Sequence) and
+                    len(resolution) == 2):
+                library.MagickSetResolution(instance.wand, *resolution)
+            elif isinstance(resolution, numbers.Integral):
+                library.MagickSetResolution(instance.wand, resolution,
+                                            resolution)
+            else:
+                raise TypeError('resolution must be a (x, y) pair or an '
+                                'integer of the same x/y')
+        if format:
+            library.MagickSetFormat(instance.wand, format)
+            if not filename:
+                library.MagickSetFilename(instance.wand,
+                                          b'buffer.' + format)
+        if file is not None:
+            if (isinstance(file, file_types) and
+                    hasattr(libc, 'fdopen') and hasattr(file, 'mode')):
+                fd = libc.fdopen(file.fileno(), file.mode)
+                r = library.MagickPingImageFile(instance.wand, fd)
+            elif not callable(getattr(file, 'read', None)):
+                raise TypeError('file must be a readable file object'
+                                ', but the given object does not '
+                                'have read() method')
+            else:
+                blob = file.read()
+                file = None
+        if blob is not None:
+            if not isinstance(blob, abc.Iterable):
+                raise TypeError('blob must be iterable, not ' +
+                                repr(blob))
+            if not isinstance(blob, binary_type):
+                blob = b''.join(blob)
+            r = library.MagickPingImageBlob(instance.wand, blob, len(blob))
+        elif filename is not None:
+            filename = encode_filename(filename)
+            r = library.MagickPingImage(instance.wand, filename)
+        if not r:
+            instance.raise_exception()
+            msg = ('MagickPingImage returns false, but did raise ImageMagick '
+                   'exception. This can occurs when a delegate is missing, or '
+                   'returns EXIT_SUCCESS without generating a raster.')
+            raise WandRuntimeError(msg)
+        else:
+            instance.metadata = Metadata(instance)
+            instance.artifacts = ArtifactTree(instance)
+            from .sequence import Sequence
+            instance.sequence = Sequence(instance)
+            instance.profiles = ProfileDict(instance)
+        return instance
+
+    @classmethod
     def stereogram(cls, left, right):
         """Create a new stereogram image from two existing images.
 
@@ -7905,65 +7983,6 @@ class Image(BaseImage):
             return blob
         else:  # pragma: no cover
             self.raise_exception()
-
-    def ping(self, file=None, filename=None, blob=None, resolution=None):
-        """Ping image header into Image() object, but without any pixel data.
-        This is useful for inspecting image meta-data without decoding the
-        whole image.
-
-        :param blob: reads an image from the ``blob`` byte array
-        :type blob: :class:`bytes`
-        :param file: reads an image from the ``file`` object
-        :type file: file object
-        :param filename: reads an image from the ``filename`` string
-        :type filename: :class:`basestring`
-        :param resolution: set a resolution value (DPI),
-                           useful for vector formats (like PDF)
-        :type resolution: :class:`collections.abc.Sequence`,
-                          :class:`numbers.Integral`
-
-        .. versionadded:: 0.5.6
-
-        """
-        r = None
-        # Resolution must be set after image reading.
-        if resolution is not None:
-            if (isinstance(resolution, abc.Sequence) and
-                    len(resolution) == 2):
-                library.MagickSetResolution(self.wand, *resolution)
-            elif isinstance(resolution, numbers.Integral):
-                library.MagickSetResolution(self.wand, resolution, resolution)
-            else:
-                raise TypeError('resolution must be a (x, y) pair or an '
-                                'integer of the same x/y')
-        if file is not None:
-            if (isinstance(file, file_types) and
-                    hasattr(libc, 'fdopen') and hasattr(file, 'mode')):
-                fd = libc.fdopen(file.fileno(), file.mode)
-                r = library.MagickPingImageFile(self.wand, fd)
-            elif not callable(getattr(file, 'read', None)):
-                raise TypeError('file must be a readable file object'
-                                ', but the given object does not '
-                                'have read() method')
-            else:
-                blob = file.read()
-                file = None
-        if blob is not None:
-            if not isinstance(blob, abc.Iterable):
-                raise TypeError('blob must be iterable, not ' +
-                                repr(blob))
-            if not isinstance(blob, binary_type):
-                blob = b''.join(blob)
-            r = library.MagickPingImageBlob(self.wand, blob, len(blob))
-        elif filename is not None:
-            filename = encode_filename(filename)
-            r = library.MagickPingImage(self.wand, filename)
-        if not r:
-            self.raise_exception()
-            msg = ('MagickReadImage returns false, but did raise ImageMagick '
-                   'exception. This can occurs when a delegate is missing, or '
-                   'returns EXIT_SUCCESS without generating a raster.')
-            raise WandRuntimeError(msg)
 
     def pseudo(self, width, height, pseudo='xc:'):
         """Creates a new image from ImageMagick's internal protocol coders.
