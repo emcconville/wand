@@ -6533,7 +6533,8 @@ class BaseImage(Resource):
                 library.MagickSetImageChannelMask(self.wand, mask)
         return r
 
-    def similarity(self, reference, threshold=0.0, metric='undefined'):
+    def similarity(self, reference, similarity_threshold=0.0,
+                   metric='undefined', dissimilarity_threshold=None):
         """Scan image for best matching ``reference`` image, and
         return location & similarity.
 
@@ -6558,14 +6559,18 @@ class BaseImage(Resource):
 
         :param reference: Image to search for.
         :type reference: :class:`wand.image.Image`
-        :param threshold: Stop scanning if reference similarity is below
-                          given threshold. Value can be between ``0.0`` and
-                          :attr:`quantum_range`. Default is ``0.0``.
-        :type threshold: :class:`numbers.Real`
+        :param similarity_threshold: Stop scanning if reference similarity is
+                          below given threshold. Value can be between ``0.0``
+                          and :attr:`quantum_range`. Default is ``0.0``.
+        :type similarity_threshold: :class:`numbers.Real`
         :param metric: specify which comparison algorithm to use. See
                        :const:`COMPARE_METRICS` for a list of values.
                        Only used by ImageMagick-7.
         :type metric: :class:`basestring`
+        :param dissimilarity_threshold: Will raise an :class:`ImageError`
+                                        exception if the similarity value is
+                                        greater than a given value.
+        :type dissimilarity_threshold: :class:`numbers.Real`
         :returns: List of location & similarity value. Location being a
                   dictionary of ``width``, ``height``, ``left``, & ``top``.
                   The similarity value is the compare distance, so a value of
@@ -6573,15 +6578,20 @@ class BaseImage(Resource):
         :rtype: :class:`tuple` (:class:`dict`, :class:`numbers.Real`)
 
         .. versionadded:: 0.5.4
+
+        .. versionchanged:: 0.5.6
+           Paramater ``threshold`` has been renamed to
+           ``similarity_threshold``, and ``dissimilarity_threshold`` parameter
+           has been added.
         """
-        assertions.assert_real(threshold=threshold)
+        assertions.assert_real(similarity_threshold=similarity_threshold)
         if not isinstance(reference, BaseImage):
             raise TypeError('reference must be in instance of '
                             'wand.image.Image, not ' + repr(reference))
         rio = RectangleInfo(0, 0, 0, 0)
         diff = ctypes.c_double(0.0)
         if MAGICK_VERSION_NUMBER < 0x700:
-            artifact_value = binary(str(threshold))  # FIXME
+            artifact_value = binary(str(similarity_threshold))  # FIXME
             library.MagickSetImageArtifact(self.wand,
                                            b'compare:similarity-threshold',
                                            artifact_value)
@@ -6597,7 +6607,7 @@ class BaseImage(Resource):
             r = library.MagickSimilarityImage(self.wand,
                                               reference.wand,
                                               metric_idx,
-                                              threshold,
+                                              similarity_threshold,
                                               ctypes.byref(rio),
                                               ctypes.byref(diff))
         if not r:  # pragma: no cover
@@ -6606,6 +6616,10 @@ class BaseImage(Resource):
             r = library.DestroyMagickWand(r)
         location = dict(width=rio.width, height=rio.height,
                         top=rio.y, left=rio.x)
+        if dissimilarity_threshold is not None:
+            if diff.value > dissimilarity_threshold:
+                from .exceptions import ImageError
+                raise ImageError('images too dissimilar')
         return (location, diff.value)
 
     @manipulative
