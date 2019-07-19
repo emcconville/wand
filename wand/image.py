@@ -2772,7 +2772,7 @@ class BaseImage(Resource):
     def auto_threshold(self, method='kapur'):
         """Automatically performs threshold method to reduce grayscale data
         down to a binary black & white image. Included algorithms are
-        Kepur, Otsu, and Triangle methods.
+        Kapur, Otsu, and Triangle methods.
 
         .. warning::
 
