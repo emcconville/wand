@@ -2957,9 +2957,13 @@ class BaseImage(Resource):
         :type radius: :class:`numbers.Real`
         :param sigma: Standard deviation of gaussian filter.
         :type sigma: :class:`numbers.Real`
-        :param lower_percent: Normalized lower threshold.
+        :param lower_percent: Normalized lower threshold. Values between
+                              ``0.0`` (0%) and ``1.0`` (100%). The default
+                              value is ``0.1`` or 10%.
         :type lower_percent: :class:`numbers.Real`
-        :param upper_percent: Normalized upper threshold.
+        :param upper_percent: Normalized upper threshold. Values between
+                              ``0.0`` (0%) and ``1.0`` (100%). The default
+                              value is ``0.3`` or 30%.
         :type upper_percent: :class:`numbers.Real`
         :raises WandLibraryVersionError: if function is not available on
                                          system's library.
@@ -3272,13 +3276,62 @@ class BaseImage(Resource):
     def color_matrix(self, matrix):
         """Adjust color values by applying a matrix transform per pixel.
 
-        Matrix should be given as 2D list, with a max size of 6x6::
+        Matrix should be given as 2D list, with a max size of 6x6.
+
+        An example of 3x3 matrix::
 
             matrix = [
                 [1.0, 0.0, 0.0],
                 [0.0, 1.0, 0.0],
                 [0.0, 0.0, 1.0],
             ]
+
+        Which would translate RGB color channels by calculating the
+        following:
+
+        .. math::
+
+            \\begin{aligned}
+            red' &= 1.0 * red + 0.0 * green + 0.0 * blue\\\\
+            green' &= 0.0 * red + 1.0 * green + 0.0 * blue\\\\
+            blue' &= 0.0 * red + 0.0 * green + 1.0 * blue\\\\
+            \end{aligned}
+
+        For RGB colorspace images, the rows & columns are laid out as:
+
+        +---------+-----+-------+------+------+-------+--------+
+        |         | Red | Green | Blue | n/a  | Alpha | Offset |
+        +=========+=====+=======+======+======+=======+========+
+        | Red'    | 1   | 0     | 0    | 0    | 0     | 0      |
+        +---------+-----+-------+------+------+-------+--------+
+        | Green'  | 0   | 1     | 0    | 0    | 0     | 0      |
+        +---------+-----+-------+------+------+-------+--------+
+        | Blue'   | 0   | 0     | 1    | 0    | 0     | 0      |
+        +---------+-----+-------+------+------+-------+--------+
+        | n/a     | 0   | 0     | 0    | 0    | 0     | 0      |
+        +---------+-----+-------+------+------+-------+--------+
+        | Alpha'  | 0   | 0     | 0    | 0    | 0     | 0      |
+        +---------+-----+-------+------+------+-------+--------+
+        | Offset' | 0   | 0     | 0    | 0    | 0     | 0      |
+        +---------+-----+-------+------+------+-------+--------+
+
+        Or for a CYMK colorspace image:
+
+        +----------+------+--------+---------+-------+-------+--------+
+        |          | Cyan | Yellow | Magenta | Black | Alpha | Offset |
+        +==========+======+========+=========+=======+=======+========+
+        | Cyan'    | 1    | 0      | 0       | 0     | 0     | 0      |
+        +----------+------+--------+---------+-------+-------+--------+
+        | Yellow'  | 0    | 1      | 0       | 0     | 0     | 0      |
+        +----------+------+--------+---------+-------+-------+--------+
+        | Magenta' | 0    | 0      | 1       | 0     | 0     | 0      |
+        +----------+------+--------+---------+-------+-------+--------+
+        | Black'   | 0    | 0      | 0       | 0     | 0     | 0      |
+        +----------+------+--------+---------+-------+-------+--------+
+        | Alpha'   | 0    | 0      | 0       | 0     | 0     | 0      |
+        +----------+------+--------+---------+-------+-------+--------+
+        | Offset'  | 0    | 0      | 0       | 0     | 0     | 0      |
+        +----------+------+--------+---------+-------+-------+--------+
 
         See `color-matrix`__ for examples.
 
@@ -5758,7 +5811,23 @@ class BaseImage(Resource):
 
         The output image will be calculated as:
 
-            output = 0.5 * image ^ 1.0
+        .. math::
+
+            output = 0.5 * image ^ {1.0}
+
+        This can work on multiple images in a sequence by calculating across
+        each frame in the image stack.
+
+        .. code::
+
+            with Image(filename='2frames.gif') as img:
+                img.polynomial(arguments=[0.5, 1.0, 0.25, 1.25])
+
+        Where the results would be calculated as:
+
+        .. math::
+
+            output = 0.5 * frame1 ^ {1.0} + 0.25 * frame2 ^ {1.25}
 
         .. warning::
 
@@ -7317,9 +7386,11 @@ class BaseImage(Resource):
         :type radius: :class:`numbers.Real`
         :param sigma: the standard deviation of the Gaussian effect.
         :type sigma: :class:`numbers.Real`
-        :param x: Width of the oval effect.
+        :param x: Number of pixels to offset inward from the top & bottom of
+                  the image before drawing effect.
         :type x: :class:`numbers.Integral`
-        :param y: Height of the oval effect.
+        :param y: Number of pixels to offset inward from the left & right of
+                  the image before drawing effect.
         :type y: :class:`numbers.Integral`
 
         .. versionadded:: 0.5.2
