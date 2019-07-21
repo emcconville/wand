@@ -5022,7 +5022,7 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def level_colors(self, black_color, white_color):
+    def level_colors(self, black_color, white_color, channel=None):
         """Maps given colors to "black" & "white" values.
 
         .. warning::
@@ -5034,6 +5034,8 @@ class BaseImage(Resource):
         :type black_color: :class:`Color`
         :param white_color: linearly map given color as "white" point.
         :type white_color: :class:`Color`
+        :param channel: target a specific color-channel to levelize.
+        :type channel: :class:`basestring`
         :raises WandLibraryVersionError: If system's version of ImageMagick
                                          does not support this method.
 
@@ -5048,12 +5050,19 @@ class BaseImage(Resource):
             white_color = Color(white_color)
         assertions.assert_color(black_color=black_color,
                                 white_color=white_color)
+        channel_mask = None
+        if channel is not None:
+            ch_const = self._channel_to_mask(channel)
+            channel_mask = library.MagickSetImageChannelMask(self.wand,
+                                                             ch_const)
         with black_color:
             with white_color:
                 r = library.MagickLevelImageColors(self.wand,
                                                    black_color.resource,
                                                    white_color.resource,
                                                    False)
+        if channel is not None:
+            library.MagickSetImageChannelMask(self.wand, channel_mask)
         return r
 
     @manipulative
@@ -5109,9 +5118,9 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def levelize_colors(self, black_color, white_color):
+    def levelize_colors(self, black_color, white_color, channel=None):
         """Reverse of :meth:`level_colors()`, and creates a de-contrasting
-        gradient of given colors.
+        gradient of given colors. This works best with grayscale images.
 
         .. warning::
 
@@ -5122,6 +5131,8 @@ class BaseImage(Resource):
         :type black_color: :class:`Color`
         :param white_color: tint map given color as "white" point.
         :type white_color: :class:`Color`
+        :param channel: target a specific color-channel to levelize.
+        :type channel: :class:`basestring`
         :raises WandLibraryVersionError: If system's version of ImageMagick
                                          does not support this method.
 
@@ -5136,12 +5147,20 @@ class BaseImage(Resource):
             white_color = Color(white_color)
         assertions.assert_color(black_color=black_color,
                                 white_color=white_color)
+        channel_mask = None
+        ch_const = None
+        if channel is not None:
+            ch_const = self._channel_to_mask(channel)
+            channel_mask = library.MagickSetImageChannelMask(self.wand,
+                                                             ch_const)
         with black_color:
             with white_color:
                 r = library.MagickLevelImageColors(self.wand,
                                                    black_color.resource,
                                                    white_color.resource,
                                                    True)
+        if channel is not None:
+            library.MagickSetImageChannelMask(self.wand, channel_mask)
         return r
 
     @manipulative
