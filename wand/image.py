@@ -3295,7 +3295,7 @@ class BaseImage(Resource):
             red' &= 1.0 * red + 0.0 * green + 0.0 * blue\\\\
             green' &= 0.0 * red + 1.0 * green + 0.0 * blue\\\\
             blue' &= 0.0 * red + 0.0 * green + 1.0 * blue\\\\
-            \end{aligned}
+            \\end{aligned}
 
         For RGB colorspace images, the rows & columns are laid out as:
 
@@ -5022,6 +5022,35 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
+    def level_colors(self, black_color, white_color):
+        """Maps given colors to "black" & "white" values.
+
+        :param black_color: linearly map given color as "black" point.
+        :type black_color: :class:`Color`
+        :param white_color: linearly map given color as "white" point.
+        :type white_color: :class:`Color`
+
+        .. versionadded:: 0.5.6
+        """
+        if library.MagickLevelImageColors is None:
+            msg = 'Method requires ImageMagick version 7.0.8-54 or greater.'
+            raise WandLibraryVersionError(msg)
+        if isinstance(black_color, string_type):
+            black_color = Color(black_color)
+        if isinstance(white_color, string_type):
+            white_color = Color(white_color)
+        assertions.assert_color(black_color=black_color,
+                                white_color=white_color)
+        with black_color:
+            with white_color:
+                r = library.MagickLevelImageColors(self.wand,
+                                                   black_color.resource,
+                                                   white_color.resource,
+                                                   False)
+        return r
+
+    @manipulative
+    @trap_exception
     def levelize(self, black=0.0, white=None, gamma=1.0, channel=None):
         """Reverse of :meth:`level()`, this method compresses the range of
         colors between ``black`` & ``white`` values.
@@ -5069,6 +5098,36 @@ class BaseImage(Resource):
                                                              ch_const)
             r = library.MagickLevelizeImage(self.wand, black, gamma, white)
             library.MagickSetImageChannelMask(self.wand, channel_mask)
+        return r
+
+    @manipulative
+    @trap_exception
+    def levelize_colors(self, black_color, white_color):
+        """Reverse of :meth:`level_colors()`, and creates a de-contrasting
+        gradient of given colors.
+
+        :param black_color: tint map given color as "black" point.
+        :type black_color: :class:`Color`
+        :param white_color: tint map given color as "white" point.
+        :type white_color: :class:`Color`
+
+        .. versionadded:: 0.5.6
+        """
+        if library.MagickLevelImageColors is None:
+            msg = 'Method requires ImageMagick version 7.0.8-54 or greater.'
+            raise WandLibraryVersionError(msg)
+        if isinstance(black_color, string_type):
+            black_color = Color(black_color)
+        if isinstance(white_color, string_type):
+            white_color = Color(white_color)
+        assertions.assert_color(black_color=black_color,
+                                white_color=white_color)
+        with black_color:
+            with white_color:
+                r = library.MagickLevelImageColors(self.wand,
+                                                   black_color.resource,
+                                                   white_color.resource,
+                                                   True)
         return r
 
     @manipulative

@@ -634,6 +634,13 @@ def load(lib, IM_VERSION):
         lib.MagickLevelImageChannel = None
     if IM_VERSION >= 0x708:
         try:
+            lib.MagickLevelImageColors.argtypes = [
+                c_void_p, c_void_p, c_void_p, c_bool
+            ]
+            lib.MagickLevelImageColors.restype = c_bool
+        except AttributeError:
+            lib.MagickLevelImageColors = None
+        try:
             lib.MagickLevelizeImage.argtypes = [c_void_p, c_double, c_double,
                                                 c_double]
             lib.MagickLevelizeImage.restype = c_bool
