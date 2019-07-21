@@ -647,6 +647,7 @@ def load(lib, IM_VERSION):
         except AttributeError:
             lib.MagickLevelizeImage = None
     else:
+        lib.MagickLevelImageColors = None
         lib.MagickLevelizeImage = None
     lib.MagickLinearStretchImage.argtypes = [c_void_p, c_double, c_double]
     lib.MagickLinearStretchImage.restype = c_bool
