@@ -5025,10 +5025,17 @@ class BaseImage(Resource):
     def level_colors(self, black_color, white_color):
         """Maps given colors to "black" & "white" values.
 
+        .. warning::
+
+            This class method is only available with ImageMagick 7.0.8-54, or
+            greater.
+
         :param black_color: linearly map given color as "black" point.
         :type black_color: :class:`Color`
         :param white_color: linearly map given color as "white" point.
         :type white_color: :class:`Color`
+        :raises WandLibraryVersionError: If system's version of ImageMagick
+                                         does not support this method.
 
         .. versionadded:: 0.5.6
         """
@@ -5106,10 +5113,17 @@ class BaseImage(Resource):
         """Reverse of :meth:`level_colors()`, and creates a de-contrasting
         gradient of given colors.
 
+        .. warning::
+
+            This class method is only available with ImageMagick 7.0.8-54, or
+            greater.
+
         :param black_color: tint map given color as "black" point.
         :type black_color: :class:`Color`
         :param white_color: tint map given color as "white" point.
         :type white_color: :class:`Color`
+        :raises WandLibraryVersionError: If system's version of ImageMagick
+                                         does not support this method.
 
         .. versionadded:: 0.5.6
         """
