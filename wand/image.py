@@ -5816,6 +5816,7 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.6
         """
+        assertions.assert_string(geometry=geometry)
         x = ctypes.c_ssize_t(0)
         y = ctypes.c_ssize_t(0)
         width = ctypes.c_size_t(self.width)
