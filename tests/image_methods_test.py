@@ -1453,6 +1453,14 @@ def test_optimize_transparency(fx_asset):
                               'present on system. ' + repr(e))
 
 
+def test_parse_meta_geometry():
+    with Image(filename='rose:') as img:
+        w, h, x, y = img.parse_meta_geometry('200%')
+        assert (w, h, x, y) == (140, 92, 0, 0)
+        with raises(ValueError):
+            img.parse_meta_geometry('junk')
+
+
 def test_percent_escape(fx_asset):
     with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
         assert 'sasha.jpg 204x247' == img.percent_escape('%f %wx%h')

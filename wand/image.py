@@ -5801,6 +5801,34 @@ class BaseImage(Resource):
                                  'available on current version of MagickWand '
                                  'library.')
 
+    def parse_meta_geometry(self, geometry):
+        """Helper method to translate geometry format, and calculate
+        meta-characters against image dimensions.
+
+        See "Image Geometry" definitions & examples for more info:
+        https://imagemagick.org/script/command-line-processing.php#geometry
+
+        :param geometry: user string following ImageMagick's geometry format.
+        :type geometry: :class:`basestring`
+        :returns: Calculated width, height, offset-x, & offset-y.
+        :rtype: :class:`tuple`
+        :raises ValueError: If given geometry can not be parsed.
+
+        .. versionadded:: 0.5.6
+        """
+        x = ctypes.c_ssize_t(0)
+        y = ctypes.c_ssize_t(0)
+        width = ctypes.c_size_t(self.width)
+        height = ctypes.c_size_t(self.height)
+        r = libmagick.ParseMetaGeometry(binary(geometry),
+                                        ctypes.byref(x),
+                                        ctypes.byref(y),
+                                        ctypes.byref(width),
+                                        ctypes.byref(height))
+        if not bool(r):
+            raise ValueError('Unable to parse geometry')
+        return (width.value, height.value, x.value, y.value)
+
     def percent_escape(self, string_format):
         """Convenience method that expands ImageMagick's `Percent Escape`_
         characters into image attribute values.
