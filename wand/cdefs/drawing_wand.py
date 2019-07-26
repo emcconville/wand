@@ -45,7 +45,7 @@ def load(lib, IM_VERSION):
     lib.IsDrawingWand.argtypes = [c_void_p]
     lib.IsDrawingWand.restype = c_int
     lib.DrawGetException.argtypes = [c_void_p, POINTER(c_int)]
-    lib.DrawGetException.restype = c_char_p
+    lib.DrawGetException.restype = c_magick_char_p
     lib.DrawClearException.argtypes = [c_void_p]
     lib.DrawClearException.restype = c_int
     lib.DrawAffine.argtypes = [c_void_p, c_void_p]
