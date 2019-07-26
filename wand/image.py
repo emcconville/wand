@@ -7154,7 +7154,7 @@ class BaseImage(Resource):
 
     @manipulative
     def transform(self, crop='', resize=''):
-        """Transforms the image using :c:func:`MagickTransformImage`,
+        r"""Transforms the image using :c:func:`MagickTransformImage`,
         which is a convenience function accepting geometry strings to
         perform cropping and resizing.  Cropping is performed first,
         followed by resizing.  Either or both arguments may be omitted
