@@ -7166,39 +7166,39 @@ class BaseImage(Resource):
         The size is specified by one of the options below,
         where **bold** terms are replaced with appropriate integer values:
 
-        **scale**\ ``%``
+        **scale**\\ ``%``
           Height and width both scaled by specified percentage
 
-        **scale-x**\ ``%x``\ \ **scale-y**\ ``%``
+        **scale-x**\\ ``%x``\\ \\ **scale-y**\\ ``%``
           Height and width individually scaled by specified percentages.
           Only one % symbol is needed.
 
         **width**
           Width given, height automagically selected to preserve aspect ratio.
 
-        ``x``\ \ **height**
+        ``x``\\ \\ **height**
           Height given, width automagically selected to preserve aspect ratio.
 
-        **width**\ ``x``\ **height**
+        **width**\\ ``x``\\ **height**
           Maximum values of width and height given; aspect ratio preserved.
 
-        **width**\ ``x``\ **height**\ ``!``
+        **width**\\ ``x``\\ **height**\\ ``!``
           Width and height emphatically given; original aspect ratio ignored.
 
-        **width**\ ``x``\ **height**\ ``>``
+        **width**\\ ``x``\\ **height**\\ ``>``
           Shrinks images with dimension(s) larger than the corresponding
           width and/or height dimension(s).
 
-        **width**\ ``x``\ **height**\ ``<``
+        **width**\\ ``x``\\ **height**\\ ``<``
           Enlarges images with dimensions smaller than the corresponding
           width and/or height dimension(s).
 
-        **area**\ ``@``
+        **area**\\ ``@``
           Resize image to have the specified area in pixels.
           Aspect ratio is preserved.
 
         The offset, which only applies to the cropping geometry string,
-        is given by ``{+-}``\ **x**\ ``{+-}``\ **y**\ , that is,
+        is given by ``{+-}``\\ **x**\\ ``{+-}``\\ **y**\\ , that is,
         one plus or minus sign followed by an **x** offset,
         followed by another plus or minus sign, followed by a **y** offset.
         Offsets are in pixels from the upper left corner of the image.
