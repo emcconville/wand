@@ -15,6 +15,7 @@ Version 0.5.6
 Unreleased.
 
  - Fixed invalid escape sequence warnings [:issue:`#428`]
+ - Fixed error on Drawing exception handling. [:issue:`#427`]
  - Added :meth:`Image.annotate() <wand.image.BaseImage.annotate>` method. [:issue:`#418`]
  - Added :meth:`Image.level_colors() <wand.image.BaseImage.level_colors>` method.
  - Added :meth:`Image.levelize_colors() <wand.image.BaseImage.levelize_colors>` method.
