@@ -8287,9 +8287,10 @@ class Image(BaseImage):
             r = library.MagickReadImage(self.wand, filename)
         if not r:
             self.raise_exception()
-            msg = ('MagickReadImage returns false, but did raise ImageMagick '
-                   'exception. This can occurs when a delegate is missing, or '
-                   'returns EXIT_SUCCESS without generating a raster.')
+            msg = ('MagickReadImage returns false, but did not raise '
+                   'ImageMagick  exception. This can occurs when a delegate '
+                   'is missing, or returns EXIT_SUCCESS without generating a '
+                   'raster.')
             raise WandRuntimeError(msg)
 
     def save(self, file=None, filename=None):
