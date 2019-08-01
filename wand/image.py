@@ -4452,9 +4452,14 @@ class BaseImage(Resource):
         :type inner_bevel: :class:`numbers.Real`
         :param outer_bevel: outset highlight length
         :type outer_bevel: :class:`numbers.Real`
+        :param compose: Optional composite operator. Default ``'over'``, and
+                        only available with ImageMagick-7.
+        :type compose: :class:`basestring`
 
         .. versionadded:: 0.4.1
 
+        .. versionchanged:: 0.5.6
+           Added optional ``compose`` parameter.
         """
         if matte is None:
             matte = Color('gray')
