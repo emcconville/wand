@@ -360,9 +360,15 @@ def load(lib, IM_VERSION):
     lib.MagickFlopImage.restype = c_bool
     lib.MagickForwardFourierTransformImage.argtypes = [c_void_p, c_bool]
     lib.MagickForwardFourierTransformImage.restype = c_bool
-    lib.MagickFrameImage.argtypes = [
-        c_void_p, c_void_p, c_size_t, c_size_t, c_ssize_t, c_ssize_t
-    ]
+    if is_im_6:
+        lib.MagickFrameImage.argtypes = [
+            c_void_p, c_void_p, c_size_t, c_size_t, c_ssize_t, c_ssize_t
+        ]
+    else:
+        lib.MagickFrameImage.argtypes = [
+            c_void_p, c_void_p, c_size_t, c_size_t, c_ssize_t, c_ssize_t,
+            c_int
+        ]
     lib.MagickFrameImage.restype = c_bool
     lib.MagickFunctionImage.argtypes = [
         c_void_p, c_int, c_size_t, POINTER(c_double)

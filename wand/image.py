@@ -4438,7 +4438,7 @@ class BaseImage(Resource):
     @manipulative
     @trap_exception
     def frame(self, matte=None, width=1, height=1, inner_bevel=0,
-              outer_bevel=0):
+              outer_bevel=0, compose='over'):
         """Creates a bordered frame around image.
         Inner & outer bevel can simulate a 3D effect.
 
@@ -4465,10 +4465,21 @@ class BaseImage(Resource):
         assertions.assert_real(inner_bevel=inner_bevel,
                                outer_bevel=outer_bevel)
         with matte:
-            r = library.MagickFrameImage(self.wand,
-                                         matte.resource,
-                                         width, height,
-                                         inner_bevel, outer_bevel)
+            if MAGICK_VERSION_NUMBER < 0x700:
+                r = library.MagickFrameImage(self.wand,
+                                             matte.resource,
+                                             width, height,
+                                             inner_bevel, outer_bevel)
+            else:
+                assertions.string_in_list(COMPOSITE_OPERATORS,
+                                          'wand.image.COMPOSITE_OPERATORS',
+                                          compose=compose)
+                op = COMPOSITE_OPERATORS.index(compose)
+                r = library.MagickFrameImage(self.wand,
+                                             matte.resource,
+                                             width, height,
+                                             inner_bevel, outer_bevel,
+                                             op)
         return r
 
     @manipulative
