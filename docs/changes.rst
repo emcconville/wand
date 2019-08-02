@@ -12,7 +12,7 @@ Wand Changelog
 Version 0.5.6
 -------------
 
-Unreleased.
+Released on August 2nd, 2019.
 
  - Fixed invalid escape sequence warnings [:issue:`#428`]
  - Fixed error on Drawing exception handling. [:issue:`#427`]
