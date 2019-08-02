@@ -7,6 +7,11 @@ Wand Changelog
 ~~~~~~~~~~
 
 
+.. _changelog-0.5.7:
+
+Unreleased.
+
+
 .. _changelog-0.5.6:
 
 Version 0.5.6
@@ -14,15 +19,15 @@ Version 0.5.6
 
 Released on August 2nd, 2019.
 
- - Fixed invalid escape sequence warnings [:issue:`#428`]
- - Fixed error on Drawing exception handling. [:issue:`#427`]
- - Fixed undefined behaviour when working with image frames in ImageMagick-7. [:issue:`#431`]
- - Added :meth:`Image.annotate() <wand.image.BaseImage.annotate>` method. [:issue:`#418`]
+ - Fixed invalid escape sequence warnings [:issue:`428`]
+ - Fixed error on Drawing exception handling. [:issue:`427`]
+ - Fixed undefined behaviour when working with image frames in ImageMagick-7. [:issue:`431`]
+ - Added :meth:`Image.annotate() <wand.image.BaseImage.annotate>` method. [:issue:`418`]
  - Added :meth:`Image.level_colors() <wand.image.BaseImage.level_colors>` method.
  - Added :meth:`Image.levelize_colors() <wand.image.BaseImage.levelize_colors>` method.
  - Added :meth:`Image.parse_meta_geometry() <wand.image.BaseImage.parse_meta_geometry>` method.
  - Added :meth:`Image.percent_escape() <wand.image.BaseImage.percent_escape>` helper method. [:issue:`421`]
- - Added :meth:`Image.ping() <wand.image.Image.ping>` class method. [:issue:`#425`]
+ - Added :meth:`Image.ping() <wand.image.Image.ping>` class method. [:issue:`425`]
  - Added ``mean_color``, ``keep``, & ``remove`` parameters in :meth:`Image.connected_components() <wand.image.BaseImage.connected_components>` method.
 
 
