@@ -6582,9 +6582,9 @@ class BaseImage(Resource):
     def shave(self, columns=0, rows=0):
         """Remove pixels from the edges.
 
-        :param columns: amount to shave off the x-axis.
+        :param columns: amount to shave off both sides of the x-axis.
         :type columns: :class:`numbers.Integral`
-        :param rows: amount to shave off the y-axis.
+        :param rows: amount to shave off both sides of the y-axis.
         :type rows: :class:`numbers.Integral`
 
         .. versionadded:: 0.5.0
