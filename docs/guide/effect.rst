@@ -38,10 +38,14 @@ Adaptive Blur
 Gaussian Blur
 '''''''''''''
 
+Smooths images by performing a Gaussian function. The ``sigma`` argument is
+used to define the standard deviation.
+
+
 .. code-block:: python
 
     with Image(filename="hummingbird.jpg") as img:
-        img.gaussian_blur(radius=3, sigma=1)
+        img.gaussian_blur(sigma=3)
         img.save(filename="effect-gaussian-blur.jpg")
 
 +---------------------------------------+------------------------------------------------+
@@ -54,6 +58,11 @@ Gaussian Blur
 
 Motion  Blur
 ''''''''''''
+
+Performs a Gaussian blur operation along a linear direction to simulate a
+motion effect. The ``radius`` argument should always be larger than the
+``sigma`` argument, but if the ``radius`` is not given (or ``0`` value) the
+radius value is selected for you.
 
 .. code-block:: python
 
@@ -72,6 +81,12 @@ Motion  Blur
 Rotational Blur
 '''''''''''''''
 
+This method simulates a motion blur by rotating at the center of the image.
+The larger the angle, the more extreme the blur will be.
+Unlike the other blur methods, there is no ``radius`` or ``sigma`` arguments.
+The ``angle`` parameter can be between ``0°`` and ``360°`` degrees
+with ``0°`` having no effect.
+
 .. code-block:: python
 
     with Image(filename="hummingbird.jpg") as img:
@@ -88,6 +103,10 @@ Rotational Blur
 
 Selective Blur
 ''''''''''''''
+
+Similair to :meth:`Image.blur() <wand.image.BaseImage.blur>` method, this
+method will only effect parts of the image that have a contrast below a given
+quantum threshold.
 
 .. code-block:: python
 
