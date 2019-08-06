@@ -2831,7 +2831,7 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def blur(self, radius, sigma, channel=None):
+    def blur(self, radius=0.0, sigma=0.0, channel=None):
         """Blurs the image.  We convolve the image with a gaussian operator
         of the given ``radius`` and standard deviation (``sigma``).
         For reasonable results, the ``radius`` should be larger
@@ -2839,9 +2839,10 @@ class BaseImage(Resource):
         a suitable ``radius`` for you.
 
         :param radius: the radius of the, in pixels,
-                       not counting the center pixel
+                       not counting the center pixel. Default is ``0.0``.
         :type radius: :class:`numbers.Real`
-        :param sigma: the standard deviation of the, in pixels
+        :param sigma: the standard deviation of the, in pixels. Default value
+                      is ``0.0``.
         :type sigma: :class:`numbers.Real`
         :param channel: Optional color channel to apply blur. See
                         :const:`CHANNELS`.
@@ -2851,6 +2852,10 @@ class BaseImage(Resource):
 
         .. versionchanged:: 0.5.5
            Added optional ``channel`` argument.
+
+        .. versionchanged:: 0.5.7
+           Postional arguments ``radius`` & ``sigman`` have been converted to
+           key-word arguments.
         """
         assertions.assert_real(radius=radius, sigma=sigma)
         if channel is None:
@@ -4628,7 +4633,7 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def gaussian_blur(self, radius, sigma, channel=None):
+    def gaussian_blur(self, radius=0.0, sigma=0.0, channel=None):
         """Blurs the image.  We convolve the image with a gaussian operator
         of the given ``radius`` and standard deviation (``sigma``).
         For reasonable results, the ``radius`` should be larger
@@ -4648,6 +4653,9 @@ class BaseImage(Resource):
 
         .. versionchanged:: 0.5.5
            Added ``channel`` argument.
+        .. versionchanged:: 0.5.7
+           Positional arguments ``radius`` & ``sigma`` have been converted
+           to keyword arguments.
         """
         assertions.assert_real(radius=radius, sigma=sigma)
         if channel is None:
