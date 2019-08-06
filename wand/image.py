@@ -2978,22 +2978,6 @@ class BaseImage(Resource):
                                             lower_percent, upper_percent)
 
     @manipulative
-    def concat(self, stacked=False):
-        """Concatenates images in stack into a single image. Left-to-right
-        by default, top-to-bottom if ``stacked`` is True.
-
-        :param stacked: stack images in a column, or in a row (default)
-        :type stacked: :class:`bool`
-
-        .. versionadded:: 0.5.0
-        """
-        assertions.assert_bool(stacked=stacked)
-        r = library.MagickAppendImages(self.wand, stacked)
-        if not r:  # pragma: no cover
-            self.raise_exception()
-        self.wand = r
-
-    @manipulative
     def caption(self, text, left=0, top=0, width=None, height=None, font=None,
                 gravity=None):
         """Writes a caption ``text`` into the position.
@@ -3658,6 +3642,22 @@ class BaseImage(Resource):
                                              int(left), int(top))
             library.MagickSetImageChannelMask(self.wand, ch_mask)
         return r
+
+    @manipulative
+    def concat(self, stacked=False):
+        """Concatenates images in stack into a single image. Left-to-right
+        by default, top-to-bottom if ``stacked`` is True.
+
+        :param stacked: stack images in a column, or in a row (default)
+        :type stacked: :class:`bool`
+
+        .. versionadded:: 0.5.0
+        """
+        assertions.assert_bool(stacked=stacked)
+        r = library.MagickAppendImages(self.wand, stacked)
+        if not r:  # pragma: no cover
+            self.raise_exception()
+        self.wand = r
 
     def connected_components(self, connectivity=4, area_threshold=None,
                              mean_color=False, keep=None, remove=None):
@@ -6441,7 +6441,8 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def selective_blur(self, radius, sigma, threshold, channel=None):
+    def selective_blur(self, radius=0.0, sigma=0.0, threshold=0.0,
+                       channel=None):
         """Blur an image within a given threshold.
 
         For best effects, use a value between 10% and 50% of
