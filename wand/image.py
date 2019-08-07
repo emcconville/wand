@@ -7492,7 +7492,8 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def unsharp_mask(self, radius, sigma, amount, threshold, channel=None):
+    def unsharp_mask(self, radius=0.0, sigma=1.0, amount=1.0, threshold=0.0,
+                     channel=None):
         """Sharpens the image using unsharp mask filter. We convolve the image
         with a Gaussian operator of the given ``radius`` and standard deviation
         (``sigma``). For reasonable results, ``radius`` should be larger than
@@ -7518,6 +7519,9 @@ class BaseImage(Resource):
 
         .. versionchanged:: 0.5.5
            Added optional ``channel`` argument.
+
+        .. versionchanged:: 0.5.7
+           Added default values to match CLI behavior.
         """
         assertions.assert_real(radius=radius, sigma=sigma,
                                amount=amount, threshold=threshold)

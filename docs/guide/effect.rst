@@ -210,6 +210,7 @@ color-channel.
     from wand.image import Image
 
     with Image(filename="hummingbird.jpg") as img:
+        img.transform_colorspace('gray')
         img.edge(1)
         img.save(filename="effect-edge.jpg")
 
@@ -236,6 +237,7 @@ best results can be generated with grayscale image. Also see :ref:`shade`.
     from wand.image import Image
 
     with Image(filename="hummingbird.jpg") as img:
+        img.transform_colorspace('gray')
         img.emboss(radius=3.0, sigma=1.75)
         img.save(filename="effect-emboss.jpg")
 
@@ -275,6 +277,36 @@ to reduce noise in an image, but also preserves edges.
 | .. image:: ../_images/hummingbird.jpg | .. image:: ../_images/effect-kuwahara.jpg |
 |    :alt: Original                     |    :alt: Kuwahara                         |
 +---------------------------------------+-------------------------------------------+
+
+
+.. _shade:
+
+Shade
+-----
+
+.. versionadded:: 0.5.0
+
+Creates a 3D effect by simulating light from source where ``aziumth`` controls
+the X/Y angle, and ``elevation`` controls the Z angle. You can also determine
+of the resulting image should be transformed to grayscale by passing ``gray``
+boolean.
+
+.. code-block:: python
+
+    from wand.image import Image
+
+    with Image(filename="hummingbird.jpg") as img:
+        img.shade(gray=True,
+                  azimuth=286.0,
+                  elevation=45.0)
+        img.save(filename="effect-shade.jpg")
+
++---------------------------------------+----------------------------------------+
+| Original                              | Shade                                  |
++---------------------------------------+----------------------------------------+
+| .. image:: ../_images/hummingbird.jpg | .. image:: ../_images/effect-shade.jpg |
+|    :alt: Original                     |    :alt: Shade                         |
++---------------------------------------+----------------------------------------+
 
 
 .. _sharpen:
@@ -335,3 +367,59 @@ the feathers, and limited  changes in the out-of-focus background.
 |    :alt: Original                     |    :alt: Adaptive Sharpen                         |
 +---------------------------------------+---------------------------------------------------+
 
+
+.. _unsharpen_mask:
+
+Unsharp Mask
+''''''''''''
+
+.. versionadded:: 0.3.4
+
+Identical to :meth:`Image.sharpen <wand.image.BaseImage.sharpen>` method,
+but gives users the control to blend between filter & original (``amount``
+parameter), and the ``threshold``. When the ``amount`` value is greater than
+``1.0`` more if the sharpen filter is applied, and less if the value is under
+``1.0``. Values for ``threshold`` over ``0.0`` reduce the sharpens.
+
+.. code-block:: python
+
+    with Image(filename="hummingbird.jpg") as img:
+        img.unsharp_mask(radius=10,
+                         sigma=4,
+                         amount=1,
+                         threshold=0)
+        img.save(filename="effect-unsharp-mask.jpg")
+
++---------------------------------------+-----------------------------------------------+
+| Original                              | Unsharp Mask                                  |
++---------------------------------------+-----------------------------------------------+
+| .. image:: ../_images/hummingbird.jpg | .. image:: ../_images/effect-unsharp-mask.jpg |
+|    :alt: Original                     |    :alt: Unsharp Mask                         |
++---------------------------------------+-----------------------------------------------+
+
+
+.. _spread:
+
+Spread
+------
+
+.. versionadded:: 0.5.3
+
+Spread replaces each pixel with the a random pixel value found near by. The
+size of the area to search for a new pixel can be controlled by defining a
+radius.
+
+.. code-block:: python
+
+    from wand.image import Image
+
+    with Image(filename="hummingbird.jpg") as img:
+        img.spread(8.0)
+        img.save(filename="effect-spread.jpg")
+
++---------------------------------------+-----------------------------------------+
+| Original                              | Spread                                  |
++---------------------------------------+-----------------------------------------+
+| .. image:: ../_images/hummingbird.jpg | .. image:: ../_images/effect-spread.jpg |
+|    :alt: Original                     |    :alt: Spread                         |
++---------------------------------------+-----------------------------------------+

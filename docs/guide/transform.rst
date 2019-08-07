@@ -218,35 +218,6 @@ The generated image :file:`transform-rotated-135.jpg` looks like:
    :alt: transform-rotated-135.jpg
 
 
-.. _shade:
-
-Shade
------
-
-.. versionadded:: 0.5.0
-
-Creates a 3D effect by simulating light from source where ``aziumth`` controls
-the X/Y angle, and ``elevation`` controls the Z angle. You can also determine
-of the resulting image should be transformed to grayscale by passing ``gray``
-boolean.
-
-.. code::
-
-    from wand.image import Image
-
-    with Image(filename="hummingbird.jpg") as left:
-        with left.clone() as right:
-            right.shade(gray=True,
-                        azimuth=286.0,
-                        elevation=45.0)
-            left.extent(width=left.width*2)
-            left.composite(right, top=0, left=right.width)
-        left.save(filename="hummingbird-shade.jpg")
-
-.. image:: ../_images/hummingbird-shade.jpg
-     :alt: Hummingbird - Shade
-
-
 .. _sketch:
 
 Sketch
@@ -271,31 +242,6 @@ Simulates an artist sketch drawing. Also see :ref:`charcoal`.
 .. image:: ../_images/hummingbird-sketch.jpg
      :alt: Hummingbird - Sketch
 
-
-.. _spread:
-
-Spread
-------
-
-.. versionadded:: 0.5.3
-
-Spread replaces each pixel with the a random pixel value found near by. The
-size of the area to search for a new pixel can be controlled by defining a
-radius.
-
-.. code::
-
-    from wand.image import Image
-
-    with Image(filename="hummingbird.jpg") as left:
-        with left.clone() as right:
-            right.spread(8.0)
-            left.extent(width=left.width*2)
-            left.composite(right, top=0, left=right.width)
-        left.save(filename="hummingbird-spread.jpg")
-
-.. image:: ../_images/hummingbird-spread.jpg
-     :alt: Hummingbird - Spread
 
 .. _statistic:
 
