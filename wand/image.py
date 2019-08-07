@@ -2832,7 +2832,7 @@ class BaseImage(Resource):
     @manipulative
     @trap_exception
     def blur(self, radius=0.0, sigma=0.0, channel=None):
-        """Blurs the image.  We convolve the image with a gaussian operator
+        """Blurs the image.  Convolve the image with a gaussian operator
         of the given ``radius`` and standard deviation (``sigma``).
         For reasonable results, the ``radius`` should be larger
         than ``sigma``.  Use a ``radius`` of 0 and :meth:`blur()` selects

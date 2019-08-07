@@ -81,6 +81,7 @@ User's guide
    guide/read
    guide/write
    guide/resizecrop
+   guide/effect
    guide/transform
    guide/colorspace
    guide/colorenhancement

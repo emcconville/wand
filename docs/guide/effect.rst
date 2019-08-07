@@ -1,8 +1,18 @@
 Image Effects
 =============
 
+.. _blur:
+
 Blur
 ----
+
+.. versionadded:: 0.4.5
+
+Basic blur operation. The ``radius`` argument defines the size of the area to
+sample, and the ``sigma`` defines the standard deviation. For all blur based
+methods, the best results are given when the ``radius`` is larger than
+``sigma``. However, if ``radius`` is omitted, or zero valued, the value
+will be selected based off the given ``sigma`` property.
 
 .. code-block:: python
 
@@ -18,10 +28,20 @@ Blur
 +---------------------------------------+---------------------------------------+
 
 
+.. _adaptive_blur:
+
 Adaptive Blur
 '''''''''''''
 
+.. versionadded:: 0.5.3
+
+This method blurs less intensely around areas of an image with detectable edges,
+and blurs more intensely for areas without edges. The ``radius`` should
+always be larger than the ``sigma`` (standard devation).
+
 .. code-block:: python
+
+    from wand.image import Image
 
     with Image(filename="hummingbird.jpg") as img:
         img.adaptive_blur(radius=8, sigma=4)
@@ -35,14 +55,20 @@ Adaptive Blur
 +---------------------------------------+------------------------------------------------+
 
 
+.. _gaussian_blur:
+
 Gaussian Blur
 '''''''''''''
+
+.. versionadded:: 0.3.3
 
 Smooths images by performing a Gaussian function. The ``sigma`` argument is
 used to define the standard deviation.
 
 
 .. code-block:: python
+
+    from wand.image import Image
 
     with Image(filename="hummingbird.jpg") as img:
         img.gaussian_blur(sigma=3)
@@ -56,8 +82,12 @@ used to define the standard deviation.
 +---------------------------------------+------------------------------------------------+
 
 
+.. _motion_blur:
+
 Motion  Blur
 ''''''''''''
+
+.. versionadded:: 0.5.4
 
 Performs a Gaussian blur operation along a linear direction to simulate a
 motion effect. The ``radius`` argument should always be larger than the
@@ -65,6 +95,8 @@ motion effect. The ``radius`` argument should always be larger than the
 radius value is selected for you.
 
 .. code-block:: python
+
+    from wand.image import Image
 
     with Image(filename="hummingbird.jpg") as img:
         img.motion_blur(radius=16, sigma=8, angle=-45)
@@ -78,8 +110,12 @@ radius value is selected for you.
 +---------------------------------------+------------------------------------------------+
 
 
+.. _rotational_blur:
+
 Rotational Blur
 '''''''''''''''
+
+.. versionadded:: 0.5.4
 
 This method simulates a motion blur by rotating at the center of the image.
 The larger the angle, the more extreme the blur will be.
@@ -88,6 +124,8 @@ The ``angle`` parameter can be between ``0°`` and ``360°`` degrees
 with ``0°`` having no effect.
 
 .. code-block:: python
+
+    from wand.image import Image
 
     with Image(filename="hummingbird.jpg") as img:
         img.rotational_blur(angle=5)
@@ -101,14 +139,20 @@ with ``0°`` having no effect.
 +---------------------------------------+----------------------------------------------------+
 
 
+.. _selective_blur:
+
 Selective Blur
 ''''''''''''''
+
+.. versionadded:: 0.5.3
 
 Similair to :meth:`Image.blur() <wand.image.BaseImage.blur>` method, this
 method will only effect parts of the image that have a contrast below a given
 quantum threshold.
 
 .. code-block:: python
+
+    from wand.image import Image
 
     with Image(filename="hummingbird.jpg") as img:
         img.selective_blur(radius=8,
@@ -124,8 +168,121 @@ quantum threshold.
 +---------------------------------------+---------------------------------------------------+
 
 
+.. _despeckle:
+
+Despeckle
+---------
+
+.. versionadded:: 0.5.0
+
+Despeckling is one of the many techniques you can use to reduce noise on a
+given image. Also see :ref:`enhance`.
+
+.. code-block:: python
+
+    from wand.image import Image
+
+    with Image(filename="hummingbird.jpg") as img:
+        img.despeckle()
+        img.save(filename="effect-despeckle.jpg")
+
++---------------------------------------+--------------------------------------------+
+| Original                              | Despeckle                                  |
++---------------------------------------+--------------------------------------------+
+| .. image:: ../_images/hummingbird.jpg | .. image:: ../_images/effect-despeckle.jpg |
+|    :alt: Original                     |    :alt: Despeckle                         |
++---------------------------------------+--------------------------------------------+
+
+
+.. _edge:
+
+Edge
+----
+
+.. versionadded:: 0.5.0
+
+Detects edges on black and white images with a simple convolution filter. If
+used with a color image, the transformation will be applied to each
+color-channel.
+
+.. code-block:: python
+
+    from wand.image import Image
+
+    with Image(filename="hummingbird.jpg") as img:
+        img.edge(1)
+        img.save(filename="effect-edge.jpg")
+
++---------------------------------------+---------------------------------------+
+| Original                              | Edge                                  |
++---------------------------------------+---------------------------------------+
+| .. image:: ../_images/hummingbird.jpg | .. image:: ../_images/effect-edge.jpg |
+|    :alt: Original                     |    :alt: Edge                         |
++---------------------------------------+---------------------------------------+
+
+
+.. _emboss:
+
+Emboss
+-------
+
+.. versionadded:: 0.5.0
+
+Generates a 3D effect that can be described as print reliefs. Like :ref:`edge`,
+best results can be generated with grayscale image. Also see :ref:`shade`.
+
+.. code-block:: python
+
+    from wand.image import Image
+
+    with Image(filename="hummingbird.jpg") as img:
+        img.emboss(radius=3.0, sigma=1.75)
+        img.save(filename="effect-emboss.jpg")
+
++---------------------------------------+-----------------------------------------+
+| Original                              | Emboss                                  |
++---------------------------------------+-----------------------------------------+
+| .. image:: ../_images/hummingbird.jpg | .. image:: ../_images/effect-emboss.jpg |
+|    :alt: Original                     |    :alt: Emboss                         |
++---------------------------------------+-----------------------------------------+
+
+
+.. _kuwahara:
+
+Kuwahara
+--------
+
+.. versionadded:: 0.5.5
+
+.. warning::
+
+    Class method only available with ImageMagick 7.0.8-41 or greater.
+
+The :meth:`~wand.image.BaseImage.kuwahara` method applies a smoothing filter
+to reduce noise in an image, but also preserves edges.
+
+.. code-block:: python
+
+    from image.wand import Image
+
+    with Image(filename="hummingbird.jpg") as img:
+        img.kuwahara(radius=2, sigma=1.5)
+        img.save(filename="effect-kuwahara.jpg")
+
++---------------------------------------+-------------------------------------------+
+| Original                              | Kuwahara                                  |
++---------------------------------------+-------------------------------------------+
+| .. image:: ../_images/hummingbird.jpg | .. image:: ../_images/effect-kuwahara.jpg |
+|    :alt: Original                     |    :alt: Kuwahara                         |
++---------------------------------------+-------------------------------------------+
+
+
+.. _sharpen:
+
 Sharpen
 -------
+
+.. versionadded:: 0.5.0
 
 Convolves an image with a Gaussian operator to enhance blurry edges into a more
 distinct "sharp" edge. The ``radius`` should always be larger than ``sigma``
@@ -133,6 +290,8 @@ value.  The radius value will be calculated automatically if only ``sigma`` is
 given.
 
 .. code-block:: python
+
+    from wand.image import Image
 
     with Image(filename="hummingbird.jpg") as img:
         img.sharpen(radius=8, sigma=4)
@@ -146,8 +305,12 @@ given.
 +---------------------------------------+------------------------------------------+
 
 
+.. _adaptive_sharpen:
+
 Adaptive Sharpen
 ''''''''''''''''
+
+.. versionadded:: 0.5.3
 
 Just like :meth:`Image.sharpen() <wand.image.BaseImage.sharpen>`, adaptive
 sharpen uses a convolve & Gaussian operations to sharpen blurred images.
@@ -158,6 +321,8 @@ from edges. In the example below, notice the visible changes around the edge of
 the feathers, and limited  changes in the out-of-focus background.
 
 .. code-block:: python
+
+    from wand.image import Image
 
     with Image(filename="hummingbird.jpg") as img:
         img.adaptive_sharpen(radius=8, sigma=4)
