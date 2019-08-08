@@ -65,40 +65,6 @@ We can apply a **Sinusoid** function with the following::
      :alt: Chicago River - Sinusoid function
 
 
-.. _fx:
-
-FX Expressions
---------------
-
-.. versionadded:: 0.4.1
-
-`FX special effects`__ are a powerful "micro" language to work with.
-Simple functions & operators offer a unique way to access & manipulate image
-data. The :meth:`~wand.image.BaseImage.fx()` method applies a FX expression, and
-generates a new :class:`~wand.image.Image` instance.
-
-     __ http://www.imagemagick.org/script/fx.php
-
-For example, when given image :file:`enhancement.jpg`:
-
-.. image:: ../_images/enhancement.jpg
-     :alt: Chicago River
-
-We can create a custom DIY filter that will turn the image black & white, except
-colors with a hue between 195° & 252°::
-
-     from wand.image import Image
-
-     fx_filter='(hue > 0.55 && hue < 0.7) ? u : lightness'
-
-     with Image(filename='enhancement.jpg') as img:
-          with img.fx(fx_filter) as filtered_img:
-               filtered_img.save(filename='enhancement-fx.jpg')
-
-.. image:: ../_images/enhancement-fx.jpg
-     :alt: Chicago River - FX Expressions
-
-
 .. _gamma:
 
 Gamma
