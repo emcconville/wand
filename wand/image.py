@@ -6961,13 +6961,20 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def spread(self, radius, method='undefined'):
+    def spread(self, radius=0.0, method='undefined'):
         """Randomly displace pixels within a defined radius.
 
-        :param radius: Distance a pixel can be displaced from source.
+        :param radius: Distance a pixel can be displaced from source. Default
+                       value is ``0.0``, which will allow ImageMagick to auto
+                       select a radius.
         :type radius: :class:`numbers.Real`
         :param method: Interpolation method. Only available with ImageMagick-7.
                        See :const:`PIXEL_INTERPOLATE_METHODS`.
+
+        .. versionadded:: 0.5.3
+
+        .. versionchanged:: 0.5.7
+           Added default value to ``radius``.
         """
         assertions.assert_real(radius=radius)
         assertions.string_in_list(PIXEL_INTERPOLATE_METHODS,

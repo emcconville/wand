@@ -1,6 +1,10 @@
 Image Effects
 =============
 
+..
+  This document covers methods defined in MagickCore's effect.c file.
+  https://imagemagick.org/api/MagickCore/effect_8c.html
+
 .. _blur:
 
 Blur
@@ -37,7 +41,7 @@ Adaptive Blur
 
 This method blurs less intensely around areas of an image with detectable edges,
 and blurs more intensely for areas without edges. The ``radius`` should
-always be larger than the ``sigma`` (standard devation).
+always be larger than the ``sigma`` (standard deviation).
 
 .. code-block:: python
 
@@ -146,7 +150,7 @@ Selective Blur
 
 .. versionadded:: 0.5.3
 
-Similair to :meth:`Image.blur() <wand.image.BaseImage.blur>` method, this
+Similar to :meth:`Image.blur() <wand.image.BaseImage.blur>` method, this
 method will only effect parts of the image that have a contrast below a given
 quantum threshold.
 
@@ -211,7 +215,7 @@ color-channel.
 
     with Image(filename="hummingbird.jpg") as img:
         img.transform_colorspace('gray')
-        img.edge(1)
+        img.edge(radius=1)
         img.save(filename="effect-edge.jpg")
 
 +---------------------------------------+---------------------------------------+
@@ -414,7 +418,7 @@ radius.
     from wand.image import Image
 
     with Image(filename="hummingbird.jpg") as img:
-        img.spread(8.0)
+        img.spread(radius=8.0)
         img.save(filename="effect-spread.jpg")
 
 +---------------------------------------+-----------------------------------------+
