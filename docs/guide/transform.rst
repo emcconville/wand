@@ -156,31 +156,6 @@ The generated image :file:`transform-rotated-135.jpg` looks like:
    :alt: transform-rotated-135.jpg
 
 
-.. _sketch:
-
-Sketch
-------
-
-.. versionadded:: 0.5.3
-
-Simulates an artist sketch drawing. Also see :ref:`charcoal`.
-
-.. code::
-
-    from wand.image import Image
-
-    with Image(filename="hummingbird.jpg") as left:
-        with left.clone() as right:
-            right.transform_colorspace("gray")
-            right.sketch(0.5, 0.0, 98.0)
-            left.extent(width=left.width*2)
-            left.composite(right, top=0, left=right.width)
-        left.save(filename="hummingbird-sketch.jpg")
-
-.. image:: ../_images/hummingbird-sketch.jpg
-     :alt: Hummingbird - Sketch
-
-
 .. _statistic:
 
 Statistic

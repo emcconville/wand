@@ -49,6 +49,22 @@ Blue Shift
 
 .. versionadded:: 0.5.3
 
+Gently mutes colors by shifting blue values by a factor. This produces a
+nighttime scene with a moonlight effect.
+
+.. code-block:: python
+
+    with Image(filename="inca_tern.jpg") as img:
+        img.blue_shift(factor=1.25)
+        img.save(filename="fx-blue-shift.jpg")
+
++-------------------------------------+-----------------------------------------+
+| Original                            | Blue Shift                              |
++-------------------------------------+-----------------------------------------+
+| .. image:: ../_images/inca_tern.jpg | .. image:: ../_images/fx-blue-shift.jpg |
+|    :alt: Original                   |    :alt: Blue Shift                     |
++-------------------------------------+-----------------------------------------+
+
 
 .. _charcoal:
 
@@ -128,6 +144,22 @@ Sketch
 ------
 
 .. versionadded:: 0.5.3
+
+Simulates an artist sketch drawing. Also see :ref:`charcoal`.
+
+.. code-block:: python
+
+    with Image(filename="inca_tern.jpg") as img:
+        img.transform_colorspace("gray")
+        img.sketch(0.5, 0.0, 98.0)
+        img.save(filename="fx-sketch.jpg")
+
++-------------------------------------+-------------------------------------+
+| Original                            | Sketch                              |
++-------------------------------------+-------------------------------------+
+| .. image:: ../_images/inca_tern.jpg | .. image:: ../_images/fx-sketch.jpg |
+|    :alt: Original                   |    :alt: Sketch                     |
++-------------------------------------+-------------------------------------+
 
 
 .. _solarize:
