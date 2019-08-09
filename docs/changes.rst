@@ -9,7 +9,13 @@ Wand Changelog
 
 .. _changelog-0.5.7:
 
+Version 0.5.7
+-------------
+
 Unreleased.
+
+ - Added :meth:`Image.read_mask <wand.image.BaseImage.read_mask>` method. [:issue:`433`]
+ - Added :meth:`Image.write_mask <wand.image.BaseImage.write_mask>` method. [:issue:`433`]
 
 
 .. _changelog-0.5.6:

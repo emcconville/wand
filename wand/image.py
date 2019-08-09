@@ -6169,6 +6169,35 @@ class BaseImage(Resource):
                                                  low_black, low_white,
                                                  high_white, high_black)
 
+    @trap_exception
+    def read_mask(self, clip_mask=None):
+        """Sets the read mask where the gray values of the clip mask
+        are used to blend during composite operations. Call this method with
+        a ``None`` argument to clear any previously set masks.
+
+        This method is also useful for :meth:`compare` method for limiting
+        region of interest.
+
+        .. warning::
+           This method is only available with ImageMagick-7.
+
+        :param clip_mask: Image to reference as blend mask.
+        :type clip_mask: :class:`BaseImage`
+
+        .. versionadded:: 0.5.7
+        """
+        r = False
+        ReadPixelMask = 0x000001
+        if library.MagickSetImageMask is None:
+            raise WandLibraryVersionError('Method requires ImageMagick-7.')
+        else:  # pragma: no cover
+            if clip_mask is None:
+                r = library.MagickSetImageMask(self.wand, ReadPixelMask, None)
+            elif isinstance(clip_mask, BaseImage):
+                r = library.MagickSetImageMask(self.wand, ReadPixelMask,
+                                               clip_mask.wand)
+        return r
+
     @manipulative
     @trap_exception
     def remap(self, affinity=None, method='no'):
@@ -7672,6 +7701,32 @@ class BaseImage(Resource):
         with threshold:
             r = library.MagickWhiteThresholdImage(self.wand,
                                                   threshold.resource)
+        return r
+
+    @trap_exception
+    def write_mask(self, clip_mask=None):
+        """Sets the write mask which prevents pixel-value updates to the image.
+        Call this method with a ``None`` argument to clear any previously set
+        masks.
+
+        .. warning::
+           This method is only available with ImageMagick-7.
+
+        :param clip_mask: Image to reference as blend mask.
+        :type clip_mask: :class:`BaseImage`
+
+        .. versionadded:: 0.5.7
+        """
+        r = False
+        WritePixelMask = 0x000002
+        if library.MagickSetImageMask is None:
+            raise WandLibraryVersionError('Method requires ImageMagick-7.')
+        else:  # pragma: no cover
+            if clip_mask is None:
+                r = library.MagickSetImageMask(self.wand, WritePixelMask, None)
+            elif isinstance(clip_mask, BaseImage):
+                r = library.MagickSetImageMask(self.wand, WritePixelMask,
+                                               clip_mask.wand)
         return r
 
 
