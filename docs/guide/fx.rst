@@ -310,20 +310,35 @@ defined threshold with a negated value.
 +-------------------------------------+---------------------------------------+
 
 
-.. _stegano:
-
-Stegano
--------
-
-.. versionadded:: 0.5.4
-
-
 .. _stereogram:
 
 Stereogram
 ----------
 
 .. versionadded:: 0.5.4
+
+Also known as "`anaglyph`_", this class method takes two
+:class:`~wand.image.Image` instances (one for each eye), and creates a 3d
+image by seperating the Red & Cyan.
+
+.. _anaglyph: https://en.wikipedia.org/wiki/Anaglyph_3D
+
+.. code-block:: python
+
+    from wand.image import Image
+
+    with Image(filename="left_camera.jpg") as left_eye:
+        with Image(filename="right_camera.jpg") as right_eye:
+            with Image.stereogram(left=left_eye,
+                                  right=right_eye) as img:
+                img.save(filename="fx-stereogram.jpg")
+
++-----------------------------------------+
+| Stereogram                              |
++-----------------------------------------+
+| .. image:: ../_images/fx-stereogram.jpg |
+|    :alt: Stereogram                     |
++-----------------------------------------+
 
 
 .. _tint:
@@ -416,3 +431,28 @@ Wavelet Denoise
 ---------------
 
 .. versionadded:: 0.5.5
+
+This method removes noise by applying a `wavelet transform`_. The ``threshold``
+argument should be a value between ``0.0`` &
+:attr:`~wand.image.BaseImage.quantum_range`, and the ``softness`` argument
+should be a value between ``0.0`` & ``1.0``.
+
+.. _`wavelet transform`: https://en.wikipedia.org/wiki/Wavelet_transform
+
+.. code-block:: python
+
+    from wand.image import Image
+
+    with Image(filename="inca_tern.jpg") as img:
+        img.wavelet_denoise(threshold=0.05 * img.quantum_range,
+                            softness=0.0)
+        img.save(filename="fx-wavelet-denoise.jpg")
+
++-------------------------------------+----------------------------------------------+
+| Original                            | Wavelet Denoise                              |
++-------------------------------------+----------------------------------------------+
+| .. image:: ../_images/inca_tern.jpg | .. image:: ../_images/fx-wavelet-denoise.jpg |
+|    :alt: Original                   |    :alt: Wavelet Denoise                     |
++-------------------------------------+----------------------------------------------+
+
+
