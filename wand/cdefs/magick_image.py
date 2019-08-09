@@ -512,6 +512,11 @@ def load(lib, IM_VERSION):
         lib.MagickGetImageKurtosis.restype = c_bool
     lib.MagickGetImageLength.argtypes = [c_void_p, POINTER(c_size_t)]
     lib.MagickGetImageLength.restype = c_bool
+    if is_im_7:
+        lib.MagickGetImageMask.argtypes = [c_void_p, c_int]
+        lib.MagickGetImageMask.restype = c_void_p
+    else:
+        lib.MagickGetImageMask = None
     lib.MagickGetImageMatteColor.argtypes = [c_void_p, c_void_p]
     lib.MagickGetImageMatteColor.restype = c_bool
     if is_im_7:
@@ -965,6 +970,11 @@ def load(lib, IM_VERSION):
     lib.MagickSetImageInterpolateMethod.restype = c_bool
     lib.MagickSetImageIterations.argtypes = [c_void_p, c_size_t]
     lib.MagickSetImageIterations.restype = c_bool
+    if is_im_7:
+        lib.MagickSetImageMask.argtypes = [c_void_p, c_int, c_void_p]
+        lib.MagickSetImageMask.restype = c_bool
+    else:
+        lib.MagickSetImageMask = None
     lib.MagickSetImageMatte.argtypes = [c_void_p, c_bool]
     lib.MagickSetImageMatteColor.argtypes = [c_void_p, c_void_p]
     if is_im_6:
