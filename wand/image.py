@@ -6535,6 +6535,24 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
+    def sepia_tone(self, threshold=0.8):
+        """Creates a Sepia Tone special effect similar to a darkroom chemical
+        toning.
+
+        :param threshold: The extent of the toning. Value can be between ``0``
+                          & :attr:`quantum_range`, or ``0`` & ``1.0``.
+                          Default value is ``0.8`` or "80%".
+        :type threshold: :class:`numbers.Real`
+
+        .. versionadded:: 0.5.7
+        """
+        assertions.assert_real(threshold=threshold)
+        if 0.0 < threshold <= 1.0:
+            threshold *= self.quantum_range
+        return library.MagickSepiaToneImage(self.wand, threshold)
+
+    @manipulative
+    @trap_exception
     def shade(self, gray=False, azimuth=0.0, elevation=0.0):
         """Creates a 3D effect by simulating a light from an
         elevated angle.

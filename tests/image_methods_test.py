@@ -1799,6 +1799,13 @@ def test_selective_blur():
         assert was != img.signature
 
 
+def test_sepia_tone():
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.sepia_tone(threshold=0.8)
+        assert was != img.signature
+
+
 def test_shade(fx_asset):
     with Image(filename='rose:') as img:
         was = img.signature

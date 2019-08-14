@@ -258,6 +258,32 @@ effect of a Polaroid print.
 +-------------------------------------+---------------------------------------+
 
 
+.. _sepia_tone:
+
+Sepia Tone
+----------
+
+.. versionadded:: 0.5.7
+
+We can simulate old-style silver based chemical photography printing by
+applying sepia toning to images.
+
+.. code-block:: python
+
+    from wand.image import Image
+
+    with Image(filename="inca_tern.jpg") as img:
+        img.sepia_tone(threshold=0.8)
+        img.save(filename="fx-sepia-tone.jpg")
+
++-------------------------------------+-----------------------------------------+
+| Original                            | Sepia Tone                              |
++-------------------------------------+-----------------------------------------+
+| .. image:: ../_images/inca_tern.jpg | .. image:: ../_images/fx-sepia-tone.jpg |
+|    :alt: Original                   |    :alt: Sepia Tone                     |
++-------------------------------------+-----------------------------------------+
+
+
 .. _sketch:
 
 Sketch
