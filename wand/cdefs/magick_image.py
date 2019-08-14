@@ -1113,8 +1113,12 @@ def load(lib, IM_VERSION):
     lib.MagickStereoImage.restype = c_void_p
     lib.MagickStripImage.argtypes = [c_void_p]
     lib.MagickStripImage.restype = c_bool
-    lib.MagickSwirlImage.argtypes = [c_void_p, c_double]
-    lib.MagickSwirlImage.restype = c_bool
+    if is_im_6:
+        lib.MagickSwirlImage.argtypes = [c_void_p, c_double]
+        lib.MagickSwirlImage.restype = c_bool
+    else:
+        lib.MagickSwirlImage.argtypes = [c_void_p, c_double, c_int]
+        lib.MagickSwirlImage.restype = c_bool
     lib.MagickTextureImage.argtypes = [c_void_p, c_void_p]
     lib.MagickTextureImage.restype = c_void_p
     lib.MagickTintImage.argtypes = [c_void_p, c_void_p, c_void_p]

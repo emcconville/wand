@@ -16,6 +16,7 @@ Unreleased.
 
  - Added :meth:`Image.read_mask() <wand.image.BaseImage.read_mask>` method. [:issue:`433`]
  - Added :meth:`Image.sepia_tone() <wand.image.BaseImage.sepia_tone>` method.
+ - Added :meth:`Image.swirl() <wand.image.BaseImage.swirl>` method.
  - Added :meth:`Image.write_mask() <wand.image.BaseImage.write_mask>` method. [:issue:`433`]
  - Converted positional to key-word arguments to allow default values & allow more consistent
    behavior with CLI operations for the following methods:

@@ -7128,6 +7128,33 @@ class BaseImage(Resource):
         return library.MagickStripImage(self.wand)
 
     @manipulative
+    @trap_exception
+    def swirl(self, degree=0.0, method="undefined"):
+        """Swirls pixels around the center of the image. The larger the degree
+        the more pixels will be effected.
+
+        :param degree: Defines the amount of pixels to be effected. Value
+                       between ``-360.0`` and ``360.0``.
+        :type degree: :class:`numbers.Real`
+        :param method: Controls interpolation of the effected pixels. Only
+                       available for ImageMagick-7. See
+                       :const:`PIXEL_INTERPOLATE_METHODS`.
+        :type method: :class:`basestring`
+
+        .. versionadded:: 0.5.7
+        """
+        assertions.assert_real(degree=degree)
+        if MAGICK_VERSION_NUMBER < 0x700:
+            r = library.MagickSwirlImage(self.wand, degree)
+        else:
+            assertions.string_in_list(PIXEL_INTERPOLATE_METHODS,
+                                      'wand.image.PIXEL_INTERPOLATE_METHODS',
+                                      method=method)
+            method_idx = PIXEL_INTERPOLATE_METHODS.index(method)
+            r = library.MagickSwirlImage(self.wand, degree, method_idx)
+        return r
+
+    @manipulative
     def texture(self, tile):
         """Repeat tile-image across the width & height of the image.
 

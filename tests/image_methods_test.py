@@ -1970,6 +1970,13 @@ def test_strip(fx_asset):
         assert len_unstripped > len_stripped
 
 
+def test_swirl():
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.swirl(degree=90)
+        assert was != img.signature
+
+
 def test_texture():
     with Image(filename='rose:') as img:
         was = img.signature

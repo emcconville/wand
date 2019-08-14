@@ -367,6 +367,32 @@ image by seperating the Red & Cyan.
 +-----------------------------------------+
 
 
+.. _swirl:
+
+Swirl
+-----
+
+.. versionadded:: 0.5.7
+
+Creates a visual whirlpool effect by rotating pixels around the center of the
+image. The value of ``degree`` controls the amount, and distance, of pixels to
+rotate around the center. Negative degrees move pixels clockwise, and postive
+values move pixels counter-clockwise.
+
+.. code-block:: python
+
+    with Image(filename='inca_tern.jpg') as img:
+        img.swirl(degree=-90)
+        img.save(filename='fx-swirl.jpg')
+
++-------------------------------------+------------------------------------+
+| Original                            | Swirl                              |
++-------------------------------------+------------------------------------+
+| .. image:: ../_images/inca_tern.jpg | .. image:: ../_images/fx-swirl.jpg |
+|    :alt: Original                   |    :alt: Swirl                     |
++-------------------------------------+------------------------------------+
+
+
 .. _tint:
 
 Tint
