@@ -14,8 +14,16 @@ Version 0.5.7
 
 Unreleased.
 
- - Added :meth:`Image.read_mask <wand.image.BaseImage.read_mask>` method. [:issue:`433`]
- - Added :meth:`Image.write_mask <wand.image.BaseImage.write_mask>` method. [:issue:`433`]
+ - Added :meth:`Image.read_mask() <wand.image.BaseImage.read_mask>` method. [:issue:`433`]
+ - Added :meth:`Image.write_mask() <wand.image.BaseImage.write_mask>` method. [:issue:`433`]
+ - Converted positional to key-word arguments to allow default values & allow more consistent
+   behavior with CLI operations for the following methods:
+
+   - :meth:`Image.blur() <wand.image.BaseImage.blur>`
+   - :meth:`Image.gaussian_blur() <wand.image.BaseImage.gaussian_blur>`
+   - :meth:`Image.selective_blur() <wand.image.BaseImage.selective_blur>`
+   - :meth:`Image.spread() <wand.image.BaseImage.spread>`
+   - :meth:`Image.unsharp_mask() <wand.image.BaseImage.unsharp_mask>`
 
 
 .. _changelog-0.5.6:
