@@ -5254,6 +5254,24 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
+    def local_contrast(self, radius=10, strength=12.5):
+        """Increase light-dark transitions within image.
+
+        :param radius: The size of the Gaussian operator. Default value is
+                       ``10.0``.
+        :type radius: :class:`numbers.Real`
+        :param strength: Percentage of blur mask to apply. Values can be
+                         between ``0.0`` and ``100`` with a default of
+                         ``12.5``.
+        :type strength: :class:`numbers.Real`
+
+        .. versionadded:: 0.5.7
+        """
+        assertions.assert_real(radius=radius, strength=strength)
+        return library.MagickLocalContrastImage(self.wand, radius, strength)
+
+    @manipulative
+    @trap_exception
     def magnify(self):
         """Quickly double an image in size. This is a convenience method.
         Use :meth:`resize()`, :meth:`resample()`, or :meth:`sample()` for

@@ -1144,6 +1144,13 @@ def test_liquid_rescale(fx_asset):
                         assert_equal_except_alpha(img[x, y], img[x, y])
 
 
+def test_local_contrast():
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.local_contrast()
+        assert was != img.signature
+
+
 def test_mean_channel():
     with Image(filename='rose:') as img:
         r = img.mean_channel('red')
