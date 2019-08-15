@@ -5257,6 +5257,11 @@ class BaseImage(Resource):
     def local_contrast(self, radius=10, strength=12.5):
         """Increase light-dark transitions within image.
 
+        .. warning::
+
+            This class method is only available with ImageMagick 6.9.3, or
+            greater.
+
         :param radius: The size of the Gaussian operator. Default value is
                        ``10.0``.
         :type radius: :class:`numbers.Real`
@@ -5267,6 +5272,9 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.7
         """
+        if library.MagickLocalContrastImage is None:
+            msg = 'Method requires ImageMagick version 6.9.3 or greater.'
+            raise WandLibraryVersionError(msg)
         assertions.assert_real(radius=radius, strength=strength)
         return library.MagickLocalContrastImage(self.wand, radius, strength)
 

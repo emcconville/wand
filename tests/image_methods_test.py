@@ -1146,9 +1146,13 @@ def test_liquid_rescale(fx_asset):
 
 def test_local_contrast():
     with Image(filename='rose:') as img:
-        was = img.signature
-        img.local_contrast()
-        assert was != img.signature
+        if MAGICK_VERSION_NUMBER < 0x693:
+            with raises(WandLibraryVersionError):
+                img.local_contrast()
+        else:
+            was = img.signature
+            img.local_contrast()
+            assert was != img.signature
 
 
 def test_mean_channel():

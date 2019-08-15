@@ -666,8 +666,11 @@ def load(lib, IM_VERSION):
         c_void_p, c_size_t, c_size_t, c_double, c_double
     ]
     lib.MagickLiquidRescaleImage.restype = c_bool
-    lib.MagickLocalContrastImage.argtypes = [c_void_p, c_double, c_double]
-    lib.MagickLocalContrastImage.restype = c_bool
+    try:
+        lib.MagickLocalContrastImage.argtypes = [c_void_p, c_double, c_double]
+        lib.MagickLocalContrastImage.restype = c_bool
+    except AttributeError:
+        lib.MagickLocalContrastImage = None
     lib.MagickMagnifyImage.argtypes = [c_void_p]
     lib.MagickMagnifyImage.restype = c_bool
     if IM_VERSION >= 0x708:
