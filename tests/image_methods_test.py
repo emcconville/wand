@@ -1453,6 +1453,17 @@ def test_optimize_transparency(fx_asset):
                               'present on system. ' + repr(e))
 
 
+def test_ordered_dither():
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.ordered_dither('o3x3')
+        assert was != img.signature
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.ordered_dither('o3x3', channel='red')
+        assert was != img.signature
+
+
 def test_parse_meta_geometry():
     with Image(filename='rose:') as img:
         w, h, x, y = img.parse_meta_geometry('200%')

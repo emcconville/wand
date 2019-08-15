@@ -5825,6 +5825,84 @@ class BaseImage(Resource):
                                  'available on current version of MagickWand '
                                  'library.')
 
+    @manipulative
+    @trap_exception
+    def ordered_dither(self, threshold_map='threshold', channel=None):
+        """Executes a ordered-based dither operations based on predetermined
+        threshold maps.
+
+        +-----------+-------+-----------------------------+
+        | Map       | Alias | Description                 |
+        +===========+=======+=============================+
+        | threshold | 1x1   | Threshold 1x1 (non-dither)  |
+        +-----------+-------+-----------------------------+
+        | checks    | 2x1   | Checkerboard 2x1 (dither)   |
+        +-----------+-------+-----------------------------+
+        | o2x2      | 2x2   | Ordered 2x2 (dispersed)     |
+        +-----------+-------+-----------------------------+
+        | o3x3      | 3x3   | Ordered 3x3 (dispersed)     |
+        +-----------+-------+-----------------------------+
+        | o4x4      | 4x4   | Ordered 4x4 (dispersed)     |
+        +-----------+-------+-----------------------------+
+        | o8x8      | 8x8   | Ordered 8x8 (dispersed)     |
+        +-----------+-------+-----------------------------+
+        | h4x4a     | 4x1   | Halftone 4x4 (angled)       |
+        +-----------+-------+-----------------------------+
+        | h6x6a     | 6x1   | Halftone 6x6 (angled)       |
+        +-----------+-------+-----------------------------+
+        | h8x8a     | 8x1   | Halftone 8x8 (angled)       |
+        +-----------+-------+-----------------------------+
+        | h4x4o     |       | Halftone 4x4 (orthogonal)   |
+        +-----------+-------+-----------------------------+
+        | h6x6o     |       | Halftone 6x6 (orthogonal)   |
+        +-----------+-------+-----------------------------+
+        | h8x8o     |       | Halftone 8x8 (orthogonal)   |
+        +-----------+-------+-----------------------------+
+        | h16x16o   |       | Halftone 16x16 (orthogonal) |
+        +-----------+-------+-----------------------------+
+        | c5x5b     | c5x5  | Circles 5x5 (black)         |
+        +-----------+-------+-----------------------------+
+        | c5x5w     |       | Circles 5x5 (white)         |
+        +-----------+-------+-----------------------------+
+        | c6x6b     | c6x6  | Circles 6x6 (black)         |
+        +-----------+-------+-----------------------------+
+        | c6x6w     |       | Circles 6x6 (white)         |
+        +-----------+-------+-----------------------------+
+        | c7x7b     | c7x7  | Circles 7x7 (black)         |
+        +-----------+-------+-----------------------------+
+        | c7x7w     |       | Circles 7x7 (white)         |
+        +-----------+-------+-----------------------------+
+
+        :param threshold_map: Name of threshold dither to use, followed by
+                              optional arguments.
+        :type threshold_map: :class:`basestring`
+        :param channel: Optional argument to apply dither to specific color
+                        channel. See :const:`CHANNELS`.
+        :type channel: :class:`basestring`
+
+        .. versionadded:: 0.5.7
+        """
+        assertions.assert_string(threshold_map=threshold_map)
+        bmap = binary(threshold_map)
+        if MAGICK_VERSION_NUMBER <= 0x700:
+            if channel is None:
+                r = library.MagickOrderedPosterizeImage(self.wand, bmap)
+            else:
+                channel_ch = self._channel_to_mask(channel)
+                r = library.MagickOrderedPosterizeImageChannel(self.wand,
+                                                               channel_ch,
+                                                               bmap)
+        else:  # pragma: no-cover
+            if channel is None:
+                r = library.MagickOrderedDitherImage(self.wand, bmap)
+            else:
+                channel_ch = self._channel_to_mask(channel)
+                mask = library.MagickSetImageChannelMask(self.wand,
+                                                         channel_ch)
+                r = library.MagickOrderedDitherImage(self.wand, bmap)
+                library.MagickSetImageChannelMask(self.wand, mask)
+        return r
+
     def parse_meta_geometry(self, geometry):
         """Helper method to translate geometry format, and calculate
         meta-characters against image dimensions.

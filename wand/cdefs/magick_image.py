@@ -757,6 +757,9 @@ def load(lib, IM_VERSION):
         lib.MagickOptimizeImageTransparency.restype = c_bool
     except AttributeError:
         lib.MagickOptimizeImageTransparency = None
+    if is_im_7:
+        lib.MagickOrderedDitherImage.argtypes = [c_void_p, c_char_p]
+        lib.MagickOrderedDitherImage.restype = c_bool
     if is_im_6:
         lib.MagickOrderedPosterizeImage.argtypes = [c_void_p, c_char_p]
         lib.MagickOrderedPosterizeImage.restype = c_bool
