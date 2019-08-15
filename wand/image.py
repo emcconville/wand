@@ -6151,6 +6151,52 @@ class BaseImage(Resource):
             treedepth, dither, measure_error
         )
 
+    @manipulative
+    @trap_exception
+    def random_threshold(self, low=0.0, high=1.0, channel=None):
+        """Performs a random dither to force a pixel into a binary black &
+        white state. Each color channel operarates independently from each
+        other.
+
+        :param low: bottom threshold. Any pixel value below the given value
+                    will be rendered "0", or no value. Given threshold value
+                    can be between ``0.0`` & ``1.0``, or ``0`` &
+                    :attr:`quantum_range`.
+        :type low: :class:`numbers.Real`
+        :param high: top threshold. Any pixel value above the given value
+                     will be rendered as max quantum value. Given threshold
+                     value can be between ``0.0`` & ``1.0``, or ``0`` &
+                     :attr:`quantum_range`.
+        :type high: :class:`numbers.Real`
+        :param channel: Optional argument to apply dither to specific color
+                        channel. See :const:`CHANNELS`.
+        :type channel: :class:`basestring`
+
+        .. versionadded:: 0.5.7
+        """
+        assertions.assert_real(low=low, high=high)
+        if 0 < low <= 1.0:
+            low *= self.quantum_range
+        if 0 < high <= 1.0:
+            high *= self.quantum_range
+        if channel is None:
+            r = library.MagickRandomThresholdImage(self.wand, low, high)
+        else:
+            ch_channel = self._channel_to_mask(channel)
+            if MAGICK_VERSION_NUMBER < 0x700:
+                r = library.MagickRandomThresholdImageChannel(self.wand,
+                                                              ch_channel,
+                                                              low,
+                                                              high)
+            else:  # pragma: no cover
+                # Set active channel, and capture mask to restore.
+                channel_mask = library.MagickSetImageChannelMask(self.wand,
+                                                                 ch_channel)
+                r = library.MagickRandomThresholdImage(self.wand, low, high)
+                # Restore original state of channels
+                library.MagickSetImageChannelMask(self.wand, channel_mask)
+        return r
+
     def range_channel(self, channel='default_channels'):
         """Calculate the minimum and maximum of quantum values in image.
 

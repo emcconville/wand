@@ -1538,6 +1538,17 @@ def test_quantize(fx_asset):
         assert img.colors <= number_colors
 
 
+def test_random_threshold():
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.random_threshold(low=0.4, high=0.6)
+        assert was != img.signature
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.random_threshold(low=0.4, high=0.6, channel='red')
+        assert was != img.signature
+
+
 def test_range_channel():
     with Image(filename='rose:') as img:
         minima, maxima = img.range_channel('red')
