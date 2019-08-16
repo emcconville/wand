@@ -4441,7 +4441,7 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.7
         """
-        return self.forward_fourier_transform(magnitude):
+        return self.forward_fourier_transform(magnitude)
 
     @manipulative
     @trap_exception
