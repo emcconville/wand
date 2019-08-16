@@ -14,6 +14,7 @@ Version 0.5.7
 
 Unreleased.
 
+ - Added :meth:`Image.color_decision_list() <wand.image.BaseImage.color_decision_list>` method.
  - Added :meth:`Image.contrast() <wand.image.BaseImage.contrast>` method.
  - Added :meth:`Image.local_contrast() <wand.image.BaseImage.local_contrast>` method.
  - Added :meth:`Image.ordered_dither() <wand.image.BaseImage.ordered_dither>` method.

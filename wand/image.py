@@ -3206,6 +3206,34 @@ class BaseImage(Resource):
             self.raise_exception()
         self.wand = r
 
+    @manipulative
+    @trap_exception
+    def color_decision_list(self, ccc):
+        """Applies color correction from a Color Correction Collection (CCC)
+        xml string. An example of xml:
+
+        .. code-block:: xml
+
+            <ColorCorrectionCollection xmlns="urn:ASC:CDL:v1.2">
+                <ColorCorrection id="cc03345">
+                    <SOPNode>
+                        <Slope> 0.9 1.2 0.5 </Slope>
+                        <Offset> 0.4 -0.5 0.6 </Offset>
+                        <Power> 1.0 0.8 1.5 </Power>
+                    </SOPNode>
+                    <SATNode>
+                        <Saturation> 0.85 </Saturation>
+                    </SATNode>
+                </ColorCorrection>
+            </ColorCorrectionCollection>
+
+        :param ccc: A XML string of the CCC contents.
+        :type ccc: :class:`basestring`
+
+        .. versionadded:: 0.5.7
+        """
+        return library.MagickColorDecisionListImage(self.wand, binary(ccc))
+
     def color_map(self, index, color=None):
         """Get & Set a color at a palette index. If ``color`` is given,
         the color at the index location will be set & returned. Omitting the

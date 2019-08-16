@@ -254,6 +254,27 @@ def test_coalesce(fx_asset):
             assert img1.size == img2.size
 
 
+def test_color_decision_list():
+    with Image(filename='rose:') as img:
+        was = img.signature
+        ccc = """
+        <ColorCorrectionCollection xmlns="urn:ASC:CDL:v1.2">
+            <ColorCorrection id="cc03345">
+                <SOPNode>
+                    <Slope> 0.9 1.2 0.5 </Slope>
+                    <Offset> 0.4 -0.5 0.6 </Offset>
+                    <Power> 1.0 0.8 1.5 </Power>
+                </SOPNode>
+                <SATNode>
+                    <Saturation> 0.85 </Saturation>
+                </SATNode>
+            </ColorCorrection>
+        </ColorCorrectionCollection>
+        """
+        assert img.color_decision_list(ccc)
+        assert was != img.signature
+
+
 def test_color_map(fx_asset):
     with Image(filename=str(fx_asset.join('trim-color-test.png'))) as img:
         img.type = 'palette'
