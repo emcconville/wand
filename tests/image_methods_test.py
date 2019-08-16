@@ -460,6 +460,13 @@ def test_connected_components(fx_asset):
             assert 2 == len(objects)
 
 
+def test_contrast():
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.contrast()
+        assert was != img.signature
+
+
 def test_contrast_stretch(fx_asset):
     with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
         img.contrast_stretch(0.15)

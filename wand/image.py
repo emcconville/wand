@@ -3766,6 +3766,21 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
+    def contrast(self, sharpen=True):
+        """Enhances the difference between lighter & darker values of the
+        image. Set ``sharpen`` to ``False`` to reduce contrast.
+
+        :param sharpen: Increase, or decrease, contrast. Default is ``True``
+                        for increased contrast.
+        :type sharpen: :class:`bool`
+
+        .. versionadded:: 0.5.7
+        """
+        assertions.assert_bool(sharpen=sharpen)
+        return library.MagickContrastImage(self.wand, sharpen)
+
+    @manipulative
+    @trap_exception
     def contrast_stretch(self, black_point=0.0, white_point=None,
                          channel=None):
         """Enhance contrast of image by adjusting the span of the available
