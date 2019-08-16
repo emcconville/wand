@@ -3039,6 +3039,13 @@ class BaseImage(Resource):
             textboard.read(filename=b'caption:' + text.encode('utf-8'))
             self.composite(textboard, left, top)
 
+    def cdl(self, ccc):
+        """Alias for :meth:`color_decision_list`.
+
+        .. versionadded:: 0.5.7
+        """
+        return self.color_decision_list(ccc)
+
     @trap_exception
     def charcoal(self, radius, sigma):
         """Transform an image into a simulated charcoal drawing.
@@ -4429,6 +4436,13 @@ class BaseImage(Resource):
             feature_ptr = library.MagickRelinquishMemory(feature_ptr)
         return response
 
+    def fft(self, magnitude=True):
+        """Alias for :meth:`forward_fourier_transform`.
+
+        .. versionadded:: 0.5.7
+        """
+        return self.forward_fourier_transform(magnitude):
+
     @manipulative
     @trap_exception
     def flip(self):
@@ -4785,6 +4799,13 @@ class BaseImage(Resource):
                                            threshold=threshold)
         return library.MagickHoughLineImage(self.wand, width, height,
                                             threshold)
+
+    def ift(self, phase, magnitude=True):
+        """Alias for :meth:`inverse_fourier_transform`.
+
+        .. versionadded:: 0.5.7
+        """
+        return self.inverse_fourier_transform(phase, magnitude)
 
     @trap_exception
     def implode(self, amount=0.0, method="undefined"):
