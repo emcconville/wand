@@ -1859,6 +1859,13 @@ def test_rotational_blur():
         assert was != img.signature
 
 
+def test_scale():
+    with Image(filename='rose:') as img:
+        width, height = img.size
+        img.scale(2, 3)
+        assert width*2, height*3 == img.size
+
+
 def test_selective_blur():
     with Image(filename='rose:') as img:
         was = img.signature

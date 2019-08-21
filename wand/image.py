@@ -6658,7 +6658,7 @@ class BaseImage(Resource):
     @manipulative
     def sample(self, width=None, height=None):
         """Resizes the image by sampling the pixels.  It's basically quicker
-        than :meth:`resize()` except less quality as a tradeoff.
+        than :meth:`resize()` except less quality as a trade-off.
 
         :param width: the width in the scaled image. default is the original
                       width
@@ -6689,6 +6689,24 @@ class BaseImage(Resource):
             library.MagickSetSize(self.wand, width, height)
             if not r:  # pragma: no cover
                 self.raise_exception()
+
+    @manipulative
+    @trap_exception
+    def scale(self, columns=1, rows=1):
+        """Increase image size by scaling each pixel value by given ``columns``
+        and ``rows``.
+
+        :param columns: The number of columns, in pixels, to scale the image
+                        horizontally.
+        :type columns: :class:`numbers.Integral`
+        :param rows: The number of rows, in pixels, to scale the image
+                        vertically.
+        :type rows: :class:`numbers.Integral`
+
+        .. versionadded:: 0.5.7
+        """
+        assertions.assert_counting_number(columns=columns, rows=rows)
+        return library.MagickScaleImage(self.wand, columns, rows)
 
     @manipulative
     @trap_exception

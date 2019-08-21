@@ -20,6 +20,7 @@ Unreleased.
  - Added :meth:`Image.ordered_dither() <wand.image.BaseImage.ordered_dither>` method.
  - Added :meth:`Image.random_threshold() <wand.image.BaseImage.random_threshold>` method.
  - Added :meth:`Image.read_mask() <wand.image.BaseImage.read_mask>` method. [:issue:`433`]
+ - Added :meth:`Image.scale() <wand.image.BaseImage.scale>` method.
  - Added :meth:`Image.sepia_tone() <wand.image.BaseImage.sepia_tone>` method.
  - Added :meth:`Image.swirl() <wand.image.BaseImage.swirl>` method.
  - Added :meth:`Image.write_mask() <wand.image.BaseImage.write_mask>` method. [:issue:`433`]
