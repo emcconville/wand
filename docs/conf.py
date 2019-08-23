@@ -264,7 +264,8 @@ intersphinx_mapping = {'http://docs.python.org/': None}
 extlinks = {
     'issue': ('https://github.com/emcconville/wand/issues/%s', '#'),
     'branch': ('https://github.com/emcconville/wand/compare/master...%s', ''),
-    'commit': ('https://github.com/emcconville/wand/commit/%s', '')
+    'commit': ('https://github.com/emcconville/wand/commit/%s', ''),
+    'cli': ('https://imagemagick.org/script/command-line-options.php#%s', '-'),
 }
 
 # fall back if theme is not there
