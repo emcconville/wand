@@ -46,6 +46,15 @@ def pytest_collection_modifyitems(config, items):
             item.add_marker(skip_pdf)
 
 
+def pytest_configure(config):
+    config.addinivalue_line(
+        'markers', 'slow: marks test as slow-running'
+    )
+    config.addinivalue_line(
+        'markers', 'pdf: marks test as PDF/Ghostscript dependent'
+    )
+
+
 @hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
     """Copied from http://pytest.org/dev/example/simple.html#making-test-result-information-available-in-fixtures
