@@ -7269,43 +7269,6 @@ class BaseImage(Resource):
         return r
 
     @manipulative
-    def stegano(self, watermark, offset=0):
-        """Hide a digital watermark of an image within the image.
-
-        .. code-block:: python
-
-            from wand.image import Image
-
-            # Embed watermark
-            with Image(filename='source.png') as img:
-                with Image(filename='gray_watermark.png') as watermark:
-                    print('watermark size (for recovery)', watermark.size)
-                    img.stegano(watermark)
-                img.save(filename='public.png')
-
-            # Recover watermark
-            with Image(width=w, height=h, pseudo='stegano:public.png') as img:
-                img.save(filename='recovered_watermark.png')
-
-        :param watermark: Image to hide within image.
-        :type watermark: :class:`wand.image.Image`
-        :param offset: Start embedding image after a number of pixels.
-        :type offset: :class:`numbers.Integral`
-
-        .. versionadded:: 0.5.4
-        """
-        if not isinstance(watermark, BaseImage):
-            raise TypeError('Watermark image must be in instance of '
-                            'wand.image.Image, not ' + repr(watermark))
-        assertions.assert_integer(offset=offset)
-        new_wand = library.MagickSteganoImage(self.wand, watermark.wand,
-                                              offset)
-        if new_wand:
-            self.wand = new_wand
-        else:  # pragma: no cover
-            self.raise_exception()
-
-    @manipulative
     @trap_exception
     def statistic(self, stat='undefined', width=None, height=None,
                   channel=None):
@@ -7352,6 +7315,43 @@ class BaseImage(Resource):
                                                  width, height)
                 library.MagickSetImageChannelMask(self.wand, mask)
         return r
+
+    @manipulative
+    def stegano(self, watermark, offset=0):
+        """Hide a digital watermark of an image within the image.
+
+        .. code-block:: python
+
+            from wand.image import Image
+
+            # Embed watermark
+            with Image(filename='source.png') as img:
+                with Image(filename='gray_watermark.png') as watermark:
+                    print('watermark size (for recovery)', watermark.size)
+                    img.stegano(watermark)
+                img.save(filename='public.png')
+
+            # Recover watermark
+            with Image(width=w, height=h, pseudo='stegano:public.png') as img:
+                img.save(filename='recovered_watermark.png')
+
+        :param watermark: Image to hide within image.
+        :type watermark: :class:`wand.image.Image`
+        :param offset: Start embedding image after a number of pixels.
+        :type offset: :class:`numbers.Integral`
+
+        .. versionadded:: 0.5.4
+        """
+        if not isinstance(watermark, BaseImage):
+            raise TypeError('Watermark image must be in instance of '
+                            'wand.image.Image, not ' + repr(watermark))
+        assertions.assert_integer(offset=offset)
+        new_wand = library.MagickSteganoImage(self.wand, watermark.wand,
+                                              offset)
+        if new_wand:
+            self.wand = new_wand
+        else:  # pragma: no cover
+            self.raise_exception()
 
     @trap_exception
     def strip(self):
