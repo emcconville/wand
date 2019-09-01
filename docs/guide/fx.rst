@@ -62,12 +62,13 @@ nighttime scene with a moonlight effect.
         img.blue_shift(factor=1.25)
         img.save(filename="fx-blue-shift.jpg")
 
-+-------------------------------------+-----------------------------------------+
-| Original                            | Blue Shift                              |
-+-------------------------------------+-----------------------------------------+
-| .. image:: ../_images/inca_tern.jpg | .. image:: ../_images/fx-blue-shift.jpg |
-|    :alt: Original                   |    :alt: Blue Shift                     |
-+-------------------------------------+-----------------------------------------+
++-----------------------------+---------------------------------+
+| Original                    | Blue Shift                      |
++-----------------------------+---------------------------------+
+| .. image::                  | .. image::                      |
+|    ../_images/inca_tern.jpg |    ../_images/fx-blue-shift.jpg |
+|    :alt: Original           |    :alt: Blue Shift             |
++-----------------------------+---------------------------------+
 
 
 .. _charcoal:
@@ -133,12 +134,13 @@ For example: To swap Red & Blue channels.
         img.color_matrix(matrix)
         img.save(filename="fx-color-matrix.jpg")
 
-+-------------------------------------+-------------------------------------------+
-| Original                            | Color Matrix                              |
-+-------------------------------------+-------------------------------------------+
-| .. image:: ../_images/inca_tern.jpg | .. image:: ../_images/fx-color-matrix.jpg |
-|    :alt: Original                   |    :alt: Color Matrix                     |
-+-------------------------------------+-------------------------------------------+
++-----------------------------+-----------------------------------+
+| Original                    | Color Matrix                      |
++-----------------------------+-----------------------------------+
+| .. image::                  | .. image::                        |
+|    ../_images/inca_tern.jpg |    ../_images/fx-color-matrix.jpg |
+|    :alt: Original           |    :alt: Color Matrix             |
++-----------------------------+-----------------------------------+
 
 
 .. _colorize:
@@ -178,13 +180,13 @@ FX
 
 `FX special effects`__ are a powerful "micro" language to work with.
 Simple functions & operators offer a unique way to access & manipulate image
-data. The :meth:`~wand.image.BaseImage.fx()` method applies a FX expression, and
-generates a new :class:`~wand.image.Image` instance.
+data. The :meth:`~wand.image.BaseImage.fx()` method applies a FX expression,
+and generates a new :class:`~wand.image.Image` instance.
 
      __ http://www.imagemagick.org/script/fx.php
 
-We can create a custom DIY filter that will turn the image black & white, except
-colors with a hue above 324°, or below 36°.
+We can create a custom DIY filter that will turn the image black & white,
+except colors with a hue above 324°, or below 36°.
 
 .. code-block:: python
 
@@ -276,12 +278,13 @@ applying sepia toning to images.
         img.sepia_tone(threshold=0.8)
         img.save(filename="fx-sepia-tone.jpg")
 
-+-------------------------------------+-----------------------------------------+
-| Original                            | Sepia Tone                              |
-+-------------------------------------+-----------------------------------------+
-| .. image:: ../_images/inca_tern.jpg | .. image:: ../_images/fx-sepia-tone.jpg |
-|    :alt: Original                   |    :alt: Sepia Tone                     |
-+-------------------------------------+-----------------------------------------+
++-----------------------------+---------------------------------+
+| Original                    | Sepia Tone                      |
++-----------------------------+---------------------------------+
+| .. image::                  | .. image::                      |
+|    ../_images/inca_tern.jpg |    ../_images/fx-sepia-tone.jpg |
+|    :alt: Original           |    :alt: Sepia Tone             |
++-----------------------------+---------------------------------+
 
 
 .. _sketch:
@@ -500,11 +503,12 @@ should be a value between ``0.0`` & ``1.0``.
                             softness=0.0)
         img.save(filename="fx-wavelet-denoise.jpg")
 
-+-------------------------------------+----------------------------------------------+
-| Original                            | Wavelet Denoise                              |
-+-------------------------------------+----------------------------------------------+
-| .. image:: ../_images/inca_tern.jpg | .. image:: ../_images/fx-wavelet-denoise.jpg |
-|    :alt: Original                   |    :alt: Wavelet Denoise                     |
-+-------------------------------------+----------------------------------------------+
++-----------------------------+--------------------------------------+
+| Original                    | Wavelet Denoise                      |
++-----------------------------+--------------------------------------+
+| .. image::                  | .. image::                           |
+|    ../_images/inca_tern.jpg |    ../_images/fx-wavelet-denoise.jpg |
+|    :alt: Original           |    :alt: Wavelet Denoise             |
++-----------------------------+--------------------------------------+
 
 
