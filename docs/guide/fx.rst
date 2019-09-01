@@ -108,7 +108,7 @@ transform. A matrix can be up to a 6x6 grid where each column maps to
 a color channel to reference, and each row represents a color channel
 to effect. Usually ``red``, ``green``, ``blue``, ``n/a``, ``alpha``,
 and a constant (a.k.a offset) for RGB images, or ``cyan``, ``yellow``,
-``maginta``, ``black``, ``alpha``, and a constant for CYMK images.
+``magenta``, ``black``, ``alpha``, and a constant for CMYK images.
 
 For example: To swap Red & Blue channels.
 
@@ -345,7 +345,7 @@ Stereogram
 
 Also known as "`anaglyph`_", this class method takes two
 :class:`~wand.image.Image` instances (one for each eye), and creates a 3d
-image by seperating the Red & Cyan.
+image by separating the Red & Cyan.
 
 .. _anaglyph: https://en.wikipedia.org/wiki/Anaglyph_3D
 
@@ -376,7 +376,7 @@ Swirl
 
 Creates a visual whirlpool effect by rotating pixels around the center of the
 image. The value of ``degree`` controls the amount, and distance, of pixels to
-rotate around the center. Negative degrees move pixels clockwise, and postive
+rotate around the center. Negative degrees move pixels clockwise, and positive
 values move pixels counter-clockwise.
 
 .. code-block:: python

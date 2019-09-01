@@ -24,7 +24,7 @@ from .exceptions import (MissingDelegateError, WandException,
                          WandRuntimeError, WandLibraryVersionError)
 from .font import Font
 from .resource import DestroyedResourceError, Resource
-from .cdefs.structures import (CCObjectInfo, ChannelFeature, GeomertyInfo,
+from .cdefs.structures import (CCObjectInfo, ChannelFeature, GeometryInfo,
                                PixelInfo, RectangleInfo)
 from .version import MAGICK_VERSION_NUMBER, MAGICK_HDRI
 
@@ -238,7 +238,7 @@ if MAGICK_VERSION_NUMBER >= 0x700:  # pragma: no cover
                        'structural_dissimilarity')
 
 
-#: (:class:`tuple`) The list of complext operators used by
+#: (:class:`tuple`) The list of complex operators used by
 #: :meth:`Image.complex() <wand.image.BaseImage.complex>`.
 #:
 #: - ``'undefined'``
@@ -1058,7 +1058,7 @@ class BaseImage(Resource):
     #: (:class:`bool`) Whether the image is changed or not.
     dirty = None
 
-    #: (:class:`numbers.Integral`) Internal placeholde for
+    #: (:class:`numbers.Integral`) Internal placeholder for
     #: :attr:`seed` property.
     #:
     #: .. versionadded:: 0.5.5
@@ -1355,7 +1355,7 @@ class BaseImage(Resource):
         """(:class:`bool`) If vectors & fonts will use anti-aliasing.
 
         .. versionchanged:: 0.5.0
-           Previosuly named :attr:`font_antialias`.
+           Previously named :attr:`font_antialias`.
         """
         return bool(library.MagickGetAntialias(self.wand))
 
@@ -2107,7 +2107,7 @@ class BaseImage(Resource):
 
     @property
     def quantum_range(self):
-        """(:class:`int`) The maxumim value of a color channel that is
+        """(:class:`int`) The maximum value of a color channel that is
         supported by the imagemagick library.
 
         .. versionadded:: 0.2.0
@@ -2854,7 +2854,7 @@ class BaseImage(Resource):
            Added optional ``channel`` argument.
 
         .. versionchanged:: 0.5.7
-           Postional arguments ``radius`` & ``sigman`` have been converted to
+           Positional arguments ``radius`` & ``sigman`` have been converted to
            key-word arguments.
         """
         assertions.assert_real(radius=radius, sigma=sigma)
@@ -2972,6 +2972,8 @@ class BaseImage(Resource):
         :type upper_percent: :class:`numbers.Real`
         :raises WandLibraryVersionError: if function is not available on
                                          system's library.
+
+        .. versionadded:: 0.5.5
         """
         if library.MagickCannyEdgeImage is None:
             msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
@@ -3339,7 +3341,7 @@ class BaseImage(Resource):
         | Offset' | 0   | 0     | 0    | 0    | 0     | 0      |
         +---------+-----+-------+------+------+-------+--------+
 
-        Or for a CYMK colorspace image:
+        Or for a CMYK colorspace image:
 
         +----------+------+--------+---------+-------+-------+--------+
         |          | Cyan | Yellow | Magenta | Black | Alpha | Offset |
@@ -3754,7 +3756,7 @@ class BaseImage(Resource):
                      are converted to transparent.
         :type keep: :class:`basestring`
         :param remove: Comma separated list of object IDs to ignore, and
-                       converte to transparent.
+                       convert to transparent.
         :type remove: :class:`basestring`
         :returns: A list of :class:`ConnectedComponentObject`.
         :rtype: :class:`list` [:class:`ConnectedComponentObject`]
@@ -4130,7 +4132,7 @@ class BaseImage(Resource):
     @manipulative
     @trap_exception
     def emboss(self, radius=0.0, sigma=0.0):
-        """Applies convolution filter against gaussians filter.
+        """Applies convolution filter against Gaussians filter.
 
         .. note::
 
@@ -4365,7 +4367,7 @@ class BaseImage(Resource):
         - variance sum of squares
         - inverse difference moment
         - sum average
-        - sum varience
+        - sum variance
         - sum entropy
         - entropy
         - difference variance
@@ -5571,7 +5573,7 @@ class BaseImage(Resource):
         exception_info = libmagick.AcquireExceptionInfo()
         if buitin:
             kernel_idx = KERNEL_INFO_TYPES.index(buitin)
-            geometry_info = GeomertyInfo()
+            geometry_info = GeometryInfo()
             flags = libmagick.ParseGeometry(binary(geometry),
                                             ctypes.byref(geometry_info))
             if buitin in ('unity',):
@@ -5658,7 +5660,7 @@ class BaseImage(Resource):
         """Apply a Gaussian blur along an ``angle`` direction. This
         simulates motion movement.
 
-        :param radius: Apature size of the Gaussian operator.
+        :param radius: Aperture size of the Gaussian operator.
         :type radius: :class:`numbers.Real`
         :param sigma: Standard deviation of the Gaussian operator.
         :type sigma: :class:`numbers.Real`
@@ -6725,7 +6727,7 @@ class BaseImage(Resource):
                 # Apply 8x3 blur with a 10% threshold
                 img.selective_blur(8.0, 3.0, 0.1 * img.quantum_range)
 
-        :param radius: Size of gaussian apature.
+        :param radius: Size of gaussian aperture.
         :type radius: :class:`numbers.Real`
         :param sigma: Standard deviation of gaussian operator.
         :type sigma: :class:`numbers.Real`
@@ -7053,7 +7055,7 @@ class BaseImage(Resource):
         """Simulates a pencil sketch effect. For best results, ``radius``
         value should be larger than ``sigma``.
 
-        :param radius: size of Gaussian apature.
+        :param radius: size of Gaussian aperture.
         :type radius: :class:`numbers.Real`
         :param sigma: standard deviation of the Gaussian operator.
         :type sigma: :class:`numbers.Real`
@@ -7308,7 +7310,7 @@ class BaseImage(Resource):
     def statistic(self, stat='undefined', width=None, height=None,
                   channel=None):
         """Replace each pixel with the statistic results from neighboring pixel
-        values. The ``width`` & ``height`` defines the size, or apature, of
+        values. The ``width`` & ``height`` defines the size, or aperture, of
         the neighboring pixels.
 
         :param stat: The type of statistic to calculate. See
@@ -8767,7 +8769,7 @@ class Iterator(Resource, abc.Iterator):
     def seek(self, y):
         assertions.assert_unsigned_integer(seek=y)
         if y > self.height:
-            raise ValueError('canot be greater than height')
+            raise ValueError('can not be greater than height')
         self.cursor = y
         if y == 0:
             library.PixelSetFirstIteratorRow(self.resource)
@@ -8824,7 +8826,7 @@ class ImageProperty(object):
         :exc: `ClosedImageError` when the parent Image has been destroyed
 
         """
-        # Dereference our weakref and check that the parent Image stil exists
+        # Dereference our weakref and check that the parent Image still exists
         image = self._image()
         if image is not None:
             return image

@@ -6,7 +6,7 @@
 from ctypes import POINTER, Structure, c_double, c_int, c_size_t
 from wand.cdefs.wandtypes import c_ssize_t, c_magick_real_t, c_magick_size_t
 
-__all__ = ('AffineMatrix', 'ChannelFeature', 'GeomertyInfo', 'KernelInfo',
+__all__ = ('AffineMatrix', 'ChannelFeature', 'GeometryInfo', 'KernelInfo',
            'MagickPixelPacket', 'PixelInfo', 'PointInfo', 'RectangleInfo')
 
 
@@ -60,7 +60,7 @@ class ChannelFeature(Structure):
                 ('maximum_correlation_coefficient', c_double * 4)]
 
 
-class GeomertyInfo(Structure):
+class GeometryInfo(Structure):
 
     _fields_ = [('rho', c_double),
                 ('sigma', c_double),
