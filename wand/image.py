@@ -8040,6 +8040,10 @@ class Image(BaseImage):
                        useful for vectorial formats (like pdf)
     :type resolution: :class:`collections.abc.Sequence`,
                       :Class:`numbers.Integral`
+    :param colorspace: sets the stack's default colorspace value before
+                       reading any images.
+                       See :const:`COLORSPACE_TYPES`.
+    :type colorspace: :class:`basestring`
 
     .. versionadded:: 0.1.5
        The ``file`` parameter.
@@ -8071,6 +8075,9 @@ class Image(BaseImage):
        Read constructor no longer sets "transparent" background by default.
        Use the ``background`` paramater to specify canvas color when reading
        in image.
+
+    .. versionchanged:: 0.5.7
+       Added the ``colorspace`` parameter.
 
     .. describe:: [left:right, top:bottom]
 
@@ -8130,7 +8137,8 @@ class Image(BaseImage):
 
     def __init__(self, image=None, blob=None, file=None, filename=None,
                  format=None, width=None, height=None, depth=None,
-                 background=None, resolution=None, pseudo=None):
+                 background=None, resolution=None, pseudo=None,
+                 colorspace=None):
         new_args = width, height, background, depth
         open_args = blob, file, filename
         if any(a is not None for a in new_args) and image is not None:
@@ -8172,6 +8180,15 @@ class Image(BaseImage):
                         )
                         if not r:
                             self.raise_exception()
+                if colorspace is not None:
+                    assertions.string_in_list(
+                        COLORSPACE_TYPES,
+                        'wand.image.COLORSPACE_TYPES',
+                        colorspace=colorspace
+                    )
+                    colorspace_idx = COLORSPACE_TYPES.index(colorspace)
+                    library.MagickSetColorspace(self.wand,
+                                                colorspace_idx)
                 if width is not None and height is not None:
                     assertions.assert_counting_number(width=width,
                                                       height=height)

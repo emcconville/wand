@@ -44,6 +44,8 @@ def load(lib, IM_VERSION):
     lib.MagickGetAntialias.restype = c_int
     lib.MagickGetBackgroundColor.argtypes = [c_void_p]
     lib.MagickGetBackgroundColor.restype = c_void_p
+    lib.MagickGetColorspace.argtypes = [c_void_p]
+    lib.MagickGetColorspace.restype = c_int
     lib.MagickGetCompression.argtypes = [c_void_p]
     lib.MagickGetCompression.restype = c_int
     lib.MagickGetCompressionQuality.argtypes = [c_void_p]
@@ -101,6 +103,8 @@ def load(lib, IM_VERSION):
     lib.MagickRemoveImageProfile.restype = POINTER(c_ubyte)
     lib.MagickSetAntialias.argtypes = [c_void_p, c_int]
     lib.MagickSetAntialias.restype = c_int
+    lib.MagickSetColorspace.argtypes = [c_void_p, c_int]
+    lib.MagickSetColorspace.restype = c_int
     lib.MagickSetCompression.argtypes = [c_void_p, c_int]
     lib.MagickSetCompression.restype = c_int
     lib.MagickSetCompressionQuality.argtypes = [c_void_p, c_size_t]

@@ -33,6 +33,11 @@ Unreleased.
    - :meth:`Image.spread() <wand.image.BaseImage.spread>`
    - :meth:`Image.unsharp_mask() <wand.image.BaseImage.unsharp_mask>`
 
+ - Restored :issue:`320` fix. [Reported by :issue:`435`]
+ - Added ``colorspace`` argument to :class:`~wand.image.Image` init. This is useful for defining CMYK ahead of
+   reading PDF documents.
+
+
 
 .. _changelog-0.5.6:
 
