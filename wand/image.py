@@ -2204,6 +2204,20 @@ class BaseImage(Resource):
             self.raise_exception()
 
     @property
+    def scene(self):
+        """(:class:`numbers.Integral`) The scene number of the current frame
+        within an animated image.
+
+        .. versionadded:: 0.5.4
+        """
+        return library.MagickGetImageScene(self.wand)
+
+    @scene.setter
+    def scene(self, value):
+        assertions.assert_unsigned_integer(scene=value)
+        library.MagickSetImageScene(self.wand, value)
+
+    @property
     def seed(self):
         """(:class:`numbers.Integral`) The seed for random number generator.
 
@@ -2224,20 +2238,6 @@ class BaseImage(Resource):
         assertions.assert_unsigned_integer(seed=value)
         self._seed = value
         library.MagickSetSeed(self.wand, value)
-
-    @property
-    def scene(self):
-        """(:class:`numbers.Integral`) The scene number of the current frame
-        within an animated image.
-
-        .. versionadded:: 0.5.4
-        """
-        return library.MagickGetImageScene(self.wand)
-
-    @scene.setter
-    def scene(self, value):
-        assertions.assert_unsigned_integer(scene=value)
-        library.MagickSetImageScene(self.wand, value)
 
     @property
     def signature(self):
