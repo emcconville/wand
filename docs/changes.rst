@@ -34,8 +34,8 @@ Unreleased.
    - :meth:`Image.unsharp_mask() <wand.image.BaseImage.unsharp_mask>`
 
  - Restored :issue:`320` fix. [Reported by :issue:`435`]
- - Added ``colorspace`` argument to :class:`~wand.image.Image` init. This is useful for defining CMYK ahead of
-   reading PDF documents.
+ - Added ``colorspace`` & ``units`` argument to :class:`~wand.image.Image` init. This is useful
+   for defining sRGB ahead of reading CMYKA PDF documents.
 
 
 

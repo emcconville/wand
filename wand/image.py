@@ -8043,7 +8043,10 @@ class Image(BaseImage):
     :param colorspace: sets the stack's default colorspace value before
                        reading any images.
                        See :const:`COLORSPACE_TYPES`.
-    :type colorspace: :class:`basestring`
+    :type colorspace: :class:`basestring`,
+    :param units: paired with ``resolution`` for defining an image's pixel
+                  density. See :const:`UNIT_TYPES`.
+    :type units: :class:`basestring`
 
     .. versionadded:: 0.1.5
        The ``file`` parameter.
@@ -8077,7 +8080,7 @@ class Image(BaseImage):
        in image.
 
     .. versionchanged:: 0.5.7
-       Added the ``colorspace`` parameter.
+       Added the ``colorspace`` & ``units`` parameter.
 
     .. describe:: [left:right, top:bottom]
 
@@ -8138,7 +8141,7 @@ class Image(BaseImage):
     def __init__(self, image=None, blob=None, file=None, filename=None,
                  format=None, width=None, height=None, depth=None,
                  background=None, resolution=None, pseudo=None,
-                 colorspace=None):
+                 colorspace=None, units=None):
         new_args = width, height, background, depth
         open_args = blob, file, filename
         if any(a is not None for a in new_args) and image is not None:
@@ -8201,11 +8204,12 @@ class Image(BaseImage):
                         library.MagickSetFilename(self.wand,
                                                   b'buffer.' + format)
                 if file is not None:
-                    self.read(file=file, resolution=resolution)
+                    self.read(file=file, resolution=resolution, units=units)
                 elif blob is not None:
-                    self.read(blob=blob, resolution=resolution)
+                    self.read(blob=blob, resolution=resolution, units=units)
                 elif filename is not None:
-                    self.read(filename=filename, resolution=resolution)
+                    self.read(filename=filename, resolution=resolution,
+                              units=units)
                 # clear the wand format, otherwise any subsequent call to
                 # MagickGetImageBlob will silently change the image to this
                 # format again.
@@ -8621,7 +8625,8 @@ class Image(BaseImage):
         if not r:
             self.raise_exception()
 
-    def read(self, file=None, filename=None, blob=None, resolution=None):
+    def read(self, file=None, filename=None, blob=None, resolution=None,
+             units=None):
         """Read new image into Image() object.
 
         :param blob: reads an image from the ``blob`` byte array
@@ -8635,9 +8640,14 @@ class Image(BaseImage):
                            useful for vectorial formats (like PDF)
         :type resolution: :class:`collections.abc.Sequence`,
                           :class:`numbers.Integral`
+        :param units: used with ``resolution``, can either be
+                     ``'pixelperinch'``, or ``'pixelpercentimeter'``.
+        :type units: :class:`basestring`
 
         .. versionadded:: 0.3.0
 
+        .. versionchanged:: 0.5.7
+           Added ``units`` parameter.
         """
         r = None
         # Resolution must be set after image reading.
@@ -8679,6 +8689,9 @@ class Image(BaseImage):
                    'is missing, or returns EXIT_SUCCESS without generating a '
                    'raster.')
             raise WandRuntimeError(msg)
+        else:
+            if units is not None:
+                self.units = units
 
     def save(self, file=None, filename=None):
         """Saves the image into the ``file`` or ``filename``. It takes
