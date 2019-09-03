@@ -129,6 +129,17 @@ def test_read_from_unicode_filename(fx_asset, tmpdir):
         assert img.width == 402
 
 
+@mark.pdf
+def test_read_with_colorspace(fx_asset):
+    fpath = str(fx_asset.join('cmyka.pdf'))
+    with Image(filename=fpath,
+               resolution=100,
+               colorspace='srgb',
+               units='pixelspercentimeter') as img:
+        assert img.colorspace == 'srgb'
+        assert img.units == 'pixelspercentimeter'
+
+
 def test_new_from_file(fx_asset):
     """Opens an image from the file object."""
     with fx_asset.join('mona-lisa.jpg').open('rb') as f:
