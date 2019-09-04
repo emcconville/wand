@@ -92,6 +92,7 @@ User's guide
    guide/layers
    guide/sequence
    guide/resource
+   guide/cli
    test
    roadmap
    changes

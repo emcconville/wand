@@ -12,7 +12,7 @@ Wand Changelog
 Version 0.5.7
 -------------
 
-Unreleased.
+Released on September 3rd, 2019.
 
  - Added :meth:`Image.color_decision_list() <wand.image.BaseImage.color_decision_list>` method.
  - Added :meth:`Image.contrast() <wand.image.BaseImage.contrast>` method.
