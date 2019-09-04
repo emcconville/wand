@@ -64,10 +64,12 @@ def library_paths():
     def magick_path(path):
         return os.path.join(magick_home, *path)
     combinations = itertools.product(versions, options)
-    suffixes = (version + option for version, option in combinations)
+    # We need to convert the ``combinations`` generator to a list so we can
+    # iterate over it twice.
+    suffixes = list(version + option for version, option in combinations)
     if magick_home:
         # exhaustively search for libraries in magick_home before calling
-        # find_library
+        # find_library.
         for suffix in suffixes:
             # On Windows, the API is split between two libs. On other
             # platforms, it's all contained in one.
