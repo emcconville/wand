@@ -225,7 +225,7 @@ This table maps ImageMagick's CLI operators to Wand's
 +-------------------------------------+----------------------------------------------------------+
 | :cli:`similarity-threshold`         | See :meth:`wand.image.BaseImage.similarity()`            |
 +-------------------------------------+----------------------------------------------------------+
-| :cli:`subimage‑search`              | See :meth:`wand.image.BaseImage.similarity()`            |
+| :cli:`subimage-search`              | See :meth:`wand.image.BaseImage.similarity()`            |
 +-------------------------------------+----------------------------------------------------------+
 | :cli:`sketch`                       | :meth:`wand.image.BaseImage.sketch()`                    |
 +-------------------------------------+----------------------------------------------------------+
@@ -301,7 +301,7 @@ This table list ImageMagick's options, and maps them to Wand's
 | :cli:`antialias`     | :attr:`wand.image.BaseImage.font_antialias`      |
 +----------------------+--------------------------------------------------+
 | :cli:`antialias`     | :attr:`wand.image.BaseImage.antialias`           |
-+----------------------+--------------------------------------------------+ 
++----------------------+--------------------------------------------------+
 | :cli:`background`    | :attr:`wand.image.BaseImage.background_color`    |
 +----------------------+--------------------------------------------------+
 | :cli:`blue-primary`  | :attr:`wand.image.BaseImage.blue_primary`        |
