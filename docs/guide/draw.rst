@@ -616,20 +616,20 @@ a little more sophisticated.
     from wand.image import Image
 
 
-    def draw_roi(contxt, roi_width, roi_height):
+    def draw_roi(contxt, roi_width, roi_height, roi_left, roi_top):
         """Let's draw a blue box so we can identify what
         our region of intrest is."""
         ctx.push()
         ctx.stroke_color = Color('BLUE')
         ctx.fill_color = Color('TRANSPARENT')
-        ctx.rectangle(left=75, top=255, width=roi_width, height=roi_height)
+        ctx.rectangle(left=roi_left, top=roi_top, width=roi_width, height=roi_height)
         ctx.pop()
 
 
     def word_wrap(image, ctx, text, roi_width, roi_height):
         """Break long text to multiple lines, and reduce point size
         until all text fits within a bounding box."""
-        mutable_message = text
+        mutable_message = {"text": text}
         iteration_attempts = 100
 
         def eval_metrics(txt):
@@ -640,19 +640,19 @@ a little more sophisticated.
         def shrink_text():
             """Reduce point-size & restore original text"""
             ctx.font_size = ctx.font_size - 0.75
-            mutable_message = text
+            mutable_message['text'] = text
 
         while ctx.font_size > 0 and iteration_attempts:
             iteration_attempts -= 1
-            width, height = eval_metrics(mutable_message)
+            width, height = eval_metrics(mutable_message['text'])
             if height > roi_height:
                 shrink_text()
             elif width > roi_width:
-                columns = len(mutable_message)
+                columns = len(mutable_message['text'])
                 while columns > 0:
                     columns -= 1
-                    mutable_message = '\n'.join(wrap(mutable_message, columns))
-                    wrapped_width, _ = eval_metrics(mutable_message)
+                    mutable_message['text'] = '\n'.join(wrap(mutable_message['text'], columns))
+                    wrapped_width, _ = eval_metrics(mutable_message['text'])
                     if wrapped_width <= roi_width:
                         break
                 if columns < 1:
@@ -661,7 +661,7 @@ a little more sophisticated.
                 break
         if iteration_attempts < 1:
             raise RuntimeError("Unable to calculate word_wrap for " + text)
-        return mutable_message
+        return mutable_message['text']
 
 
     message = """This is some really long sentence with the
@@ -671,7 +671,7 @@ a little more sophisticated.
 
     with Image(filename='logo:') as img:
         with Drawing() as ctx:
-            draw_roi(ctx, ROI_SIDE, ROI_SIDE)
+            draw_roi(ctx, ROI_SIDE, ROI_SIDE, 75, 275)
             # Set the font style
             ctx.fill_color = Color('RED')
             ctx.font_family = 'Times New Roman'
