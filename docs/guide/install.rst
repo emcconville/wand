@@ -20,7 +20,7 @@ Or you can simply install Wand and its entire dependencies using the package
 manager of your system (it's way convenient but the version might be outdated):
 
 - :ref:`Debian/Ubuntu <install-wand-debian>`
-- :ref:`Fefora <install-wand-fedora>`
+- :ref:`Fedora <install-wand-fedora>`
 - :ref:`FreeBSD <install-wand-freebsd>`
 
 .. _PyPI: http://pypi.python.org/pypi/Wand
@@ -153,6 +153,38 @@ the path of ImageMagick installation.
 In that case, you can give the path to Wand by setting :envvar:`MAGICK_HOME`.
 Wand respects :envvar:`MAGICK_HOME`, the environment variable which has been
 reserved by ImageMagick.
+
+
+.. _explicit-suffix:
+
+Explicitly define ImageMagick library suffix
+--------------------------------------------
+
+.. versionadded:: 0.5.8
+
+Wand will attempt to load all popular combinations of ImageMagick's shared
+library suffixes. By default, the library suffix would follow a
+pattern similar to:
+
+.. sourcecode:: text
+
+                 ~~~~~~~~~~      Library Suffix
+    libMagickWand-7.Q16HDRI.so
+                 ~~              Major version number. Can be blank, 6, or 7.
+                    ~~~          Magick Quantum. Can be blank, Q8, or Q16.
+                       ~~~~      Optional HDRI-Support. Can be blank, or HDRI
+
+If you have compiled ImageMagick with custom suffixes, you can tell
+the Wand module how to search for it by setting :envvar:`MAGICK_HOME`, like
+:ref:`above <explicit-link>`, and :envvar:`WAND_MAGICK_LIBRARY_SUFFIX`
+environment variables.
+
+The :envvar:`WAND_MAGICK_LIBRARY_SUFFIX` would be a semicolon delimited list
+
+.. sourcecode:: console
+
+   $ export WAND_MAGICK_LIBRARY_SUFFIX="-7.Q32;-7.Q32HDRI;.Q32HDRI;.Q32"
+   $ python3 wand_app.py
 
 
 .. _install-wand-debian:

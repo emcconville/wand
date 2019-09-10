@@ -42,6 +42,7 @@ def library_paths():
     options = '', 'HDRI', 'HDRI-2'
     system = platform.system()
     magick_home = os.environ.get('MAGICK_HOME')
+    magick_suffix = os.environ.get('WAND_MAGICK_LIBRARY_SUFFIX')
 
     if system == 'Windows':
         # ImageMagick installers normally install coder and filter DLLs in
@@ -64,9 +65,12 @@ def library_paths():
     def magick_path(path):
         return os.path.join(magick_home, *path)
     combinations = itertools.product(versions, options)
+    suffixes = list()
+    if magick_suffix:
+        suffixes = str(magick_suffix).split(';')
     # We need to convert the ``combinations`` generator to a list so we can
     # iterate over it twice.
-    suffixes = list(version + option for version, option in combinations)
+    suffixes.extend(list(version + option for version, option in combinations))
     if magick_home:
         # exhaustively search for libraries in magick_home before calling
         # find_library.

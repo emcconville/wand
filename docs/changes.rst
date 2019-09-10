@@ -7,6 +7,17 @@ Wand Changelog
 ~~~~~~~~~~
 
 
+.. _changelog-0.5.8:
+
+Version 0.5.8
+-------------
+
+Unreleased
+
+ - Check :envvar:`WAND_MAGICK_LIBRARY_SUFFIX` for additional library suffixes. [:issue:`436`]
+
+
+
 .. _changelog-0.5.7:
 
 Version 0.5.7
