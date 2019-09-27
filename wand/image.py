@@ -8527,6 +8527,8 @@ class Image(BaseImage):
             r = library.MagickCompareImagesLayers(self.wand, m)
         elif library.MagickCompareImageLayers:
             r = library.MagickCompareImageLayers(self.wand, m)
+        elif library.MagickCompareImagesLayers:  # pragma: no cover
+            r = library.MagickCompareImagesLayers(self.wand, m)
         else:
             raise AttributeError('MagickCompareImageLayers method '
                                  'not available on system.')

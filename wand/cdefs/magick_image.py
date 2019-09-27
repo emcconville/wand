@@ -225,8 +225,11 @@ def load(lib, IM_VERSION):
         except AttributeError:
             lib.MagickCompareImageLayers = None
     else:
-        lib.MagickCompareImagesLayers.argtypes = [c_void_p, c_int]
-        lib.MagickCompareImagesLayers.restype = c_void_p
+        try:
+            lib.MagickCompareImagesLayers.argtypes = [c_void_p, c_int]
+            lib.MagickCompareImagesLayers.restype = c_void_p
+        except AttributeError:
+            lib.MagickCompareImagesLayers = None
     if IM_VERSION >= 0x708:
         try:
             lib.MagickComplexImages.argtypes = [c_void_p, c_int]

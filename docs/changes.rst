@@ -15,7 +15,7 @@ Version 0.5.8
 Unreleased
 
  - Check :envvar:`WAND_MAGICK_LIBRARY_SUFFIX` for additional library suffixes. [:issue:`436`]
-
+ - Fixed :c:func:`MagickCompareImagesLayers` loading for ImageMagick-6 [:issue:`439`]
 
 
 .. _changelog-0.5.7:
