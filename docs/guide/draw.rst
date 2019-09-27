@@ -637,16 +637,12 @@ a little more sophisticated.
             metrics = ctx.get_font_metrics(image, txt, True)
             return (metrics.text_width, metrics.text_height)
 
-        def shrink_text():
-            """Reduce point-size & restore original text"""
-            ctx.font_size = ctx.font_size - 0.75
-            mutable_message = text
-
         while ctx.font_size > 0 and iteration_attempts:
             iteration_attempts -= 1
             width, height = eval_metrics(mutable_message)
             if height > roi_height:
-                shrink_text()
+                ctx.font_size -= 0.75  # Reduce pointsize
+                mutable_message = text  # Restore original text
             elif width > roi_width:
                 columns = len(mutable_message)
                 while columns > 0:
@@ -656,7 +652,8 @@ a little more sophisticated.
                     if wrapped_width <= roi_width:
                         break
                 if columns < 1:
-                    shrink_text()
+                    ctx.font_size -= 0.75  # Reduce pointsize
+                    mutable_message = text  # Restore original text
             else:
                 break
         if iteration_attempts < 1:
