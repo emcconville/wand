@@ -16,6 +16,7 @@ Unreleased
 
  - Check :envvar:`WAND_MAGICK_LIBRARY_SUFFIX` for additional library suffixes. [:issue:`436`]
  - Fixed :c:func:`MagickCompareImagesLayers` loading for ImageMagick-6 [:issue:`439`]
+ - Updated example in :meth:`Image.annotate() <wand.image.BaseImage.annotate>` docstring. [:issue:`441` by alexgv]
 
 
 .. _changelog-0.5.7:
