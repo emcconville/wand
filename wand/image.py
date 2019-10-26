@@ -2706,7 +2706,7 @@ class BaseImage(Resource):
                     ctx.font_size = 18
                     ctx.text_decoration = 'underline'
                     ctx.text_kerning = -1
-                    img.annotate('Hello World', ctx, left=20, top=50)
+                    img.annotate('Hello World', ctx, left=20, baseline=50)
                 img.save(filename='output.jpg')
 
         :param text: String to annotate on image.
