@@ -16,6 +16,18 @@ def test_length(fx_asset):
         assert len(img.sequence) == 4
 
 
+def test_validate_position_error(fx_asset):
+    with Image(filename=str(fx_asset.join('apple.ico'))) as img:
+        with raises(TypeError):
+            img.sequence.validate_position(0.001)
+
+
+def test_validate_slice_error(fx_asset):
+    with Image(filename=str(fx_asset.join('apple.ico'))) as img:
+        with raises(ValueError):
+            img.sequence.validate_slice(slice(0,10, 3))
+
+
 def test_getitem(fx_asset):
     with Image(filename=str(fx_asset.join('apple.ico'))) as img:
         size = img.size
@@ -43,6 +55,8 @@ def test_setitem(fx_asset):
         assert imga.sequence[2].size == (16, 16)
         expire(imga)
         assert imga.sequence[2].size == (16, 16)
+        with raises(TypeError):
+            imga.sequence[3] = 0xDEADBEEF
 
 
 def test_delitem(fx_asset):
@@ -157,6 +171,8 @@ def test_insert(fx_asset):
             assert imga.sequence[2] == imgg.sequence[0]
         for i, instance in enumerate(instances):
             assert instance == imga.sequence[3 + i]
+        with raises(TypeError):
+            imga.sequence.insert(0xDEADBEEF)
 
 
 def test_insert_first(fx_asset):
@@ -181,6 +197,8 @@ def test_extend(fx_asset):
             assert a.sequence[length] == b.sequence[1]
             assert a.sequence[length + 1] == b.sequence[0]
         assert len(a.sequence) == 6
+        with raises(TypeError):
+            a.sequence.extend([0xDEADBEEF])
 
 
 def test_extend_sequence(fx_asset):
@@ -319,3 +337,7 @@ def test_set_delay(fx_asset):
             frame.delay = 10
         with img.sequence.index_context(2):
             assert library.MagickGetImageDelay(img.wand) == 10
+        with raises(TypeError):
+            img.sequence[2].delay = 0.0001
+        with raises(ValueError):
+            img.sequence[2].delay = -1
