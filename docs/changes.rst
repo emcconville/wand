@@ -60,7 +60,7 @@ Released on August 2nd, 2019.
 
  - Fixed invalid escape sequence warnings [:issue:`428`]
  - Fixed error on Drawing exception handling. [:issue:`427`]
- - Fixed undefined behaviour when working with image frames in ImageMagick-7. [:issue:`431`]
+ - Fixed undefined behavior when working with image frames in ImageMagick-7. [:issue:`431`]
  - Added :meth:`Image.annotate() <wand.image.BaseImage.annotate>` method. [:issue:`418`]
  - Added :meth:`Image.level_colors() <wand.image.BaseImage.level_colors>` method.
  - Added :meth:`Image.levelize_colors() <wand.image.BaseImage.levelize_colors>` method.
@@ -412,7 +412,7 @@ Released on November 30, 2015.
   (:c:func:`MagickTransformImageColorspace()`).
   [:issue:`152` by Adrian Jung, :issue:`262` by Jeong YunWon]
 - Now ImageMagick DLL can be loaded on Windows even if its location
-  is stored in the resitry.  [:issue:`261` by Roeland Schoukens]
+  is stored in the registry.  [:issue:`261` by Roeland Schoukens]
 - Added ``depth`` parameter to :class:`~.wand.image.Image` constructor.
   The ``depth``, ``width`` and ``height`` parameters can be used
   with the ``filename``, ``file`` and ``blob`` parameters to load
@@ -789,7 +789,7 @@ Released on May 28, 2013.
 
 - Fix :exc:`~exceptions.NameError` in :attr:`Resource.resource
   <wand.resource.Resource.resource>` setter.
-  [:issue:`89` forwareded from Debian bug report `#699064`__
+  [:issue:`89` forwarded from Debian bug report `#699064`__
   by Jakub Wilk]
 - Fix the problem of library loading for Mac with Homebrew and Arch Linux.
   [:issue:`102` by Roel Gerrits, :issue:`44`]
@@ -970,7 +970,7 @@ Released on October 31, 2011. Still alpha version.
 - Added :meth:`Image.convert() <wand.image.Image.convert>` method.
 - Fixed a bug about Python 2.6 compatibility.
 - Use the internal representation of :c:type:`PixelWand` instead of
-  the string representaion for :class:`~wand.color.Color` type.
+  the string representation for :class:`~wand.color.Color` type.
 
 Version 0.1.5
 -------------
