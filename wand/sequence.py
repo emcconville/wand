@@ -30,7 +30,7 @@ class Sequence(ImageProperty, abc.MutableSequence):
         self.instances = []
 
     def __del__(self):
-        for instance in self.instances:
+        for instance in self.instances:  # pragma: no cover
             if instance is not None:
                 instance.c_resource = None
 

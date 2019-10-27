@@ -43,7 +43,7 @@ import sys
 
 try:
     from .api import libmagick, library
-except ImportError:
+except ImportError:  # pragma: no cover
     libmagick = None
 from .compat import binary, string_type, text
 
@@ -101,7 +101,7 @@ if libmagick:
     #: .. versionadded:: 0.5.0
     if libmagick.GetMagickDelegates:  # pragma: no cover
         MAGICK_VERSION_DELEGATES = text(libmagick.GetMagickDelegates())
-    else:
+    else:  # pragma: no cover
         MAGICK_VERSION_DELEGATES = ""
 
     #: (:class:`basestring`) A string of all features enabled.
