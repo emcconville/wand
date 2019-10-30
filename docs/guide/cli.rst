@@ -302,6 +302,8 @@ This table list ImageMagick's options, and maps them to Wand's
 +----------------------+--------------------------------------------------+
 | :cli:`antialias`     | :attr:`wand.image.BaseImage.antialias`           |
 +----------------------+--------------------------------------------------+
+| :cli:`attenuate`     | See :meth:`wand.image.BaseImage.noise()`         |
++----------------------+--------------------------------------------------+
 | :cli:`background`    | :attr:`wand.image.BaseImage.background_color`    |
 +----------------------+--------------------------------------------------+
 | :cli:`blue-primary`  | :attr:`wand.image.BaseImage.blue_primary`        |
@@ -377,6 +379,8 @@ This table list ImageMagick's options, and maps them to Wand's
 | :cli:`stroke`        | :attr:`wand.image.BaseImage.stroke_color`        |
 +----------------------+--------------------------------------------------+
 | :cli:`strokewidth`   | :attr:`wand.image.BaseImage.stroke_width`        |
++----------------------+--------------------------------------------------+
+| :cli:`treedepth`     | See :meth:`wand.image.BaseImage.quantize()`      |
 +----------------------+--------------------------------------------------+
 | :cli:`type`          | :attr:`wand.image.BaseImage.type`                |
 +----------------------+--------------------------------------------------+
