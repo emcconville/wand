@@ -153,47 +153,47 @@ class CorruptImageFatalError(BaseFatalError, ValueError):
     wand_error_code = 725
 
 
-class FileOpenWarning(BaseWarning, OSError):
+class FileOpenWarning(BaseWarning, IOError):
     """The image file could not be opened for reading or writing."""
     wand_error_code = 330
 
 
-class FileOpenError(BaseError, OSError):
+class FileOpenError(BaseError, IOError):
     """The image file could not be opened for reading or writing."""
     wand_error_code = 430
 
 
-class FileOpenFatalError(BaseFatalError, OSError):
+class FileOpenFatalError(BaseFatalError, IOError):
     """The image file could not be opened for reading or writing."""
     wand_error_code = 730
 
 
-class BlobWarning(BaseWarning, OSError):
+class BlobWarning(BaseWarning, IOError):
     """A binary large object could not be allocated, read, or written."""
     wand_error_code = 335
 
 
-class BlobError(BaseError, OSError):
+class BlobError(BaseError, IOError):
     """A binary large object could not be allocated, read, or written."""
     wand_error_code = 435
 
 
-class BlobFatalError(BaseFatalError, OSError):
+class BlobFatalError(BaseFatalError, IOError):
     """A binary large object could not be allocated, read, or written."""
     wand_error_code = 735
 
 
-class StreamWarning(BaseWarning, OSError):
+class StreamWarning(BaseWarning, IOError):
     """There was a problem reading or writing from a stream."""
     wand_error_code = 340
 
 
-class StreamError(BaseError, OSError):
+class StreamError(BaseError, IOError):
     """There was a problem reading or writing from a stream."""
     wand_error_code = 440
 
 
-class StreamFatalError(BaseFatalError, OSError):
+class StreamFatalError(BaseFatalError, IOError):
     """There was a problem reading or writing from a stream."""
     wand_error_code = 740
 
