@@ -357,7 +357,7 @@ def test_draw_line(fx_wand):
 
 @mark.xfail(MAGICK_VERSION_NUMBER >= 0x700,
             reason='wand.drawing.Drawing.matte removed with IM 7.',
-            rasies=AttributeError)
+            raises=AttributeError)
 def test_draw_matte():
     white = Color('rgba(0, 255, 255, 5%)')
     transparent = Color('transparent')
@@ -371,7 +371,7 @@ def test_draw_matte():
 
 @mark.xfail(MAGICK_VERSION_NUMBER >= 0x700,
             reason='wand.drawing.Drawing.matte removed with IM 7.',
-            rasies=AttributeError)
+            raises=AttributeError)
 def test_draw_matte_user_error():
     with Drawing() as draw:
         with raises(TypeError):
@@ -384,7 +384,7 @@ def test_draw_matte_user_error():
 
 @mark.xfail(MAGICK_VERSION_NUMBER < 0x700,
             reason='wand.drawing.Drawing.alpha was added with IM 7.',
-            rasies=AttributeError)
+            raises=AttributeError)
 def test_draw_alpha():
     transparent = Color('transparent')
     with Image(width=50, height=50, pseudo='xc:white') as img:
@@ -397,7 +397,7 @@ def test_draw_alpha():
 
 @mark.xfail(MAGICK_VERSION_NUMBER < 0x700,
             reason='wand.drawing.Drawing.alpha was added with IM 7.',
-            rasies=AttributeError)
+            raises=AttributeError)
 def test_draw_alpha_user_error():
     with Drawing() as draw:
         with raises(TypeError):
