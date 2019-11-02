@@ -96,7 +96,7 @@ class Color(Resource):
         self.dirty = False
         self.allocated = 0
         if raw is None:
-            if self.use_pixel:
+            if self.use_pixel:  # pragma: no cover
                 self.raw = ctypes.create_string_buffer(
                     ctypes.sizeof(PixelInfo)
                 )
@@ -128,7 +128,7 @@ class Color(Resource):
                 # Initialize resource.
                 self.resource = library.NewPixelWand()
                 # Restore color value from structure buffer.
-                if self.use_pixel:
+                if self.use_pixel:  # pragma: no cover
                     library.PixelSetPixelColor(self.resource, self.raw)
                 else:
                     library.PixelSetMagickColor(self.resource, self.raw)

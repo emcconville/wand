@@ -5,11 +5,31 @@ try:
     from memory_profiler import memory_usage
 except ImportError:
     memory_usage = None
-from pytest import mark
+from pytest import mark, raises
 
 from wand.color import Color
 from wand.compat import xrange
 from wand.version import QUANTUM_DEPTH, MAGICK_VERSION_INFO  # noqa
+
+
+def test_user_error():
+    with raises(TypeError):
+        _ = Color()
+    with raises(ValueError):
+        _ = Color('not_a_color')
+
+
+def test_user_raw():
+    with Color('black') as black:
+        with Color(raw=black.raw) as c:
+            assert c
+
+
+def test_user_pickle():
+    with Color('black') as black:
+        # Can't trust string literal between IM versions, but the tuple
+        # should be constant.
+        assert len(black.__getinitargs__()) == 2
 
 
 def test_equals():

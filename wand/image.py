@@ -5984,7 +5984,7 @@ class BaseImage(Resource):
                 r = library.MagickOrderedPosterizeImageChannel(self.wand,
                                                                channel_ch,
                                                                bmap)
-        else:  # pragma: no-cover
+        else:  # pragma: no cover
             if channel is None:
                 r = library.MagickOrderedDitherImage(self.wand, bmap)
             else:
