@@ -1266,11 +1266,10 @@ class BaseImage(Resource):
                                             ctypes.byref(c_buffer))
         if not r:
             self.raise_exception()
-        return dict(data=(ctypes.addressof(c_buffer), True),
+        return dict(data=bytearray(c_buffer),  # Copy buffer to byte-array
                     shape=(width, height, channel_number),
                     typestr='|u1',
-                    version=3,
-                    _c_buffer=c_buffer)  # Need to hold reference count.
+                    version=3)
 
     @property
     def alpha_channel(self):
