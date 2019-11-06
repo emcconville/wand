@@ -1258,15 +1258,15 @@ class BaseImage(Resource):
         if self.alpha_channel:
             channel_format = binary("RGBA")
             channel_number = 4
-        c_buffer = (width * height * channel_number * ctypes.c_char)()
+        self._c_buffer = (width * height * channel_number * ctypes.c_char)()
         # FIXME: Move to pixel-data import/export methods.
         r = library.MagickExportImagePixels(self.wand,
                                             0, 0, width, height,
                                             channel_format, storage_type,
-                                            ctypes.byref(c_buffer))
+                                            ctypes.byref(self._c_buffer))
         if not r:
             self.raise_exception()
-        return dict(data=bytearray(c_buffer),  # Copy buffer to byte-array
+        return dict(data=(ctypes.addressof(self._c_buffer), True),
                     shape=(width, height, channel_number),
                     typestr='|u1',
                     version=3)
@@ -8306,18 +8306,14 @@ class Image(BaseImage):
                     channel_map = 'CMYKA'[0:shape[2]]
             else:
                 channel_map = 'I'
-        if hasattr(array, 'tobytes'):
+        if hasattr(array, 'ctypes'):
+            data_ptr = array.ctypes.data_as(ctypes.c_void_p)
+        elif hasattr(array, 'tobytes'):
             data_ptr = array.tobytes()
         elif hasattr(array, 'tostring'):
             data_ptr = array.tostring()
-        elif hasattr(array, 'ctypes'):
-            data_ptr = array.ctypes.data_as(ctypes.c_void_p)
         else:
-            data_attr = arr_itr.get('data')
-            if len(data_attr) == 2:
-                data_attr = data_attr[0]
-            c_data_ptr = (ctypes.c_char * len(data_attr))
-            data_ptr = c_data_ptr.from_buffer(data_attr)
+            data_ptr, _ = arr_itr.get('data')
         storage_idx = STORAGE_TYPES.index(storage)
         width, height = shape[:2]
         wand = library.NewMagickWand()
