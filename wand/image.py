@@ -8284,8 +8284,6 @@ class Image(BaseImage):
         arr_itr = array.__array_interface__
         typestr = arr_itr['typestr']  # Required by interface.
         shape = arr_itr['shape']  # Required by interface.
-        data_ptr, flag = arr_itr.get('data', (None, False))  # Optional
-        strides = arr_itr.get('strides', None)  # Optional
         if storage is None:
             # Attempt to guess storage
             storage_map = dict(u1='char', i1='char',
@@ -8308,8 +8306,18 @@ class Image(BaseImage):
                     channel_map = 'CMYKA'[0:shape[2]]
             else:
                 channel_map = 'I'
-        if data_ptr is None or strides is not None:
+        if hasattr(array, 'tobytes'):
+            data_ptr = array.tobytes()
+        elif hasattr(array, 'tostring'):
+            data_ptr = array.tostring()
+        elif hasattr(array, 'ctypes'):
             data_ptr = array.ctypes.data_as(ctypes.c_void_p)
+        else:
+            data_attr = arr_itr.get('data')
+            if len(data_attr) == 2:
+                data_attr = data_attr[0]
+            c_data_ptr = (ctypes.c_char * len(data_attr))
+            data_ptr = c_data_ptr.from_buffer(data_attr)
         storage_idx = STORAGE_TYPES.index(storage)
         width, height = shape[:2]
         wand = library.NewMagickWand()
