@@ -2474,7 +2474,13 @@ class BaseImage(Resource):
         .. versionadded:: 0.4.1
 
         """
-        exif_orientation = self.metadata.get('exif:orientation')
+        v_ptr = library.MagickGetImageProperty(self.wand,
+                                               b'exif:orientation')
+        if v_ptr:
+            exif_orientation = v_ptr.value
+        else:
+            return
+
         if not exif_orientation:
             return
 
@@ -3525,7 +3531,9 @@ class BaseImage(Resource):
                                   'wand.image.COMPLEX_OPERATORS',
                                   operator=operator)
         if snr is not None:
-            self.artifacts['complex:snr=float'] = str(snr)
+            library.MagickSetImageArtifact(self.wand,
+                                           b'complex:snr=float',
+                                           b'{0}'.format(snr))
         operator_idx = COMPLEX_OPERATORS.index(operator)
         wand = library.MagickComplexImages(self.wand, operator_idx)
         if not bool(wand):
@@ -3773,17 +3781,25 @@ class BaseImage(Resource):
         if connectivity not in (4, 8):
             raise ValueError('connectivity must be 4, or 8.')
         if area_threshold is not None:
-            key = 'connected-components:area-threshold'
-            self.artifacts[key] = str(area_threshold)
+            key = b'connected-components:area-threshold'
+            library.MagickSetImageArtifact(self.wand,
+                                           key,
+                                           b'{0}'.format(area_threshold))
         if mean_color:
-            key = 'connected-components:mean-color'
-            self.artifacts[key] = 'true'
+            key = b'connected-components:mean-color'
+            library.MagickSetImageArtifact(self.wand,
+                                           key,
+                                           b'true')
         if keep is not None:
-            key = 'connected-components:keep'
-            self.artifacts[key] = str(keep)
+            key = b'connected-components:keep'
+            library.MagickSetImageArtifact(self.wand,
+                                           key,
+                                           b'{0}'.format(keep))
         if remove is not None:
-            key = 'connected-components:remove'
-            self.artifacts[key] = str(remove)
+            key = b'connected-components:remove'
+            library.MagickSetImageArtifact(self.wand,
+                                           key,
+                                           b'{0}'.format(remove))
         objects_ptr = ctypes.c_void_p(0)
         ccoi_mem_size = ctypes.sizeof(CCObjectInfo)
         r = library.MagickConnectedComponentsImage(self.wand, connectivity,
