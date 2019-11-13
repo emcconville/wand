@@ -16,8 +16,9 @@ Unreleased
 
  - Check :envvar:`WAND_MAGICK_LIBRARY_SUFFIX` for additional library suffixes. [:issue:`436`]
  - Fixed :c:func:`MagickCompareImagesLayers` loading for ImageMagick-6 [:issue:`439`]
+ - Fixed incorrect color values for first 5 pixels when exporting to :class:`numpy.array` [:issue:`442`]
  - Updated example in :meth:`Image.annotate() <wand.image.BaseImage.annotate>` docstring. [:issue:`441` by alexgv]
- - Improved pycache performance by defining all ImageMagick warnings & errors in :mod:`wand.exceptions`.
+ - Improved pycache performance by explicitly defining all ImageMagick warnings & errors in :mod:`wand.exceptions`.
    Previously all ImageMagick exceptions were generated dynamically during run-time.
 
 
