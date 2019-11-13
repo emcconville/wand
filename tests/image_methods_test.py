@@ -546,6 +546,9 @@ def test_crop(fx_asset):
             assert cropped.size == img.size
             cropped.crop(top=100, bottom=200)
             assert cropped.size == (300, 100)
+        with img.clone() as cropped:
+            width, height = img.size
+            assert cropped.crop(left=0, top=0, width=width, height=height)
         with raises(ValueError):
             img.crop(0, 0, 500, 500)
         with raises(ValueError):
@@ -1041,6 +1044,9 @@ def test_inverse_fourier_transform(fx_asset):
     with Image(filename=str(fx_asset.join('ccobject_magnitude.png'))) as a:
         with Image(filename=str(fx_asset.join('ccobject_phase.png'))) as b:
             assert a.ift(b)
+    with raises(TypeError):
+        with Image(filename=str(fx_asset.join('ccobject_magnitude.png'))) as a:
+            a.inverse_fourier_transform(0xDEADBEEF)
 
 
 def test_kurtosis_channel():
@@ -1536,6 +1542,8 @@ def test_polaroid(fx_asset):
         font = Font(str(fx_asset.join('League_Gothic.otf')), 12,
                     Color('orange'), True, Color('pink'), 1)
         img.polaroid(caption='hello', font=font)
+        with raises(TypeError):
+            img.polaroid(caption='hello', font='League_Gothic.otf')
 
 
 def test_polynomial():
@@ -1918,6 +1926,10 @@ def test_sharpen(fx_asset):
             img.sharpen(radius='hello')
         with raises(TypeError):
             img.sharpen(sigma='hello')
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.sharpen(radius=10.0, sigma=2.0, channel='red')
+        assert was != img.signature
 
 
 def test_shave(fx_asset):
@@ -1945,6 +1957,13 @@ def test_sigmoidal_contrast():
                                strength=3,
                                midpoint=0.65 * img.quantum_range)
         assert was != img.signature
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.sigmoidal_contrast(sharpen=True,
+                               strength=3,
+                               midpoint=0.65 * img.quantum_range,
+                               channel='red')
+        assert was != img.signature
 
 
 def test_similarity():
@@ -1953,6 +1972,8 @@ def test_similarity():
             location, diff = img.similarity(sub_img)
             assert location['top'] == 0 and location['left'] == 0
             assert diff < 0.001
+        with raises(TypeError):
+            img.similarity(0xDEADBEEF)
 
 
 def test_sketch():
@@ -1984,6 +2005,11 @@ def test_solarize():
         was = img.signature
         img.alpha_channel = 'off'  # Needed for IM-7
         img.solarize(0.5 * img.quantum_range)
+        assert was != img.signature
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.alpha_channel = 'off'  # Needed for IM-7
+        img.solarize(0.5 * img.quantum_range, channel='red')
         assert was != img.signature
 
 
@@ -2023,6 +2049,10 @@ def test_statistic(fx_asset):
         was = img.signature
         img.statistic('median', 5, 5)
         assert was != img.signature
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.statistic('median', 5, 5, channel='red')
+        assert was != img.signature
 
 
 def test_stegano():
@@ -2031,6 +2061,8 @@ def test_stegano():
         with Image(filename='rose:') as watermark:
             img.stegano(watermark)
         assert was != img.signature
+        with raises(TypeError):
+            img.stegano(0xDEADBEEF)
 
 
 def test_strip(fx_asset):
@@ -2287,6 +2319,10 @@ def test_unsharp_mask(fx_asset, display):
         assert 0.89 <= after.red <= 0.90
         assert 0.82 <= after.green <= 0.83
         assert 0.72 <= after.blue < 0.74
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.unsharp_mask(1.1, 1, 0.5, 0.001, channel='red')
+        assert was != img.signature
 
 
 def test_vignette(fx_asset):
