@@ -4554,7 +4554,7 @@ class BaseImage(Resource):
                                              matte.resource,
                                              width, height,
                                              inner_bevel, outer_bevel)
-            else:
+            else:  # pragma: no cover
                 assertions.string_in_list(COMPOSITE_OPERATORS,
                                           'wand.image.COMPOSITE_OPERATORS',
                                           compose=compose)
@@ -5103,7 +5103,7 @@ class BaseImage(Resource):
 
         bp = float(self.quantum_range * black)
         wp = float(self.quantum_range * white)
-        if MAGICK_HDRI:
+        if MAGICK_HDRI:  # pragma: no cover
             bp -= 0.5  # TODO: Document why HDRI requires 0.5 adjustments.
             wp -= 0.5
         if channel is None:
@@ -5326,7 +5326,7 @@ class BaseImage(Resource):
                                          delta_x, rigidity)
         try:
             self.raise_exception()
-        except MissingDelegateError as e:
+        except MissingDelegateError as e:  # pragma: no cover
             raise MissingDelegateError(
                 str(e) + '\n\nImageMagick in the system is likely to be '
                 'impossible to load liblqr.  You might not install liblqr, '
@@ -5353,7 +5353,7 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.7
         """
-        if library.MagickLocalContrastImage is None:
+        if library.MagickLocalContrastImage is None:  # pragma: no cover
             msg = 'Method requires ImageMagick version 6.9.3 or greater.'
             raise WandLibraryVersionError(msg)
         assertions.assert_real(radius=radius, strength=strength)
@@ -5832,7 +5832,7 @@ class BaseImage(Resource):
         assertions.assert_real(radius=radius, sigma=sigma)
         if MAGICK_VERSION_NUMBER < 0x700:
             r = library.MagickOilPaintImage(self.wand, radius)
-        else:
+        else:  # pragma: no cover
             r = library.MagickOilPaintImage(self.wand, radius, sigma)
         return r
 
@@ -6652,7 +6652,7 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.4
         """
-        if not library.MagickRotationalBlurImage:
+        if not library.MagickRotationalBlurImage:  # pragma: no cover
             msg = ("Method `rotational_blur` not available on installed "
                    "version of ImageMagick library. ")
             raise WandLibraryVersionError(msg)
@@ -7395,7 +7395,7 @@ class BaseImage(Resource):
         assertions.assert_real(degree=degree)
         if MAGICK_VERSION_NUMBER < 0x700:
             r = library.MagickSwirlImage(self.wand, degree)
-        else:
+        else:  # pragma: no cover
             assertions.string_in_list(PIXEL_INTERPOLATE_METHODS,
                                       'wand.image.PIXEL_INTERPOLATE_METHODS',
                                       method=method)
