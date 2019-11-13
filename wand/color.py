@@ -753,7 +753,7 @@ def scale_quantum_to_int8(quantum):
     if quantum <= 0:
         return 0
     table = {8: 1, 16: 257.0, 32: 16843009.0, 64: 72340172838076673.0}
-    if MAGICK_HDRI:
+    if MAGICK_HDRI:  # pragma: no cover
         if QUANTUM_DEPTH == 8:
             v = quantum / table[QUANTUM_DEPTH]
         elif QUANTUM_DEPTH == 16:

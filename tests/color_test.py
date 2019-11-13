@@ -295,6 +295,8 @@ def test_fuzz():
     c = Color('none')
     c.fuzz = 55.5
     assert c.fuzz == 55.5
+    with raises(TypeError):
+        c.fuzz = 'NaN'
 
 
 def test_hsl():
@@ -320,3 +322,36 @@ def test_memory_leak():
         minimum = ctypes.sizeof(nil_color.raw)
     consumes = memory_usage((color_memory_leak, (), {}))
     assert consumes[-1] - consumes[0] <= minimum
+
+
+def test_color_assert_double_user_error():
+    with Color('WHITE') as c:
+        with raises(TypeError):
+            c._assert_double('double')
+        with raises(ValueError):
+            c._assert_double(-1)
+        with raises(ValueError):
+            c._assert_double(1.1)
+
+
+def test_color_assert_int8_user_error():
+    with Color('WHITE') as c:
+        with raises(TypeError):
+            c._assert_int8(0.123)
+        with raises(ValueError):
+            c._assert_int8(-1)
+        with raises(ValueError):
+            c._assert_int8(0xFFFFF)
+
+
+def test_color_assert_quantum_user_error():
+    with Color('WHITE') as c:
+        with raises(TypeError):
+            c._assert_quantum('Q16')
+        with raises(ValueError):
+            c._assert_quantum(-1)
+
+
+def test_color_repr_html():
+    with Color('#AABBCC') as c:
+        assert '#AABBCC' in c._repr_html_()
