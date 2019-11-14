@@ -3295,7 +3295,7 @@ class BaseImage(Resource):
             r = library.MagickGetImageColormapColor(self.wand,
                                                     index,
                                                     color_ptr)
-            if not r:
+            if not r:  # pragma: no cover
                 color_ptr = library.DestroyPixelWand(color_ptr)
                 self.raise_exception()
             color = Color.from_pixelwand(color_ptr)

@@ -67,6 +67,9 @@ def test_annotate(fx_asset):
             ctx.font_size = 32
             img.annotate('Hello', ctx, left=10, baseline=img.height-10)
         assert was != img.signature
+    with raises(TypeError):
+        with Image(filename='rose:') as img:
+            img.annotate('Hello', 0xDEADBEEF)
 
 
 def test_auto_gamma():
@@ -168,6 +171,10 @@ def test_border(fx_asset):
             assert img[2, -6] == left_bottom
             assert img[-3, 5] == right_top
             assert img[-3, -6] == right_bottom
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.border('pink', 2, 5)
+        assert was != img.signature
 
 
 def test_brightness_contrast():
@@ -179,6 +186,19 @@ def test_brightness_contrast():
         was = img.signature
         img.brightness_contrast(-10.0, 50, 'red')
         assert was != img.signature
+
+
+def test_canny(fx_asset):
+    if MAGICK_VERSION_NUMBER < 0x708:
+        with raises(WandLibraryVersionError):
+            with Image(filename='rose:') as img:
+                img.canny(1, 3)
+    else:
+        with Image(filename='rose:') as img:
+            img.transform_colorspace('gray')
+            was = img.signature
+            img.canny(1, 3)
+            assert was != img.signature
 
 
 def test_caption(fx_asset):
@@ -209,6 +229,14 @@ def test_caption_without_font(fx_asset):
             )
 
 
+def test_charcoal():
+    with Image(filename='rose:') as img:
+        img.transform_colorspace('gray')
+        was = img.signature
+        img.charcoal(1, 2)
+        assert was != img.signature
+
+
 def test_chop():
     with Image(filename='rose:') as img:
         w, h = img.size
@@ -229,6 +257,11 @@ def test_clahe():
             assert was != img.signature
 
 
+def test_clamp():
+    with Image(filename='rose:') as img:
+        assert img.clamp(channel='red')
+
+
 def test_clut(fx_asset):
     with Image(filename='rose:') as img:
         was = img.signature
@@ -244,6 +277,8 @@ def test_clut(fx_asset):
             clut.flop()
             img.clut(clut, channel='red')
             assert was != img.signature
+        with raises(TypeError):
+            img.clut(0xDEADBEEF)
 
 
 def test_coalesce(fx_asset):
@@ -289,6 +324,8 @@ def test_color_map(fx_asset):
             img.color_map('NaN')
         with raises(TypeError):
             img.color_map(0, 0xDEADBEEF)
+        with raises(ValueError):
+            img.color_map(-1, orange)
 
 
 def test_color_matrix():
@@ -305,6 +342,8 @@ def test_color_matrix():
             img.color_matrix(0xDEADBEEF)
         with raises(TypeError):
             img.color_matrix((0, 0, 0, 0, 0))
+        with raises(ValueError):
+            img.color_matrix([[1, 0], [0, 1, 0]])
 
 
 def test_colorize():
@@ -321,7 +360,9 @@ def test_colorize():
 def test_compare(fx_asset):
     with Image(filename=str(fx_asset.join('beach.jpg'))) as orig:
         with Image(filename=str(fx_asset.join('watermark_beach.jpg'))) as img:
-            cmp_img, err = orig.compare(img, 'absolute')
+            cmp_img, err = orig.compare(img, 'absolute',
+                                        highlight=Color('orange'),
+                                        lowlight=Color('gray90'))
             cmp_img, err = orig.compare(img, 'mean_absolute')
             cmp_img, err = orig.compare(img, 'root_mean_square')
 
@@ -962,6 +1003,8 @@ def test_hald_clut(fx_asset):
             hald.gamma(0.367)
             img.hald_clut(hald, channel='red')
         assert was != img.signature
+        with raises(TypeError):
+            img.hald_clut(0xDEADBEEF)
 
 
 def test_hough_lines(fx_asset):
