@@ -14,16 +14,23 @@ jobs:
   build_linux:
     name: Build Linux
     runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 2
+      matrix:
+        python-version: [3.6, 3.7]
     steps:
     - uses: actions/checkout@v1
       with:
         fetch-depth: 1
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        set -e
         apt-get update -y
         apt-get install -y imagemagick
-        pip install -U pip
-        pip install -U pytest pytest-xdist pytest-cov coveralls
+        python -m pip install --upgrade pip
+        pip install --upgrade pytest pytest-xdist pytest-cov coveralls
     - name: Run PyTest
       run: pytest --skip-pdf --cov wand --boxed --durations=20
