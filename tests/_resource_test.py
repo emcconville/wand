@@ -82,7 +82,7 @@ def test_limits():
     area_was = resource.limits['area']  # Save state.
     area_expected = area_was - 100
     resource.limits['area'] = area_expected
-    assert resource.limits['area'] == area_expected
+    assert resource.limits['area'] <= area_expected
     # We have no images loaded, so the current area should be zero.
     assert resource.limits.resource('area') == 0
     del resource.limits['area']
