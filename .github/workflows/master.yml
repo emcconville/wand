@@ -1,0 +1,29 @@
+name: Wand CI
+
+on:
+  push:
+    branches:
+    - master
+    tags:
+    - '!*'
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  build_linux:
+    name: Build Linux
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+    - name: Install dependencies
+      run: |
+        set -e
+        apt-get update -y
+        apt-get install -y imagemagick
+        pip install -U pip
+        pip install -U pytest pytest-xdist pytest-cov coveralls
+    - name: Run PyTest
+      run: pytest --skip-pdf --cov wand --boxed --durations=20
