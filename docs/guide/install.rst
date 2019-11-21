@@ -22,6 +22,7 @@ manager of your system (it's way convenient but the version might be outdated):
 - :ref:`Debian/Ubuntu <install-wand-debian>`
 - :ref:`Fedora <install-wand-fedora>`
 - :ref:`FreeBSD <install-wand-freebsd>`
+- :ref:`Alpine <install-wand-alpine>`
 
 .. _PyPI: http://pypi.python.org/pypi/Wand
 .. _ImageMagick: http://www.imagemagick.org/
@@ -231,3 +232,27 @@ You can install it using :program:`pkg_add` command:
    $ pkg_add -r py-wand
 
 .. _py-wand: http://www.freebsd.org/cgi/cvsweb.cgi/ports/graphics/py-wand/
+
+
+.. _install-wand-alpine:
+
+Install Wand on Alpine
+----------------------
+
+Wand can be installed on Alpine Linux with `pip`, but due to the security
+nature of Alpine, :envvar:`MAGICK_HOME` must be defined before running any
+Wand applications.
+
+.. sourcecode:: console
+
+    # apk add imagemagick
+    # pip install Wand
+    # export MAGICK_HOME=/usr
+
+You may need to create a symbolic links for the ImageMagick libraries.
+
+.. sourcecode:: console
+
+    # ln -s /usr/lib/libMagickCore-7.Q16HDRI.so.6 /usr/lib/libMagickCore-7.Q16HDRI.so
+    # ln -s /usr/lib/libMagickWand-7.Q16HDRI.so.6 /usr/lib/libMagickWand-7.Q16HDRI.so
+
