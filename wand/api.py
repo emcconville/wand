@@ -92,7 +92,11 @@ def library_paths():
                 yield magick_path(libwand), magick_path(libwand)
             else:
                 libwand = 'lib', 'libMagickWand{0}.so'.format(suffix),
-                yield magick_path(libwand), magick_path(libwand)
+                libmagick = 'lib', 'libMagickCore{0}.so'.format(suffix),
+                yield magick_path(libwand), magick_path(libmagick)
+                libwand = 'lib', 'libMagickWand{0}.so.6'.format(suffix),
+                libmagick = 'lib', 'libMagickCore{0}.so.6'.format(suffix),
+                yield magick_path(libwand), magick_path(libmagick)
     for suffix in suffixes:
         if system == 'Windows':
             libwand = ctypes.util.find_library('CORE_RL_wand_' + suffix)
