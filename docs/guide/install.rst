@@ -239,9 +239,9 @@ You can install it using :program:`pkg_add` command:
 Install Wand on Alpine
 ----------------------
 
-Wand can be installed on Alpine Linux with `pip`, but due to the security
-nature of Alpine, :envvar:`MAGICK_HOME` must be defined before running any
-Wand applications.
+Wand can be installed on Alpine Linux with :program:`pip`, but due to the
+security nature of Alpine, :envvar:`MAGICK_HOME` must be defined before running
+any Wand applications.
 
 .. sourcecode:: console
 
@@ -249,7 +249,7 @@ Wand applications.
     # pip install Wand
     # export MAGICK_HOME=/usr
 
-You may need to create a symbolic links for the ImageMagick libraries.
+You may need to create a couple symbolic links for the ImageMagick libraries.
 
 .. sourcecode:: console
 
