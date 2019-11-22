@@ -34,3 +34,26 @@ jobs:
         pip install --upgrade pytest pytest-xdist pytest-cov coveralls
     - name: Run PyTest
       run: pytest --skip-pdf --cov wand --boxed --durations=20
+  build_macos:
+    name: Build MacOS
+    runs-on: macos-latest
+    strategy:
+      max-parallel: 2
+      matrix:
+        python-version: [3.7, 3.8]
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        export HOMEBREW_NO_AUTO_UPDATE=1
+        brew install imagemagick
+        python -m pip install --upgrade pip
+        pip install --upgrade pytest pytest-xdist pytest-cov coveralls
+    - name: Run PyTest
+      run: pytest --skip-pdf --cov wand --boxed --durations=20
