@@ -52,7 +52,7 @@ jobs:
     - name: Install dependencies
       run: |
         export HOMEBREW_NO_AUTO_UPDATE=1
-        brew install imagemagick
+        brew install imagemagick --with-fftw --with-fontconfig --with-liblqr
         python -m pip install --upgrade pip
         pip install --upgrade pytest pytest-xdist pytest-cov coveralls
     - name: Run PyTest
