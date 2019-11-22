@@ -37,10 +37,12 @@ def test_configure_options():
 
 def test_fonts():
     font_list = fonts()
-    mark.skipif(not font_list, reason='Fonts not configured on system')
-    first_font = font_list[0]
-    first_font_part = first_font[1:-1]
-    assert first_font in fonts('*{0}*'.format(first_font_part))
+    if not font_list:
+        mark.skip('Fonts not configured on system')
+    else:
+        first_font = font_list[0]
+        first_font_part = first_font[1:-1]
+        assert first_font in fonts('*{0}*'.format(first_font_part))
     with raises(TypeError):
         fonts(0xDEADBEEF)
 
