@@ -856,6 +856,7 @@ def test_flop(fx_asset):
             assert flopped[-1, -1] == img[0, -1]
 
 
+@mark.fft
 def test_forward_fourier_transform():
     with Image(filename='rose:') as img:
         was = img.signature
@@ -1078,6 +1079,7 @@ def test_import_pixels_issue_413():
         assert img
 
 
+@mark.fft
 def test_inverse_fourier_transform(fx_asset):
     with Image(filename=str(fx_asset.join('ccobject_magnitude.png'))) as a:
         was = a.signature

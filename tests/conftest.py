@@ -26,6 +26,8 @@ def pytest_addoption(parser):
                      default=os.environ.get('IMGUR_CLIENT_ID'))
     parser.addoption('--skip-pdf', action='store_true',
                      help='Skip any test with PDF documents.')
+    parser.addoption('--skip-fft', action='store_true',
+                     help='Skip any test with Forward Fourier Transform.')
     parser.addoption('--no-pdf', action='store_true',
                      help='Alias to --skip-pdf.')
 
@@ -33,10 +35,13 @@ def pytest_addoption(parser):
 def pytest_collection_modifyitems(config, items):
     skip_slow = False
     skip_pdf = False
+    skip_fft = False
     if config.getoption('--skip-slow'):
         skip_slow = mark.skip('skipped; --skip-slow option is used')
     if config.getoption('--skip-pdf'):
         skip_pdf = mark.skip('skipped; --skip-pdf option is used')
+    if config.getoption('--skip-fft'):
+        skip_fft = mark.skip('skipped; --skip-fft option is used')
     if config.getoption('--no-pdf'):
         skip_pdf = mark.skip('skipped; --skip-pdf option is used')
     for item in items:
@@ -44,6 +49,8 @@ def pytest_collection_modifyitems(config, items):
             item.add_marker(skip_slow)
         if skip_pdf and 'pdf' in item.keywords:
             item.add_marker(skip_pdf)
+        if skip_fft and 'fft' in item.keywords:
+            item.add_marker(skip_fft)
 
 
 def pytest_configure(config):
@@ -52,6 +59,9 @@ def pytest_configure(config):
     )
     config.addinivalue_line(
         'markers', 'pdf: marks test as PDF/Ghostscript dependent'
+    )
+    config.addinivalue_line(
+        'markers', 'fft: marks test as Forward Fourier Transform dependent'
     )
 
 
