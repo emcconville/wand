@@ -7449,14 +7449,14 @@ class BaseImage(Resource):
 
         """
         assertions.assert_real(threshold=threshold)
+        threshold *= self.quantum_range + 1
         if channel is None:
-            r = library.MagickThresholdImage(self.wand,
-                                             threshold * self.quantum_range)
+            r = library.MagickThresholdImage(self.wand, threshold)
         else:
             ch_const = self._channel_to_mask(channel)
             r = library.MagickThresholdImageChannel(
                 self.wand, ch_const,
-                threshold * self.quantum_range
+                threshold
             )
         return r
 
