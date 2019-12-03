@@ -2177,13 +2177,16 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.3.0
 
+        .. versionchanged:: 0.5.8
+           Resolution returns a tuple of float values to
+           match ImageMagick's behavior.
         """
-        x = ctypes.c_double()
-        y = ctypes.c_double()
+        x = ctypes.c_double(0.0)
+        y = ctypes.c_double(0.0)
         r = library.MagickGetImageResolution(self.wand, x, y)
         if not r:  # pragma: no cover
             self.raise_exception()
-        return int(x.value), int(y.value)
+        return x.value, y.value
 
     @resolution.setter
     @manipulative

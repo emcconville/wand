@@ -18,6 +18,7 @@ Unreleased
  - Fixed :c:func:`MagickCompareImagesLayers` loading for ImageMagick-6 [:issue:`439`]
  - Fixed incorrect color values for first 5 pixels when exporting to :class:`numpy.array` [:issue:`442`]
  - Updated example in :meth:`Image.annotate() <wand.image.BaseImage.annotate>` docstring. [:issue:`441` by alexgv]
+ - Fixed :attr:`Image.resolution <wand.image.BaseImage.resolution>` property to return a tuple of float values. [:issue:`444`]
  - Improved pycache performance by explicitly defining all ImageMagick warnings & errors in :mod:`wand.exceptions`.
    Previously all ImageMagick exceptions were generated dynamically during run-time.
 
