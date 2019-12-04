@@ -40,7 +40,10 @@ def terminus():
        :func:`decrement_refcount()` functions instead.
 
     """
-    library.MagickWandTerminus()
+    if library.IsMagickWandInstantiated is None:  # pragma no cover
+        library.MagickWandTerminus()
+    elif library.IsMagickWandInstantiated():
+        library.MagickWandTerminus()
 
 
 #: (:class:`numbers.Integral`) The internal integer value that maintains
