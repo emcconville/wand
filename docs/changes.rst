@@ -12,7 +12,7 @@ Wand Changelog
 Version 0.5.8
 -------------
 
-Unreleased
+Released on December 5th, 2019.
 
  - Check :envvar:`WAND_MAGICK_LIBRARY_SUFFIX` for additional library suffixes. [:issue:`436`]
  - Fixed :c:func:`MagickCompareImagesLayers` loading for ImageMagick-6 [:issue:`439`]
