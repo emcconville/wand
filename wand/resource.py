@@ -242,6 +242,9 @@ class Resource(object):
         elif isinstance(e, Exception):
             raise e
 
+    def make_blob(self, format=None):
+        raise NotImplementedError
+
     def __enter__(self):
         return self
 
