@@ -7468,7 +7468,7 @@ class BaseImage(Resource):
     def thumbnail(self, width=None, height=None):
         """Changes the size of an image to the given dimensions and removes any
         associated profiles.  The goal is to produce small low cost thumbnail
-        images suited for display on the
+        images suited for display on the web.
 
         :param width: the width in the scaled image. default is the original
                       width

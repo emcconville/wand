@@ -7,6 +7,16 @@ Wand Changelog
 ~~~~~~~~~~
 
 
+.. _changelog-0.5.9:
+
+Version 0.5.9
+-------------
+
+Unreleased
+
+ - Updated broken sentence in :meth:`Image.thumbnail() <wand.image.BaseImage.thumbnail>` method. [:issue:`446`]
+
+
 .. _changelog-0.5.8:
 
 Version 0.5.8
