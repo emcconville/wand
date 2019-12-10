@@ -8578,17 +8578,6 @@ class Image(BaseImage):
         cloned.format = format
         return cloned
 
-    def destroy(self):
-        """Manually remove :class:`~.sequence.SingleImage`'s in
-        the :class:`~.sequence.Sequence`, allowing it to
-        be properly garbage collected after using a ``with Image()`` context
-        manager.
-
-        """
-        while self.sequence:
-            self.sequence.pop()
-        super(Image, self).destroy()
-
     def make_blob(self, format=None):
         """Makes the binary string of the image.
 

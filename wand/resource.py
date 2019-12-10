@@ -5,6 +5,7 @@ There is the global resource to manage in MagickWand API. This module
 implements automatic global resource management through reference counting.
 
 """
+import atexit
 import contextlib
 import ctypes
 import warnings
@@ -14,9 +15,9 @@ from .compat import abc, string_type, text
 from .exceptions import TYPE_MAP, WandException
 from .version import MAGICK_VERSION_NUMBER
 
-__all__ = ('genesis', 'terminus', 'increment_refcount', 'decrement_refcount',
+__all__ = ('genesis', 'terminus', 'allocate_ref', 'deallocate_ref',
            'limits', 'Resource', 'ResourceLimits', 'DestroyedResourceError',
-           'safe_copy')
+           'safe_copy', 'shutdown')
 
 
 def genesis():
@@ -46,41 +47,34 @@ def terminus():
         library.MagickWandTerminus()
 
 
-#: (:class:`numbers.Integral`) The internal integer value that maintains
-#: the number of referenced objects.
-#:
-#: .. warning::
-#:
-#:    Don't touch this global variable. Use :func:`increment_refcount()` and
-#:    :func:`decrement_refcount()` functions instead.
-#:
-reference_count = 0
+arc = {}
 
-
-def increment_refcount():
-    """Increments the :data:`reference_count` and instantiates the MagickWand
-    API if it is the first use.
-
-    """
-    global reference_count
-    if reference_count:
-        reference_count += 1
-    else:
+def allocate_ref(addr, deallocator):
+    global arc
+    if len(arc) == 0:
         genesis()
-        reference_count = 1
+    if addr not in arc:
+        arc[addr] = deallocator
+    elif arc[addr] != deallocator:
+        arc[addr] = deallocator
+
+def deallocate_ref(addr):
+    global arc
+    if addr in arc:
+        deallocator = arc[addr]
+        if deallocator:
+            deallocator(addr)
+        del arc[addr]
 
 
-def decrement_refcount():
-    """Decrements the :data:`reference_count` and cleans up the MagickWand
-    API if it will be no more used.
-
-    """
-    global reference_count
-    if not reference_count:
-        raise RuntimeError('wand.resource.reference_count is already zero')
-    reference_count -= 1
-    if not reference_count:
-        terminus()
+#@atexit.register
+def shutdown():
+    global arc
+    for addr, deallocator in arc.items():
+        if deallocator:
+            deallocator(addr)
+    arc = {}
+    terminus()
 
 
 def safe_copy(ptr):
@@ -180,13 +174,14 @@ class Resource(object):
 
         if self.c_is_resource(resource):
             self.c_resource = resource
+            allocate_ref(self.c_resource, self.c_destroy_resource)
         else:
             raise TypeError(repr(resource) + ' is an invalid resource')
-        increment_refcount()
 
     @resource.deleter
     def resource(self):
-        self.c_destroy_resource(self.resource)
+        if getattr(self, 'c_resource', None):
+            deallocate_ref(self.c_resource)
         self.c_resource = None
 
     @contextlib.contextmanager
@@ -199,12 +194,7 @@ class Resource(object):
                 resource.resource = library.NewResource()
 
         """
-        increment_refcount()
-        try:
-            yield self
-        except:  # noqa: E722
-            decrement_refcount()
-            raise
+        yield self
 
     def destroy(self):
         """Cleans up the resource explicitly. If you use the resource in
@@ -213,7 +203,6 @@ class Resource(object):
 
         """
         del self.resource
-        decrement_refcount()
 
     def get_exception(self):
         """Gets a current exception instance.

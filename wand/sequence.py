@@ -29,10 +29,6 @@ class Sequence(ImageProperty, abc.MutableSequence):
         super(Sequence, self).__init__(image)
         self.instances = []
 
-    def __del__(self):
-        for instance in self.instances:  # pragma: no cover
-            if instance is not None:
-                instance.c_resource = None
 
     @property
     def current_index(self):
