@@ -8706,7 +8706,7 @@ class Image(BaseImage):
             if units is not None:
                 self.units = units
 
-    def save(self, file=None, filename=None):
+    def save(self, file=None, filename=None, adjoin=True):
         """Saves the image into the ``file`` or ``filename``. It takes
         only one argument at a time.
 
@@ -8714,11 +8714,17 @@ class Image(BaseImage):
         :type file: file object
         :param filename: a filename string to write to
         :type filename: :class:`basestring`
-
-        .. versionadded:: 0.1.5
-           The ``file`` parameter.
+        :param adjoin: write all images to a single multi-image file. Only
+                       available if file format supports frames, layers, & etc.
+        :type adjoin: :class:`bool`
 
         .. versionadded:: 0.1.1
+
+        .. versionchanged:: 0.1.5
+           The ``file`` parameter was added.
+
+        .. versionchanged:: 6.0.0
+           The ``adjoin`` parameter was added.
 
         """
         if file is None and filename is None:
@@ -8732,7 +8738,7 @@ class Image(BaseImage):
                                 '.save(filename={0!r})?'.format(file))
             elif isinstance(file, file_types) and hasattr(libc, 'fdopen'):
                 fd = libc.fdopen(file.fileno(), file.mode)
-                if len(self.sequence) > 1:
+                if library.MagickGetNumberImages(self.wand) > 1:
                     r = library.MagickWriteImagesFile(self.wand, fd)
                 else:
                     r = library.MagickWriteImageFile(self.wand, fd)
@@ -8750,8 +8756,8 @@ class Image(BaseImage):
                 raise TypeError('filename must be a string, not ' +
                                 repr(filename))
             filename = encode_filename(filename)
-            if len(self.sequence) > 1:
-                r = library.MagickWriteImages(self.wand, filename, True)
+            if library.MagickGetNumberImages(self.wand) > 1:
+                r = library.MagickWriteImages(self.wand, filename, adjoin)
             else:
                 r = library.MagickWriteImage(self.wand, filename)
             if not r:
