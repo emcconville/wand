@@ -29,7 +29,6 @@ class Sequence(ImageProperty, abc.MutableSequence):
         super(Sequence, self).__init__(image)
         self.instances = []
 
-
     @property
     def current_index(self):
         """(:class:`numbers.Integral`) The current index of

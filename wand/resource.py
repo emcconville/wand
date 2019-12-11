@@ -49,6 +49,7 @@ def terminus():
 
 arc = {}
 
+
 def allocate_ref(addr, deallocator):
     global arc
     if len(arc) == 0:
@@ -57,6 +58,7 @@ def allocate_ref(addr, deallocator):
         arc[addr] = deallocator
     elif arc[addr] != deallocator:
         arc[addr] = deallocator
+
 
 def deallocate_ref(addr):
     global arc
@@ -67,7 +69,7 @@ def deallocate_ref(addr):
         del arc[addr]
 
 
-#@atexit.register
+@atexit.register
 def shutdown():
     global arc
     for addr, deallocator in arc.items():
