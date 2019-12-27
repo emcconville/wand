@@ -1,6 +1,24 @@
 Wand Changelog
 ==============
 
+.. _changelog-0.6:
+
+0.6 series
+~~~~~~~~~~
+
+
+.. _changelog-0.6.0:
+
+Version 0.6.0
+~~~~~~~~~~~~~
+
+Unreleased
+
+ - Updated :mod:`numpy` array interface methods to accept / generate
+   :attr:`shape` data values as ``rows``, ``columns``, and ``channels``.
+   This change should match other python-image numpy integrations. [:issue:`447`]
+
+
 .. _changelog-0.5:
 
 0.5 series

@@ -1248,6 +1248,9 @@ class BaseImage(Resource):
         :raises ValueError: if image has no data.
 
         .. versionadded:: 0.5.0
+        .. versionchanged:: 0.6.0
+           The :attr:`shape` property is now ordered by ``height``, ``width``,
+           and ``channel``.
         """
         if not self.signature:
             raise ValueError("No image data to interface with.")
@@ -1267,7 +1270,7 @@ class BaseImage(Resource):
         if not r:
             self.raise_exception()
         return dict(data=(ctypes.addressof(self._c_buffer), True),
-                    shape=(width, height, channel_number),
+                    shape=(height, width, channel_number),
                     typestr='|u1',
                     version=3)
 
@@ -8299,6 +8302,9 @@ class Image(BaseImage):
         :rtype: :class:`~wand.image.Image`
 
         .. versionadded:: 0.5.3
+        .. versionchanged:: 0.6.0
+           Input ``array`` now expects the :attr:`shape` property to be defined
+           as ```( 'height', 'width', 'channels' )```.
         """
         arr_itr = array.__array_interface__
         typestr = arr_itr['typestr']  # Required by interface.
@@ -8334,7 +8340,7 @@ class Image(BaseImage):
         else:
             data_ptr, _ = arr_itr.get('data')
         storage_idx = STORAGE_TYPES.index(storage)
-        width, height = shape[:2]
+        height, width = shape[:2]
         wand = library.NewMagickWand()
         instance = cls(BaseImage(wand))
         r = library.MagickConstituteImage(instance.wand,
