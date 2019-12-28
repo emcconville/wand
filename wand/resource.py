@@ -89,11 +89,11 @@ def safe_copy(ptr):
 
     .. versionadded:: 0.5.3
     """
-    string = ''
+    string = None
     if bool(ptr):
-        string = ctypes.cast(ptr, ctypes.c_char_p).value
-        ptr = library.MagickRelinquishMemory(ptr)
-    return ptr, text(string)
+        string = text(ctypes.cast(ptr, ctypes.c_char_p).value)
+        ptr = library.MagickRelinquishMemory(ptr)  # Force pointer to zero
+    return ptr, string
 
 
 class Resource(object):
