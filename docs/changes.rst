@@ -14,6 +14,7 @@ Version 0.5.9
 
 Unreleased
 
+ - Fixed typo in :attr:`Resource.c_is_resource <wand.resource.Resource.c_is_resource>` documentation. [:issue:`448`]
  - Updated broken sentence in :meth:`Image.thumbnail() <wand.image.BaseImage.thumbnail>` method. [:issue:`446`]
 
 

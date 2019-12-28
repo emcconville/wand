@@ -127,7 +127,7 @@ class Resource(object):
 
     #: (:class:`ctypes.CFUNCTYPE`) The :mod:`ctypes` predicate function
     #: that returns whether the given pointer (that contains a resource data
-    #: usuaully) is a valid resource.
+    #: usually) is a valid resource.
     #:
     #: .. note::
     #:
