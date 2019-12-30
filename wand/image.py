@@ -8758,8 +8758,9 @@ class Image(BaseImage):
                 file.write(self.make_blob())
         else:
             if not isinstance(filename, string_type):
-                raise TypeError('filename must be a string, not ' +
-                                repr(filename))
+                if not hasattr(filename, '__fspath__'):
+                    raise TypeError('filename must be a string, not ' +
+                                    repr(filename))
             filename = encode_filename(filename)
             if len(self.sequence) > 1:
                 r = library.MagickWriteImages(self.wand, filename, True)
