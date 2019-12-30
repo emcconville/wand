@@ -9110,7 +9110,7 @@ class ProfileDict(ImageProperty, abc.MutableMapping):
         with Image(filename='photo.jpg') as img:
             # Extract EXIF
             with open('exif.bin', 'wb') as payload:
-                payload.write(img.profiles['exif])
+                payload.write(img.profiles['exif'])
             # Import ICC
             with open('color_profile.icc', 'rb') as payload:
                 img.profiles['icc'] = payload.read()
