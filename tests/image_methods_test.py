@@ -30,7 +30,7 @@ def test_adaptive_resize():
         img.adaptive_resize(140, 92)
         assert 140, 92 == img.size
     with Image(filename='rose:') as img:
-        w, h = img.size
+        _, h = img.size
         img.adaptive_resize(columns=140)
         assert img.size == (140, h)
         img.adaptive_resize(rows=92)
@@ -357,14 +357,30 @@ def test_colorize():
             img.colorize(Color('blue'), 0xDEADBEEF)
 
 
+def test_combine():
+    with Image() as img:
+        img.pseudo(width=1, height=1, pseudo='xc:grey100')
+        img.pseudo(width=1, height=1, pseudo='xc:grey50')
+        img.pseudo(width=1, height=1, pseudo='xc:grey0')
+        assert len(img.sequence) == 3
+        img.colorspace = 'rgb'
+        img.combine()
+        assert len(img.sequence) == 1
+        pixel = img[0, 0]
+        assert pixel.red > pixel.green  > pixel.blue
+
+
 def test_compare(fx_asset):
     with Image(filename=str(fx_asset.join('beach.jpg'))) as orig:
         with Image(filename=str(fx_asset.join('watermark_beach.jpg'))) as img:
             cmp_img, err = orig.compare(img, 'absolute',
                                         highlight=Color('orange'),
                                         lowlight=Color('gray90'))
+            del cmp_img, err
             cmp_img, err = orig.compare(img, 'mean_absolute')
+            del cmp_img, err
             cmp_img, err = orig.compare(img, 'root_mean_square')
+            del cmp_img, err
 
 
 def test_complex():
@@ -1369,7 +1385,7 @@ def test_modulate(fx_asset, display):
         after = img[100, 100]
         assert before != after
         #  Resulting channels should be between around ``(0.98, 0.98, 0.92)``;
-        #  however, JPEG format + quantuom depth can effect this metric.
+        #  however, JPEG format + quantum depth can effect this metric.
         #  For this test, any value above between ``(0.89, 0.89, 0.72)`` and
         #  ``(1.0, 1.0, 1.0)`` should pass.
         assert 0.90 <= after.red <= 0.99
@@ -1678,7 +1694,7 @@ def test_remap(fx_asset):
     ((36, None), (400, 600)),
 ])
 def test_resample(density, expected_size, fx_asset):
-    """Resample (Adjust nuber of pixels at the given density) the image."""
+    """Resample (Adjust number of pixels at the given density) the image."""
     xr, yr = density
     with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
         img.units = "pixelspercentimeter"
@@ -2097,13 +2113,13 @@ def test_strip(fx_asset):
     with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
         strio = io.BytesIO()
         img.save(file=strio)
-        len_unstripped = strio.tell()
+        len_original = strio.tell()
         strio.close()
         strio = io.BytesIO()
         img.strip()
         img.save(file=strio)
         len_stripped = strio.tell()
-        assert len_unstripped > len_stripped
+        assert len_original > len_stripped
 
 
 def test_swirl():
@@ -2293,11 +2309,11 @@ def test_transverse(fx_asset):
 def test_trim(fx_asset):
     """Remove transparent area around image."""
     with Image(filename=str(fx_asset.join('trimtest.png'))) as img:
-        oldx, oldy = img.size
+        old_x, old_y = img.size
         img.trim()
-        newx, newy = img.size
-        assert newx < oldx
-        assert newy < oldy
+        new_x, new_y = img.size
+        assert new_x < old_x
+        assert new_y < old_y
 
 
 def test_trim_color(fx_asset):
@@ -2316,11 +2332,11 @@ def test_trim_color(fx_asset):
 def test_trim_fuzz(fx_asset):
     with Image(filename=str(fx_asset.join('trimtest.png'))) as img:
         img.trim()
-        trimx, trimy = img.size
+        trim_x, trim_y = img.size
         img.trim(fuzz=10000)
-        fuzzx, fuzzy = img.size
-        assert fuzzx < trimx
-        assert fuzzy < trimy
+        fuzz_x, fuzz_y = img.size
+        assert fuzz_x < trim_x
+        assert fuzz_y < trim_y
 
 
 def test_unique_colors(fx_asset):

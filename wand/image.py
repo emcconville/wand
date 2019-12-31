@@ -3430,6 +3430,54 @@ class BaseImage(Resource):
         return r
 
     @manipulative
+    def combine(self, channel='rgb_channels', colorspace='rgb'):
+        """Creates an image where each color channel is assigned by a grayscale
+        image in a sequence.
+
+        .. warning::
+
+            If your using ImageMagick-6, use ``channel`` argument to control
+            the color-channel order.  With ImageMagick-7, the ``channel``
+            argument has been replaced with ``colorspace``.
+
+        For example::
+
+            for wand.image import Image
+
+            with Image() as img:
+                img.read(filename='red_channel.png')
+                img.read(filename='green_channel.png')
+                img.read(filename='blue_channel.png')
+                img.combine(colorspace='rgb')
+                img.save(filename='output.png')
+
+        :param channel: Determines the colorchannel ordering of the
+                        sequence. Only used for ImageMagick-6.
+                        See :const:`CHANNELS`.
+        :type channel: :class:`basestring`
+        :param colorspace: Determines the colorchannel ordering of the
+                           sequence. Only used for ImageMagick-7.
+                           See :const:`COLORSPACE_TYPES`.
+        :type colorspace: :class:`basestring`
+
+        .. versionadded:: 0.5.9
+        """
+        assertions.string_in_list(COLORSPACE_TYPES,
+                                  'wand.image.COLORSPACE_TYPES',
+                                  colorspace=colorspace)
+        library.MagickResetIterator(self.wand)
+        colorspace_c = COLORSPACE_TYPES.index(colorspace)
+        channel_c = self._channel_to_mask(channel)
+        if MAGICK_VERSION_NUMBER < 0x700:
+            new_wand = library.MagickCombineImages(self.wand, channel_c)
+        else:  # pragma: no-cover
+            new_wand = library.MagickCombineImages(self.wand, colorspace_c)
+        if new_wand:
+            self.wand = new_wand
+        else:
+            self.raise_exception()
+
+    @manipulative
     def compare(self, image, metric='undefined', highlight=None,
                 lowlight=None):
         """Compares an image to a reconstructed image.

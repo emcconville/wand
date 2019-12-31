@@ -14,6 +14,7 @@ Version 0.5.9
 
 Unreleased
 
+ - Added :meth:`Image.combine() <wand.image.combine>` method. [Thanks Fred!]
  - Check ``__fspath__`` attribute for ``filename`` parameter when calling :meth:`Image.save() <wand.image.Image.save>`. [:issue:`452`]
  - Fixed typo in :class:`ProfileDict <wand.image.ProfileDict>` documentation. [:issue:`450` by Thijs Triemstra]
  - Fixed typo in :attr:`Resource.c_is_resource <wand.resource.Resource.c_is_resource>` documentation. [:issue:`448`]
