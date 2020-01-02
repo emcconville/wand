@@ -6255,54 +6255,57 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def quantize(self, number_colors, colorspace_type,
-                 treedepth, dither, measure_error):
+    def quantize(self, number_colors, colorspace_type=None,
+                 treedepth=0, dither=False, measure_error=False):
         """`quantize` analyzes the colors within a sequence of images and
         chooses a fixed number of colors to represent the image. The goal of
         the algorithm is to minimize the color difference between the input and
         output image while minimizing the processing time.
 
-        :param number_colors: the number of colors.
+        :param number_colors: The target number of colors to reduce the image.
         :type number_colors: :class:`numbers.Integral`
-        :param colorspace_type: colorspace_type. available value can be found
-                                in the :const:`COLORSPACE_TYPES`
+        :param colorspace_type: Available value can be found
+                                in the :const:`COLORSPACE_TYPES`. Defaults
+                                :attr:`colorspace`.
         :type colorspace_type: :class:`basestring`
-        :param treedepth: normally, this integer value is zero or one.
-                          a zero or one tells :meth:`quantize` to choose
-                          a optimal tree depth of ``log4(number_colors)``.
-                          a tree of this depth generally allows the best
-                          representation of the reference image
-                          with the least amount of memory and
-                          the fastest computational speed.
-                          in some cases, such as an image with low color
-                          dispersion (a few number of colors), a value other
-                          than ``log4(number_colors)`` is required.
-                          to expand the color tree completely,
-                          use a value of 8
+        :param treedepth: A value between ``0`` & ``8`` where ``0`` will
+                         allow ImageMagick to calculate the optimal depth
+                         with ``Log4(number_colors)``. Default value is ``0``.
         :type treedepth: :class:`numbers.Integral`
-        :param dither: a value other than zero distributes the difference
-                       between an original image and the corresponding
-                       color reduced algorithm to neighboring pixels along
-                       a Hilbert curve
-        :type dither: :class:`bool`
-        :param measure_error: a value other than zero measures the difference
-                              between the original and quantized images.
-                              this difference is the total quantization error.
-                              The error is computed by summing over all pixels
-                              in an image the distance squared in RGB space
-                              between each reference pixel value and
-                              its quantized value
+        :param dither: Perform dither operation between neighboring pixel
+                       values. If using ImageMagick-6, this can be a value
+                       of ``True``, or ``False``. With ImageMagick-7, use
+                       a string from :const:`DITHER_METHODS`. Default
+                       ``False``.
+        :type dither: :class:`bool`, or :class:`basestring`
+        :param measure_error: Include total quantization error of all pixels
+                              in an image & quantized value.
         :type measure_error: :class:`bool`
 
         .. versionadded:: 0.4.2
 
+        .. versionchanged:: 0.5.9
+           Fixed ImageMagick-7 ``dither`` argument, and added keyword defaults.
         """
         assertions.assert_integer(number_colors=number_colors)
+        if colorspace_type is None:
+            colorspace_type = self.colorspace
         assertions.string_in_list(COLORSPACE_TYPES,
                                   'wand.image.COLORSPACE_TYPES',
                                   colorspace_type=colorspace_type)
         assertions.assert_integer(treedepth=treedepth)
-        assertions.assert_bool(dither=dither, measure_error=measure_error)
+        if MAGICK_VERSION_NUMBER < 0x700:
+            assertions.assert_bool(dither=dither)
+        else:  # pragma: no cover
+            if dither is False:
+                dither = 'no'
+            elif dither is True:
+                dither = 'riemersma'
+            assertions.string_in_list(DITHER_METHODS,
+                                      'wand.image.DITHER_METHODS',
+                                      dither=dither)
+            dither = DITHER_METHODS.index(dither)
+        assertions.assert_bool(measure_error=measure_error)
         return library.MagickQuantizeImage(
             self.wand, number_colors,
             COLORSPACE_TYPES.index(colorspace_type),

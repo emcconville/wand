@@ -804,14 +804,24 @@ def load(lib, IM_VERSION):
     lib.MagickPreviewImages.restype = c_void_p
     lib.MagickPreviousImage.argtypes = [c_void_p]
     lib.MagickPreviousImage.restype = c_bool
-    lib.MagickQuantizeImage.argtypes = [
-        c_void_p, c_size_t, c_int, c_size_t, c_bool, c_bool
-    ]
-    lib.MagickQuantizeImage.restypes = c_bool
-    lib.MagickQuantizeImages.argtypes = [
-        c_void_p, c_size_t, c_int, c_size_t, c_bool, c_bool
-    ]
-    lib.MagickQuantizeImages.restype = c_bool
+    if IM_VERSION < 0x700:
+        lib.MagickQuantizeImage.argtypes = [
+            c_void_p, c_size_t, c_int, c_size_t, c_bool, c_bool
+        ]
+        lib.MagickQuantizeImage.restypes = c_bool
+        lib.MagickQuantizeImages.argtypes = [
+            c_void_p, c_size_t, c_int, c_size_t, c_bool, c_bool
+        ]
+        lib.MagickQuantizeImages.restype = c_bool
+    else:
+        lib.MagickQuantizeImage.argtypes = [
+            c_void_p, c_size_t, c_int, c_size_t, c_int, c_bool
+        ]
+        lib.MagickQuantizeImage.restypes = c_bool
+        lib.MagickQuantizeImages.argtypes = [
+            c_void_p, c_size_t, c_int, c_size_t, c_int, c_bool
+        ]
+        lib.MagickQuantizeImages.restype = c_bool
     lib.MagickRaiseImage.argtypes = [
         c_void_p, c_size_t, c_size_t, c_ssize_t, c_ssize_t, c_bool
     ]
