@@ -165,7 +165,7 @@ except (OSError, IOError):
                     break
         else:
             msg += '#install-imagemagick-on-mac'
-    else:
+    elif hasattr(platform, 'linux_distribution'):
         distname, _, __ = platform.linux_distribution()
         distname = (distname or '').lower()
         if distname in ('debian', 'ubuntu'):
