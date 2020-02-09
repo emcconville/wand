@@ -181,6 +181,12 @@ def test_compression_quality_set(fx_asset):
             img.compression_quality = 'high'
 
 
+def test_delay_set_get(fx_asset):
+    with Image(filename=str(fx_asset.join('nocomments.gif'))) as img:
+        img.delay = 10
+        assert img.delay == 10
+
+
 def test_depth_get(fx_asset):
     """Gets the image depth"""
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
