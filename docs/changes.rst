@@ -12,7 +12,7 @@ Wand Changelog
 Version 0.5.9
 -------------
 
-Unreleased
+Released on February 10th, 2020.
 
  - Fixed ``dither`` parameter in :meth:`Image.quantize() <wand.image.BaseImage.quantize>` method for ImageMagick-7.
  - Added :meth:`Image.combine() <wand.image.Image.combine>` method. [Thanks Fred!]
