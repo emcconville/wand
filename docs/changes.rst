@@ -30,7 +30,7 @@ Unreleased
 Version 0.5.9
 -------------
 
-Unreleased
+Released on February 10th, 2020.
 
  - Fixed ``dither`` parameter in :meth:`Image.quantize() <wand.image.BaseImage.quantize>` method for ImageMagick-7.
  - Added :meth:`Image.combine() <wand.image.Image.combine>` method. [Thanks Fred!]
@@ -38,6 +38,8 @@ Unreleased
  - Fixed typo in :class:`ProfileDict <wand.image.ProfileDict>` documentation. [:issue:`450` by Thijs Triemstra]
  - Fixed typo in :attr:`Resource.c_is_resource <wand.resource.Resource.c_is_resource>` documentation. [:issue:`448`]
  - Updated broken sentence in :meth:`Image.thumbnail() <wand.image.BaseImage.thumbnail>` method. [:issue:`446`]
+ - Check for :meth:`linux_distribution() <platform.linux_distribution>` as method was removed in Python 3.8. [:issue:`456`]
+ - Added :attr:`Image.delay <wand.image.BaseImage.delay>` property. Previously only available with :class:`~wand.sequence.SingleImage` class.
 
 
 .. _changelog-0.5.8:

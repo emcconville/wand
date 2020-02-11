@@ -1572,6 +1572,19 @@ class BaseImage(Resource):
                              repr(quality))
 
     @property
+    def delay(self):
+        """(:class:`numbers.Integral`) The number of ticks between frames.
+
+        .. versionadded:: 0.5.9
+        """
+        return library.MagickGetImageDelay(self.wand)
+
+    @delay.setter
+    def delay(self, value):
+        assertions.assert_integer(delay=value)
+        library.MagickSetImageDelay(self.wand, value)
+
+    @property
     def depth(self):
         """(:class:`numbers.Integral`) The depth of this image.
 
