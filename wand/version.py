@@ -176,6 +176,8 @@ def configure_options(pattern='*'):
     """
     if not isinstance(pattern, string_type):
         raise TypeError('pattern must be a string, not ' + repr(pattern))
+    # We must force init environment to load user config paths.
+    library.MagickWandGenesis()
     pattern_p = ctypes.create_string_buffer(binary(pattern))
     config_count = ctypes.c_size_t(0)
     configs = {}
@@ -216,6 +218,8 @@ def fonts(pattern='*'):
     """
     if not isinstance(pattern, string_type):
         raise TypeError('pattern must be a string, not ' + repr(pattern))
+    # We must force init environment to load user config paths.
+    library.MagickWandGenesis()
     pattern_p = ctypes.create_string_buffer(binary(pattern))
     number_fonts = ctypes.c_size_t(0)
     fonts = []
@@ -248,6 +252,8 @@ def formats(pattern='*'):
     """
     if not isinstance(pattern, string_type):
         raise TypeError('pattern must be a string, not ' + repr(pattern))
+    # We must force init environment to load user config paths.
+    library.MagickWandGenesis()
     pattern_p = ctypes.create_string_buffer(binary(pattern))
     number_formats = ctypes.c_size_t(0)
     formats = []
