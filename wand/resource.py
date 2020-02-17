@@ -9,7 +9,7 @@ import contextlib
 import ctypes
 import warnings
 
-from .api import libmagick, library
+from .api import library
 from .compat import abc, string_type, text
 from .exceptions import TYPE_MAP, WandException
 from .version import MAGICK_VERSION_NUMBER
@@ -358,7 +358,7 @@ class ResourceLimits(abc.MutableMapping):
 
         .. versionadded:: 0.5.1
         """
-        return libmagick.GetMagickResource(self._to_idx(resource))
+        return library.MagickGetResource(self._to_idx(resource))
 
     def get_resource_limit(self, resource):
         """Get the current limit for the resource type.
@@ -369,7 +369,7 @@ class ResourceLimits(abc.MutableMapping):
 
         .. versionadded:: 0.5.1
         """
-        return libmagick.GetMagickResourceLimit(self._to_idx(resource))
+        return library.MagickGetResourceLimit(self._to_idx(resource))
 
     def set_resource_limit(self, resource, limit):
         """Sets a new limit for resource type.
@@ -387,7 +387,8 @@ class ResourceLimits(abc.MutableMapping):
 
         .. versionadded:: 0.5.1
         """
-        libmagick.SetMagickResourceLimit(self._to_idx(resource), int(limit))
+        genesis()
+        library.MagickSetResourceLimit(self._to_idx(resource), int(limit))
 
 
 #: (:class:`ResourceLimits`) Helper to get & set Magick Resource Limits.
