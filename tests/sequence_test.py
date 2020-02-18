@@ -25,7 +25,7 @@ def test_validate_position_error(fx_asset):
 def test_validate_slice_error(fx_asset):
     with Image(filename=str(fx_asset.join('apple.ico'))) as img:
         with raises(ValueError):
-            img.sequence.validate_slice(slice(0,10, 3))
+            img.sequence.validate_slice(slice(0, 10, 3))
 
 
 def test_getitem(fx_asset):

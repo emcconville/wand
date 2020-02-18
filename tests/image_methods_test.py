@@ -367,7 +367,7 @@ def test_combine():
         img.combine()
         assert len(img.sequence) == 1
         pixel = img[0, 0]
-        assert pixel.red > pixel.green  > pixel.blue
+        assert pixel.red > pixel.green > pixel.blue
 
 
 def test_compare(fx_asset):
@@ -1504,6 +1504,7 @@ def test_normalize_channel(fx_asset):
         was = img.signature
         img.normalize('red')
         assert was != img.signature
+
 
 def test_oil_paint():
     with Image(filename='rose:') as img:
