@@ -32,9 +32,11 @@ else:
     cmdclass = {'test': pytest}
 
 test_requires = [
-    'pytest >= 2.3.0',
-    'pytest-xdist >= 1.8',
-    'psutil >= 1.0.1'
+    'pytest >= 5.3.5',
+]
+
+doc_requires = [
+    'Sphinx >= 2.4.1',
 ]
 
 setup(
@@ -52,7 +54,7 @@ setup(
     maintainer_email='emcconville' '@' 'emcconville.com',
     url='http://wand-py.org/',
     tests_require=test_requires,
-    extras_require={'doc': ['Sphinx >=1.0'], 'test': test_requires},
+    extras_require={'doc': doc_requires, 'test': test_requires},
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
@@ -65,6 +67,7 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
         'Programming Language :: Python :: Implementation :: Stackless',
