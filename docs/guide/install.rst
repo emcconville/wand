@@ -112,15 +112,15 @@ a prebuilt binary of ImageMagick for your architecture (``win32`` or
 
 You can download it from the following link:
 
-http://legacy.imagemagick.org/script/binary-releases.php#windows
+https://imagemagick.org/script/download.php#windows
 
 Choose a binary for your architecture:
 
 Windows 32-bit
-   ImageMagick-6.9.x-x-Q16-x86-dll.exe
+   ImageMagick-7.0.x-x-Q16-x86-dll.exe
 
 Windows 64-bit
-   ImageMagick-6.9.x-x-Q16-x64-dll.exe
+   ImageMagick-7.0.x-x-Q16-HDRI-x64-dll.exe
 
 .. note::
 

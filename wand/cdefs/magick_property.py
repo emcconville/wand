@@ -81,6 +81,10 @@ def load(lib, IM_VERSION):
     lib.MagickGetPointsize.argtypes = [c_void_p]
     lib.MagickGetPointsize.restype = c_double
     lib.MagickGetQuantumRange.argtypes = [POINTER(c_size_t)]
+    lib.MagickGetResource.argtypes = [c_int]
+    lib.MagickGetResource.restype = c_size_t
+    lib.MagickGetResourceLimit.argtypes = [c_int]
+    lib.MagickGetResourceLimit.restype = c_size_t
     lib.MagickGetSize.argtypes = [c_void_p, POINTER(c_uint), POINTER(c_uint)]
     lib.MagickGetSize.restype = c_int
     lib.MagickQueryConfigureOption.argtypes = [c_char_p]
@@ -132,6 +136,8 @@ def load(lib, IM_VERSION):
     lib.MagickSetOption.restype = c_int
     lib.MagickSetPointsize.argtypes = [c_void_p, c_double]
     lib.MagickSetPointsize.restype = c_int
+    lib.MagickSetResourceLimit.argtypes = [c_int, c_size_t]
+    lib.MagickSetResourceLimit.restype = c_int
     if IM_VERSION >= 0x708:
         try:
             lib.MagickSetSeed.argtypes = [c_void_p, c_ulong]
