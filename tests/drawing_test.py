@@ -322,7 +322,7 @@ def test_draw_color():
 def test_draw_color_user_error():
     with Drawing() as draw:
         with raises(TypeError):
-            draw.color()
+            draw.color('apples')
         with raises(TypeError):
             draw.color(1, 2, 4)
         with raises(ValueError):
@@ -375,7 +375,7 @@ def test_draw_matte():
 def test_draw_matte_user_error():
     with Drawing() as draw:
         with raises(TypeError):
-            draw.matte()
+            draw.matte('apples')
         with raises(TypeError):
             draw.matte(1, 2, 4)
         with raises(ValueError):
