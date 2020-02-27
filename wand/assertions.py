@@ -116,7 +116,7 @@ def assert_coordinate(**kwargs):
         elif len(subject) != 2:
             fmt = "'{0}' must be a exactly 2 real numbers, not {1}"
             msg = fmt.format(label, len(subject))
-            raise TypeError(msg)
+            raise ValueError(msg)
         elif not isinstance(subject[0], numbers.Real):
             fmt = "first entry of '{0}' must be a real number, not {1}"
             msg = fmt.format(label, repr(subject[0]))
