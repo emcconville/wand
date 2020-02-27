@@ -366,10 +366,7 @@ class Drawing(Resource):
 
     @font_resolution.setter
     def font_resolution(self, resolution):
-        if not isinstance(resolution, abc.Sequence):
-            raise TypeError('expected sequence, not ' + repr(resolution))
-        if len(resolution) != 2:
-            raise ValueError('expected sequence of 2 floats')
+        assertions.assert_coordinate(font_resolution=resolution)
         library.DrawSetFontResolution(self.resource, *resolution)
 
     @property
@@ -927,6 +924,7 @@ class Drawing(Resource):
         .. versionadded:: 0.4.0
 
         """
+        assertions.assert_coordinate(start=start, end=end, degree=degree)
         start_x, start_y = start
         end_x, end_y = end
         degree_start, degree_end = degree
@@ -979,11 +977,11 @@ class Drawing(Resource):
         .. versionadded:: 0.4.0
 
         """
+        assertions.assert_coordinate(origin=origin, perimeter=perimeter)
         origin_x, origin_y = origin
         perimeter_x, perimeter_y = perimeter
-        library.DrawCircle(self.resource,
-                           float(origin_x), float(origin_y),  # origin
-                           float(perimeter_x), float(perimeter_y))  # perimeter
+        library.DrawCircle(self.resource, origin_x, origin_y,
+                           perimeter_x, perimeter_y)
 
     def clear(self):
         library.ClearDrawingWand(self.resource)
@@ -1095,7 +1093,7 @@ class Drawing(Resource):
         if not res:
             self.raise_exception()
 
-    def ellipse(self, origin, radius, rotation=(0, 360)):
+    def ellipse(self, origin, radius, rotation=None):
         """Draws a ellipse at ``origin`` with independent x & y ``radius``.
         Ellipse can be partial by setting start & end ``rotation``.
 
@@ -1113,13 +1111,17 @@ class Drawing(Resource):
         .. versionadded:: 0.4.0
 
         """
+        if rotation is None:
+            rotation = (0, 360)
+        assertions.assert_coordinate(origin=origin, radius=radius,
+                                     rotation=rotation)
         origin_x, origin_y = origin
         radius_x, radius_y = radius
         rotation_start, rotation_end = rotation
         library.DrawEllipse(self.resource,
-                            float(origin_x), float(origin_y),  # origin
-                            float(radius_x), float(radius_y),  # radius
-                            float(rotation_start), float(rotation_end))
+                            origin_x, origin_y,
+                            radius_x, radius_y,
+                            rotation_start, rotation_end)
 
     def get_font_metrics(self, image, text, multiline=False):
         """Queries font metrics from the given ``text``.
@@ -1428,13 +1430,12 @@ class Drawing(Resource):
         .. versionadded:: 0.4.0
 
         """
-        if to is None:
-            raise TypeError('to is missing')
+        assertions.assert_coordinate(to=to)
         x, y = to
         if relative:
-            library.DrawPathLineToRelative(self.resource, float(x), float(y))
+            library.DrawPathLineToRelative(self.resource, x, y)
         else:
-            library.DrawPathLineToAbsolute(self.resource, float(x), float(y))
+            library.DrawPathLineToAbsolute(self.resource, x, y)
         return self
 
     def path_move(self, to=None, relative=False):
@@ -1452,13 +1453,12 @@ class Drawing(Resource):
         .. versionadded:: 0.4.0
 
         """
-        if to is None:
-            raise TypeError('to is missing')
+        assertions.assert_coordinate(to=to)
         x, y = to
         if relative:
-            library.DrawPathMoveToRelative(self.resource, float(x), float(y))
+            library.DrawPathMoveToRelative(self.resource, x, y)
         else:
-            library.DrawPathMoveToAbsolute(self.resource, float(x), float(y))
+            library.DrawPathMoveToAbsolute(self.resource, x, y)
         return self
 
     def path_start(self):
@@ -1564,12 +1564,15 @@ class Drawing(Resource):
             or alter, any previously executed drawing commands.
 
         :returns: success of pop operation.
-        :rtype: `bool`
+        :rtype: :class:`bool`
 
         .. versionadded:: 0.4.0
 
         """
-        return bool(library.PopDrawingWand(self.resource))
+        ok = bool(library.PopDrawingWand(self.resource))
+        if not ok:  # pragma: no cover
+            self.raise_exception()
+        return ok
 
     def pop_clip_path(self):
         """Terminates a clip path definition.
@@ -1642,12 +1645,15 @@ class Drawing(Resource):
             drawn artifacts.
 
         :returns: success of push operation.
-        :rtype: `bool`
+        :rtype: :class:`bool`
 
         .. versionadded:: 0.4.0
 
         """
-        return bool(library.PushDrawingWand(self.resource))
+        ok = bool(library.PushDrawingWand(self.resource))
+        if not ok:
+            self.raise_exception()
+        return ok
 
     def push_clip_path(self, clip_mask_id):
         """Starts a clip path definition which is comprised of any number of
@@ -1691,7 +1697,7 @@ class Drawing(Resource):
         :param height: height of pattern space.
         :type height: :class:`numbers.Real`
         :returns: success of push operation
-        :rtype: `bool`
+        :rtype: :class:`bool`
 
         .. versionadded:: 0.4.0
 
@@ -1701,6 +1707,8 @@ class Drawing(Resource):
         okay = library.DrawPushPattern(self.resource, binary(pattern_id),
                                        left, top,
                                        width, height)
+        if not okay:  # pragma: no cover
+            self.raise_exception()
         return bool(okay)
 
     def rectangle(self, left=None, top=None, right=None, bottom=None,
