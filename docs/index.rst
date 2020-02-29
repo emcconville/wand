@@ -13,6 +13,10 @@ Wand
    :alt: Build Status
    :target: https://travis-ci.org/emcconville/wand
 
+.. image:: https://github.com/emcconville/wand/workflows/Wand%20CI/badge.svg
+   :alt: Build Status
+   :target: https://github.com/emcconville/wand/actions?query=workflow%3A%22Wand+CI%22
+
 .. image:: https://img.shields.io/coveralls/emcconville/wand.svg?style=flat
    :alt: Coverage Status
    :target: https://coveralls.io/r/emcconville/wand
@@ -132,10 +136,11 @@ There's a Stack Overflow tag for Wand:
 
 http://stackoverflow.com/questions/tagged/wand
 
-Freely ask questions about Wand including troubleshooting.  Thanks for
-sindikat_'s contribution.
+Freely ask questions about Wand including troubleshooting.
 
-.. _sindikat: http://stackoverflow.com/users/596361/sindikat
+Thanks to everyone in the `Stack Overflow community`__ for contributions.
+
+__ https://stackoverflow.com/tags/wand/topusers
 
 
 Documentation

@@ -141,15 +141,12 @@ def test_blue_shift(fx_asset):
             img.blue_shift('NaN')
 
 
-def test_blur(fx_asset, display):
+def test_blur(fx_asset):
     with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
         before = img[100, 100]
         img.blur(30, 10)
         after = img[100, 100]
         assert before != after
-        assert 0.84 <= after.red <= 0.851
-        assert 0.74 <= after.green <= 0.75
-        assert 0.655 <= after.blue < 0.67
     with Image(filename='rose:') as img:
         was = img.signature
         img.blur(30, 10, 'red')
@@ -367,7 +364,7 @@ def test_combine():
         img.combine()
         assert len(img.sequence) == 1
         pixel = img[0, 0]
-        assert pixel.red > pixel.green  > pixel.blue
+        assert pixel.red > pixel.green > pixel.blue
 
 
 def test_compare(fx_asset):
@@ -993,7 +990,7 @@ def test_gamma_user_error(fx_asset):
             img.gamma(0.0, 'no channel')
 
 
-def test_gaussian_blur(fx_asset, display):
+def test_gaussian_blur(fx_asset):
     with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
         before = img[100, 100]
         img.gaussian_blur(30, 10)
@@ -1378,19 +1375,12 @@ def test_mode(fx_asset):
         assert was != img.signature
 
 
-def test_modulate(fx_asset, display):
+def test_modulate(fx_asset):
     with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
         before = img[100, 100]
         img.modulate(120, 120, 120)
         after = img[100, 100]
         assert before != after
-        #  Resulting channels should be between around ``(0.98, 0.98, 0.92)``;
-        #  however, JPEG format + quantum depth can effect this metric.
-        #  For this test, any value above between ``(0.89, 0.89, 0.72)`` and
-        #  ``(1.0, 1.0, 1.0)`` should pass.
-        assert 0.90 <= after.red <= 0.99
-        assert 0.90 <= after.green <= 0.99
-        assert 0.80 <= after.blue <= 0.97
 
 
 def test_morphology_builtin(fx_asset):
@@ -1479,7 +1469,7 @@ def test_noise():
         assert was != img.signature
 
 
-def test_normalize(display, fx_asset):
+def test_normalize(fx_asset):
     with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
         left_top = img[0, 0]
         left_bottom = img[0, -1]
@@ -1504,6 +1494,7 @@ def test_normalize_channel(fx_asset):
         was = img.signature
         img.normalize('red')
         assert was != img.signature
+
 
 def test_oil_paint():
     with Image(filename='rose:') as img:
@@ -2346,15 +2337,12 @@ def test_unique_colors(fx_asset):
         assert was != img.signature
 
 
-def test_unsharp_mask(fx_asset, display):
+def test_unsharp_mask(fx_asset):
     with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
         before = img[100, 100]
         img.unsharp_mask(1.1, 1, 0.5, 0.001)
         after = img[100, 100]
         assert before != after
-        assert 0.89 <= after.red <= 0.90
-        assert 0.82 <= after.green <= 0.83
-        assert 0.72 <= after.blue < 0.74
     with Image(filename='rose:') as img:
         was = img.signature
         img.unsharp_mask(1.1, 1, 0.5, 0.001, channel='red')

@@ -322,7 +322,7 @@ def test_draw_color():
 def test_draw_color_user_error():
     with Drawing() as draw:
         with raises(TypeError):
-            draw.color()
+            draw.color('apples')
         with raises(TypeError):
             draw.color(1, 2, 4)
         with raises(ValueError):
@@ -375,7 +375,7 @@ def test_draw_matte():
 def test_draw_matte_user_error():
     with Drawing() as draw:
         with raises(TypeError):
-            draw.matte()
+            draw.matte('apples')
         with raises(TypeError):
             draw.matte(1, 2, 4)
         with raises(ValueError):
@@ -636,7 +636,7 @@ def test_draw_move_user_error():
     [('right', 40), ('width', 30)],
     [('bottom', 40), ('height', 30)]
 ))
-def test_draw_rectangle(kwargs, display, fx_wand):
+def test_draw_rectangle(kwargs, fx_wand):
     white = Color('WHITE')
     black = Color('BLACK')
     gray = Color('#ccc')
@@ -646,7 +646,6 @@ def test_draw_rectangle(kwargs, display, fx_wand):
         fx_wand.stroke_color = gray
         fx_wand.rectangle(left=10, top=10, **dict(kwargs))
         fx_wand.draw(img)
-        display(img)
         assert (img[7, 7] == img[7, 42] == img[42, 7] ==
                 img[42, 42] == img[0, 0] == img[49, 49] == white)
         assert (img[12, 12] == img[12, 38] == img[38, 12] ==
@@ -659,7 +658,7 @@ def test_draw_rectangle(kwargs, display, fx_wand):
     [('yradius', 20)],
     [('radius', 10)]
 ))
-def test_draw_rectangle_with_radius(kwargs, display, fx_wand):
+def test_draw_rectangle_with_radius(kwargs, fx_wand):
     white = Color('WHITE')
     black = Color('BLACK')
     gray = Color('#ccc')
@@ -670,7 +669,6 @@ def test_draw_rectangle_with_radius(kwargs, display, fx_wand):
         fx_wand.rectangle(left=10, top=10,
                           width=30, height=30, **dict(kwargs))
         fx_wand.draw(img)
-        display(img)
         assert img[10, 10] == img[40, 40] == white
         assert img[26, 12] == img[26, 36] == black
 
@@ -687,7 +685,7 @@ def test_draw_rotate():
             assert img[0, 49] == black
 
 
-def test_draw_scale(display, fx_wand):
+def test_draw_scale(fx_wand):
     white = Color('WHITE')
     black = Color('BLACK')
     with Image(width=50, height=50, background=white) as img:
@@ -695,14 +693,13 @@ def test_draw_scale(display, fx_wand):
         fx_wand.scale(x=2.0, y=0.5)
         fx_wand.rectangle(top=5, left=5, width=20, height=20)
         fx_wand.draw(img)
-        display(img)
         # if width was scaled up by 200%
         assert img[45, 10] == black
         # if height was scaled down by 50%
         assert img[20, 20] == white
 
 
-def test_set_fill_pattern_url(display, fx_wand):
+def test_set_fill_pattern_url(fx_wand):
     white = Color('#fff')
     green = Color('#0f0')
     black = Color('#000')
@@ -715,11 +712,10 @@ def test_set_fill_pattern_url(display, fx_wand):
         fx_wand.set_fill_pattern_url('#green_circle')
         fx_wand.rectangle(top=5, left=5, width=40, height=40)
         fx_wand.draw(img)
-        display(img)
         assert img[17, 17] == green
 
 
-def test_set_stroke_pattern_url(display, fx_wand):
+def test_set_stroke_pattern_url(fx_wand):
     white = Color('#fff')
     green = Color('#0f0')
     with Image(width=50, height=50, background=white) as img:
@@ -732,7 +728,6 @@ def test_set_stroke_pattern_url(display, fx_wand):
         fx_wand.stroke_width = 6
         fx_wand.rectangle(top=5, left=5, width=40, height=40)
         fx_wand.draw(img)
-        display(img)
         assert img[45, 45] == green
 
 
@@ -920,7 +915,7 @@ def test_set_get_stroke_width_user_error(fx_wand):
         fx_wand.stroke_width = -1.5
 
 
-def test_draw_affine(display, fx_wand):
+def test_draw_affine(fx_wand):
     skyblue = Color('skyblue')
     black = Color('black')
     with Image(width=100, height=100, background=skyblue) as img:
@@ -928,7 +923,6 @@ def test_draw_affine(display, fx_wand):
         fx_wand.affine([1.5, 0.5, 0, 1.5, 45, 25])
         fx_wand.rectangle(top=5, left=5, width=25, height=25)
         fx_wand.draw(img)
-        display(img)
         assert img[25, 25] == skyblue
         assert img[75, 75] == black
         with raises(ValueError):
@@ -939,7 +933,7 @@ def test_draw_affine(display, fx_wand):
 
 @mark.skipif(MAGICK_VERSION_NUMBER >= 0x700,
              reason="Needs to be rewritten/simplified.")
-def test_draw_clip_path(display, fx_wand):
+def test_draw_clip_path(fx_wand):
     skyblue = Color('skyblue')
     orange = Color('orange')
     with Image(width=100, height=100, background=skyblue) as img:
@@ -957,6 +951,5 @@ def test_draw_clip_path(display, fx_wand):
         fx_wand.fill_color = orange
         fx_wand.rectangle(top=5, left=5, width=90, height=90)
         fx_wand.draw(img)
-        display(img)
         assert img[25, 25] == orange
         assert img[75, 75] == skyblue

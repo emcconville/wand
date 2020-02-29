@@ -366,10 +366,7 @@ class Drawing(Resource):
 
     @font_resolution.setter
     def font_resolution(self, resolution):
-        if not isinstance(resolution, abc.Sequence):
-            raise TypeError('expected sequence, not ' + repr(resolution))
-        if len(resolution) != 2:
-            raise ValueError('expected sequence of 2 floats')
+        assertions.assert_coordinate(font_resolution=resolution)
         library.DrawSetFontResolution(self.resource, *resolution)
 
     @property
@@ -516,8 +513,8 @@ class Drawing(Resource):
 
     @property
     def stroke_dash_array(self):
-        """(:class:`~collections.abc.Sequence`) - (:class:`numbers.Real`) An array
-        representing the pattern of dashes & gaps used to stroke paths.
+        """(:class:`~collections.abc.Sequence`) - (:class:`numbers.Real`) An
+        array representing the pattern of dashes & gaps used to stroke paths.
         It also can be set.
 
         .. versionadded:: 0.4.0
@@ -903,13 +900,12 @@ class Drawing(Resource):
                 'Method added with ImageMagick version 7. ' +
                 'Please use `wand.drawing.Drawing.matte()\' instead.'
             )
-        if x is None or y is None:
-            raise TypeError('Both x & y coordinates need to be defined')
+        assertions.assert_real(x=x, y=y)
         assertions.string_in_list(PAINT_METHOD_TYPES,
                                   'wand.drawing.PAINT_METHOD_TYPES',
                                   paint_method=paint_method)
-        library.DrawAlpha(self.resource, float(x), float(y),
-                          PAINT_METHOD_TYPES.index(paint_method))
+        op = PAINT_METHOD_TYPES.index(paint_method)
+        library.DrawAlpha(self.resource, x, y, op)
 
     def arc(self, start, end, degree):
         """Draws a arc using the current :attr:`stroke_color`,
@@ -928,6 +924,7 @@ class Drawing(Resource):
         .. versionadded:: 0.4.0
 
         """
+        assertions.assert_coordinate(start=start, end=end, degree=degree)
         start_x, start_y = start
         end_x, end_y = end
         degree_start, degree_end = degree
@@ -980,11 +977,11 @@ class Drawing(Resource):
         .. versionadded:: 0.4.0
 
         """
+        assertions.assert_coordinate(origin=origin, perimeter=perimeter)
         origin_x, origin_y = origin
         perimeter_x, perimeter_y = perimeter
-        library.DrawCircle(self.resource,
-                           float(origin_x), float(origin_y),  # origin
-                           float(perimeter_x), float(perimeter_y))  # perimeter
+        library.DrawCircle(self.resource, origin_x, origin_y,
+                           perimeter_x, perimeter_y)
 
     def clear(self):
         library.ClearDrawingWand(self.resource)
@@ -998,7 +995,7 @@ class Drawing(Resource):
         """
         return type(self)(drawing=self)
 
-    def color(self, x=None, y=None, paint_method='undefined'):
+    def color(self, x=0.0, y=0.0, paint_method='undefined'):
         """Draws a color on the image using current fill color, starting
         at specified position & method.
 
@@ -1014,13 +1011,12 @@ class Drawing(Resource):
         .. versionadded:: 0.4.0
 
         """
-        if x is None or y is None:
-            raise TypeError('Both x & y coordinates need to be defined')
+        assertions.assert_real(x=x, y=y)
         assertions.string_in_list(PAINT_METHOD_TYPES,
                                   'wand.drawing.PAINT_METHOD_TYPES',
                                   paint_method=paint_method)
-        library.DrawColor(self.resource, float(x), float(y),
-                          PAINT_METHOD_TYPES.index(paint_method))
+        op = PAINT_METHOD_TYPES.index(paint_method)
+        library.DrawColor(self.resource, x, y, op)
 
     def comment(self, message=None):
         """Adds a comment to the vector stream.
@@ -1060,16 +1056,13 @@ class Drawing(Resource):
         """
         assertions.assert_string(operator=operator)
         assertions.assert_real(left=left, top=top, width=width, height=height)
-        try:
-            op = COMPOSITE_OPERATORS.index(operator)
-        except IndexError:
-            raise IndexError(repr(operator) + ' is an invalid composite '
-                             'operator type; see wand.image.COMPOSITE_'
-                             'OPERATORS dictionary')
-        okay = library.DrawComposite(self.resource, op, left, top, width,
-                                     height, image.wand)
-        if okay == 0:
-            self.raise_exception()
+        assertions.string_in_list(COMPOSITE_OPERATORS,
+                                  'wand.drawing.COMPOSITE_OPERATORS',
+                                  operator=operator)
+        op = COMPOSITE_OPERATORS.index(operator)
+        library.DrawComposite(self.resource, op, left, top, width,
+                              height, image.wand)
+        self.raise_exception()
 
     def draw(self, image):
         """Renders the current drawing into the ``image``.  You can simply
@@ -1100,7 +1093,7 @@ class Drawing(Resource):
         if not res:
             self.raise_exception()
 
-    def ellipse(self, origin, radius, rotation=(0, 360)):
+    def ellipse(self, origin, radius, rotation=None):
         """Draws a ellipse at ``origin`` with independent x & y ``radius``.
         Ellipse can be partial by setting start & end ``rotation``.
 
@@ -1118,13 +1111,17 @@ class Drawing(Resource):
         .. versionadded:: 0.4.0
 
         """
+        if rotation is None:
+            rotation = (0, 360)
+        assertions.assert_coordinate(origin=origin, radius=radius,
+                                     rotation=rotation)
         origin_x, origin_y = origin
         radius_x, radius_y = radius
         rotation_start, rotation_end = rotation
         library.DrawEllipse(self.resource,
-                            float(origin_x), float(origin_y),  # origin
-                            float(radius_x), float(radius_y),  # radius
-                            float(rotation_start), float(rotation_end))
+                            origin_x, origin_y,
+                            radius_x, radius_y,
+                            rotation_start, rotation_end)
 
     def get_font_metrics(self, image, text, multiline=False):
         """Queries font metrics from the given ``text``.
@@ -1179,7 +1176,7 @@ class Drawing(Resource):
                          int(start_x), int(start_y),
                          int(end_x), int(end_y))
 
-    def matte(self, x=None, y=None, paint_method='undefined'):
+    def matte(self, x=0.0, y=0.0, paint_method='undefined'):
         """Paints on the image's opacity channel in order to set effected pixels
         to transparent.
 
@@ -1206,13 +1203,12 @@ class Drawing(Resource):
                 'Method removed from ImageMagick version. ' +
                 'Please use `wand.drawing.Drawing.alpha()\' instead.'
             )
-        if x is None or y is None:
-            raise TypeError('Both x & y coordinates need to be defined')
+        assertions.assert_real(x=x, y=y)
         assertions.string_in_list(PAINT_METHOD_TYPES,
                                   'wand.drawing.PAINT_METHOD_TYPES',
                                   paint_method=paint_method)
-        library.DrawMatte(self.resource, float(x), float(y),
-                          PAINT_METHOD_TYPES.index(paint_method))
+        op = PAINT_METHOD_TYPES.index(paint_method)
+        library.DrawMatte(self.resource, x, y, op)
 
     def path_close(self):
         """Adds a path element to the current path which closes
@@ -1411,12 +1407,11 @@ class Drawing(Resource):
         .. versionadded:: 0.4.0
 
         """
-        if x is None:
-            raise TypeError('x is missing')
+        assertions.assert_real(x=x)
         if relative:
-            library.DrawPathLineToHorizontalRelative(self.resource, float(x))
+            library.DrawPathLineToHorizontalRelative(self.resource, x)
         else:
-            library.DrawPathLineToHorizontalAbsolute(self.resource, float(x))
+            library.DrawPathLineToHorizontalAbsolute(self.resource, x)
         return self
 
     def path_line(self, to=None, relative=False):
@@ -1435,13 +1430,12 @@ class Drawing(Resource):
         .. versionadded:: 0.4.0
 
         """
-        if to is None:
-            raise TypeError('to is missing')
+        assertions.assert_coordinate(to=to)
         x, y = to
         if relative:
-            library.DrawPathLineToRelative(self.resource, float(x), float(y))
+            library.DrawPathLineToRelative(self.resource, x, y)
         else:
-            library.DrawPathLineToAbsolute(self.resource, float(x), float(y))
+            library.DrawPathLineToAbsolute(self.resource, x, y)
         return self
 
     def path_move(self, to=None, relative=False):
@@ -1459,13 +1453,12 @@ class Drawing(Resource):
         .. versionadded:: 0.4.0
 
         """
-        if to is None:
-            raise TypeError('to is missing')
+        assertions.assert_coordinate(to=to)
         x, y = to
         if relative:
-            library.DrawPathMoveToRelative(self.resource, float(x), float(y))
+            library.DrawPathMoveToRelative(self.resource, x, y)
         else:
-            library.DrawPathMoveToAbsolute(self.resource, float(x), float(y))
+            library.DrawPathMoveToAbsolute(self.resource, x, y)
         return self
 
     def path_start(self):
@@ -1497,12 +1490,11 @@ class Drawing(Resource):
         .. versionadded:: 0.4.0
 
         """
-        if y is None:
-            raise TypeError('y is missing')
+        assertions.assert_real(y=y)
         if relative:
-            library.DrawPathLineToVerticalRelative(self.resource, float(y))
+            library.DrawPathLineToVerticalRelative(self.resource, y)
         else:
-            library.DrawPathLineToVerticalAbsolute(self.resource, float(y))
+            library.DrawPathLineToVerticalAbsolute(self.resource, y)
         return self
 
     def polygon(self, points=None):
@@ -1558,9 +1550,8 @@ class Drawing(Resource):
         .. versionadded:: 0.4.0
 
         """
-        library.DrawPoint(self.resource,
-                          float(x),
-                          float(y))
+        assertions.assert_real(x=x, y=y)
+        library.DrawPoint(self.resource, x, y)
 
     def pop(self):
         """Pop destroys the current tip of the drawing context stack,
@@ -1573,12 +1564,15 @@ class Drawing(Resource):
             or alter, any previously executed drawing commands.
 
         :returns: success of pop operation.
-        :rtype: `bool`
+        :rtype: :class:`bool`
 
         .. versionadded:: 0.4.0
 
         """
-        return bool(library.PopDrawingWand(self.resource))
+        ok = bool(library.PopDrawingWand(self.resource))
+        if not ok:  # pragma: no cover
+            self.raise_exception()
+        return ok
 
     def pop_clip_path(self):
         """Terminates a clip path definition.
@@ -1651,12 +1645,15 @@ class Drawing(Resource):
             drawn artifacts.
 
         :returns: success of push operation.
-        :rtype: `bool`
+        :rtype: :class:`bool`
 
         .. versionadded:: 0.4.0
 
         """
-        return bool(library.PushDrawingWand(self.resource))
+        ok = bool(library.PushDrawingWand(self.resource))
+        if not ok:
+            self.raise_exception()
+        return ok
 
     def push_clip_path(self, clip_mask_id):
         """Starts a clip path definition which is comprised of any number of
@@ -1700,7 +1697,7 @@ class Drawing(Resource):
         :param height: height of pattern space.
         :type height: :class:`numbers.Real`
         :returns: success of push operation
-        :rtype: `bool`
+        :rtype: :class:`bool`
 
         .. versionadded:: 0.4.0
 
@@ -1710,6 +1707,8 @@ class Drawing(Resource):
         okay = library.DrawPushPattern(self.resource, binary(pattern_id),
                                        left, top,
                                        width, height)
+        if not okay:  # pragma: no cover
+            self.raise_exception()
         return bool(okay)
 
     def rectangle(self, left=None, top=None, right=None, bottom=None,
@@ -1825,7 +1824,7 @@ class Drawing(Resource):
             library.DrawRectangle(self.resource, left, top, right, bottom)
         self.raise_exception()
 
-    def rotate(self, degree):
+    def rotate(self, degree=0.0):
         """Applies the specified rotation to the current coordinate space.
 
         :param degree: degree to rotate
@@ -1837,14 +1836,14 @@ class Drawing(Resource):
         assertions.assert_real(degree=degree)
         library.DrawRotate(self.resource, degree)
 
-    def scale(self, x=None, y=None):
+    def scale(self, x=1.0, y=1.0):
         """
         Adjusts the scaling factor to apply in the horizontal and vertical
         directions to the current coordinate space.
 
-        :param x: Horizontal scale factor
+        :param x: Horizontal scale factor. Default `1.0`
         :type x: :class:`~numbers.Real`
-        :param y: Vertical scale factor
+        :param y: Vertical scale factor. Default `1.0`
         :type y: :class:`~numbers.Real`
 
         .. versionadded:: 0.4.0
@@ -1869,10 +1868,8 @@ class Drawing(Resource):
         if url[0] != '#':
             raise ValueError('value not a relative URL, '
                              'expecting "#identifier"')
-        okay = library.DrawSetFillPatternURL(self.resource, binary(url))
-        if okay == 0:
-            # ThrowDrawException(DrawError,"URLNotFound",fill_url)
-            self.raise_exception()
+        library.DrawSetFillPatternURL(self.resource, binary(url))
+        self.raise_exception()
 
     def set_stroke_pattern_url(self, url):
         """Sets the pattern used for stroking object outlines. Only local
@@ -1890,10 +1887,8 @@ class Drawing(Resource):
         if url[0] != '#':
             raise ValueError('value not a relative URL, '
                              'expecting "#identifier"')
-        okay = library.DrawSetStrokePatternURL(self.resource, binary(url))
-        if okay == 0:
-            # ThrowDrawException(DrawError,"URLNotFound",fill_url)
-            self.raise_exception()
+        library.DrawSetStrokePatternURL(self.resource, binary(url))
+        self.raise_exception()
 
     def skew(self, x=None, y=None):
         """Skews the current coordinate system in the horizontal direction if
@@ -1908,9 +1903,11 @@ class Drawing(Resource):
 
         """
         if x is not None:
-            library.DrawSkewX(self.resource, float(x))
+            assertions.assert_real(x=x)
+            library.DrawSkewX(self.resource, x)
         if y is not None:
-            library.DrawSkewY(self.resource, float(y))
+            assertions.assert_real(y=y)
+            library.DrawSkewY(self.resource, y)
 
     def text(self, x, y, body):
         """Writes a text ``body`` into (``x``, ``y``).
@@ -1940,7 +1937,7 @@ class Drawing(Resource):
             ctypes.cast(body_p, ctypes.POINTER(ctypes.c_ubyte))
         )
 
-    def translate(self, x=None, y=None):
+    def translate(self, x=0.0, y=0.0):
         """Applies a translation to the current coordinate system which moves
         the coordinate system origin to the specified coordinate.
 
@@ -1951,9 +1948,8 @@ class Drawing(Resource):
 
         .. versionadded:: 0.4.0
         """
-        if x is None or y is None:
-            raise TypeError('Both x & y coordinates need to be defined')
-        library.DrawTranslate(self.resource, float(x), float(y))
+        assertions.assert_real(x=x, y=y)
+        library.DrawTranslate(self.resource, x, y)
 
     def viewbox(self, left, top, right, bottom):
         """Viewbox sets the overall canvas size to be recorded with the drawing
