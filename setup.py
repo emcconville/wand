@@ -42,7 +42,6 @@ doc_requires = [
 setup(
     name='Wand',
     packages=['wand', 'wand.cdefs'],
-    data_files=[('', ['README.rst'])],
     version=VERSION,
     description='Ctypes-based simple MagickWand API binding for Python',
     long_description=readme(),
