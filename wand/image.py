@@ -3238,6 +3238,7 @@ class BaseImage(Resource):
         if not r:  # pragma: no cover
             self.raise_exception()
         self.wand = r
+        self.reset_sequence()
 
     @manipulative
     @trap_exception
@@ -3490,6 +3491,7 @@ class BaseImage(Resource):
             new_wand = library.MagickCombineImages(self.wand, colorspace_c)
         if new_wand:
             self.wand = new_wand
+            self.reset_sequence()
         else:
             self.raise_exception()
 
@@ -4076,6 +4078,7 @@ class BaseImage(Resource):
             return True
         if self.animation:
             self.wand = library.MagickCoalesceImages(self.wand)
+            self.reset_sequence()
             library.MagickSetLastIterator(self.wand)
             n = library.MagickGetIteratorIndex(self.wand)
             library.MagickResetIterator(self.wand)
@@ -6568,6 +6571,7 @@ class BaseImage(Resource):
         blur = ctypes.c_double(float(blur))
         if self.animation:
             self.wand = library.MagickCoalesceImages(self.wand)
+            self.reset_sequence()
             library.MagickSetLastIterator(self.wand)
             n = library.MagickGetIteratorIndex(self.wand)
             library.MagickResetIterator(self.wand)
@@ -6590,6 +6594,14 @@ class BaseImage(Resource):
 
         """
         library.MagickResetImagePage(self.wand, None)
+
+    def reset_sequence(self):
+        """Abstract method prototype.
+        See :meth:`wand.image.Image.reset_sequence()`.
+
+        .. versionadded:: 0.6.0
+        """
+        pass
 
     @manipulative
     def resize(self, width=None, height=None, filter='undefined', blur=1):
@@ -6641,6 +6653,7 @@ class BaseImage(Resource):
         blur = ctypes.c_double(float(blur))
         if self.animation:
             self.wand = library.MagickCoalesceImages(self.wand)
+            self.reset_sequence()
             library.MagickSetLastIterator(self.wand)
             n = library.MagickGetIteratorIndex(self.wand)
             library.MagickResetIterator(self.wand)
@@ -6686,6 +6699,7 @@ class BaseImage(Resource):
         with background:
             if self.animation:
                 self.wand = library.MagickCoalesceImages(self.wand)
+                self.reset_sequence()
                 library.MagickSetLastIterator(self.wand)
                 n = library.MagickGetIteratorIndex(self.wand)
                 library.MagickResetIterator(self.wand)
@@ -6764,6 +6778,7 @@ class BaseImage(Resource):
         assertions.assert_counting_number(width=width, height=height)
         if self.animation:
             self.wand = library.MagickCoalesceImages(self.wand)
+            self.reset_sequence()
             library.MagickSetLastIterator(self.wand)
             n = library.MagickGetIteratorIndex(self.wand)
             library.MagickResetIterator(self.wand)
@@ -7435,6 +7450,7 @@ class BaseImage(Resource):
                                               offset)
         if new_wand:
             self.wand = new_wand
+            self.reset_sequence()
         else:  # pragma: no cover
             self.raise_exception()
 
@@ -8775,6 +8791,17 @@ class Image(BaseImage):
         else:
             if units is not None:
                 self.units = units
+
+    def reset_sequence(self):
+        """Remove any previously allocated :class:`~wand.sequence.SingleImage`
+        instances in :attr:`sequence` attribute.
+
+        .. versionadded:: 0.6.0
+        """
+        for instance in self.sequence.instances:
+            if hasattr(instance, 'destroy'):
+                instance.destroy()
+        self.sequence.instances = []
 
     def save(self, file=None, filename=None, adjoin=True):
         """Saves the image into the ``file`` or ``filename``. It takes
