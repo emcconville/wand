@@ -3776,6 +3776,7 @@ class BaseImage(Resource):
         if not r:  # pragma: no cover
             self.raise_exception()
         self.wand = r
+        self.reset_sequence()
 
     def connected_components(self, connectivity=4, area_threshold=None,
                              mean_color=False, keep=None, remove=None):
@@ -5540,6 +5541,7 @@ class BaseImage(Resource):
             self.raise_exception()
         else:
             self.wand = r
+            self.reset_sequence()
 
     @manipulative
     def mode(self, width, height=None):
@@ -7184,6 +7186,7 @@ class BaseImage(Resource):
         result = library.MagickSmushImages(self.wand, bool(stacked), offset)
         if result:
             self.wand = result
+            self.reset_sequence()
         else:  # pragma: no cover
             self.raise_exception()
 
