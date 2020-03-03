@@ -8513,8 +8513,9 @@ class Image(BaseImage):
 
     @property
     def animation(self):
-        return (self.mimetype in ('image/gif', 'image/x-gif') and
-                len(self.sequence) > 1)
+        is_gif = self.mimetype in ('image/gif', 'image/x-gif')
+        frames = library.MagickGetNumberImages(self.wand)
+        return is_gif and frames > 1
 
     @property
     def mimetype(self):
