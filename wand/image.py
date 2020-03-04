@@ -8478,7 +8478,7 @@ class Image(BaseImage):
         if not r:
             instance.raise_exception()
             msg = ('MagickPingImage returns false, but did raise ImageMagick '
-                   'exception. This can occurs when a delegate is missing, or '
+                   'exception. This can occur when a delegate is missing, or '
                    'returns EXIT_SUCCESS without generating a raster.')
             raise WandRuntimeError(msg)
         else:
@@ -8774,7 +8774,7 @@ class Image(BaseImage):
         if not r:
             self.raise_exception()
             msg = ('MagickReadImage returns false, but did not raise '
-                   'ImageMagick  exception. This can occurs when a delegate '
+                   'ImageMagick  exception. This can occur when a delegate '
                    'is missing, or returns EXIT_SUCCESS without generating a '
                    'raster.')
             raise WandRuntimeError(msg)
