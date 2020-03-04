@@ -40,13 +40,6 @@ easily installed using APT:
 
    $ sudo apt-get install libmagickwand-dev
 
-If you need SVG, WMF, OpenEXR, DjVu, and Graphviz support you have to install
-``libmagickcore5-extra`` as well:
-
-.. sourcecode:: console
-
-   $ sudo apt-get install libmagickcore5-extra
-
 
 .. _install-imagemagick-redhat:
 

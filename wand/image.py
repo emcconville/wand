@@ -668,7 +668,7 @@ IMAGE_TYPES = ('undefined', 'bilevel', 'grayscale', 'grayscalematte',
                'colorseparation', 'colorseparationmatte', 'optimize',
                'palettebilevelmatte')
 if MAGICK_VERSION_NUMBER >= 0x700:  # pragma: no cover
-    IMAGE_TYPES = ('undefined', 'bilevel', 'grayscale', 'grayscalemalpha',
+    IMAGE_TYPES = ('undefined', 'bilevel', 'grayscale', 'grayscalealpha',
                    'palette', 'palettealpha', 'truecolor', 'truecoloralpha',
                    'colorseparation', 'colorseparationalpha', 'optimize',
                    'palettebilevelalpha')
@@ -8538,8 +8538,9 @@ class Image(BaseImage):
 
     @property
     def animation(self):
-        return (self.mimetype in ('image/gif', 'image/x-gif') and
-                len(self.sequence) > 1)
+        is_gif = self.mimetype in ('image/gif', 'image/x-gif')
+        frames = library.MagickGetNumberImages(self.wand)
+        return is_gif and frames > 1
 
     @property
     def mimetype(self):
