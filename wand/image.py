@@ -3224,6 +3224,7 @@ class BaseImage(Resource):
         return r
 
     @manipulative
+    @trap_exception
     def coalesce(self):
         """Rebuilds image sequence with each frame size the same as first frame,
         and composites each frame atop of previous.
@@ -3235,10 +3236,10 @@ class BaseImage(Resource):
         .. versionadded:: 0.5.0
         """
         r = library.MagickCoalesceImages(self.wand)
-        if not r:  # pragma: no cover
-            self.raise_exception()
-        self.wand = r
-        self.reset_sequence()
+        if r:
+            self.wand = r
+            self.reset_sequence()
+        return bool(r)
 
     @manipulative
     @trap_exception
@@ -3447,6 +3448,7 @@ class BaseImage(Resource):
         return r
 
     @manipulative
+    @trap_exception
     def combine(self, channel='rgb_channels', colorspace='rgb'):
         """Creates an image where each color channel is assigned by a grayscale
         image in a sequence.
@@ -3492,8 +3494,7 @@ class BaseImage(Resource):
         if new_wand:
             self.wand = new_wand
             self.reset_sequence()
-        else:
-            self.raise_exception()
+        return bool(new_wand)
 
     @manipulative
     def compare(self, image, metric='undefined', highlight=None,
@@ -3762,6 +3763,7 @@ class BaseImage(Resource):
         return r
 
     @manipulative
+    @trap_exception
     def concat(self, stacked=False):
         """Concatenates images in stack into a single image. Left-to-right
         by default, top-to-bottom if ``stacked`` is True.
@@ -3773,10 +3775,10 @@ class BaseImage(Resource):
         """
         assertions.assert_bool(stacked=stacked)
         r = library.MagickAppendImages(self.wand, stacked)
-        if not r:  # pragma: no cover
-            self.raise_exception()
-        self.wand = r
-        self.reset_sequence()
+        if r:
+            self.wand = r
+            self.reset_sequence()
+        return bool(r)
 
     def connected_components(self, connectivity=4, area_threshold=None,
                              mean_color=False, keep=None, remove=None):
@@ -5513,6 +5515,7 @@ class BaseImage(Resource):
                                             color_distance)
 
     @manipulative
+    @trap_exception
     def merge_layers(self, method):
         """Composes all the image layers from the current given image onward
         to produce a single image of the merged layers.
@@ -5537,11 +5540,10 @@ class BaseImage(Resource):
                              '\'mosaic\', or \'trimbounds\'')
         m = IMAGE_LAYER_METHOD.index(method)
         r = library.MagickMergeImageLayers(self.wand, m)
-        if not r:  # pragma: no cover
-            self.raise_exception()
-        else:
+        if r:
             self.wand = r
             self.reset_sequence()
+        return bool(r)
 
     @manipulative
     def mode(self, width, height=None):
@@ -6526,6 +6528,7 @@ class BaseImage(Resource):
         return library.MagickRemapImage(self.wand, affinity.wand, method_idx)
 
     @manipulative
+    @trap_exception
     def resample(self, x_res=None, y_res=None, filter='undefined', blur=1):
         """Adjust the number of pixels in an image so that when displayed at
         the given Resolution or Density the image will still look the same size
@@ -6579,14 +6582,12 @@ class BaseImage(Resource):
             library.MagickResetIterator(self.wand)
             for i in xrange(n + 1):
                 library.MagickSetIteratorIndex(self.wand, i)
-                library.MagickResampleImage(self.wand, x_res, y_res,
-                                            filter, blur)
+                r = library.MagickResampleImage(self.wand, x_res, y_res,
+                                                filter, blur)
         else:
             r = library.MagickResampleImage(self.wand, x_res, y_res,
                                             filter, blur)
-
-            if not r:
-                self.raise_exception()
+        return r
 
     def reset_coords(self):
         """Reset the coordinate frame of the image so to the upper-left corner
@@ -6606,6 +6607,7 @@ class BaseImage(Resource):
         pass
 
     @manipulative
+    @trap_exception
     def resize(self, width=None, height=None, filter='undefined', blur=1):
         """Resizes the image.
 
@@ -6661,17 +6663,17 @@ class BaseImage(Resource):
             library.MagickResetIterator(self.wand)
             for i in xrange(n + 1):
                 library.MagickSetIteratorIndex(self.wand, i)
-                library.MagickResizeImage(self.wand, width, height,
-                                          filter, blur)
+                r = library.MagickResizeImage(self.wand, width, height,
+                                              filter, blur)
             library.MagickSetSize(self.wand, width, height)
         else:
             r = library.MagickResizeImage(self.wand, width, height,
                                           filter, blur)
             library.MagickSetSize(self.wand, width, height)
-            if not r:  # pragma: no cover
-                self.raise_exception()
+        return r
 
     @manipulative
+    @trap_exception
     def rotate(self, degree, background=None, reset_coords=True):
         """Rotates the image right.  It takes a ``background`` color
         for ``degree`` that isn't a multiple of 90.
@@ -6707,19 +6709,18 @@ class BaseImage(Resource):
                 library.MagickResetIterator(self.wand)
                 for i in range(0, n + 1):
                     library.MagickSetIteratorIndex(self.wand, i)
-                    library.MagickRotateImage(self.wand,
-                                              background.resource,
-                                              degree)
+                    result = library.MagickRotateImage(self.wand,
+                                                       background.resource,
+                                                       degree)
                     if reset_coords:
                         library.MagickResetImagePage(self.wand, None)
             else:
                 result = library.MagickRotateImage(self.wand,
                                                    background.resource,
                                                    degree)
-                if not result:  # pragma: no cover
-                    self.raise_exception()
                 if reset_coords:
                     self.reset_coords()
+        return result
 
     @manipulative
     @trap_exception
@@ -6759,6 +6760,7 @@ class BaseImage(Resource):
         return r
 
     @manipulative
+    @trap_exception
     def sample(self, width=None, height=None):
         """Resizes the image by sampling the pixels.  It's basically quicker
         than :meth:`resize()` except less quality as a trade-off.
@@ -6786,13 +6788,12 @@ class BaseImage(Resource):
             library.MagickResetIterator(self.wand)
             for i in xrange(n + 1):
                 library.MagickSetIteratorIndex(self.wand, i)
-                library.MagickSampleImage(self.wand, width, height)
+                r = library.MagickSampleImage(self.wand, width, height)
             library.MagickSetSize(self.wand, width, height)
         else:
             r = library.MagickSampleImage(self.wand, width, height)
             library.MagickSetSize(self.wand, width, height)
-            if not r:  # pragma: no cover
-                self.raise_exception()
+        return bool(r)
 
     @manipulative
     @trap_exception
@@ -7169,6 +7170,7 @@ class BaseImage(Resource):
         assertions.assert_real(radius=radius, sigma=sigma, angle=angle)
         return library.MagickSketchImage(self.wand, radius, sigma, angle)
 
+    @trap_exception
     def smush(self, stacked=False, offset=0):
         """Appends all images together. Similar behavior to :meth:`concat`,
         but with an optional offset between images.
@@ -7187,8 +7189,7 @@ class BaseImage(Resource):
         if result:
             self.wand = result
             self.reset_sequence()
-        else:  # pragma: no cover
-            self.raise_exception()
+        return bool(result)
 
     @manipulative
     @trap_exception
@@ -7420,6 +7421,7 @@ class BaseImage(Resource):
         return r
 
     @manipulative
+    @trap_exception
     def stegano(self, watermark, offset=0):
         """Hide a digital watermark of an image within the image.
 
@@ -7454,8 +7456,7 @@ class BaseImage(Resource):
         if new_wand:
             self.wand = new_wand
             self.reset_sequence()
-        else:  # pragma: no cover
-            self.raise_exception()
+        return bool(new_wand)
 
     @trap_exception
     def strip(self):
