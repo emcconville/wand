@@ -4111,6 +4111,7 @@ class BaseImage(Resource):
         return library.MagickCycleColormapImage(self.wand, offset)
 
     @manipulative
+    @trap_exception
     def deconstruct(self):
         """Iterates over internal image stack, and adjust each frame size to
         minimum bounding region of any changes from the previous frame.
@@ -4118,9 +4119,10 @@ class BaseImage(Resource):
         .. versionadded:: 0.5.0
         """
         r = library.MagickDeconstructImages(self.wand)
-        if not r:
-            self.raise_exception()
-        self.wand = r
+        if r:
+            self.wand = r
+            self.reset_sequence()
+        return bool(r)
 
     @manipulative
     @trap_exception
@@ -4744,13 +4746,13 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def gamma(self, adjustment_value, channel=None):
+    def gamma(self, adjustment_value=1.0, channel=None):
         """Gamma correct image.
 
         Specific color channels can be correct individual. Typical values
         range between 0.8 and 2.3.
 
-        :param adjustment_value: value to adjust gamma level
+        :param adjustment_value: value to adjust gamma level. Default `1.0`
         :type adjustment_value: :class:`numbers.Real`
         :param channel: optional channel to apply gamma correction
         :type channel: :class:`basestring`
@@ -5972,6 +5974,7 @@ class BaseImage(Resource):
         return r
 
     @manipulative
+    @trap_exception
     def optimize_layers(self):
         """Attempts to crop each frame to the smallest image without altering
         the animation.
@@ -5983,9 +5986,10 @@ class BaseImage(Resource):
         .. versionadded:: 0.5.0
         """
         r = library.MagickOptimizeImageLayers(self.wand)
-        if not r:  # pragma: no cover
-            self.raise_exception()
-        self.wand = r
+        if r:
+            self.wand = r
+            self.reset_sequence()
+        return bool(r)
 
     @manipulative
     @trap_exception
@@ -7494,6 +7498,7 @@ class BaseImage(Resource):
         return r
 
     @manipulative
+    @trap_exception
     def texture(self, tile):
         """Repeat tile-image across the width & height of the image.
 
@@ -7515,10 +7520,9 @@ class BaseImage(Resource):
             raise TypeError('Tile image must be an instance of '
                             'wand.image.Image, not ' + repr(tile))
         r = library.MagickTextureImage(self.wand, tile.wand)
-        if not bool(r):  # pragma: no cover
-            self.raise_exception()
-        else:
+        if r:
             self.wand = r
+        return bool(r)
 
     @manipulative
     @trap_exception
@@ -7598,6 +7602,7 @@ class BaseImage(Resource):
         return r
 
     @manipulative
+    @trap_exception
     def transform(self, crop='', resize=''):
         """Transforms the image using :c:func:`MagickTransformImage`,
         which is a convenience function accepting geometry strings to
@@ -7685,7 +7690,8 @@ class BaseImage(Resource):
         .. versionchanged:: 0.5.0
            Will call :meth:`crop()` followed by :meth:`resize()` in the event
            that :c:func:`MagickTransformImage` is not available.
-
+        .. deprecated:: 0.6.0
+           Use :meth:`crop()` and :meth:`resize()` instead.
         """  # noqa
         # Check that the values given are the correct types.  ctypes will do
         # this automatically, but we can make the error message more friendly
@@ -7733,7 +7739,7 @@ class BaseImage(Resource):
                             height=height.value)
             # Both `BaseImage.crop` & `BaseImage.resize` will handle
             # animation & error handling, so we can stop here.
-            return None
+            return True
         if self.animation:
             new_wand = library.MagickCoalesceImages(self.wand)
             length = len(self.sequence)
@@ -7751,9 +7757,9 @@ class BaseImage(Resource):
             self.sequence.instances = []
         else:
             new_wand = library.MagickTransformImage(self.wand, crop, resize)
-        if not new_wand:  # pragma: no cover
-            self.raise_exception()
-        self.wand = new_wand
+        if new_wand:
+            self.wand = new_wand
+        return bool(new_wand)
 
     @manipulative
     @trap_exception
