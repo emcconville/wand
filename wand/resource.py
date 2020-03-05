@@ -47,35 +47,35 @@ def terminus():
         library.MagickWandTerminus()
 
 
-arc = {}
+allocation_map = {}
 
 
 def allocate_ref(addr, deallocator):
-    global arc
-    if len(arc) == 0:
+    global allocation_map
+    if len(allocation_map) == 0:
         genesis()
-    if addr not in arc:
-        arc[addr] = deallocator
-    elif arc[addr] != deallocator:
-        arc[addr] = deallocator
+    if addr not in allocation_map:
+        allocation_map[addr] = deallocator
+    elif allocation_map[addr] != deallocator:
+        allocation_map[addr] = deallocator
 
 
 def deallocate_ref(addr):
-    global arc
-    if addr in arc:
-        deallocator = arc[addr]
-        if deallocator:
+    global allocation_map
+    if addr in allocation_map:
+        deallocator = allocation_map[addr]
+        if callable(deallocator):
             deallocator(addr)
-        del arc[addr]
+        del allocation_map[addr]
 
 
 @atexit.register
 def shutdown():
-    global arc
-    for addr, deallocator in arc.items():
-        if deallocator:
+    global allocation_map
+    for addr, deallocator in allocation_map.items():
+        if callable(deallocator):
             deallocator(addr)
-    arc = {}
+    allocation_map = {}
     terminus()
 
 
