@@ -1308,6 +1308,10 @@ class BaseImage(Resource):
            Support for additional setting values.
            However :attr:`Image.alpha_channel` will continue to return
            :class:`bool` if the current alpha/matte state is enabled.
+
+        .. versionchanged:: 0.6.0
+           Setting the alpha channel will apply the change to all frames
+           in the image stack.
         """
         return bool(library.MagickGetImageAlphaChannel(self.wand))
 
@@ -1325,7 +1329,12 @@ class BaseImage(Resource):
                                   'wand.image.ALPHA_CHANNEL_TYPES',
                                   alpha_channel=alpha_type)
         alpha_index = ALPHA_CHANNEL_TYPES.index(alpha_type)
-        library.MagickSetImageAlphaChannel(self.wand, alpha_index)
+        library.MagickSetLastIterator(self.wand)
+        n = library.MagickGetIteratorIndex(self.wand)
+        library.MagickResetIterator(self.wand)
+        for i in xrange(0, n + 1):
+            library.MagickSetIteratorIndex(self.wand, i)
+            library.MagickSetImageAlphaChannel(self.wand, alpha_index)
 
     @property
     def animation(self):
@@ -1391,6 +1400,11 @@ class BaseImage(Resource):
             result = library.MagickSetImageBackgroundColor(self.wand,
                                                            color.resource)
             if not result:  # pragma: no cover
+                self.raise_exception()
+            # Also set the image stack.
+            result = library.MagickSetBackgroundColor(self.wand,
+                                                      color.resource)
+            if not result:
                 self.raise_exception()
 
     @property
