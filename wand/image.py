@@ -4119,12 +4119,16 @@ class BaseImage(Resource):
         """Attempts to remove skew artifacts common with most
         scanning & optical import devices.
 
-        :params threshold: limit between foreground & background.
+        :params threshold: limit between foreground & background. Use a real
+                           number between `0.0` & `1.0` to match CLI's percent
+                           argument.
         :type threshold: :class:`numbers.Real`
 
         .. versionadded:: 0.5.0
         """
         assertions.assert_real(threshold=threshold)
+        if 0 < threshold <= 1.0:
+            threshold *= self.quantum_range
         return library.MagickDeskewImage(self.wand, threshold)
 
     @manipulative
