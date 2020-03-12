@@ -17,6 +17,18 @@ Unreleased
  - Updated :mod:`numpy` array interface methods to accept / generate
    :attr:`shape` data values as ``rows``, ``columns``, and ``channels``.
    This change should match other python-image numpy integrations. [:issue:`447`]
+ - Added ``adjoin=`` argument to :meth:`Image.save() <wand.image.Image.save>` method.
+ - Added support for :mod:`atexit`'s shutdown routine. [:issue:`248` & :issue:`361`]
+ - Added Python 2 classifiers to :file:`MANIFEST.in`. [:issue:`462` by Thijs Triemstra]
+ - Removed :file:`README.rst` from :file:`setup.py`. [:issue:`460`]
+ - Rewrote memory allocation manager. [:issue:`300` & :issue:`312`]
+ - Fixed segfault on macOS when invoking resource limits without calling
+   :c:func:`MagickWandGenesis()`.
+ - Fixed ``grayscalealpha`` spelling. [:issue:`463`]
+ - Fixed :meth:`Image.deskew() <wand.image.BaseImage.deskew>` threshold argument. [:issue:`467`]
+ - Fixed :attr:`Image.alpha_channel <wand.image.BaseImage.alpha_channel>` property to apply changes to all images in the stack. [:issue:`468`]
+ - [TEST] Switch CI environment to Ubuntu 18.04.04 LTS (Bionic)
+ - [TEST] Deprecated display fixtures.
 
 
 .. _changelog-0.5:
