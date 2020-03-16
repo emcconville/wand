@@ -5799,6 +5799,7 @@ class BaseImage(Resource):
                 library.MagickSetImageChannelMask(self.wand, channel_mask)
         return r
 
+    @manipulative
     @trap_exception
     def negate(self, grayscale=False, channel=None):
         """Negate the colors in the reference image.
@@ -5995,7 +5996,11 @@ class BaseImage(Resource):
     @trap_exception
     def optimize_layers(self):
         """Attempts to crop each frame to the smallest image without altering
-        the animation.
+        the animation. For best results, call
+        :meth:`Image.coalesce() <wand.image.BaseImage.coalesce>` before
+        manipulating any frames. For timing accuracy, any
+        :attr:`SingleImage.delay <wand.sequence.SingleImage.delay>` overwrites
+        must be applied after optimizing layers.
 
         .. note::
 
