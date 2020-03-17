@@ -15,9 +15,8 @@ from .compat import abc, string_type, text
 from .exceptions import TYPE_MAP, WandException
 from .version import MAGICK_VERSION_NUMBER
 
-__all__ = ('genesis', 'terminus', 'allocate_ref', 'deallocate_ref',
-           'limits', 'Resource', 'ResourceLimits', 'DestroyedResourceError',
-           'safe_copy', 'shutdown')
+__all__ = ('genesis', 'limits', 'safe_copy', 'shutdown', 'terminus',
+           'DestroyedResourceError', 'Resource', 'ResourceLimits')
 
 
 def genesis():
