@@ -18,6 +18,7 @@ Unreleased
    :attr:`shape` data values as ``rows``, ``columns``, and ``channels``.
    This change should match other python-image numpy integrations. [:issue:`447`]
  - Added ``adjoin=`` argument to :meth:`Image.save() <wand.image.Image.save>` method.
+ - Added ``reset_coords=`` argument to :meth:`Image.trim() <wand.image.BaseImage.trim>` method. [:issue:`472` ]
  - Added support for :mod:`atexit`'s shutdown routine. [:issue:`248` & :issue:`361`]
  - Added Python 2 classifiers to :file:`MANIFEST.in`. [:issue:`462` by Thijs Triemstra]
  - Removed :file:`README.rst` from :file:`setup.py`. [:issue:`460`]

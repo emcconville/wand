@@ -7899,7 +7899,7 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def trim(self, color=None, fuzz=0):
+    def trim(self, color=None, fuzz=0, reset_coords=False):
         """Remove solid border from image. Uses top left pixel as a guide
         by default, or you can also specify the ``color`` to remove.
 
@@ -7910,15 +7910,21 @@ class BaseImage(Resource):
                      two colors as the same. Value can be between ``0``,
                      and :attr:`quantum_range`.
         :type fuzz: :class:`numbers.Integral`
+        :param reset_coords: Reset coordinates after triming image. Default
+                             ``False``.
+        :type reset_coords: :class:`bool`
 
-        .. versionchanged:: 0.5.2
-           The ``color`` parameter may except color-compliant strings.
+
+        .. versionadded:: 0.2.1
 
         .. versionchanged:: 0.3.0
            Optional ``color`` and ``fuzz`` parameters.
 
-        .. versionadded:: 0.2.1
+        .. versionchanged:: 0.5.2
+           The ``color`` parameter may except color-compliant strings.
 
+        .. versionchanged:: 0.6.0
+           Optional ``reset_coords`` parameter added.
         """
         if color is None:
             color = self[0, 0]
@@ -7927,7 +7933,10 @@ class BaseImage(Resource):
         assertions.assert_color(color=color)
         with color:
             self.border(color, 1, 1, compose="copy")
-        return library.MagickTrimImage(self.wand, fuzz)
+        r = library.MagickTrimImage(self.wand, fuzz)
+        if reset_coords:
+            self.reset_coords()
+        return r
 
     @manipulative
     @trap_exception

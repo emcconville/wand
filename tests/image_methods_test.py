@@ -2330,6 +2330,13 @@ def test_trim_fuzz(fx_asset):
         assert fuzz_y < trim_y
 
 
+def test_trim_reset_coords():
+    with Image(filename='logo:') as img:
+        page = img.page
+        img.trim(reset_coords=True)
+        assert page != img.page
+
+
 def test_unique_colors(fx_asset):
     with Image(filename='rose:') as img:
         was = img.signature
