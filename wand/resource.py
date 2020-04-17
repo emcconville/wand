@@ -53,9 +53,7 @@ def allocate_ref(addr, deallocator):
     global allocation_map
     if len(allocation_map) == 0:
         genesis()
-    if addr not in allocation_map:
-        allocation_map[addr] = deallocator
-    elif allocation_map[addr] != deallocator:
+    if addr:
         allocation_map[addr] = deallocator
 
 
