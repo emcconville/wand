@@ -759,6 +759,7 @@ def test_draw_text(fx_asset):
     white = Color('#fff')
     black = Color('#000')
     with Image(width=100, height=100, background=white) as img:
+        was = img.signature
         with Drawing() as draw:
             draw.font = str(fx_asset.join('League_Gothic.otf'))
             draw.font_size = 25
@@ -767,10 +768,7 @@ def test_draw_text(fx_asset):
             draw.gravity = 'west'
             draw.text(0, 0, 'Hello Wand')
             draw.draw(img)
-        assert (img[0, 0] == img[0, -1] == img[-1, 0] == img[-1, -1] ==
-                img[77, 39] == img[77, 57] == white)
-        assert (img[2, 40] == img[2, 57] == img[75, 40] == img[75, 57] ==
-                black)
+        assert was != img.signature
 
 
 def test_get_font_metrics_test(fx_asset):
