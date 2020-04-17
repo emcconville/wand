@@ -2,11 +2,11 @@
 #
 # This tests Wand's internal reference counter, so we can't assume
 # the initial state after any function of Wand are used.
-# That means this tests have to be first, and py.test automatically
+# That means this tests have to be first, and pytest automatically
 # discovers tests just using filenames.  Fortuneately, it seems to run
 # tests in lexicographical order, so we simply adds underscore to
 # the beginning of the filename.
-from pytest import mark, raises
+from pytest import mark
 
 from wand import exceptions, resource
 
