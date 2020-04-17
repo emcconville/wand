@@ -14,9 +14,9 @@ from wand.version import QUANTUM_DEPTH, MAGICK_VERSION_INFO  # noqa
 
 def test_user_error():
     with raises(TypeError):
-        _ = Color()
+        Color()
     with raises(ValueError):
-        _ = Color('not_a_color')
+        Color('not_a_color')
 
 
 def test_user_raw():
