@@ -89,7 +89,7 @@ Pseudo Images
 
 .. versionadded:: 0.5.0
 
-The :class:`~wand.image.Image` constructor now accepts the ``pseudo`` paramater.
+The :class:`~wand.image.Image` constructor now accepts the ``pseudo`` parameter.
 This allows you to quickly read `Pseudo-image Formats`_, and `Built-in Patterns`_
 
 .. _Pseudo-image Formats: https://imagemagick.org/script/formats.php#pseudo
