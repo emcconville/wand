@@ -11,13 +11,13 @@ Wand has unit tests and regression tests.  It can be run using
 It uses pytest_ as its testing library.  The above command will automatically
 install pytest as well if it's not installed yet.
 
-Or you can manually install pytest and then use :program:`py.test` command.
+Or you can manually install pytest and then use :program:`pytest` command.
 It provides more options:
 
 .. sourcecode:: console
 
    $ pip install pytest
-   $ py.test
+   $ pytest
 
 .. _pytest: http://pytest.org/
 
@@ -30,7 +30,7 @@ There are some time-consuming tests.  You can skip these tests using
 
 .. sourcecode:: console
 
-   $ py.test --skip-slow
+   $ pytest --skip-slow
 
 Be default, tests include regression testing for the PDF format. Test cases
 will fail if the system does not include `Ghostscript`_ binaries. You can skip
@@ -38,16 +38,33 @@ PDF dependent tests with ``--skip-pdf`` option:
 
 .. sourcecode:: console
 
-    $ py.test --skip-pdf
+    $ pytest --skip-pdf
 
 .. _Ghostscript: https://www.ghostscript.com
 
+The same behavior is true for `Fourier Transform`_ library. Use ``--skip-fft``
+to skip over any discrete Fourier transformation test cases.
+
+.. sourcecode:: console
+
+    $ pytest --skip-fft
+
+.. _Fourier Transform: http://www.fftw.org/
 
 You can run only tests you want using ``-k`` option.
 
 .. sourcecode:: console
 
-   $ py.test -k image
+   $ pytest -k image
+
+The source code repository for Wand doesn't ship any `pytest.ini` configuration
+files. However nightly regression test are usually run in parallel with coverage
+reports. An example `pytest.ini` file might look like::
+
+    [pytest]
+    addopts=-n8 -rsfEw --cov wand --cov-report html
+
+
 
 
 Using tox_
