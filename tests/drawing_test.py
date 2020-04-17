@@ -757,7 +757,6 @@ def test_draw_translate():
 
 def test_draw_text(fx_asset):
     white = Color('#fff')
-    black = Color('#000')
     with Image(width=100, height=100, background=white) as img:
         was = img.signature
         with Drawing() as draw:
@@ -839,11 +838,17 @@ def test_set_get_fill_rule(fx_wand):
         fx_wand.fill_rule = invalid
     fx_wand.fill_rule = 'undefined'  # reset
 
-
+@mark.skipif(MAGICK_VERSION_NUMBER < 0x700,
+             reason='DrawGetOpacity always returns 1.0')
 def test_set_get_opacity(fx_wand):
     assert fx_wand.opacity == 1.0
-    fx_wand.opacity = 0.3456
-    skip('DrawGetOpacity always returns 1.0')
+    fx_wand.push()
+    fx_wand.opacity = 0.5
+    fx_wand.push()
+    fx_wand.opacity = 0.25
+    assert fx_wand.opacity == 0.25
+    fx_wand.pop()
+    assert fx_wand.opacity == 0.5
 
 
 def test_set_get_stroke_antialias(fx_wand):
@@ -929,8 +934,6 @@ def test_draw_affine(fx_wand):
             fx_wand.affine(['a', 'b', 'c', 'd', 'e', 'f'])
 
 
-@mark.skipif(MAGICK_VERSION_NUMBER >= 0x700,
-             reason="Needs to be rewritten/simplified.")
 def test_draw_clip_path(fx_wand):
     skyblue = Color('skyblue')
     orange = Color('orange')
@@ -949,5 +952,4 @@ def test_draw_clip_path(fx_wand):
         fx_wand.fill_color = orange
         fx_wand.rectangle(top=5, left=5, width=90, height=90)
         fx_wand.draw(img)
-        assert img[25, 25] == orange
         assert img[75, 75] == skyblue
