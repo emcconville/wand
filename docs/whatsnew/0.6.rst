@@ -1,0 +1,70 @@
+What's new in Wand 0.6?
+=======================
+
+This guide doesn't cover all changes in 0.6. See the full list of changes
+in :ref:`changelog-0.6`.
+
+
+Completed MagickWand API
+''''''''''''''''''''''''
+
+The majority of the MagickWand API has been integrated into Wand between
+0.5 & 0.6 release. Documentation referring to incomplete, or minimal
+integrations of the API have been updated.
+
+Ensure to run Wand with the latest ImageMagick-7 library to take advantage
+of all the new methods.
+
+ - :meth:`Image.auto_threshold() <wand.image.BaseImage.auto_threshold>` method.
+ - :meth:`Image.canny() <wand.image.BaseImage.canny>` method.
+ - :meth:`Image.clahe() <wand.image.BaseImage.canny>` method.
+   Also known as "Contrast Limited Adaptive Histogram Equalization".
+ - :meth:`Image.complex() <wand.image.BaseImage.complex>` method.
+ - :meth:`Image.connected_components() <wand.image.BaseImage.connected_components>` method.
+ - :meth:`Image.hough_lines() <wand.image.BaseImage.hough_lines>` method.
+ - :meth:`Image.kuwahara() <wand.image.BaseImage.kuwahara>` method.
+ - :meth:`Image.level_colors() <wand.image.BaseImage.level_colors>` method.
+ - :meth:`Image.levelize() <wand.image.BaseImage.levelize>` method.
+ - :meth:`Image.levelize_colors() <wand.image.BaseImage.levelize_colors>` method.
+ - :meth:`Image.local_contrast() <wand.image.BaseImage.local_contrast>` method.
+ - :meth:`Image.mean_shift() <wand.image.BaseImage.mean_shift>` method.
+ - :meth:`Image.polynomial() <wand.image.BaseImage.polynomial>` method.
+ - :meth:`Image.range_threshold() <wand.image.BaseImage.range_threshold>` method.
+ - :meth:`Image.read_mask() <wand.image.BaseImage.read_mask>` method.
+ - :meth:`Image.rotational_blur() <wand.image.BaseImage.rotational_blur>` method.
+ - :meth:`Image.wavelet_denoise() <wand.image.BaseImage.wavelet_denoise>` method.
+ - :meth:`Image.write_mask() <wand.image.BaseImage.write_mask>` method.
+
+
+Numpy I/O Fixes
+'''''''''''''''
+
+The original integration of Numpy's array interface exported shape data as
+``( WIDTH, HEIGHT, CHANNELS )``. However many other imaging libraries that work
+with Numpy expect this shape data as ``( ROWS, COLUMNS, CHANNELS )``. Wand-0.6
+adjusted the shape data to be in alignment & compatible with other libraries.
+
+
+Improved Memory Deallocation & :mod:`atexit` Support
+''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+Several memory leaks have been addressed by reworking the :mod:`wand.resource`
+allocation & deallocation functions.
+
+It's still recommended to use Wand's :class:`Image <wand.image.Image>` class
+in a ``with`` statement for proper memory-resource context::
+
+    with Image(filename='input.jpg') as img:
+        pass
+
+Users not using the ``with`` statement forfeit memory deallocation over to
+Python's garbage-collector :mod:`gc` module.
+
+The :c:func:`MagickWandTerminus()` function is now only called during Python's
+:mod:`atexit` shutdown routine.
+
+.. note::
+
+    For "What's New in Wand 0.5", see `previous announcements`_.
+
+    .. _previous announcements: 0.5.html
