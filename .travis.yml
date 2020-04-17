@@ -25,9 +25,9 @@ script:
 - python -mwand.version --verbose
 - >
     if [[ $TRAVIS_PYTHON_VERSION == pypy* ]]; then
-      py.test --skip-pdf --boxed --durations=20;
+      pytest --skip-pdf --boxed --durations=20;
     else
-      py.test --skip-pdf --cov wand --boxed --durations=20;
+      pytest --skip-pdf --cov wand --boxed --durations=20;
     fi
 after_success:
 - coveralls
