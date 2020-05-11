@@ -28,6 +28,7 @@ Unreleased
  - Fixed ``grayscalealpha`` spelling. [:issue:`463`]
  - Fixed :meth:`Image.deskew() <wand.image.BaseImage.deskew>` threshold argument. [:issue:`467`]
  - Fixed :attr:`Image.alpha_channel <wand.image.BaseImage.alpha_channel>` property to apply changes to all images in the stack. [:issue:`468`]
+ - Fixed :meth:`Image.trim() <wand.image.BaseImage.trim>` paging offsets affected by 1x1 border. [:issue:`475`]
  - [TEST] Updated Travis CI environment to Ubuntu 18.04.04 LTS (Bionic)
  - [TEST] Deprecated display fixtures.
 

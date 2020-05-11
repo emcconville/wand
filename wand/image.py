@@ -7899,7 +7899,7 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def trim(self, color=None, fuzz=0, reset_coords=False):
+    def trim(self, color=None, fuzz=0.0, reset_coords=False):
         """Remove solid border from image. Uses top left pixel as a guide
         by default, or you can also specify the ``color`` to remove.
 
@@ -7907,9 +7907,9 @@ class BaseImage(Resource):
                       if it's omitted top left pixel is used by default
         :type color: :class:`~wand.color.Color`
         :param fuzz: Defines how much tolerance is acceptable to consider
-                     two colors as the same. Value can be between ``0``,
+                     two colors as the same. Value can be between ``0.0``,
                      and :attr:`quantum_range`.
-        :type fuzz: :class:`numbers.Integral`
+        :type fuzz: :class:`numbers.Real`
         :param reset_coords: Reset coordinates after triming image. Default
                              ``False``.
         :type reset_coords: :class:`bool`
@@ -7931,11 +7931,24 @@ class BaseImage(Resource):
         elif isinstance(color, string_type):
             color = Color(color)
         assertions.assert_color(color=color)
+        assertions.assert_real(fuzz=fuzz)
+        assertions.assert_bool(reset_coords=reset_coords)
         with color:
             self.border(color, 1, 1, compose="copy")
         r = library.MagickTrimImage(self.wand, fuzz)
         if reset_coords:
             self.reset_coords()
+        else:
+            # Re-calculate page coordinates as we added a 1x1 border before
+            # applying the trim.
+            adjusted_coords = list(self.page)
+            # Width & height are unsigned.
+            adjusted_coords[0] = max(adjusted_coords[0] - 2, 0)
+            adjusted_coords[1] = max(adjusted_coords[1] - 2, 0)
+            # X & Y are signed. It's common for page offsets to be negative.
+            adjusted_coords[2] -= 1
+            adjusted_coords[3] -= 1
+            self.page = adjusted_coords
         return r
 
     @manipulative
