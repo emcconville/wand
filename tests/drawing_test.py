@@ -846,9 +846,10 @@ def test_set_get_opacity(fx_wand):
     fx_wand.opacity = 0.5
     fx_wand.push()
     fx_wand.opacity = 0.25
-    assert fx_wand.opacity == 0.25
+    assert 0.24 < fx_wand.opacity < 0.26  # Expect float precision issues
     fx_wand.pop()
-    assert fx_wand.opacity == 0.5
+    assert 0.49 < fx_wand.opacity < 0.51  # Expect float precision issues
+    fx_wand.pop()
 
 
 def test_set_get_stroke_antialias(fx_wand):
