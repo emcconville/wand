@@ -82,6 +82,7 @@ User's guide
 
    whatsnew/0.6
    guide/install
+   guide/security
    guide/read
    guide/write
    guide/resizecrop
