@@ -60,19 +60,18 @@ def allocate_ref(addr, deallocator):
 def deallocate_ref(addr):
     global allocation_map
     if addr in allocation_map:
-        deallocator = allocation_map[addr]
+        deallocator = allocation_map.pop(addr)
         if callable(deallocator):
             deallocator(addr)
-        del allocation_map[addr]
 
 
 @atexit.register
 def shutdown():
     global allocation_map
-    for addr, deallocator in allocation_map.items():
+    for addr in allocation_map:
+        deallocator = allocation_map.pop(addr)
         if callable(deallocator):
             deallocator(addr)
-    allocation_map = {}
     terminus()
 
 
