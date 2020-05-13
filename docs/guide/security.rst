@@ -10,7 +10,8 @@ to process images from the public, then you **must** be more vigilant.
 
 - Never use :mod:`Wand` directly within a HTTP service, or on any server with
   public access. A simple queue based background worker can be used.
-  For example: `Celery`_, `Redis`_, or Amazon's `SQS`_, but there many others.
+  For example: `Celery`_, `Redis`_, or Amazon's `SQS`_, but there are many
+  others.
 - Update the ``policy.xml`` on the system, and reduce the resource limits to
   something reasonable to your system.
 
