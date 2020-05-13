@@ -1,6 +1,7 @@
 include README.rst
 include LICENSE
 graft docs
+prune docs/_build
 graft tests
 global-exclude __pycache__
 global-exclude *.py[co]
