@@ -21,6 +21,7 @@ Unreleased
  - Added ``reset_coords=`` argument to :meth:`Image.trim() <wand.image.BaseImage.trim>` method. [:issue:`472` ]
  - Added support for :mod:`atexit`'s shutdown routine. [:issue:`248` & :issue:`361`]
  - Added Python 2 classifiers to :file:`MANIFEST.in`. [:issue:`462` by Thijs Triemstra]
+ - Added both test-cases and documentation to source distribution packages. [:issue:`7`, :issue:`479`, :issue:`480`]
  - Removed :file:`README.rst` from :file:`setup.py`. [:issue:`460`]
  - Rewrote memory allocation manager. [:issue:`300` & :issue:`312`]
  - Fixed segfault on macOS when invoking resource limits without calling
