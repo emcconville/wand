@@ -45,6 +45,21 @@ with Numpy expect this shape data as ``( ROWS, COLUMNS, CHANNELS )``. Wand-0.6
 adjusted the shape data to be in alignment & compatible with other libraries.
 
 
+Documentation & Test Cases Ship with Source Distribution
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+The source distribution now includes Wand's `reStructuredText`_ documentation,
+and `pytest`_ regression tests source files. Hopefully this will help offline
+users. See :ref:`running-tests` document for info on local testing.
+
+Use setuptools-extra to install additional development dependencies::
+
+    pip install -U Wand[doc,test]
+
+.. _reStructuredText: https://en.wikipedia.org/wiki/ReStructuredText
+.. _pytest: https://docs.pytest.org/en/latest/
+
+
 Improved Memory Deallocation & :mod:`atexit` Support
 ''''''''''''''''''''''''''''''''''''''''''''''''''''
 
