@@ -1,12 +1,13 @@
 Security
 ========
 
-The authors & contributors of the Wand module, ImageMagick library, and all the
-third party image delegates make a genuine effort to release stable code.
-However there is a trade off between convenience & secure environment, and
-everyone makes honest mistakes. Ensure you're using the latest library versions,
-and the system is up to date with security patches. If you are using Wand
-to process images from the public, then you **must** be more vigilant.
+The authors & contributors of the :mod:`Wand` module, ImageMagick library, and
+all the third party image delegates make a genuine effort to release stable
+code. However there is a trade off between convenience & secure environment,
+and everyone makes honest mistakes. Ensure you're using the latest library
+versions, and the system is up to date with security patches. If you are using
+:mod:`Wand` to process images from the public, then you **must** be more
+vigilant.
 
 - Never use :mod:`Wand` directly within a HTTP service, or on any server with
   public access. A simple queue based background worker can be used.
@@ -70,7 +71,7 @@ to process images from the public, then you **must** be more vigilant.
     except AssertionError:
         # ... handle exception ...
 
-- Ensure that any Python code is invoked with low-privileged system user.
+- Ensure that any Python code is invoked with a low-privileged system user.
 - Ensure filenames are sanitized.
 - Ensure filenames are prefixed with coder protocol.
 
@@ -83,7 +84,7 @@ to process images from the public, then you **must** be more vigilant.
   :class:`~wand.exceptions.PolicyError`
   exceptions if a file-format was banned, and
   :class:`~wand.exceptions.ResourceLimitError` if the system
-  is unable to allocated additional memory/disk resources.
+  is unable to allocate additional memory/disk resources.
   Both can be configured by the :file:`policy.xml` listed above.
 
 .. _Celery: http://www.celeryproject.org/
