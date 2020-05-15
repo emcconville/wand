@@ -14,7 +14,7 @@ Version 0.6.1
 
 Released on May 15th, 2020.
 
- - Fixed RuntimeError on deallocation when ``allocation_map`` changes. [:issue:`482`]
+ - Fixed RuntimeError on deallocation when ``allocation_map`` changes. [:issue:`482` by Louis Sautier]
 
 
 Version 0.6.0
