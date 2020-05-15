@@ -9,6 +9,14 @@ Wand Changelog
 
 .. _changelog-0.6.0:
 
+Version 0.6.1
+-------------
+
+Released on May 15th, 2020.
+
+ - Fixed RuntimeError on deallocation when ``allocation_map`` changes. [:issue:`482`]
+
+
 Version 0.6.0
 -------------
 
