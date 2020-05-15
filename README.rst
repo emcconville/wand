@@ -70,9 +70,6 @@ List archive
 Stack Overflow tag (Q&A)
    http://stackoverflow.com/questions/tagged/wand
 
-IRC
-   `irc://irc.freenode.net/wand <http://webchat.freenode.net/?channels=wand>`_
-
 Continuous Integration (Travis CI)
    https://travis-ci.org/emcconville/wand
 
