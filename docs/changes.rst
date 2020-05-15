@@ -12,7 +12,7 @@ Wand Changelog
 Version 0.6.0
 -------------
 
-Unreleased
+Released on May 14th, 2020.
 
  - Updated :mod:`numpy` array interface methods to accept / generate
    :attr:`shape` data values as ``rows``, ``columns``, and ``channels``.
