@@ -12,7 +12,7 @@ or your default image application (:program:`Windows Photo Viewer` usually)
 if :program:`imdisplay.exe` is unavailable.
 
 You can use it from CLI also.  Execute :mod:`wand.display` module through
-:option:`python -m` option:
+:option:`python -m <-m>` option:
 
 .. sourcecode:: console
 
@@ -58,6 +58,8 @@ def display(image, server_name=':0'):
             return
     if system in ('Windows', 'Darwin'):
         ext = '.' + image.format.lower()
+        if ext in ('miff', 'xc'):
+            ext = 'png'
         path = tempfile.mktemp(suffix=ext)
         image.save(filename=path)
         os.system(('start ' if system == 'Windows' else 'open ') + path)
