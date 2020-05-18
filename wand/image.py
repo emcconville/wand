@@ -7268,7 +7268,7 @@ class BaseImage(Resource):
                 Color('ORANGE'): (74, 123)
             }
             with Image(filename='input.png') as img:
-                img.sparse_colors('bilinear', colors)
+                img.sparse_color('bilinear', colors)
 
         The available interpolate methods are:
 
@@ -7293,7 +7293,7 @@ class BaseImage(Resource):
                 }
                 # Only apply Voronoi to Red & Alpha channels
                 mask = CHANNELS['red'] | CHANNELS['alpha']
-                img.sparse_colors('voronoi', colors, channel_mask=mask)
+                img.sparse_color('voronoi', colors, channel_mask=mask)
 
         :param method: Interpolate method. See :const:`SPARSE_COLOR_METHODS`
         :type method: :class:`basestring`
