@@ -14,6 +14,8 @@ Version 0.6.2
 
 Unreleased.
 
+ - Fixed :func:`~wand.display.display` on Windows & MacOS when previewing MIFF & XC formats.
+
 
 Version 0.6.1
 -------------
