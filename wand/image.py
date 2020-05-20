@@ -7997,7 +7997,7 @@ class BaseImage(Resource):
            Optional ``color`` and ``fuzz`` parameters.
 
         .. versionchanged:: 0.5.2
-           The ``color`` parameter may except color-compliant strings.
+           The ``color`` parameter may accept color-compliant strings.
 
         .. versionchanged:: 0.6.0
            Optional ``reset_coords`` parameter added.
