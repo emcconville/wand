@@ -2617,6 +2617,8 @@ class BaseImage(Resource):
         """Adaptively blurs the image by decreasing Gaussian as the operator
         approaches detected edges.
 
+        :see: Example of :ref:`adaptive_blur`.
+
         :param radius: size of gaussian aperture.
         :type radius: :class:`numbers.Real`
         :param sigma: Standard deviation of the gaussian filter.
@@ -2671,6 +2673,8 @@ class BaseImage(Resource):
     def adaptive_sharpen(self, radius=0.0, sigma=0.0, channel=None):
         """Adaptively sharpens the image by sharpening more intensely near
         image edges and less intensely far from edges.
+
+        :see: Example of :ref:`adaptive_sharpen`.
 
         :param radius: size of gaussian aperture.
         :type radius: :class:`numbers.Real`
@@ -2859,6 +2863,8 @@ class BaseImage(Resource):
     def blue_shift(self, factor=1.5):
         """Mutes colors of the image by shifting blue values.
 
+        :see: Example of :ref:`blue_shift`
+
         :param factor: Amount to adjust values.
         :type factor: :class:`numbers.Real`
 
@@ -2875,6 +2881,8 @@ class BaseImage(Resource):
         For reasonable results, the ``radius`` should be larger
         than ``sigma``.  Use a ``radius`` of 0 and :meth:`blur()` selects
         a suitable ``radius`` for you.
+
+        :see: Example of :ref:`blur`.
 
         :param radius: the radius of the, in pixels,
                        not counting the center pixel. Default is ``0.0``.
@@ -3089,6 +3097,8 @@ class BaseImage(Resource):
     @trap_exception
     def charcoal(self, radius, sigma):
         """Transform an image into a simulated charcoal drawing.
+
+        :see: Example of :ref:`charcoal`.
 
         :param radius: The size of the Gaussian operator.
         :type radius: :class:`numbers.Real`
@@ -3403,6 +3413,8 @@ class BaseImage(Resource):
 
         __ https://www.imagemagick.org/Usage/color_mods/#color-matrix
 
+        :see: Example of :ref:`color_matrix`.
+
         :param matrix: 2D List of doubles.
         :type matrix: :class:`collections.abc.Sequence`
 
@@ -3441,6 +3453,8 @@ class BaseImage(Resource):
     def colorize(self, color=None, alpha=None):
         """Blends a given fill color over the image. The amount of blend is
         determined by the color channels given by the ``alpha`` argument.
+
+        :see: Example of :ref:`colorize`.
 
         :param color: Color to paint image with.
         :type color: :class:`wand.color.Color`
@@ -4161,6 +4175,8 @@ class BaseImage(Resource):
     def despeckle(self):
         """Applies filter to reduce noise in image.
 
+        :see: Example of :ref:`despeckle`.
+
         .. versionadded:: 0.5.0
         """
         return library.MagickDespeckleImage(self.wand)
@@ -4201,6 +4217,8 @@ class BaseImage(Resource):
             img.artifacts['distort:viewport'] = '44x44+15+0'
             img.artifacts['distort:scale'] = '10'
 
+        :see: Additional examples of :ref:`distort`.
+
         :param method: Distortion method name from :const:`DISTORTION_METHODS`
         :type method: :class:`basestring`
         :param arguments: List of distorting float arguments
@@ -4229,6 +4247,8 @@ class BaseImage(Resource):
     def edge(self, radius=0.0):
         """Applies convolution filter to detect edges.
 
+        :see: Example of :ref:`edge`.
+
         :param radius: aperture of detection filter.
         :type radius: :class:`numbers.Real`
 
@@ -4246,6 +4266,8 @@ class BaseImage(Resource):
 
             The `radius` value should be larger than `sigma` for best results.
 
+        :see: Example of :ref:`emboss`.
+
         :param radius: filter aperture size.
         :type radius: :class:`numbers.Real`
         :param sigma: standard deviation.
@@ -4260,6 +4282,8 @@ class BaseImage(Resource):
     @trap_exception
     def enhance(self):
         """Applies digital filter to reduce noise.
+
+        :see: Example of :ref:`enhance`.
 
         .. versionadded:: 0.5.0
         """
@@ -4300,6 +4324,8 @@ class BaseImage(Resource):
 
             fifty_percent = img.quantum_range * 0.5
             img.evaluate(operator='set', value=fifty_percent)
+
+        :see: Example of :ref:`evaluate`.
 
         :param operator: Type of operation to calculate
         :type operator: :const:`EVALUATE_OPS`
@@ -4559,6 +4585,8 @@ class BaseImage(Resource):
         """Creates a vertical mirror image by reflecting the pixels around
         the central x-axis.  It manipulates the image in place.
 
+        :see: Example of :ref:`flip_flop`.
+
         .. versionadded:: 0.3.0
 
         """
@@ -4569,6 +4597,8 @@ class BaseImage(Resource):
     def flop(self):
         """Creates a horizontal mirror image by reflecting the pixels around
         the central y-axis.  It manipulates the image in place.
+
+        :see: Example of :ref:`flip_flop`.
 
         .. versionadded:: 0.3.0
 
@@ -4677,6 +4707,8 @@ class BaseImage(Resource):
            - ``'arcsin'`` >= 6.5.3-1
            - ``'arctan'`` >= 6.5.3-1
 
+        :see: Example of :ref:`function`.
+
         :param function: a string listed in :const:`FUNCTION_TYPES`
         :type function: :class:`basestring`
         :param arguments: a sequence of doubles to apply against ``function``
@@ -4731,6 +4763,8 @@ class BaseImage(Resource):
                      http://www.imagemagick.org/script/fx.php
 
 
+        :see: Example of :ref:`fx`.
+
         :param expression: The entire FX expression to apply
         :type expression: :class:`basestring`
         :param channel: Optional channel to target.
@@ -4770,6 +4804,8 @@ class BaseImage(Resource):
         Specific color channels can be correct individual. Typical values
         range between 0.8 and 2.3.
 
+        :see: Example of :ref:`gamma`.
+
         :param adjustment_value: value to adjust gamma level. Default `1.0`
         :type adjustment_value: :class:`numbers.Real`
         :param channel: optional channel to apply gamma correction
@@ -4806,6 +4842,8 @@ class BaseImage(Resource):
         For reasonable results, the ``radius`` should be larger
         than ``sigma``.  Use a ``radius`` of 0 and :meth:`blur()` selects
         a suitable ``radius`` for you.
+
+        :see: Example of :ref:`gaussian_blur`.
 
         :param radius: the radius of the, in pixels,
                        not counting the center pixel
@@ -4921,6 +4959,8 @@ class BaseImage(Resource):
     def implode(self, amount=0.0, method="undefined"):
         """Creates a "imploding" effect by pulling pixels towards the center
         of the image.
+
+        :see: Example of :ref:`implode`.
 
         :param amount: Normalized degree of effect between `0.0` & `1.0`.
         :type amount: :class:`numbers.Real`
@@ -5142,6 +5182,8 @@ class BaseImage(Resource):
             This class method is only available with ImageMagick 7.0.8-41, or
             greater.
 
+        :see: Example of :ref:`kuwahara`.
+
         :param radius: Size of the filter aperture.
         :type radius: :class:`numbers.Real`
         :param sigma: Standard deviation of Gaussian filter.
@@ -5166,6 +5208,8 @@ class BaseImage(Resource):
         quantum range.
 
         If only ``black`` is given, ``white`` will be adjusted inward.
+
+        :see: Example of :ref:`level`.
 
         :param black: Black point, as a percentage of the system's quantum
                       range. Defaults to 0.
@@ -5769,6 +5813,8 @@ class BaseImage(Resource):
         """Apply a Gaussian blur along an ``angle`` direction. This
         simulates motion movement.
 
+        :see: Example of :ref:`motion_blur`.
+
         :param radius: Aperture size of the Gaussian operator.
         :type radius: :class:`numbers.Real`
         :param sigma: Standard deviation of the Gaussian operator.
@@ -5834,6 +5880,8 @@ class BaseImage(Resource):
     @trap_exception
     def noise(self, noise_type='uniform', attenuate=1.0, channel=None):
         """Adds noise to image.
+
+        :see: Example of :ref:`noise`.
 
         :param noise_type: type of noise to apply. See :const:`NOISE_TYPES`.
         :type noise_type: :class:`basestring`
@@ -6179,6 +6227,8 @@ class BaseImage(Resource):
     @trap_exception
     def polaroid(self, angle=0.0, caption=None, font=None, method='undefined'):
         """Creates a special effect simulating a Polaroid photo.
+
+        :see: Example of :ref:`polaroid`.
 
         :param angle: applies a shadow effect along this angle.
         :type angle: :class:`numbers.Real`
@@ -6538,6 +6588,8 @@ class BaseImage(Resource):
     def remap(self, affinity=None, method='no'):
         """Rebuild image palette with closest color from given affinity image.
 
+        :see: Example of :ref:`remap`.
+
         :param affinity: reference image.
         :type affinity: :class:`BaseImage`
         :param method: dither method. See :const:`DITHER_METHODS`.
@@ -6705,6 +6757,8 @@ class BaseImage(Resource):
         """Rotates the image right.  It takes a ``background`` color
         for ``degree`` that isn't a multiple of 90.
 
+        :see: Example of :ref:`rotate`.
+
         :param degree: a degree to rotate. multiples of 360 affect nothing
         :type degree: :class:`numbers.Real`
         :param background: an optional background color.
@@ -6755,6 +6809,8 @@ class BaseImage(Resource):
         """Blur an image in a radius around the center of an image.
 
         .. warning:: Requires ImageMagick-6.8.8 or greater.
+
+        :see: Example of :ref:`rotational_blur`.
 
         :param angle: Degrees of rotation to blur with.
         :type angle: :class:`numbers.Real`
@@ -6857,6 +6913,8 @@ class BaseImage(Resource):
                 # Apply 8x3 blur with a 10% threshold
                 img.selective_blur(8.0, 3.0, 0.1 * img.quantum_range)
 
+        :see: Example of :ref:`selective_blur`.
+
         :param radius: Size of gaussian aperture.
         :type radius: :class:`numbers.Real`
         :param sigma: Standard deviation of gaussian operator.
@@ -6903,6 +6961,8 @@ class BaseImage(Resource):
         """Creates a Sepia Tone special effect similar to a darkroom chemical
         toning.
 
+        :see: Example of :ref:`sepia_tone`.
+
         :param threshold: The extent of the toning. Value can be between ``0``
                           & :attr:`quantum_range`, or ``0`` & ``1.0``.
                           Default value is ``0.8`` or "80%".
@@ -6920,6 +6980,8 @@ class BaseImage(Resource):
     def shade(self, gray=False, azimuth=0.0, elevation=0.0):
         """Creates a 3D effect by simulating a light from an
         elevated angle.
+
+        :see: Example of :ref:`shade`.
 
         :param gray: Isolate the effect on pixel intensity.
                      Default is False.
@@ -6968,6 +7030,8 @@ class BaseImage(Resource):
 
             Defaults values of zero will have ImageMagick attempt
             to auto-select suitable values.
+
+        :see: Example of :ref:`sharpen`.
 
         :param radius: size of gaussian aperture.
         :type radius: :class:`numbers.Real`
@@ -7185,6 +7249,8 @@ class BaseImage(Resource):
         """Simulates a pencil sketch effect. For best results, ``radius``
         value should be larger than ``sigma``.
 
+        :see: Example of :ref:`sketch`.
+
         :param radius: size of Gaussian aperture.
         :type radius: :class:`numbers.Real`
         :param sigma: standard deviation of the Gaussian operator.
@@ -7222,6 +7288,8 @@ class BaseImage(Resource):
     @trap_exception
     def solarize(self, threshold=0.0, channel=None):
         """Simulates extreme overexposure.
+
+        :see: Example of :ref:`solarize`.
 
         :param threshold: between ``0.0`` and :attr:`quantum_range`.
         :type threshold: :class:`numbers.Real`
@@ -7376,6 +7444,8 @@ class BaseImage(Resource):
     def spread(self, radius=0.0, method='undefined'):
         """Randomly displace pixels within a defined radius.
 
+        :see: Example of :ref:`spread`.
+
         :param radius: Distance a pixel can be displaced from source. Default
                        value is ``0.0``, which will allow ImageMagick to auto
                        select a radius.
@@ -7406,6 +7476,8 @@ class BaseImage(Resource):
         """Replace each pixel with the statistic results from neighboring pixel
         values. The ``width`` & ``height`` defines the size, or aperture, of
         the neighboring pixels.
+
+        :see: Example of :ref:`statistic`.
 
         :param stat: The type of statistic to calculate. See
                      :const:`STATISTIC_TYPES`.
@@ -7498,6 +7570,8 @@ class BaseImage(Resource):
     def swirl(self, degree=0.0, method="undefined"):
         """Swirls pixels around the center of the image. The larger the degree
         the more pixels will be effected.
+
+        :see: Example of :ref:`swirl`.
 
         :param degree: Defines the amount of pixels to be effected. Value
                        between ``-360.0`` and ``360.0``.
@@ -7604,6 +7678,8 @@ class BaseImage(Resource):
     @trap_exception
     def tint(self, color=None, alpha=None):
         """Applies a color vector to each pixel in the image.
+
+        :see: Example of :ref:`tint`.
 
         :param color: Color to calculate midtone.
         :type color: :class:`~wand.color.Color`
@@ -7971,6 +8047,8 @@ class BaseImage(Resource):
         ``sigma``. Use a radius of 0 and :meth:`unsharp_mask()` selects
         a suitable radius for you.
 
+        :see: Example of :ref:`unsharp_mask`.
+
         :param radius: the radius of the Gaussian, in pixels,
                        not counting the center pixel
         :type radius: :class:`numbers.Real`
@@ -8016,6 +8094,8 @@ class BaseImage(Resource):
     @trap_exception
     def vignette(self, radius=0.0, sigma=0.0, x=0, y=0):
         """Creates a soft vignette style effect on the image.
+
+        :see: Example of :ref:`vignette`.
 
         :param radius: the radius of the Gaussian blur effect.
         :type radius: :class:`numbers.Real`
@@ -8064,6 +8144,8 @@ class BaseImage(Resource):
     def wave(self, amplitude=0.0, wave_length=0.0, method='undefined'):
         """Creates a ripple effect within the image.
 
+        :see: Example of :ref:`wave`.
+
         :param amplitude: height of wave form.
         :type amplitude: :class:`numbers.Real`
         :param wave_length: width of wave form.
@@ -8098,6 +8180,8 @@ class BaseImage(Resource):
 
             This class method is only available with ImageMagick 7.0.8-41, or
             greater.
+
+        :see: Example of :ref:`wavelet_denoise`.
 
         :param threshold: Smoothing limit.
         :type threshold: :class:`numbers.Real`
@@ -8569,6 +8653,8 @@ class Image(BaseImage):
     @classmethod
     def stereogram(cls, left, right):
         """Create a new stereogram image from two existing images.
+
+        :see: Example of :ref:`stereogram`.
 
         :param left: Left-eye image.
         :type left: :class:`wand.image.Image`
