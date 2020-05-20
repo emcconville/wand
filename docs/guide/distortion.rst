@@ -1,3 +1,5 @@
+.. _distort:
+
 Distortion
 ==========
 
@@ -22,7 +24,7 @@ list differently. For example::
     img.distort('affine', points)
 
 A more complete & detailed overview on distortion can be found in `Distorting
-Images`__ usage article by Anthony Thyssen. 
+Images`__ usage article by Anthony Thyssen.
 
 __ https://www.imagemagick.org/Usage/distorts/
 

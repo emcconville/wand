@@ -88,8 +88,8 @@ used to define the standard deviation.
 
 .. _motion_blur:
 
-Motion  Blur
-''''''''''''
+Motion Blur
+'''''''''''
 
 .. versionadded:: 0.5.4
 
@@ -372,7 +372,7 @@ the feathers, and limited  changes in the out-of-focus background.
 +---------------------------------------+---------------------------------------------------+
 
 
-.. _unsharpen_mask:
+.. _unsharp_mask:
 
 Unsharp Mask
 ''''''''''''

@@ -110,6 +110,8 @@ Remap replaces all pixels with the closest matching pixel found in the
      :alt: Hummingbird - Remap
 
 
+.. _rotate:
+
 Rotation
 --------
 
@@ -163,7 +165,7 @@ Statistic
 
 .. versionadded:: 0.5.3
 
-Similare to :ref:`spread`, but replaces each pixel with the result of a
+Similar to :ref:`spread`, but replaces each pixel with the result of a
 mathematical operation performed against neighboring pixel values.
 
 The type of statistic operation can be any of the following.

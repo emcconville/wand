@@ -1,7 +1,7 @@
 Resizing and cropping
 =====================
 
-Creating thumbnails (by resizing images) and cropping are most frequent works 
+Creating thumbnails (by resizing images) and cropping are most frequent works
 about images. This guide explains ways to deal with sizes of images.
 
 Above all, to get the current size of the image check
@@ -16,7 +16,7 @@ properties:
    >>> with Image(file=f) as img:
    ...     width = img.width
    ...     height = img.height
-   ... 
+   ...
    >>> f.close()
    >>> width
    48
