@@ -10,3 +10,5 @@
 .. py:data:: libmagick
 
     (:class:`ctypes.CDLL`) The `MagickCore <https://imagemagick.org/script/magick-core.php>`_ library.
+
+    .. versionadded:: 0.1.10
