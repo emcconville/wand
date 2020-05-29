@@ -2189,7 +2189,6 @@ def test_tint(fx_asset):
     ((), {'crop': '300x300'}, (300, 300)),
     ((), {'crop': '300x300+100+100'}, (300, 300)),
     ((), {'crop': '300x300-150-150'}, (150, 150)),
-    ((), {'crop': '16:9'}, (800, 450)),
     (('300x300', '200%'), {}, (600, 600)),
 ])
 def test_transform(args, kwargs, expected_size, fx_asset):
@@ -2198,6 +2197,14 @@ def test_transform(args, kwargs, expected_size, fx_asset):
         assert img.size == (800, 600)
         img.transform(*args, **kwargs)
         assert img.size == expected_size
+
+
+@mark.skipif(MAGICK_VERSION_NUMBER < 0x708,
+             reason="-crop aspect:ration support added in 7.0.7-22")
+def test_transform_aspect_crop(fx_asset):
+    with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
+        img.transform(crop='16:9')
+        assert img.size == (800, 450)
 
 
 def test_transform_colorspace(fx_asset):

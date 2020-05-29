@@ -7747,9 +7747,11 @@ class BaseImage(Resource):
           Aspect ratio is preserved.
 
         **X**\\ ``:``\\ **Y**
-          Crop or resize at a given aspect ratio. Common aspect ratios may
+          Resize at a given aspect ratio. Common aspect ratios may
           include ``4:3`` for video/tv, ``3:2`` for 35mm film, ``16:9`` for
-          HDTV, and ``2.39:1`` for cinema.
+          HDTV, and ``2.39:1`` for cinema. Aspect ratio can be used with the
+          crop parameter, but is only available with ImageMagick version 7.0.8
+          or greater.
 
         The offset, which only applies to the cropping geometry string,
         is given by ``{+-}``\\ **x**\\ ``{+-}``\\ **y**\\ , that is,
