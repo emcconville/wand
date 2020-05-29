@@ -2,7 +2,7 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This module provides several subtle things to support
-multiple Python versions (2.6, 2.7, 3.3+) and VM implementations
+multiple Python versions (2.7, 3.3+) and VM implementations
 (CPython, PyPy).
 
 """

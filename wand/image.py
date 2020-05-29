@@ -2050,10 +2050,10 @@ class BaseImage(Resource):
         .. versionadded:: 0.4.3
 
         """
-        w = ctypes.c_uint()
-        h = ctypes.c_uint()
-        x = ctypes.c_int()
-        y = ctypes.c_int()
+        w = ctypes.c_size_t()
+        h = ctypes.c_size_t()
+        x = ctypes.c_ssize_t()
+        y = ctypes.c_ssize_t()
         r = library.MagickGetImagePage(self.wand, w, h, x, y)
         if not r:  # pragma: no cover
             self.raise_exception()
@@ -7716,7 +7716,7 @@ class BaseImage(Resource):
         where **bold** terms are replaced with appropriate integer values:
 
         **scale**\\ ``%``
-          Height and width both scaled by specified percentage
+          Height and width both scaled by specified percentage.
 
         **scale-x**\\ ``%x``\\ \\ **scale-y**\\ ``%``
           Height and width individually scaled by specified percentages.
@@ -7745,6 +7745,11 @@ class BaseImage(Resource):
         **area**\\ ``@``
           Resize image to have the specified area in pixels.
           Aspect ratio is preserved.
+
+        **X**\\ ``:``\\ **Y**
+          Crop or resize at a given aspect ratio. Common aspect ratios may
+          include ``4:3`` for video/tv, ``3:2`` for 35mm film, ``16:9`` for
+          HDTV, and ``2.39:1`` for cinema.
 
         The offset, which only applies to the cropping geometry string,
         is given by ``{+-}``\\ **x**\\ ``{+-}``\\ **y**\\ , that is,
@@ -7814,19 +7819,26 @@ class BaseImage(Resource):
                 y = ctypes.c_ssize_t(0)
                 width = ctypes.c_size_t(self.width)
                 height = ctypes.c_size_t(self.height)
-                libmagick.GetGeometry(crop,
-                                      ctypes.byref(x),
-                                      ctypes.byref(y),
-                                      ctypes.byref(width),
-                                      ctypes.byref(height))
+                if b':' in crop:  # For "4:3" aspect cropping.
+                    libmagick.ParseMetaGeometry(crop,
+                                                ctypes.byref(x),
+                                                ctypes.byref(y),
+                                                ctypes.byref(width),
+                                                ctypes.byref(height))
+                else:
+                    libmagick.GetGeometry(crop,
+                                          ctypes.byref(x),
+                                          ctypes.byref(y),
+                                          ctypes.byref(width),
+                                          ctypes.byref(height))
                 self.crop(top=y.value,
                           left=x.value,
                           width=width.value,
                           height=height.value,
                           reset_coords=False)
             if resize:
-                x = ctypes.c_ssize_t()
-                y = ctypes.c_ssize_t()
+                x = ctypes.c_ssize_t(0)
+                y = ctypes.c_ssize_t(0)
                 width = ctypes.c_size_t(self.width)
                 height = ctypes.c_size_t(self.height)
                 libmagick.ParseMetaGeometry(resize,

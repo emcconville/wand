@@ -530,8 +530,8 @@ def load(lib, IM_VERSION):
     lib.MagickGetImageOrientation.argtypes = [c_void_p]
     lib.MagickGetImageOrientation.restype = c_int
     lib.MagickGetImagePage.argtypes = [
-        c_void_p, POINTER(c_uint), POINTER(c_uint), POINTER(c_int),
-        POINTER(c_int)
+        c_void_p, POINTER(c_size_t), POINTER(c_size_t), POINTER(c_ssize_t),
+        POINTER(c_ssize_t)
     ]
     lib.MagickGetImagePage.restype = c_bool
     lib.MagickGetImagePixelColor.argtypes = [
