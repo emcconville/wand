@@ -14,7 +14,7 @@ Version 0.6.2
 
 Unreleased.
 
- - Added aspect cropping support for :meth:`Image.transform()` method.
+ - Added aspect cropping support for :meth:`Image.transform() <wand.image.BaseImage.transform>` method.
  - Fixed :func:`~wand.display.display` on Windows & MacOS when previewing MIFF & XC formats.
  - [DOC] Make the documentation reproducible. [:issue:`484` by Chris Lamb]
 
