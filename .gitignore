@@ -6,6 +6,7 @@ htmlcov
 issues
 patches
 support
+temp
 run.py
 .tox
 *.pyc
