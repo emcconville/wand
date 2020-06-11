@@ -7854,20 +7854,20 @@ class BaseImage(Resource):
             # animation & error handling, so we can stop here.
             return True
         if self.animation:
-            new_wand = library.MagickCoalesceImages(self.wand)
+            new_wand = library.NewMagickWand()
+            src_wand = library.MagickCoalesceImages(self.wand)
             length = library.MagickGetNumberImages(self.wand)
             for i in xrange(length):
-                library.MagickSetIteratorIndex(new_wand, i)
-                if i:
-                    library.MagickAddImage(
-                        new_wand,
-                        library.MagickTransformImage(new_wand, crop, resize)
-                    )
-                else:
-                    new_wand = library.MagickTransformImage(new_wand,
-                                                            crop,
-                                                            resize)
-            self.sequence.instances = []
+                library.MagickSetIteratorIndex(src_wand, i)
+                tmp_wand = library.MagickTransformImage(src_wand,
+                                                        crop,
+                                                        resize)
+                library.MagickAddImage(new_wand, tmp_wand)
+                if bool(tmp_wand):
+                    library.DestroyMagickWand(tmp_wand)
+            if bool(src_wand):
+                library.DestroyMagickWand(src_wand)
+            self.reset_sequence()
         else:
             new_wand = library.MagickTransformImage(self.wand, crop, resize)
         if new_wand:
