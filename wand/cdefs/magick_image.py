@@ -23,7 +23,7 @@ __all__ = ('MagickProgressMonitor', 'load')
 #:
 #: .. note::
 #:
-#:     TODO - Move to isoalted module. This shouldn't be defined at time of
+#:     TODO - Move to isolated module. This shouldn't be defined at time of
 #:     mload. It might be wiser to create a method to allow the user to ask for
 #:     C-function-type.
 MagickProgressMonitor = CFUNCTYPE(c_bool,
