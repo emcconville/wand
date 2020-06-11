@@ -21,4 +21,4 @@ run.py
 .pydevproject
 .settings/*
 .vscode
-
+pytest.ini
