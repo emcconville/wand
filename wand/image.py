@@ -7855,7 +7855,7 @@ class BaseImage(Resource):
             return True
         if self.animation:
             new_wand = library.MagickCoalesceImages(self.wand)
-            length = len(self.sequence)
+            length = library.MagickGetNumberImages(self.wand)
             for i in xrange(length):
                 library.MagickSetIteratorIndex(new_wand, i)
                 if i:
@@ -8846,7 +8846,7 @@ class Image(BaseImage):
         library.MagickResetIterator(self.wand)
         length = ctypes.c_size_t()
         blob_p = None
-        if len(self.sequence) > 1:
+        if library.MagickGetNumberImages(self.wand) > 1:
             blob_p = library.MagickGetImagesBlob(self.wand,
                                                  ctypes.byref(length))
         else:
