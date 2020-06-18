@@ -221,7 +221,7 @@ htmlhelp_basename = 'Wanddoc'
 # (source start file, target name, title, author,
 #  documentclass [howto/manual]).
 latex_documents = [
-    ('index', 'Wand.tex', 'Wand Documentation', 'Hong Minhee', 'manual'),
+    ('index', 'Wand.tex', 'Wand Documentation', 'Hong Minhee \\and E. McConville', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -254,7 +254,7 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'wand', 'Wand Documentation',
-     ['Hong Minhee'], 1)
+     ['Hong Minhee', 'E. McConville'], 1)
 ]
 
 
