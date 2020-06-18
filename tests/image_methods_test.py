@@ -1107,6 +1107,28 @@ def test_inverse_fourier_transform(fx_asset):
             a.inverse_fourier_transform(0xDEADBEEF)
 
 
+def test_iterator(fx_asset):
+    with Image(filename=str(fx_asset.join('animation.gif'))) as img:
+        length = img.iterator_length()
+        assert length == 4
+        img.iterator_reset()
+        idx = img.iterator_get()
+        assert idx == 0
+        while img.iterator_next(): pass
+        idx = img.iterator_get()
+        assert idx == 3
+        img.iterator_first()
+        idx = img.iterator_get()
+        assert idx == 0
+        img.iterator_last()
+        while img.iterator_previous(): pass
+        idx = img.iterator_get()
+        assert idx == 0
+        img.iterator_set(2)
+        idx = img.iterator_get()
+        assert idx == 2
+
+
 def test_kurtosis_channel():
     with Image(filename='rose:') as img:
         r = img.kurtosis_channel('red')

@@ -87,6 +87,7 @@ that :class:`~wand.image.Image` and :class:`~wand.sequence.SingleImage` are
 the same, but be careful when you deal with animated :mimetype:`image/gif`
 files or :mimetype:`image/ico` files that contain multiple icons.
 
+
 Manipulating :attr:`~wand.sequence.SingleImage`
 -----------------------------------------------
 When working with :attr:`~wand.image.BaseImage.sequence`, it's important to
@@ -108,3 +109,76 @@ with-statement context manager.
 ...     with image.sequence[2] as frame:
 ...         frame.negate()
 ...     image.save(filename='output.gif')  # Changes applied.
+
+
+Working directly with Image-Stack Iterators
+-------------------------------------------
+A faster way to work with images in a sequence is to use the internal stack
+iterator. This does not create copies, or generate :class:`~wand.sequence.Sequence` /
+:class:`~wand.sequence.SingleImage` instances.
+
+.. warning::
+
+   Users should **NOT** mix :attr:`Image.sequence <wand.image.BaseImage.sequence>`
+   code with direct iterator methods.
+
+When reading a image file, the internal iterator is pointing to the last frame
+read. To iterate over all frames, use :meth:`Image.iterator_reset() <wand.image.BaseImage.iterator_reset>`
+and :meth:`Image.iterator_next() <wand.image.BaseImage.iterator_next>` methods.
+
+>>> with Image(filename='link_to_the_past.gif') as img:
+...     img.iterator_reset()
+...     print("First frame", img.size)
+...     while img.iterator_next():
+...         print("Additional frame", img.size)
+First frame (300, 289)
+Additional frame (172, 128)
+Additional frame (172, 145)
+Additional frame (123, 112)
+Additional frame (144, 182)
+Additional frame (107, 117)
+Additional frame (171, 128)
+Additional frame (123, 107)
+
+You can also iterate backwards with :meth:`Image.iterator_last() <wand.image.BaseImage.iterator_last>`
+and :meth:`Image.iterator_previous() <wand.image.BaseImage.iterator_previous>` methods.
+
+>>> with Image(filename='link_to_the_past.gif') as img:
+...     img.iterator_last()
+...     print("End frame", img.size)
+...     while img.iterator_previous():
+...         print("Previous frame", img.size)
+End frame (123, 107)
+Previous frame (171, 128)
+Previous frame (107, 117)
+Previous frame (144, 182)
+Previous frame (123, 112)
+Previous frame (172, 145)
+Previous frame (172, 128)
+Previous frame (300, 289)
+
+Method :meth:`Image.iterator_first() <wand.image.BaseImage.iterator_first>` is
+like :meth:`Image.iterator_reset() <wand.image.BaseImage.iterator_reset>`, but allows
+the next image read to be prepended at the start of the stack.
+
+>>> with Image(filename='support/link_net.gif') as img:
+...     img.iterator_first()
+...     img.pseudo(1, 1, 'xc:gold')
+...     img.iterator_set(0)
+...     print(img.size)
+...     img.iterator_set(1)
+...     print(img.size)
+(1, 1)
+(300, 289)
+
+.. note::
+
+   The "image-stack" is general term for a `linked list`_ of sub-images in a file.
+   The nomenclature varies between industries & users. You may find documents
+   referencing sub-images as:
+
+    - *Frame* for animated formats (GIF)
+    - *Page* for document based formats (PDF)
+    - *Layer* for publishing formats (PSD, TIFF)
+
+   .. _linked list: https://en.wikipedia.org/wiki/Linked_list

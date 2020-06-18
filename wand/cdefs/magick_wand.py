@@ -57,6 +57,7 @@ def load(lib, IM_VERSION):
     lib.MagickResetIterator.argtypes = [c_void_p]
     lib.MagickSetFirstIterator.argtypes = [c_void_p]
     lib.MagickSetIteratorIndex.argtypes = [c_void_p, c_ssize_t]
+    lib.MagickSetIteratorIndex.restype = c_bool
     lib.MagickSetLastIterator.argtypes = [c_void_p]
     lib.MagickWandGenesis.argtypes = []
     lib.MagickWandTerminus.argtypes = []

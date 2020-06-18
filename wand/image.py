@@ -2136,8 +2136,8 @@ class BaseImage(Resource):
 
     @property
     def quantum_range(self):
-        """(:class:`int`) The maximum value of a color channel that is
-        supported by the imagemagick library.
+        """(`:class:`numbers.Integral`) The maximum value of a color
+        channel that is supported by the imagemagick library.
 
         .. versionadded:: 0.2.0
 
@@ -2558,7 +2558,7 @@ class BaseImage(Resource):
         :param value: Mixed user input.
         :type value: :class:`numbers.Integral` or :class:`basestring`
         :returns: Bit-mask constant.
-        :rtype: :class:`numbers.Integral`
+        :rtype: :class:`int`
 
         .. versionadded:: 0.5.5
         """
@@ -5123,6 +5123,84 @@ class BaseImage(Resource):
         return library.MagickInverseFourierTransformImage(self.wand,
                                                           phase.wand,
                                                           magnitude)
+
+    def iterator_first(self):
+        """Sets the internal image-stack iterator to the first image.
+        Useful for prepending an image at the start of the stack.
+
+        .. versionadded:: 0.6.2
+        """
+        library.MagickSetFirstIterator(self.wand)
+
+    def iterator_get(self):
+        """Returns the position of the internal image-stack index.
+
+        :rtype: :class:`int`
+
+        .. versionadded:: 0.6.2
+        """
+        return library.MagickGetIteratorIndex(self.wand)
+
+    def iterator_last(self):
+        """Sets the internal image-stack iterator to the last image.
+        Useful for appending an image to the end of the stack.
+
+        .. versionadded:: 0.6.2
+        """
+        library.MagickSetLastIterator(self.wand)
+
+    def iterator_length(self):
+        """Get the count of images in the image-stack.
+
+        :rtype: :class:`int`
+
+        .. versionadded:: 0.6.2
+        """
+        return library.MagickGetNumberImages(self.wand)
+
+    def iterator_next(self):
+        """Steps the image-stack index forward by one
+
+        :rtype: :class:`bool`
+
+        .. versionadded:: 0.6.2
+        """
+        has_next = library.MagickHasNextImage(self.wand)
+        if has_next:
+            idx = library.MagickGetIteratorIndex(self.wand)
+            has_next = library.MagickSetIteratorIndex(self.wand, idx + 1)
+        return has_next
+
+    def iterator_previous(self):
+        """Steps the image-stack index back by one.
+
+        :rtype: :class:`bool`
+
+        .. versionadded:: 0.6.2
+        """
+        has_prev = library.MagickHasPreviousImage(self.wand)
+        if has_prev:
+            idx = library.MagickGetIteratorIndex(self.wand)
+            has_prev = library.MagickSetIteratorIndex(self.wand, idx - 1)
+        return has_prev
+
+    def iterator_reset(self):
+        """Reset internal image-stack iterator. Useful for iterating over the
+        image-stack without allocating :class:`~wand.sequence.Sequence`.
+
+        .. versionadded:: 0.6.2
+        """
+        library.MagickResetIterator(self.wand)
+
+    def iterator_set(self, index):
+        """Sets the index of the internal image-stack.
+
+        :rtype: :class:`bool`
+
+        .. versionadded:: 0.6.2
+        """
+        assertions.assert_integer(index=index)
+        return library.MagickSetIteratorIndex(self.wand, index)
 
     def kurtosis_channel(self, channel='default_channels'):
         """Calculates the kurtosis and skewness of the image.

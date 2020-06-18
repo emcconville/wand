@@ -15,6 +15,17 @@ Version 0.6.2
 Unreleased.
 
  - Added aspect cropping support for :meth:`Image.transform() <wand.image.BaseImage.transform>` method.
+ - Added iterator methods to directly navigate the internal image-stack.
+
+   - :meth:`Image.iterator_first() <wand.image.BaseImage.iterator_first>`
+   - :meth:`Image.iterator_get() <wand.image.BaseImage.iterator_get>`
+   - :meth:`Image.iterator_last() <wand.image.BaseImage.iterator_last>`
+   - :meth:`Image.iterator_length() <wand.image.BaseImage.iterator_length>`
+   - :meth:`Image.iterator_next() <wand.image.BaseImage.iterator_next>`
+   - :meth:`Image.iterator_previous() <wand.image.BaseImage.iterator_previous>`
+   - :meth:`Image.iterator_reset() <wand.image.BaseImage.iterator_reset>`
+   - :meth:`Image.iterator_set() <wand.image.BaseImage.iterator_set>`
+
  - Fixed :func:`~wand.display.display` on Windows & MacOS when previewing MIFF & XC formats.
  - Fixed memory leak in :meth:`Image.transform() <wand.image.BaseImage.transform>` for ImageMagick-6.
  - Fixed animation preservation with :meth:`Image.transform() <wand.image.BaseImage.transform>` method. [:issue:`251`]
