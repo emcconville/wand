@@ -565,6 +565,16 @@ def test_array_interface():
         img.alpha_channel = 'off'
         array = np.array(img)
         assert array.shape == (46, 70, 3)
+    with Image(filename='rose:') as img:
+        img.alpha_channel = 'off'
+        img.transform_colorspace('gray')
+        array = np.array(img)
+        assert array.shape == (46, 70, 1)
+    with Image(filename='rose:') as img:
+        img.alpha_channel = 'off'
+        img.transform_colorspace('cmyk')
+        array = np.array(img)
+        assert array.shape == (46, 70, 4)
 
 
 @mark.skipif(np is None, reason='Numpy not available.')

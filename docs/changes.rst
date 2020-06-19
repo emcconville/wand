@@ -26,6 +26,7 @@ Unreleased.
    - :meth:`Image.iterator_reset() <wand.image.BaseImage.iterator_reset>`
    - :meth:`Image.iterator_set() <wand.image.BaseImage.iterator_set>`
 
+ - Added ``gray`` & ``cmyk`` support for Numpy's array interface.
  - Fixed :func:`~wand.display.display` on Windows & MacOS when previewing MIFF & XC formats.
  - Fixed memory leak in :meth:`Image.transform() <wand.image.BaseImage.transform>` for ImageMagick-6.
  - Fixed animation preservation with :meth:`Image.transform() <wand.image.BaseImage.transform>` method. [:issue:`251`]

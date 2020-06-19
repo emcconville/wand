@@ -1256,11 +1256,16 @@ class BaseImage(Resource):
             raise ValueError("No image data to interface with.")
         width, height = self.size
         storage_type = 1  # CharPixel
-        channel_format = binary("RGB")
-        channel_number = 3
+        cs = self.colorspace
+        if cs in ('gray',):
+            channel_format = binary('R')
+        elif cs in ('cmyk',):
+            channel_format = binary('CMYK')
+        else:
+            channel_format = binary('RGB')
         if self.alpha_channel:
-            channel_format = binary("RGBA")
-            channel_number = 4
+            channel_format += binary('A')
+        channel_number = len(channel_format)
         self._c_buffer = (width * height * channel_number * ctypes.c_char)()
         # FIXME: Move to pixel-data import/export methods.
         r = library.MagickExportImagePixels(self.wand,
@@ -8641,7 +8646,7 @@ class Image(BaseImage):
                 else:
                     channel_map = 'CMYKA'[0:shape[2]]
             else:
-                channel_map = 'I'
+                channel_map = 'R'
         if hasattr(array, 'ctypes'):
             data_ptr = array.ctypes.data_as(ctypes.c_void_p)
         elif hasattr(array, 'tobytes'):

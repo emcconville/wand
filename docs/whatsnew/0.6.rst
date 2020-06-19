@@ -4,6 +4,34 @@ What's new in Wand 0.6?
 This guide doesn't cover all changes in 0.6. See the full list of changes
 in :ref:`changelog-0.6`.
 
+CMYK & Gray Color Spaces Added to Numpy's Array Interface
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+.. versionadded:: 0.6.2
+
+When exporting pixel data into a Numpy array, Gray & CMYK color-spaces will
+be represented.
+
+Note that the shape of the array only has one data channel for grayscale images.
+
+>>> with Image(filename="rose:") as img:
+...     img.transform_colorspace("gray")
+...     print(np.array(img).shape)
+(46, 70, 1)
+
+As expected, CMYK images will export 4 bytes for each color channel.
+
+>>> with Image(filename="rose:") as img:
+...     img.transform_colorspace("cmyk")
+...     print(np.array(img).shape)
+(46, 70, 4)
+
+Numpy array's do not transport channel assignment by default, so users will be
+responsible for passing this information back into a raster library.
+
+>>> with Image.form_array(my_cmyk_array, channel_map="cmyk")  as img:
+...     pass
+
 
 Completed MagickWand API
 ''''''''''''''''''''''''
