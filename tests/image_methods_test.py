@@ -1114,14 +1114,16 @@ def test_iterator(fx_asset):
         img.iterator_reset()
         idx = img.iterator_get()
         assert idx == 0
-        while img.iterator_next(): pass
+        while img.iterator_next():
+            pass
         idx = img.iterator_get()
         assert idx == 3
         img.iterator_first()
         idx = img.iterator_get()
         assert idx == 0
         img.iterator_last()
-        while img.iterator_previous(): pass
+        while img.iterator_previous():
+            pass
         idx = img.iterator_get()
         assert idx == 0
         img.iterator_set(2)
