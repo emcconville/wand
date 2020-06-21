@@ -30,7 +30,16 @@ Numpy array's do not transport channel assignment by default, so users will be
 responsible for passing this information back into a raster library.
 
 >>> with Image.form_array(my_cmyk_array, channel_map="cmyk")  as img:
-...     pass
+...     img.save(filename="output.tiff")
+
+Users expecting to keep RGBA array shapes should perform color space
+transformations before passing to Numpy.
+
+>>> with Image(filename="cmyk_photo.tiff") as img:
+...     if img.colorspace == "cmky":
+...         img.transform_colorspace("srgb")
+...     arr = numpy.array(img)
+...     arr = cv2.cvtColor(arr, cv2.COLOR_RGB2BGR)
 
 
 Completed MagickWand API
