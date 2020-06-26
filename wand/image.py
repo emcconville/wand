@@ -1251,6 +1251,8 @@ class BaseImage(Resource):
         .. versionchanged:: 0.6.0
            The :attr:`shape` property is now ordered by ``height``, ``width``,
            and ``channel``.
+        .. versionchanged:: 0.6.2
+           Color spaces ``gray`` & ``cmyk`` are now supported.
         """
         if not self.signature:
             raise ValueError("No image data to interface with.")
@@ -3911,7 +3913,7 @@ class BaseImage(Resource):
                                                    ctypes.byref(objects_ptr))
         objects = []
         if r and objects_ptr.value:
-            for i in range(self.colors):
+            for i in xrange(self.colors):
                 temp = CCObjectInfo()
                 src_addr = objects_ptr.value + (i * ccoi_mem_size)
                 ctypes.memmove(ctypes.addressof(temp), src_addr, ccoi_mem_size)
@@ -6871,7 +6873,7 @@ class BaseImage(Resource):
                 library.MagickSetLastIterator(self.wand)
                 n = library.MagickGetIteratorIndex(self.wand)
                 library.MagickResetIterator(self.wand)
-                for i in range(0, n + 1):
+                for i in xrange(0, n + 1):
                     library.MagickSetIteratorIndex(self.wand, i)
                     result = library.MagickRotateImage(self.wand,
                                                        background.resource,

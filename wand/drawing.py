@@ -1998,7 +1998,7 @@ def _list_to_point_info(points):
     point_info_size = point_length * tuple_size
     # Allocate sequence of memory
     point_info = (ctypes.c_double * point_info_size)()
-    for double_index in range(point_info_size):
+    for double_index in xrange(point_info_size):
         tuple_index = double_index // tuple_size
         tuple_offset = double_index % tuple_size
         point_info[double_index] = ctypes.c_double(
