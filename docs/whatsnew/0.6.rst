@@ -36,7 +36,7 @@ Users expecting to keep RGBA array shapes should perform color space
 transformations before passing to Numpy.
 
 >>> with Image(filename="cmyk_photo.tiff") as img:
-...     if img.colorspace == "cmky":
+...     if img.colorspace == "cmyk":
 ...         img.transform_colorspace("srgb")
 ...     arr = numpy.array(img)
 ...     arr = cv2.cvtColor(arr, cv2.COLOR_RGB2BGR)
