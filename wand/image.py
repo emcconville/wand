@@ -1882,8 +1882,12 @@ class BaseImage(Resource):
         See :const:`INTERLACE_TYPES`.
 
         .. versionadded:: 0.5.2
+
+        .. versionchanged:: 0.6.2
+           The :attr:`interlace_scheme` property now points to the image.
+           Previously was pointing to the :c:struct:`MagickWand`.
         """
-        scheme_idx = library.MagickGetInterlaceScheme(self.wand)
+        scheme_idx = library.MagickGetImageInterlaceScheme(self.wand)
         return INTERLACE_TYPES[scheme_idx]
 
     @interlace_scheme.setter
@@ -1892,7 +1896,7 @@ class BaseImage(Resource):
                                   'wand.image.INTERLACE_TYPES',
                                   interlace_scheme=scheme)
         scheme_idx = INTERLACE_TYPES.index(scheme)
-        library.MagickSetInterlaceScheme(self.wand, scheme_idx)
+        library.MagickSetImageInterlaceScheme(self.wand, scheme_idx)
 
     @property
     def interpolate_method(self):

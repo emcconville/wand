@@ -4,7 +4,7 @@
 .. versionadded:: 0.5.0
 """
 from ctypes import (CFUNCTYPE, POINTER, c_void_p, c_int, c_size_t, c_double,
-                    c_char_p, c_uint, c_ubyte, c_bool)
+                    c_char_p, c_ubyte, c_bool)
 from wand.cdefs.wandtypes import c_ssize_t, c_magick_char_p
 
 __all__ = ('MagickProgressMonitor', 'load')
@@ -503,7 +503,7 @@ def load(lib, IM_VERSION):
     lib.MagickGetImageHistogram.argtypes = [c_void_p, POINTER(c_size_t)]
     lib.MagickGetImageHistogram.restype = POINTER(c_void_p)
     lib.MagickGetImageInterlaceScheme.argtypes = [c_void_p]
-    lib.MagickGetImageInterlaceScheme.restype = c_bool
+    lib.MagickGetImageInterlaceScheme.restype = c_int
     lib.MagickGetImageIterations.argtypes = [c_void_p]
     lib.MagickGetImageIterations.restype = c_size_t
     lib.MagickGetImageInterpolateMethod.argtypes = [c_void_p]

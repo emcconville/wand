@@ -30,6 +30,7 @@ Unreleased.
  - Fixed :func:`~wand.display.display` on Windows & MacOS when previewing MIFF & XC formats.
  - Fixed memory leak in :meth:`Image.transform() <wand.image.BaseImage.transform>` for ImageMagick-6.
  - Fixed animation preservation with :meth:`Image.transform() <wand.image.BaseImage.transform>` method. [:issue:`251`]
+ - Fixed :attr:`Image.interlace_scheme <wand.image.BaseImage.interlace_scheme>` property. [:issue:`488`]
  - [DOC] Make the documentation reproducible. [:issue:`484` by Chris Lamb]
 
 
