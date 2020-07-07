@@ -12,7 +12,7 @@ Wand Changelog
 Version 0.6.2
 -------------
 
-Unreleased.
+Released on July 6th, 2020.
 
  - Added aspect cropping support for :meth:`Image.transform() <wand.image.BaseImage.transform>` method.
  - Added iterator methods to directly navigate the internal image-stack.
