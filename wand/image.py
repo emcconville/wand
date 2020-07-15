@@ -8909,6 +8909,23 @@ class Image(BaseImage):
         cloned.format = format
         return cloned
 
+    def data_url(self):
+        """Generate a base64 `data-url`_ string from the loaded image.
+        Useful for converting small graphics into ASCII strings for HTML/CSS
+        web development.
+
+        .. _data-url: https://en.wikipedia.org/wiki/Data_URI_scheme
+
+        :returns: a data-url formated string.
+        :rtype: :class:`basestring`
+
+        .. versionadded:: 0.6.3
+        """
+        from base64 import b64encode
+        mime_type = self.mimetype
+        base_bytes = b64encode(self.make_blob())
+        return "data:{0};base64,{1}".format(mime_type, text(base_bytes))
+
     def make_blob(self, format=None):
         """Makes the binary string of the image.
 

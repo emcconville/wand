@@ -582,3 +582,10 @@ def test_numpy_array_hairpinning():
     with Image(filename='rose:') as left:
         with Image.from_array(left) as right:
             assert left.size == right.size
+
+
+def test_data_url():
+    with Image(filename='rose:') as img:
+        img.format = 'PNG'
+        data = img.data_url()
+        assert data.startswith('data:image/png;base64,')
