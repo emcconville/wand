@@ -150,7 +150,7 @@ except KeyError:
 try:
     libraries = load_library()
 except (OSError, IOError):
-    msg = 'http://docs.wand-py.org/en/latest/guide/install.html'
+    msg = 'https://docs.wand-py.org/en/latest/guide/install.html'
     if sys.platform.startswith(('dragonfly', 'freebsd')):
         msg = 'pkg install'
     elif sys.platform == 'win32':

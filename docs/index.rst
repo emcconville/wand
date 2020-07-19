@@ -7,7 +7,7 @@ Wand
 
 .. image:: https://readthedocs.org/projects/wand/badge/
    :alt: Documentation Status
-   :target: http://docs.wand-py.org/en/latest/
+   :target: https://docs.wand-py.org/en/latest/
 
 .. image:: https://secure.travis-ci.org/emcconville/wand.svg?branch=master
    :alt: Build Status
@@ -151,10 +151,10 @@ The documentation_ for Wand is hosted by `ReadTheDocs.org`_. The nightly
 development docs can be found under the latest_ version, and the most recent
 release under stable_.  Previous & maintenance releases are also available.
 
-.. _documentation: http://docs.wand-py.org
+.. _documentation: https://docs.wand-py.org
 .. _ReadTheDocs.org: https://readthedocs.org
-.. _latest: http://docs.wand-py.org/en/latest/
-.. _stable: http://docs.wand-py.org/en/stable/
+.. _latest: https://docs.wand-py.org/en/latest/
+.. _stable: https://docs.wand-py.org/en/stable/
 
 
 Open source

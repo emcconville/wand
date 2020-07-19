@@ -28,7 +28,7 @@ Tests
 - There's `docs about how to test`__.
 - All commits will be tested by `Travis CI`__ & `GitHub Actions`__.
 
-__ http://docs.wand-py.org/en/latest/test.html
+__ https://docs.wand-py.org/en/latest/test.html
 __ https://travis-ci.org/emcconville/wand
 __ https://github.com/emcconville/wand/actions
 

@@ -77,7 +77,7 @@ setup(
     keywords='ImageMagick ctypes',
     cmdclass=cmdclass,
     project_urls={
-        'Documentation': 'http://docs.wand-py.org',
+        'Documentation': 'https://docs.wand-py.org',
         'Source': 'https://github.com/emcconville/wand',
         'Tracker': 'https://github.com/emcconville/wand/issues',
     }

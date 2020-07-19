@@ -1,4 +1,4 @@
-.. image:: http://docs.wand-py.org/en/latest/_static/wand.png
+.. image:: https://docs.wand-py.org/en/latest/_static/wand.png
    :width: 120
    :height: 120
 
@@ -25,7 +25,7 @@ revision of the source code from the `GitHub repository`__:
    $ python setup.py install
 
 .. _Wand: http://wand-py.org/
-.. _ImageMagick: http://www.imagemagick.org/
+.. _ImageMagick: https://www.imagemagick.org/
 .. _PyPI: https://pypi.python.org/pypi/Wand
 __ https://github.com/emcconville/wand
 
@@ -34,14 +34,14 @@ Docs
 ----
 
 Recent version
-   http://docs.wand-py.org/
+   https://docs.wand-py.org/
 
 Development version
-   http://docs.wand-py.org/en/latest/
+   https://docs.wand-py.org/en/latest/
 
    .. image:: https://readthedocs.org/projects/wand/badge/
       :alt: Documentation Status
-      :target: http://docs.wand-py.org/en/latest/
+      :target: https://docs.wand-py.org/en/latest/
 
 
 Community
