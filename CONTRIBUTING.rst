@@ -26,10 +26,11 @@ Tests
 
 - All code patches should contain one or more unit tests or regression tests.
 - There's `docs about how to test`__.
-- All commits will be tested by `Travis CI`__.
+- All commits will be tested by `Travis CI`__ & `GitHub Actions`__.
 
 __ http://docs.wand-py.org/en/latest/test.html
-__ http://travis-ci.org/emcconville/wand
+__ https://travis-ci.org/emcconville/wand
+__ https://github.com/emcconville/wand/actions
 
 
 Docs

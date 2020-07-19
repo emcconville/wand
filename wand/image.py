@@ -8598,7 +8598,7 @@ class Image(BaseImage):
 
         Use the optional ``channel_map`` & ``storage`` arguments to specify
         the order of color channels & data size. If ``channel_map`` is omitted,
-        this method will will guess ``"RGB"``, ``"I"``, or ``"CMYK"`` based on
+        this method will will guess ``"RGB"``, or ``"CMYK"`` based on
         array shape. If ``storage`` is omitted, this method will reference the
         array's ``typestr`` value, and raise a :class:`ValueError` if
         storage-type can not be mapped.
