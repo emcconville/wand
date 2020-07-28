@@ -89,7 +89,6 @@ EXIF
 Wand now can read EXIF metadata from images through :attr:`metadata
 <wand.image.Image>` property which is a mapping:
 
->>> from __future__ import print_function
 >>> url = 'http://farm9.staticflickr.com/8282/7874109806_3fe0080ae4_o_d.jpg'
 >>> with Image(file=urllib2.urlopen(url)) as i:
 ...     for key, value in i.metadata.items():

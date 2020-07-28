@@ -21,7 +21,6 @@ You can use it from CLI also.  Execute :mod:`wand.display` module through
 .. versionadded:: 0.1.9
 
 """
-from __future__ import print_function
 import ctypes
 import os
 import platform

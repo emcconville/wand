@@ -7,9 +7,10 @@
 import contextlib
 import ctypes
 import numbers
+from collections import abc
 
 from .api import libmagick, library
-from .compat import abc, binary, xrange
+from .compat import binary
 from .image import BaseImage, ImageProperty
 from .version import MAGICK_VERSION_INFO
 
@@ -26,7 +27,7 @@ class Sequence(ImageProperty, abc.MutableSequence):
     """
 
     def __init__(self, image):
-        super(Sequence, self).__init__(image)
+        super().__init__(image)
         self.instances = []
 
     @property
@@ -97,12 +98,12 @@ class Sequence(ImageProperty, abc.MutableSequence):
         else:
             stop = slice_.stop
         stop = min(length, stop or length)
-        return xrange(start, stop) if as_range else slice(start, stop, None)
+        return range(start, stop) if as_range else slice(start, stop, None)
 
     def __getitem__(self, index):
         if isinstance(index, slice):
             slice_ = self.validate_slice(index)
-            return [self[i] for i in xrange(slice_.start, slice_.stop)]
+            return [self[i] for i in range(slice_.start, slice_.stop)]
         index = self.validate_position(index)
         instances = self.instances
         instances_length = len(instances)
@@ -113,7 +114,7 @@ class Sequence(ImageProperty, abc.MutableSequence):
                 return instance
         else:
             number_to_extend = index - instances_length + 1
-            instances.extend(None for _ in xrange(number_to_extend))
+            instances.extend(None for _ in range(number_to_extend))
         wand = self.image.wand
         tmp_idx = library.MagickGetIteratorIndex(wand)
         library.MagickSetIteratorIndex(wand, index)
@@ -279,7 +280,7 @@ class SingleImage(BaseImage):
     container = None
 
     def __init__(self, wand, container, c_original_resource):
-        super(SingleImage, self).__init__(wand)
+        super().__init__(wand)
         self.container = container
         self.c_original_resource = c_original_resource
         self._delay = None
@@ -342,7 +343,7 @@ class SingleImage(BaseImage):
 
     def __exit__(self, type_, value, traceback):
         self._sync_container_sequence()
-        super(SingleImage, self).__exit__(type_, value, traceback)
+        super().__exit__(type_, value, traceback)
 
     def __repr__(self):
         cls = type(self)

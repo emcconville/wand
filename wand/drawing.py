@@ -9,11 +9,12 @@ The module provides some vector drawing functions.
 import collections
 import ctypes
 import numbers
+from collections import abc
 
 from . import assertions
 from .api import AffineMatrix, PointInfo, library
 from .color import Color
-from .compat import abc, binary, string_type, text, text_type, xrange
+from .compat import binary, text
 from .exceptions import WandLibraryVersionError
 from .image import BaseImage, COMPOSITE_OPERATORS
 from .sequence import SingleImage
@@ -200,7 +201,7 @@ class Drawing(Resource):
 
     @border_color.setter
     def border_color(self, color):
-        if isinstance(color, string_type):
+        if isinstance(color, str):
             color = Color(color)
         assertions.assert_color(border_color=color)
         with color:
@@ -208,7 +209,7 @@ class Drawing(Resource):
 
     @property
     def clip_path(self):
-        """(:class:`basestring`) The current clip path. It also can be set.
+        """(:class:`str`) The current clip path. It also can be set.
 
         .. versionadded:: 0.4.0
 
@@ -227,7 +228,7 @@ class Drawing(Resource):
 
     @property
     def clip_rule(self):
-        """(:class:`basestring`) The current clip rule. It also can be set.
+        """(:class:`str`) The current clip rule. It also can be set.
         It's a string value from :const:`FILL_RULE_TYPES` list.
 
         .. versionadded:: 0.4.0
@@ -245,7 +246,7 @@ class Drawing(Resource):
 
     @property
     def clip_units(self):
-        """(:class:`basestring`) The current clip units. It also can be set.
+        """(:class:`str`) The current clip units. It also can be set.
         It's a string value from :const:`CLIP_PATH_UNITS` list.
 
         .. versionadded:: 0.4.0
@@ -275,7 +276,7 @@ class Drawing(Resource):
 
     @fill_color.setter
     def fill_color(self, color):
-        if isinstance(color, string_type):
+        if isinstance(color, str):
             color = Color(color)
         assertions.assert_color(fill_color=color)
         with color:
@@ -297,7 +298,7 @@ class Drawing(Resource):
 
     @property
     def fill_rule(self):
-        """(:class:`basestring`) The current fill rule. It can also be set.
+        """(:class:`str`) The current fill rule. It can also be set.
         It's a string value from :const:`FILL_RULE_TYPES` list.
 
         .. versionadded:: 0.4.0
@@ -305,7 +306,7 @@ class Drawing(Resource):
         fill_rule_index = library.DrawGetFillRule(self.resource)
         if fill_rule_index not in FILL_RULE_TYPES:
             self.raise_exception()
-        return text(FILL_RULE_TYPES[fill_rule_index])
+        return FILL_RULE_TYPES[fill_rule_index]
 
     @fill_rule.setter
     def fill_rule(self, fill_rule):
@@ -317,7 +318,7 @@ class Drawing(Resource):
 
     @property
     def font(self):
-        """(:class:`basestring`) The current font name.  It also can be set.
+        """(:class:`str`) The current font name.  It also can be set.
 
         .. versionchanged: 0.4.1
            Safely release allocated memory with
@@ -334,7 +335,7 @@ class Drawing(Resource):
 
     @property
     def font_family(self):
-        """(:class:`basestring`) The current font family. It also can be set.
+        """(:class:`str`) The current font family. It also can be set.
 
         .. versionadded:: 0.4.0
 
@@ -383,14 +384,14 @@ class Drawing(Resource):
 
     @property
     def font_stretch(self):
-        """(:class:`basestring`) The current font stretch variation.
+        """(:class:`str`) The current font stretch variation.
         It also can be set, but will only apply if the font-family or encoder
         supports the stretch type.
 
         .. versionadded:: 0.4.0
         """
         stretch_index = library.DrawGetFontStretch(self.resource)
-        return text(STRETCH_TYPES[stretch_index])
+        return STRETCH_TYPES[stretch_index]
 
     @font_stretch.setter
     def font_stretch(self, stretch):
@@ -402,14 +403,14 @@ class Drawing(Resource):
 
     @property
     def font_style(self):
-        """(:class:`basestring`) The current font style.
+        """(:class:`str`) The current font style.
         It also can be set, but will only apply if the font-family
         supports the style.
 
         .. versionadded:: 0.4.0
         """
         style_index = library.DrawGetFontStyle(self.resource)
-        return text(STYLE_TYPES[style_index])
+        return STYLE_TYPES[style_index]
 
     @font_style.setter
     def font_style(self, style):
@@ -435,7 +436,7 @@ class Drawing(Resource):
 
     @property
     def gravity(self):
-        """(:class:`basestring`) The text placement gravity used when
+        """(:class:`str`) The text placement gravity used when
         annotating with text.  It's a string from :const:`GRAVITY_TYPES`
         list.  It also can be set.
 
@@ -443,7 +444,7 @@ class Drawing(Resource):
         gravity_index = library.DrawGetGravity(self.resource)
         if not gravity_index:
             self.raise_exception()
-        return text(GRAVITY_TYPES[gravity_index])
+        return GRAVITY_TYPES[gravity_index]
 
     @gravity.setter
     def gravity(self, value):
@@ -505,7 +506,7 @@ class Drawing(Resource):
 
     @stroke_color.setter
     def stroke_color(self, color):
-        if isinstance(color, string_type):
+        if isinstance(color, str):
             color = Color(color)
         assertions.assert_color(stroke_color=color)
         with color:
@@ -531,7 +532,7 @@ class Drawing(Resource):
         dash_array = []
         if dash_array_p is not None:
             dash_array = [float(dash_array_p[i])
-                          for i in xrange(number_elements.value)]
+                          for i in range(number_elements.value)]
             library.MagickRelinquishMemory(dash_array_p)
         return dash_array
 
@@ -558,14 +559,14 @@ class Drawing(Resource):
 
     @property
     def stroke_line_cap(self):
-        """(:class:`basestring`) The stroke line cap. It also can be set.
+        """(:class:`str`) The stroke line cap. It also can be set.
 
         .. versionadded:: 0.4.0
         """
         line_cap_index = library.DrawGetStrokeLineCap(self.resource)
         if line_cap_index not in LINE_CAP_TYPES:
             self.raise_exception()
-        return text(LINE_CAP_TYPES[line_cap_index])
+        return LINE_CAP_TYPES[line_cap_index]
 
     @stroke_line_cap.setter
     def stroke_line_cap(self, line_cap):
@@ -577,14 +578,14 @@ class Drawing(Resource):
 
     @property
     def stroke_line_join(self):
-        """(:class:`basestring`) The stroke line join. It also can be set.
+        """(:class:`str`) The stroke line join. It also can be set.
 
         .. versionadded:: 0.4.0
         """
         line_join_index = library.DrawGetStrokeLineJoin(self.resource)
         if line_join_index not in LINE_JOIN_TYPES:
             self.raise_exception()
-        return text(LINE_JOIN_TYPES[line_join_index])
+        return LINE_JOIN_TYPES[line_join_index]
 
     @stroke_line_join.setter
     def stroke_line_join(self, line_join):
@@ -640,7 +641,7 @@ class Drawing(Resource):
 
     @property
     def text_alignment(self):
-        """(:class:`basestring`) The current text alignment setting.
+        """(:class:`str`) The current text alignment setting.
         It's a string value from :const:`TEXT_ALIGN_TYPES` list.
         It also can be set.
 
@@ -648,7 +649,7 @@ class Drawing(Resource):
         text_alignment_index = library.DrawGetTextAlignment(self.resource)
         if not text_alignment_index:  # pragma: no cover
             self.raise_exception()
-        return text(TEXT_ALIGN_TYPES[text_alignment_index])
+        return TEXT_ALIGN_TYPES[text_alignment_index]
 
     @text_alignment.setter
     def text_alignment(self, align):
@@ -675,14 +676,14 @@ class Drawing(Resource):
 
     @property
     def text_decoration(self):
-        """(:class:`basestring`) The text decoration setting, a string
+        """(:class:`str`) The text decoration setting, a string
         from :const:`TEXT_DECORATION_TYPES` list.  It also can be set.
 
         """
         text_decoration_index = library.DrawGetTextDecoration(self.resource)
         if not text_decoration_index:  # pragma: no cover
             self.raise_exception()
-        return text(TEXT_DECORATION_TYPES[text_decoration_index])
+        return TEXT_DECORATION_TYPES[text_decoration_index]
 
     @text_decoration.setter
     def text_decoration(self, decoration):
@@ -694,7 +695,7 @@ class Drawing(Resource):
 
     @property
     def text_direction(self):
-        """(:class:`basestring`) The text direction setting. a string
+        """(:class:`str`) The text direction setting. a string
         from :const:`TEXT_DIRECTION_TYPES` list. It also can be set."""
         if library.DrawGetTextDirection is None:  # pragma: no cover
             raise WandLibraryVersionError(
@@ -704,7 +705,7 @@ class Drawing(Resource):
         text_direction_index = library.DrawGetTextDirection(self.resource)
         if not text_direction_index:  # pragma: no cover
             self.raise_exception()
-        return text(TEXT_DIRECTION_TYPES[text_direction_index])
+        return TEXT_DIRECTION_TYPES[text_direction_index]
 
     @text_direction.setter
     def text_direction(self, direction):
@@ -721,7 +722,7 @@ class Drawing(Resource):
 
     @property
     def text_encoding(self):
-        """(:class:`basestring`) The internally used text encoding setting.
+        """(:class:`str`) The internally used text encoding setting.
         Although it also can be set, but it's not encouraged.
 
         .. versionchanged: 0.4.1
@@ -804,7 +805,7 @@ class Drawing(Resource):
 
     @text_under_color.setter
     def text_under_color(self, color):
-        if isinstance(color, string_type):
+        if isinstance(color, str):
             color = Color(color)
         assertions.assert_color(text_under_color=color)
         with color:
@@ -812,7 +813,7 @@ class Drawing(Resource):
 
     @property
     def vector_graphics(self):
-        """(:class:`basestring`) The XML text of the Vector Graphics.
+        """(:class:`str`) The XML text of the Vector Graphics.
         It also can be set.  The drawing-wand XML is experimental,
         and subject to change.
 
@@ -832,7 +833,7 @@ class Drawing(Resource):
     @vector_graphics.setter
     def vector_graphics(self, vector_graphics):
         if vector_graphics is not None and not isinstance(vector_graphics,
-                                                          string_type):
+                                                          str):
             raise TypeError('expected a string, not ' + repr(vector_graphics))
         elif vector_graphics is None:
             # Reset all vector graphic properties on drawing wand.
@@ -1022,7 +1023,7 @@ class Drawing(Resource):
         """Adds a comment to the vector stream.
 
         :param message: the comment to set.
-        :type message: :class:`basestring`
+        :type message: :class:`str`
 
         .. versionadded:: 0.4.0
         """
@@ -1129,7 +1130,7 @@ class Drawing(Resource):
         :param image: the image to be drawn
         :type image: :class:`~wand.image.BaseImage`
         :param text: the text string for get font metrics.
-        :type text: :class:`basestring`
+        :type text: :class:`str`
         :param multiline: text is multiline or not
         :type multiline: `boolean`
 
@@ -1142,7 +1143,7 @@ class Drawing(Resource):
             font_metrics_f = library.MagickQueryMultilineFontMetrics
         else:
             font_metrics_f = library.MagickQueryFontMetrics
-        if isinstance(text, text_type):
+        if isinstance(text, str):
             if self.text_encoding:
                 text = text.encode(self.text_encoding)
             else:
@@ -1155,7 +1156,7 @@ class Drawing(Resource):
             image.raise_exception()
             # Generate a generic error if ImageMagick couldn't emit one.
             raise ValueError('Unable to render text with current font.')
-        args = [result[i] for i in xrange(13)]
+        args = [result[i] for i in range(13)]
         library.MagickRelinquishMemory(result)
         return FontMetrics(*args)
 
@@ -1661,7 +1662,7 @@ class Drawing(Resource):
         command.
 
         :param clip_mask_id: string identifier to associate with the clip path.
-        :type clip_mask_id: :class:`basestring`
+        :type clip_mask_id: :class:`str`
 
         .. versionadded:: 0.4.0
 
@@ -1687,7 +1688,7 @@ class Drawing(Resource):
         Named patterns may be used as stroke or brush definitions.
 
         :param pattern_id: a unique identifier for the pattern.
-        :type pattern_id: :class:`basestring`
+        :type pattern_id: :class:`str`
         :param left: x ordinate of top left corner.
         :type left: :class:`numbers.Real`
         :param top: y ordinate of top left corner.
@@ -1859,7 +1860,7 @@ class Drawing(Resource):
         Drawing.push_pattern & Drawing.pop_pattern.
 
         :param url: URL to use to obtain fill pattern.
-        :type url: :class:`basestring`
+        :type url: :class:`str`
 
         .. versionadded:: 0.4.0
 
@@ -1878,7 +1879,7 @@ class Drawing(Resource):
         Drawing.push_pattern & Drawing.pop_pattern.
 
         :param url: URL to use to obtain stroke pattern.
-        :type url: :class:`basestring`
+        :type url: :class:`str`
 
         .. versionadded:: 0.4.0
 
@@ -1917,14 +1918,14 @@ class Drawing(Resource):
         :param y: the baseline where to start writing text
         :type y: :class:`numbers.Integral`
         :param body: the body string to write
-        :type body: :class:`basestring`
+        :type body: :class:`str`
 
         """
         assertions.assert_unsigned_integer(x=x, y=y)
         assertions.assert_string(body=body)
         if not body:
             raise ValueError('body string cannot be empty')
-        if isinstance(body, text_type):
+        if isinstance(body, str):
             # According to ImageMagick C API docs, we can use only UTF-8
             # at this time, so we do hardcoding here.
             # http://imagemagick.org/api/drawing-wand.php#DrawSetTextEncoding
@@ -1998,7 +1999,7 @@ def _list_to_point_info(points):
     point_info_size = point_length * tuple_size
     # Allocate sequence of memory
     point_info = (ctypes.c_double * point_info_size)()
-    for double_index in xrange(point_info_size):
+    for double_index in range(point_info_size):
         tuple_index = double_index // tuple_size
         tuple_offset = double_index % tuple_size
         point_info[double_index] = ctypes.c_double(

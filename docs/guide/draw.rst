@@ -361,7 +361,7 @@ The following example will draw points following a math function across a given
     import math
     
     with Drawing() as draw:
-        for x in xrange(0, 100):
+        for x in range(0, 100):
             y = math.tan(x) * 4
             draw.point(x, y + 50)
         with Image(width=100, height=100, background=Color('lightblue')) as image:
@@ -491,12 +491,9 @@ exist to match there pop counterparts.
     from wand.color import Color
     from wand.image import Image
     from wand.drawing import Drawing
-    from wand.compat import nested
     from math import cos, pi, sin
 
-    with nested(Color('lightblue'),
-                Color('transparent'),
-                Drawing()) as (bg, fg, draw):
+    with Color('lightblue') as bg, Color('transparent') as fg, Drawing() as draw:
         draw.stroke_width = 3
         draw.fill_color = fg
         for degree in range(0, 360, 15):

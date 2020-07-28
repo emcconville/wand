@@ -34,8 +34,6 @@ You can find the current version in the command line interface:
    additional information about ImageMagick library.
 
 """
-from __future__ import print_function
-
 import ctypes
 import datetime
 import re
@@ -45,7 +43,7 @@ try:
     from .api import libmagick, library
 except ImportError:  # pragma: no cover
     libmagick = None
-from .compat import binary, string_type, text
+from .compat import binary, text
 
 
 __all__ = ('VERSION', 'VERSION_INFO', 'MAGICK_VERSION',
@@ -61,7 +59,7 @@ __all__ = ('VERSION', 'VERSION_INFO', 'MAGICK_VERSION',
 #:    Becomes :class:`tuple`.  (It was string before.)
 VERSION_INFO = (0, 6, 3)
 
-#: (:class:`basestring`) The version string e.g. ``'0.1.2'``.
+#: (:class:`str`) The version string e.g. ``'0.1.2'``.
 #:
 #: .. versionchanged:: 0.1.9
 #:    Becomes string.  (It was :class:`tuple` before.)
@@ -69,7 +67,7 @@ VERSION = '{0}.{1}.{2}'.format(*VERSION_INFO)
 
 if libmagick:
     c_magick_version = ctypes.c_size_t()
-    #: (:class:`basestring`) The version string of the linked ImageMagick
+    #: (:class:`str`) The version string of the linked ImageMagick
     #: library.  The exactly same string to the result of
     #: :c:func:`GetMagickVersion` function.
     #:
@@ -91,7 +89,7 @@ if libmagick:
     _match = re.match(r'^ImageMagick\s+(\d+)\.(\d+)\.(\d+)(?:-(\d+))?',
                       MAGICK_VERSION)
 
-    #: (:class:`basestring`) A string of all delegates enabled.
+    #: (:class:`str`) A string of all delegates enabled.
     #: This value is identical to what is returned by
     #: :c:func:`GetMagickDelegates`
     #:
@@ -104,7 +102,7 @@ if libmagick:
     else:  # pragma: no cover
         MAGICK_VERSION_DELEGATES = ""
 
-    #: (:class:`basestring`) A string of all features enabled.
+    #: (:class:`str`) A string of all features enabled.
     #: This value is identical to what is returned by
     #: :c:func:`GetMagickFeatures`
     #:
@@ -117,7 +115,7 @@ if libmagick:
     #: .. versionadded:: 0.2.1
     MAGICK_VERSION_INFO = tuple(int(v or 0) for v in _match.groups())
 
-    #: (:class:`basestring`) The date string e.g. ``'2012-06-03'`` of
+    #: (:class:`str`) The date string e.g. ``'2012-06-03'`` of
     #: :const:`MAGICK_RELEASE_DATE_STRING`.  This value is the exactly same
     #: string to the result of :c:func:`GetMagickReleaseDate` function.
     #:
@@ -170,11 +168,11 @@ def configure_options(pattern='*'):
 
     :param pattern: A term to filter queries against. Supports wildcard '*'
                     characters. Default patterns '*' for all options.
-    :type pattern: :class:`basestring`
+    :type pattern: :class:`str`
     :returns: Directory of configuration options matching given pattern
     :rtype: :class:`collections.defaultdict`
     """
-    if not isinstance(pattern, string_type):
+    if not isinstance(pattern, str):
         raise TypeError('pattern must be a string, not ' + repr(pattern))
     # We must force init environment to load user config paths.
     library.MagickWandGenesis()
@@ -212,11 +210,11 @@ def fonts(pattern='*'):
 
     :param pattern: A term to filter queries against. Supports wildcard '*'
                     characters. Default patterns '*' for all options.
-    :type pattern: :class:`basestring`
+    :type pattern: :class:`str`
     :returns: Sequence of matching fonts
     :rtype: :class:`collections.Sequence`
     """
-    if not isinstance(pattern, string_type):
+    if not isinstance(pattern, str):
         raise TypeError('pattern must be a string, not ' + repr(pattern))
     # We must force init environment to load user config paths.
     library.MagickWandGenesis()
@@ -246,11 +244,11 @@ def formats(pattern='*'):
 
     :param pattern: A term to filter formats against. Supports wildcards '*'
                     characters. Default pattern '*' for all formats.
-    :type pattern: :class:`basestring`
+    :type pattern: :class:`str`
     :returns: Sequence of matching formats
     :rtype: :class:`collections.Sequence`
     """
-    if not isinstance(pattern, string_type):
+    if not isinstance(pattern, str):
         raise TypeError('pattern must be a string, not ' + repr(pattern))
     # We must force init environment to load user config paths.
     library.MagickWandGenesis()

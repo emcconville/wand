@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # These tests cover the basic I/O & pythonic interfaces of the Image class.
 #
@@ -15,7 +14,6 @@ from pytest import mark, raises
 
 from wand.image import ClosedImageError, Image
 from wand.color import Color
-from wand.compat import PY3, text, text_type
 
 try:
     filesystem_encoding = sys.getfilesystemencoding()
@@ -120,12 +118,10 @@ def test_read_from_filename(fx_asset):
 def test_read_from_unicode_filename(fx_asset, tmpdir):
     """https://github.com/emcconville/wand/issues/122"""
     filename = '모나리자.jpg'
-    if not PY3:
-        filename = filename.decode('utf-8')
-    path = os.path.join(text_type(tmpdir), filename)  # workaround py.path bug
+    path = os.path.join(str(tmpdir), filename)  # workaround py.path bug
     shutil.copyfile(str(fx_asset.join('mona-lisa.jpg')), path)
     with Image() as img:
-        img.read(filename=text(path))
+        img.read(filename=path)
         assert img.width == 402
 
 
@@ -172,11 +168,9 @@ def test_new_from_filename(fx_asset):
 def test_new_from_unicode_filename(fx_asset, tmpdir):
     """https://github.com/emcconville/wand/issues/122"""
     filename = '모나리자.jpg'
-    if not PY3:
-        filename = filename.decode('utf-8')
-    path = os.path.join(text_type(tmpdir), filename)  # workaround py.path bug
+    path = os.path.join(str(tmpdir), filename)  # workaround py.path bug
     shutil.copyfile(str(fx_asset.join('mona-lisa.jpg')), path)
-    with Image(filename=text(path)) as img:
+    with Image(filename=path) as img:
         assert img.width == 402
 
 
@@ -255,9 +249,7 @@ def test_save_to_filename(fx_asset):
              reason='Unicode filesystem encoding needed')
 def test_save_to_unicode_filename(fx_asset, tmpdir):
     filename = '모나리자.jpg'
-    if not PY3:
-        filename = filename.decode('utf-8')
-    path = os.path.join(text_type(tmpdir), filename)  # workaround py.path bug
+    path = os.path.join(str(tmpdir), filename)  # workaround py.path bug
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as orig:
         orig.save(filename=path)
     with Image(filename=path) as img:

@@ -36,7 +36,7 @@ name is a very complicated problem to achieve.
 """
 from . import assertions
 from .color import Color
-from .compat import string_type, text
+from .compat import text
 
 __all__ = ('Font',)
 
@@ -45,7 +45,7 @@ class Font(tuple):
     """Font struct which is a subtype of :class:`tuple`.
 
     :param path: the path of the font file
-    :type path: :class:`str`, :class:`basestring`
+    :type path: :class:`str`
     :param size: the size of typeface.  0 by default which means *autosized*
     :type size: :class:`numbers.Real`
     :param color: the color of typeface.  black by default
@@ -71,22 +71,21 @@ class Font(tuple):
         assertions.assert_real(size=size)
         if color is None:
             color = Color('black')
-        elif isinstance(color, string_type):
+        elif isinstance(color, str):
             color = Color(color)
         assertions.assert_color(color=color)
         if stroke_color:
-            if isinstance(stroke_color, string_type):
+            if isinstance(stroke_color, str):
                 stroke_color = Color(stroke_color)
             assertions.assert_color(stroke_color=stroke_color)
         if stroke_width is not None:
             assertions.assert_real(stroke_width=stroke_width)
-        path = text(path)
         return tuple.__new__(cls, (path, size, color, bool(antialias),
                                    stroke_color, stroke_width))
 
     @property
     def path(self):
-        """(:class:`basestring`) The path of font file."""
+        """(:class:`str`) The path of font file."""
         return self[0]
 
     @property
