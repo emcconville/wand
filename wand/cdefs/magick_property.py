@@ -4,8 +4,8 @@
 .. versionadded:: 0.5.0
 """
 from ctypes import (POINTER, c_void_p, c_char_p, c_size_t, c_ubyte, c_uint,
-                    c_int, c_ulong, c_double)
-from wand.cdefs.wandtypes import c_magick_char_p
+                    c_int, c_ulong, c_double, c_bool)
+from wand.cdefs.wandtypes import c_magick_char_p, c_ssize_t
 
 __all__ = ('load',)
 
@@ -35,13 +35,13 @@ def load(lib, IM_VERSION):
 
     """
     lib.MagickDeleteImageArtifact.argtypes = [c_void_p, c_char_p]
-    lib.MagickDeleteImageArtifact.restype = c_int
+    lib.MagickDeleteImageArtifact.restype = c_bool
     lib.MagickDeleteImageProperty.argtypes = [c_void_p, c_char_p]
-    lib.MagickDeleteImageProperty.restype = c_int
+    lib.MagickDeleteImageProperty.restype = c_bool
     lib.MagickDeleteOption.argtypes = [c_void_p, c_char_p]
-    lib.MagickDeleteOption.restype = c_int
+    lib.MagickDeleteOption.restype = c_bool
     lib.MagickGetAntialias.argtypes = [c_void_p]
-    lib.MagickGetAntialias.restype = c_int
+    lib.MagickGetAntialias.restype = c_bool
     lib.MagickGetBackgroundColor.argtypes = [c_void_p]
     lib.MagickGetBackgroundColor.restype = c_void_p
     lib.MagickGetColorspace.argtypes = [c_void_p]
@@ -85,6 +85,8 @@ def load(lib, IM_VERSION):
     lib.MagickGetResource.restype = c_size_t
     lib.MagickGetResourceLimit.argtypes = [c_int]
     lib.MagickGetResourceLimit.restype = c_size_t
+    lib.MagickGetSamplingFactors.argtypes = [c_void_p, POINTER(c_size_t)]
+    lib.MagickGetSamplingFactors.restype = POINTER(c_double)
     lib.MagickGetSize.argtypes = [c_void_p, POINTER(c_uint), POINTER(c_uint)]
     lib.MagickGetSize.restype = c_int
     lib.MagickQueryConfigureOption.argtypes = [c_char_p]
@@ -106,38 +108,58 @@ def load(lib, IM_VERSION):
     ]
     lib.MagickRemoveImageProfile.restype = POINTER(c_ubyte)
     lib.MagickSetAntialias.argtypes = [c_void_p, c_int]
-    lib.MagickSetAntialias.restype = c_int
-    lib.MagickSetColorspace.argtypes = [c_void_p, c_int]
-    lib.MagickSetColorspace.restype = c_int
-    lib.MagickSetCompression.argtypes = [c_void_p, c_int]
-    lib.MagickSetCompression.restype = c_int
-    lib.MagickSetCompressionQuality.argtypes = [c_void_p, c_size_t]
-    lib.MagickSetCompressionQuality.restype = c_int
+    lib.MagickSetAntialias.restype = c_bool
     lib.MagickSetBackgroundColor.argtypes = [c_void_p, c_void_p]
-    lib.MagickSetBackgroundColor.restype = c_int
+    lib.MagickSetBackgroundColor.restype = c_bool
+    lib.MagickSetColorspace.argtypes = [c_void_p, c_int]
+    lib.MagickSetColorspace.restype = c_bool
+    lib.MagickSetCompression.argtypes = [c_void_p, c_int]
+    lib.MagickSetCompression.restype = c_bool
+    lib.MagickSetCompressionQuality.argtypes = [c_void_p, c_size_t]
+    lib.MagickSetCompressionQuality.restype = c_bool
     lib.MagickSetDepth.argtypes = [c_void_p, c_uint]
-    lib.MagickSetDepth.restype = c_int
+    lib.MagickSetDepth.restype = c_bool
+    lib.MagickSetExtract.argtypes = [c_void_p, c_char_p]
+    lib.MagickSetExtract.restype = c_bool
     lib.MagickSetFilename.argtypes = [c_void_p, c_char_p]
+    lib.MagickSetFilename.restype = c_bool
     lib.MagickSetFont.argtypes = [c_void_p, c_char_p]
-    lib.MagickSetFont.restype = c_int
+    lib.MagickSetFont.restype = c_bool
     lib.MagickSetFormat.argtypes = [c_void_p, c_char_p]
-    lib.MagickSetFormat.restype = c_int
+    lib.MagickSetFormat.restype = c_bool
     lib.MagickSetGravity.argtypes = [c_void_p, c_int]
-    lib.MagickSetGravity.restype = c_int
+    lib.MagickSetGravity.restype = c_bool
     lib.MagickSetImageArtifact.argtypes = [c_void_p, c_char_p, c_char_p]
     lib.MagickSetImageProfile.argtypes = [
         c_void_p, c_char_p, c_void_p, c_size_t
     ]
-    lib.MagickSetImageProfile.restype = c_int
+    lib.MagickSetImageProfile.restype = c_bool
     lib.MagickSetImageProperty.argtypes = [c_void_p, c_char_p, c_char_p]
+    lib.MagickSetImageProperty.restype = c_bool
     lib.MagickSetInterlaceScheme.argtypes = [c_void_p, c_int]
-    lib.MagickSetInterlaceScheme.restype = c_int
+    lib.MagickSetInterlaceScheme.restype = c_bool
+    lib.MagickSetInterpolateMethod.argtypes = [c_void_p, c_int]
+    lib.MagickSetInterpolateMethod.restype = c_bool
     lib.MagickSetOption.argtypes = [c_void_p, c_char_p, c_char_p]
-    lib.MagickSetOption.restype = c_int
+    lib.MagickSetOption.restype = c_bool
+    lib.MagickSetOrientation.argtypes = [c_void_p, c_int]
+    lib.MagickSetOrientation.restype = c_bool
+    lib.MagickSetPage.argtypes = [
+        c_void_p, c_size_t, c_size_t, c_ssize_t, c_ssize_t
+    ]
+    lib.MagickSetPage.restype = c_bool
+    lib.MagickSetPassphrase.argtypes = [c_void_p, c_char_p]
+    lib.MagickSetPassphrase.restype = c_bool
     lib.MagickSetPointsize.argtypes = [c_void_p, c_double]
-    lib.MagickSetPointsize.restype = c_int
+    lib.MagickSetPointsize.restype = c_bool
+    lib.MagickSetResolution.argtypes = [c_void_p, c_double, c_double]
+    lib.MagickSetResolution.restype = c_bool
     lib.MagickSetResourceLimit.argtypes = [c_int, c_size_t]
-    lib.MagickSetResourceLimit.restype = c_int
+    lib.MagickSetResourceLimit.restype = c_bool
+    lib.MagickSetSamplingFactors.argtypes = [
+        c_void_p, c_size_t, POINTER(c_double)
+    ]
+    lib.MagickSetSamplingFactors.restype = c_bool
     if IM_VERSION >= 0x708:
         try:
             lib.MagickSetSeed.argtypes = [c_void_p, c_ulong]
@@ -145,5 +167,16 @@ def load(lib, IM_VERSION):
             lib.MagickSetSeed = None
     else:
         lib.MagickSetSeed = None
+    try:
+        lib.MagickSetSecurityPolicy.argtypes = [c_void_p, c_char_p]
+        lib.MagickSetSecurityPolicy.restype = c_bool
+    except AttributeError:
+        lib.MagickSetSecurityPolicy = None
     lib.MagickSetSize.argtypes = [c_void_p, c_uint, c_uint]
-    lib.MagickSetSize.restype = c_int
+    lib.MagickSetSize.restype = c_bool
+    lib.MagickSetSizeOffset.argtypes = [
+        c_void_p, c_size_t, c_size_t, c_ssize_t
+    ]
+    lib.MagickSetSizeOffset.restype = c_bool
+    lib.MagickSetType.argtypes = [c_void_p, c_int]
+    lib.MagickSetType.restype = c_bool
