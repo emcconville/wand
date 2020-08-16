@@ -2247,6 +2247,47 @@ class BaseImage(Resource):
             self.raise_exception()
 
     @property
+    def sampling_factors(self):
+        """(:class:`tuple`) Factors used in sampling data streams.
+        This can be set by given it a string ``"4:2:2"``, or tuple of numbers
+        ``(2, 1, 1)``. However the given string value will be parsed to aspect
+        ratio (i.e. ``"4:2:2"`` internally becomes ``"2,1"``).
+
+        .. note::
+            This property is only used by YUV, DPX, & EXR encoders. For
+            JPEG & TIFF set ``"jpeg:sampling-factor"`` on
+            :attr:`Image.options` dictionary::
+
+                with Image(filename='input.jpg') as img:
+                    img.options['jpeg:sampling-factor'] = '2x1'
+
+        .. versionadded:: 0.6.3
+        """
+        factors_len = ctypes.c_size_t(0)
+        factors = library.MagickGetSamplingFactors(self.wand,
+                                                   ctypes.byref(factors_len))
+        factors_tuple = tuple(factors[x] for x in xrange(factors_len.value))
+        library.MagickRelinquishMemory(factors)
+        return factors_tuple
+
+    @sampling_factors.setter
+    def sampling_factors(self, factors):
+        if isinstance(factors, string_type):
+            geometry_info = GeometryInfo()
+            flags = libmagick.ParseGeometry(binary(factors),
+                                            ctypes.byref(geometry_info))
+            if (flags & 0x0008) == 0:
+                factors = (geometry_info.rho, geometry_info.rho)
+            else:
+                factors = (geometry_info.rho, geometry_info.sigma)
+        elif not isinstance(factors, abc.Sequence):
+            raise TypeError('sampling_factors must be a sequence of real '
+                            'numbers, not ' + repr(factors))
+        factors_len = len(factors)
+        factors_ptr = (ctypes.c_double * factors_len)(*factors)
+        library.MagickSetSamplingFactors(self.wand, factors_len, factors_ptr)
+
+    @property
     def scene(self):
         """(:class:`numbers.Integral`) The scene number of the current frame
         within an animated image.
@@ -8484,7 +8525,8 @@ class Image(BaseImage):
     def __init__(self, image=None, blob=None, file=None, filename=None,
                  format=None, width=None, height=None, depth=None,
                  background=None, resolution=None, pseudo=None,
-                 colorspace=None, units=None):
+                 colorspace=None, units=None, sampling_factors=None,
+                 interlace=None):
         new_args = width, height, background, depth
         open_args = blob, file, filename
         if any(a is not None for a in new_args) and image is not None:
@@ -8546,6 +8588,14 @@ class Image(BaseImage):
                     if not filename:
                         library.MagickSetFilename(self.wand,
                                                   b'buffer.' + format)
+                if sampling_factors is not None:
+                    self.sampling_factors = sampling_factors
+                if interlace is not None:
+                    assertions.string_in_list(INTERLACE_TYPES,
+                                              'wand.image.INTERLACE_TYPES',
+                                              interlace=interlace)
+                    c_interlace = INTERLACE_TYPES.index(interlace)
+                    library.MagickSetInterlaceScheme(self.wand, c_interlace)
                 if file is not None:
                     self.read(file=file, resolution=resolution, units=units)
                 elif blob is not None:

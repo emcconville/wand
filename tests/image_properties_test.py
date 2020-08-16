@@ -553,6 +553,14 @@ def test_resolution_set_04(fx_asset):
         warnings.warn('PDF delegate could not be found.')
 
 
+def test_sampling_factors():
+    with Image(filename='rose:') as img:
+        img.sampling_factors = "4:2:2"
+        assert img.sampling_factors == (2, 1)
+        with raises(TypeError):
+            img.sampling_factors = {}
+
+
 def test_scene():
     with Image(filename='rose:') as img:
         img.scene = 4
