@@ -61,7 +61,33 @@ class ChannelFeature(Structure):
 
 
 class GeometryInfo(Structure):
-
+    NoValue = 0x0000
+    XValue = 0x0001
+    XiValue = 0x0001
+    YValue = 0x0002
+    PsiValue = 0x0002
+    WidthValue = 0x0004
+    RhoValue = 0x0004
+    HeightValue = 0x0008
+    SigmaValue = 0x0008
+    ChiValue = 0x0010
+    XiNegative = 0x0020
+    XNegative = 0x0020
+    PsiNegative = 0x0040
+    YNegative = 0x0040
+    ChiNegative = 0x0080
+    PercentValue = 0x1000
+    AspectValue = 0x2000
+    NormalizeValue = 0x2000
+    LessValue = 0x4000
+    GreaterValue = 0x8000
+    MinimumValue = 0x10000
+    CorrelateNormalizeValue = 0x10000
+    AreaValue = 0x20000
+    DecimalValue = 0x40000
+    SeparatorValue = 0x80000
+    AspectRatioValue = 0x100000
+    AllValues = 0x7fffffff
     _fields_ = [('rho', c_double),
                 ('sigma', c_double),
                 ('xi', c_double),

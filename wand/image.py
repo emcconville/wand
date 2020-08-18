@@ -2276,7 +2276,7 @@ class BaseImage(Resource):
             geometry_info = GeometryInfo()
             flags = libmagick.ParseGeometry(binary(factors),
                                             ctypes.byref(geometry_info))
-            if (flags & 0x0008) == 0:
+            if (flags & geometry_info.SigmaValue) == 0:
                 factors = (geometry_info.rho, geometry_info.rho)
             else:
                 factors = (geometry_info.rho, geometry_info.sigma)
@@ -5860,34 +5860,34 @@ class BaseImage(Resource):
             flags = libmagick.ParseGeometry(binary(geometry),
                                             ctypes.byref(geometry_info))
             if buitin in ('unity',):
-                if (flags & 0x0004) == 0:
+                if (flags & geometry_info.RhoValue) == 0:
                     geometry_info.rho = 1.0
             elif buitin in ('square', 'diamond', 'octagon', 'disk',
                             'plus', 'cross'):
-                if (flags & 0x0008) == 0:
+                if (flags & geometry_info.SigmaValue) == 0:
                     geometry_info.sigma = 1.0
             elif buitin in ('ring',):
-                if (flags & 0x0001) == 0:
+                if (flags & geometry_info.XiValue) == 0:
                     geometry_info.xi = 1.0
             elif buitin in ('rectangle',):
-                if (flags & 0x0004) == 0:
+                if (flags & geometry_info.RhoValue) == 0:
                     geometry_info.rho = geometry_info.sigma
                 if geometry_info.rho < 1.0:
                     geometry_info.rho = 3.0
                 if geometry_info.sigma < 1.0:
                     geometry_info.sigma = geometry_info.rho
-                if (flags & 0x0001) == 0:
+                if (flags & geometry_info.XiValue) == 0:
                     geometry_info.xi = (geometry_info.rho - 1.0) / 2.0
-                if (flags & 0x0002) == 0:
+                if (flags & geometry_info.PsiValue) == 0:
                     geometry_info.psi = (geometry_info.sigma - 1.0) / 2.0
             elif buitin in ('chebyshev', 'manhattan', 'octagonal',
                             'euclidean'):
-                if (flags & 0x0008) == 0:
+                if (flags & geometry_info.SigmaValue) == 0:
                     geometry_info.sigma = 100.0
-                elif (flags & 0x2000) != 0:
+                elif (flags & geometry_info.AspectValue) != 0:
                     geometry_info.sigma = (float(self.quantum_range) /
                                            (geometry_info.sigma + 1.0))
-                elif (flags & 0x1000) != 0:
+                elif (flags & geometry_info.PercentValue) != 0:
                     geometry_info.sigma *= float(self.quantum_range) / 100.0
             if MAGICK_VERSION_NUMBER < 0x700:
                 kernel_info = libmagick.AcquireKernelBuiltIn(
