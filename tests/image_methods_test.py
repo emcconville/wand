@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # These test cover the Image methods that directly map to C-API function calls.
 #

@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 from pytest import mark, raises
 
 from wand.api import library

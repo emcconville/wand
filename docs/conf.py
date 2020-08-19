@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # Wand documentation build configuration file, created by
 # sphinx-quickstart on Wed Sep 28 18:27:30 2011.
 #
@@ -31,7 +29,7 @@ if os.environ.get('READTHEDOCS', 0):
     except ImportError:
         pass
 
-    class Mock(object):
+    class Mock:
         def __init__(self, name):
             self.name = name
 

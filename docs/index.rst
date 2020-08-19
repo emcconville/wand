@@ -61,9 +61,8 @@ are lacking something we need:
 Requirements
 ------------
 
-- Python 2.7 or higher
+- Python 3.3 or higher
 
-  - CPython 2.7 or higher
   - CPython 3.3 or higher
   - PyPy 1.5 or higher
 

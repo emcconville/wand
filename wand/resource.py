@@ -9,9 +9,10 @@ import atexit
 import contextlib
 import ctypes
 import warnings
+from collections import abc
 
 from .api import library
-from .compat import abc, string_type, text
+from .compat import text
 from .exceptions import TYPE_MAP, WandException
 from .version import MAGICK_VERSION_NUMBER
 
@@ -92,7 +93,7 @@ def safe_copy(ptr):
     return ptr, string
 
 
-class Resource(object):
+class Resource:
     """Abstract base class for MagickWand object that requires resource
     management. Its all subclasses manage the resource semiautomatically
     and support :keyword:`with` statement as well::
@@ -217,7 +218,7 @@ class Resource(object):
         self.c_clear_exception(self.resource)
         exc_cls = TYPE_MAP[severity.value]
         message = desc.value
-        if not isinstance(message, string_type):
+        if not isinstance(message, str):
             message = message.decode(errors='replace')
         return exc_cls(message)
 
@@ -340,7 +341,7 @@ class ResourceLimits(abc.MutableMapping):
         """Get the current value for the resource type.
 
         :param resource: Resource type.
-        :type resource: :class:`basestring`
+        :type resource: :class:`str`
         :rtype: :class:`numeric.Integral`
 
         .. versionadded:: 0.5.1
@@ -351,7 +352,7 @@ class ResourceLimits(abc.MutableMapping):
         """Get the current limit for the resource type.
 
         :param resource: Resource type.
-        :type resource: :class:`basestring`
+        :type resource: :class:`str`
         :rtype: :class:`numeric.Integral`
 
         .. versionadded:: 0.5.1
@@ -368,7 +369,7 @@ class ResourceLimits(abc.MutableMapping):
             normal bounds will be ignored silently.
 
         :param resource: Resource type.
-        :type resource: :class:`basestring`
+        :type resource: :class:`str`
         :param limit: New limit value.
         :type limit: :class:`numeric.Integral`
 
