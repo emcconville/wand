@@ -4192,6 +4192,24 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
+    def decipher(self, passphrase):
+        """Decrypt ciphered pixels into original values.
+
+        .. note::
+
+            :class:`~wand.exceptions.ImageError` will be thrown if the system's
+            ImageMagick library was compiled without cipher support.
+
+        :param passphrase: the secret passphrase to decrypt with.
+        :type passphrase: :class:`basestring`
+
+        .. versionadded:: 0.6.3
+        """
+        assertions.assert_string(passphrase=passphrase)
+        return library.MagickDecipherImage(self.wand, binary(passphrase))
+
+    @manipulative
+    @trap_exception
     def deconstruct(self):
         """Iterates over internal image stack, and adjust each frame size to
         minimum bounding region of any changes from the previous frame.
@@ -4329,6 +4347,24 @@ class BaseImage(Resource):
         """
         assertions.assert_real(radius=radius, sigma=sigma)
         return library.MagickEmbossImage(self.wand, radius, sigma)
+
+    @manipulative
+    @trap_exception
+    def encipher(self, passphrase):
+        """Encrypt plain pixels into ciphered values.
+
+        .. note::
+
+            :class:`~wand.exceptions.ImageError` will be thrown if the system's
+            ImageMagick library was compiled without cipher support.
+
+        :param passphrase: the secret passphrase to encrypt with.
+        :type passphrase: :class:`basestring`
+
+        .. versionadded:: 0.6.3
+        """
+        assertions.assert_string(passphrase=passphrase)
+        return library.MagickDecipherImage(self.wand, binary(passphrase))
 
     @manipulative
     @trap_exception

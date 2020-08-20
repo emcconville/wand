@@ -733,6 +733,16 @@ def test_emboss(fx_asset):
         assert was != img.signature
 
 
+def test_encipher_decipher():
+    with Image(filename='rose:') as img:
+        img.depth = 8  # Safety
+        was = img.signature
+        img.encipher(passphrase='secret')
+        assert was != img.signature
+        img.decipher(passphrase='secret')
+        assert was == img.signature
+
+
 def test_enhance(fx_asset):
     with Image(filename='rose:') as img:
         was = img.signature
