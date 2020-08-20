@@ -8427,7 +8427,7 @@ class Image(BaseImage):
     :param colorspace: sets the stack's default colorspace value before
                        reading any images.
                        See :const:`COLORSPACE_TYPES`.
-    :type colorspace: :class:`basestring`,
+    :type colorspace: :class:`basestring`
     :param units: paired with ``resolution`` for defining an image's pixel
                   density. See :const:`UNIT_TYPES`.
     :type units: :class:`basestring`
@@ -8465,6 +8465,9 @@ class Image(BaseImage):
 
     .. versionchanged:: 0.5.7
        Added the ``colorspace`` & ``units`` parameter.
+
+    .. versionchanged:: 0.6.3
+       Added ``sampling_factors`` parameter for working with YUV streams.
 
     .. describe:: [left:right, top:bottom]
 
@@ -8523,10 +8526,10 @@ class Image(BaseImage):
     profiles = None
 
     def __init__(self, image=None, blob=None, file=None, filename=None,
-                 format=None, width=None, height=None, depth=None,
-                 background=None, resolution=None, pseudo=None,
-                 colorspace=None, units=None, sampling_factors=None,
-                 interlace=None):
+                 pseudo=None, background=None, colorspace=None, depth=None,
+                 extract=None, format=None, height=None, interlace=None,
+                 resolution=None, sampling_factors=None, units=None,
+                 width=None):
         new_args = width, height, background, depth
         open_args = blob, file, filename
         if any(a is not None for a in new_args) and image is not None:
@@ -8536,14 +8539,6 @@ class Image(BaseImage):
             raise TypeError(', '.join(open_args) +
                             ' and image parameters are exclusive each other; '
                             'use only one at once')
-        if not (format is None):
-            if not isinstance(format, string_type):
-                raise TypeError('format must be a string, not ' + repr(format))
-            if not any(a is not None for a in open_args):
-                raise TypeError('format can only be used with the blob, file '
-                                'or filename parameter')
-        if depth not in [None, 8, 16, 32]:
-            raise ValueError('Depth must be 8, 16 or 32')
         with self.allocate():
             if image is None:
                 wand = library.NewMagickWand()
@@ -8555,54 +8550,18 @@ class Image(BaseImage):
                 wand = library.CloneMagickWand(image.wand)
                 super(Image, self).__init__(wand)
             elif any(a is not None for a in open_args):
-                if format:
-                    format = binary(format)
-                if background:
-                    if isinstance(background, string_type):
-                        background = Color(background)
-                    assertions.assert_color(background=background)
-                    with background:
-                        r = library.MagickSetBackgroundColor(
-                            self.wand,
-                            background.resource
-                        )
-                        if not r:
-                            self.raise_exception()
-                if colorspace is not None:
-                    assertions.string_in_list(
-                        COLORSPACE_TYPES,
-                        'wand.image.COLORSPACE_TYPES',
-                        colorspace=colorspace
-                    )
-                    colorspace_idx = COLORSPACE_TYPES.index(colorspace)
-                    library.MagickSetColorspace(self.wand,
-                                                colorspace_idx)
-                if width is not None and height is not None:
-                    assertions.assert_counting_number(width=width,
-                                                      height=height)
-                    library.MagickSetSize(self.wand, width, height)
-                if depth is not None:
-                    library.MagickSetDepth(self.wand, depth)
-                if format:
-                    library.MagickSetFormat(self.wand, format)
-                    if not filename:
-                        library.MagickSetFilename(self.wand,
-                                                  b'buffer.' + format)
-                if sampling_factors is not None:
-                    self.sampling_factors = sampling_factors
-                if interlace is not None:
-                    assertions.string_in_list(INTERLACE_TYPES,
-                                              'wand.image.INTERLACE_TYPES',
-                                              interlace=interlace)
-                    c_interlace = INTERLACE_TYPES.index(interlace)
-                    library.MagickSetInterlaceScheme(self.wand, c_interlace)
+                self._preamble_read(
+                    background=background, colorspace=colorspace, depth=depth,
+                    extract=extract, format=format, height=height,
+                    interlace=interlace, resolution=resolution,
+                    sampling_factors=sampling_factors, width=width
+                )
                 if file is not None:
-                    self.read(file=file, resolution=resolution, units=units)
+                    self.read(file=file)
                 elif blob is not None:
-                    self.read(blob=blob, resolution=resolution, units=units)
+                    self.read(blob=blob)
                 elif filename is not None:
-                    self.read(filename=filename, resolution=resolution,
-                              units=units)
+                    self.read(filename=filename)
                 # clear the wand format, otherwise any subsequent call to
                 # MagickGetImageBlob will silently change the image to this
                 # format again.
@@ -8616,6 +8575,8 @@ class Image(BaseImage):
                     r = library.MagickSetImageDepth(self.wand, depth)
                     if not r:
                         raise self.raise_exception()
+            if units is not None:
+                self.units = units
             self.metadata = Metadata(self)
             self.artifacts = ArtifactTree(self)
             from .sequence import Sequence
@@ -8628,14 +8589,100 @@ class Image(BaseImage):
             extra_format=' {self.format!r} ({self.width}x{self.height})'
         )
 
+    def _preamble_read(self, background=None, colorspace=None, depth=None,
+                       extract=None, format=None, height=None, interlace=None,
+                       resolution=None, sampling_factors=None, units=None,
+                       width=None):
+        """Set-up MagickWand properties before reading an image file. The
+        properties are unique to the image decoder.
+
+        :param background: Defines the default background color.
+        :type background: :class:`Color`, :class:`basestring`
+        :param colorspace: Defines what colorspace the decoder should operate
+                           in. See :const:`COLORSPACE_TYPES`.
+        :type colorspace: :class:`basestring`
+        :param depth: Bits per color sample.
+        :type depth: :class:`numbers.Integral`
+        :param extract: Only decode a sub-region of the image.
+        :type extract: :class:`basestring`
+        :param format: Defines the decoder image format.
+        :type format: :class:`basestring`
+        :param height: Defines how high a blank canvas should be. Only used if
+                       ``width`` is also defined.
+        :type height: :class:`numbers.Integral`
+        :param interlace: Defines the interlacing scheme for raw data streams.
+                          See :const:`INTERLACE_TYPES`.
+        :type interlace: :class:`basestring`
+        :param resolution: Defines the pixel density of a scalable formats.
+                           PDF & SVG as examples.
+        :type resolution: :class:`collections.abc.Sequence`,
+                          :class:`numbers.Integral`
+        :param sampling_factors: Defines how a YUV might be upsampled.
+        :type sampling_factors: :class:`collections.abc.Sequence`,
+                                :class:`basestring`
+        :param units: Unused.
+        :type units: :class:`numbers.Integral`
+        :param width: Defines how wide a blank canvas should be. Only used if
+                      ``height`` is also defined.
+        :type width: :class:`numbers.Intragal`
+
+        .. versionadded:: 0.6.3
+        """
+        if background:
+            if isinstance(background, string_type):
+                background = Color(background)
+            assertions.assert_color(background=background)
+            with background:
+                library.MagickSetBackgroundColor(self.wand,
+                                                 background.resource)
+        if colorspace is not None:
+            assertions.string_in_list(
+                COLORSPACE_TYPES,
+                'wand.image.COLORSPACE_TYPES',
+                colorspace=colorspace
+            )
+            colorspace_idx = COLORSPACE_TYPES.index(colorspace)
+            library.MagickSetColorspace(self.wand, colorspace_idx)
+        if depth is not None:
+            assertions.assert_counting_number(depth=depth)
+            library.MagickSetDepth(self.wand, depth)
+        if extract is not None:
+            assertions.assert_string(extract=extract)
+            library.MagickSetExtract(self.wand, binary(extract))
+        if format is not None:
+            assertions.assert_string(format=format)
+            library.MagickSetFormat(self.wand, binary(format))
+        if interlace is not None:
+            assertions.string_in_list(
+                INTERLACE_TYPES,
+                'wand.image.INTERLACE_TYPES',
+                interlace=interlace
+            )
+            c_interlace = INTERLACE_TYPES.index(interlace)
+            library.MagickSetInterlaceScheme(self.wand, c_interlace)
+        if resolution is not None:
+            if (isinstance(resolution, abc.Sequence) and
+                    len(resolution) == 2):
+                library.MagickSetResolution(self.wand, *resolution)
+            elif isinstance(resolution, numbers.Integral):
+                library.MagickSetResolution(self.wand, resolution, resolution)
+            else:
+                raise TypeError('resolution must be a (x, y) pair or an '
+                                'integer of the same x/y')
+        if sampling_factors is not None:
+            self.sampling_factors = sampling_factors
+        if width is not None and height is not None:
+            assertions.assert_counting_number(width=width, height=height)
+            library.MagickSetSize(self.wand, width, height)
+
     def _repr_png_(self):
         with self.convert('png') as cloned:
             return cloned.make_blob()
 
     @classmethod
     def from_array(cls, array, channel_map=None, storage=None):
-        """Create an image instance from a :mod:`numpy` array, or any other datatype
-        that implements `__array_interface__`__ protocol.
+        """Create an image instance from a :mod:`numpy` array, or any other
+        datatype that implements `__array_interface__`__ protocol.
 
         .. code::
 
@@ -8726,8 +8773,7 @@ class Image(BaseImage):
         return instance
 
     @classmethod
-    def ping(cls, file=None, filename=None, blob=None, resolution=None,
-             format=None):
+    def ping(cls, file=None, filename=None, blob=None, **kwargs):
         """Ping image header into Image() object, but without any pixel data.
         This is useful for inspecting image meta-data without decoding the
         whole image.
@@ -8751,22 +8797,7 @@ class Image(BaseImage):
         """
         r = None
         instance = cls()
-        # Resolution must be set after image reading.
-        if resolution is not None:
-            if (isinstance(resolution, abc.Sequence) and
-                    len(resolution) == 2):
-                library.MagickSetResolution(instance.wand, *resolution)
-            elif isinstance(resolution, numbers.Integral):
-                library.MagickSetResolution(instance.wand, resolution,
-                                            resolution)
-            else:
-                raise TypeError('resolution must be a (x, y) pair or an '
-                                'integer of the same x/y')
-        if format:
-            library.MagickSetFormat(instance.wand, format)
-            if not filename:
-                library.MagickSetFilename(instance.wand,
-                                          b'buffer.' + format)
+        instance._preamble_read(**kwargs)
         if file is not None:
             if (isinstance(file, file_types) and
                     hasattr(libc, 'fdopen') and hasattr(file, 'mode')):
@@ -8796,6 +8827,9 @@ class Image(BaseImage):
                    'returns EXIT_SUCCESS without generating a raster.')
             raise WandRuntimeError(msg)
         else:
+            units = kwargs.get('units')
+            if units is not None:
+                instance.units = units
             instance.metadata = Metadata(instance)
             instance.artifacts = ArtifactTree(instance)
             from .sequence import Sequence
@@ -9036,8 +9070,10 @@ class Image(BaseImage):
         if not r:
             self.raise_exception()
 
-    def read(self, file=None, filename=None, blob=None, resolution=None,
-             units=None):
+    def read(self, file=None, filename=None, blob=None, background=None,
+             colorspace=None, depth=None, extract=None, format=None,
+             height=None, interlace=None, resolution=None,
+             sampling_factors=None, units=None, width=None):
         """Read new image into Image() object.
 
         :param blob: reads an image from the ``blob`` byte array
@@ -9047,30 +9083,55 @@ class Image(BaseImage):
         :param filename: reads an image from the ``filename`` string.
                          Additional :ref:`read_mods` are supported.
         :type filename: :class:`basestring`
+        :param background: set default background color.
+        :type background: :class:`Color`, :class:`basestring`
+        :param colorspace: set default colorspace.
+                           See :const:`COLORSPACE_TYPES`.
+        :type colorspace: :class:`basestring`
+        :param depth: sets bits per color sample. Usually ``8``, or ``16``.
+        :type depth: :class:`numbers.Integral`
+        :param format: sets which image decoder to read with. Helpful when
+                       reading ``blob`` data with ambiguous headers.
+        :type format: :class:`basestring`
+        :param height: used with ``width`` to define the canvas size. Useful
+                       for reading image streams.
+        :type height: :class:`numbers.Integral`
+        :param interlace: Defines the interlacing scheme for raw data streams.
+                          See :const:`INTERLACE_TYPES`.
+        :type interlace: :class:`basestring`
         :param resolution: set a resolution value (DPI),
                            useful for vectorial formats (like PDF)
         :type resolution: :class:`collections.abc.Sequence`,
                           :class:`numbers.Integral`
+        :param sampling_factors: set up/down stampling factors for YUV data
+                                 stream. Usually ``"4:2:2"``
+        :type sampling_factors: :class:`collections.abc.Sequence`,
+                                :class:`basestring`
         :param units: used with ``resolution``, can either be
                      ``'pixelperinch'``, or ``'pixelpercentimeter'``.
         :type units: :class:`basestring`
+        :param width: used with ``height`` to define the canvas size. Useful
+                      for reading image streams.
+        :type width: :class:`numbers.Integral`
 
         .. versionadded:: 0.3.0
 
         .. versionchanged:: 0.5.7
            Added ``units`` parameter.
+
+        .. versionchanged:: 0.6.3
+           Added, or documented, optional pre-read parameters:
+           ``background``, ``colorspace``, ``depth``, ``format``, ``height``,
+           ``interlace``, ``sampling_factors``, & ``width``.
         """
         r = None
         # Resolution must be set after image reading.
-        if resolution is not None:
-            if (isinstance(resolution, abc.Sequence) and
-                    len(resolution) == 2):
-                library.MagickSetResolution(self.wand, *resolution)
-            elif isinstance(resolution, numbers.Integral):
-                library.MagickSetResolution(self.wand, resolution, resolution)
-            else:
-                raise TypeError('resolution must be a (x, y) pair or an '
-                                'integer of the same x/y')
+        self._preamble_read(
+            background=background, colorspace=colorspace, depth=depth,
+            extract=extract, format=format, height=height, interlace=interlace,
+            resolution=resolution, sampling_factors=sampling_factors,
+            width=width
+        )
         if file is not None:
             if (isinstance(file, file_types) and
                     hasattr(libc, 'fdopen') and hasattr(file, 'mode')):

@@ -14,7 +14,9 @@ Version 0.6.3
 
 Unreleased.
 
- - Added :meth:`Image.data_url()` method.
+ - Added :meth:`Image.data_url() <wand.image.Image.data_url>` method. [:issue:`489`]
+ - Added :attr:`Image.sampling_factors <wand.image.BaseImage.sampling_factors>` property. [:issue:`491`]
+ - Uniformed additional pre-read parameters between :meth:`Image.__init__()` & :meth:`Image.read()`.
 
 
 Version 0.6.2

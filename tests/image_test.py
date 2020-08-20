@@ -73,8 +73,6 @@ def test_raw_image(fx_asset):
     b = b"".join([struct.pack("BBB", i, j, 0)
                   for i in range(256) for j in range(256)])
     with raises(ValueError):
-        Image(blob=b, depth=6)
-    with raises(ValueError):
         Image(blob=b, depth=8, width=0, height=0, format="RGB")
     with raises(TypeError):
         Image(blob=b, depth=8, width=256, height=256, format=1)
@@ -138,6 +136,14 @@ def test_read_with_colorspace(fx_asset):
                units='pixelspercentimeter') as img:
         assert img.colorspace == 'srgb'
         assert img.units == 'pixelspercentimeter'
+
+
+def test_read_with_extract():
+    with Image(filename='rose:', extract="10x10+10+10") as img:
+        assert (10, 10) == img.size
+    with Image() as img:
+        img.read(filename='rose:', extract="10x10+10+10")
+        assert (10, 10) == img.size
 
 
 def test_new_from_file(fx_asset):
