@@ -1039,10 +1039,6 @@ def load(lib, IM_VERSION):
             c_void_p, c_double, c_double, c_double
         ]
     lib.MagickSetImageWhitePoint.restype = c_bool
-    try:
-        lib.MagickSetResolution.argtypes = [c_void_p, c_double, c_double]
-    except AttributeError:
-        lib.MagickSetResolution = None
     lib.MagickShadeImage.argtypes = [c_void_p, c_bool, c_double, c_double]
     lib.MagickShadeImage.restype = c_bool
     lib.MagickShadowImage.argtypes = [

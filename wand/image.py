@@ -8700,11 +8700,11 @@ class Image(BaseImage):
             if (isinstance(resolution, abc.Sequence) and
                     len(resolution) == 2):
                 library.MagickSetResolution(self.wand, *resolution)
-            elif isinstance(resolution, numbers.Integral):
+            elif isinstance(resolution, numbers.Real):
                 library.MagickSetResolution(self.wand, resolution, resolution)
             else:
                 raise TypeError('resolution must be a (x, y) pair or an '
-                                'integer of the same x/y')
+                                'real number of the same x/y')
         if sampling_factors is not None:
             self.sampling_factors = sampling_factors
         if width is not None and height is not None:
