@@ -6779,6 +6779,23 @@ class BaseImage(Resource):
         the given Resolution or Density the image will still look the same size
         in real world terms.
 
+        .. note::
+
+            This method will automatically :meth:`coalesce` & resample all
+            frames in a GIF animation. For other image formats,
+            :meth:`resample` will only effect the current image in the stack.
+            Use :meth:`iterator_reset` & :meth:`iterator_next` to traverse
+            the image stack to resample all images in a multi-layer document.
+
+            .. code::
+
+                with Image(filename='input.tiff') as img:
+                    img.iterator_reset()
+                    while True:
+                        img.resample(128, 128)
+                        if not img.iterator_next():
+                            break
+
         :param x_res: the X resolution (density) in the scaled image. default
                       is  the original resolution.
         :type x_res: :class:`numbers.Real`
@@ -8080,15 +8097,16 @@ class BaseImage(Resource):
                      same. For example, set fuzz to 10 and the color red at
                      intensities of 100 and 102 respectively are now
                      interpreted as the same color for the color.
-        :type fuzz: :class:`numbers.Integral`
+        :type fuzz: :class:`numbers.Real`
         :param invert: Boolean to tell to paint the inverse selection.
         :type invert: :class:`bool`
 
         .. versionadded:: 0.3.0
 
+        .. versionchanged:: 0.6.3 Parameter ``fuzz`` type switched from
+        Integral to Real.
         """
-        assertions.assert_real(alpha=alpha)
-        assertions.assert_integer(fuzz=fuzz)
+        assertions.assert_real(alpha=alpha, fuzz=fuzz)
         if isinstance(color, string_type):
             color = Color(color)
         assertions.assert_color(color=color)
