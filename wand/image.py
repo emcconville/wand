@@ -3978,6 +3978,7 @@ class BaseImage(Resource):
                 src_addr = objects_ptr.value + (i * ccoi_mem_size)
                 ctypes.memmove(ctypes.addressof(temp), src_addr, ccoi_mem_size)
                 objects.append(ConnectedComponentObject(temp))
+                del temp
             objects_ptr = libmagick.RelinquishMagickMemory(objects_ptr)
         else:
             self.raise_exception()

@@ -14,6 +14,7 @@ Version 0.6.3
 
 Unreleased.
 
+ - Fixed buffer overflow bug in :meth:`Image.connected_components() <wand.image.BaseImage.connected_components>` method. [:issue:`496`]
  - Added :meth:`Image.data_url() <wand.image.Image.data_url>` method. [:issue:`489`]
  - Added :attr:`Image.sampling_factors <wand.image.BaseImage.sampling_factors>` property. [:issue:`491`]
  - Added :meth:`Image.encipher() <wand.image.BaseImage.encipher>` & :meth:`Image.decipher() <wand.image.BaseImage.decipher>` methods.
