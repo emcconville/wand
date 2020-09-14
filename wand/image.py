@@ -24,8 +24,8 @@ from .exceptions import (MissingDelegateError, WandException,
                          WandRuntimeError, WandLibraryVersionError)
 from .font import Font
 from .resource import DestroyedResourceError, Resource
-from .cdefs.structures import (CCObjectInfo, ChannelFeature, GeometryInfo,
-                               PixelInfo, RectangleInfo)
+from .cdefs.structures import (CCObjectInfo, CCObjectInfo70A, ChannelFeature,
+                               GeometryInfo, PixelInfo, RectangleInfo)
 from .version import MAGICK_VERSION_NUMBER, MAGICK_HDRI
 
 
@@ -3965,13 +3965,16 @@ class BaseImage(Resource):
                                            key,
                                            b'{0}'.format(remove))
         objects_ptr = ctypes.c_void_p(0)
-        ccoi_mem_size = ctypes.sizeof(CCObjectInfo)
+        CCObjectInfoStructure = CCObjectInfo
+        if MAGICK_VERSION_NUMBER > 0x709:
+            CCObjectInfoStructure = CCObjectInfo70A
+        ccoi_mem_size = ctypes.sizeof(CCObjectInfoStructure)
         r = library.MagickConnectedComponentsImage(self.wand, connectivity,
                                                    ctypes.byref(objects_ptr))
         objects = []
         if r and objects_ptr.value:
             for i in xrange(self.colors):
-                temp = CCObjectInfo()
+                temp = CCObjectInfoStructure()
                 src_addr = objects_ptr.value + (i * ccoi_mem_size)
                 ctypes.memmove(ctypes.addressof(temp), src_addr, ccoi_mem_size)
                 objects.append(ConnectedComponentObject(temp))
@@ -9841,6 +9844,8 @@ class ConnectedComponentObject(object):
     <wand.image.BaseImage.connected_components>` method.
 
     .. versionadded:: 0.5.5
+    .. versionchanged:: 0.6.3
+        Added :attr:`merge` & :attr:`metric` for ImageMagick 7.0.10
     """
     #: (:class:`numbers.Integral`) Serialized object identifier
     #: starting at `0`.
@@ -9876,9 +9881,22 @@ class ConnectedComponentObject(object):
     #: shape.
     mean_color = None
 
+    #: (:class:`bool`) Object merge flag. Only avaliable after
+    #: ImageMagick-7.0.10.
+    #: ..versionadded:: 0.6.3
+    merge = None
+
+    #: (:class:`list`) List of doubles used by metric. Only avaliable after
+    #: ImageMagick-7.0.10.
+    #: ..versionadded:: 0.6.3
+    metric = None
+
     def __init__(self, cc_object=None):
         if isinstance(cc_object, CCObjectInfo):
             self.clone_from_cc_object_info(cc_object)
+        if isinstance(cc_object, CCObjectInfo70A):
+            self.clone_from_cc_object_info(cc_object)
+            self.clone_from_extra_70A_info(cc_object)
 
     @property
     def size(self):
@@ -9914,6 +9932,17 @@ class ConnectedComponentObject(object):
                        ctypes.byref(cc_object.color),
                        pinfo_size)
         self.mean_color = Color(raw=raw_buffer)
+
+    def clone_from_extra_70A_info(self, cc_object):
+        """Copy the additional values from CCObjectInfo structure. This is the
+        :attr:`merge` & :attr:`metric` properties added in ImageMagick 7.0.10.
+
+        .. versionadded:: 0.6.3
+        """
+        self.merge = cc_object.merge
+        self.metric = []
+        for i in range(cc_object.CCMaxMetrics):
+            self.metric.append(cc_object.metric[i])
 
     def __repr__(self):
         fmt = ("{name}({_id}: {width}x{height}+{left}+{top} {center_x:.2f},"
