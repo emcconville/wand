@@ -1285,7 +1285,7 @@ class BaseImage(Resource):
     def alpha_channel(self):
         """(:class:`bool`) Get state of image alpha channel.
         It can also be used to enable/disable alpha channel, but with different
-        behavior new, copied, or existing.
+        behavior such as new, copied, or existing.
 
         Behavior of setting :attr:`alpha_channel` is defined with the
         following values:
@@ -1310,6 +1310,18 @@ class BaseImage(Resource):
         - ``'remove'`` will composite :attr:`background_color` value.
         - ``'background'`` replaces full-transparent color with background
            color.
+
+        .. note::
+
+            The :attr:`alpha_channel` attribute will always return ``True``
+            if alpha channel is enabled, and ``False`` otherwise. Setting
+            this property with a string value from :const:`ALPHA_CHANNEL_TYPES`
+            will resolve to a :class:`bool` after applying channel operations
+            listed above.
+
+            With ImageMagick-6, values ``'on'`` & ``'off'`` are aliased to
+            ``'activate'`` & ``'deactivate'``. However in ImageMagick-7,
+            both ``'on'`` & ``'off'`` have their own behavior.
 
 
         .. versionadded:: 0.2.1
@@ -8103,8 +8115,10 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.3.0
 
-        .. versionchanged:: 0.6.3 Parameter ``fuzz`` type switched from
-        Integral to Real.
+        .. versionchanged:: 0.6.3
+
+            Parameter ``fuzz`` type switched from Integral to Real.
+
         """
         assertions.assert_real(alpha=alpha, fuzz=fuzz)
         if isinstance(color, string_type):

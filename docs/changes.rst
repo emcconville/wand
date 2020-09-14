@@ -17,6 +17,7 @@ Unreleased.
  - Added :meth:`Image.data_url() <wand.image.Image.data_url>` method. [:issue:`489`]
  - Added :attr:`Image.sampling_factors <wand.image.BaseImage.sampling_factors>` property. [:issue:`491`]
  - Added :meth:`Image.encipher() <wand.image.BaseImage.encipher>` & :meth:`Image.decipher() <wand.image.BaseImage.decipher>` methods.
+ - Argument ``fuzz`` for :meth:`Image.transparent_color() <wand.image.BaseImage.transparent_color>` now accepts :class:`numbers.Real` numbers.
  - Uniformed additional pre-read parameters between :meth:`Image.__init__()` & :meth:`Image.read()`.
 
 
