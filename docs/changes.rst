@@ -12,7 +12,7 @@ Wand Changelog
 Version 0.6.3
 -------------
 
-Unreleased.
+Released on September 14th, 2020.
 
  - Fixed buffer overflow bug in :meth:`Image.connected_components() <wand.image.BaseImage.connected_components>` method. [:issue:`496`]
  - Added :meth:`Image.data_url() <wand.image.Image.data_url>` method. [:issue:`489`]
