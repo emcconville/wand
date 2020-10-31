@@ -7,7 +7,31 @@ Wand Changelog
 ~~~~~~~~~~
 
 
-.. _changelog-0.6.0:
+.. _changelog-0.6.4:
+
+Version 0.6.4
+-------------
+
+Unreleased.
+
+ - Added ``percent_background`` & ``background_color`` parameters to :meth:`Image.trim() <wand.image.BaseImage.trim>` method.
+ - Added the following arguments to :meth:`Image.connected_components() <wand.image.BaseImage.connected_components>`:
+
+   - ``angle_threshold``
+   - ``background_id``
+   - ``circularity_threshold``
+   - ``diameter_threshold``
+   - ``eccentricity_threshold``
+   - ``keep_colors``
+   - ``keep_top``
+   - ``major_axis_threshold``
+   - ``minor_axis_threshold``
+   - ``perimeter_threshold``
+   - ``remove_colors``
+
+   These optional arguments are only available with ImageMagick version 7.0.9-24, or above.
+
+.. _changelog-0.6.3:
 
 Version 0.6.3
 -------------
@@ -21,6 +45,8 @@ Released on September 14th, 2020.
  - Argument ``fuzz`` for :meth:`Image.transparent_color() <wand.image.BaseImage.transparent_color>` now accepts :class:`numbers.Real` numbers.
  - Uniformed additional pre-read parameters between :meth:`Image.__init__()` & :meth:`Image.read()`.
 
+
+.. _changelog-0.6.2:
 
 Version 0.6.2
 -------------
@@ -47,6 +73,8 @@ Released on July 6th, 2020.
  - [DOC] Make the documentation reproducible. [:issue:`484` by Chris Lamb]
 
 
+.. _changelog-0.6.1:
+
 Version 0.6.1
 -------------
 
@@ -54,6 +82,8 @@ Released on May 15th, 2020.
 
  - Fixed RuntimeError on deallocation when ``allocation_map`` changes. [:issue:`482` by Louis Sautier]
 
+
+.. _changelog-0.6.0:
 
 Version 0.6.0
 -------------

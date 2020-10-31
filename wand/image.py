@@ -3872,8 +3872,7 @@ class BaseImage(Resource):
             self.reset_sequence()
         return bool(r)
 
-    def connected_components(self, connectivity=4, area_threshold=None,
-                             mean_color=False, keep=None, remove=None):
+    def connected_components(self, **kwargs):
         """Evaluates binary image, and groups connected pixels into objects.
         This method will also return a list of
         :class:`ConnectedComponentObject` instances that will describe an
@@ -3911,24 +3910,71 @@ class BaseImage(Resource):
                     img.fuzz = 0.1 * QUANTUM_RANGE  # 10%
                     objects = img.connected_components()
 
+        :param angle_threshold: Optional argument that merges any region with
+                                an equivalent ellipse smaller than a given
+                                value. Requires ImageMagick-7.0.9-24, or
+                                greater.
+        :type angle_threshold: :class:`basestring`
+        :param area_threshold: Optional argument to merge objects under an
+                               area size.
+        :type area_threshold: :class:`basestring`
+        :param background_id: Optional argument to identify which object
+                              should be the background. Requires
+                              ImageMagick-7.0.9-24, or greater.
+        :type background_id: :class:`basestring`
+        :param circularity_threshold: Optional argument that merges any region
+                                      smaller than value defined as:
+                                      ``4*pi*area/perimeter^2``. Requires
+                                      ImageMagick-7.0.9-24, or greater.
+        :type circularity_threshold: :class:`basestring`
         :param connectivity: Either ``4``, or ``8``. A value of ``4`` will
                             evaluate each pixels top-bottom, & left-right
                             neighbors. A value of ``8`` will use the same
                             pixels as with ``4``, but will also include the
-                            four corners of each pixel.
+                            four corners of each pixel. Default value of ``4``.
         :type connectivity: :class:`numbers.Integral`
-        :param area_threshold: Optional argument to exclude objects under an
-                               area size.
-        :type area_threshold: :class:`basestring`
-        :param mean_color: Optional argument. Replace object color with mean
-                           color of the source image.
-        :type mean_color: :class:`bool`
+        :param diameter_threshold: Optional argument to merge any region under
+                                   a given value. A region is defined as:
+                                   ``sqr(4*area/pi)``. Requires
+                                   ImageMagick-7.0.9-24.
+        :type diameter_threshold: :class:`basestring`
+        :param eccentricity_threshold: Optional argument to merge any region
+                                       with ellipse eccentricity under a given
+                                       value. Requires ImageMagick-7.0.9-24,
+                                       or greater.
         :param keep: Comma separated list of object IDs to isolate, the reset
                      are converted to transparent.
         :type keep: :class:`basestring`
+        :param keep_colors: Semicolon separated list of objects to keep by
+                            their color value. Requires ImageMagick-7.0.9-24,
+                            or greater.
+        :type keep_colors: :class:`basestring`
+        :param keep_top: Keeps only the top number of objects by area.
+                         Requires ImageMagick-7.0.9-24, or greater.
+        :type keep_top: :class:`basestring`
+        :param major_axis_threshold: Optional argument to merge any ellipse
+                                     with a major axis smaller then given
+                                     value. Requires ImageMagick-7.0.9-24,
+                                     or greater.
+        :type major_axis_threshold: :class:`basestring`
+        :param mean_color: Optional argument. Replace object color with mean
+                           color of the source image.
+        :type mean_color: :class:`bool`
+        :param minor_axis_threshold: Optional argument to merge any ellipse
+                                     with a minor axis smaller then given
+                                     value. Requires ImageMagick-7.0.9-24,
+                                     or greater.
+        :type minor_axis_threshold: :class:`basestring`
+        :param perimeter_threshold: Optional argument to merge any region with
+                                    a perimeter smaller than the given value.
+                                    Requires ImageMagick-7.0.9-24, or greater.
         :param remove: Comma separated list of object IDs to ignore, and
                        convert to transparent.
         :type remove: :class:`basestring`
+        :param remove_colors: Semicolon separated list of objects to remove
+                              by there color. Requires ImageMagick-7.0.9-24,
+                              or greater.
+        :type remove_colors: :class:`basestring`
         :returns: A list of :class:`ConnectedComponentObject`.
         :rtype: :class:`list` [:class:`ConnectedComponentObject`]
         :raises WandLibraryVersionError: If ImageMagick library
@@ -3938,32 +3984,94 @@ class BaseImage(Resource):
 
         .. versionchanged:: 0.5.6
            Added ``mean_color``, ``keep``, & ``remove`` optional arguments.
+
+        .. versionchanged:: 0.6.4
+           Added ``angle_threshold``, ``circularity_threshold``,
+           ``diameter_threshold``, ``eccentricity_threshold``,
+           ``keep_colors``, ``major_axis_threshold``, ``minor_axis_threshold``,
+           ``perimeter_threshold``, and ``remove_colors`` optional arguments.
         """
+        angle_threshold = kwargs.get('angle_threshold', None)
+        area_threshold = kwargs.get('area_threshold', None)
+        background_id = kwargs.get('background_id', None)
+        circularity_threshold = kwargs.get('circularity_threshold', None)
+        connectivity = kwargs.get('connectivity', 4)
+        diameter_threshold = kwargs.get('diameter_threshold', None)
+        eccentricity_threshold = kwargs.get('eccentricity_threshold', None)
+        keep = kwargs.get('keep', None)
+        keep_colors = kwargs.get('keep_colors', None)
+        keep_top = kwargs.get('keep_top', None)
+        major_axis_threshold = kwargs.get('major_axis_threshold', None)
+        mean_color = kwargs.get('mean_color', False)
+        minor_axis_threshold = kwargs.get('minor_axis_threshold', None)
+        perimeter_threshold = kwargs.get('perimeter_threshold', None)
+        remove = kwargs.get('remove', None)
+        remove_colors = kwargs.get('remove_colors', None)
         if library.MagickConnectedComponentsImage is None:
             msg = 'Method requires ImageMagick version 7.0.8-41 or greater.'
             raise WandLibraryVersionError(msg)
         if connectivity not in (4, 8):
             raise ValueError('connectivity must be 4, or 8.')
+        if angle_threshold is not None:
+            key = b'connected-components:angle-threshold'
+            val = b'{0}'.format(angle_threshold)
+            library.MagickSetImageArtifact(self.wand, key, val)
         if area_threshold is not None:
             key = b'connected-components:area-threshold'
-            library.MagickSetImageArtifact(self.wand,
-                                           key,
-                                           b'{0}'.format(area_threshold))
-        if mean_color:
-            key = b'connected-components:mean-color'
-            library.MagickSetImageArtifact(self.wand,
-                                           key,
-                                           b'true')
+            val = b'{0}'.format(area_threshold)
+            library.MagickSetImageArtifact(self.wand, key, val)
+        if background_id is not None:
+            key = b'connected-components:background-id'
+            val = b'{0}'.format(background_id)
+            library.MagickSetImageArtifact(self.wand, key, val)
+        if circularity_threshold is not None:
+            key = b'connected-components:circularity-threshold'
+            val = b'{0}'.format(circularity_threshold)
+            library.MagickSetImageArtifact(self.wand, key, val)
+        if diameter_threshold is not None:
+            key = b'connected-components:diameter-threshold'
+            val = b'{0}'.format(diameter_threshold)
+            library.MagickSetImageArtifact(self.wand, key, val)
+        if eccentricity_threshold is not None:
+            key = b'connected-components:eccentricity-threshold'
+            val = b'{0}'.format(eccentricity_threshold)
+            library.MagickSetImageArtifact(self.wand, key, val)
         if keep is not None:
             key = b'connected-components:keep'
-            library.MagickSetImageArtifact(self.wand,
-                                           key,
-                                           b'{0}'.format(keep))
+            val = b'{0}'.format(keep)
+            library.MagickSetImageArtifact(self.wand, key, val)
+        if keep_colors is not None:
+            key = b'connected-components:keep-colors'
+            val = b'{0}'.format(keep_colors)
+            library.MagickSetImageArtifact(self.wand, key, val)
+        if keep_top is not None:
+            key = b'connected-components:keep-top'
+            val = b'{0}'.format(keep_top)
+            library.MagickSetImageArtifact(self.wand, key, val)
+        if major_axis_threshold is not None:
+            key = b'connected-components:major-axis-threshold'
+            val = b'{0}'.format(major_axis_threshold)
+            library.MagickSetImageArtifact(self.wand, key, val)
+        if mean_color:
+            key = b'connected-components:mean-color'
+            val = b'true'
+            library.MagickSetImageArtifact(self.wand, key, b'true')
+        if minor_axis_threshold is not None:
+            key = b'connected-components:minor-axis-threshold'
+            val = b'{0}'.format(minor_axis_threshold)
+            library.MagickSetImageArtifact(self.wand, key, val)
+        if perimeter_threshold is not None:
+            key = b'connected-components:perimeter-threshold'
+            val = b'{0}'.format(perimeter_threshold)
+            library.MagickSetImageArtifact(self.wand, key, val)
         if remove is not None:
             key = b'connected-components:remove'
-            library.MagickSetImageArtifact(self.wand,
-                                           key,
-                                           b'{0}'.format(remove))
+            val = b'{0}'.format(remove)
+            library.MagickSetImageArtifact(self.wand, key, val)
+        if remove_colors is not None:
+            key = b'connected-components:remove-colors'
+            val = b'{0}'.format(remove_colors)
+            library.MagickSetImageArtifact(self.wand, key, val)
         objects_ptr = ctypes.c_void_p(0)
         CCObjectInfoStructure = CCObjectInfo
         if MAGICK_VERSION_NUMBER > 0x709:
@@ -8191,7 +8299,8 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def trim(self, color=None, fuzz=0.0, reset_coords=False):
+    def trim(self, color=None, fuzz=0.0, reset_coords=False,
+             percent_background=None, background_color=None):
         """Remove solid border from image. Uses top left pixel as a guide
         by default, or you can also specify the ``color`` to remove.
 
@@ -8205,6 +8314,14 @@ class BaseImage(Resource):
         :param reset_coords: Reset coordinates after triming image. Default
                              ``False``.
         :type reset_coords: :class:`bool`
+        :param percent_background: Sets how aggressive the trim operation will
+                                   be. A value of `0.0` will trim to the
+                                   minimal bounding box of all matching color,
+                                   and `1.0` to the most outer edge.
+        :type percent_background: :class:`numbers.Real`
+        :param background_color: Local alias to :attr:`background_color`,
+                                 and has the same effect as defining ``color``
+                                 parameter -- but much faster.
 
 
         .. versionadded:: 0.2.1
@@ -8217,20 +8334,42 @@ class BaseImage(Resource):
 
         .. versionchanged:: 0.6.0
            Optional ``reset_coords`` parameter added.
+
+        .. versionchanged:: 0.6.4
+           Optional ``percent_background`` & ``background_color`` parameters
+           have been added.
         """
-        if color is None:
-            color = self[0, 0]
-        elif isinstance(color, string_type):
-            color = Color(color)
-        assertions.assert_color(color=color)
+        use_border = background_color is None
+        if use_border:
+            if color is None:
+                color = self[0, 0]
+            elif isinstance(color, string_type):
+                color = Color(color)
+            assertions.assert_color(color=color)
+            with color:
+                self.border(color, 1, 1, compose='copy')
         assertions.assert_real(fuzz=fuzz)
         assertions.assert_bool(reset_coords=reset_coords)
-        with color:
-            self.border(color, 1, 1, compose="copy")
+        if percent_background is not None:
+            assertions.assert_real(percent_background=percent_background)
+            percent_background = max(min(percent_background, 1.0), 0.0) * 100.0
+            str_pb = '{0:g}%'.format(percent_background)
+            library.MagickSetImageArtifact(self.wand,
+                                           binary('trim:percent-background'),
+                                           binary(str_pb))
+        if not use_border:
+            if isinstance(background_color, string_type):
+                background_color = Color(background_color)
+            assertions.assert_color(background_color=background_color)
+            bc_key = 'trim:background-color'
+            bc_val = background_color.string
+            library.MagickSetImageArtifact(self.wand,
+                                           binary(bc_key),
+                                           binary(bc_val))
         r = library.MagickTrimImage(self.wand, fuzz)
         if reset_coords:
             self.reset_coords()
-        else:
+        elif use_border:
             # Re-calculate page coordinates as we added a 1x1 border before
             # applying the trim.
             adjusted_coords = list(self.page)
