@@ -2372,6 +2372,8 @@ def test_trim_fuzz(fx_asset):
         assert fuzz_y < trim_y
 
 
+@mark.skipif(MAGICK_VERSION_NUMBER < 0x709,
+             reason='trim:percent-background only supported with 7.0.9')
 def test_trim_percent_background(fx_asset):
     # TODO - Find a better test image to demonstrate trim ranges.
     with Image(filename=str(fx_asset.join('horizon_sunset_border2.jpg'))) as img:
