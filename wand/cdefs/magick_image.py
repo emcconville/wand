@@ -203,6 +203,11 @@ def load(lib, IM_VERSION):
     lib.MagickColorizeImage.restype = c_bool
     lib.MagickColorMatrixImage.argtypes = [c_void_p, c_void_p]
     lib.MagickColorMatrixImage.restype = c_bool
+    if IM_VERSION > 0x709:
+        lib.MagickColorThresholdImage.argtypes = [c_void_p, c_void_p, c_void_p]
+        lib.MagickColorThresholdImage.restype = c_bool
+    else:
+        lib.MagickColorThresholdImage = None
     lib.MagickCommentImage.argtypes = [c_void_p, c_char_p]
     lib.MagickCommentImage.restype = c_bool
     lib.MagickCombineImages.argtypes = [c_void_p, c_int]

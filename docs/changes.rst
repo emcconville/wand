@@ -30,6 +30,8 @@ Unreleased.
    - ``remove_colors``
 
    These optional arguments are only available with ImageMagick version 7.0.9-24, or above.
+ - Added :meth:`Image.color_threshold() <wand.image.BaseImage.color_threshold>` method.
+
 
 .. _changelog-0.6.3:
 

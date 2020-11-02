@@ -3514,6 +3514,38 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
+    def color_threshold(self, start=None, stop=None):
+        """Forces all pixels in color range to white, and all other pixels to
+        black.
+
+        .. note::
+
+            This method is only works with ImageMagick-7.0.10, or later.
+
+        :param start: Color to begin color range.
+        :type start: :class:`wand.color.Color`
+        :param stop: Color to end color range.
+        :type stop: :class:`wand.color.Color`
+
+        .. versionadded:: 0.6.4
+        """
+        if isinstance(start, string_type):
+            start = Color(start)
+        if isinstance(stop, string_type):
+            stop = Color(stop)
+        assertions.assert_color(start=start, stop=stop)
+        if library.MagickColorThresholdImage is None:
+            msg = 'Method "color_threshold" not available.'
+            raise WandLibraryVersionError(msg)
+        with start:
+            with stop:
+                r = library.MagickColorThresholdImage(self.wand,
+                                                      start.resource,
+                                                      stop.resource)
+        return r
+
+    @manipulative
+    @trap_exception
     def colorize(self, color=None, alpha=None):
         """Blends a given fill color over the image. The amount of blend is
         determined by the color channels given by the ``alpha`` argument.

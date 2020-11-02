@@ -343,6 +343,15 @@ def test_color_matrix():
             img.color_matrix([[1, 0], [0, 1, 0]])
 
 
+@mark.skipif(MAGICK_VERSION_NUMBER < 0x70A,
+             reason='color_threshold only available after 7.0.10')
+def test_color_threshold():
+    with Image(width=100, height=100, pseudo='plasma:') as img:
+        was = img.signature
+        img.color_threshold(start='#000', stop='#ccc')
+        assert was != img.signature
+
+
 def test_colorize():
     with Image(filename='rose:') as img:
         was = img.signature
