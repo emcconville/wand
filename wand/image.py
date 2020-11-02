@@ -476,6 +476,7 @@ DITHER_METHODS = ('undefined', 'no', 'riemersma', 'floyd_steinberg')
 #: - ``'exponential'``
 #: - ``'gaussiannoise'``
 #: - ``'impulsenoise'``
+#: - ``'inverse_log'`` - Added with ImageMagick-7.0.10-24
 #: - ``'laplaciannoise'``
 #: - ``'leftshift'``
 #: - ``'log'``
@@ -520,7 +521,8 @@ if MAGICK_VERSION_NUMBER >= 0x700:  # pragma: no cover
                     'median', 'min', 'multiplicativenoise', 'multiply', 'or',
                     'poissonnoise', 'pow', 'rightshift', 'rootmeansquare',
                     'set', 'sine', 'subtract', 'sum', 'thresholdblack',
-                    'threshold', 'thresholdwhite', 'uniformnoise', 'xor')
+                    'threshold', 'thresholdwhite', 'uniformnoise', 'xor',
+                    'inverse_log')
 
 
 #: (:class:`tuple`) The list of filter types. Used by

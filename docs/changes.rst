@@ -31,6 +31,14 @@ Unreleased.
 
    These optional arguments are only available with ImageMagick version 7.0.9-24, or above.
  - Added :meth:`Image.color_threshold() <wand.image.BaseImage.color_threshold>` method.
+ - Added ``inverse_log`` operator to :meth:`Image.evaluate() <wand.image.BaseImage.evaluate>` method.
+
+    .. code::
+
+      with Image(filename='rose:') as img:
+        img.evaluate(operator='inverse_log',
+                     value=0.5 * img.quantum_range)
+        img.save(filename='output.png')
 
 
 .. _changelog-0.6.3:
