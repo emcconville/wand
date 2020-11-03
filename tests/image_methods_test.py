@@ -578,6 +578,15 @@ def test_contrast_stretch_user_error(fx_asset):
             img.contrast_stretch(0.1, channel='Not a channel')
 
 
+@mark.skipif(MAGICK_VERSION_NUMBER < 0x70A,
+             reason='Convex hull not supported.')
+def test_convex_hull(fx_asset):
+    fpath = str(fx_asset.join('horizon_sunset_border2.jpg'))
+    with Image(filename=fpath) as img:
+        points = img.convex_hull(background='black')
+        assert len(points) > 0
+
+
 def test_crop(fx_asset):
     """Crops in-place."""
     with Image(filename=str(fx_asset.join('croptest.png'))) as img:
@@ -2385,11 +2394,12 @@ def test_trim_fuzz(fx_asset):
              reason='trim:percent-background only supported with 7.0.9')
 def test_trim_percent_background(fx_asset):
     # TODO - Find a better test image to demonstrate trim ranges.
-    with Image(filename=str(fx_asset.join('horizon_sunset_border2.jpg'))) as img:
+    fpath = str(fx_asset.join('horizon_sunset_border2.jpg'))
+    with Image(filename=fpath) as img:
         was = img.size
         img.trim(fuzz=0.0, percent_background=0.0, background_color='black')
         assert img.size != was
-    with Image(filename=str(fx_asset.join('horizon_sunset_border2.jpg'))) as img:
+    with Image(filename=fpath) as img:
         was = img.size
         img.trim(fuzz=0.0, percent_background=0.5, background_color='black')
         assert img.size != was

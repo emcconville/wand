@@ -439,6 +439,7 @@ DISPOSE_TYPES = (
 #: - ``'shepards'``
 #: - ``'resize'``
 #: - ``'sentinel'``
+#: - ``'rigidaffine'``
 #:
 #: .. versionadded:: 0.4.1
 DISTORTION_METHODS = (
@@ -446,7 +447,7 @@ DISTORTION_METHODS = (
     'perspective', 'perspective_projection', 'bilinear_forward',
     'bilinear_reverse', 'polynomial', 'arc', 'polar', 'depolar',
     'cylinder_2_plane', 'plane_2_cylinder', 'barrel', 'barrel_inverse',
-    'shepards', 'resize', 'sentinel'
+    'shepards', 'resize', 'sentinel', 'rigidaffine'
 )
 
 
@@ -4196,6 +4197,67 @@ class BaseImage(Resource):
                                                        white_point)
                 # Restore original state of channels
                 library.MagickSetImageChannelMask(self.wand, channel_mask)
+        return r
+
+    def convex_hull(self, background=None):
+        """Find the smallest convex polygon, and returns a list of points.
+
+        .. note:: Requires ImageMagick-7.0.10 or greater.
+
+        You can pass the list of points directly to
+        :meth:`Drawing.polygon() <wand.drawing.Drawing.polygon>` method
+        to draw the convex hull shape on the image.
+
+        .. code::
+
+            from wand.image import Image
+            from wand.drawing import Drawing
+
+            with Image(filename='kdf_black.png') as img:
+              points = img.convex_hull()
+              with Drawing() as ctx:
+                ctx.fill_color = 'transparent'
+                ctx.stroke_color = 'red'
+                ctx.polygon(points=points)
+                ctx(img)
+            img.save(filename='kdf_black_convex_hull.png')
+
+        .. image:: ../_images/wand/image/kdf_black.png
+        .. image:: ../_images/wand/image/kdf_black_convex_hull.png
+
+        :param background: Define which color value to evaluate as the
+                           background.
+        :type background: :class:`basestring` or :class:`~wand.color.Color`
+        :returns: list of points
+        :rtype: :class:`list` [ :class:`tuple` ( :class:`float`,
+                :class:`float` ) ]
+
+        .. versionadded:: 0.6.4
+        """
+        r = []
+        if MAGICK_VERSION_NUMBER < 0x70A:
+            msg = 'ImageMagick-7.0.10 is required to use convex_hull().'
+            raise WandLibraryVersionError(msg)
+        with self.clone() as tmp:
+            if background is not None:
+                if isinstance(background, Color):
+                    background = background.string
+                assertions.assert_string(background=background)
+                key = b'convex-hull:background-color'
+                val = b'{0}'.format(background)
+                library.MagickSetImageArtifact(tmp.wand, key, val)
+            library.MagickSetOption(tmp.wand, b'format', b'%[convex-hull]')
+            library.MagickSetImageFormat(tmp.wand, b'INFO')
+            length = ctypes.c_size_t()
+            blob_p = library.MagickGetImageBlob(tmp.wand,
+                                                ctypes.byref(length))
+            if blob_p:
+                blob = ctypes.string_at(blob_p, length.value)
+                library.MagickRelinquishMemory(blob_p)
+                pts = blob.decode('ascii', 'ignore').strip().split(' ')
+                r = [tuple(map(lambda x: float(x), p.split(','))) for p in pts]
+            else:
+                self.raise_exception()
         return r
 
     @manipulative

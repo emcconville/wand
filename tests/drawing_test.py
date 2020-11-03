@@ -838,6 +838,7 @@ def test_set_get_fill_rule(fx_wand):
         fx_wand.fill_rule = invalid
     fx_wand.fill_rule = 'undefined'  # reset
 
+
 @mark.skipif(MAGICK_VERSION_NUMBER < 0x700,
              reason='DrawGetOpacity always returns 1.0')
 def test_set_get_opacity(fx_wand):
