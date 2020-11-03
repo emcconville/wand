@@ -19,7 +19,7 @@ from . import assertions
 from .api import libc, libmagick, library
 from .color import Color
 from .compat import (abc, binary, binary_type, encode_filename, file_types,
-                     PY3, string_type, text, xrange)
+                     PY3, string_type, text, to_bytes, xrange)
 from .exceptions import (MissingDelegateError, WandException,
                          WandRuntimeError, WandLibraryVersionError)
 from .font import Font
@@ -3728,9 +3728,9 @@ class BaseImage(Resource):
                                   'wand.image.COMPLEX_OPERATORS',
                                   operator=operator)
         if snr is not None:
-            library.MagickSetImageArtifact(self.wand,
-                                           b'complex:snr=float',
-                                           b'{0}'.format(snr))
+            key = b'complex:snr=float'
+            val = to_bytes(snr)
+            library.MagickSetImageArtifact(self.wand, key, val)
         operator_idx = COMPLEX_OPERATORS.index(operator)
         wand = library.MagickComplexImages(self.wand, operator_idx)
         if not bool(wand):
@@ -4049,43 +4049,43 @@ class BaseImage(Resource):
             raise ValueError('connectivity must be 4, or 8.')
         if angle_threshold is not None:
             key = b'connected-components:angle-threshold'
-            val = b'{0}'.format(angle_threshold)
+            val = to_bytes(angle_threshold)
             library.MagickSetImageArtifact(self.wand, key, val)
         if area_threshold is not None:
             key = b'connected-components:area-threshold'
-            val = b'{0}'.format(area_threshold)
+            val = to_bytes(area_threshold)
             library.MagickSetImageArtifact(self.wand, key, val)
         if background_id is not None:
             key = b'connected-components:background-id'
-            val = b'{0}'.format(background_id)
+            val = to_bytes(background_id)
             library.MagickSetImageArtifact(self.wand, key, val)
         if circularity_threshold is not None:
             key = b'connected-components:circularity-threshold'
-            val = b'{0}'.format(circularity_threshold)
+            val = to_bytes(circularity_threshold)
             library.MagickSetImageArtifact(self.wand, key, val)
         if diameter_threshold is not None:
             key = b'connected-components:diameter-threshold'
-            val = b'{0}'.format(diameter_threshold)
+            val = to_bytes(diameter_threshold)
             library.MagickSetImageArtifact(self.wand, key, val)
         if eccentricity_threshold is not None:
             key = b'connected-components:eccentricity-threshold'
-            val = b'{0}'.format(eccentricity_threshold)
+            val = to_bytes(eccentricity_threshold)
             library.MagickSetImageArtifact(self.wand, key, val)
         if keep is not None:
             key = b'connected-components:keep'
-            val = b'{0}'.format(keep)
+            val = to_bytes(keep)
             library.MagickSetImageArtifact(self.wand, key, val)
         if keep_colors is not None:
             key = b'connected-components:keep-colors'
-            val = b'{0}'.format(keep_colors)
+            val = to_bytes(keep_colors)
             library.MagickSetImageArtifact(self.wand, key, val)
         if keep_top is not None:
             key = b'connected-components:keep-top'
-            val = b'{0}'.format(keep_top)
+            val = to_bytes(keep_top)
             library.MagickSetImageArtifact(self.wand, key, val)
         if major_axis_threshold is not None:
             key = b'connected-components:major-axis-threshold'
-            val = b'{0}'.format(major_axis_threshold)
+            val = to_bytes(major_axis_threshold)
             library.MagickSetImageArtifact(self.wand, key, val)
         if mean_color:
             key = b'connected-components:mean-color'
@@ -4093,19 +4093,19 @@ class BaseImage(Resource):
             library.MagickSetImageArtifact(self.wand, key, b'true')
         if minor_axis_threshold is not None:
             key = b'connected-components:minor-axis-threshold'
-            val = b'{0}'.format(minor_axis_threshold)
+            val = to_bytes(minor_axis_threshold)
             library.MagickSetImageArtifact(self.wand, key, val)
         if perimeter_threshold is not None:
             key = b'connected-components:perimeter-threshold'
-            val = b'{0}'.format(perimeter_threshold)
+            val = to_bytes(perimeter_threshold)
             library.MagickSetImageArtifact(self.wand, key, val)
         if remove is not None:
             key = b'connected-components:remove'
-            val = b'{0}'.format(remove)
+            val = to_bytes(remove)
             library.MagickSetImageArtifact(self.wand, key, val)
         if remove_colors is not None:
             key = b'connected-components:remove-colors'
-            val = b'{0}'.format(remove_colors)
+            val = to_bytes(remove_colors)
             library.MagickSetImageArtifact(self.wand, key, val)
         objects_ptr = ctypes.c_void_p(0)
         CCObjectInfoStructure = CCObjectInfo
@@ -4244,7 +4244,7 @@ class BaseImage(Resource):
                     background = background.string
                 assertions.assert_string(background=background)
                 key = b'convex-hull:background-color'
-                val = b'{0}'.format(background)
+                val = to_bytes(background)
                 library.MagickSetImageArtifact(tmp.wand, key, val)
             library.MagickSetOption(tmp.wand, b'format', b'%[convex-hull]')
             library.MagickSetImageFormat(tmp.wand, b'INFO')

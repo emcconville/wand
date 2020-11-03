@@ -18,7 +18,7 @@ import types
 
 __all__ = ('PY3', 'abc', 'binary', 'binary_type', 'encode_filename',
            'file_types', 'nested', 'string_type', 'text', 'text_type',
-           'xrange')
+           'to_bytes', 'xrange')
 
 
 #: (:class:`bool`) Whether it is Python 3.x or not.
@@ -58,6 +58,20 @@ def binary(string, var=None):
     if var:
         raise TypeError('{0} must be a string, not {1!r}'.format(var, string))
     raise TypeError('expected a string, not ' + repr(string))
+
+
+def to_bytes(value, string_pattern='{0}'):
+    """Short-cut method to allow mixed value types to be converted to bytes.
+
+    :param value: Value to be cast to bytes
+    :type value: :class:`basestring`, :class:`int`, :class:`float`
+    :param string_pattern: String format to allow printf style control of
+                           bytes output.
+    :type string_pattern: :class:`basestring`
+
+    .. versionadded:: 0.6.4
+    """
+    return string_pattern.format(value).encode()
 
 
 if PY3:
