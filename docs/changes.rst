@@ -41,6 +41,7 @@ Unreleased.
         img.save(filename='output.png')
 
  - Added :meth:`Image.convex_hull() <wand.image.BaseImage.convex_hull>` method. Requires ImageMagick-7.0.10 or above.
+ - Added ``rigidaffine`` operator to :meth:`Image.distort() <wand.image.BaseImage.distort>` method. Requires ImageMagick-7.0.10 or above.
 
 
 .. _changelog-0.6.3:

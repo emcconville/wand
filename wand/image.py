@@ -439,7 +439,7 @@ DISPOSE_TYPES = (
 #: - ``'shepards'``
 #: - ``'resize'``
 #: - ``'sentinel'``
-#: - ``'rigidaffine'``
+#: - ``'rigidaffine'`` - Only available with ImageMagick-7.0.10, or later.
 #:
 #: .. versionadded:: 0.4.1
 DISTORTION_METHODS = (
