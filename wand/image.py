@@ -5995,6 +5995,84 @@ class BaseImage(Resource):
             self.reset_sequence()
         return bool(r)
 
+    def minimum_bounding_box(self, orientation=None):
+        """Find the minmum bounding box within the image. Use
+        properties :attr:`fuzz` & :attr:`background_color` to influence
+        bounding box thresholds.
+
+        .. code::
+
+            from wand.image import Image
+            from wand.drawing import Drawing
+
+            with Image(filename='kdf_black.png') as img:
+                img.fuzz = img.quantum_range * 0.1
+                img.background_color = 'black'
+                mbr = img.minimum_bounding_box()
+                with Drawing() as ctx:
+                    ctx.fill_color = 'transparent'
+                    ctx.stroke_color = 'red'
+                    ctx.polygon(points=mbr['points'])
+                    ctx.fill_color = 'red'
+                    ctx.stroke_color = 'transparent'
+                    ctx.text(1, 10, '{0:.4g}°'.format(mbr['angle']))
+                    ctx(img)
+                img.save(filename='kdf_black_mbr.png')
+
+        .. image:: ../_images/wand/image/kdf_black.png
+        .. image:: ../_images/wand/image/kdf_black_mbr.png
+
+        .. note::
+
+            Requires ImageMagick-7.0.10 or later.
+
+        :param orientation: sets the image orientation. Values can be
+                            ``'landscape'``, or ``'portrait'``.
+        :type orientation: :class:`basestring`
+        :returns: a directory of MBR properties & corner points.
+        :rtype: :class:`dict` { "points": :class:`list` [ :class:`tuple` (
+                :class:`float`, :class:`float` ) ], "area": :class:`float`,
+                "width": :class:`float`, "height": :class:`float`,
+                "angle": :class:`float` }
+
+        .. versionadded:: 0.6.4
+        """
+        r = {}
+        if MAGICK_VERSION_NUMBER < 0x70A:
+            msg = 'ImageMagick-7.0.10 is required to use convex_hull().'
+            raise WandLibraryVersionError(msg)
+        with self.clone() as tmp:
+            if orientation is not None:
+                if orientation not in ('landscape', 'portrait'):
+                    msg = 'orientation can only be landscape, or portrait, not'
+                    msg += ' ' + repr(orientation)
+                    raise ValueError(msg)
+                key = b'minimum-bounding-box:orientation'
+                val = to_bytes(orientation)
+                library.MagickSetImageArtifact(tmp.wand, key, val)
+            mbr_str = b'%[minimum-bounding-box]'
+            mbr_str += b'|%[minimum-bounding-box:area]'
+            mbr_str += b'|%[minimum-bounding-box:width]'
+            mbr_str += b'|%[minimum-bounding-box:height]'
+            mbr_str += b'|%[minimum-bounding-box:angle]'
+            library.MagickSetOption(tmp.wand, b'format', mbr_str)
+            library.MagickSetImageFormat(tmp.wand, b'INFO')
+            length = ctypes.c_size_t()
+            blob_p = library.MagickGetImageBlob(tmp.wand,
+                                                ctypes.byref(length))
+            if blob_p:
+                blob = ctypes.string_at(blob_p, length.value)
+                library.MagickRelinquishMemory(blob_p)
+                parts = blob.decode('ascii', 'ignore').split('|')
+                pts = parts[0].strip().split(' ')
+                r = [tuple(map(lambda x: float(x), p.split(','))) for p in pts]
+                attr = list(map(lambda x: float(x.strip()), parts[1:]))
+                keys = ['area', 'width', 'height', 'angle']
+                r = dict(zip(keys, attr), points=r)
+            else:
+                self.raise_exception()
+        return r
+
     @manipulative
     def mode(self, width, height=None):
         """Replace each pixel with the mathematical mode of the neighboring

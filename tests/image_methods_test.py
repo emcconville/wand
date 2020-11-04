@@ -1420,6 +1420,17 @@ def test_merge_layers_method_mosaic_neg_offset(fx_asset):
             assert img1.size == (16, 16)
 
 
+@mark.skipif(MAGICK_VERSION_NUMBER < 0x70A,
+             reason='ImageMagick-7.0.10 required.')
+def test_minimum_bounding_box():
+    with Image(filename='wizard:') as img:
+        img.fuzz = 0.1 * img.quantum_range
+        img.background_color = 'white'
+        mbr = img.minimum_bounding_box()
+        assert img.width > mbr.get('width', img.width)
+        assert img.height > mbr.get('height', img.height)
+
+
 def test_mode(fx_asset):
     with Image(filename='rose:') as img:
         was = img.signature
