@@ -37,13 +37,13 @@ def pytest_collection_modifyitems(config, items):
     skip_pdf = False
     skip_fft = False
     if config.getoption('--skip-slow'):
-        skip_slow = mark.skip('skipped; --skip-slow option is used')
+        skip_slow = mark.skip('skipped; --skip-slow option was used')
     if config.getoption('--skip-pdf'):
-        skip_pdf = mark.skip('skipped; --skip-pdf option is used')
+        skip_pdf = mark.skip('skipped; --skip-pdf option was used')
     if config.getoption('--skip-fft'):
-        skip_fft = mark.skip('skipped; --skip-fft option is used')
+        skip_fft = mark.skip('skipped; --skip-fft option was used')
     if config.getoption('--no-pdf'):
-        skip_pdf = mark.skip('skipped; --skip-pdf option is used')
+        skip_pdf = mark.skip('skipped; --skip-pdf option was used')
     for item in items:
         if skip_slow and 'slow' in item.keywords:
             item.add_marker(skip_slow)
