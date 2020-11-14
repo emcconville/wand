@@ -5574,6 +5574,36 @@ class BaseImage(Resource):
         assertions.assert_integer(index=index)
         return library.MagickSetIteratorIndex(self.wand, index)
 
+    @manipulative
+    @trap_exception
+    def kmeans(self, number_colors=None, max_iterations=100, tolerance=0.01):
+        """Reduces the number of colors in an image by appling the K-means
+        clustering algorithm.
+
+        .. note::
+
+            Requires ImageMagick-7.0.10-37, or later.
+
+        :param number_colors: the target number of colors to use as seeds.
+        :type number_colors: :class:`numbers.Integral`
+        :param max_iterations: maximum number of iterations needed until
+                               convergence. Default ``100``.
+        :type max_iterations: :class:`numbers.Integral`
+        :param tolerance: maximum tolerance between distrotion iterations.
+                          Default ``0.01``
+        :type tolerance: :class:`numbers.Real`
+
+        .. versionadded:: 0.6.4
+        """
+        if MAGICK_VERSION_NUMBER < 0x70A or library.MagickKmeansImage is None:
+            msg = "Kmeans requires ImageMagick-7.0.10-37 or later."
+            raise WandLibraryVersionError(msg)
+        assertions.assert_unsigned_integer(number_colors=number_colors,
+                                           max_iterations=max_iterations)
+        assertions.assert_real(tolerance=tolerance)
+        return library.MagickKmeansImage(self.wand, number_colors,
+                                         max_iterations, tolerance)
+
     def kurtosis_channel(self, channel='default_channels'):
         """Calculates the kurtosis and skewness of the image.
 

@@ -1159,6 +1159,15 @@ def test_iterator(fx_asset):
         assert idx == 2
 
 
+@mark.skipif(MAGICK_VERSION_NUMBER < 0x70B,
+             reason='Requires ImageMagick-7.0.10-37')
+def test_kmeans():
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.kmeans(64)
+        assert was != img.signature
+
+
 def test_kurtosis_channel():
     with Image(filename='rose:') as img:
         r = img.kurtosis_channel('red')

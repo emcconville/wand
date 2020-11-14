@@ -45,6 +45,7 @@ Unreleased.
  - Added :meth:`Image.minimum_bounding_box() <wand.image.BaseImage.minimum_bounding_box>` method. Requires ImageMagick-7.0.10 or above;
  - Added :class:`PAPERSIZE_MAP <wand.image.PAPERSIZE_MAP>` dict as a convenience lookup table.
  - Added support for setting :attr:`Image.page <wand.image.BaseImage.page>` attribute with papersizes defined in :class:`~wand.image.PAPERSIZE_MAP`.
+ - Added :meth:`Image.kmeans() <wand.image.BaseImage.kmeans>` method. Only available with ImageMagick-7.0.10-37 or later.
 
 
 .. _changelog-0.6.3:

@@ -632,6 +632,16 @@ def load(lib, IM_VERSION):
         c_void_p, c_void_p, c_double
     ]
     lib.MagickInverseFourierTransformImage.restype = c_bool
+    if IM_VERSION > 0x709:
+        try:
+            lib.MagickKmeansImage.argtypes = [
+                c_void_p, c_size_t, c_size_t, c_double
+            ]
+            lib.MagickKmeansImage.restype = c_bool
+        except AttributeError:
+            lib.MagickKmeansImage = None
+    else:
+        lib.MagickKmeansImage = None
     if IM_VERSION >= 0x708:
         try:
             lib.MagickKuwaharaImage.argtypes = [c_void_p, c_double, c_double]
