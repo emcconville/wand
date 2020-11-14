@@ -47,9 +47,9 @@ def test_artifacts():
         img.artifacts['key'] = 'value'
         assert 'date:create' in img.artifacts
         assert img.artifacts['key'] == 'value'
-        assert img.artifacts['novalue'] is None
+        assert img.artifacts['not_a_value'] is None
         assert len(img.artifacts) > 0
-        for key, value in img.artifacts.items():
+        for _ in img.artifacts.items():
             pass
         del img.artifacts['key']
 
@@ -389,9 +389,9 @@ def test_mimetype(fx_asset):
 
 def test_minima_maxima():
     with Image(filename='rose:') as img:
-        minq = img.minima
-        maxq = img.maxima
-        assert minq < maxq
+        min_q = img.minima
+        max_q = img.maxima
+        assert min_q < max_q
 
 
 def test_orientation_get(fx_asset):
@@ -458,6 +458,14 @@ def test_page_setter_items(fx_asset):
         assert img1.page == (6400, 4800, -12, 13)
         img1.page_y = -13
         assert img1.page == (6400, 4800, -12, -13)
+
+
+def test_page_setter_papersize():
+    with Image(filename='rose:') as img:
+        img.page = 'a4'
+        assert img.page == (595, 842, 0, 0)
+        img.page = 'badvalue'
+        assert img.page == (0, 0, 0, 0)
 
 
 def test_primary_points(fx_asset):

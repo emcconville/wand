@@ -35,8 +35,9 @@ __all__ = ('ALPHA_CHANNEL_TYPES', 'AUTO_THRESHOLD_METHODS', 'CHANNELS',
            'DITHER_METHODS', 'EVALUATE_OPS', 'FILTER_TYPES', 'FUNCTION_TYPES',
            'GRAVITY_TYPES', 'IMAGE_LAYER_METHOD', 'IMAGE_TYPES',
            'INTERLACE_TYPES', 'KERNEL_INFO_TYPES', 'MORPHOLOGY_METHODS',
-           'NOISE_TYPES', 'ORIENTATION_TYPES', 'PIXEL_INTERPOLATE_METHODS',
-           'RENDERING_INTENT_TYPES', 'SPARSE_COLOR_METHODS', 'STATISTIC_TYPES',
+           'NOISE_TYPES', 'ORIENTATION_TYPES', 'PAPERSIZE_MAP',
+           'PIXEL_INTERPOLATE_METHODS', 'RENDERING_INTENT_TYPES',
+           'SPARSE_COLOR_METHODS', 'STATISTIC_TYPES',
            'STORAGE_TYPES', 'VIRTUAL_PIXEL_METHOD', 'UNIT_TYPES',
            'BaseImage', 'ChannelDepthDict', 'ChannelImageDict',
            'ClosedImageError', 'HistogramDict', 'Image', 'ImageProperty',
@@ -864,6 +865,48 @@ OPTIONS = frozenset([
 ORIENTATION_TYPES = ('undefined', 'top_left', 'top_right', 'bottom_right',
                      'bottom_left', 'left_top', 'right_top', 'right_bottom',
                      'left_bottom')
+
+
+#: (:class:`dict`) Map of papersize names to page sizes. Each page size
+#: is a width & height :class:`tuple` at a 72dpi resolution.
+#:
+#: .. code::
+#:
+#:     from wand.image import Image, PAPERSIZE_MAP
+#:
+#:     w, h = PAPERSIZE_MAP["a4"]
+#:     with Image(width=w, height=h, background="white") as img:
+#:         img.save(filename="a4_page.png")
+#:
+#: .. versionadded:: 0.6.4
+PAPERSIZE_MAP = {
+    '4x6': (288, 432), '5x7': (360, 504), '7x9': (504, 648),
+    '8x10': (576, 720), '9x11': (648, 792), '9x12': (648, 864),
+    '10x13': (720, 936), '10x14': (720, 1008), '11x17': (792, 1224),
+    '4A0': (4768, 6741), '2A0': (3370, 4768), 'a0': (2384, 3370),
+    'a1': (1684, 2384), 'a2': (1191, 1684), 'a3': (842, 1191),
+    'a4': (595, 842), 'a4small': (595, 842), 'a5': (420, 595),
+    'a6': (298, 420), 'a7': (210, 298), 'a8': (147, 210), 'a9': (105, 147),
+    'a10': (74, 105), 'archa': (648, 864), 'archb': (864, 1296),
+    'archC': (1296, 1728), 'archd': (1728, 2592), 'arche': (2592, 3456),
+    'b0': (2920, 4127), 'b1': (2064, 2920), 'b10': (91, 127),
+    'b2': (1460, 2064), 'b3': (1032, 1460), 'b4': (729, 1032),
+    'b5': (516, 729), 'b6': (363, 516), 'b7': (258, 363), 'b8': (181, 258),
+    'b9': (127, 181), 'c0': (2599, 3676), 'c1': (1837, 2599),
+    'c2': (1298, 1837), 'c3': (918, 1296), 'c4': (649, 918), 'c5': (459, 649),
+    'c6': (323, 459), 'c7': (230, 323), 'csheet': (1224, 1584),
+    'dsheet': (1584, 2448), 'esheet': (2448, 3168), 'executive': (540, 720),
+    'flsa': (612, 936), 'flse': (612, 936), 'folio': (612, 936),
+    'halfletter': (396, 612), 'isob0': (2835, 4008), 'isob1': (2004, 2835),
+    'isob10': (88, 125), 'isob2': (1417, 2004), 'isob3': (1001, 1417),
+    'isob4': (709, 1001), 'isob5': (499, 709), 'isob6': (354, 499),
+    'isob7': (249, 354), 'isob8': (176, 249), 'isob9': (125, 176),
+    'jisb0': (1030, 1456), 'jisb1': (728, 1030), 'jisb2': (515, 728),
+    'jisb3': (364, 515), 'jisb4': (257, 364), 'jisb5': (182, 257),
+    'jisb6': (128, 182), 'ledger': (1224, 792), 'legal': (612, 1008),
+    'letter': (612, 792), 'lettersmall': (612, 792), 'monarch': (279, 540),
+    'quarto': (610, 780), 'statement': (396, 612),  'tabloid': (792, 1224)
+}
 
 
 #: (:class:`tuple`) List of interpolate pixel methods (ImageMagick-7 only.)
@@ -2069,12 +2112,25 @@ class BaseImage(Resource):
         """The dimensions and offset of this Wand's page as a 4-tuple:
         ``(width, height, x, y)``.
 
+        .. code::
+
+            with Image(filename='wizard:') as img:
+                img.page = (595, 842, 0, 0)
+
         Note that since it is based on the virtual canvas, it may not equal the
         dimensions of an image. See the ImageMagick documentation on the
         virtual canvas for more information.
 
+        This attribute can also be set by using a named papersize. For
+        example::
+
+            with Image(filename='wizard:') as img:
+                img.page = 'a4'
+
         .. versionadded:: 0.4.3
 
+        .. versionchanged:: 0.6.4
+           Added support for setting by papersize.
         """
         w = ctypes.c_size_t()
         h = ctypes.c_size_t()
@@ -2088,6 +2144,14 @@ class BaseImage(Resource):
     @page.setter
     @manipulative
     def page(self, newpage):
+        if isinstance(newpage, string_type):
+            c_ptr = libmagick.GetPageGeometry(newpage.encode())
+            ri = RectangleInfo()
+            c_ptr = ctypes.cast(c_ptr, ctypes.c_char_p)
+            libmagick.ParseAbsoluteGeometry(c_ptr, ctypes.byref(ri))
+            newpage = (ri.width, ri.height, ri.x, ri.y)
+            libmagick.DestroyString(c_ptr)
+            del ri
         if isinstance(newpage, abc.Sequence):
             w, h, x, y = newpage
         else:
@@ -6033,7 +6097,7 @@ class BaseImage(Resource):
         :rtype: :class:`dict` { "points": :class:`list` [ :class:`tuple` (
                 :class:`float`, :class:`float` ) ], "area": :class:`float`,
                 "width": :class:`float`, "height": :class:`float`,
-                "angle": :class:`float` }
+                "angle": :class:`float`, "unrotate": :class:`float` }
 
         .. versionadded:: 0.6.4
         """
@@ -6055,6 +6119,7 @@ class BaseImage(Resource):
             mbr_str += b'|%[minimum-bounding-box:width]'
             mbr_str += b'|%[minimum-bounding-box:height]'
             mbr_str += b'|%[minimum-bounding-box:angle]'
+            mbr_str += b'|%[minimum-bounding-box:unrotate]'
             library.MagickSetOption(tmp.wand, b'format', mbr_str)
             library.MagickSetImageFormat(tmp.wand, b'INFO')
             length = ctypes.c_size_t()
@@ -6067,7 +6132,7 @@ class BaseImage(Resource):
                 pts = parts[0].strip().split(' ')
                 r = [tuple(map(lambda x: float(x), p.split(','))) for p in pts]
                 attr = list(map(lambda x: float(x.strip()), parts[1:]))
-                keys = ['area', 'width', 'height', 'angle']
+                keys = ['area', 'width', 'height', 'angle', 'unrotate']
                 r = dict(zip(keys, attr), points=r)
             else:
                 self.raise_exception()

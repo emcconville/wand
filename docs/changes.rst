@@ -41,8 +41,10 @@ Unreleased.
         img.save(filename='output.png')
 
  - Added :meth:`Image.convex_hull() <wand.image.BaseImage.convex_hull>` method. Requires ImageMagick-7.0.10 or above.
- - Added ``rigidaffine`` operator to :meth:`Image.distort() <wand.image.BaseImage.distort>` method. Requires ImageMagick-7.0.10 or above.
+ - Added ``'rigidaffine'`` operator to :meth:`Image.distort() <wand.image.BaseImage.distort>` method. Requires ImageMagick-7.0.10 or above.
  - Added :meth:`Image.minimum_bounding_box() <wand.image.BaseImage.minimum_bounding_box>` method. Requires ImageMagick-7.0.10 or above;
+ - Added :class:`PAPERSIZE_MAP <wand.image.PAPERSIZE_MAP>` dict as a convenience lookup table.
+ - Added support for setting :attr:`Image.page <wand.image.BaseImage.page>` attribute with papersizes defined in :class:`~wand.image.PAPERSIZE_MAP`.
 
 
 .. _changelog-0.6.3:

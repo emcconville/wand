@@ -34,6 +34,8 @@ def load(libmagick):
     libmagick.DestroyExceptionInfo.restype = c_void_p
     libmagick.DestroyImage.argtypes = [c_void_p]
     libmagick.DestroyImage.restype = c_void_p
+    libmagick.DestroyString.argtypes = [c_void_p]
+    libmagick.DestroyString.restype = c_void_p
     try:
         libmagick.GetGeometry.argtypes = [c_char_p,
                                           POINTER(c_ssize_t),
@@ -71,10 +73,20 @@ def load(libmagick):
     libmagick.GetMagickResourceLimit.restype = c_size_t
     libmagick.GetMagickVersion.argtypes = [POINTER(c_size_t)]
     libmagick.GetMagickVersion.restype = c_char_p
+    try:
+        libmagick.GetPageGeometry.argtypes = [c_char_p]
+        libmagick.GetPageGeometry.restype = c_void_p
+    except AttributeError:
+        libmagick.GetPageGeometry = None
     libmagick.GetNextImageInList.argtypes = [c_void_p]
     libmagick.GetNextImageInList.restype = c_void_p
     libmagick.MagickToMime.argtypes = [c_char_p]
     libmagick.MagickToMime.restype = c_magick_char_p
+    try:
+        libmagick.ParseAbsoluteGeometry.argtypes = [c_char_p, c_void_p]
+        libmagick.ParseAbsoluteGeometry.restype = c_int
+    except AttributeError:
+        libmagick.ParseAbsoluteGeometry = None
     try:
         libmagick.ParseChannelOption.argtypes = [c_char_p]
         libmagick.ParseChannelOption.restypes = c_ssize_t
