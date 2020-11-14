@@ -2497,6 +2497,15 @@ def test_wavelet_denoise():
             assert was != img.signature
 
 
+@mark.skipif(MAGICK_VERSION_NUMBER < 0x70B,
+             reason='Requires ImageMagick-7.0.10-37')
+def test_white_balance():
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.white_balance()
+        assert was != img.signature
+
+
 def test_white_threshold(fx_asset):
     with Image(filename='rose:') as img:
         was = img.signature

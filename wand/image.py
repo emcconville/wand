@@ -8829,6 +8829,24 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
+    def white_balance(self):
+        """Uses LAB colorspace to apply a white balance to the image.
+
+        .. note::
+
+            Requires ImageMagick-7.0.10-37 or later.
+
+        .. versionadded:: 0.6.4
+        """
+        msg = 'Requires ImageMagick-7.0.10-37, or later.'
+        if MAGICK_VERSION_NUMBER < 0x70A:
+            raise WandLibraryVersionError(msg)
+        elif library.MagickWhiteBalanceImage is None:
+            raise WandLibraryVersionError(msg)
+        return library.MagickWhiteBalanceImage(self.wand)
+
+    @manipulative
+    @trap_exception
     def white_threshold(self, threshold):
         """Forces all pixels above a given color as white. Leaves pixels
         below threshold unaltered.

@@ -46,6 +46,7 @@ Unreleased.
  - Added :class:`PAPERSIZE_MAP <wand.image.PAPERSIZE_MAP>` dict as a convenience lookup table.
  - Added support for setting :attr:`Image.page <wand.image.BaseImage.page>` attribute with papersizes defined in :class:`~wand.image.PAPERSIZE_MAP`.
  - Added :meth:`Image.kmeans() <wand.image.BaseImage.kmeans>` method. Only available with ImageMagick-7.0.10-37 or later.
+ - Added :meth:`Image.white_balance() <wand.image.BaseImage.white_balance>` method. Only available with ImageMagick-7.0.10-37 or later.
 
 
 .. _changelog-0.6.3:
