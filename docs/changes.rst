@@ -14,6 +14,11 @@ Version 0.6.4
 
 Unreleased.
 
+ - Added :meth:`Image.color_threshold() <wand.image.BaseImage.color_threshold>` method.
+ - Added :meth:`Image.convex_hull() <wand.image.BaseImage.convex_hull>` method. Requires ImageMagick-7.0.10 or above.
+ - Added :meth:`Image.kmeans() <wand.image.BaseImage.kmeans>` method. Only available with ImageMagick-7.0.10-37 or later.
+ - Added :meth:`Image.minimum_bounding_box() <wand.image.BaseImage.minimum_bounding_box>` method. Requires ImageMagick-7.0.10 or above;
+ - Added :meth:`Image.white_balance() <wand.image.BaseImage.white_balance>` method. Only available with ImageMagick-7.0.10-37 or later.
  - Added ``percent_background`` & ``background_color`` parameters to :meth:`Image.trim() <wand.image.BaseImage.trim>` method.
  - Added the following arguments to :meth:`Image.connected_components() <wand.image.BaseImage.connected_components>`:
 
@@ -29,24 +34,10 @@ Unreleased.
    - ``perimeter_threshold``
    - ``remove_colors``
 
-   These optional arguments are only available with ImageMagick version 7.0.9-24, or above.
- - Added :meth:`Image.color_threshold() <wand.image.BaseImage.color_threshold>` method.
- - Added ``inverse_log`` operator to :meth:`Image.evaluate() <wand.image.BaseImage.evaluate>` method.
-
-    .. code::
-
-      with Image(filename='rose:') as img:
-        img.evaluate(operator='inverse_log',
-                     value=0.5 * img.quantum_range)
-        img.save(filename='output.png')
-
- - Added :meth:`Image.convex_hull() <wand.image.BaseImage.convex_hull>` method. Requires ImageMagick-7.0.10 or above.
+ - Added ``'inverse_log'`` operator to :meth:`Image.evaluate() <wand.image.BaseImage.evaluate>` method.
  - Added ``'rigidaffine'`` operator to :meth:`Image.distort() <wand.image.BaseImage.distort>` method. Requires ImageMagick-7.0.10 or above.
- - Added :meth:`Image.minimum_bounding_box() <wand.image.BaseImage.minimum_bounding_box>` method. Requires ImageMagick-7.0.10 or above;
  - Added :class:`PAPERSIZE_MAP <wand.image.PAPERSIZE_MAP>` dict as a convenience lookup table.
  - Added support for setting :attr:`Image.page <wand.image.BaseImage.page>` attribute with papersizes defined in :class:`~wand.image.PAPERSIZE_MAP`.
- - Added :meth:`Image.kmeans() <wand.image.BaseImage.kmeans>` method. Only available with ImageMagick-7.0.10-37 or later.
- - Added :meth:`Image.white_balance() <wand.image.BaseImage.white_balance>` method. Only available with ImageMagick-7.0.10-37 or later.
 
 
 .. _changelog-0.6.3:
