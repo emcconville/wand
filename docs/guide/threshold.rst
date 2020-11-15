@@ -10,6 +10,9 @@ Threshold
 
 Adaptive Threshold
 ------------------
+
+.. versionadded:: 0.5.3
+
 Also known as Local Adaptive Threshold, each pixel value is adjusted
 by the surrounding pixels. If the current pixel has greater value than the
 average of the surrounding pixels, then the pixel becomes white, else black.
@@ -34,11 +37,15 @@ arguments. Use ``offset`` argument to apply a +/- value to the current pixel.
 |    :alt: Original                   |    :alt: Adaptive Threshold                  |
 +-------------------------------------+----------------------------------------------+
 
+.. note:: Requires ImageMagick-7.
+
 
 .. _auto_threshold:
 
 Auto Threshold
 --------------
+
+.. versionadded:: 0.5.5
 
 This method applies threshold automatically. You can define which method to
 use from :class:`~wand.image.AUTO_THRESHOLD_METHODS`. Defaults to ``'kapur'``.
@@ -71,11 +78,15 @@ use from :class:`~wand.image.AUTO_THRESHOLD_METHODS`. Defaults to ``'kapur'``.
 |    :alt: Auto Threshold (``'otsu'``)          |    :alt: Auto Threshold (``'triangle'``)          |
 +-----------------------------------------------+---------------------------------------------------+
 
+.. note:: Requires ImageMagick-7.0.8-41
+
 
 .. _black_threshold:
 
 Black Threshold
 ---------------
+
+.. versionadded:: 0.5.3
 
 Force all pixels below a given pixel value to black.
 This works on a color channel-by-channel basis, and can be used to reduce
@@ -100,6 +111,8 @@ unwanted colors.
 Color Threshold
 ---------------
 
+.. versionadded:: 0.6.4
+
 Creates a binary image where all pixels between ``start`` & ``stop`` are forced
 to white, else black.
 
@@ -116,12 +129,15 @@ to white, else black.
 |    :alt: Original                   |    :alt: Color Threshold                  |
 +-------------------------------------+-------------------------------------------+
 
+.. note:: Requires ImageMagick-7.0.10
 
 
 .. _random_threshold:
 
 Random Threshold
 ----------------
+
+.. versionadded:: 0.5.7
 
 Applies a random threshold between ``low`` & ``heigh`` values.
 
@@ -145,6 +161,8 @@ Applies a random threshold between ``low`` & ``heigh`` values.
 
 Range Threshold
 ---------------
+
+.. versionadded:: 0.5.5
 
 This can either apply a soft, or hard, threshold between two quantum points.
 
@@ -192,11 +210,14 @@ To use a hard threshold, pass the same values as both low & high range.
 |    :alt: Original                   |    :alt: Range Threshold (range)               |
 +-------------------------------------+------------------------------------------------+
 
+.. note:: Requires ImageMagick-7.0.8-41
 
 .. _white_threshold:
 
 White Threshold
 ---------------
+
+.. versionadded:: 0.5.2
 
 Force all pixels above a given pixel value to white.
 This works on a color channel-by-channel basis, and can be used to reduce
