@@ -94,6 +94,8 @@ unwanted colors.
 
 .. code-block:: python
 
+    from wand.image import Image
+
     with Image(filename='inca_tern.jpg') as img:
         img.black_threshold(threshold='#930')
         img.save(filename='threshold_black.jpg')
@@ -117,6 +119,8 @@ Creates a binary image where all pixels between ``start`` & ``stop`` are forced
 to white, else black.
 
 .. code-block:: python
+
+    from wand.image import Image
 
     with Image(filename='inca_tern.jpg') as img:
         img.color_threshold(start='#333', stop='#cdc')
@@ -253,6 +257,8 @@ point.
 
 .. code-block:: python
 
+    from wand.image import Image
+
     with Image(filename='inca_tern.jpg') as img:
         img.transform_colorspace('gray')
         white_point = 0.9 * img.quantum_range
@@ -274,6 +280,8 @@ point.
 To use a hard threshold, pass the same values as both low & high range.
 
 .. code-block:: python
+
+    from wand.image import Image
 
     with Image(filename='inca_tern.jpg') as img:
         img.transform_colorspace('gray')
@@ -306,6 +314,8 @@ This works on a color channel-by-channel basis, and can be used to reduce
 unwanted colors.
 
 .. code-block:: python
+
+    from wand.image import Image
 
     with Image(filename='inca_tern.jpg') as img:
         img.threshold_threshold(threshold='#ace')

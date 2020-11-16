@@ -91,6 +91,8 @@ of color.
 
 .. code-block:: python
 
+    from wand.image import Image
+
     with Image(filename='hummingbird.jpg') as img:
         img.quantize(number_colors=8, colorspace_type='srgb',
                      treedepth=1, dither=True, measure_error=False)
@@ -115,7 +117,7 @@ Remap
 Remap replaces all pixels with the closest matching pixel found in the
 *affinity* reference image.
 
-.. code::
+.. code-block:: python
 
     from wand.image import Image
 
