@@ -2,7 +2,7 @@ Threshold
 =========
 
 ..
-  This document covers methods defined in MagickCore's fx.c file.
+  This document covers methods defined in MagickCore's threshold.c file.
   https://imagemagick.org/api/MagickCore/threshold_8c.html
 
 
@@ -132,6 +132,86 @@ to white, else black.
 .. note:: Requires ImageMagick-7.0.10
 
 
+.. _ordered_dither:
+
+Ordered Dither
+--------------
+
+Applies a pre-defined threshold map to create dithering to an image.
+
+The pre-defined thresholds are the following:
+
++-----------+-------+-----------------------------+
+| Map       | Alias | Description                 |
++===========+=======+=============================+
+| threshold | 1x1   | Threshold 1x1 (non-dither)  |
++-----------+-------+-----------------------------+
+| checks    | 2x1   | Checkerboard 2x1 (dither)   |
++-----------+-------+-----------------------------+
+| o2x2      | 2x2   | Ordered 2x2 (dispersed)     |
++-----------+-------+-----------------------------+
+| o3x3      | 3x3   | Ordered 3x3 (dispersed)     |
++-----------+-------+-----------------------------+
+| o4x4      | 4x4   | Ordered 4x4 (dispersed)     |
++-----------+-------+-----------------------------+
+| o8x8      | 8x8   | Ordered 8x8 (dispersed)     |
++-----------+-------+-----------------------------+
+| h4x4a     | 4x1   | Halftone 4x4 (angled)       |
++-----------+-------+-----------------------------+
+| h6x6a     | 6x1   | Halftone 6x6 (angled)       |
++-----------+-------+-----------------------------+
+| h8x8a     | 8x1   | Halftone 8x8 (angled)       |
++-----------+-------+-----------------------------+
+| h4x4o     |       | Halftone 4x4 (orthogonal)   |
++-----------+-------+-----------------------------+
+| h6x6o     |       | Halftone 6x6 (orthogonal)   |
++-----------+-------+-----------------------------+
+| h8x8o     |       | Halftone 8x8 (orthogonal)   |
++-----------+-------+-----------------------------+
+| h16x16o   |       | Halftone 16x16 (orthogonal) |
++-----------+-------+-----------------------------+
+| c5x5b     | c5x5  | Circles 5x5 (black)         |
++-----------+-------+-----------------------------+
+| c5x5w     |       | Circles 5x5 (white)         |
++-----------+-------+-----------------------------+
+| c6x6b     | c6x6  | Circles 6x6 (black)         |
++-----------+-------+-----------------------------+
+| c6x6w     |       | Circles 6x6 (white)         |
++-----------+-------+-----------------------------+
+| c7x7b     | c7x7  | Circles 7x7 (black)         |
++-----------+-------+-----------------------------+
+| c7x7w     |       | Circles 7x7 (white)         |
++-----------+-------+-----------------------------+
+
+.. code-block:: python
+
+    from wand.image import Image
+
+    with Image(filename='inca_tern.jpg') as img:
+        img.transform_colorspace('gray')
+        with img.clone() as dispersed:
+            dispersed.ordered_dither('o3x3')
+            dispersed.save(filename='threshold_ordered_dither_dispersed.jpg')
+        with img.clone() as halftone:
+            halftone.ordered_dither('h6x6a')
+            halftone.save(filename='threshold_ordered_dither_halftone.jpg')
+        with img.clone() as circles:
+            circles.ordered_dither('c6x6b')
+            circles.save(filename='threshold_ordered_dither_circles.jpg')
+
++-------------------------------------------------------------+--------------------------------------------------------------+
+| Original                                                    | Ordered Dither (Ordered 3x3)                                 |
++-------------------------------------------------------------+--------------------------------------------------------------+
+| .. image:: ../_images/inca_tern.jpg                         | .. image:: ../_images/threshold_ordered_dither_dispersed.jpg |
+|    :alt: Original                                           |    :alt: Ordered Dither (Ordered 3x3)                        |
++-------------------------------------------------------------+--------------------------------------------------------------+
+| Ordered Dither (Halftone 4x4)                               | Ordered Dither (Circles 6x6)                                 |
++-------------------------------------------------------------+--------------------------------------------------------------+
+| .. image:: ../_images/threshold_ordered_dither_halftone.jpg | .. image:: ../_images/threshold_ordered_dither_circles.jpg   |
+|    :alt: Ordered Dither (Halftone 4x4)                      |    :alt: Ordered Dither (Circles 6x6)                        |
++-------------------------------------------------------------+--------------------------------------------------------------+
+
+
 .. _random_threshold:
 
 Random Threshold
@@ -142,6 +222,8 @@ Random Threshold
 Applies a random threshold between ``low`` & ``heigh`` values.
 
 .. code-block:: python
+
+    from wand.image import Image
 
     with Image(filename='inca_tern.jpg') as img:
         img.transform_colorspace('gray')

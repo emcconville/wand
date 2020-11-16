@@ -97,6 +97,7 @@ User's guide
    guide/layers
    guide/sequence
    guide/resource
+   guide/quantize
    guide/threshold
    guide/cli
    test
