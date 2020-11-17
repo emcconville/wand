@@ -60,7 +60,7 @@ def load(lib, IM_VERSION, IM_QUANTUM_DEPTH, IM_HDRI):
     is_im_7 = IM_VERSION >= 0x700
 
     # Check for IBM Z Systems.
-    if 's309x' == platform.machine():
+    if platform.machine() in ['s390', 's390x']:
         FloatType = c_double
     else:
         FloatType = c_float
