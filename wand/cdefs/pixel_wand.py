@@ -8,6 +8,7 @@ from ctypes import (CDLL, POINTER, c_char_p, c_double,
                     c_ubyte, c_uint, c_ushort, c_void_p)
 from wand.cdefs.wandtypes import c_magick_char_p
 import numbers
+import platform
 
 __all__ = ('load',)
 
@@ -30,7 +31,7 @@ def load(lib, IM_VERSION, IM_QUANTUM_DEPTH, IM_HDRI):
 
     Mapping Pixel methods also requires the wand library to evaluate
     what "Quantum" is to ImageMagick. We must query the library
-    to identify if HRDI is enabled, and what the quantum depth is.
+    to identify if HDRI is enabled, and what the quantum depth is.
 
     .. seealso::
 
@@ -58,10 +59,16 @@ def load(lib, IM_VERSION, IM_QUANTUM_DEPTH, IM_HDRI):
     is_im_6 = IM_VERSION < 0x700
     is_im_7 = IM_VERSION >= 0x700
 
+    # Check for IBM Z Systems.
+    if 's309x' == platform.machine():
+        FloatType = c_double
+    else:
+        FloatType = c_float
+
     if IM_QUANTUM_DEPTH == 8:
-        QuantumType = c_float if IM_HDRI else c_ubyte
+        QuantumType = FloatType if IM_HDRI else c_ubyte
     elif IM_QUANTUM_DEPTH == 16:
-        QuantumType = c_float if IM_HDRI else c_ushort
+        QuantumType = FloatType if IM_HDRI else c_ushort
     elif IM_QUANTUM_DEPTH == 32:
         QuantumType = c_double if IM_HDRI else c_uint
     elif IM_QUANTUM_DEPTH == 64:
