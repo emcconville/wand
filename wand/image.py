@@ -6109,7 +6109,7 @@ class BaseImage(Resource):
                     ctx.polygon(points=mbr['points'])
                     ctx.fill_color = 'red'
                     ctx.stroke_color = 'transparent'
-                    ctx.text(1, 10, '{0:.4g}°'.format(mbr['angle']))
+                    ctx.text(1, 10, '{0:.4g}\u00B0'.format(mbr['angle']))
                     ctx(img)
                 img.save(filename='kdf_black_mbr.png')
 
