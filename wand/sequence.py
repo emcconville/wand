@@ -140,8 +140,12 @@ class Sequence(ImageProperty, abc.MutableSequence):
                 raise TypeError('image must be an instance of wand.image.'
                                 'BaseImage, not ' + repr(image))
             with self.index_context(index) as index:
-                library.MagickRemoveImage(self.image.wand)
-                library.MagickAddImage(self.image.wand, image.wand)
+                if library.MagickHasNextImage(self.image.wand):
+                    library.MagickAddImage(self.image.wand, image.wand)
+                    library.MagickRemoveImage(self.image.wand)
+                else:
+                    library.MagickRemoveImage(self.image.wand)
+                    library.MagickAddImage(self.image.wand, image.wand)
 
     def __delitem__(self, index):
         if isinstance(index, slice):
