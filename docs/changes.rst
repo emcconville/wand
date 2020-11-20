@@ -16,6 +16,7 @@ Unreleased.
 
  - Fixed `MagickFloatType` mapping for **s390x** architecture. [:issue:`504` & :issue:`505`]
  - Fixed image order when calling :meth:`wand.sequence.Sequence.__setitem__()` method. [:issue:`506`]
+ - Fixed :meth:`Image.gaussian_blur() <wand.image.BaseImage.gaussian_blur>` method with ``channel`` parameter. [:issue:`508`]
  - Added :meth:`Image.color_threshold() <wand.image.BaseImage.color_threshold>` method.
  - Added :meth:`Image.convex_hull() <wand.image.BaseImage.convex_hull>` method. Requires ImageMagick-7.0.10 or above.
  - Added :meth:`Image.kmeans() <wand.image.BaseImage.kmeans>` method. Only available with ImageMagick-7.0.10-37 or later.
