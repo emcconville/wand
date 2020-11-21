@@ -54,22 +54,26 @@ of all the new methods.
 
  - :meth:`Image.auto_threshold() <wand.image.BaseImage.auto_threshold>` method.
  - :meth:`Image.canny() <wand.image.BaseImage.canny>` method.
- - :meth:`Image.clahe() <wand.image.BaseImage.canny>` method.
-   Also known as "Contrast Limited Adaptive Histogram Equalization".
+ - :meth:`Image.clahe() <wand.image.BaseImage.canny>` method. Also known as "Contrast Limited Adaptive Histogram Equalization".
+ - :meth:`Image.color_threshold() <wand.image.BaseImage.color_threshold>` method.
  - :meth:`Image.complex() <wand.image.BaseImage.complex>` method.
  - :meth:`Image.connected_components() <wand.image.BaseImage.connected_components>` method.
+ - :meth:`Image.convex_hull() <wand.image.BaseImage.convex_hull>` method.
  - :meth:`Image.hough_lines() <wand.image.BaseImage.hough_lines>` method.
+ - :meth:`Image.kmeans() <wand.image.BaseImage.kmeans>` method.
  - :meth:`Image.kuwahara() <wand.image.BaseImage.kuwahara>` method.
  - :meth:`Image.level_colors() <wand.image.BaseImage.level_colors>` method.
  - :meth:`Image.levelize() <wand.image.BaseImage.levelize>` method.
  - :meth:`Image.levelize_colors() <wand.image.BaseImage.levelize_colors>` method.
  - :meth:`Image.local_contrast() <wand.image.BaseImage.local_contrast>` method.
  - :meth:`Image.mean_shift() <wand.image.BaseImage.mean_shift>` method.
+ - :meth:`Image.minimum_bounding_box() <wand.image.BaseImage.minimum_bounding_box>` method.
  - :meth:`Image.polynomial() <wand.image.BaseImage.polynomial>` method.
  - :meth:`Image.range_threshold() <wand.image.BaseImage.range_threshold>` method.
  - :meth:`Image.read_mask() <wand.image.BaseImage.read_mask>` method.
  - :meth:`Image.rotational_blur() <wand.image.BaseImage.rotational_blur>` method.
  - :meth:`Image.wavelet_denoise() <wand.image.BaseImage.wavelet_denoise>` method.
+ - :meth:`Image.white_balance() <wand.image.BaseImage.white_balance>` method.
  - :meth:`Image.write_mask() <wand.image.BaseImage.write_mask>` method.
 
 
