@@ -118,20 +118,6 @@ References
 Troubleshooting
 ---------------
 
-Mailing list
-''''''''''''
-
-Wand has the list for users.  If you want to subscribe the list, just send a
-mail to:
-
-    wand@librelist.com
-
-The `list archive`_ provided by Librelist_ is synchronized every hour.
-
-.. _list archive: http://librelist.com/browser/wand/
-.. _Librelist: http://librelist.com/
-
-
 Stack Overflow
 ''''''''''''''
 
@@ -173,9 +159,6 @@ complete list of contributors_ as well. The source code is distributed under
 
 If you find a bug, please notify to `our issue tracker`_. Pull requests
 are always welcome!
-
-We discuss about Wand's development on IRC.  Come #wand channel on
-freenode network.
 
 Check out :doc:`changes` also.
 

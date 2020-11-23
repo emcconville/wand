@@ -60,13 +60,6 @@ Package Index (Cheeseshop)
       :alt: Latest PyPI version
       :target: https://pypi.python.org/pypi/Wand
 
-Mailing list
-   wand@librelist.com
-
-List archive
-   http://librelist.com/browser/wand/
-   http://dir.gmane.org/gmane.comp.python.wand
-
 Discord
    https://discord.gg/BWQ25wB
 
