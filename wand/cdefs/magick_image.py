@@ -407,7 +407,7 @@ def load(lib, IM_VERSION):
     lib.MagickGaussianBlurImage.restype = c_bool
     if is_im_6:
         lib.MagickGaussianBlurImageChannel.argtypes = [
-            c_void_p, c_double, c_double
+            c_void_p, c_int, c_double, c_double
         ]
         lib.MagickGaussianBlurImageChannel.restype = c_bool
     else:

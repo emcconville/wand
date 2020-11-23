@@ -67,6 +67,9 @@ List archive
    http://librelist.com/browser/wand/
    http://dir.gmane.org/gmane.comp.python.wand
 
+Discord
+   https://discord.gg/BWQ25wB
+
 Stack Overflow tag (Q&A)
    http://stackoverflow.com/questions/tagged/wand
 
