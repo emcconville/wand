@@ -4,7 +4,7 @@
 .. versionadded:: 0.5.0
 """
 from ctypes import POINTER, c_void_p, c_char_p, c_int, c_size_t
-from wand.cdefs.wandtypes import c_magick_char_p, c_ssize_t
+from wand.cdefs.wandtypes import c_ssize_t
 
 __all__ = ('load', 'load_with_version')
 
@@ -81,7 +81,7 @@ def load(libmagick):
     libmagick.GetNextImageInList.argtypes = [c_void_p]
     libmagick.GetNextImageInList.restype = c_void_p
     libmagick.MagickToMime.argtypes = [c_char_p]
-    libmagick.MagickToMime.restype = c_magick_char_p
+    libmagick.MagickToMime.restype = c_void_p
     try:
         libmagick.ParseAbsoluteGeometry.argtypes = [c_char_p, c_void_p]
         libmagick.ParseAbsoluteGeometry.restype = c_int

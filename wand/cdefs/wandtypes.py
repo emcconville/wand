@@ -24,7 +24,7 @@ class c_magick_char_p(ctypes.c_char_p):
         """Relinquishes memory allocated by ImageMagick.
         We don't need to worry about checking for ``NULL`` because
         :c:func:`MagickRelinquishMemory` does that for us.
-        Note alslo that :class:`ctypes.c_char_p` has no
+        Note also that :class:`ctypes.c_char_p` has no
         :meth:`~object.__del__` method, so we don't need to
         (and indeed can't) call the superclass destructor.
 

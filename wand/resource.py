@@ -213,10 +213,16 @@ class Resource(object):
         severity = ctypes.c_int()
         desc = self.c_get_exception(self.resource, ctypes.byref(severity))
         if severity.value == 0:
+            if desc:
+                desc = library.MagickRelinquishMemory(desc)
             return
         self.c_clear_exception(self.resource)
         exc_cls = TYPE_MAP[severity.value]
-        message = desc.value
+        if desc:
+            message = ctypes.string_at(desc)
+            desc = library.MagickRelinquishMemory(desc)
+        else:
+            message = b''
         if not isinstance(message, string_type):
             message = message.decode(errors='replace')
         return exc_cls(message)

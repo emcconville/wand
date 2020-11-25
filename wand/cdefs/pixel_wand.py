@@ -6,7 +6,6 @@
 from ctypes import (CDLL, POINTER, c_char_p, c_double,
                     c_float, c_int, c_longdouble, c_size_t,
                     c_ubyte, c_uint, c_ushort, c_void_p)
-from wand.cdefs.wandtypes import c_magick_char_p
 import numbers
 import platform
 
@@ -100,9 +99,9 @@ def load(lib, IM_VERSION, IM_QUANTUM_DEPTH, IM_HDRI):
     lib.PixelGetBlueQuantum.argtypes = [c_void_p]
     lib.PixelGetBlueQuantum.restype = QuantumType
     lib.PixelGetColorAsNormalizedString.argtypes = [c_void_p]
-    lib.PixelGetColorAsNormalizedString.restype = c_magick_char_p
+    lib.PixelGetColorAsNormalizedString.restype = c_void_p
     lib.PixelGetColorAsString.argtypes = [c_void_p]
-    lib.PixelGetColorAsString.restype = c_magick_char_p
+    lib.PixelGetColorAsString.restype = c_void_p
     lib.PixelGetColorCount.argtypes = [c_void_p]
     lib.PixelGetColorCount.restype = c_size_t
     lib.PixelGetCyan.argtypes = [c_void_p]
@@ -110,7 +109,7 @@ def load(lib, IM_VERSION, IM_QUANTUM_DEPTH, IM_HDRI):
     lib.PixelGetCyanQuantum.argtypes = [c_void_p]
     lib.PixelGetCyanQuantum.restype = QuantumType
     lib.PixelGetException.argtypes = [c_void_p, POINTER(c_int)]
-    lib.PixelGetException.restype = c_magick_char_p
+    lib.PixelGetException.restype = c_void_p
     lib.PixelGetExceptionType.argtypes = [c_void_p]
     lib.PixelGetExceptionType.restype = c_int
     lib.PixelGetFuzz.argtypes = [c_void_p]

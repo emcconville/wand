@@ -183,12 +183,14 @@ def configure_options(pattern='*'):
     configs = {}
     configs_p = library.MagickQueryConfigureOptions(pattern_p,
                                                     ctypes.byref(config_count))
-    cursor = 0
-    while cursor < config_count.value:
-        config = configs_p[cursor].value
-        value = library.MagickQueryConfigureOption(config)
-        configs[text(config)] = text(value.value)
-        cursor += 1
+    for cursor in range(config_count.value):
+        config = ctypes.string_at(configs_p[cursor])
+        val_p = library.MagickQueryConfigureOption(config)
+        if val_p:
+            configs[text(config)] = text(ctypes.string_at(val_p))
+            val_p = library.MagickRelinquishMemory(val_p)
+    if configs_p:
+        configs_p = library.MagickRelinquishMemory(configs_p)
     return configs
 
 
@@ -225,11 +227,11 @@ def fonts(pattern='*'):
     fonts = []
     fonts_p = library.MagickQueryFonts(pattern_p,
                                        ctypes.byref(number_fonts))
-    cursor = 0
-    while cursor < number_fonts.value:
-        font = fonts_p[cursor].value
+    for cursor in range(number_fonts.value):
+        font = ctypes.string_at(fonts_p[cursor])
         fonts.append(text(font))
-        cursor += 1
+    if fonts_p:
+        fonts_p = library.MagickRelinquishMemory(fonts_p)
     return fonts
 
 
@@ -259,11 +261,11 @@ def formats(pattern='*'):
     formats = []
     formats_p = library.MagickQueryFormats(pattern_p,
                                            ctypes.byref(number_formats))
-    cursor = 0
-    while cursor < number_formats.value:
-        value = formats_p[cursor].value
+    for cursor in range(number_formats.value):
+        value = ctypes.string_at(formats_p[cursor])
         formats.append(text(value))
-        cursor += 1
+    if formats_p:
+        formats_p = library.MagickRelinquishMemory(formats_p)
     return formats
 
 

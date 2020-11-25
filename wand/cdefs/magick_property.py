@@ -5,7 +5,7 @@
 """
 from ctypes import (POINTER, c_void_p, c_char_p, c_size_t, c_ubyte, c_uint,
                     c_int, c_ulong, c_double, c_bool)
-from wand.cdefs.wandtypes import c_magick_char_p, c_ssize_t
+from wand.cdefs.wandtypes import c_ssize_t
 
 __all__ = ('load',)
 
@@ -55,7 +55,7 @@ def load(lib, IM_VERSION):
     lib.MagickGetGravity.argtypes = [c_void_p]
     lib.MagickGetGravity.restype = c_int
     lib.MagickGetImageArtifact.argtypes = [c_void_p, c_char_p]
-    lib.MagickGetImageArtifact.restype = c_magick_char_p
+    lib.MagickGetImageArtifact.restype = c_void_p
     lib.MagickGetImageArtifacts.argtypes = [
         c_void_p, c_char_p, POINTER(c_size_t)
     ]
@@ -69,11 +69,11 @@ def load(lib, IM_VERSION):
     ]
     lib.MagickGetImageProfiles.restype = POINTER(c_char_p)
     lib.MagickGetImageProperty.argtypes = [c_void_p, c_char_p]
-    lib.MagickGetImageProperty.restype = c_magick_char_p
+    lib.MagickGetImageProperty.restype = c_void_p
     lib.MagickGetImageProperties.argtypes = [
         c_void_p, c_char_p, POINTER(c_size_t)
     ]
-    lib.MagickGetImageProperties.restype = POINTER(c_char_p)
+    lib.MagickGetImageProperties.restype = POINTER(c_void_p)
     lib.MagickGetInterlaceScheme.argtypes = [c_void_p]
     lib.MagickGetInterlaceScheme.restype = c_int
     lib.MagickGetOption.argtypes = [c_void_p, c_char_p]
@@ -90,15 +90,15 @@ def load(lib, IM_VERSION):
     lib.MagickGetSize.argtypes = [c_void_p, POINTER(c_uint), POINTER(c_uint)]
     lib.MagickGetSize.restype = c_int
     lib.MagickQueryConfigureOption.argtypes = [c_char_p]
-    lib.MagickQueryConfigureOption.restype = c_magick_char_p
+    lib.MagickQueryConfigureOption.restype = c_void_p
     lib.MagickQueryConfigureOptions.argtypes = [c_char_p, POINTER(c_size_t)]
-    lib.MagickQueryConfigureOptions.restype = POINTER(c_magick_char_p)
+    lib.MagickQueryConfigureOptions.restype = POINTER(c_void_p)
     lib.MagickQueryFontMetrics.argtypes = [c_void_p, c_void_p, c_char_p]
     lib.MagickQueryFontMetrics.restype = POINTER(c_double)
     lib.MagickQueryFonts.argtypes = [c_char_p, POINTER(c_size_t)]
-    lib.MagickQueryFonts.restype = POINTER(c_magick_char_p)
+    lib.MagickQueryFonts.restype = POINTER(c_void_p)
     lib.MagickQueryFormats.argtypes = [c_char_p, POINTER(c_size_t)]
-    lib.MagickQueryFormats.restype = POINTER(c_magick_char_p)
+    lib.MagickQueryFormats.restype = POINTER(c_void_p)
     lib.MagickQueryMultilineFontMetrics.argtypes = [
         c_void_p, c_void_p, c_char_p
     ]

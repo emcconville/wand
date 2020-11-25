@@ -5,7 +5,7 @@
 """
 from ctypes import (CFUNCTYPE, POINTER, c_void_p, c_int, c_size_t, c_double,
                     c_char_p, c_ubyte, c_bool)
-from wand.cdefs.wandtypes import c_ssize_t, c_magick_char_p
+from wand.cdefs.wandtypes import c_ssize_t
 
 __all__ = ('MagickProgressMonitor', 'load')
 
@@ -485,9 +485,9 @@ def load(lib, IM_VERSION):
         lib.MagickGetImageFeatures.argtypes = [c_void_p, c_size_t]
         lib.MagickGetImageFeatures.restype = c_void_p
     lib.MagickGetImageFilename.argtypes = [c_void_p]
-    lib.MagickGetImageFilename.restype = c_magick_char_p
+    lib.MagickGetImageFilename.restype = c_void_p
     lib.MagickGetImageFormat.argtypes = [c_void_p]
-    lib.MagickGetImageFormat.restype = c_magick_char_p
+    lib.MagickGetImageFormat.restype = c_void_p
     lib.MagickGetImageFuzz.argtypes = [c_void_p]
     lib.MagickGetImageFuzz.restype = c_double
     lib.MagickGetImageGamma.argtypes = [c_void_p]
@@ -574,7 +574,7 @@ def load(lib, IM_VERSION):
     lib.MagickGetImageScene.argtypes = [c_void_p]
     lib.MagickGetImageScene.restype = c_size_t
     lib.MagickGetImageSignature.argtypes = [c_void_p]
-    lib.MagickGetImageSignature.restype = c_magick_char_p
+    lib.MagickGetImageSignature.restype = c_void_p
     lib.MagickGetImageTicksPerSecond.argtypes = [c_void_p]
     lib.MagickGetImageTicksPerSecond.restype = c_size_t
     lib.MagickGetImageTotalInkDensity.argtypes = [c_void_p]
@@ -617,7 +617,7 @@ def load(lib, IM_VERSION):
     else:
         lib.MagickHoughLineImage = None
     lib.MagickIdentifyImage.argtypes = [c_void_p]
-    lib.MagickIdentifyImage.restype = c_magick_char_p
+    lib.MagickIdentifyImage.restype = c_void_p
     if is_im_6:
         lib.MagickImplodeImage.argtypes = [c_void_p, c_double]
     else:

@@ -218,7 +218,12 @@ class Drawing(Resource):
 
         """
         clip_path_p = library.DrawGetClipPath(self.resource)
-        return text(clip_path_p.value)
+        if clip_path_p:
+            clip_path_str = ctypes.string_at(clip_path_p)
+            clip_path_p = library.MagickRelinquishMemory(clip_path_p)
+        else:
+            clip_path_str = b''
+        return text(clip_path_str)
 
     @clip_path.setter
     def clip_path(self, path):
@@ -325,7 +330,12 @@ class Drawing(Resource):
 
         """
         font_p = library.DrawGetFont(self.resource)
-        return text(font_p.value)
+        if font_p:
+            font_str = ctypes.string_at(font_p)
+            font_p = library.MagickRelinquishMemory(font_p)
+        else:
+            font_str = b''
+        return text(font_str)
 
     @font.setter
     def font(self, font):
@@ -344,7 +354,12 @@ class Drawing(Resource):
 
         """
         font_family_p = library.DrawGetFontFamily(self.resource)
-        return text(font_family_p.value)
+        if font_family_p:
+            font_family_str = ctypes.string_at(font_family_p)
+            font_family_p = library.MagickRelinquishMemory(font_family_p)
+        else:
+            font_family_str = b''
+        return text(font_family_str)
 
     @font_family.setter
     def font_family(self, family):
@@ -529,10 +544,10 @@ class Drawing(Resource):
             self.resource, ctypes.byref(number_elements)
         )
         dash_array = []
-        if dash_array_p is not None:
+        if dash_array_p:
             dash_array = [float(dash_array_p[i])
                           for i in xrange(number_elements.value)]
-            library.MagickRelinquishMemory(dash_array_p)
+            dash_array_p = library.MagickRelinquishMemory(dash_array_p)
         return dash_array
 
     @stroke_dash_array.setter
@@ -730,7 +745,12 @@ class Drawing(Resource):
 
         """
         text_encoding_p = library.DrawGetTextEncoding(self.resource)
-        return text(text_encoding_p.value)
+        if text_encoding_p:
+            text_encoding_str = ctypes.string_at(text_encoding_p)
+            text_encoding_p = library.MagickRelinquishMemory(text_encoding_p)
+        else:
+            text_encoding_str = b''
+        return text(text_encoding_str)
 
     @text_encoding.setter
     def text_encoding(self, encoding):
@@ -826,8 +846,13 @@ class Drawing(Resource):
            :c:func:`MagickRelinquishMemory` instead of :c:func:`libc.free`.
 
         """
-        vector_graphics_p = library.DrawGetVectorGraphics(self.resource)
-        return '<wand>' + text(vector_graphics_p.value) + '</wand>'
+        vg_p = library.DrawGetVectorGraphics(self.resource)
+        if vg_p:
+            vg_str = ctypes.string_at(vg_p)
+            vg_p = library.MagickRelinquishMemory(vg_p)
+        else:
+            vg_str = b''
+        return '<wand>' + text(vg_str) + '</wand>'
 
     @vector_graphics.setter
     def vector_graphics(self, vector_graphics):
@@ -1156,7 +1181,7 @@ class Drawing(Resource):
             # Generate a generic error if ImageMagick couldn't emit one.
             raise ValueError('Unable to render text with current font.')
         args = [result[i] for i in xrange(13)]
-        library.MagickRelinquishMemory(result)
+        result = library.MagickRelinquishMemory(result)
         return FontMetrics(*args)
 
     def line(self, start, end):
