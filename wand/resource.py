@@ -15,7 +15,7 @@ from .compat import abc, string_type, text
 from .exceptions import TYPE_MAP, WandException
 from .version import MAGICK_VERSION_NUMBER
 
-__all__ = ('genesis', 'limits', 'safe_copy', 'shutdown', 'terminus',
+__all__ = ('genesis', 'limits', 'shutdown', 'terminus',
            'DestroyedResourceError', 'Resource', 'ResourceLimits')
 
 
@@ -69,27 +69,13 @@ def deallocate_ref(addr):
 def shutdown():
     global allocation_map
     for addr in list(allocation_map):
-        deallocator = allocation_map.pop(addr)
-        if callable(deallocator):
-            deallocator(addr)
+        try:
+            deallocator = allocation_map.pop(addr)
+            if callable(deallocator):
+                deallocator(addr)
+        except KeyError:
+            pass
     terminus()
-
-
-def safe_copy(ptr):
-    """Safely cast memory address to char pointer, convert to python string,
-    and immediately free resources.
-
-    :param ptr: The memory address to convert to text string.
-    :type ptr: :class:`ctypes.c_void_p`
-    :returns: :class:`tuple` (:class:`ctypes.c_void_p`, :class:`str`)
-
-    .. versionadded:: 0.5.3
-    """
-    string = None
-    if bool(ptr):
-        string = text(ctypes.cast(ptr, ctypes.c_char_p).value)
-        ptr = library.MagickRelinquishMemory(ptr)  # Force pointer to zero
-    return ptr, string
 
 
 class Resource(object):
