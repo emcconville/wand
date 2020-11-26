@@ -19,7 +19,7 @@ from . import assertions
 from .api import libc, libmagick, library
 from .color import Color
 from .compat import (abc, binary, binary_type, encode_filename, file_types,
-                     PY3, string_type, text, to_bytes, xrange)
+                     string_type, text, to_bytes, xrange)
 from .exceptions import (MissingDelegateError, WandException,
                          WandRuntimeError, WandLibraryVersionError)
 from .font import Font
@@ -1764,7 +1764,12 @@ class BaseImage(Resource):
         It also can be set.
 
         """
-        return text(library.MagickGetFont(self.wand))
+        font_str = b''
+        font_p = library.MagickGetFont(self.wand)
+        if font_p:
+            font_str = ctypes.string_at(font_p)
+            font_p = library.MagickRelinquishMemory(font_p)
+        return text(font_str)
 
     @font_path.setter
     @manipulative
@@ -9882,8 +9887,14 @@ class OptionDict(ImageProperty, abc.MutableMapping):
 
     def __getitem__(self, key):
         assertions.assert_string(key=key)
-        image = self.image
-        return text(library.MagickGetOption(image.wand, binary(key)))
+        opt_str = b''
+        opt_p = library.MagickGetOption(self.image.wand, binary(key))
+        if opt_p:
+            opt_str = ctypes.string_at(opt_p)
+            opt_p = library.MagickRelinquishMemory(opt_p)
+        else:
+            raise KeyError(key)
+        return text(opt_str)
 
     def __setitem__(self, key, value):
         assertions.assert_string(key=key, value=value)
@@ -10121,23 +10132,19 @@ class ProfileDict(ImageProperty, abc.MutableMapping):
     def __getitem__(self, k):
         assertions.assert_string(key=k)
         num = ctypes.c_size_t(0)
+        return_profile = None
         profile_p = library.MagickGetImageProfile(self.image.wand,
                                                   binary(k), num)
         if num.value > 0:
-            if PY3:
-                return_profile = bytes(profile_p[0:num.value])
-            else:
-                return_profile = str(bytearray(profile_p[0:num.value]))
+            return_profile = ctypes.string_at(profile_p, num.value)
             profile_p = library.MagickRelinquishMemory(profile_p)
-        else:
-            return_profile = None
         return return_profile
 
     def __iter__(self):
         num = ctypes.c_size_t(0)
-        profiles_p = library.MagickGetImageProfiles(self.image.wand, b'', num)
-        profiles = [text(profiles_p[i]) for i in xrange(num.value)]
-        profiles_p = library.MagickRelinquishMemory(profiles_p)
+        prop = library.MagickGetImageProfiles(self.image.wand, b'', num)
+        profiles = [text(ctypes.string_at(prop[i])) for i in xrange(num.value)]
+        prop = library.MagickRelinquishMemory(prop)
         return iter(profiles)
 
     def __len__(self):

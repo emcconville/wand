@@ -11,7 +11,7 @@ import ctypes
 import warnings
 
 from .api import library
-from .compat import abc, string_type, text
+from .compat import abc, string_type
 from .exceptions import TYPE_MAP, WandException
 from .version import MAGICK_VERSION_NUMBER
 
