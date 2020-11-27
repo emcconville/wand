@@ -613,13 +613,12 @@ class Color(Resource):
 
         """
         with self:
+            string = None
             ptr = library.PixelGetColorAsNormalizedString(self.resource)
             if ptr:
-                string = ctypes.string_at(ptr)
+                string = text(ctypes.string_at(ptr))
                 ptr = library.MagickRelinquishMemory(ptr)
-            else:
-                string = b''
-            return text(string)
+            return string
 
     @property
     def red(self):
@@ -671,13 +670,12 @@ class Color(Resource):
     def string(self):
         """(:class:`basestring`) The string representation of the color."""
         with self:
+            color_string = None
             ptr = library.PixelGetColorAsString(self.resource)
             if ptr:
-                color_string = ctypes.string_at(ptr)
+                color_string = text(ctypes.string_at(ptr))
                 ptr = library.MagickRelinquishMemory(ptr)
-            else:
-                color_string = b''
-            return text(color_string)
+            return color_string
 
     @property
     def yellow(self):

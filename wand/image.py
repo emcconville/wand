@@ -1764,12 +1764,12 @@ class BaseImage(Resource):
         It also can be set.
 
         """
-        font_str = b''
+        font_str = None
         font_p = library.MagickGetFont(self.wand)
         if font_p:
-            font_str = ctypes.string_at(font_p)
+            font_str = text(ctypes.string_at(font_p))
             font_p = library.MagickRelinquishMemory(font_p)
-        return text(font_str)
+        return font_str
 
     @font_path.setter
     @manipulative
@@ -1817,13 +1817,12 @@ class BaseImage(Resource):
         .. versionadded:: 0.1.6
 
         """
+        fmt_str = None
         fmt_p = library.MagickGetImageFormat(self.wand)
         if fmt_p:
-            fmt_str = ctypes.string_at(fmt_p)
+            fmt_str = text(ctypes.string_at(fmt_p))
             fmt_p = library.MagickRelinquishMemory(fmt_p)
-        else:
-            fmt_str = b''
-        return text(fmt_str)
+        return fmt_str
 
     @format.setter
     def format(self, fmt):
@@ -2417,13 +2416,12 @@ class BaseImage(Resource):
         .. versionadded:: 0.1.9
 
         """
+        sig_str = None
         sig_p = library.MagickGetImageSignature(self.wand)
         if sig_p:
-            sig_str = ctypes.string_at(sig_p)
+            sig_str = text(ctypes.string_at(sig_p))
             sig_p = library.MagickRelinquishMemory(sig_p)
-        else:
-            sig_str = b''
-        return text(sig_str)
+        return sig_str
 
     @property
     def size(self):
@@ -9386,13 +9384,12 @@ class Image(BaseImage):
         .. versionadded:: 0.1.7
 
         """
+        mtype = None
         rp = libmagick.MagickToMime(binary(self.format))
-        if bool(rp):
-            mtype = ctypes.string_at(rp)
+        if rp:
+            mtype = text(ctypes.string_at(rp))
             rp = libmagick.DestroyString(rp)
-        else:
-            self.raise_exception()
-        return text(mtype)
+        return mtype
 
     def blank(self, width, height, background=None):
         """Creates blank image.
@@ -9890,11 +9887,11 @@ class OptionDict(ImageProperty, abc.MutableMapping):
         opt_str = b''
         opt_p = library.MagickGetOption(self.image.wand, binary(key))
         if opt_p:
-            opt_str = ctypes.string_at(opt_p)
+            opt_str = text(ctypes.string_at(opt_p))
             opt_p = library.MagickRelinquishMemory(opt_p)
         else:
             raise KeyError(key)
-        return text(opt_str)
+        return opt_str
 
     def __setitem__(self, key, value):
         assertions.assert_string(key=key, value=value)
@@ -9940,11 +9937,11 @@ class Metadata(ImageProperty, abc.MutableMapping):
         value = b''
         vp = library.MagickGetImageProperty(image.wand, binary(k))
         if vp:
-            value = ctypes.string_at(vp)
+            value = text(ctypes.string_at(vp))
             vp = library.MagickRelinquishMemory(vp)
         else:
             raise KeyError(k)
-        return text(value)
+        return value
 
     def __setitem__(self, k, v):
         """
@@ -10034,16 +10031,16 @@ class ArtifactTree(ImageProperty, abc.MutableMapping):
         vs = b''
         vp = library.MagickGetImageArtifact(image.wand, binary(k))
         if vp:
-            vs = ctypes.string_at(vp)
+            vs = text(ctypes.string_at(vp))
             vp = library.MagickRelinquishMemory(vp)
         if len(vs) < 1:
             vp = library.MagickGetImageProperty(image.wand, binary(k))
             if vp:
-                vs = ctypes.string_at(vp)
+                vs = text(ctypes.string_at(vp))
                 vp = library.MagickRelinquishMemory(vp)
-        if len(vs) < 1:
-            return None
-        return text(vs)
+            else:
+                vs = None
+        return vs
 
     def __setitem__(self, k, v):
         """

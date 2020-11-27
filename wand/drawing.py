@@ -217,13 +217,12 @@ class Drawing(Resource):
            :c:func:`MagickRelinquishMemory` instead of :c:func:`libc.free`.
 
         """
+        clip_path_str = None
         clip_path_p = library.DrawGetClipPath(self.resource)
         if clip_path_p:
-            clip_path_str = ctypes.string_at(clip_path_p)
+            clip_path_str = text(ctypes.string_at(clip_path_p))
             clip_path_p = library.MagickRelinquishMemory(clip_path_p)
-        else:
-            clip_path_str = b''
-        return text(clip_path_str)
+        return clip_path_str
 
     @clip_path.setter
     def clip_path(self, path):
@@ -329,13 +328,12 @@ class Drawing(Resource):
            :c:func:`MagickRelinquishMemory` instead of :c:func:`libc.free`.
 
         """
+        font_str = None
         font_p = library.DrawGetFont(self.resource)
         if font_p:
-            font_str = ctypes.string_at(font_p)
+            font_str = text(ctypes.string_at(font_p))
             font_p = library.MagickRelinquishMemory(font_p)
-        else:
-            font_str = b''
-        return text(font_str)
+        return font_str
 
     @font.setter
     def font(self, font):
@@ -353,13 +351,12 @@ class Drawing(Resource):
            :c:func:`MagickRelinquishMemory` instead of :c:func:`libc.free`.
 
         """
+        font_family_str = None
         font_family_p = library.DrawGetFontFamily(self.resource)
         if font_family_p:
-            font_family_str = ctypes.string_at(font_family_p)
+            font_family_str = text(ctypes.string_at(font_family_p))
             font_family_p = library.MagickRelinquishMemory(font_family_p)
-        else:
-            font_family_str = b''
-        return text(font_family_str)
+        return font_family_str
 
     @font_family.setter
     def font_family(self, family):
@@ -744,13 +741,12 @@ class Drawing(Resource):
            :c:func:`MagickRelinquishMemory` instead of :c:func:`libc.free`.
 
         """
+        text_encoding_str = None
         text_encoding_p = library.DrawGetTextEncoding(self.resource)
         if text_encoding_p:
-            text_encoding_str = ctypes.string_at(text_encoding_p)
+            text_encoding_str = text(ctypes.string_at(text_encoding_p))
             text_encoding_p = library.MagickRelinquishMemory(text_encoding_p)
-        else:
-            text_encoding_str = b''
-        return text(text_encoding_str)
+        return text_encoding_str
 
     @text_encoding.setter
     def text_encoding(self, encoding):
