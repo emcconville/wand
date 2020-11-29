@@ -12,7 +12,7 @@ Wand Changelog
 Version 0.6.5
 -------------
 
-Unreleased.
+Released on November 29th, 2020.
 
  - Fixed memory allocation & deallocation bugs with PyPy3, and various memory leaks identified during regression testing. [:issue:`510`]
  - [TEST] Added Python 3.9 into Github regression tests. [:issue:`513` by Thijs Triemstra]
