@@ -5,7 +5,7 @@
 """
 from ctypes import (POINTER, c_void_p, c_char_p, c_double, c_int, c_uint,
                     c_size_t, c_ubyte, c_ulong)
-from wand.cdefs.wandtypes import c_magick_char_p, c_ssize_t
+from wand.cdefs.wandtypes import c_ssize_t
 from wand.cdefs.structures import PointInfo
 
 __all__ = ('load',)
@@ -45,7 +45,7 @@ def load(lib, IM_VERSION):
     lib.IsDrawingWand.argtypes = [c_void_p]
     lib.IsDrawingWand.restype = c_int
     lib.DrawGetException.argtypes = [c_void_p, POINTER(c_int)]
-    lib.DrawGetException.restype = c_magick_char_p
+    lib.DrawGetException.restype = c_void_p
     lib.DrawClearException.argtypes = [c_void_p]
     lib.DrawClearException.restype = c_int
     lib.DrawAffine.argtypes = [c_void_p, c_void_p]
@@ -112,7 +112,7 @@ def load(lib, IM_VERSION):
     ]
     lib.DrawGetBorderColor.argtypes = [c_void_p, c_void_p]
     lib.DrawGetClipPath.argtypes = [c_void_p]
-    lib.DrawGetClipPath.restype = c_magick_char_p
+    lib.DrawGetClipPath.restype = c_void_p
     lib.DrawGetClipRule.argtypes = [c_void_p]
     lib.DrawGetClipRule.restype = c_uint
     lib.DrawGetClipUnits.argtypes = [c_void_p]
@@ -142,9 +142,9 @@ def load(lib, IM_VERSION):
     lib.DrawGetStrokeWidth.argtypes = [c_void_p]
     lib.DrawGetStrokeWidth.restype = c_double
     lib.DrawGetFont.argtypes = [c_void_p]
-    lib.DrawGetFont.restype = c_magick_char_p
+    lib.DrawGetFont.restype = c_void_p
     lib.DrawGetFontFamily.argtypes = [c_void_p]
-    lib.DrawGetFontFamily.restype = c_magick_char_p
+    lib.DrawGetFontFamily.restype = c_void_p
     lib.DrawGetFontResolution.argtypes = [
         c_void_p, POINTER(c_double), POINTER(c_double)
     ]
@@ -169,7 +169,7 @@ def load(lib, IM_VERSION):
     except AttributeError:
         lib.DrawGetTextDirection = None
     lib.DrawGetTextEncoding.argtypes = [c_void_p]
-    lib.DrawGetTextEncoding.restype = c_magick_char_p
+    lib.DrawGetTextEncoding.restype = c_void_p
     try:
         lib.DrawGetTextInterlineSpacing.argtypes = [c_void_p]
         lib.DrawGetTextInterlineSpacing.restype = c_double
@@ -181,7 +181,7 @@ def load(lib, IM_VERSION):
     lib.DrawGetTextKerning.restype = c_double
     lib.DrawGetTextUnderColor.argtypes = [c_void_p, c_void_p]
     lib.DrawGetVectorGraphics.argtypes = [c_void_p]
-    lib.DrawGetVectorGraphics.restype = c_magick_char_p
+    lib.DrawGetVectorGraphics.restype = c_void_p
     lib.DrawSetGravity.argtypes = [c_void_p, c_int]
     lib.DrawGetGravity.argtypes = [c_void_p]
     lib.DrawGetGravity.restype = c_int

@@ -4,7 +4,7 @@
 .. versionadded:: 0.5.0
 """
 from ctypes import POINTER, c_void_p, c_bool, c_int
-from wand.cdefs.wandtypes import c_ssize_t, c_magick_char_p
+from wand.cdefs.wandtypes import c_ssize_t
 
 __all__ = ('load',)
 
@@ -47,7 +47,7 @@ def load(lib, IM_VERSION):
         pass
     lib.MagickClearException.argtypes = [c_void_p]
     lib.MagickGetException.argtypes = [c_void_p, POINTER(c_int)]
-    lib.MagickGetException.restype = c_magick_char_p
+    lib.MagickGetException.restype = c_void_p
     lib.MagickGetExceptionType.argtypes = [c_void_p]
     lib.MagickGetExceptionType.restype = c_int
     lib.MagickGetIteratorIndex.argtypes = [c_void_p]

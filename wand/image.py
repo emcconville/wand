@@ -19,7 +19,7 @@ from . import assertions
 from .api import libc, libmagick, library
 from .color import Color
 from .compat import (abc, binary, binary_type, encode_filename, file_types,
-                     PY3, string_type, text, to_bytes, xrange)
+                     string_type, text, to_bytes, xrange)
 from .exceptions import (MissingDelegateError, WandException,
                          WandRuntimeError, WandLibraryVersionError)
 from .font import Font
@@ -1764,7 +1764,12 @@ class BaseImage(Resource):
         It also can be set.
 
         """
-        return text(library.MagickGetFont(self.wand))
+        font_str = None
+        font_p = library.MagickGetFont(self.wand)
+        if font_p:
+            font_str = text(ctypes.string_at(font_p))
+            font_p = library.MagickRelinquishMemory(font_p)
+        return font_str
 
     @font_path.setter
     @manipulative
@@ -1812,11 +1817,12 @@ class BaseImage(Resource):
         .. versionadded:: 0.1.6
 
         """
-        fmt = library.MagickGetImageFormat(self.wand)
-        if bool(fmt):
-            return text(fmt.value)
-        else:  # pragma: no cover
-            self.raise_exception()
+        fmt_str = None
+        fmt_p = library.MagickGetImageFormat(self.wand)
+        if fmt_p:
+            fmt_str = text(ctypes.string_at(fmt_p))
+            fmt_p = library.MagickRelinquishMemory(fmt_p)
+        return fmt_str
 
     @format.setter
     def format(self, fmt):
@@ -2346,7 +2352,7 @@ class BaseImage(Resource):
         factors = library.MagickGetSamplingFactors(self.wand,
                                                    ctypes.byref(factors_len))
         factors_tuple = tuple(factors[x] for x in xrange(factors_len.value))
-        library.MagickRelinquishMemory(factors)
+        factors = library.MagickRelinquishMemory(factors)
         return factors_tuple
 
     @sampling_factors.setter
@@ -2410,8 +2416,12 @@ class BaseImage(Resource):
         .. versionadded:: 0.1.9
 
         """
-        signature = library.MagickGetImageSignature(self.wand)
-        return text(signature.value)
+        sig_str = None
+        sig_p = library.MagickGetImageSignature(self.wand)
+        if sig_p:
+            sig_str = text(ctypes.string_at(sig_p))
+            sig_p = library.MagickRelinquishMemory(sig_p)
+        return sig_str
 
     @property
     def size(self):
@@ -2641,7 +2651,8 @@ class BaseImage(Resource):
         v_ptr = library.MagickGetImageProperty(self.wand,
                                                b'exif:orientation')
         if v_ptr:
-            exif_orientation = v_ptr.value
+            exif_orientation = ctypes.string_at(v_ptr)
+            v_ptr = library.MagickRelinquishMemory(v_ptr)
         else:
             return
 
@@ -4317,7 +4328,7 @@ class BaseImage(Resource):
                                                 ctypes.byref(length))
             if blob_p:
                 blob = ctypes.string_at(blob_p, length.value)
-                library.MagickRelinquishMemory(blob_p)
+                blob_p = library.MagickRelinquishMemory(blob_p)
                 pts = blob.decode('ascii', 'ignore').strip().split(' ')
                 r = [tuple(map(lambda x: float(x), p.split(','))) for p in pts]
             else:
@@ -6157,7 +6168,7 @@ class BaseImage(Resource):
                                                 ctypes.byref(length))
             if blob_p:
                 blob = ctypes.string_at(blob_p, length.value)
-                library.MagickRelinquishMemory(blob_p)
+                blob_p = library.MagickRelinquishMemory(blob_p)
                 parts = blob.decode('ascii', 'ignore').split('|')
                 pts = parts[0].strip().split(' ')
                 r = [tuple(map(lambda x: float(x), p.split(','))) for p in pts]
@@ -9373,11 +9384,12 @@ class Image(BaseImage):
         .. versionadded:: 0.1.7
 
         """
+        mtype = None
         rp = libmagick.MagickToMime(binary(self.format))
-        if not bool(rp):
-            self.raise_exception()
-        mimetype = rp.value
-        return text(mimetype)
+        if rp:
+            mtype = text(ctypes.string_at(rp))
+            rp = libmagick.DestroyString(rp)
+        return mtype
 
     def blank(self, width, height, background=None):
         """Creates blank image.
@@ -9542,7 +9554,7 @@ class Image(BaseImage):
                                                 ctypes.byref(length))
         if blob_p and length.value:
             blob = ctypes.string_at(blob_p, length.value)
-            library.MagickRelinquishMemory(blob_p)
+            blob_p = library.MagickRelinquishMemory(blob_p)
             return blob
         else:  # pragma: no cover
             self.raise_exception()
@@ -9872,8 +9884,14 @@ class OptionDict(ImageProperty, abc.MutableMapping):
 
     def __getitem__(self, key):
         assertions.assert_string(key=key)
-        image = self.image
-        return text(library.MagickGetOption(image.wand, binary(key)))
+        opt_str = b''
+        opt_p = library.MagickGetOption(self.image.wand, binary(key))
+        if opt_p:
+            opt_str = text(ctypes.string_at(opt_p))
+            opt_p = library.MagickRelinquishMemory(opt_p)
+        else:
+            raise KeyError(key)
+        return opt_str
 
     def __setitem__(self, key, value):
         assertions.assert_string(key=key, value=value)
@@ -9916,11 +9934,14 @@ class Metadata(ImageProperty, abc.MutableMapping):
         """
         assertions.assert_string(key=k)
         image = self.image
-        v = library.MagickGetImageProperty(image.wand, binary(k))
-        if bool(v) is False:
+        value = b''
+        vp = library.MagickGetImageProperty(image.wand, binary(k))
+        if vp:
+            value = text(ctypes.string_at(vp))
+            vp = library.MagickRelinquishMemory(vp)
+        else:
             raise KeyError(k)
-        value = v.value
-        return text(value)
+        return value
 
     def __setitem__(self, k, v):
         """
@@ -9955,15 +9976,15 @@ class Metadata(ImageProperty, abc.MutableMapping):
         image = self.image
         num = ctypes.c_size_t()
         props_p = library.MagickGetImageProperties(image.wand, b'', num)
-        props = [text(props_p[i]) for i in xrange(num.value)]
-        library.MagickRelinquishMemory(props_p)
+        props = [text(ctypes.string_at(props_p[i])) for i in xrange(num.value)]
+        props_p = library.MagickRelinquishMemory(props_p)
         return iter(props)
 
     def __len__(self):
         image = self.image
         num = ctypes.c_size_t()
         props_p = library.MagickGetImageProperties(image.wand, b'', num)
-        library.MagickRelinquishMemory(props_p)
+        props_p = library.MagickRelinquishMemory(props_p)
         return num.value
 
 
@@ -10007,16 +10028,19 @@ class ArtifactTree(ImageProperty, abc.MutableMapping):
         """
         assertions.assert_string(key=k)
         image = self.image
-        v = library.MagickGetImageArtifact(image.wand, binary(k))
-        if bool(v) is False:
-            try:
-                v = library.MagickGetImageProperty(image.wand, binary(k))
-                value = v.value
-            except KeyError:  # pragma: no cover
-                value = ""
-        else:
-            value = v.value
-        return text(value)
+        vs = b''
+        vp = library.MagickGetImageArtifact(image.wand, binary(k))
+        if vp:
+            vs = text(ctypes.string_at(vp))
+            vp = library.MagickRelinquishMemory(vp)
+        if len(vs) < 1:
+            vp = library.MagickGetImageProperty(image.wand, binary(k))
+            if vp:
+                vs = text(ctypes.string_at(vp))
+                vp = library.MagickRelinquishMemory(vp)
+            else:
+                vs = None
+        return vs
 
     def __setitem__(self, k, v):
         """
@@ -10050,16 +10074,16 @@ class ArtifactTree(ImageProperty, abc.MutableMapping):
     def __iter__(self):
         image = self.image
         num = ctypes.c_size_t()
-        props_p = library.MagickGetImageArtifacts(image.wand, b'', num)
-        props = [text(props_p[i]) for i in xrange(num.value)]
-        library.MagickRelinquishMemory(props_p)
+        art_p = library.MagickGetImageArtifacts(image.wand, b'', num)
+        props = [text(ctypes.string_at(art_p[i])) for i in xrange(num.value)]
+        art_p = library.MagickRelinquishMemory(art_p)
         return iter(props)
 
     def __len__(self):
         image = self.image
         num = ctypes.c_size_t()
-        props_p = library.MagickGetImageArtifacts(image.wand, b'', num)
-        library.MagickRelinquishMemory(props_p)
+        art_p = library.MagickGetImageArtifacts(image.wand, b'', num)
+        art_p = library.MagickRelinquishMemory(art_p)
         return num.value
 
 
@@ -10100,34 +10124,30 @@ class ProfileDict(ImageProperty, abc.MutableMapping):
         num = ctypes.c_size_t(0)
         profile_p = library.MagickRemoveImageProfile(self.image.wand,
                                                      binary(k), num)
-        library.MagickRelinquishMemory(profile_p)
+        profile_p = library.MagickRelinquishMemory(profile_p)
 
     def __getitem__(self, k):
         assertions.assert_string(key=k)
         num = ctypes.c_size_t(0)
+        return_profile = None
         profile_p = library.MagickGetImageProfile(self.image.wand,
                                                   binary(k), num)
         if num.value > 0:
-            if PY3:
-                return_profile = bytes(profile_p[0:num.value])
-            else:
-                return_profile = str(bytearray(profile_p[0:num.value]))
-            library.MagickRelinquishMemory(profile_p)
-        else:
-            return_profile = None
+            return_profile = ctypes.string_at(profile_p, num.value)
+            profile_p = library.MagickRelinquishMemory(profile_p)
         return return_profile
 
     def __iter__(self):
         num = ctypes.c_size_t(0)
-        profiles_p = library.MagickGetImageProfiles(self.image.wand, b'', num)
-        profiles = [text(profiles_p[i]) for i in xrange(num.value)]
-        library.MagickRelinquishMemory(profiles_p)
+        prop = library.MagickGetImageProfiles(self.image.wand, b'', num)
+        profiles = [text(ctypes.string_at(prop[i])) for i in xrange(num.value)]
+        prop = library.MagickRelinquishMemory(prop)
         return iter(profiles)
 
     def __len__(self):
         num = ctypes.c_size_t(0)
         profiles_p = library.MagickGetImageProfiles(self.image.wand, b'', num)
-        library.MagickRelinquishMemory(profiles_p)
+        profiles_p = library.MagickRelinquishMemory(profiles_p)
         return num.value
 
     def __setitem__(self, k, v):

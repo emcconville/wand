@@ -255,7 +255,7 @@ class Sequence(ImageProperty, abc.MutableSequence):
                                              ctypes.byref(length))
         if blob_p and length.value:
             blob = ctypes.string_at(blob_p, length.value)
-            library.MagickRelinquishMemory(blob_p)
+            blob_p = library.MagickRelinquishMemory(blob_p)
             return blob
         else:
             return None

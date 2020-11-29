@@ -4,7 +4,7 @@
 .. versionadded:: 0.5.0
 """
 from ctypes import POINTER, c_void_p, c_int, c_size_t
-from wand.cdefs.wandtypes import c_ssize_t, c_magick_char_p
+from wand.cdefs.wandtypes import c_ssize_t
 
 __all__ = ('load',)
 
@@ -42,7 +42,7 @@ def load(lib, IM_VERSION):
     lib.NewPixelIterator.restype = c_void_p
     lib.PixelClearIteratorException.argtypes = [c_void_p]
     lib.PixelGetIteratorException.argtypes = [c_void_p, POINTER(c_int)]
-    lib.PixelGetIteratorException.restype = c_magick_char_p
+    lib.PixelGetIteratorException.restype = c_void_p
     lib.PixelGetNextIteratorRow.argtypes = [c_void_p, POINTER(c_size_t)]
     lib.PixelGetNextIteratorRow.restype = POINTER(c_void_p)
     lib.PixelSetFirstIteratorRow.argtypes = [c_void_p]
