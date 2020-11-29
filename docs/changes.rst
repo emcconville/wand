@@ -7,6 +7,16 @@ Wand Changelog
 ~~~~~~~~~~
 
 
+.. _changelog-0.6.5:
+
+Version 0.6.5
+-------------
+
+Unreleased.
+
+ - Fixed memory allocation & deallocation bugs with PyPy3, and various memory leaks identified during regression testing. [:issue:`510`]
+
+
 .. _changelog-0.6.4:
 
 Version 0.6.4
