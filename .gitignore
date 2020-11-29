@@ -5,6 +5,7 @@ docs/_build
 htmlcov
 issues
 patches
+prof
 support
 temp
 run.py
