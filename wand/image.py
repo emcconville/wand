@@ -3729,8 +3729,8 @@ class BaseImage(Resource):
         :type lowlight: :class:`~wand.color.Color` or :class:`basestring`
         :returns: The difference image(:class:`wand.image.Image`),
                   the computed distortion between the images
-                  (:class:`numbers.Integral`)
-        :rtype: :class:`tuple`
+                  (:class:`numbers.Real`)
+        :rtype: :class:`tuple` ( :class:`Image`, :class:`numbers.Real` )
 
         .. versionadded:: 0.4.3
 
