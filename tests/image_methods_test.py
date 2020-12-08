@@ -1033,6 +1033,13 @@ def test_gaussian_blur(fx_asset):
         assert was != img.signature
 
 
+def test_get_image_distortion(fx_asset):
+    with Image(filename=str(fx_asset.join('beach.jpg'))) as orig:
+        with Image(filename=str(fx_asset.join('watermark_beach.jpg'))) as img:
+            err = orig.get_image_distortion(img, 'absolute')
+            assert err >= 0.0
+
+
 def test_hald_clut(fx_asset):
     with Image(filename='rose:') as img:
         was = img.signature

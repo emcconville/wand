@@ -3701,7 +3701,13 @@ class BaseImage(Resource):
     @manipulative
     def compare(self, image, metric='undefined', highlight=None,
                 lowlight=None):
-        """Compares an image to a reconstructed image.
+        """Compares an image with another, and returns a reconstructed
+        image & computed distortion. The reconstructed image will show the
+        differences colored with ``highlight``, and similarities with
+        ``lowlight``.
+
+        If you need the computed distortion between to images without a
+        image being reconstructed, use :meth:`get_image_distortion()` method.
 
         Set :attr:`fuzz` property to adjust pixel-compare thresholds.
 
@@ -3753,7 +3759,7 @@ class BaseImage(Resource):
                                            b'compare:lowlight-color',
                                            binary(lowlight))
         metric = COMPARE_METRICS.index(metric)
-        distortion = ctypes.c_double()
+        distortion = ctypes.c_double(0.0)
         compared_image = library.MagickCompareImages(self.wand, image.wand,
                                                      metric,
                                                      ctypes.byref(distortion))
@@ -5260,6 +5266,35 @@ class BaseImage(Resource):
                 r = library.MagickGaussianBlurImage(self.wand, radius, sigma)
                 library.MagickSetImageChannelMask(self.wand, mask)
         return r
+
+    def get_image_distortion(self, image, metric='undefined'):
+        """Compares two images, and return the specified distortion metric.
+
+        This method is faster than :meth:`compare()` method as ImageMagick
+        will not need to reconstruct an image.
+
+        :param image: Image to reference.
+        :type image: :class:`wand.image.BaseImage`
+        :param metric: Compare disortion metric to use. See
+                       :const:`COMPARE_METRICS`.
+        :type metric: :class:`basestring`
+        :returns: Computed value of the distortion metric used.
+        :rtype: :class:`numbers.Real`
+
+        .. versionadded:: 0.6.6
+        """
+        if not isinstance(image, BaseImage):
+            raise TypeError('expecting a base image, not ' + repr(image))
+        assertions.string_in_list(COMPARE_METRICS,
+                                  'wand.image.COMPARE_METRICS',
+                                  metric=metric)
+        metric_idx = COMPARE_METRICS.index(metric)
+        dist = ctypes.c_double(0.0)
+        ok = library.MagickGetImageDistortion(self.wand, image.wand,
+                                              metric_idx, dist)
+        if not ok:
+            self.raise_exception()
+        return dist.value
 
     @manipulative
     @trap_exception

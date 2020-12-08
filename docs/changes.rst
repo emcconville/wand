@@ -7,6 +7,16 @@ Wand Changelog
 ~~~~~~~~~~
 
 
+.. _changelog-0.6.6:
+
+Version 0.6.6
+-------------
+
+Unreleased.
+
+ - Added :meth:`Image.get_image_distortion() <wand.image.BaseImage.get_image_distortion>` method.
+
+
 .. _changelog-0.6.5:
 
 Version 0.6.5
