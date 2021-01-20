@@ -1217,9 +1217,9 @@ class BaseImage(Resource):
         if y1 < 0:
             y1 += height
         if x1 >= width:
-            raise ValueError('x must be less then image width')
+            raise ValueError('x must be less than image width')
         elif y1 >= height:
-            raise ValueError('y must be less then image height')
+            raise ValueError('y must be less than image height')
         if colorspace == 'gray':
             channel_map = b'I'
             pixel = (ctypes.c_double * 1)()
@@ -1789,7 +1789,7 @@ class BaseImage(Resource):
     def font_size(self, size):
         assertions.assert_real(font_size=size)
         if size < 0.0:
-            raise ValueError('cannot be less then 0.0, but got ' + repr(size))
+            raise ValueError('cannot be less than 0.0, but got ' + repr(size))
         r = library.MagickSetPointsize(self.wand, size)
         if not r:  # pragma: no cover
             self.raise_exception()
@@ -5752,8 +5752,8 @@ class BaseImage(Resource):
         :type channel: :const:`CHANNELS`
 
         .. note::
-            Images may not be affected if the ``white`` value is equal, or
-            less then, the ``black`` value.
+            Images may not be affected if the ``white`` value is equal to or
+            less than the ``black`` value.
 
         .. versionadded:: 0.4.1
 

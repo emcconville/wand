@@ -390,7 +390,7 @@ class Drawing(Resource):
     def font_size(self, size):
         assertions.assert_real(font_size=size)
         if size < 0.0:
-            raise ValueError('cannot be less then 0.0, but got ' + repr(size))
+            raise ValueError('cannot be less than 0.0, but got ' + repr(size))
         library.DrawSetFontSize(self.resource, size)
 
     @property
@@ -647,7 +647,7 @@ class Drawing(Resource):
     def stroke_width(self, width):
         assertions.assert_real(stroke_width=width)
         if width < 0.0:
-            raise ValueError('cannot be less then 0.0, but got ' + repr(width))
+            raise ValueError('cannot be less than 0.0, but got ' + repr(width))
         library.DrawSetStrokeWidth(self.resource, width)
 
     @property

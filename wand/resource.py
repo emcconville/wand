@@ -355,7 +355,7 @@ class ResourceLimits(abc.MutableMapping):
 
         .. note::
 
-            The new limit value must be equal to, or less then, the maximum
+            The new limit value must be equal to or less than the maximum
             limit defined by the :file:`policy.xml`. Any values set outside
             normal bounds will be ignored silently.
 
