@@ -174,7 +174,7 @@ def test_alpha_quantum():
 
 def test_cyan_quantum():
     q = 2 ** QUANTUM_DEPTH - 1
-    assert Color('cmyk(100%, 0, 0, 0)').cyan_quantum == q
+    assert int(Color('cmyk(100%, 0, 0, 0)').cyan_quantum) == q
     assert Color('cmyk(0, 0, 0, 0)').cyan_quantum == 0
     c = Color('none')
     c.cyan_quantum = q
@@ -183,7 +183,7 @@ def test_cyan_quantum():
 
 def test_magenta_quantum():
     q = 2 ** QUANTUM_DEPTH - 1
-    assert Color('cmyk(0, 100%, 0, 0)').magenta_quantum == q
+    assert int(Color('cmyk(0, 100%, 0, 0)').magenta_quantum) == q
     assert Color('cmyk(0, 0, 0, 0)').magenta_quantum == 0
     c = Color('none')
     c.magenta_quantum = q
@@ -192,7 +192,7 @@ def test_magenta_quantum():
 
 def test_yellow_quantum():
     q = 2 ** QUANTUM_DEPTH - 1
-    assert Color('cmyk(0, 0, 100%, 0)').yellow_quantum == q
+    assert int(Color('cmyk(0, 0, 100%, 0)').yellow_quantum) == q
     assert Color('cmyk(0, 0, 0, 0)').yellow_quantum == 0
     c = Color('none')
     c.yellow_quantum = q
@@ -201,7 +201,7 @@ def test_yellow_quantum():
 
 def test_black_quantum():
     q = 2 ** QUANTUM_DEPTH - 1
-    assert Color('cmyk(0, 0, 0, 100%)').black_quantum == q
+    assert int(Color('cmyk(0, 0, 0, 100%)').black_quantum) == q
     assert Color('cmyk(0, 0, 0, 0)').black_quantum == 0
     c = Color('none')
     c.black_quantum = q
