@@ -15,6 +15,7 @@ Version 0.6.6
 Unreleased.
 
  - Added :meth:`Image.get_image_distortion() <wand.image.BaseImage.get_image_distortion>` method.
+ - Fixed `QuantumType` allocation for 32-bit architectures using HDRI. [:issue:`518`]
 
 
 .. _changelog-0.6.5:
