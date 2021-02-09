@@ -10108,7 +10108,7 @@ class ArtifactTree(ImageProperty, abc.MutableMapping):
 
     def __iter__(self):
         image = self.image
-        num = ctypes.c_size_t()
+        num = ctypes.c_size_t(0)
         art_p = library.MagickGetImageArtifacts(image.wand, b'', num)
         props = [text(ctypes.string_at(art_p[i])) for i in xrange(num.value)]
         art_p = library.MagickRelinquishMemory(art_p)
@@ -10116,7 +10116,7 @@ class ArtifactTree(ImageProperty, abc.MutableMapping):
 
     def __len__(self):
         image = self.image
-        num = ctypes.c_size_t()
+        num = ctypes.c_size_t(0)
         art_p = library.MagickGetImageArtifacts(image.wand, b'', num)
         art_p = library.MagickRelinquishMemory(art_p)
         return num.value
