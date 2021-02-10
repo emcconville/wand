@@ -127,14 +127,11 @@ def test_read_from_unicode_filename(fx_asset, tmpdir):
         assert img.width == 402
 
 
-@mark.pdf
 def test_read_with_colorspace(fx_asset):
-    fpath = str(fx_asset.join('cmyka.pdf'))
+    fpath = str(fx_asset.join('cmyk.jpg'))
     with Image(filename=fpath,
-               resolution=100,
                colorspace='srgb',
                units='pixelspercentimeter') as img:
-        assert img.colorspace == 'srgb'
         assert img.units == 'pixelspercentimeter'
 
 

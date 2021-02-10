@@ -16,6 +16,7 @@ Unreleased.
 
  - Added :meth:`Image.get_image_distortion() <wand.image.BaseImage.get_image_distortion>` method.
  - Fixed `QuantumType` allocation for 32-bit architectures using HDRI. [:issue:`518`]
+ - [TEST] Deprecated PDF format from test assets.
 
 
 .. _changelog-0.6.5:

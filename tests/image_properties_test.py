@@ -539,26 +539,20 @@ def test_resolution_set_02(fx_asset):
         assert img.resolution == (100, 100)
 
 
-@mark.pdf
 def test_resolution_set_03(fx_asset):
     """Sets image resolution on constructor"""
-    try:
-        with Image(filename=str(fx_asset.join('sample.pdf')),
-                   resolution=(100, 100)) as img:
-            assert img.resolution == (100, 100)
-    except DelegateError:
-        warnings.warn('PDF delegate could not be found.')
+    with Image(filename='msvg:' + str(fx_asset.join('svg_logo.svg')),
+                resolution=(100, 100),
+                width=94, height=34) as img:
+        assert img.resolution == (100, 100)
 
 
-@mark.pdf
 def test_resolution_set_04(fx_asset):
     """Sets image resolution on constructor with integer as parameter."""
-    try:
-        with Image(filename=str(fx_asset.join('sample.pdf')),
-                   resolution=100) as img:
-            assert img.resolution == (100, 100)
-    except DelegateError:
-        warnings.warn('PDF delegate could not be found.')
+    with Image(filename='msvg:' + str(fx_asset.join('svg_logo.svg')),
+                resolution=100,
+                width=94, height=34) as img:
+        assert img.resolution == (100, 100)
 
 
 def test_sampling_factors():
