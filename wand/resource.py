@@ -348,6 +348,7 @@ class ResourceLimits(abc.MutableMapping):
 
         .. versionadded:: 0.5.1
         """
+        genesis()
         return library.MagickGetResourceLimit(self._to_idx(resource))
 
     def set_resource_limit(self, resource, limit):
