@@ -4,12 +4,10 @@
 #
 import io
 import numbers
-import warnings
 from pytest import mark, raises
 
 from wand.color import Color
 from wand.compat import string_type
-from wand.exceptions import DelegateError
 from wand.font import Font
 from wand.image import Image
 from wand.version import MAGICK_VERSION_NUMBER
