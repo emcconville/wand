@@ -242,16 +242,13 @@ def test_chop():
         assert img.height == (h - 10)
 
 
+@mark.skipif(MAGICK_VERSION_NUMBER < 0x709,
+             reason="clahe not supported by ImageMagick version.")
 def test_clahe():
-    if MAGICK_VERSION_NUMBER < 0x700:
-        with raises(WandLibraryVersionError):
-            with Image(filename='rose:') as img:
-                img.clahe(10, 10, 128, 3)
-    else:
-        with Image(filename='rose:') as img:
-            was = img.signature
-            img.clahe(10, 10, 128, 3)
-            assert was != img.signature
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.clahe(10, 10, 128, 3)
+        assert was != img.signature
 
 
 def test_clamp():
