@@ -8,8 +8,7 @@ import warnings
 from pytest import mark, raises
 
 from wand.color import Color
-from wand.exceptions import (MissingDelegateError, OptionError,
-                             WandLibraryVersionError)
+from wand.exceptions import (MissingDelegateError, OptionError)
 from wand.image import Image
 from wand.font import Font
 from wand.version import MAGICK_VERSION_NUMBER
@@ -111,15 +110,13 @@ def test_auto_orientation(fx_asset):
             assert img[-1, -1] == original[-1, 0]
 
 
+@mark.skipif(MAGICK_VERSION_NUMBER < 0x708,
+             reason='Auto Threshold requires ImageMagick-7.0.8.')
 def test_auto_threshold():
     with Image(filename='rose:') as img:
-        if MAGICK_VERSION_NUMBER < 0x708:
-            with raises(WandLibraryVersionError):
-                img.auto_threshold()
-        else:
-            was = img.signature
-            img.auto_threshold()
-            assert was != img.signature
+        was = img.signature
+        img.auto_threshold()
+        assert was != img.signature
 
 
 def test_black_threshold(fx_asset):
@@ -185,17 +182,14 @@ def test_brightness_contrast():
         assert was != img.signature
 
 
+@mark.skipif(MAGICK_VERSION_NUMBER < 0x708,
+             reason="Canny requires ImageMagick-7.0.8")
 def test_canny(fx_asset):
-    if MAGICK_VERSION_NUMBER < 0x708:
-        with raises(WandLibraryVersionError):
-            with Image(filename='rose:') as img:
-                img.canny(1, 3)
-    else:
-        with Image(filename='rose:') as img:
-            img.transform_colorspace('gray')
-            was = img.signature
-            img.canny(1, 3)
-            assert was != img.signature
+    with Image(filename='rose:') as img:
+        img.transform_colorspace('gray')
+        was = img.signature
+        img.canny(1, 3)
+        assert was != img.signature
 
 
 def test_caption(fx_asset):
@@ -243,7 +237,7 @@ def test_chop():
 
 
 @mark.skipif(MAGICK_VERSION_NUMBER < 0x709,
-             reason="clahe not supported by ImageMagick version.")
+             reason="Clahe requires Imagemagick-7.0.9.")
 def test_clahe():
     with Image(filename='rose:') as img:
         was = img.signature
@@ -341,7 +335,7 @@ def test_color_matrix():
 
 
 @mark.skipif(MAGICK_VERSION_NUMBER < 0x70A,
-             reason='color_threshold only available after 7.0.10')
+             reason='Color Threshold requires ImageMagick-7.0.10')
 def test_color_threshold():
     with Image(width=100, height=100, pseudo='plasma:') as img:
         was = img.signature
@@ -386,14 +380,12 @@ def test_compare(fx_asset):
             del cmp_img, err
 
 
+@mark.skipif(MAGICK_VERSION_NUMBER < 0x708,
+             reason="Complex requires ImageMagick-7.0.8.")
 def test_complex():
     with Image(width=1, height=1, pseudo='xc:gray25') as a:
         with Image(width=1, height=1, pseudo='xc:gray50') as b:
             a.sequence.append(b)
-        if MAGICK_VERSION_NUMBER < 0x708:
-            with raises(WandLibraryVersionError):
-                a.complex('add')
-        else:
             with a.complex('add') as img:
                 assert 2 == len(img.sequence)
 
@@ -533,14 +525,12 @@ def test_concat():
             assert row.size == (70, 92)
 
 
+@mark.skipif(MAGICK_VERSION_NUMBER < 0x708,
+             reason='Connected Components requires ImageMagick-7.0.8.')
 def test_connected_components(fx_asset):
     with Image(filename=str(fx_asset.join('ccobject.png'))) as img:
-        if MAGICK_VERSION_NUMBER < 0x708:
-            with raises(WandLibraryVersionError):
-                img.connected_components()
-        else:
-            objects = img.connected_components()
-            assert 2 == len(objects)
+        objects = img.connected_components()
+        assert 2 == len(objects)
 
 
 def test_contrast():
@@ -576,7 +566,7 @@ def test_contrast_stretch_user_error(fx_asset):
 
 
 @mark.skipif(MAGICK_VERSION_NUMBER < 0x70A,
-             reason='Convex hull not supported.')
+             reason='Convex Hull requires ImageMagick-7.0.10.')
 def test_convex_hull(fx_asset):
     fpath = str(fx_asset.join('horizon_sunset_border2.jpg'))
     with Image(filename=fpath) as img:
@@ -1053,15 +1043,13 @@ def test_hald_clut(fx_asset):
             img.hald_clut(0xDEADBEEF)
 
 
+@mark.skipif(MAGICK_VERSION_NUMBER < 0x708,
+             reason='Hough Lines requires ImageMagick-7.0.8.')
 def test_hough_lines(fx_asset):
     with Image(filename=str(fx_asset.join('ccobject.png'))) as img:
-        if MAGICK_VERSION_NUMBER < 0x708:
-            with raises(WandLibraryVersionError):
-                img.hough_lines(width=3, height=3)
-        else:
-            was = img.signature
-            img.hough_lines(width=3, height=3)
-            assert was != img.signature
+        was = img.signature
+        img.hough_lines(width=3, height=3)
+        assert was != img.signature
 
 
 def test_implode(fx_asset):
@@ -1164,7 +1152,7 @@ def test_iterator(fx_asset):
 
 
 @mark.skipif(MAGICK_VERSION_NUMBER < 0x70B,
-             reason='Requires ImageMagick-7.0.10-37')
+             reason='Kmeans requires ImageMagick-7.0.11')
 def test_kmeans():
     with Image(filename='rose:') as img:
         was = img.signature
@@ -1180,15 +1168,13 @@ def test_kurtosis_channel():
             img.kurtosis_channel('unknown')
 
 
+@mark.skipif(MAGICK_VERSION_NUMBER < 0x708,
+             reason='Kuwahara requires ImageMagick-7.0.8.')
 def test_kuwahara():
     with Image(filename='rose:') as img:
-        if MAGICK_VERSION_NUMBER < 0x708:
-            with raises(WandLibraryVersionError):
-                img.kuwahara(3.0)
-        else:
-            was = img.signature
-            img.kuwahara(3.0)
-            assert was != img.signature
+        was = img.signature
+        img.kuwahara(3.0)
+        assert was != img.signature
 
 
 def test_level(fx_asset):
@@ -1259,15 +1245,13 @@ def test_level_user_error(fx_asset):
             img.level(channel='404')
 
 
+@mark.skipif(MAGICK_VERSION_NUMBER < 0x708,
+             reason='Levelize requires ImageMagick-7.0.8.')
 def test_levelize():
     with Image(filename='rose:') as img:
-        if MAGICK_VERSION_NUMBER < 0x708:
-            with raises(WandLibraryVersionError):
-                img.levelize(3.0)
-        else:
-            was = img.signature
-            img.levelize(3.0)
-            assert was != img.signature
+        was = img.signature
+        img.levelize(3.0)
+        assert was != img.signature
 
 
 def test_linear_stretch(fx_asset):
@@ -1310,15 +1294,13 @@ def test_liquid_rescale(fx_asset):
                         assert_equal_except_alpha(img[x, y], img[x, y])
 
 
+@mark.skipif(MAGICK_VERSION_NUMBER < 0x693,
+             reason='Local Contrast not supported.')
 def test_local_contrast():
     with Image(filename='rose:') as img:
-        if MAGICK_VERSION_NUMBER < 0x693:
-            with raises(WandLibraryVersionError):
-                img.local_contrast()
-        else:
-            was = img.signature
-            img.local_contrast()
-            assert was != img.signature
+        was = img.signature
+        img.local_contrast()
+        assert was != img.signature
 
 
 def test_mean_channel():
@@ -1336,15 +1318,13 @@ def test_magnify():
         assert expected == img.width
 
 
+@mark.skipif(MAGICK_VERSION_NUMBER < 0x708,
+             reason='Mean Shift requires ImageMagick-7.0.8.')
 def test_mean_shift():
     with Image(filename='rose:') as img:
-        if MAGICK_VERSION_NUMBER < 0x708:
-            with raises(WandLibraryVersionError):
-                img.mean_shift(width=5, height=5)
-        else:
-            was = img.signature
-            img.mean_shift(width=5, height=5)
-            assert was != img.signature
+        was = img.signature
+        img.mean_shift(width=5, height=5)
+        assert was != img.signature
 
 
 def test_merge_layers(fx_asset):
@@ -1434,7 +1414,7 @@ def test_merge_layers_method_mosaic_neg_offset(fx_asset):
 
 
 @mark.skipif(MAGICK_VERSION_NUMBER < 0x70A,
-             reason='ImageMagick-7.0.10 required.')
+             reason='Minimum Bounding Box requires ImageMagick-7.0.10.')
 def test_minimum_bounding_box():
     with Image(filename='wizard:') as img:
         img.fuzz = 0.1 * img.quantum_range
@@ -1656,15 +1636,13 @@ def test_polaroid(fx_asset):
             img.polaroid(caption='hello', font='League_Gothic.otf')
 
 
+@mark.skipif(MAGICK_VERSION_NUMBER < 0x708,
+             reason='Polynomial requires ImageMagick-7.0.8.')
 def test_polynomial():
     with Image(filename='rose:') as img:
-        if MAGICK_VERSION_NUMBER < 0x708:
-            with raises(WandLibraryVersionError):
-                img.polynomial(arguments=(0.5, 1.0))
-        else:
-            was = img.signature
-            img.polynomial(arguments=(0.5, 1.0))
-            assert was != img.signature
+        was = img.signature
+        img.polynomial(arguments=(0.5, 1.0))
+        assert was != img.signature
 
 
 def test_posterize(fx_asset):
@@ -1723,19 +1701,17 @@ def test_range_channel():
             img.range_channel('unknown')
 
 
+@mark.skipif(MAGICK_VERSION_NUMBER < 0x708,
+             reason='Range Threshold requires ImageMagick-7.0.8.')
 def test_range_threshold():
     with Image(filename='rose:') as img:
-        if MAGICK_VERSION_NUMBER < 0x708:
-            with raises(WandLibraryVersionError):
-                img.range_threshold(20)
-        else:
-            was = img.signature
-            img.range_threshold(20, 40, 60, 80)
-            assert was != img.signature
-            # Smoke test
-            img.range_threshold(20)
-            img.range_threshold(20, 40)
-            img.range_threshold(20, 40, 60)
+        was = img.signature
+        img.range_threshold(20, 40, 60, 80)
+        assert was != img.signature
+        # Smoke test
+        img.range_threshold(20)
+        img.range_threshold(20, 40)
+        img.range_threshold(20, 40, 60)
 
 
 def test_remap(fx_asset):
@@ -2276,7 +2252,7 @@ def test_transform(args, kwargs, expected_size, fx_asset):
 
 
 @mark.skipif(MAGICK_VERSION_NUMBER < 0x708,
-             reason="-crop aspect:ration support added in 7.0.7-22")
+             reason="Crop by aspect-ration requires ImageMagick-7.0.8")
 def test_transform_aspect_crop(fx_asset):
     with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
         img.transform(crop='16:9')
@@ -2415,7 +2391,7 @@ def test_trim_fuzz(fx_asset):
 
 
 @mark.skipif(MAGICK_VERSION_NUMBER < 0x709,
-             reason='trim:percent-background only supported with 7.0.9')
+             reason='Trim by percent-background requires ImagesMagick-7.0.9')
 def test_trim_percent_background(fx_asset):
     # TODO - Find a better test image to demonstrate trim ranges.
     fpath = str(fx_asset.join('horizon_sunset_border2.jpg'))
@@ -2490,19 +2466,17 @@ def test_wave(fx_asset):
             img.wave(method=0xDEADBEEF)
 
 
+@mark.skipif(MAGICK_VERSION_NUMBER < 0x708,
+             reason='Wavelet Denoise requires ImageMagick-7.0.8.')
 def test_wavelet_denoise():
     with Image(filename='rose:') as img:
-        if MAGICK_VERSION_NUMBER < 0x708:
-            with raises(WandLibraryVersionError):
-                img.wavelet_denoise(0.2, 0.3)
-        else:
-            was = img.signature
-            img.wavelet_denoise(0.2, 0.3)
-            assert was != img.signature
+        was = img.signature
+        img.wavelet_denoise(0.2, 0.3)
+        assert was != img.signature
 
 
 @mark.skipif(MAGICK_VERSION_NUMBER < 0x70B,
-             reason='Requires ImageMagick-7.0.10-37')
+             reason='White balance requires ImageMagick-7.0.11')
 def test_white_balance():
     with Image(filename='rose:') as img:
         was = img.signature
