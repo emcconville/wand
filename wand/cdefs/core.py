@@ -3,7 +3,7 @@
 
 .. versionadded:: 0.5.0
 """
-from ctypes import POINTER, c_void_p, c_char_p, c_int, c_size_t
+from ctypes import POINTER, c_void_p, c_char_p, c_int, c_size_t, c_ulonglong
 from wand.cdefs.wandtypes import c_ssize_t
 
 __all__ = ('load', 'load_with_version')
@@ -68,9 +68,9 @@ def load(libmagick):
     libmagick.GetMagickReleaseDate.argtypes = []
     libmagick.GetMagickReleaseDate.restype = c_char_p
     libmagick.GetMagickResource.argtypes = [c_int]
-    libmagick.GetMagickResource.restype = c_size_t
+    libmagick.GetMagickResource.restype = c_ulonglong
     libmagick.GetMagickResourceLimit.argtypes = [c_int]
-    libmagick.GetMagickResourceLimit.restype = c_size_t
+    libmagick.GetMagickResourceLimit.restype = c_ulonglong
     libmagick.GetMagickVersion.argtypes = [POINTER(c_size_t)]
     libmagick.GetMagickVersion.restype = c_char_p
     try:
@@ -104,7 +104,7 @@ def load(libmagick):
     except AttributeError:
         libmagick.ParseGeometry = None
         libmagick.ParseMetaGeometry = None
-    libmagick.SetMagickResourceLimit.argtypes = [c_int, c_size_t]
+    libmagick.SetMagickResourceLimit.argtypes = [c_int, c_ulonglong]
     libmagick.SetMagickResourceLimit.restype = c_int
 
 

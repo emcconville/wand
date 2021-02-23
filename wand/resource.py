@@ -368,7 +368,8 @@ class ResourceLimits(abc.MutableMapping):
         .. versionadded:: 0.5.1
         """
         genesis()
-        library.MagickSetResourceLimit(self._to_idx(resource), int(limit))
+        ull = ctypes.c_ulonglong(limit)
+        library.MagickSetResourceLimit(self._to_idx(resource), ull)
 
 
 #: (:class:`ResourceLimits`) Helper to get & set Magick Resource Limits.
