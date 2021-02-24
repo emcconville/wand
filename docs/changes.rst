@@ -18,6 +18,7 @@ Unreleased.
  - Fixed `QuantumType` allocation for 32-bit architectures using HDRI. [:issue:`518`]
  - Fixed `MagickSizeType` allocation for :meth:`ResourceLimits.set_resource_limit() <wand.resource.ResourceLimits.set_resource_limit>` and segfault with ``armv7l`` architecture. [:issue:`520`]
  - [TEST] Deprecated PDF format from test assets.
+ - [TEST] Deprecated :class:`~wand.drawing.Drawing` text ``fx_wand`` fixture to improve parallel CI testing.
  - [TEST] Marked all ImageMagick-7 features skipped when running test suite with ImageMagick-6. [:issue:`522`]
 
 
