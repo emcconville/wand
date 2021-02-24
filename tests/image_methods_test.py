@@ -209,7 +209,7 @@ def test_caption(fx_asset):
         )
 
 
-def test_caption_without_font(fx_asset):
+def test_caption_without_font():
     with Image(width=144, height=192, background=Color('#1e50a2')) as img:
         with raises(TypeError):
             img.caption(

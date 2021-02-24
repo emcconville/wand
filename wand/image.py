@@ -3214,9 +3214,11 @@ class BaseImage(Resource):
             height = self.height - top
         else:
             assertions.assert_integer(height=height)
-        if not font:
+        if font is None:
             try:
                 font = self.font
+                if font is None:
+                    raise TypeError()
             except TypeError:
                 raise TypeError('font must be specified or existing in image')
         with Image() as textboard:
