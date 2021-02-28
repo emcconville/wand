@@ -2335,6 +2335,7 @@ def test_transparentize(fx_asset):
                 assert im[99, 100] == transparent
                 assert im[100, 100] == black
                 im.transparentize(0.3)
+                im.clamp()
                 assert im[99, 100].alpha_int8 == transparent.alpha_int8
                 with im[100, 100] as c:
                     assert c.red == c.green == c.blue == 0

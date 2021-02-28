@@ -328,7 +328,7 @@ class Color(Resource):
         .. versionadded:: 0.3.0
 
         """
-        return scale_quantum_to_int8(self.alpha_quantum)
+        return max(0, min(255, int(255.0 * self.alpha)))
 
     @alpha_int8.setter
     def alpha_int8(self, value):
@@ -377,7 +377,7 @@ class Color(Resource):
 
         .. versionadded:: 0.5.1
         """
-        return scale_quantum_to_int8(self.black_quantum)
+        return max(0, min(255, int(255.0 * self.black)))
 
     @black_int8.setter
     def black_int8(self, value):
@@ -422,7 +422,7 @@ class Color(Resource):
         .. versionadded:: 0.3.0
 
         """
-        return scale_quantum_to_int8(self.blue_quantum)
+        return max(0, min(255, int(255.0 * self.blue)))
 
     @blue_int8.setter
     def blue_int8(self, value):
@@ -471,7 +471,7 @@ class Color(Resource):
 
         .. versionadded:: 0.5.1
         """
-        return scale_quantum_to_int8(self.cyan_quantum)
+        return max(0, min(255, int(255.0 * self.cyan)))
 
     @cyan_int8.setter
     def cyan_int8(self, value):
@@ -530,7 +530,7 @@ class Color(Resource):
         .. versionadded:: 0.3.0
 
         """
-        return scale_quantum_to_int8(self.green_quantum)
+        return max(0, min(255, int(255.0 * self.green)))
 
     @green_int8.setter
     def green_int8(self, value):
@@ -579,7 +579,7 @@ class Color(Resource):
 
         .. versionadded:: 0.5.1
         """
-        return scale_quantum_to_int8(self.magenta_quantum)
+        return max(0, min(255, int(255.0 * self.magenta)))
 
     @magenta_int8.setter
     def magenta_int8(self, value):
@@ -641,7 +641,7 @@ class Color(Resource):
         .. versionadded:: 0.3.0
 
         """
-        return scale_quantum_to_int8(self.red_quantum)
+        return max(0, min(255, int(255.0 * self.red)))
 
     @red_int8.setter
     def red_int8(self, value):
@@ -701,7 +701,7 @@ class Color(Resource):
 
         .. versionadded:: 0.5.1
         """
-        return scale_quantum_to_int8(self.yellow_quantum)
+        return max(0, min(255, int(255.0 * self.yellow)))
 
     @yellow_int8.setter
     def yellow_int8(self, value):
@@ -748,6 +748,8 @@ class Color(Resource):
 def scale_quantum_to_int8(quantum):
     """Straightforward port of :c:func:`ScaleQuantumToChar()` inline
     function.
+
+    .. deprecated:: 0.6.6
 
     :param quantum: quantum value
     :type quantum: :class:`numbers.Integral`
