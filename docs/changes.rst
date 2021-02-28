@@ -12,7 +12,7 @@ Wand Changelog
 Version 0.6.6
 -------------
 
-Unreleased.
+Released on February 28th, 2021.
 
  - Added :meth:`Image.get_image_distortion() <wand.image.BaseImage.get_image_distortion>` method.
  - Fixed `QuantumType` allocation for 32-bit architectures using HDRI. [:issue:`518`]
