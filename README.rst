@@ -61,7 +61,7 @@ Package Index (Cheeseshop)
       :target: https://pypi.python.org/pypi/Wand
 
 Discord
-   https://discord.gg/BWQ25wB
+   https://discord.gg/wtDWDE9fXK
 
 Stack Overflow tag (Q&A)
    http://stackoverflow.com/questions/tagged/wand
