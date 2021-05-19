@@ -9198,6 +9198,7 @@ class Image(BaseImage):
         if format is not None:
             assertions.assert_string(format=format)
             library.MagickSetFormat(self.wand, binary(format))
+            library.MagickSetFilename(self.wand, b'buffer.' + binary(format))
         if interlace is not None:
             assertions.string_in_list(
                 INTERLACE_TYPES,
