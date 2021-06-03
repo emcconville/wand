@@ -337,7 +337,7 @@ COMPLEX_OPERATORS = ('undefined', 'add', 'conjugate', 'divide', 'magnitude',
 #:
 #: .. versionchanged:: 0.5.6
 #:    Operators have been updated to reflect latest changes in C-API.
-#     For ImageMagick-6, ``'add'`` has been renamed to ``'modulus_add'``,
+#:    For ImageMagick-6, ``'add'`` has been renamed to ``'modulus_add'``,
 #:    ``'subtract'`` has been renamed to ``'modulus_subtract'``,
 #:    ``'divide'`` has been split into ``'divide_dst'`` & ``'divide_src'``, and
 #:    ``'minus'`` has been split into ``'minus_dst'`` & ``'minus_src'``.
@@ -392,6 +392,29 @@ if MAGICK_VERSION_NUMBER >= 0x700:  # pragma: no cover
 
 #: (:class:`tuple`) The list of :attr:`Image.compression` types.
 #:
+#: - ``'undefined'``
+#: - ``'b44a'``
+#: - ``'b44'``
+#: - ``'bzip'``
+#: - ``'dxt1'``
+#: - ``'dxt3'``
+#: - ``'dxt5'``
+#: - ``'fax'``
+#: - ``'group4'``
+#: - ``'jbig1'``
+#: - ``'jbig2'``
+#: - ``'jpeg2000'``
+#: - ``'jpeg'``
+#: - ``'losslessjpeg'``
+#: - ``'lzma'``
+#: - ``'lzw'``
+#: - ``'no'``
+#: - ``'piz'``
+#: - ``'pxr24'``
+#: - ``'rle'``
+#: - ``'zip'``
+#: - ``'zips'``
+#:
 #: .. versionadded:: 0.3.6
 #: .. versionchanged:: 0.5.0
 #:    Support for ImageMagick-6 & ImageMagick-7
@@ -409,6 +432,11 @@ if MAGICK_VERSION_NUMBER >= 0x700:  # pragma: no cover
     )
 
 #: (:class:`tuple`) The list of :attr:`BaseImage.dispose` types.
+#:
+#: - ``'undefined'``
+#: - ``'none'``
+#: - ``'background'``
+#: - ``'previous'``
 #:
 #: .. versionadded:: 0.5.0
 DISPOSE_TYPES = (
