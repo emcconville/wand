@@ -276,3 +276,46 @@ For example::
 
 .. image:: ../_images/distort-affine-projection.png
 
+
+Polynomial
+----------
+
+Polynomial distortion requires at least four sets of coordinates & control
+points, and will perform a standard polynomial equation. However, the first
+distortion argument is reserved to define the ``Order``, or ``Complexity``
+of the two dimensional equation.
+
+.. parsed-literal::
+
+    Order, X\ :sub:`1`, Y\ :sub:`1`, I\ :sub:`1`, J\ :sub:`1`,
+           X\ :sub:`2`, Y\ :sub:`2`, I\ :sub:`2`, J\ :sub:`2`,
+           X\ :sub:`3`, Y\ :sub:`3`, I\ :sub:`3`, J\ :sub:`3`,
+           X\ :sub:`4`, Y\ :sub:`4`, I\ :sub:`4`, J\ :sub:`4`
+
+For example::
+
+    from collections import namedtuple
+    from wand.color import Color
+    from wand.image import Image
+
+    Point = namedtuple('Point', ['x', 'y', 'i', 'j'])
+
+    with Image(filename='rose:') as img:
+        img.resize(140, 92)
+        img.background_color = Color('skyblue')
+        img.virtual_pixel = 'background'
+        order = 1.5
+        alpha = Point(0, 0, 26, 0)
+        beta = Point(139, 0, 114, 23)
+        gamma = Point(139, 91, 139, 80)
+        delta = Point(0, 92, 0, 78)
+        args = (
+            order,
+            alpha.x, alpha.y, alpha.i, alpha.j,
+            beta.x, beta.y, beta.i, beta.j,
+            gamma.x, gamma.y, gamma.i, gamma.j,
+            delta.x, delta.y, delta.i, delta.j,
+        )
+        img.distort('polynomial', args)
+
+.. image:: ../_images/distort-polynomial.png
