@@ -260,7 +260,8 @@ pairs.
     src1\ :sub:`x`, src1\ :sub:`y`, dst1\ :sub:`x`, dst1\ :sub:`y`,
     src2\ :sub:`x`, src2\ :sub:`y`, dst2\ :sub:`x`, dst2\ :sub:`y`,
     src3\ :sub:`x`, src3\ :sub:`y`, dst3\ :sub:`x`, dst3\ :sub:`y`,
-    src4\ :sub:`x`, src4\ :sub:`y`, dst4\ :sub:`x`, dst4\ :sub:`y`
+    src4\ :sub:`x`, src4\ :sub:`y`, dst4\ :sub:`x`, dst4\ :sub:`y`,
+    ...
 
 For example::
 
@@ -301,10 +302,10 @@ of the two dimensional equation.
 
 .. parsed-literal::
 
-    Order, X\ :sub:`1`, Y\ :sub:`1`, I\ :sub:`1`, J\ :sub:`1`,
-           X\ :sub:`2`, Y\ :sub:`2`, I\ :sub:`2`, J\ :sub:`2`,
-           X\ :sub:`3`, Y\ :sub:`3`, I\ :sub:`3`, J\ :sub:`3`,
-           X\ :sub:`4`, Y\ :sub:`4`, I\ :sub:`4`, J\ :sub:`4`,
+    Order, src1\ :sub:`x`, src1\ :sub:`y`, dst1\ :sub:`x`, dst1\ :sub:`y`,
+           src2\ :sub:`x`, src2\ :sub:`y`, dst2\ :sub:`x`, dst2\ :sub:`y`,
+           src3\ :sub:`x`, src3\ :sub:`y`, dst3\ :sub:`x`, dst3\ :sub:`y`,
+           src4\ :sub:`x`, src4\ :sub:`y`, dst4\ :sub:`x`, dst4\ :sub:`y`,
            ...
 
 For example::
@@ -399,3 +400,43 @@ And three arguments would describe the origin of rotation::
 .. image:: ../_images/distort-srt-xy-angle.png
 
 ... and so forth.
+
+
+Shepards
+--------
+
+Shepard's distortion moves (or smudges) a given source point to a destination
+coordinate. The arguments are:
+
+.. parsed-literal::
+
+    src1\ :sub:`x`, src1\ :sub:`y`, dst1\ :sub:`x`, dst1\ :sub:`y`,
+    src2\ :sub:`x`, src2\ :sub:`y`, dst2\ :sub:`x`, dst2\ :sub:`y`,
+    ...
+
+The size, or inverse weighted distance, of the source point can be controlled
+by defining ``shepards:power`` artifact.
+
+For example::
+
+    from collections import namedtuple
+    from wand.color import Color
+    from wand.image import Image
+
+    Point = namedtuple('Point', ['x', 'y', 'i', 'j'])
+
+    with Image(filename='rose:') as img:
+        img.resize(140, 92)
+        img.background_color = Color('skyblue')
+        img.virtual_pixel = 'background'
+        img.artifacts['distort:viewport'] = "160x112-10+10"
+        img.artifacts['shepards:power'] = "4.0"
+        alpha = Point(0, 0, 30, 15)
+        beta = Point(70, 46, 60, 70)
+        args = (
+            *alpha,
+            *beta
+        )
+        img.distort('shepards', args)
+
+.. image:: ../_images/distort-shepards.png
