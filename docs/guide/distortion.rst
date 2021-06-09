@@ -104,114 +104,6 @@ Setting the ``'distort:scale'`` artifact will resizing the final image::
     img.artifacts['distort:scale'] = '75%'
 
 
-Scale Rotate Translate
-----------------------
-
-A more common form of distortion, the method ``'scale_rotate_translate'`` can
-be controlled by the total number of arguments.
-
-The total arguments dictate the following order.
-
-===============  ==============
-Total Arguments  Argument Order
----------------  --------------
- 1                Angle
- 2                Scale, Angle
- 3                X, Y, Angle
- 4                X, Y, Scale, Angle
- 5                X, Y, ScaleX, ScaleY, Angle
- 6                X, Y, Scale, Angle, NewX, NewY
- 7                X, Y, ScaleX, ScaleY, Angle, NewX, NewY
-===============  ==============
-
-For example...
-
-A single argument would be treated as an angle::
-
-    from wand.color import Color
-    from wand.image import Image
-
-    with Image(filename='rose:') as img:
-        img.resize(140, 92)
-        img.background_color = Color('skyblue')
-        img.virtual_pixel = 'background'
-        angle = 90.0
-        img.distort('scale_rotate_translate', (angle,))
-
-.. image:: ../_images/distort-srt-angle.png
-
-Two arguments would be treated as a scale & angle::
-
-    with Image(filename='rose:') as img:
-        img.resize(140, 92)
-        img.background_color = Color('skyblue')
-        img.virtual_pixel = 'background'
-        angle = 90.0
-        scale = 0.5
-        img.distort('scale_rotate_translate', (scale, angle,))
-
-.. image:: ../_images/distort-srt-scale-angle.png
-
-
-And three arguments would describe the origin of rotation::
-
-    with Image(filename='rose:') as img:
-        img.resize(140, 92)
-        img.background_color = Color('skyblue')
-        img.virtual_pixel = 'background'
-        x = 80
-        y = 60
-        angle = 90.0
-        img.distort('scale_rotate_translate', (x, y, angle,))
-
-.. image:: ../_images/distort-srt-xy-angle.png
-
-... and so forth.
-
-
-Perspective
------------
-
-Perspective distortion requires 4 pairs of points which is a total of 16 doubles.
-The order of the ``arguments`` are groups of source & destination coordinate
-pairs.
-
-.. parsed-literal::
-
-    src1\ :sub:`x`, src1\ :sub:`y`, dst1\ :sub:`x`, dst1\ :sub:`y`,
-    src2\ :sub:`x`, src2\ :sub:`y`, dst2\ :sub:`x`, dst2\ :sub:`y`,
-    src3\ :sub:`x`, src3\ :sub:`y`, dst3\ :sub:`x`, dst3\ :sub:`y`,
-    src4\ :sub:`x`, src4\ :sub:`y`, dst4\ :sub:`x`, dst4\ :sub:`y`
-
-For example::
-
-    from itertools import chain
-    from wand.color import Color
-    from wand.image import Image
-
-    with Image(filename='rose:') as img:
-        img.resize(140, 92)
-        img.background_color = Color('skyblue')
-        img.virtual_pixel = 'background'
-        source_points = (
-            (0, 0),
-            (140, 0),
-            (0, 92),
-            (140, 92)
-        )
-        destination_points = (
-            (14, 4.6),
-            (126.9, 9.2),
-            (0, 92),
-            (140, 92)
-        )
-        order = chain.from_iterable(zip(source_points, destination_points))
-        arguments = list(chain.from_iterable(order))
-        img.distort('perspective', arguments)
-
-.. image:: ../_images/distort-perspective.png
-
-
 Affine
 ------
 
@@ -288,9 +180,12 @@ arguments are:
 
     ArcAngle, RotateAngle, TopRadius, BottomRadius
 
-Where `arc_angle` is the only required arguments, and the rest are optional.
+Where `ArcAngle` is the only required arguments, and the rest are optional.
 
 For example::
+
+    from wand.color import Color
+    from wand.image import Image
 
     with Image(filename='rose:') as img:
         img.resize(140, 92)
@@ -303,6 +198,97 @@ For example::
         img.distort('arc', (270, 45))
 
 .. image:: ../_images/distort-arc.png
+
+
+Cylinder & Plane
+----------------
+
+Cylinder 2 plane is a radial projection to correct common field of
+vision (fov) distortions. The arguments are:
+
+.. parsed-literal::
+
+    FovAngle, CenterX, CenterY, FovOutput, DestCenterX, DestCenterY
+
+Where only the first argument is required, and the rest are optional.
+The `FovAngle` value can be roughly calculated by:
+
+.. math:: {FovAngle} = {{LensFocalLength} \over {FilmWidth}} * { 180 \over \pi }
+
+The ``'plane_2_cylinder'`` is the inverted behavior. The arguments are:
+
+.. parsed-literal::
+
+    FovAngle, CenterX, CenterY
+
+For (a rather poor) example::
+
+    import math
+    from wand.color import Color
+    from wand.image import Image
+
+    with Image(filename='rose:') as img:
+        img.resize(140, 92)
+        img.background_color = Color('skyblue')
+        img.virtual_pixel = 'background'
+        lens = 60
+        film = 35
+        args = (
+            lens/film * 180/math.pi,
+        )
+        img.distort('plane_2_cylinder', args)
+
+.. image:: ../_images/distort-plane2cylinder.png
+
+And the inverse::
+
+        img.distort('cylinder_2_plane', args)
+
+.. image:: ../_images/distort-cylinder2plane.png
+
+
+
+Perspective
+-----------
+
+Perspective distortion requires 4 pairs of points which is a total of 16 doubles.
+The order of the ``arguments`` are groups of source & destination coordinate
+pairs.
+
+.. parsed-literal::
+
+    src1\ :sub:`x`, src1\ :sub:`y`, dst1\ :sub:`x`, dst1\ :sub:`y`,
+    src2\ :sub:`x`, src2\ :sub:`y`, dst2\ :sub:`x`, dst2\ :sub:`y`,
+    src3\ :sub:`x`, src3\ :sub:`y`, dst3\ :sub:`x`, dst3\ :sub:`y`,
+    src4\ :sub:`x`, src4\ :sub:`y`, dst4\ :sub:`x`, dst4\ :sub:`y`
+
+For example::
+
+    from itertools import chain
+    from wand.color import Color
+    from wand.image import Image
+
+    with Image(filename='rose:') as img:
+        img.resize(140, 92)
+        img.background_color = Color('skyblue')
+        img.virtual_pixel = 'background'
+        source_points = (
+            (0, 0),
+            (140, 0),
+            (0, 92),
+            (140, 92)
+        )
+        destination_points = (
+            (14, 4.6),
+            (126.9, 9.2),
+            (0, 92),
+            (140, 92)
+        )
+        order = chain.from_iterable(zip(source_points, destination_points))
+        arguments = list(chain.from_iterable(order))
+        img.distort('perspective', arguments)
+
+.. image:: ../_images/distort-perspective.png
 
 
 Polynomial
@@ -348,3 +334,68 @@ For example::
         img.distort('polynomial', args)
 
 .. image:: ../_images/distort-polynomial.png
+
+
+Scale Rotate Translate
+----------------------
+
+A more common form of distortion, the method ``'scale_rotate_translate'`` can
+be controlled by the total number of arguments.
+
+The total arguments dictate the following order.
+
+===============  ==============
+Total Arguments  Argument Order
+---------------  --------------
+ 1                Angle
+ 2                Scale, Angle
+ 3                X, Y, Angle
+ 4                X, Y, Scale, Angle
+ 5                X, Y, ScaleX, ScaleY, Angle
+ 6                X, Y, Scale, Angle, NewX, NewY
+ 7                X, Y, ScaleX, ScaleY, Angle, NewX, NewY
+===============  ==============
+
+For example...
+
+A single argument would be treated as an angle::
+
+    from wand.color import Color
+    from wand.image import Image
+
+    with Image(filename='rose:') as img:
+        img.resize(140, 92)
+        img.background_color = Color('skyblue')
+        img.virtual_pixel = 'background'
+        angle = 90.0
+        img.distort('scale_rotate_translate', (angle,))
+
+.. image:: ../_images/distort-srt-angle.png
+
+Two arguments would be treated as a scale & angle::
+
+    with Image(filename='rose:') as img:
+        img.resize(140, 92)
+        img.background_color = Color('skyblue')
+        img.virtual_pixel = 'background'
+        angle = 90.0
+        scale = 0.5
+        img.distort('scale_rotate_translate', (scale, angle,))
+
+.. image:: ../_images/distort-srt-scale-angle.png
+
+
+And three arguments would describe the origin of rotation::
+
+    with Image(filename='rose:') as img:
+        img.resize(140, 92)
+        img.background_color = Color('skyblue')
+        img.virtual_pixel = 'background'
+        x = 80
+        y = 60
+        angle = 90.0
+        img.distort('scale_rotate_translate', (x, y, angle,))
+
+.. image:: ../_images/distort-srt-xy-angle.png
+
+... and so forth.
