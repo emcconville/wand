@@ -222,7 +222,8 @@ perspective, but only need a pair of 3 points, or 12 real numbers.
 
     src1\ :sub:`x`, src1\ :sub:`y`, dst1\ :sub:`x`, dst1\ :sub:`y`,
     src2\ :sub:`x`, src2\ :sub:`y`, dst2\ :sub:`x`, dst2\ :sub:`y`,
-    src3\ :sub:`x`, src3\ :sub:`y`, dst3\ :sub:`x`, dst3\ :sub:`y`
+    src3\ :sub:`x`, src3\ :sub:`y`, dst3\ :sub:`x`, dst3\ :sub:`y`,
+    ...
 
 For example::
 
@@ -277,6 +278,33 @@ For example::
 .. image:: ../_images/distort-affine-projection.png
 
 
+Arc
+---
+
+Arc distortion curves the image around the center point of an image. The
+arguments are:
+
+.. parsed-literal::
+
+    ArcAngle, RotateAngle, TopRadius, BottomRadius
+
+Where `arc_angle` is the only required arguments, and the rest are optional.
+
+For example::
+
+    with Image(filename='rose:') as img:
+        img.resize(140, 92)
+        img.background_color = Color('skyblue')
+        img.virtual_pixel = 'background'
+        args = (
+            270,  # ArcAngle
+            45,   # RotateAngle
+        )
+        img.distort('arc', (270, 45))
+
+.. image:: ../_images/distort-arc.png
+
+
 Polynomial
 ----------
 
@@ -290,7 +318,8 @@ of the two dimensional equation.
     Order, X\ :sub:`1`, Y\ :sub:`1`, I\ :sub:`1`, J\ :sub:`1`,
            X\ :sub:`2`, Y\ :sub:`2`, I\ :sub:`2`, J\ :sub:`2`,
            X\ :sub:`3`, Y\ :sub:`3`, I\ :sub:`3`, J\ :sub:`3`,
-           X\ :sub:`4`, Y\ :sub:`4`, I\ :sub:`4`, J\ :sub:`4`
+           X\ :sub:`4`, Y\ :sub:`4`, I\ :sub:`4`, J\ :sub:`4`,
+           ...
 
 For example::
 
