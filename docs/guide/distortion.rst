@@ -195,9 +195,76 @@ For example::
             270,  # ArcAngle
             45,   # RotateAngle
         )
-        img.distort('arc', (270, 45))
+        img.distort('arc', args)
 
 .. image:: ../_images/distort-arc.png
+
+
+Barrel
+------
+
+Barrel distortion attempts to correct spherical distortion caused by camera
+lenses. It operates with four constant coefficient values `A`, `B`, `C`, & `D`
+mapped to the images EXIF meta-data. Usually camera, lens, and zoom attributes.
+The equation for ``barrel`` distortion is:
+
+.. math:: {R}_{src} = r * \left( A * r^3 + B * r^2 + C * r + D \right)
+
+Where ``r`` is the destination radius. The arguments for the distortion are:
+
+.. parsed-literal::
+
+    A B C D X Y
+
+Where ``X`` & ``Y`` are optional center coordinates.
+
+For example::
+
+    from wand.color import Color
+    from wand.image import Image
+
+    with Image(filename='rose:') as img:
+        img.resize(140, 92)
+        img.background_color = Color('skyblue')
+        img.virtual_pixel = 'background'
+        args = (
+            0.2,  # A
+            0.0,  # B
+            0.0,  # C
+            1.0,  # D
+        )
+        img.distort('barrel', args)
+
+.. image:: ../_images/distort-barrel.png
+
+
+Barrel Inverse
+--------------
+The barrel inverse distortion has the same arguments as the barrel distortion,
+but performs a different equation.
+
+.. math:: {R}_{src} = { r \over \left( A * r^3 + B * r^2 + C * r + D \right) }
+
+It does not reverse, or undo, the effects of the barrel distortion.
+
+For example::
+
+    from wand.color import Color
+    from wand.image import Image
+
+    with Image(filename='rose:') as img:
+        img.resize(140, 92)
+        img.background_color = Color('skyblue')
+        img.virtual_pixel = 'background'
+        args = (
+            0.0,   # A
+            0.0,   # B
+            -0.5,  # C
+            1.5,   # D
+        )
+        img.distort('barrel_inverse', args)
+
+.. image:: ../_images/distort-barrel-inverse.png
 
 
 Cylinder & Plane
