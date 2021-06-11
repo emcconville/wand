@@ -267,6 +267,61 @@ For example::
 .. image:: ../_images/distort-barrel-inverse.png
 
 
+Bilinear
+--------
+
+The bilinear distortion is similar to perspective distortion, but evenly
+distributes pixels rather than compress & reduce shrinking areas. This
+means that shrunk areas of the image will appear flat with bilinear as opposed
+to farther away. The arguments are:
+
+.. parsed-literal::
+
+    src1\ :sub:`x`, src1\ :sub:`y`, dst1\ :sub:`x`, dst1\ :sub:`y`,
+    src2\ :sub:`x`, src2\ :sub:`y`, dst2\ :sub:`x`, dst2\ :sub:`y`,
+    src3\ :sub:`x`, src3\ :sub:`y`, dst3\ :sub:`x`, dst3\ :sub:`y`,
+    src4\ :sub:`x`, src4\ :sub:`y`, dst4\ :sub:`x`, dst4\ :sub:`y`,
+    ...
+
+Unlike other inverse methods, bilinear distortion effects are directional.
+Meaning you can undo a distortion previously applied. For example::
+
+    from itertools import chain
+    from wand.color import Color
+    from wand.image import Image
+
+    with Image(filename='rose:') as img:
+        img.resize(140, 92)
+        img.background_color = Color('skyblue')
+        img.virtual_pixel = 'background'
+        source_points = (
+            (0, 0),
+            (140, 0),
+            (0, 92),
+            (140, 92)
+        )
+        destination_points = (
+            (14, 4.6),
+            (126.9, 9.2),
+            (0, 92),
+            (140, 92)
+        )
+        order = chain.from_iterable(zip(source_points, destination_points))
+        arguments = list(chain.from_iterable(order))
+        img.distort('bilinear_forward', arguments)
+
+.. image:: ../_images/distort-bilinear-forward.png
+
+And then reverted with by swapping the destination with source coordinates,
+and using ``'bilinear_reverse'``::
+
+        order = chain.from_iterable(zip(destination_points, source_points))
+        arguments = list(chain.from_iterable(order))
+        img.distort('bilinear_reverse', arguments)
+
+.. image:: ../_images/distort-bilinear-reverse.png
+
+
 Cylinder & Plane
 ----------------
 
