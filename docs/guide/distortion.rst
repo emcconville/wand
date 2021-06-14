@@ -414,6 +414,46 @@ For example::
 .. image:: ../_images/distort-perspective.png
 
 
+Polar & Depolar
+---------------
+
+Polar distortion is similar to arc distort method, but does not attempt to
+preserve aspect ratios.
+
+.. parsed-literal::
+
+    Radius\ :sub:`max`, Radius\ :sub:`min`, Center\ :sub:`x`, Center\ :sub:`y`, Angle\ :sub:`start`, Angle\ :sub:`end`
+
+All the arguments are optional, and an argument of ``0`` will use the distance
+of the center to the closet edge as the default radius.
+
+For example::
+
+    from wand.image import Image
+
+    with Image(filename='rose:') as img:
+        img.resize(140, 92)
+        img.virtual_pixel = 'black'
+        img.distort('polar', (0,))
+
+.. image:: ../_images/distort-polar.png
+
+For depolar distortion, the arguments are the same. However to revert the image
+previously distorted with nearest edge (argument ``0``), use ``-1`` for
+ImageMagick to calculate the radius distance from the middle to the farthest
+edge.
+
+For example::
+
+    from wand.image import Image
+
+    with Image(filename='distort-polar.png') as img:
+        img.virtual_pixel = 'horizontal_tile'
+        img.distort('depolar', (-1,))
+
+.. image:: ../_images/distort-depolar.png
+
+
 Polynomial
 ----------
 
