@@ -1,0 +1,2 @@
+Sphinx==4.0.1
+readthedocs-sphinx-search==0.1.0
