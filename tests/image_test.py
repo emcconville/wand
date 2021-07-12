@@ -206,6 +206,16 @@ def test_new_from_pseudo(fx_asset):
         assert img.size == (10, 10)
 
 
+def test_add_image():
+    with Image(filename='rose:') as a:
+        with Image(filename='rose:') as b:
+            a.add_image(b)
+        assert a.iterator_length() == 2
+    with raises(TypeError):
+        with Image(filename='rose:') as img:
+            img.add_image(0xdeadbeef)
+
+
 def test_clone(fx_asset):
     """Clones the existing image."""
     funcs = (lambda img: Image(image=img),

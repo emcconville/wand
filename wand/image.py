@@ -9457,6 +9457,23 @@ class Image(BaseImage):
             rp = libmagick.DestroyString(rp)
         return mtype
 
+    @trap_exception
+    def add_image(self, image):
+        """Copies a given image on to the image stack. By default, the added
+        image will be append at the end of the stack, or immediately after
+        the current image iterator defined by :meth:`~BaseImage.iterator_set`.
+        Use :meth:`~BaseImage.iterator_reset` before calling this method to
+        insert the new image before existing images on the stack.
+
+        :param image: raster to add.
+        :type image: :class:`Image`
+
+        .. versionadded:: 0.6.7
+        """
+        if not isinstance(image, Image):
+            raise TypeError('image must be instance of wand.image.Image')
+        return library.MagickAddImage(self.wand, image.wand)
+
     def blank(self, width, height, background=None):
         """Creates blank image.
 
