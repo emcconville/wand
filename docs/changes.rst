@@ -7,6 +7,17 @@ Wand Changelog
 ~~~~~~~~~~
 
 
+.. _changelog-0.6.7:
+
+Version 0.6.7
+-------------
+
+Unreleased.
+
+ - Fixed sub-image extraction on read. [:issue:`532`]
+ - [DOC] Completed :doc:`Distortion <./guide/distortion>` guide. [:issue:`534`]
+
+
 .. _changelog-0.6.6:
 
 Version 0.6.6
