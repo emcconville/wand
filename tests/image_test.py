@@ -249,6 +249,12 @@ def test_ping_from_file(fx_asset):
             assert img.size == (402, 599)
 
 
+def test_remove_image():
+    with Image(filename='null:') as empty:
+        empty.remove_image()
+        assert empty.iterator_length() == 0
+
+
 def test_save_to_filename(fx_asset):
     """Saves an image to the filename."""
     savefile = os.path.join(tempfile.mkdtemp(), 'savetest.jpg')

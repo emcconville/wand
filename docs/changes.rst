@@ -15,6 +15,7 @@ Version 0.6.7
 Unreleased.
 
  - Added :meth:`Image.add_image() <wand.image.Image.add_image>` method.
+ - Added :meth:`Image.remove_image() <wand.image.Image.remove_image>` method.
  - Fixed sub-image extraction on read. [:issue:`532`]
  - [DOC] Completed :doc:`Distortion <./guide/distortion>` guide. [:issue:`534`]
 

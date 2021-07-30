@@ -9758,6 +9758,14 @@ class Image(BaseImage):
             if units is not None:
                 self.units = units
 
+    @trap_exception
+    def remove_image(self):
+        """Remove an image from the image-stack at the current index.
+
+        .. versionadded:: 0.6.7
+        """
+        return library.MagickRemoveImage(self.wand)
+
     def reset_sequence(self):
         """Remove any previously allocated :class:`~wand.sequence.SingleImage`
         instances in :attr:`sequence` attribute.
