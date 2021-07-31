@@ -206,16 +206,6 @@ def test_new_from_pseudo(fx_asset):
         assert img.size == (10, 10)
 
 
-def test_add_image():
-    with Image(filename='rose:') as a:
-        with Image(filename='rose:') as b:
-            a.add_image(b)
-        assert a.iterator_length() == 2
-    with raises(TypeError):
-        with Image(filename='rose:') as img:
-            img.add_image(0xdeadbeef)
-
-
 def test_clone(fx_asset):
     """Clones the existing image."""
     funcs = (lambda img: Image(image=img),
@@ -230,6 +220,45 @@ def test_clone(fx_asset):
     with raises(ClosedImageError):
         img.wand
 
+
+def test_image_add():
+    with Image(filename='rose:') as a:
+        with Image(filename='rose:') as b:
+            a.image_add(b)
+        assert a.iterator_length() == 2
+    with raises(TypeError):
+        with Image(filename='rose:') as img:
+            img.image_add(0xdeadbeef)
+
+
+def test_image_get():
+    with Image(filename='rose:') as img:
+        with img.image_get() as i:
+            assert isinstance(i, Image)
+
+
+def test_image_remove():
+    with Image(filename='null:') as empty:
+        empty.image_remove()
+        assert empty.iterator_length() == 0
+
+
+def test_image_set():
+    with Image(filename='null:') as a:
+        with Image(filename='rose:') as b:
+            a.image_set(b)
+        assert a.iterator_length() == 1
+
+
+def test_image_swap():
+    with Image(width=1, height=1, background='red') as a:
+        a.read(filename='xc:green')
+        a.read(filename='xc:blue')
+        was = a.iterator_get()
+        a.image_swap(0, 2)
+        assert a.iterator_get() == was
+    with raises(TypeError):
+        a.image_swap('a', 'b')
 
 def test_ping_from_filename(fx_asset):
     file_path = str(fx_asset.join('mona-lisa.jpg'))
@@ -247,12 +276,6 @@ def test_ping_from_file(fx_asset):
     with fx_asset.join('mona-lisa.jpg').open('rb') as fd:
         with Image.ping(file=fd) as img:
             assert img.size == (402, 599)
-
-
-def test_remove_image():
-    with Image(filename='null:') as empty:
-        empty.remove_image()
-        assert empty.iterator_length() == 0
 
 
 def test_save_to_filename(fx_asset):

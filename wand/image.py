@@ -2500,7 +2500,6 @@ class BaseImage(Resource):
         return Color(stroke) if stroke else None
 
     @stroke_color.setter
-    @manipulative
     def stroke_color(self, color):
         if isinstance(color, string_type):
             color = Color(color)
@@ -2518,7 +2517,6 @@ class BaseImage(Resource):
         return float(strokewidth) if strokewidth else None
 
     @stroke_width.setter
-    @manipulative
     def stroke_width(self, width):
         assertions.assert_real(stroke_width=width)
         self.options['strokewidth'] = str(width)
@@ -9457,23 +9455,6 @@ class Image(BaseImage):
             rp = libmagick.DestroyString(rp)
         return mtype
 
-    @trap_exception
-    def add_image(self, image):
-        """Copies a given image on to the image stack. By default, the added
-        image will be append at the end of the stack, or immediately after
-        the current image iterator defined by :meth:`~BaseImage.iterator_set`.
-        Use :meth:`~BaseImage.iterator_reset` before calling this method to
-        insert the new image before existing images on the stack.
-
-        :param image: raster to add.
-        :type image: :class:`Image`
-
-        .. versionadded:: 0.6.7
-        """
-        if not isinstance(image, Image):
-            raise TypeError('image must be instance of wand.image.Image')
-        return library.MagickAddImage(self.wand, image.wand)
-
     def blank(self, width, height, background=None):
         """Creates blank image.
 
@@ -9602,6 +9583,81 @@ class Image(BaseImage):
         mime_type = self.mimetype
         base_bytes = b64encode(self.make_blob())
         return "data:{0};base64,{1}".format(mime_type, text(base_bytes))
+
+    @trap_exception
+    def image_add(self, image):
+        """Copies a given image on to the image stack. By default, the added
+        image will be append at the end of the stack, or immediately after
+        the current image iterator defined by :meth:`~BaseImage.iterator_set`.
+        Use :meth:`~BaseImage.iterator_reset` before calling this method to
+        insert the new image before existing images on the stack.
+
+        :param image: raster to add.
+        :type image: :class:`Image`
+
+        .. versionadded:: 0.6.7
+        """
+        if not isinstance(image, Image):
+            raise TypeError('image must be instance of wand.image.Image')
+        return library.MagickAddImage(self.wand, image.wand)
+
+    def image_get(self):
+        """Generate & return a clone of a single image at the current
+        image-stack index.
+
+        .. versionadded:: 0.6.7
+        """
+        r = library.MagickGetImage(self.wand)
+        if not r:
+            self.raise_exception()
+            return None  # noqa - Safety if exception isn't thrown.
+        return Image(BaseImage(r))
+
+    @trap_exception
+    def image_remove(self):
+        """Remove an image from the image-stack at the current index.
+
+        .. versionadded:: 0.6.7
+        """
+        return library.MagickRemoveImage(self.wand)
+
+    @trap_exception
+    def image_set(self, image):
+        """Overwrite current image on the image-stack with given image.
+
+        :param image: Wand instance of images to write to stack.
+        :type image: :class:`wand.image.Image`
+
+        .. versionadded:: 0.6.7
+        """
+        if not isinstance(image, Image):
+            raise TypeError('image must be an instance of wand.image.Image,',
+                            ' not ' + repr(image))
+        return library.MagickSetImage(self.wand, image.wand)
+
+    @trap_exception
+    def image_swap(self, i, j):
+        """Swap two images on the image-stack.
+
+        :param i: image index to replace with ``j``
+        :type i: :class:`numbers.Integral`
+        :param j: image index to replace with ``i``
+        :type j: :class:`numbers.Integral`
+
+        .. versionadded:: 0.6.7
+        """
+        assertions.assert_integer(i=i)
+        assertions.assert_integer(j=j)
+        op = self.iterator_get()
+        self.iterator_set(i)
+        with self.image_get() as a:
+            self.iterator_set(j)
+            with self.image_get() as b:
+                self.image_set(a)
+                self.iterator_set(i)
+                self.image_set(b)
+        self.iterator_set(op)
+
 
     def make_blob(self, format=None):
         """Makes the binary string of the image.
@@ -9757,14 +9813,6 @@ class Image(BaseImage):
         else:
             if units is not None:
                 self.units = units
-
-    @trap_exception
-    def remove_image(self):
-        """Remove an image from the image-stack at the current index.
-
-        .. versionadded:: 0.6.7
-        """
-        return library.MagickRemoveImage(self.wand)
 
     def reset_sequence(self):
         """Remove any previously allocated :class:`~wand.sequence.SingleImage`
