@@ -65,6 +65,8 @@ This table maps ImageMagick's CLI operators to Wand's
 +-------------------------------------+----------------------------------------------------------+
 | :cli:`color-matrix`                 | :meth:`wand.image.BaseImage.color_matrix()`              |
 +-------------------------------------+----------------------------------------------------------+
+| :cli:`color-threshold`              | :meth:`wand.image.BaseImage.color_threshold()`           |
++-------------------------------------+----------------------------------------------------------+
 | :cli:`colorspace`                   | :meth:`wand.image.BaseImage.transform_colorspace()`      |
 +-------------------------------------+----------------------------------------------------------+
 | :cli:`compare`                      | :meth:`wand.image.BaseImage.compare()`                   |
@@ -83,6 +85,8 @@ This table maps ImageMagick's CLI operators to Wand's
 +-------------------------------------+----------------------------------------------------------+
 | :cli:`cycle`                        | :meth:`wand.image.BaseImage.cycle_color_map()`           |
 +-------------------------------------+----------------------------------------------------------+
+| :cli:`decipher`                     | :meth:`wand.image.BaseImage.decipher()`                  |
++-------------------------------------+----------------------------------------------------------+
 | :cli:`deconstruct`                  | :meth:`wand.image.BaseImage.deconstruct()`               |
 +-------------------------------------+----------------------------------------------------------+
 | :cli:`deskew`                       | :meth:`wand.image.BaseImage.deskew()`                    |
@@ -94,6 +98,8 @@ This table maps ImageMagick's CLI operators to Wand's
 | :cli:`edge`                         | :meth:`wand.image.BaseImage.edge()`                      |
 +-------------------------------------+----------------------------------------------------------+
 | :cli:`emboss`                       | :meth:`wand.image.BaseImage.emboss()`                    |
++-------------------------------------+----------------------------------------------------------+
+| :cli:`encipher`                     | :meth:`wand.image.BaseImage.encipher()`                  |
 +-------------------------------------+----------------------------------------------------------+
 | :cli:`enhance`                      | :meth:`wand.image.BaseImage.enhance()`                   |
 +-------------------------------------+----------------------------------------------------------+
@@ -128,6 +134,8 @@ This table maps ImageMagick's CLI operators to Wand's
 | :cli:`ift`                          | :meth:`wand.image.BaseImage.inverse_fourier_transform()` |
 +-------------------------------------+----------------------------------------------------------+
 | :cli:`implode`                      | :meth:`wand.image.BaseImage.implode()`                   |
++-------------------------------------+----------------------------------------------------------+
+| :cli:`kmeans`                       | :meth:`wand.image.BaseImage.kmeans()`                    |
 +-------------------------------------+----------------------------------------------------------+
 | :cli:`kuwahara`                     | :meth:`wand.image.BaseImage.kuwahara()`                  |
 +-------------------------------------+----------------------------------------------------------+
@@ -247,6 +255,8 @@ This table maps ImageMagick's CLI operators to Wand's
 +-------------------------------------+----------------------------------------------------------+
 | :cli:`strip`                        | :meth:`wand.image.BaseImage.strip()`                     |
 +-------------------------------------+----------------------------------------------------------+
+| :cli:`swap`                         | :meth:`wand.image.Image.image_swap()`                    |
++-------------------------------------+----------------------------------------------------------+
 | :cli:`swirl`                        | :meth:`wand.image.BaseImage.swirl()`                     |
 +-------------------------------------+----------------------------------------------------------+
 | :cli:`texture`                      | :meth:`wand.image.BaseImage.texture()`                   |
@@ -281,6 +291,8 @@ This table maps ImageMagick's CLI operators to Wand's
 +-------------------------------------+----------------------------------------------------------+
 | :cli:`wavelet-denoise`              | :meth:`wand.image.BaseImage.wavelet_denoise()`           |
 +-------------------------------------+----------------------------------------------------------+
+| :cli:`white-balance`                | :meth:`wand.image.BaseImage.white_balance()`             |
++-------------------------------------+----------------------------------------------------------+
 | :cli:`white-threshold`              | :meth:`wand.image.BaseImage.white_threshold()`           |
 +-------------------------------------+----------------------------------------------------------+
 | :cli:`write-mask`                   | :meth:`wand.image.BaseImage.write_mask()`                |
@@ -293,100 +305,102 @@ CLI Options to Wand Properties
 This table list ImageMagick's options, and maps them to Wand's
 :class:`~wand.image.Image` properties.
 
-+----------------------+--------------------------------------------------+
-| CLI Options          | Wand Properties                                  |
-+======================+==================================================+
-| :cli:`alpha`         | :attr:`wand.image.BaseImage.alpha_channel`       |
-+----------------------+--------------------------------------------------+
-| :cli:`antialias`     | :attr:`wand.image.BaseImage.font_antialias`      |
-+----------------------+--------------------------------------------------+
-| :cli:`antialias`     | :attr:`wand.image.BaseImage.antialias`           |
-+----------------------+--------------------------------------------------+
-| :cli:`attenuate`     | See :meth:`wand.image.BaseImage.noise()`         |
-+----------------------+--------------------------------------------------+
-| :cli:`background`    | :attr:`wand.image.BaseImage.background_color`    |
-+----------------------+--------------------------------------------------+
-| :cli:`blue-primary`  | :attr:`wand.image.BaseImage.blue_primary`        |
-+----------------------+--------------------------------------------------+
-| :cli:`bordercolor`   | :attr:`wand.image.BaseImage.border_color`        |
-+----------------------+--------------------------------------------------+
-| :cli:`colorspace`    | :attr:`wand.image.BaseImage.colorspace`          |
-+----------------------+--------------------------------------------------+
-| :cli:`compose`       | :attr:`wand.image.BaseImage.compose`             |
-+----------------------+--------------------------------------------------+
-| :cli:`compression`   | :attr:`wand.image.BaseImage.compression`         |
-+----------------------+--------------------------------------------------+
-| :cli:`delay`         | :attr:`wand.image.BaseImage.ticks_per_second`    |
-+----------------------+--------------------------------------------------+
-| :cli:`delay`         | :attr:`wand.sequence.SingleImage.delay`          |
-+----------------------+--------------------------------------------------+
-| :cli:`density`       | :attr:`wand.image.BaseImage.resolution`          |
-+----------------------+--------------------------------------------------+
-| :cli:`depth`         | :attr:`wand.image.BaseImage.depth`               |
-+----------------------+--------------------------------------------------+
-| :cli:`dispose`       | :attr:`wand.image.BaseImage.dispose`             |
-+----------------------+--------------------------------------------------+
-| :cli:`fill`          | :attr:`wand.image.BaseImage.font_color`          |
-+----------------------+--------------------------------------------------+
-| :cli:`font`          | :attr:`wand.image.BaseImage.font`                |
-+----------------------+--------------------------------------------------+
-| :cli:`format`        | :attr:`wand.image.BaseImage.format`              |
-+----------------------+--------------------------------------------------+
-| :cli:`fuzz`          | :attr:`wand.image.BaseImage.fuzz`                |
-+----------------------+--------------------------------------------------+
-| :cli:`gravity`       | :attr:`wand.image.BaseImage.gravity`             |
-+----------------------+--------------------------------------------------+
-| :cli:`green-primary` | :attr:`wand.image.BaseImage.green_primary`       |
-+----------------------+--------------------------------------------------+
-| :cli:`intent`        | :attr:`wand.image.BaseImage.rendering_intent`    |
-+----------------------+--------------------------------------------------+
-| :cli:`interlace`     | :attr:`wand.image.BaseImage.interlace_scheme`    |
-+----------------------+--------------------------------------------------+
-| :cli:`interpolate`   | :attr:`wand.image.BaseImage.interpolate_method`  |
-+----------------------+--------------------------------------------------+
-| :cli:`loop`          | :attr:`wand.image.BaseImage.loop`                |
-+----------------------+--------------------------------------------------+
-| :cli:`mattecolor`    | :attr:`wand.image.BaseImage.matte_color`         |
-+----------------------+--------------------------------------------------+
-| :cli:`orientation`   | :attr:`wand.image.BaseImage.orientation`         |
-+----------------------+--------------------------------------------------+
-| :cli:`page`          | :attr:`wand.image.BaseImage.page`                |
-+----------------------+--------------------------------------------------+
-| :cli:`page`          | :attr:`wand.image.BaseImage.page_height`         |
-+----------------------+--------------------------------------------------+
-| :cli:`page`          | :attr:`wand.image.BaseImage.page_width`          |
-+----------------------+--------------------------------------------------+
-| :cli:`page`          | :attr:`wand.image.BaseImage.page_x`              |
-+----------------------+--------------------------------------------------+
-| :cli:`page`          | :attr:`wand.image.BaseImage.page_y`              |
-+----------------------+--------------------------------------------------+
-| :cli:`pointsize`     | :attr:`wand.image.BaseImage.font_size`           |
-+----------------------+--------------------------------------------------+
-| :cli:`quality`       | :attr:`wand.image.BaseImage.compression_quality` |
-+----------------------+--------------------------------------------------+
-| :cli:`red-primary`   | :attr:`wand.image.BaseImage.red_primary`         |
-+----------------------+--------------------------------------------------+
-| :cli:`scene`         | :attr:`wand.image.BaseImage.scene`               |
-+----------------------+--------------------------------------------------+
-| :cli:`seed`          | :attr:`wand.image.BaseImage.seed`                |
-+----------------------+--------------------------------------------------+
-| :cli:`size`          | :attr:`wand.image.BaseImage.height`              |
-+----------------------+--------------------------------------------------+
-| :cli:`size`          | :attr:`wand.image.BaseImage.width`               |
-+----------------------+--------------------------------------------------+
-| :cli:`size`          | :attr:`wand.image.BaseImage.size`                |
-+----------------------+--------------------------------------------------+
-| :cli:`stroke`        | :attr:`wand.image.BaseImage.stroke_color`        |
-+----------------------+--------------------------------------------------+
-| :cli:`strokewidth`   | :attr:`wand.image.BaseImage.stroke_width`        |
-+----------------------+--------------------------------------------------+
-| :cli:`treedepth`     | See :meth:`wand.image.BaseImage.quantize()`      |
-+----------------------+--------------------------------------------------+
-| :cli:`type`          | :attr:`wand.image.BaseImage.type`                |
-+----------------------+--------------------------------------------------+
-| :cli:`units`         | :attr:`wand.image.BaseImage.units`               |
-+----------------------+--------------------------------------------------+
-| :cli:`virtual-pixel` | :attr:`wand.image.BaseImage.virtual_pixel`       |
-+----------------------+--------------------------------------------------+
-| :cli:`white-point`   | :attr:`wand.image.BaseImage.white_point`         |
-+----------------------+--------------------------------------------------+
++------------------------+--------------------------------------------------+
+| CLI Options            | Wand Properties                                  |
++========================+==================================================+
+| :cli:`alpha`           | :attr:`wand.image.BaseImage.alpha_channel`       |
++------------------------+--------------------------------------------------+
+| :cli:`antialias`       | :attr:`wand.image.BaseImage.font_antialias`      |
++------------------------+--------------------------------------------------+
+| :cli:`antialias`       | :attr:`wand.image.BaseImage.antialias`           |
++------------------------+--------------------------------------------------+
+| :cli:`attenuate`       | See :meth:`wand.image.BaseImage.noise()`         |
++------------------------+--------------------------------------------------+
+| :cli:`background`      | :attr:`wand.image.BaseImage.background_color`    |
++------------------------+--------------------------------------------------+
+| :cli:`blue-primary`    | :attr:`wand.image.BaseImage.blue_primary`        |
++------------------------+--------------------------------------------------+
+| :cli:`bordercolor`     | :attr:`wand.image.BaseImage.border_color`        |
++------------------------+--------------------------------------------------+
+| :cli:`colorspace`      | :attr:`wand.image.BaseImage.colorspace`          |
++------------------------+--------------------------------------------------+
+| :cli:`compose`         | :attr:`wand.image.BaseImage.compose`             |
++------------------------+--------------------------------------------------+
+| :cli:`compression`     | :attr:`wand.image.BaseImage.compression`         |
++------------------------+--------------------------------------------------+
+| :cli:`delay`           | :attr:`wand.image.BaseImage.ticks_per_second`    |
++------------------------+--------------------------------------------------+
+| :cli:`delay`           | :attr:`wand.sequence.SingleImage.delay`          |
++------------------------+--------------------------------------------------+
+| :cli:`density`         | :attr:`wand.image.BaseImage.resolution`          |
++------------------------+--------------------------------------------------+
+| :cli:`depth`           | :attr:`wand.image.BaseImage.depth`               |
++------------------------+--------------------------------------------------+
+| :cli:`dispose`         | :attr:`wand.image.BaseImage.dispose`             |
++------------------------+--------------------------------------------------+
+| :cli:`fill`            | :attr:`wand.image.BaseImage.font_color`          |
++------------------------+--------------------------------------------------+
+| :cli:`font`            | :attr:`wand.image.BaseImage.font`                |
++------------------------+--------------------------------------------------+
+| :cli:`format`          | :attr:`wand.image.BaseImage.format`              |
++------------------------+--------------------------------------------------+
+| :cli:`fuzz`            | :attr:`wand.image.BaseImage.fuzz`                |
++------------------------+--------------------------------------------------+
+| :cli:`gravity`         | :attr:`wand.image.BaseImage.gravity`             |
++------------------------+--------------------------------------------------+
+| :cli:`green-primary`   | :attr:`wand.image.BaseImage.green_primary`       |
++------------------------+--------------------------------------------------+
+| :cli:`intent`          | :attr:`wand.image.BaseImage.rendering_intent`    |
++------------------------+--------------------------------------------------+
+| :cli:`interlace`       | :attr:`wand.image.BaseImage.interlace_scheme`    |
++------------------------+--------------------------------------------------+
+| :cli:`interpolate`     | :attr:`wand.image.BaseImage.interpolate_method`  |
++------------------------+--------------------------------------------------+
+| :cli:`loop`            | :attr:`wand.image.BaseImage.loop`                |
++------------------------+--------------------------------------------------+
+| :cli:`mattecolor`      | :attr:`wand.image.BaseImage.matte_color`         |
++------------------------+--------------------------------------------------+
+| :cli:`orientation`     | :attr:`wand.image.BaseImage.orientation`         |
++------------------------+--------------------------------------------------+
+| :cli:`page`            | :attr:`wand.image.BaseImage.page`                |
++------------------------+--------------------------------------------------+
+| :cli:`page`            | :attr:`wand.image.BaseImage.page_height`         |
++------------------------+--------------------------------------------------+
+| :cli:`page`            | :attr:`wand.image.BaseImage.page_width`          |
++------------------------+--------------------------------------------------+
+| :cli:`page`            | :attr:`wand.image.BaseImage.page_x`              |
++------------------------+--------------------------------------------------+
+| :cli:`page`            | :attr:`wand.image.BaseImage.page_y`              |
++------------------------+--------------------------------------------------+
+| :cli:`pointsize`       | :attr:`wand.image.BaseImage.font_size`           |
++------------------------+--------------------------------------------------+
+| :cli:`quality`         | :attr:`wand.image.BaseImage.compression_quality` |
++------------------------+--------------------------------------------------+
+| :cli:`red-primary`     | :attr:`wand.image.BaseImage.red_primary`         |
++------------------------+--------------------------------------------------+
+| :cli:`sampling-factor` | :attr:`wand.image.BaseImage.sampling_factors`    |
++------------------------+--------------------------------------------------+
+| :cli:`scene`           | :attr:`wand.image.BaseImage.scene`               |
++------------------------+--------------------------------------------------+
+| :cli:`seed`            | :attr:`wand.image.BaseImage.seed`                |
++------------------------+--------------------------------------------------+
+| :cli:`size`            | :attr:`wand.image.BaseImage.height`              |
++------------------------+--------------------------------------------------+
+| :cli:`size`            | :attr:`wand.image.BaseImage.width`               |
++------------------------+--------------------------------------------------+
+| :cli:`size`            | :attr:`wand.image.BaseImage.size`                |
++------------------------+--------------------------------------------------+
+| :cli:`stroke`          | :attr:`wand.image.BaseImage.stroke_color`        |
++------------------------+--------------------------------------------------+
+| :cli:`strokewidth`     | :attr:`wand.image.BaseImage.stroke_width`        |
++------------------------+--------------------------------------------------+
+| :cli:`treedepth`       | See :meth:`wand.image.BaseImage.quantize()`      |
++------------------------+--------------------------------------------------+
+| :cli:`type`            | :attr:`wand.image.BaseImage.type`                |
++------------------------+--------------------------------------------------+
+| :cli:`units`           | :attr:`wand.image.BaseImage.units`               |
++------------------------+--------------------------------------------------+
+| :cli:`virtual-pixel`   | :attr:`wand.image.BaseImage.virtual_pixel`       |
++------------------------+--------------------------------------------------+
+| :cli:`white-point`     | :attr:`wand.image.BaseImage.white_point`         |
++------------------------+--------------------------------------------------+
