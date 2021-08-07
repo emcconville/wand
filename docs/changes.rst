@@ -20,6 +20,7 @@ Unreleased.
  - Added :meth:`Image.image_set() <wand.image.Image.image_set>` method.
  - Added :meth:`Image.image_swap() <wand.image.Image.image_swap>` method.
  - Fixed sub-image extraction on read. [:issue:`532`]
+ - Fixed :attr:`~wand.image.BaseImage.background_color` attribute when image was not read.
  - [DOC] Completed :doc:`Distortion <./guide/distortion>` guide. [:issue:`534`]
  - [DOC] Added :doc:`Morphology <./guide/morphology>` guide.
 

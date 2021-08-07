@@ -1476,9 +1476,15 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.1.9
 
+        .. versionchanged:: 0.6.7
+           Allow property to be set before image read.
         """
         pixel = library.NewPixelWand()
-        result = library.MagickGetImageBackgroundColor(self.wand, pixel)
+        if library.MagickGetNumberImages(self.wand):
+            result = library.MagickGetImageBackgroundColor(self.wand, pixel)
+        else:
+            pixel = library.MagickGetBackgroundColor(self.wand)
+            result = True
         if not result:  # pragma: no cover
             self.raise_exception()
         else:
@@ -1493,10 +1499,12 @@ class BaseImage(Resource):
             color = Color(color)
         assertions.assert_color(color=color)
         with color:
-            result = library.MagickSetImageBackgroundColor(self.wand,
-                                                           color.resource)
-            if not result:  # pragma: no cover
-                self.raise_exception()
+            # Only set the image background if an image was loaded.
+            if library.MagickGetNumberImages(self.wand):
+                result = library.MagickSetImageBackgroundColor(self.wand,
+                                                               color.resource)
+                if not result:  # pragma: no cover
+                    self.raise_exception()
             # Also set the image stack.
             result = library.MagickSetBackgroundColor(self.wand,
                                                       color.resource)
