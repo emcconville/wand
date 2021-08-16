@@ -137,7 +137,7 @@ arguments allows a simplified cropping alternative.
 Transform images
 ----------------
 
-Use this function to crop and resize and image at the same time,
+Use this function to crop and resize an image at the same time,
 using ImageMagick geometry strings. Cropping is performed first,
 followed by resizing.
 
