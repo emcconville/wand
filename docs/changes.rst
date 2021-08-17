@@ -12,7 +12,7 @@ Wand Changelog
 Version 0.6.7
 -------------
 
-Unreleased.
+Released on August 16th, 2021.
 
  - Added :meth:`Image.image_add() <wand.image.Image.image_add>` method.
  - Added :meth:`Image.image_get() <wand.image.Image.image_get>` method.
