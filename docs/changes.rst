@@ -7,6 +7,16 @@ Wand Changelog
 ~~~~~~~~~~
 
 
+.. _changelog-0.6.8:
+
+Version 0.6.8
+-------------
+
+Unreleased.
+
+ - Added :meth:`Image.region() <wand.image.BaseImage.region>` method.
+
+
 .. _changelog-0.6.7:
 
 Version 0.6.7

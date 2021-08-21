@@ -7224,6 +7224,52 @@ class BaseImage(Resource):
                                                clip_mask.wand)
         return r
 
+    def region(self, width=None, height=None, x=None, y=None):
+        """Extract an area of the image. This is the same as :meth:`crop`,
+        but returns a new instance of :class:`Image` without altering the
+        original source image.
+
+        .. code-block:: python
+
+            from wand.image import Image
+
+            with Image(filename='input.jpg') as img:
+                with img.region(width=100, height=100, x=0, y=0) as area:
+                    pass
+
+        :param width: Area size on the X-axis. Default value is
+                      the image's :attr:`page_width`.
+        :type width: :class:`numbers.`Integral`
+        :param height: Area size on the  Y-axis.Default value is
+                       the image's :attr:`page_height`.
+        :type height: :class:`numbers.`Integral`
+        :param x: X-axis offset. This number can be negative. Default value is
+                  the image's :attr:`page_x`.
+        :type x: :class:`numbers.`Integral`
+        :param y: Y-axis offset. This number can be negative. Default value is
+                  the image's :attr:`page_y`.
+        :type y: :class:`numbers.`Integral`
+        :returns: New instance of Wand.
+        :rtype: :class:`Image`
+
+        .. versionadded:: 0.6.8
+        """
+        ow, oh, ox, oy = self.page
+        if width is None:
+            width = ow
+        if height is None:
+            height = oh
+        if x is None:
+            x = ox
+        if y is None:
+            y = oy
+        assertions.assert_unsigned_integer(width=width, height=height)
+        assertions.assert_integer(x=x, y=y)
+        new_wand = library.MagickGetImageRegion(self.wand, width, height, x, y)
+        if not new_wand:
+            self.raise_exception()
+        return Image(BaseImage(new_wand))
+
     @manipulative
     @trap_exception
     def remap(self, affinity=None, method='no'):
@@ -9665,7 +9711,6 @@ class Image(BaseImage):
                 self.iterator_set(i)
                 self.image_set(b)
         self.iterator_set(op)
-
 
     def make_blob(self, format=None):
         """Makes the binary string of the image.

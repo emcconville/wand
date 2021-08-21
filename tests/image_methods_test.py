@@ -1714,6 +1714,15 @@ def test_range_threshold():
         img.range_threshold(20, 40, 60)
 
 
+def test_region():
+    with Image(filename='rose:') as src:
+        w, h, x, y = src.page
+        with src.region() as dst:
+            assert (w, h) == dst.size
+        with src.region(width=w//2, height=h//2, x=x//2, y=y//2) as dst:
+            assert (w//2, h//2) == dst.size
+
+
 def test_remap(fx_asset):
     with Image(filename='rose:') as img:
         was = img.signature
