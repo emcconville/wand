@@ -7239,16 +7239,16 @@ class BaseImage(Resource):
 
         :param width: Area size on the X-axis. Default value is
                       the image's :attr:`page_width`.
-        :type width: :class:`numbers.`Integral`
+        :type width: :class:`numbers.Integral`
         :param height: Area size on the  Y-axis.Default value is
                        the image's :attr:`page_height`.
-        :type height: :class:`numbers.`Integral`
+        :type height: :class:`numbers.Integral`
         :param x: X-axis offset. This number can be negative. Default value is
                   the image's :attr:`page_x`.
-        :type x: :class:`numbers.`Integral`
+        :type x: :class:`numbers.Integral`
         :param y: Y-axis offset. This number can be negative. Default value is
                   the image's :attr:`page_y`.
-        :type y: :class:`numbers.`Integral`
+        :type y: :class:`numbers.Integral`
         :returns: New instance of Wand.
         :rtype: :class:`Image`
 
