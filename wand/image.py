@@ -4914,7 +4914,7 @@ class BaseImage(Resource):
             width = self.width
         if height is None or height == 0:
             height = self.height
-        assertions.assert_integer(width=width, height=height)
+        assertions.assert_unsigned_integer(width=width, height=height)
         if gravity is None:
             if x is None:
                 x = 0
