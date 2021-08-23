@@ -1741,6 +1741,14 @@ def test_region():
             assert (w, h) == dst.size
         with src.region(width=w//2, height=h//2, x=x//2, y=y//2) as dst:
             assert (w//2, h//2) == dst.size
+    with Image(filename='rose:') as src:
+        with src.region(width=10, height=10, gravity='south_east') as dst:
+            assert (70, 46, 60, 36) == dst.page
+            assert (10, 10) == dst.size
+    with raises(ValueError):
+        with Image(filename='rose:') as img:
+            with img.region(x=10, gravity='center') as i:
+                pass
 
 
 def test_remap(fx_asset):

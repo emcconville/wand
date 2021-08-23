@@ -7255,7 +7255,7 @@ class BaseImage(Resource):
                                                clip_mask.wand)
         return r
 
-    def region(self, width=None, height=None, x=None, y=None):
+    def region(self, width=None, height=None, x=None, y=None, gravity=None):
         """Extract an area of the image. This is the same as :meth:`crop`,
         but returns a new instance of :class:`Image` without altering the
         original source image.
@@ -7280,6 +7280,9 @@ class BaseImage(Resource):
         :param y: Y-axis offset. This number can be negative. Default value is
                   the image's :attr:`page_y`.
         :type y: :class:`numbers.Integral`
+        :param region: Helper attribute to set ``x`` & ``y`` offset. See
+                       :const:`GRAVITY_TYPES`.
+        :type region: :class:`basestring`
         :returns: New instance of Wand.
         :rtype: :class:`Image`
 
@@ -7290,11 +7293,15 @@ class BaseImage(Resource):
             width = ow
         if height is None:
             height = oh
+        assertions.assert_unsigned_integer(width=width, height=height)
+        if gravity is not None:
+            if x is not None or y is not None:
+                raise ValueError('x & y can not be used with gravity.')
+            y, x = self._gravity_to_offset(gravity, width, height)
         if x is None:
             x = ox
         if y is None:
             y = oy
-        assertions.assert_unsigned_integer(width=width, height=height)
         assertions.assert_integer(x=x, y=y)
         new_wand = library.MagickGetImageRegion(self.wand, width, height, x, y)
         if not new_wand:
