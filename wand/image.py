@@ -8162,7 +8162,7 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def splice(self, width=None, height=None, x=None, y=None):
+    def splice(self, width=None, height=None, x=None, y=None, gravity=None):
         """Partitions image by splicing a ``width`` x ``height`` rectangle at
         (``x``, ``y``) offset coordinate. The space inserted will be replaced
         by the :attr:`background_color` value.
@@ -8178,7 +8178,22 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.3
         """
-        assertions.assert_integer(width=width, height=height, x=x, y=y)
+        ow, oh = self.size
+        if width is None:
+            width = ow
+        if height is None:
+            height = oh
+        assertions.assert_unsigned_integer(width=width, height=height)
+        if gravity is None:
+            if x is None:
+                x = 0
+            if y is None:
+                y = 0
+        else:
+            if x is not None or y is not None:
+                raise ValueError('x & y can not be used with gravity.')
+            y, x = self._gravity_to_offset(gravity, width, height)
+        assertions.assert_integer(x=x, y=y)
         return library.MagickSpliceImage(self.wand, width, height, x, y)
 
     @manipulative

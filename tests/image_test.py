@@ -260,6 +260,7 @@ def test_image_swap():
     with raises(TypeError):
         a.image_swap('a', 'b')
 
+
 def test_ping_from_filename(fx_asset):
     file_path = str(fx_asset.join('mona-lisa.jpg'))
     with Image.ping(filename=file_path) as img:

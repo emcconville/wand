@@ -1747,7 +1747,7 @@ def test_region():
             assert (10, 10) == dst.size
     with raises(ValueError):
         with Image(filename='rose:') as img:
-            with img.region(x=10, gravity='center') as i:
+            with img.region(x=10, gravity='center') as _:
                 pass
 
 
@@ -2158,6 +2158,13 @@ def test_splice(fx_asset):
         img.splice(10, 10, 10, 10)
         assert width+10, height+10 == img.size
         assert img[15, 15] == green
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.splice(width=10, height=10, gravity='center')
+        assert img.signature != was
+    with raises(ValueError):
+        with Image(filename='rose:') as img:
+            img.splice(width=10, height=10, x=10, gravity='center')
 
 
 def test_spread(fx_asset):
