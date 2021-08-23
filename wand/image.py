@@ -4885,35 +4885,46 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def extent(self, width=None, height=None, x=0, y=0):
-        """extends the image as defined by the geometry, gravity, and wand
-        background color. Set the (x,y) offset of the geometry to move the
-        original wand relative to the extended wand.
+    def extent(self, width=None, height=None, x=None, y=None, gravity=None):
+        """Adjust the canvas size of the image. Use ``x`` & ``y`` to offset
+        the image's relative placement in the canvas, or ``gravity`` helper
+        for quick position placement.
 
-        :param width: the :attr:`width` of the extended image.
-                      default is the :attr:`width` of the image.
+        :param width: the target width of the extended image.
+                      Default is the :attr:`width` of the image.
         :type width: :class:`numbers.Integral`
-        :param height: the :attr:`height` of the extended image.
-                       default is the :attr:`height` of the image.
+        :param height: the target height of the extended image.
+                       Default is the :attr:`height` of the image.
         :type height: :class:`numbers.Integral`
-        :param x: the :attr:`x` offset of the extended image.
-                      default is 0
+        :param x: the x-axis offset of the extended image.
+                      Default is 0, and can not be used with ``gravity``.
         :type x: :class:`numbers.Integral`
         :param y: the :attr:`y` offset of the extended image.
-                       default is 0
+                       Default is 0, and can not be used with ``gravity``.
         :type y: :class:`numbers.Integral`
+        :param gravity: position of the item extent when not using ``x`` &
+                        ``y``. See :const:`GRAVITY_TYPES`.
 
         .. versionadded:: 0.4.5
+
+        .. versionchanged:: 0.6.8
+           Added ``gravity`` argument.
         """
         if width is None or width == 0:
             width = self.width
         if height is None or height == 0:
             height = self.height
-        if width < 0:
-            raise ValueError('image width cannot be negative integer')
-        elif height < 0:
-            raise ValueError('image height cannot be negative integer')
-
+        assertions.assert_integer(width=width, height=height)
+        if gravity is None:
+            if x is None:
+                x = 0
+            if y is None:
+                y = 0
+        else:
+            if x is not None or y is not None:
+                raise ValueError('x & y can not be used with gravity.')
+            y, x = self._gravity_to_offset(gravity, width, height)
+        assertions.assert_integer(x=x, y=y)
         return library.MagickExtentImage(self.wand, width, height, x, y)
 
     def features(self, distance):

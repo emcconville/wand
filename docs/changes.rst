@@ -15,6 +15,7 @@ Version 0.6.8
 Unreleased.
 
  - Added :meth:`Image.region() <wand.image.BaseImage.region>` method.
+ - Updated :meth:`Image.extent() <wand.image.BaseImage.extent>` method to support ``gravity`` keyword. [:issue:`554`]
 
 
 .. _changelog-0.6.7:

@@ -856,6 +856,14 @@ def test_extent(fx_asset):
             img.extent(height=-10)
 
 
+def test_extent_gravity():
+    with Image(filename='rose:') as img:
+        img.extent(width=10, height=10, gravity='south_east')
+        assert (10, 10, 0, 0) == img.page
+        img.extent(width=100, height=100, gravity='center')
+        assert (100, 100, 0, 0) == img.page
+
+
 def test_features():
     with Image(filename='rose:') as img:
         cf = img.features(10)
