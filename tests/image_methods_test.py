@@ -236,6 +236,15 @@ def test_chop():
         assert img.height == (h - 10)
 
 
+def test_chop_gravity():
+    with Image(filename='rose:') as img:
+        img.chop(width=10, height=10, gravity='south_east')
+        assert (60, 36, 0, 0) == img.page
+    with raises(ValueError):
+        with Image(filename='rose:') as img:
+            img.chop(x=10, gravity='north')
+
+
 @mark.skipif(MAGICK_VERSION_NUMBER < 0x709,
              reason="Clahe requires Imagemagick-7.0.9.")
 def test_clahe():
@@ -862,6 +871,9 @@ def test_extent_gravity():
         assert (10, 10, 0, 0) == img.page
         img.extent(width=100, height=100, gravity='center')
         assert (100, 100, 0, 0) == img.page
+    with raises(ValueError):
+        with Image(filename='rose:') as img:
+            img.extent(x=10, gravity='north')
 
 
 def test_features():

@@ -3290,7 +3290,7 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def chop(self, width, height, x=0, y=0):
+    def chop(self, width=None, height=None, x=None, y=None, gravity=None):
         """Removes a region of an image, and reduces the image size
         accordingly.
 
@@ -3302,10 +3302,29 @@ class BaseImage(Resource):
         :type x: :class:`numbers.Integral`
         :param y: Offset on the Y-axis.
         :type y: :class:`numbers.Integral`
+        :param gravity: Helper to auto-calculate offset.
+                        See :const:`GRAVITY_TYPES`.
+        :type gravity: :class:`basestring`
 
         .. versionadded:: 0.5.5
+
+        .. versionchanged:: 0.6.8
+           Added ``gravity`` argument.
         """
+        if width is None or width == 0:
+            width = self.width
+        if height is None or height == 0:
+            height = self.height
         assertions.assert_unsigned_integer(width=width, height=height)
+        if gravity is None:
+            if x is None:
+                x = 0
+            if y is None:
+                y = 0
+        else:
+            if x is not None or y is not None:
+                raise ValueError('x & y can not be used with gravity.')
+            y, x = self._gravity_to_offset(gravity, width, height)
         assertions.assert_integer(x=x, y=y)
         return library.MagickChopImage(self.wand, width, height, x, y)
 
@@ -4904,6 +4923,7 @@ class BaseImage(Resource):
         :type y: :class:`numbers.Integral`
         :param gravity: position of the item extent when not using ``x`` &
                         ``y``. See :const:`GRAVITY_TYPES`.
+        :type gravity: :class:`basestring`
 
         .. versionadded:: 0.4.5
 
