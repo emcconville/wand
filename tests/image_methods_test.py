@@ -1200,10 +1200,10 @@ def test_kuwahara():
 def test_label():
     with Image(filename='rose:') as img:
         was = img.signature
-        img.label('a', left=0, top=0, font=Font('monospace', 12))
+        img.label('a', left=0, top=0, font=Font('Arial', 12))
         now = img.signature
         assert now != was
-        img.label('b', font=Font('monospace', 12), gravity='south')
+        img.label('b', font=Font('Arial', 12), gravity='south')
         assert img.signature != now
     with raises(TypeError):
         with Image(filename='rose:') as img:
