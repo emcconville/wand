@@ -67,11 +67,11 @@ Stack Overflow tag (Q&A)
    http://stackoverflow.com/questions/tagged/wand
 
 Continuous Integration (Travis CI)
-   https://travis-ci.org/emcconville/wand
+   https://app.travis-ci.com/emcconville/wand
 
-   .. image:: https://secure.travis-ci.org/emcconville/wand.svg?branch=master
+   .. image:: https://app.travis-ci.com/emcconville/wand.svg?branch=master
       :alt: Build Status
-      :target: https://travis-ci.org/emcconville/wand
+      :target: https://app.travis-ci.com/emcconville/wand
 
 Continuous Integration (GitHub Actions)
    https://github.com/emcconville/wand/actions

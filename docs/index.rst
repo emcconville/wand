@@ -9,9 +9,9 @@ Wand
    :alt: Documentation Status
    :target: https://docs.wand-py.org/en/latest/
 
-.. image:: https://secure.travis-ci.org/emcconville/wand.svg?branch=master
+.. image:: https://app.travis-ci.com/emcconville/wand.svg?branch=master
    :alt: Build Status
-   :target: https://travis-ci.org/emcconville/wand
+   :target: https://app.travis-ci.com/emcconville/wand
 
 .. image:: https://github.com/emcconville/wand/workflows/Wand%20CI/badge.svg
    :alt: Build Status

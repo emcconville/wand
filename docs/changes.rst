@@ -18,7 +18,7 @@ Unreleased.
  - Added :meth:`Image.region() <wand.image.BaseImage.region>` method.
  - Updated :meth:`Image.chop() <wand.image.BaseImage.chop>` method to support ``gravity`` keyword.
  - Updated :meth:`Image.extent() <wand.image.BaseImage.extent>` method to support ``gravity`` keyword. [:issue:`554`]
-
+ - [TEST] Migrated CI from `travis-ci.org <https://travis-ci.org/github/emcconville/wand>`_ to `travis-ci.com <https://app.travis-ci.com/emcconville/wand>`_.
 
 .. _changelog-0.6.7:
 
