@@ -14,6 +14,7 @@ Version 0.6.8
 
 Unreleased.
 
+ - Added :meth:`Image.label() <wand.image.BaseImage.label>` method.
  - Added :meth:`Image.region() <wand.image.BaseImage.region>` method.
  - Updated :meth:`Image.chop() <wand.image.BaseImage.chop>` method to support ``gravity`` keyword.
  - Updated :meth:`Image.extent() <wand.image.BaseImage.extent>` method to support ``gravity`` keyword. [:issue:`554`]

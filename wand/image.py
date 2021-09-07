@@ -5794,6 +5794,45 @@ class BaseImage(Resource):
         assertions.assert_real(radius=radius, sigma=sigma)
         return library.MagickKuwaharaImage(self.wand, radius, sigma)
 
+    @manipulative
+    def label(self, text, left=None, top=None, font=None, gravity=None,
+              background_color='transparent'):
+        """Writes a label ``text`` into the position on top of the existing
+        canvas. This method doesn't autofit text like :meth:`caption`. Use
+        ``left`` & ``top``, or ``gravity``, to position the text.
+
+        :param text: text to write.
+        :type text: :class:`basestring`
+        :param left: x offset in pixels.
+        :type left: :class:`numbers.Integral`
+        :param top: y offset in pixels.
+        :type top: :class:`numbers.Integral`
+        :param font: font to use.  default is :attr:`font` of the image.
+        :type font: :class:`wand.font.Font`
+        :param gravity: text placement gravity.
+        :type gravity: :class:`basestring`
+
+        .. versionadded:: 0.6.8
+        """
+        if font is not None and not isinstance(font, Font):
+            raise TypeError('font must be a wand.font.Font, not ' + repr(font))
+        if gravity is not None:
+            assertions.string_in_list(GRAVITY_TYPES,
+                                      'wand.image.GRAVITY_TYPES',
+                                      gravity=gravity)
+        if font is None:
+            try:
+                font = self.font
+                if font is None:
+                    raise TypeError()
+            except TypeError:
+                raise TypeError('font must be specified or existing in image')
+        with Image() as textboard:
+            textboard.font = font
+            textboard.background_color = background_color
+            textboard.read(filename=b'label:' + text.encode('utf-8'))
+            self.composite(textboard, left=left, top=top, gravity=gravity)
+
     @trap_exception
     def level(self, black=0.0, white=None, gamma=1.0, channel=None):
         """Adjusts the levels of an image by scaling the colors falling
