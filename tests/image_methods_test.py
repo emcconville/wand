@@ -1197,13 +1197,14 @@ def test_kuwahara():
         assert was != img.signature
 
 
-def test_label():
+def test_label(fx_asset):
+    font_path = str(fx_asset.join('League_Gothic.otf'))
     with Image(filename='rose:') as img:
         was = img.signature
-        img.label('a', left=0, top=0, font=Font('Arial', 12))
+        img.label('a', left=0, top=0, font=Font(font_path, 12))
         now = img.signature
         assert now != was
-        img.label('b', font=Font('Arial', 12), gravity='south')
+        img.label('b', font=Font(font_path, 12), gravity='south')
         assert img.signature != now
     with raises(TypeError):
         with Image(filename='rose:') as img:
