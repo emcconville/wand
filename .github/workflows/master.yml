@@ -71,3 +71,23 @@ jobs:
         pip install --upgrade pytest pytest-xdist pytest-cov coveralls
     - name: Run PyTest
       run: pytest --skip-pdf --skip-fft --cov wand --boxed --durations=20
+    - name: Generate coverage report
+      run: coveralls --service=github
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        COVERALLS_FLAG_NAME: ${{ matrix.test-name }}
+        COVERALLS_PARALLEL: true
+  coveralls:
+    name: Indicate completion to coveralls.io
+    needs: |
+      build_linux
+      build_macos
+    runs-on: ubuntu-latest
+    container: python:3-slim
+    steps:
+    - name: Finished
+      run: |
+        pip3 install --upgrade coveralls
+        coveralls --service=github --finish
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
