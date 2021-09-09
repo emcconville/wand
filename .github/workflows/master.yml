@@ -79,9 +79,7 @@ jobs:
         COVERALLS_PARALLEL: true
   coveralls:
     name: Indicate completion to coveralls.io
-    needs: |
-      build_linux
-      build_macos
+    needs: [build_linux, build_macos]
     runs-on: ubuntu-latest
     container: python:3-slim
     steps:
