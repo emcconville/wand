@@ -1,5 +1,6 @@
 import ctypes
 import time
+import warnings
 
 try:
     from memory_profiler import memory_usage
@@ -16,7 +17,9 @@ def test_user_error():
     with raises(TypeError):
         Color()
     with raises(ValueError):
-        Color('not_a_color')
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore')
+            Color('not_a_color')
 
 
 def test_user_raw():

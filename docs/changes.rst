@@ -20,6 +20,7 @@ Unreleased.
  - Updated :meth:`Image.extent() <wand.image.BaseImage.extent>` method to support ``gravity`` keyword. [:issue:`554`]
  - [TEST] Migrated CI from `travis-ci.org <https://travis-ci.org/github/emcconville/wand>`_ to `travis-ci.com <https://app.travis-ci.com/emcconville/wand>`_.
  - [TEST] Removed unneeded SVG dependency from regression test.
+ - [TEST] Suppressed :class:`~wand.exceptions.OptionWarning` when testing user errors.
 
 .. _changelog-0.6.7:
 
