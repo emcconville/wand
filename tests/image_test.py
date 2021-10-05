@@ -360,21 +360,20 @@ def test_make_blob(fx_asset):
         assert img.format == 'JPEG'
         with raises(TypeError):
             img.make_blob(123)
-    svg = b'''
-    <svg width="100px" height="100px">
-        <circle cx="100" cy="50" r="40" stroke="black"
-         stroke-width="2" fill="red" />
-    </svg>
+    pbm = b'''P1
+    4 4
+    0 1 0 1
+    1 0 1 0
+    0 1 0 1
+    1 0 1 0
     '''
-    with Image(blob=svg, format='svg') as img:
-        assert img.size == (100, 100)
-        assert img.format in ('SVG', 'MVG')
+    png = None
+    with Image(blob=pbm, format='pbm') as img:
+        assert img.size == (4, 4)
         img.format = 'PNG'
-        assert img.size == (100, 100)
-        assert img.format == 'PNG'
         png = img.make_blob()
     with Image(blob=png, format='png') as img:
-        assert img.size == (100, 100)
+        assert img.size == (4, 4)
         assert img.format == 'PNG'
 
 
