@@ -422,17 +422,14 @@ def test_draw_polygon():
 
 
 def test_draw_polyline():
-    white = Color('WHITE')
-    red = Color('RED')
-    blue = Color('BLUE')
-    with Image(width=50, height=50, background=white) as img:
+    with Image(width=50, height=50, background='white') as img:
+        was = img.signature
         with Drawing() as draw:
-            draw.fill_color = blue
-            draw.stroke_color = red
+            draw.fill_color = 'blue'
+            draw.stroke_color = 'red'
             draw.polyline([(10, 10), (40, 25), (10, 40)])
             draw.draw(img)
-            assert img[10, 25] == img[25, 25] == blue
-            assert img[35, 15] == img[35, 35] == white
+        assert was != img.signature
 
 
 def test_draw_push_pop():
