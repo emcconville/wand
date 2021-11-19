@@ -246,6 +246,6 @@ You may need to create a couple symbolic links for the ImageMagick libraries.
 
 .. sourcecode:: console
 
-    # ln -s /usr/lib/libMagickCore-7.Q16HDRI.so.6 /usr/lib/libMagickCore-7.Q16HDRI.so
-    # ln -s /usr/lib/libMagickWand-7.Q16HDRI.so.6 /usr/lib/libMagickWand-7.Q16HDRI.so
+    # ln -s /usr/lib/libMagickCore-7.Q16HDRI.so.9 /usr/lib/libMagickCore-7.Q16HDRI.so
+    # ln -s /usr/lib/libMagickWand-7.Q16HDRI.so.9 /usr/lib/libMagickWand-7.Q16HDRI.so
 
