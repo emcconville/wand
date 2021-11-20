@@ -94,6 +94,9 @@ def library_paths():
                 libwand = 'lib', 'libMagickWand{0}.so'.format(suffix),
                 libmagick = 'lib', 'libMagickCore{0}.so'.format(suffix),
                 yield magick_path(libwand), magick_path(libmagick)
+                libwand = 'lib', 'libMagickWand{0}.so.9'.format(suffix),
+                libmagick = 'lib', 'libMagickCore{0}.so.9'.format(suffix),
+                yield magick_path(libwand), magick_path(libmagick)
                 libwand = 'lib', 'libMagickWand{0}.so.6'.format(suffix),
                 libmagick = 'lib', 'libMagickCore{0}.so.6'.format(suffix),
                 yield magick_path(libwand), magick_path(libmagick)

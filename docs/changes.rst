@@ -18,6 +18,7 @@ Unreleased.
  - Added :meth:`Image.region() <wand.image.BaseImage.region>` method.
  - Updated :meth:`Image.chop() <wand.image.BaseImage.chop>` method to support ``gravity`` keyword.
  - Updated :meth:`Image.extent() <wand.image.BaseImage.extent>` method to support ``gravity`` keyword. [:issue:`554`]
+ - Added `.so.9` shared library suffix to :meth:`wand.api.library_paths()` generator when searching :const:`MAGICK_HOME` path.
  - [TEST] Migrated CI from `travis-ci.org <https://travis-ci.org/github/emcconville/wand>`_ to `travis-ci.com <https://app.travis-ci.com/emcconville/wand>`_.
  - [TEST] Removed unneeded SVG dependency from regression test.
  - [TEST] Suppressed :class:`~wand.exceptions.OptionWarning` when testing user errors.
