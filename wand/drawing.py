@@ -11,7 +11,8 @@ import ctypes
 import numbers
 
 from . import assertions
-from .api import AffineMatrix, PointInfo, library
+from .cdefs.structures import AffineMatrix, PointInfo
+from .api import library
 from .color import Color
 from .compat import abc, binary, string_type, text, text_type, xrange
 from .exceptions import WandLibraryVersionError
