@@ -52,8 +52,8 @@ __all__ = ('VERSION', 'VERSION_INFO', 'MAGICK_VERSION',
            'MAGICK_VERSION_DELEGATES', 'MAGICK_VERSION_FEATURES',
            'MAGICK_VERSION_INFO', 'MAGICK_VERSION_NUMBER',
            'MAGICK_RELEASE_DATE', 'MAGICK_RELEASE_DATE_STRING', 'MAGICK_HDRI',
-           'QUANTUM_DEPTH', 'QUANTUM_RANGE', 'configure_options',
-           'fonts', 'formats')
+           'QUANTUM_DEPTH', 'QUANTUM_RANGE', 'QUANTUM_SCALE',
+           'configure_options', 'fonts', 'formats')
 
 #: (:class:`tuple`) The version tuple e.g. ``(0, 1, 2)``.
 #:
@@ -149,6 +149,12 @@ if libmagick:
     #:
     #: .. versionadded:: 0.5.0
     QUANTUM_RANGE = c_quantum_range.value
+
+    #: (:class:`numbers.Real`) The quantum scale of the linked ImageMagick
+    #: library. This is calculated as `1.0 / QUANTUM_RANGE`.
+    #:
+    #: .. versionadded:: 0.6.8
+    QUANTUM_SCALE = 1.0 / float(QUANTUM_RANGE)
 
     #: (:class:`bool`) True if ImageMagick is compiled for High Dynamic
     #: Range Image.

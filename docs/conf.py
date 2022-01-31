@@ -53,6 +53,7 @@ if os.environ.get('READTHEDOCS', 0):
     sys.modules['wand.version'].MAGICK_RELEASE_DATE = None
     sys.modules['wand.version'].QUANTUM_DEPTH = None
     sys.modules['wand.version'].QUANTUM_RANGE = None
+    sys.modules['wand.version'].QUANTUM_SCALE = None
     sys.modules['wand.version'].MAGICK_HDRI = None
 
 # -- General configuration ----------------------------------------------------
