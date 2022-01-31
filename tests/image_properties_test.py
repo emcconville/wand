@@ -170,11 +170,6 @@ def test_compression_quality_set(fx_asset):
     with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
         img.compression_quality = 50
         assert img.compression_quality == 50
-        strio = io.BytesIO()
-        img.save(file=strio)
-        strio.seek(0)
-        with Image(file=strio) as jpg:
-            assert jpg.compression_quality == 50
         with raises(TypeError):
             img.compression_quality = 'high'
 
