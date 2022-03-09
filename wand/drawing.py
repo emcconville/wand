@@ -2053,19 +2053,23 @@ class FontMetrics(collections.namedtuple('FontMetrics',
 
     .. py:attribute:: x1
 
-        (:class:`numbers.Real`) The horizontal value of the starting corner.
+        (:class:`numbers.Real`) The horizontal value of the bounding box's
+        starting corner.
 
     .. py:attribute:: y1
 
-        (:class:`numbers.Real`) The vertical value of the starting corner.
+        (:class:`numbers.Real`) The vertical value of the bounding box's
+        starting corner.
 
     .. py:attribute:: x2
 
-        (:class:`numbers.Real`) The horizontal value of the ending corner.
+        (:class:`numbers.Real`) The horizontal value of the bounding box's
+        ending corner.
 
     .. py:attribute:: y2
 
-        (:class:`numbers.Real`) The vertical value of the ending corner.
+        (:class:`numbers.Real`) The vertical value of the bounding box's
+        ending corner.
 
     .. py:attribute:: x
 
