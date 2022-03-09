@@ -20,6 +20,7 @@ Unreleased.
  - Updated :meth:`Image.extent() <wand.image.BaseImage.extent>` method to support ``gravity`` keyword. [:issue:`554`]
  - Added `.so.9` shared library suffix to :meth:`wand.api.library_paths()` generator when searching :const:`MAGICK_HOME` path.
  - Added :const:`QUANTUM_SCALE <wand.version.QUANTUM_SCALE>` constant.
+ - [DOC] Improved :class:`~wand.drawing.FontMetrics` documentation. [:issue:`566`]
  - [TEST] Migrated CI from `travis-ci.org <https://travis-ci.org/github/emcconville/wand>`_ to `travis-ci.com <https://app.travis-ci.com/emcconville/wand>`_.
  - [TEST] Removed unneeded SVG dependency from regression test.
  - [TEST] Suppressed :class:`~wand.exceptions.OptionWarning` when testing user errors.
