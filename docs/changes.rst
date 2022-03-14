@@ -24,6 +24,8 @@ Unreleased.
  - [TEST] Migrated CI from `travis-ci.org <https://travis-ci.org/github/emcconville/wand>`_ to `travis-ci.com <https://app.travis-ci.com/emcconville/wand>`_.
  - [TEST] Removed unneeded SVG dependency from regression test.
  - [TEST] Suppressed :class:`~wand.exceptions.OptionWarning` when testing user errors.
+ - [TEST] Added Python 3.9 regression test for `travis-ci.com <https://app.travis-ci.com/emcconville/wand>`_.
+ - [TEST] Removed Python 3.7 regression test for `travis-ci.com <https://app.travis-ci.com/emcconville/wand>`_.
 
 .. _changelog-0.6.7:
 
