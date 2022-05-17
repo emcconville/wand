@@ -384,6 +384,8 @@ values move pixels counter-clockwise.
 
 .. code-block:: python
 
+    from wand.image import Image
+
     with Image(filename='inca_tern.jpg') as img:
         img.swirl(degree=-90)
         img.save(filename='fx-swirl.jpg')
