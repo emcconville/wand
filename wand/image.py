@@ -24,8 +24,9 @@ from .exceptions import (MissingDelegateError, WandException,
                          WandRuntimeError, WandLibraryVersionError)
 from .font import Font
 from .resource import DestroyedResourceError, Resource
-from .cdefs.structures import (CCObjectInfo, CCObjectInfo70A, ChannelFeature,
-                               GeometryInfo, PixelInfo, RectangleInfo)
+from .cdefs.structures import (CCObjectInfo, CCObjectInfo70A, CCObjectInfo711,
+                               ChannelFeature, GeometryInfo, PixelInfo,
+                               RectangleInfo)
 from .version import MAGICK_VERSION_NUMBER, MAGICK_HDRI
 
 
@@ -4245,7 +4246,9 @@ class BaseImage(Resource):
             library.MagickSetImageArtifact(self.wand, key, val)
         objects_ptr = ctypes.c_void_p(0)
         CCObjectInfoStructure = CCObjectInfo
-        if MAGICK_VERSION_NUMBER > 0x709:
+        if MAGICK_VERSION_NUMBER > 0x710:
+            CCObjectInfoStructure = CCObjectInfo711
+        elif MAGICK_VERSION_NUMBER > 0x709:
             CCObjectInfoStructure = CCObjectInfo70A
         ccoi_mem_size = ctypes.sizeof(CCObjectInfoStructure)
         r = library.MagickConnectedComponentsImage(self.wand, connectivity,
@@ -10577,6 +10580,8 @@ class ConnectedComponentObject(object):
     .. versionadded:: 0.5.5
     .. versionchanged:: 0.6.3
         Added :attr:`merge` & :attr:`metric` for ImageMagick 7.0.10
+    .. versionchanged:: 0.6.8
+        Added :attr:`key` property for ImageMagick 7.1.0
     """
     #: (:class:`numbers.Integral`) Serialized object identifier
     #: starting at `0`.
@@ -10628,6 +10633,10 @@ class ConnectedComponentObject(object):
         if isinstance(cc_object, CCObjectInfo70A):
             self.clone_from_cc_object_info(cc_object)
             self.clone_from_extra_70A_info(cc_object)
+        if isinstance(cc_object, CCObjectInfo711):
+            self.clone_from_cc_object_info(cc_object)
+            self.clone_from_extra_70A_info(cc_object)
+            self.clone_from_extra_710_info(cc_object)
 
     @property
     def size(self):
@@ -10674,6 +10683,14 @@ class ConnectedComponentObject(object):
         self.metric = []
         for i in range(cc_object.CCMaxMetrics):
             self.metric.append(cc_object.metric[i])
+
+    def clone_from_extra_710_info(self, cc_object):
+        """Copy additional value from CCObjectInfo structure for properties
+        added to ImageMagick 7.1.0.
+
+        .. versionadded:: 0.6.8
+        """
+        self.key = cc_object.key
 
     def __repr__(self):
         fmt = ("{name}({_id}: {width}x{height}+{left}+{top} {center_x:.2f},"
