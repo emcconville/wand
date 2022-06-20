@@ -95,6 +95,7 @@ User's guide
    guide/draw
    guide/exif
    guide/layers
+   guide/montage
    guide/morphology
    guide/sequence
    guide/resource

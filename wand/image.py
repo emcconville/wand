@@ -9859,7 +9859,7 @@ class Image(BaseImage):
             self.raise_exception()
 
     @trap_exception
-    def montage(self, font=None, tile=None, thumbnail=None, mode='frame',
+    def montage(self, font=None, tile=None, thumbnail=None, mode='unframe',
                 frame=None):
         """Generates a new image containing thumbnails if each previous image
         read. ::
