@@ -825,6 +825,18 @@ if MAGICK_VERSION_NUMBER >= 0x700:  # pragma: no cover
                           'voronoi')
 
 
+#: (:class:`tuple`) The list of montage behaviors used by
+#: :meth:`Image.montage()` method.
+#:
+#: - ``'undefined'``
+#: - ``'frame'``
+#: - ``'unframe'``
+#: - ``'concatenate'``
+#:
+#: .. versionadded:: 0.6.8
+MONTAGE_MODES = ('undefined', 'frame', 'unframe', 'concatenate')
+
+
 #: (:class:`tuple`) The list of noise types used by
 #: :meth:`Image.noise() <wand.image.BaseImage.noise>` method.
 #:
@@ -9845,6 +9857,82 @@ class Image(BaseImage):
             return blob
         else:  # pragma: no cover
             self.raise_exception()
+
+    @trap_exception
+    def montage(self, font=None, tile=None, thumbnail=None, mode="frame",
+                frame=None):
+        """Generates a new image containing thumbnails if each previous image
+        read. ::
+
+            with Image() as img:
+                for file_path in ['first.png', 'second.png', 'third.png']:
+                    with Image(filename=file_path) as item:
+                        img.options['label'] = file_path
+                        img.image_add(item)
+                style = Font('monospace', 24, 'green')
+                img.montage(font=style, tile='3x1', thumbnail='15x15')
+                img.save(filename='montage.png')
+
+        :param font: Define font style to use when labeling each thumbnail.
+                     Thumbnail labeling will only be rendered if ``'label'``
+                     value in :attr:`options` dict is defined.
+        :type font: :class:`~wand.font.Font`
+        :param tile: The number of thunbnails per rows & column on a page.
+                     Example: ``"6x4"``.
+        :type tile: :class:`basestring`
+        :param thumbnail: Preferred image size. Montage will attempt to
+                          generate a thumbnail to match the geometry. This
+                          can also define the border size on each thumbmail.
+                          Example: ``"120x120x+4+3>"``.
+        :type thumbnail: :class:`basestring`
+        :param mode: Which effect to render. Options include ``"frame"``,
+                     ``"unframe"``, and ``"concatenate"``. Default ``"frame"``.
+        :type mode: :class:`basestring`
+        :param frame: Define ornamental boarder around each thrumbnail.
+                      The color of the frame is defined by the image's matte
+                      color. Example: ``"15x15+3+3"``.
+        :type frame: :class:`basestring`
+
+        .. versionadded:: 0.6.8
+        """
+        if font is not None:
+            if not isinstance(font, Font):
+                msg = "font must be an instance of wand.font.Font"
+                raise TypeError(msg)
+        else:
+            font = Font('helvetica', 16, 'black')
+        if tile is not None:
+            assertions.assert_string(tile=tile)
+            tile = binary(tile)
+        if thumbnail is not None:
+            assertions.assert_string(thumbnail=thumbnail)
+            thumbnail = binary(thumbnail)
+        assertions.in_list(MONTAGE_MODES,
+                           "wand.image.MONTAGE_MODES",
+                           mode=mode)
+        mode_idx = MONTAGE_MODES.index(mode)
+        if frame is not None:
+            assertions.assert_string(frame=frame)
+            frame = binary(frame)
+        ctx_ptr = library.NewDrawingWand()
+        if font.path:
+            library.DrawSetFont(ctx_ptr, binary(font.path))
+            library.DrawSetFontFamily(ctx_ptr, binary(font.path))
+        if font.size:
+            library.DrawSetFontSize(ctx_ptr, font.size)
+        if font.color:
+            with font.color:
+                library.DrawSetFillColor(ctx_ptr, font.color.resource)
+        if font.stroke_color:
+            with font.stroke_color:
+                library.DrawSetStrokeColor(ctx_ptr, font.stroke_color.resource)
+        new_wand = library.MagickMontageImage(self.wand, ctx_ptr, tile,
+                                              thumbnail, mode_idx, frame)
+        ctx_ptr = library.DestroyDrawingWand(ctx_ptr)
+        if new_wand:
+            self.wand = new_wand
+            self.reset_sequence()
+        return bool(new_wand)
 
     def pseudo(self, width, height, pseudo='xc:'):
         """Creates a new image from ImageMagick's internal protocol coders.

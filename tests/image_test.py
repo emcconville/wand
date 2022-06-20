@@ -16,6 +16,7 @@ from pytest import mark, raises
 from wand.image import ClosedImageError, Image
 from wand.color import Color
 from wand.compat import PY3, text, text_type
+from wand.font import Font
 
 try:
     filesystem_encoding = sys.getfilesystemencoding()
@@ -375,6 +376,18 @@ def test_make_blob(fx_asset):
     with Image(blob=png, format='png') as img:
         assert img.size == (4, 4)
         assert img.format == 'PNG'
+
+
+def test_montage():
+    with Image() as base:
+        for label in ['foo', 'bar', 'baz']:
+            with Image(width=10, height=10, pseudo='plasma:') as img:
+                img.options['label'] = label
+                base.image_add(img)
+        style = Font('monospace', 16, 'blue', False, 'orange')
+        base.montage(font=style, tile="2x2", thumbnail="16x16", mode="frame",
+                     frame="5x5")
+        assert base.iterator_length() == 1
 
 
 def test_convert(fx_asset):
