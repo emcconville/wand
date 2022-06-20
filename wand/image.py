@@ -9859,7 +9859,7 @@ class Image(BaseImage):
             self.raise_exception()
 
     @trap_exception
-    def montage(self, font=None, tile=None, thumbnail=None, mode="frame",
+    def montage(self, font=None, tile=None, thumbnail=None, mode='frame',
                 frame=None):
         """Generates a new image containing thumbnails if each previous image
         read. ::
@@ -9897,7 +9897,7 @@ class Image(BaseImage):
         """
         if font is not None:
             if not isinstance(font, Font):
-                msg = "font must be an instance of wand.font.Font"
+                msg = 'font must be an instance of wand.font.Font'
                 raise TypeError(msg)
         else:
             font = Font('helvetica', 16, 'black')
@@ -9908,7 +9908,7 @@ class Image(BaseImage):
             assertions.assert_string(thumbnail=thumbnail)
             thumbnail = binary(thumbnail)
         assertions.in_list(MONTAGE_MODES,
-                           "wand.image.MONTAGE_MODES",
+                           'wand.image.MONTAGE_MODES',
                            mode=mode)
         mode_idx = MONTAGE_MODES.index(mode)
         if frame is not None:
@@ -9929,10 +9929,11 @@ class Image(BaseImage):
         new_wand = library.MagickMontageImage(self.wand, ctx_ptr, tile,
                                               thumbnail, mode_idx, frame)
         ctx_ptr = library.DestroyDrawingWand(ctx_ptr)
-        if new_wand:
+        ok = bool(new_wand)
+        if ok:
             self.wand = new_wand
             self.reset_sequence()
-        return bool(new_wand)
+        return ok
 
     def pseudo(self, width, height, pseudo='xc:'):
         """Creates a new image from ImageMagick's internal protocol coders.
