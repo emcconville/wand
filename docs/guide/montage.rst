@@ -150,6 +150,16 @@ To draw a decorative frame around each thumbnail, use a combination of
 .. image:: ../_images/montage-frame.png
    :alt: Montage frame
 
+Define the ``thumbnail=`` key-word to control the border between the thumbnail,
+and frame.
+
+.. code-block:: python
+
+    img.montage(mode='frame', frame='5', thumbnail="64x64+10+10")
+
+.. image:: ../_images/montage-frame-thumbnail.png
+   :alt: Montage frame with thumbnail
+
 
 .. _montage-labels:
 
@@ -171,7 +181,7 @@ For example:
     with Image() as img:
         for src in ['pattern:crosshatch', 'canvas:orange', 'plasma:']:
             with Image() as item:
-                # NOTE: We must set the label before reading the image.
+                # NOTE: Set the label before reading the image.
                 item.options['label'] = src
                 item.pseudo(64, 64, src)
                 img.image_add(item)
