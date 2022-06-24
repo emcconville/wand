@@ -119,7 +119,7 @@ def test_auto_threshold():
         assert was != img.signature
 
 
-def test_black_threshold(fx_asset):
+def test_black_threshold():
     with Image(filename='rose:') as img:
         was = img.signature
         img.black_threshold(Color('gray(50%)'))
@@ -129,7 +129,7 @@ def test_black_threshold(fx_asset):
             img.white_threshold(0xDEADBEEF)
 
 
-def test_blue_shift(fx_asset):
+def test_blue_shift():
     with Image(filename='rose:') as img:
         was = img.signature
         img.blue_shift(1.5)
@@ -2046,7 +2046,7 @@ def test_shade(fx_asset):
             img.shade(elevation='hello')
 
 
-def test_shadow(fx_asset):
+def test_shadow():
     with Image(filename='rose:') as img:
         was = img.size
         img.shadow(alpha=5.0, sigma=1.25, x=10, y=10)
@@ -2061,7 +2061,7 @@ def test_shadow(fx_asset):
             img.shadow(y=None)
 
 
-def test_sharpen(fx_asset):
+def test_sharpen():
     with Image(filename='rose:') as img:
         was = img.signature
         img.sharpen(radius=10.0, sigma=2.0)
@@ -2076,7 +2076,7 @@ def test_sharpen(fx_asset):
         assert was != img.signature
 
 
-def test_shave(fx_asset):
+def test_shave():
     with Image(filename='rose:') as img:
         was = img.size
         img.shave(10, 10)
@@ -2088,7 +2088,6 @@ def test_shave(fx_asset):
 
 
 def test_shear():
-    green = Color('GREEN')
     with Image(filename='rose:') as img:
         was = img.signature
         img.shear(background='green', x=10, y=10)
@@ -2172,7 +2171,7 @@ def test_sparse_color():
             img.sparse_color('barycentric', colors, channel_mask='red')
 
 
-def test_splice(fx_asset):
+def test_splice():
     green = Color('GREEN')
     with Image(filename='rose:') as img:
         width, height = img.size
@@ -2189,14 +2188,14 @@ def test_splice(fx_asset):
             img.splice(width=10, height=10, x=10, gravity='center')
 
 
-def test_spread(fx_asset):
+def test_spread():
     with Image(filename='rose:') as img:
         was = img.signature
         img.spread(8.0)
         assert was != img.signature
 
 
-def test_statistic(fx_asset):
+def test_statistic():
     with Image(filename='rose:') as img:
         was = img.signature
         img.statistic('median', 5, 5)
@@ -2282,7 +2281,7 @@ def test_thumbnail():
         assert (img.width, 20) == img.size
 
 
-def test_tint(fx_asset):
+def test_tint():
     with Image(filename='rose:') as img:
         was = img.signature
         img.tint('blue', 'blue')
@@ -2479,7 +2478,7 @@ def test_trim_reset_coords():
         assert page != img.page
 
 
-def test_unique_colors(fx_asset):
+def test_unique_colors():
     with Image(filename='rose:') as img:
         was = img.signature
         img.unique_colors()
@@ -2498,7 +2497,7 @@ def test_unsharp_mask(fx_asset):
         assert was != img.signature
 
 
-def test_vignette(fx_asset):
+def test_vignette():
     with Image(filename='rose:') as img:
         was = img.signature
         img.vignette(radius=3, sigma=3)
@@ -2514,7 +2513,7 @@ def test_watermark(fx_asset):
             assert was != img.signature
 
 
-def test_wave(fx_asset):
+def test_wave():
     with Image(filename='rose:') as img:
         was = img.size
         img.wave(amplitude=img.height, wave_length=img.width/2)
@@ -2545,7 +2544,7 @@ def test_white_balance():
         assert was != img.signature
 
 
-def test_white_threshold(fx_asset):
+def test_white_threshold():
     with Image(filename='rose:') as img:
         was = img.signature
         img.white_threshold(Color('gray(50%)'))
