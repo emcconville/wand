@@ -363,7 +363,7 @@ def test_mean():
 def test_metadata(fx_asset):
     """Test metadata api"""
     with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
-        assert 52 <= len(img.metadata) <= 55
+        assert len(img.metadata) > 0
         for key in img.metadata:
             assert isinstance(key, string_type)
         assert 'exif:ApertureValue' in img.metadata
