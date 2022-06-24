@@ -7549,6 +7549,25 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
+    def roll(self, x=0, y=0):
+        """Shifts all pixels over by an X/Y offset.
+
+        :param x: Number of columns to roll over. Negative value will roll
+                  pixels from right-to-left, and positive value will roll
+                  pixels from left-to-right. Default value: ``0``.
+        :type x: :class:`numbers.Integral`
+        :param y: Number of rows to roll over. Negative value will roll
+                  pixels from bottomt-to-top, and positive value will roll
+                  pixels from top-to-bottm. Default value: ``0``.
+        :type y: :class:`numbers.Integral`
+
+        .. versionadded:: 0.6.8
+        """
+        assertions.assert_integer(x=x, y=y)
+        return library.MagickRollImage(self.wand, x, y)
+
+    @manipulative
+    @trap_exception
     def rotate(self, degree, background=None, reset_coords=True):
         """Rotates the image right.  It takes a ``background`` color
         for ``degree`` that isn't a multiple of 90.

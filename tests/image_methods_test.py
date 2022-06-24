@@ -1907,6 +1907,13 @@ def test_resize_and_sample_gif(method, tmpdir, fx_asset):
     tmpdir.remove()
 
 
+def test_roll():
+    with Image(filename='rose:') as img:
+        was = img.signature
+        img.roll(x=-15, y=15)
+        assert was != img.signature
+
+
 @mark.slow
 def test_rotate(fx_asset):
     """Rotates an image."""
