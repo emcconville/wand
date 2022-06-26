@@ -28,7 +28,7 @@ before_install:
     fi 
 install:
 - echo $TRAVIS_PYTHON_VERSION
-- pip install -U pytest pytest-xdist coveralls --use-deprecated=backtrack-on-build-failures
+- pip install -U pytest pytest-xdist
 - >
     if [[ $TRAVIS_PYTHON_VERSION != pypy* ]]; then
       pip install 'pytest-cov>=1.8.0';
@@ -42,5 +42,3 @@ script:
     else
       pytest --skip-pdf --cov wand --boxed --durations=20;
     fi
-after_success:
-- coveralls
