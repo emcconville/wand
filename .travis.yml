@@ -28,6 +28,7 @@ before_install:
     fi 
 install:
 - echo $TRAVIS_PYTHON_VERSION
+- pip install -U setuptools
 - pip install -U pytest pytest-xdist
 - >
     if [[ $TRAVIS_PYTHON_VERSION != pypy* ]]; then
