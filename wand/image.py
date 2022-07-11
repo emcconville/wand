@@ -4733,6 +4733,8 @@ class BaseImage(Resource):
         :type passphrase: :class:`basestring`
 
         .. versionadded:: 0.6.3
+        .. versionchanged:: 0.6.8
+           Fixed C-API call.
         """
         assertions.assert_string(passphrase=passphrase)
         return library.MagickEncipherImage(self.wand, binary(passphrase))

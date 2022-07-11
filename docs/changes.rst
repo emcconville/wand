@@ -23,7 +23,8 @@ Unreleased.
  - Added :meth:`Image.montage() <wand.image.Image.montage>` method. [:issue:`575`]
  - Added :meth:`Image.roll() <wand.image.BaseImage.roll>` method.
  - Fixed returned values for :meth:`Image.connected_components() <wand.image.BaseImage.connected_components>` method for ImageMagick 7.1.1. [:issue:`574`]
- - Fixed :c:func:`MagickSetImageDepth` C-API method signature. [:issue:`577` by Pavel Borzenkov]
+ - Fixed :c:func:`MagickSetImageDepth()` C-API method signature. [:issue:`577` by Pavel Borzenkov]
+ - Fixed :meth:`Image.encipher() <wand.image.BaseImage.encipher>` method to call the correct API. [:issue:`578` by Pavel Borzenkov]
  - [DOC] Improved :class:`~wand.drawing.FontMetrics` documentation. [:issue:`566`]
  - [TEST] Migrated CI from `travis-ci.org <https://travis-ci.org/github/emcconville/wand>`_ to `travis-ci.com <https://app.travis-ci.com/emcconville/wand>`_.
  - [TEST] Removed unneeded SVG dependency from regression test.
