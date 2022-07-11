@@ -4735,7 +4735,7 @@ class BaseImage(Resource):
         .. versionadded:: 0.6.3
         """
         assertions.assert_string(passphrase=passphrase)
-        return library.MagickDecipherImage(self.wand, binary(passphrase))
+        return library.MagickEncipherImage(self.wand, binary(passphrase))
 
     @manipulative
     @trap_exception
