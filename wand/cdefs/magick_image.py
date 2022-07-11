@@ -971,7 +971,7 @@ def load(lib, IM_VERSION):
     lib.MagickSetImageCompressionQuality.restype = c_bool
     lib.MagickSetImageDelay.argtypes = [c_void_p, c_ssize_t]
     lib.MagickSetImageDelay.restype = c_bool
-    lib.MagickSetImageDepth.argtypes = [c_void_p]
+    lib.MagickSetImageDepth.argtypes = [c_void_p, c_size_t]
     lib.MagickSetImageDepth.restype = c_bool
     lib.MagickSetImageDispose.argtypes = [c_void_p, c_int]
     lib.MagickSetImageDispose.restype = c_bool
