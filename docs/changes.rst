@@ -21,14 +21,16 @@ Unreleased.
  - Added `.so.9` shared library suffix to :meth:`wand.api.library_paths()` generator when searching :const:`MAGICK_HOME` path.
  - Added :const:`QUANTUM_SCALE <wand.version.QUANTUM_SCALE>` constant.
  - Added :meth:`Image.montage() <wand.image.Image.montage>` method. [:issue:`575`]
- - Added :meth:`Image.rool() <wand.image.BaseImage.roll>` method.
+ - Added :meth:`Image.roll() <wand.image.BaseImage.roll>` method.
  - Fixed returned values for :meth:`Image.connected_components() <wand.image.BaseImage.connected_components>` method for ImageMagick 7.1.1. [:issue:`574`]
  - [DOC] Improved :class:`~wand.drawing.FontMetrics` documentation. [:issue:`566`]
  - [TEST] Migrated CI from `travis-ci.org <https://travis-ci.org/github/emcconville/wand>`_ to `travis-ci.com <https://app.travis-ci.com/emcconville/wand>`_.
  - [TEST] Removed unneeded SVG dependency from regression test.
  - [TEST] Suppressed :class:`~wand.exceptions.OptionWarning` when testing user errors.
  - [TEST] Added Python 3.9 regression test for `travis-ci.com <https://app.travis-ci.com/emcconville/wand>`_.
- - [TEST] Removed Python 3.7 regression test for `travis-ci.com <https://app.travis-ci.com/emcconville/wand>`_.
+ - [TEST] Removed Python 3.7 & 3.8 regression test for `travis-ci.com <https://app.travis-ci.com/emcconville/wand>`_.
+ - [TEST] Added Python 3.10 regression tests for `github actions <https://github.com/emcconville/wand/actions>`_.
+
 
 .. _changelog-0.6.7:
 
