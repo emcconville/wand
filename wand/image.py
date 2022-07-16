@@ -2845,7 +2845,7 @@ class BaseImage(Resource):
 
         :param columns: width of resized image.
         :type columns: :class:`numbers.Integral`
-        :param rows: hight of resized image.
+        :param rows: height of resized image.
         :type rows: :class:`numbers.Integral`
 
         .. versionadded:: 0.5.3
@@ -3145,7 +3145,7 @@ class BaseImage(Resource):
     @manipulative
     @trap_exception
     def brightness_contrast(self, brightness=0.0, contrast=0.0, channel=None):
-        """Converts ``brightness`` & ``contrast`` paramaters into a slope &
+        """Converts ``brightness`` & ``contrast`` parameters into a slope &
         intercept, and applies a polynomial function.
 
         :param brightness: between ``-100.0`` and ``100.0``. Default is ``0.0``
@@ -7559,7 +7559,7 @@ class BaseImage(Resource):
                   pixels from left-to-right. Default value: ``0``.
         :type x: :class:`numbers.Integral`
         :param y: Number of rows to roll over. Negative value will roll
-                  pixels from bottomt-to-top, and positive value will roll
+                  pixels from bottom-to-top, and positive value will roll
                   pixels from top-to-bottm. Default value: ``0``.
         :type y: :class:`numbers.Integral`
 
@@ -8836,7 +8836,7 @@ class BaseImage(Resource):
                      two colors as the same. Value can be between ``0.0``,
                      and :attr:`quantum_range`.
         :type fuzz: :class:`numbers.Real`
-        :param reset_coords: Reset coordinates after triming image. Default
+        :param reset_coords: Reset coordinates after trimming image. Default
                              ``False``.
         :type reset_coords: :class:`bool`
         :param percent_background: Sets how aggressive the trim operation will
@@ -9903,7 +9903,7 @@ class Image(BaseImage):
         :type tile: :class:`basestring`
         :param thumbnail: Preferred image size. Montage will attempt to
                           generate a thumbnail to match the geometry. This
-                          can also define the border size on each thumbmail.
+                          can also define the border size on each thumbnail.
                           Example: ``"120x120x+4+3>"``.
         :type thumbnail: :class:`basestring`
         :param mode: Which effect to render. Options include ``"frame"``,

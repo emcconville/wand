@@ -14,7 +14,7 @@ import os.path
 import platform
 import sys
 import traceback
-# Forward import for backwords compatibility.
+# Forward import for backwards compatibility.
 from .cdefs.structures import (AffineMatrix, MagickPixelPacket, PixelInfo,
                                PointInfo)
 if platform.system() == "Windows":

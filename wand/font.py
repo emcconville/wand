@@ -62,7 +62,7 @@ class Font(tuple):
        0, which means *autosized*.
 
     .. versionchanged:: 0.5.0
-       Added ``stroke_color`` & ``stoke_width`` paramaters.
+       Added ``stroke_color`` & ``stoke_width`` parameters.
     """
 
     def __new__(cls, path, size=0, color=None, antialias=True,

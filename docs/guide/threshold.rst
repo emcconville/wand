@@ -223,7 +223,7 @@ Random Threshold
 
 .. versionadded:: 0.5.7
 
-Applies a random threshold between ``low`` & ``heigh`` values.
+Applies a random threshold between ``low`` & ``high`` values.
 
 .. code-block:: python
 
