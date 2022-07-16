@@ -24,7 +24,7 @@ from .exceptions import (MissingDelegateError, WandException,
                          WandRuntimeError, WandLibraryVersionError)
 from .font import Font
 from .resource import DestroyedResourceError, Resource
-from .cdefs.structures import (CCObjectInfo, CCObjectInfo70A, CCObjectInfo711,
+from .cdefs.structures import (CCObjectInfo, CCObjectInfo70A, CCObjectInfo710,
                                ChannelFeature, GeometryInfo, PixelInfo,
                                RectangleInfo)
 from .version import MAGICK_VERSION_NUMBER, MAGICK_HDRI
@@ -4258,8 +4258,8 @@ class BaseImage(Resource):
             library.MagickSetImageArtifact(self.wand, key, val)
         objects_ptr = ctypes.c_void_p(0)
         CCObjectInfoStructure = CCObjectInfo
-        if MAGICK_VERSION_NUMBER > 0x710:
-            CCObjectInfoStructure = CCObjectInfo711
+        if MAGICK_VERSION_NUMBER > 0x70B:
+            CCObjectInfoStructure = CCObjectInfo710
         elif MAGICK_VERSION_NUMBER > 0x709:
             CCObjectInfoStructure = CCObjectInfo70A
         ccoi_mem_size = ctypes.sizeof(CCObjectInfoStructure)
@@ -10743,7 +10743,7 @@ class ConnectedComponentObject(object):
         if isinstance(cc_object, CCObjectInfo70A):
             self.clone_from_cc_object_info(cc_object)
             self.clone_from_extra_70A_info(cc_object)
-        if isinstance(cc_object, CCObjectInfo711):
+        if isinstance(cc_object, CCObjectInfo710):
             self.clone_from_cc_object_info(cc_object)
             self.clone_from_extra_70A_info(cc_object)
             self.clone_from_extra_710_info(cc_object)
