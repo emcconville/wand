@@ -12,7 +12,7 @@ Wand Changelog
 Version 0.6.8
 -------------
 
-Unreleased.
+Released on July 16th, 2022.
 
  - Added :meth:`Image.label() <wand.image.BaseImage.label>` method.
  - Added :meth:`Image.region() <wand.image.BaseImage.region>` method.
