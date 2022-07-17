@@ -7,6 +7,16 @@ Wand Changelog
 ~~~~~~~~~~
 
 
+.. _changelog-0.6.9:
+
+Version 0.6.9
+-------------
+
+Unreleased.
+
+ - Updated :meth:`Image.fx() <wand.image.BaseImage.fx>` method to raise :class:`~wand.exceptions.WandRuntimeError` if ImageMagick is unable to generate an image. [:issue:`582`]
+
+
 .. _changelog-0.6.8:
 
 Version 0.6.8
