@@ -8,7 +8,8 @@ import warnings
 from pytest import mark, raises
 
 from wand.color import Color
-from wand.exceptions import (MissingDelegateError, OptionError)
+from wand.exceptions import (MissingDelegateError, OptionError,
+                             WandRuntimeError)
 from wand.image import Image
 from wand.font import Font
 from wand.version import MAGICK_VERSION_NUMBER
@@ -978,8 +979,8 @@ def test_fx(fx_asset):
 
 def test_fx_error(fx_asset):
     with Image() as empty_wand:
-        with raises(AttributeError):
-            with empty_wand.fx('8'):
+        with raises(WandRuntimeError):
+            with empty_wand.fx('8') as _:
                 pass
     with Image(filename='rose:') as xc:
         with raises(OptionError):
