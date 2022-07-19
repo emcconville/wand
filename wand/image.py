@@ -9513,7 +9513,8 @@ class Image(BaseImage):
                     channel_map = 'CMYKA'[0:shape[2]]
             else:
                 channel_map = 'R'
-        if hasattr(array, 'ctypes'):
+        strides = arr_itr.get('strides', None)
+        if hasattr(array, 'ctypes') and strides is None:
             data_ptr = array.ctypes.data_as(ctypes.c_void_p)
         elif hasattr(array, 'tobytes'):
             data_ptr = array.tobytes()
