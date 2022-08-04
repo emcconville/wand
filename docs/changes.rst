@@ -12,11 +12,11 @@ Wand Changelog
 Version 0.6.9
 -------------
 
-Unreleased.
+Released on August 3rd, 2022.
 
  - Updated :meth:`Image.fx() <wand.image.BaseImage.fx>` method to raise :class:`~wand.exceptions.WandRuntimeError` if ImageMagick is unable to generate an image. [:issue:`582`]
  - Fixed :meth:`Image.from_array() <wand.image.Image.from_array>` classmethod to handle Numpy's strided arrays. [:issue:`582`]
- - Fixed segmentation fault with ImageMagick 7.1.0-4X release. [:issue:`586`]
+ - Fixed segmentation fault introduced with ImageMagick 7.1.0-45. [:issue:`586`]
 
 
 .. _changelog-0.6.8:
