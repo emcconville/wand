@@ -178,6 +178,7 @@ class Resource(object):
                 resource.resource = library.NewResource()
 
         """
+        genesis()
         yield self
 
     def destroy(self):
