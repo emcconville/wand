@@ -10,7 +10,7 @@ import numbers
 from .api import library
 from .cdefs.structures import MagickPixelPacket, PixelInfo
 from .compat import binary, text
-from .resource import Resource, genesis
+from .resource import Resource
 from .version import MAGICK_VERSION_NUMBER, MAGICK_HDRI, QUANTUM_DEPTH
 
 __all__ = 'Color', 'scale_quantum_to_int8'
@@ -124,9 +124,6 @@ class Color(Resource):
 
     def __enter__(self):
         if self.allocated < 1:
-            # As of 0x710, we must call MagickWandGenesis before allocate of
-            # Wand's Resource & ImageMagick PixelWand.
-            genesis()
             with self.allocate():
                 # Initialize resource.
                 self.resource = library.NewPixelWand()
