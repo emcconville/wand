@@ -7,6 +7,17 @@ Wand Changelog
 ~~~~~~~~~~
 
 
+.. _changelog-0.6.10:
+
+Version 0.6.10
+--------------
+
+Unreleased.
+
+ - Fixed segmentation fault during resource allocation on M1 processor. [:issue:`587`]
+ - Fixed additional segmentation faults introduced with ImageMagick 7.1.0-45.
+
+
 .. _changelog-0.6.9:
 
 Version 0.6.9
