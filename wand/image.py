@@ -23,7 +23,7 @@ from .compat import (abc, binary, binary_type, encode_filename, file_types,
 from .exceptions import (MissingDelegateError, WandException,
                          WandRuntimeError, WandLibraryVersionError)
 from .font import Font
-from .resource import DestroyedResourceError, Resource
+from .resource import DestroyedResourceError, Resource, genesis
 from .cdefs.structures import (CCObjectInfo, CCObjectInfo70A, CCObjectInfo710,
                                ChannelFeature, GeometryInfo, PixelInfo,
                                RectangleInfo)
@@ -9524,6 +9524,7 @@ class Image(BaseImage):
             data_ptr, _ = arr_itr.get('data')
         storage_idx = STORAGE_TYPES.index(storage)
         height, width = shape[:2]
+        genesis()
         wand = library.NewMagickWand()
         instance = cls(BaseImage(wand))
         r = library.MagickConstituteImage(instance.wand,
