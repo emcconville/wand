@@ -12,10 +12,10 @@ Wand Changelog
 Version 0.6.10
 --------------
 
-Unreleased.
+Released on August 14th, 2022.
 
  - Fixed segmentation fault during resource allocation on M1 processor. [:issue:`587`]
- - Fixed additional segmentation faults introduced with ImageMagick 7.1.0-45.
+ - Fixed additional segmentation faults introduced with ImageMagick 7.1.0-45. [:issue:`587` & :issue:`586`]
 
 
 .. _changelog-0.6.9:
