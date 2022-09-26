@@ -1158,11 +1158,12 @@ class BaseImage(Resource):
 
     __slots__ = '_wand',
 
-    def __init__(self, wand):
+    def __init__(self, wand, options={}):
         self.wand = wand
         self.channel_images = ChannelImageDict(self)
         self.channel_depths = ChannelDepthDict(self)
         self.options = OptionDict(self)
+        self.options.update(options)
         self.dirty = False
 
     def __eq__(self, other):
@@ -9291,7 +9292,7 @@ class Image(BaseImage):
                  pseudo=None, background=None, colorspace=None, depth=None,
                  extract=None, format=None, height=None, interlace=None,
                  resolution=None, sampling_factors=None, units=None,
-                 width=None):
+                 width=None, options={}):
         new_args = width, height, background, depth
         open_args = blob, file, filename
         if any(a is not None for a in new_args) and image is not None:
@@ -9304,13 +9305,13 @@ class Image(BaseImage):
         with self.allocate():
             if image is None:
                 wand = library.NewMagickWand()
-                super(Image, self).__init__(wand)
+                super(Image, self).__init__(wand, options=options)
             if image is not None:
                 if not isinstance(image, BaseImage):
                     raise TypeError('image must be a wand.image.Image '
                                     'instance, not ' + repr(image))
                 wand = library.CloneMagickWand(image.wand)
-                super(Image, self).__init__(wand)
+                super(Image, self).__init__(wand, options=options)
             elif any(a is not None for a in open_args):
                 self._preamble_read(
                     background=background, colorspace=colorspace, depth=depth,
