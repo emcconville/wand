@@ -9754,9 +9754,15 @@ class Image(BaseImage):
 
         .. versionadded:: 0.1.6
 
+        .. versionchanged:: 0.6.11
+           Call :c:func:`MagickSetFormat` method after
+           :c:func:`MagickSetImageFormat`. This will ensure image info, magick,
+           and filename properties are aligned.
         """
         cloned = self.clone()
         cloned.format = format
+        library.MagickSetFormat(cloned.wand,
+                                binary(format.strip().upper()))
         return cloned
 
     def data_url(self):

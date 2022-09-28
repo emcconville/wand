@@ -376,6 +376,11 @@ def test_make_blob(fx_asset):
     with Image(blob=png, format='png') as img:
         assert img.size == (4, 4)
         assert img.format == 'PNG'
+    with Image() as img:
+        img.read(blob=pbm, format='pbm')
+        img.depth = 8
+        out = img.make_blob('R')
+        assert out[:2] == b'\xff\x00'
 
 
 def test_montage():
