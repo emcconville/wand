@@ -7,6 +7,17 @@ Wand Changelog
 ~~~~~~~~~~
 
 
+.. _changelog-0.6.11:
+
+Version 0.6.11
+--------------
+
+Unreleased.
+
+ - Fixed format issue when calling :meth:`Image.convert() <wand.image.Image.convert>`,
+   and :meth:`Image.make_blob() <wand.image.Image.make_blob>` methods. [:issue:`594`]
+
+
 .. _changelog-0.6.10:
 
 Version 0.6.10
