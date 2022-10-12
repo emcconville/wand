@@ -4879,6 +4879,9 @@ class BaseImage(Resource):
         :rtype: :class:`collections.abc.Sequence`
 
         .. versionadded:: 0.5.0
+
+        .. versionchanged:: 0.6.11
+           Update storage type size for `"long"` & `"quantum"` values.
         """
         _w, _h = self.size
         if width is None:
@@ -4901,8 +4904,8 @@ class BaseImage(Resource):
             ctypes.c_double,
             ctypes.c_float,
             ctypes.c_uint,
-            ctypes.c_ulong,
-            ctypes.c_double,  # FIXME: Might be c_longdouble?
+            ctypes.c_uint64,
+            library.PixelGetRedQuantum.restype,
             ctypes.c_ushort
         ]
         s_index = STORAGE_TYPES.index(storage)
@@ -5548,6 +5551,9 @@ class BaseImage(Resource):
         :type storage: :class:`basestring`
 
         .. versionadded:: 0.5.0
+
+        .. versionchanged:: 0.6.11
+           Update storage type size for `"long"` & `"quantum"` values.
         """
         _w, _h = self.size
         if width is None:
@@ -5582,8 +5588,8 @@ class BaseImage(Resource):
             ctypes.c_double,
             ctypes.c_float,
             ctypes.c_uint,
-            ctypes.c_ulong,
-            ctypes.c_double,  # FIXME: Might be c_longdouble ?
+            ctypes.c_uint64,
+            library.PixelGetRedQuantum.restype,
             ctypes.c_ushort
         ]
         s_index = STORAGE_TYPES.index(storage)

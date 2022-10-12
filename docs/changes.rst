@@ -16,6 +16,9 @@ Unreleased.
 
  - Fixed format issue when calling :meth:`Image.convert() <wand.image.Image.convert>`,
    and :meth:`Image.make_blob() <wand.image.Image.make_blob>` methods. [:issue:`594`]
+ - Fixed storage type size for `"long"` & `"quantum"` values in
+   :meth:`Image.export_pixels() <wand.image.BaseImage.export_pixels>` and
+   :meth:`Image.import_pixels() <wand.image.BaseImage.import_pixels>` methods. [:issue:`596`]
 
 
 .. _changelog-0.6.10:
