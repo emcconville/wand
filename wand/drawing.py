@@ -363,8 +363,8 @@ class Drawing(Resource):
 
     @property
     def font_resolution(self):
-        """(:class:`~collections.abc.Sequence`) The current font resolution. It also
-        can be set.
+        """(:class:`~collections.abc.Sequence`) The current font resolution.
+        It also can be set.
 
         .. versionadded:: 0.4.0
         """
@@ -893,8 +893,8 @@ class Drawing(Resource):
         library.DrawAffine(self.resource, ctypes.byref(amx))
 
     def alpha(self, x=None, y=None, paint_method='undefined'):
-        """Paints on the image's opacity channel in order to set effected pixels
-        to transparent.
+        """Paints on the image's opacity channel in order to set effected
+        pixels to transparent.
 
          To influence the opacity of pixels. The available methods are:
 
@@ -1206,8 +1206,8 @@ class Drawing(Resource):
                          int(end_x), int(end_y))
 
     def matte(self, x=0.0, y=0.0, paint_method='undefined'):
-        """Paints on the image's opacity channel in order to set effected pixels
-        to transparent.
+        """Paints on the image's opacity channel in order to set effected
+        pixels to transparent.
 
          To influence the opacity of pixels. The available methods are:
 
@@ -1698,9 +1698,10 @@ class Drawing(Resource):
         library.DrawPushClipPath(self.resource, binary(clip_mask_id))
 
     def push_defs(self):
-        """Indicates that commands up to a terminating :class:`Drawing.pop_defs`
-        command create named elements (e.g. clip-paths, textures, etc.) which
-        may safely be processed earlier for the sake of efficiency.
+        """Indicates that commands up to a terminating
+        :class:`Drawing.pop_defs` command create named elements (e.g.
+        clip-paths, textures, etc.) which may safely be processed earlier for
+        the sake of efficiency.
 
         .. versionadded:: 0.4.0
 
@@ -1882,9 +1883,9 @@ class Drawing(Resource):
         library.DrawScale(self.resource, x, y)
 
     def set_fill_pattern_url(self, url):
-        """Sets the URL to use as a fill pattern for filling objects. Only local
-        URLs ("#identifier") are supported at this time. These local URLs are
-        normally created by defining a named fill pattern with
+        """Sets the URL to use as a fill pattern for filling objects. Only
+        local URLs ("#identifier") are supported at this time. These local URLs
+        are normally created by defining a named fill pattern with
         Drawing.push_pattern & Drawing.pop_pattern.
 
         :param url: URL to use to obtain fill pattern.
