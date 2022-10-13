@@ -2729,9 +2729,9 @@ class BaseImage(Resource):
         self.orientation = 'top_left'
 
     def _channel_to_mask(self, value):
-        """Attempts to resolve user input into a :c:type:`ChannelType` bit-mask.
-        User input can be an integer, a string defined in :const:`CHANNELS`,
-        or a string following ImageMagick's `CLI format`__.
+        """Attempts to resolve user input into a :c:type:`ChannelType`
+        bit-mask. User input can be an integer, a string defined in
+        :const:`CHANNELS`, or a string following ImageMagick's `CLI format`__.
 
         __ https://imagemagick.org/script/command-line-options.php#channel
 
@@ -3460,8 +3460,8 @@ class BaseImage(Resource):
     @manipulative
     @trap_exception
     def coalesce(self):
-        """Rebuilds image sequence with each frame size the same as first frame,
-        and composites each frame atop of previous.
+        """Rebuilds image sequence with each frame size the same as first
+        frame, and composites each frame atop of previous.
 
         .. note::
 
@@ -4899,14 +4899,14 @@ class BaseImage(Resource):
                 raise ValueError('Unknown channel label: ' +
                                  repr(channel))
         c_storage_types = [
-            None,
-            ctypes.c_ubyte,
-            ctypes.c_double,
-            ctypes.c_float,
-            ctypes.c_uint,
-            ctypes.c_uint64,
-            library.PixelGetRedQuantum.restype,
-            ctypes.c_ushort
+            None,                                # undefined
+            ctypes.c_ubyte,                      # char
+            ctypes.c_double,                     # double
+            ctypes.c_float,                      # float
+            ctypes.c_uint,                       # integer
+            ctypes.c_uint64,                     # long
+            library.PixelGetRedQuantum.restype,  # quantum
+            ctypes.c_ushort                      # short
         ]
         s_index = STORAGE_TYPES.index(storage)
         c_storage = c_storage_types[s_index]
@@ -5583,14 +5583,14 @@ class BaseImage(Resource):
             )
             raise ValueError(msg)
         c_storage_types = [
-            None,
-            ctypes.c_ubyte,
-            ctypes.c_double,
-            ctypes.c_float,
-            ctypes.c_uint,
-            ctypes.c_uint64,
-            library.PixelGetRedQuantum.restype,
-            ctypes.c_ushort
+            None,                                # undefined
+            ctypes.c_ubyte,                      # char
+            ctypes.c_double,                     # double
+            ctypes.c_float,                      # float
+            ctypes.c_uint,                       # integer
+            ctypes.c_uint64,                     # long
+            library.PixelGetRedQuantum.restype,  # quantum
+            ctypes.c_ushort                      # short
         ]
         s_index = STORAGE_TYPES.index(storage)
         c_type = c_storage_types[s_index]
