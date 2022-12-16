@@ -27,7 +27,7 @@ before_install:
     fi 
 install:
 - echo $TRAVIS_PYTHON_VERSION
-- pip install -U pytest pytest-xdist
+- pip install -U pytest pytest-xdist pytest-forked
 - >
     if [[ $TRAVIS_PYTHON_VERSION != pypy* ]]; then
       pip install 'pytest-cov>=1.8.0';
@@ -37,7 +37,7 @@ script:
 - python -mwand.version --verbose
 - >
     if [[ $TRAVIS_PYTHON_VERSION == pypy* ]]; then
-      pytest --skip-pdf --boxed --durations=20;
+      pytest --skip-pdf --forked --durations=20;
     else
-      pytest --skip-pdf --cov wand --boxed --durations=20;
+      pytest --skip-pdf --cov wand --forked --durations=20;
     fi
