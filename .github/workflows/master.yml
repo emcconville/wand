@@ -38,9 +38,9 @@ jobs:
         sudo apt-get update -y
         sudo apt-get install -y imagemagick
         python -m pip install --upgrade pip
-        pip install --upgrade pytest pytest-xdist pytest-cov coveralls
+        pip install --upgrade pytest pytest-xdist pytest-forked pytest-cov coveralls
     - name: Run PyTest
-      run: pytest --skip-pdf --cov wand --boxed --durations=20
+      run: pytest --skip-pdf --cov wand --forked --durations=20
   build_macos:
     name: Build MacOS
     runs-on: macos-latest
