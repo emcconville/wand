@@ -68,9 +68,9 @@ jobs:
         export HOMEBREW_NO_AUTO_UPDATE=1
         brew install imagemagick
         python -m pip install --upgrade pip
-        pip install --upgrade pytest pytest-xdist pytest-cov coveralls
+        pip install --upgrade pytest pytest-xdist pytest-forked pytest-cov coveralls
     - name: Run PyTest
-      run: pytest --skip-pdf --skip-fft --cov wand --boxed --durations=20
+      run: pytest --skip-pdf --skip-fft --cov wand --forked --durations=20
     - name: Generate coverage report
       run: coveralls --service=github
       env:
