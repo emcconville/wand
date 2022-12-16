@@ -4,7 +4,7 @@
 #
 import io
 import numbers
-from pytest import mark, raises
+from pytest import raises
 
 from wand.color import Color
 from wand.compat import string_type
@@ -75,39 +75,20 @@ def test_border_color():
         assert img.border_color == green
 
 
-@mark.xfail(MAGICK_VERSION_NUMBER >= 0x700,
-            reason="Channel traits are not implemented in IM7.")
-def test_channel_depths(fx_asset):
-    with Image(filename=str(fx_asset.join('beach.jpg'))) as i:
-        assert dict(i.channel_depths) == {
-            'blue': 8, 'gray': 8, 'true_alpha': 1, 'opacity': 1,
-            'undefined': 1, 'composite_channels': 8, 'index': 1,
-            'rgb_channels': 8, 'alpha': 1, 'yellow': 8, 'sync_channels': 1,
-            'default_channels': 8, 'black': 1, 'cyan': 8,
-            'all_channels': 8, 'green': 8, 'magenta': 8, 'red': 8,
-            'gray_channels': 8, 'rgb': 8
-        }
-    with Image(filename=str(fx_asset.join('google.ico'))) as i:
-        assert dict(i.channel_depths) == {
-            'blue': 8, 'gray': 8, 'true_alpha': 1, 'opacity': 1,
-            'undefined': 1, 'composite_channels': 8, 'index': 1,
-            'rgb_channels': 8, 'alpha': 1, 'yellow': 8, 'sync_channels': 1,
-            'default_channels': 8, 'black': 1, 'cyan': 8, 'all_channels': 8,
-            'green': 8, 'magenta': 8, 'red': 8, 'gray_channels': 8, 'rgb': 8
-        }
+def test_channel_depths():
+    with Image(filename='rose:') as img:
+        channels = dict(img.channel_depths)
+        assert channels["red"] == channels["green"] == channels["blue"]
 
 
 def test_channel_images(fx_asset):
     with Image(filename=str(fx_asset.join('sasha.jpg'))) as i:
         i.format = 'png'
         channels = ('opacity', 'alpha',)
-        # Only include TrueAlphaChannel if IM6, as its deprecated & unused
-        # in IM7.
-        if MAGICK_VERSION_NUMBER < 0x700:
-            channels = channels + ('true_alpha',)
         for name in channels:
             expected_path = str(fx_asset.join('channel_images', name + '.png'))
             with Image(filename=expected_path) as expected:
+                expected.depth = 8
                 if MAGICK_VERSION_NUMBER >= 0x700:
                     # With IM7, channels are dynamic & influence signatures.
                     # We'll need to compare the first channel of the expected
