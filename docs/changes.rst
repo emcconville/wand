@@ -19,6 +19,7 @@ Unreleased.
  - Fixed storage type size for `"long"` & `"quantum"` values in
    :meth:`Image.export_pixels() <wand.image.BaseImage.export_pixels>` and
    :meth:`Image.import_pixels() <wand.image.BaseImage.import_pixels>` methods. [:issue:`596`]
+ - Added ``filter`` parameter to :meth:`Image.distort() <wand.image.BaseImage.distort>` method.
  - [TEST] Added Python 3.11 to regression tests for `github actions <https://github.com/emcconville/wand/actions>`_.
 
 

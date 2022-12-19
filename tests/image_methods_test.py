@@ -699,35 +699,40 @@ def test_cycle_color_map(fx_asset):
             img.cycle_color_map('NaN')
 
 
-def test_deskew(fx_asset):
+def test_deskew():
     with Image(filename='rose:') as img:
         was = img.signature
         img.deskew(0.4 * img.quantum_range)
         assert was != img.signature
 
 
-def test_despeckle(fx_asset):
+def test_despeckle():
     with Image(filename='rose:') as img:
         was = img.signature
         img.despeckle()
         assert was != img.signature
 
 
-@mark.slow
-def test_distort(fx_asset):
+def test_distort():
     """Distort image."""
-    with Image(filename=str(fx_asset.join('checks.png'))) as img:
-        with Color('skyblue') as color:
-            img.matte_color = color
-            img.virtual_pixel = 'tile'
-            img.distort('perspective', (0, 0, 20, 60, 90, 0, 70, 63,
-                                        0, 90, 5, 83, 90, 90, 85, 88))
-            assert img[img.width - 1, 0] == color
+    with Image(filename='rose:') as img:
+        was = img.signature
+        w, h = img.size
+        img.distort('resize', (w*2, h*2))
+        neu = img.signature
+        assert was != neu
+    # Let's ensure a distorted image with a defined filter doesn't
+    # match default.
+    with Image(filename='rose:') as img:
+        was = img.signature
+        w, h = img.size
+        img.distort('resize', (w*2, h*2), filter='lanczos')
+        assert neu != img.signature
 
 
-def test_distort_error(fx_asset):
+def test_distort_error():
     """Distort image with user error"""
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+    with Image(filename='rose:') as img:
         with raises(ValueError):
             img.distort('mirror', (1,))
         with raises(TypeError):
@@ -1247,25 +1252,25 @@ def test_level_channel(fx_asset):
         with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
             # Adjust each channel level to make it entirely black
             img.level(0.99, 1.0, channel=chan)
-            assert(getattr(img[0, 0], c) <= 0)
-            assert(getattr(img[0, -1], c) <= 0)
+            assert getattr(img[0, 0], c) <= 0
+            assert getattr(img[0, -1], c) <= 0
         with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
             # Adjust each channel level to make it entirely white
             img.level(0.0, 0.01, channel=chan)
-            assert(getattr(img[0, 0], c) >= 255)
-            assert(getattr(img[0, -1], c) >= 255)
+            assert getattr(img[0, 0], c) >= 255
+            assert getattr(img[0, -1], c) >= 255
         with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
             # Adjust each channel's gamma to darken its midtones
             img.level(gamma=0.5, channel=chan)
             with img[0, len(img) // 2] as light:
-                assert(getattr(light, c) <= 65)
-                assert(getattr(light, c) >= 60)
+                assert getattr(light, c) <= 65
+                assert getattr(light, c) >= 60
         with Image(filename=str(fx_asset.join('gray_range.jpg'))) as img:
             # Adjust each channel's gamma to lighten its midtones
             img.level(0, 1, 2.5, chan)
             with img[0, len(img) // 2] as light:
-                assert(getattr(light, c) >= 190)
-                assert(getattr(light, c) <= 195)
+                assert getattr(light, c) >= 190
+                assert getattr(light, c) <= 195
 
 
 def test_level_user_error(fx_asset):
@@ -1691,13 +1696,12 @@ def test_posterize(fx_asset):
             img.posterize(levels=16, dither='manhatten')
 
 
-@mark.slow
 def test_quantize(fx_asset):
-    number_colors = 64
-    with Image(width=100, height=100, pseudo='PLASMA:') as img:
+    number_colors = 32
+    with Image(width=100, height=100, pseudo='gradient:') as img:
         assert img.colors > number_colors
 
-    with Image(width=100, height=100, pseudo='PLASMA:') as img:
+    with Image(width=100, height=100, pseudo='gradient:') as img:
         with raises(TypeError):
             img.quantize(str(number_colors), 'undefined', 0, True, True)
 

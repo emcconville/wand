@@ -4624,7 +4624,7 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def distort(self, method, arguments, best_fit=False):
+    def distort(self, method, arguments, best_fit=False, filter=None):
         """Distorts an image using various distorting methods.
 
         .. code:: python
@@ -4668,8 +4668,14 @@ class BaseImage(Resource):
         :param best_fit: Attempt to resize resulting image fit distortion.
                          Defaults False
         :type best_fit: :class:`bool`
+        :param filter: Optional resampling filter used when calculating
+                       pixel-value. Defaults to ``'mitchell'``, or
+                       ``'lanczos'`` based on image type & operation.
+        :type filter: :class:`basestring`
 
         .. versionadded:: 0.4.1
+        .. versionchanged:: 0.6.11
+           Included `filter=` parameter.
         """
         assertions.string_in_list(DISTORTION_METHODS,
                                   'wand.image.DISTORTION_METHODS',
@@ -4680,6 +4686,33 @@ class BaseImage(Resource):
         argc = len(arguments)
         argv = (ctypes.c_double * argc)(*arguments)
         method_idx = DISTORTION_METHODS.index(method)
+        if filter is not None:
+            assertions.string_in_list(FILTER_TYPES,
+                                      'wand.image.FILTER_TYPES',
+                                      filter=filter)
+            ok = False
+            if library.MagickSetImageFilter:
+                filter_idx = FILTER_TYPES.index(filter)
+                ok = library.MagickSetImageFilter(self.wand,
+                                                  filter_idx)
+            else:
+                img_info_ptr = libmagick.AcquireImageInfo()
+                exp_ptr = libmagick.AcquireExceptionInfo()
+                img_ptr = library.GetImageFromMagickWand(self.wand)
+                if all([img_info_ptr, exp_ptr, img_ptr]):
+                    libmagick.SetImageOption(img_info_ptr,
+                                             b'filter',
+                                             filter.encode())
+                    ok = libmagick.SyncImageSettings(img_info_ptr,
+                                                     img_ptr,
+                                                     exp_ptr)
+                if img_info_ptr:
+                    img_info_ptr = libmagick.DestroyImageInfo(img_info_ptr)
+                if exp_ptr:
+                    exp_ptr = libmagick.DestroyExceptionInfo(exp_ptr)
+                if not ok:
+                    raise AttributeError('Unable to set filter for ' +
+                                         filter)
         return library.MagickDistortImage(self.wand, method_idx,
                                           argc, argv, bool(best_fit))
 

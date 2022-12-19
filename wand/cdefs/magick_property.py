@@ -52,6 +52,14 @@ def load(lib, IM_VERSION):
     lib.MagickGetCompressionQuality.restype = c_size_t
     lib.MagickGetFont.argtypes = [c_void_p]
     lib.MagickGetFont.restype = c_void_p
+    if IM_VERSION >= 0x710:
+        try:
+            lib.MagickGetFilter.argtypes = [c_void_p]
+            lib.MagickGetFilter.restype = c_int
+        except AttributeError:
+            lib.MagickGetFilter = None
+    else:
+        lib.MagickGetFilter = None
     lib.MagickGetGravity.argtypes = [c_void_p]
     lib.MagickGetGravity.restype = c_int
     lib.MagickGetImageArtifact.argtypes = [c_void_p, c_char_p]
@@ -123,6 +131,15 @@ def load(lib, IM_VERSION):
     lib.MagickSetExtract.restype = c_bool
     lib.MagickSetFilename.argtypes = [c_void_p, c_char_p]
     lib.MagickSetFilename.restype = c_bool
+    if IM_VERSION >= 0x710:
+        try:
+            lib.MagickSetFilter.argtypes = [c_void_p, c_int]
+            lib.MagickSetFilter.restype = c_bool
+        except AttributeError:
+            lib.MagickSetFilter = None
+    else:
+        lib.MagickSetFilter = None
+    lib.MagickSetFilter
     lib.MagickSetFont.argtypes = [c_void_p, c_char_p]
     lib.MagickSetFont.restype = c_bool
     lib.MagickSetFormat.argtypes = [c_void_p, c_char_p]

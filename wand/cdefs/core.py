@@ -3,7 +3,8 @@
 
 .. versionadded:: 0.5.0
 """
-from ctypes import POINTER, c_void_p, c_char_p, c_int, c_size_t, c_ulonglong
+from ctypes import (POINTER, c_void_p, c_char_p, c_int, c_size_t,
+                    c_ulonglong, c_bool)
 from wand.cdefs.wandtypes import c_ssize_t
 
 __all__ = ('load', 'load_with_version')
@@ -28,12 +29,18 @@ def load(libmagick):
     """
     libmagick.AcquireExceptionInfo.argtypes = []
     libmagick.AcquireExceptionInfo.restype = c_void_p
+    libmagick.AcquireImageInfo.argtypes = []
+    libmagick.AcquireImageInfo.restype = c_void_p
+    libmagick.CloneImageInfo.argtypes = [c_void_p]
+    libmagick.CloneImageInfo.restype = c_void_p
     libmagick.CloneImages.argtypes = [c_void_p, c_char_p, c_void_p]
     libmagick.CloneImages.restype = c_void_p
     libmagick.DestroyExceptionInfo.argtypes = [c_void_p]
     libmagick.DestroyExceptionInfo.restype = c_void_p
     libmagick.DestroyImage.argtypes = [c_void_p]
     libmagick.DestroyImage.restype = c_void_p
+    libmagick.DestroyImageInfo.argtypes = [c_void_p]
+    libmagick.DestroyImageInfo.restype = c_void_p
     libmagick.DestroyString.argtypes = [c_void_p]
     libmagick.DestroyString.restype = c_void_p
     try:
@@ -104,8 +111,12 @@ def load(libmagick):
     except AttributeError:
         libmagick.ParseGeometry = None
         libmagick.ParseMetaGeometry = None
+    libmagick.SetImageOption.argtypes = [c_void_p, c_char_p, c_char_p]
+    libmagick.SetImageOption.restype = c_bool
     libmagick.SetMagickResourceLimit.argtypes = [c_int, c_ulonglong]
     libmagick.SetMagickResourceLimit.restype = c_int
+    libmagick.SyncImageSettings.argtypes = [c_void_p, c_void_p, c_void_p]
+    libmagick.SyncImageSettings.restype = c_bool
 
 
 def load_with_version(libmagick, IM_VERSION):
