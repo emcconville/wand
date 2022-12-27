@@ -63,8 +63,8 @@ def test_set_get_clip_units():
 
 def test_set_get_font(fx_asset):
     with Drawing() as ctx:
-        ctx.font = str(fx_asset.join('League_Gothic.otf'))
-        assert ctx.font == str(fx_asset.join('League_Gothic.otf'))
+        ctx.font = str(fx_asset.joinpath('League_Gothic.otf'))
+        assert ctx.font == str(fx_asset.joinpath('League_Gothic.otf'))
         with raises(TypeError):
             ctx.font = 0xDEADBEEF
 
@@ -731,7 +731,7 @@ def test_draw_text(fx_asset):
     with Image(width=100, height=100, background='white') as img:
         was = img.signature
         with Drawing() as ctx:
-            ctx.font = str(fx_asset.join('League_Gothic.otf'))
+            ctx.font = str(fx_asset.joinpath('League_Gothic.otf'))
             ctx.font_size = 25
             ctx.fill_color = 'black'
             ctx.gravity = 'west'
@@ -743,7 +743,7 @@ def test_draw_text(fx_asset):
 def test_get_font_metrics_test(fx_asset):
     with Image(width=144, height=192, background=Color('#fff')) as img:
         with Drawing() as draw:
-            draw.font = str(fx_asset.join('League_Gothic.otf'))
+            draw.font = str(fx_asset.joinpath('League_Gothic.otf'))
             draw.font_size = 13
             nm1 = draw.get_font_metrics(img, 'asdf1234')
             nm2 = draw.get_font_metrics(img, 'asdf1234asdf1234')

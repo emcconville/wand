@@ -8,7 +8,7 @@ except ImportError:
     import urllib
     import urllib2
 
-from py.path import local
+from pathlib import Path
 from pytest import fixture, hookimpl, mark
 
 from wand.display import display as display_fn
@@ -87,17 +87,19 @@ def pytest_report_header(config):
 
 @fixture
 def fx_asset():
-    """The fixture that provides :class:`py.path.local` instance that
+    """The fixture that provides :class:`pathlib.Path` instance that
     points the :file:`assets` directory.  You can use this in test
     functions::
 
         def test_something(fx_asset):
-            monalisa = str(fx_asset.join('mona-lisa.jpg'))
+            monalisa = str(fx_asset.joinpath('mona-lisa.jpg'))
             with open(monalisa) as f:
                 assert f.tell() == 0
 
+    .. versionchanged:: 0.6.11
+       Switch `py.path.local` to `pathlib.Path`.
     """
-    return local(__file__).dirpath('assets')
+    return Path(__file__).with_name('assets')
 
 
 @fixture

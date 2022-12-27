@@ -82,7 +82,7 @@ def test_raw_image(fx_asset):
         assert img[0, 0] == Color('#000000')
         assert img[255, 255] == Color('#ffff00')
         assert img[64, 128] == Color('#804000')
-    with Image(filename=str(fx_asset.join('blob.rgb')),
+    with Image(filename=str(fx_asset.joinpath('blob.rgb')),
                depth=8, width=256, height=256, format="RGB") as img:
         assert img.size == (256, 256)
         assert img[0, 0] == Color('#000000')
@@ -92,26 +92,28 @@ def test_raw_image(fx_asset):
 
 def test_clear_image(fx_asset):
     with Image() as img:
-        img.read(filename=str(fx_asset.join('mona-lisa.jpg')))
+        img.read(filename=str(fx_asset.joinpath('mona-lisa.jpg')))
         assert img.size == (402, 599)
         img.clear()
         assert img.size == (0, 0)
-        img.read(filename=str(fx_asset.join('beach.jpg')))
+        img.read(filename=str(fx_asset.joinpath('beach.jpg')))
         assert img.size == (800, 600)
 
 
 def test_read_from_filename(fx_asset):
+    fpath = str(fx_asset.joinpath('mona-lisa.jpg'))
     with Image() as img:
-        img.read(filename=str(fx_asset.join('mona-lisa.jpg')))
+        img.read(filename=fpath)
         assert img.width == 402
         img.clear()
-        with fx_asset.join('mona-lisa.jpg').open('rb') as f:
+        with open(fpath, 'rb') as f:
             img.read(file=f)
             assert img.width == 402
             img.clear()
-        blob = fx_asset.join('mona-lisa.jpg').read('rb')
-        img.read(blob=blob)
-        assert img.width == 402
+        with open(fpath, 'rb') as f:
+            blob = f.read()
+            img.read(blob=blob)
+            assert img.width == 402
 
 
 @mark.skipif(not unicode_filesystem_encoding,
@@ -122,14 +124,14 @@ def test_read_from_unicode_filename(fx_asset, tmpdir):
     if not PY3:
         filename = filename.decode('utf-8')
     path = os.path.join(text_type(tmpdir), filename)  # workaround py.path bug
-    shutil.copyfile(str(fx_asset.join('mona-lisa.jpg')), path)
+    shutil.copyfile(str(fx_asset.joinpath('mona-lisa.jpg')), path)
     with Image() as img:
         img.read(filename=text(path))
         assert img.width == 402
 
 
 def test_read_with_colorspace(fx_asset):
-    fpath = str(fx_asset.join('cmyk.jpg'))
+    fpath = str(fx_asset.joinpath('cmyk.jpg'))
     with Image(filename=fpath,
                colorspace='srgb',
                units='pixelspercentimeter') as img:
@@ -146,29 +148,32 @@ def test_read_with_extract():
 
 def test_new_from_file(fx_asset):
     """Opens an image from the file object."""
-    with fx_asset.join('mona-lisa.jpg').open('rb') as f:
+    fpath = fx_asset.joinpath('mona-lisa.jpg')
+    with open(fpath, 'rb') as f:
         with Image(file=f) as img:
             assert img.width == 402
-    with raises(ClosedImageError):
-        img.wand
-    strio = io.BytesIO(fx_asset.join('mona-lisa.jpg').read('rb'))
-    with Image(file=strio) as img:
-        assert img.width == 402
-    strio.close()
-    with raises(ClosedImageError):
-        img.wand
-    with raises(TypeError):
-        Image(file='not file object')
+        with raises(ClosedImageError):
+            img.wand
+
+    with open(fpath, 'rb') as f:
+        strio = io.BytesIO(f.read())
+        with Image(file=strio) as img:
+            assert img.width == 402
+        strio.close()
+        with raises(ClosedImageError):
+            img.wand
+        with raises(TypeError):
+            Image(file='not file object')
 
 
 def test_new_from_filename(fx_asset):
     """Opens an image through its filename."""
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as img:
         assert img.width == 402
     with raises(ClosedImageError):
         img.wand
     with raises(IOError):
-        Image(filename=str(fx_asset.join('not-exists.jpg')))
+        Image(filename=str(fx_asset.joinpath('not-exists.jpg')))
 
 
 @mark.skipif(not unicode_filesystem_encoding,
@@ -179,26 +184,30 @@ def test_new_from_unicode_filename(fx_asset, tmpdir):
     if not PY3:
         filename = filename.decode('utf-8')
     path = os.path.join(text_type(tmpdir), filename)  # workaround py.path bug
-    shutil.copyfile(str(fx_asset.join('mona-lisa.jpg')), path)
+    shutil.copyfile(str(fx_asset.joinpath('mona-lisa.jpg')), path)
     with Image(filename=text(path)) as img:
         assert img.width == 402
 
 
 def test_new_from_blob(fx_asset):
     """Opens an image from blob."""
-    blob = fx_asset.join('mona-lisa.jpg').read('rb')
-    with Image(blob=blob) as img:
-        assert img.width == 402
-    with raises(ClosedImageError):
-        img.wand
+    fpath = fx_asset.joinpath('mona-lisa.jpg')
+    with open(fpath, 'rb') as f:
+        blob = f.read()
+        with Image(blob=blob) as img:
+            assert img.width == 402
+        with raises(ClosedImageError):
+            img.wand
 
 
 def test_new_with_format(fx_asset):
-    blob = fx_asset.join('google.ico').read('rb')
-    with raises(Exception):
-        Image(blob=blob)
-    with Image(blob=blob, format='ico') as img:
-        assert img.size == (16, 16)
+    fpath = fx_asset.joinpath('google.ico')
+    with open(fpath, 'rb') as f:
+        blob = f.read()
+        with raises(Exception):
+            Image(blob=blob)
+        with Image(blob=blob, format='ico') as img:
+            assert img.size == (16, 16)
 
 
 def test_new_from_pseudo(fx_asset):
@@ -211,7 +220,7 @@ def test_clone(fx_asset):
     """Clones the existing image."""
     funcs = (lambda img: Image(image=img),
              lambda img: img.clone())
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as img:
         for func in funcs:
             with func(img) as cloned:
                 assert img.wand is not cloned.wand
@@ -263,19 +272,21 @@ def test_image_swap():
 
 
 def test_ping_from_filename(fx_asset):
-    file_path = str(fx_asset.join('mona-lisa.jpg'))
+    file_path = str(fx_asset.joinpath('mona-lisa.jpg'))
     with Image.ping(filename=file_path) as img:
         assert img.size == (402, 599)
 
 
 def test_ping_from_blob(fx_asset):
-    blob = fx_asset.join('mona-lisa.jpg').read('rb')
-    with Image.ping(blob=blob) as img:
-        assert img.size == (402, 599)
+    fpath = fx_asset.joinpath('mona-lisa.jpg')
+    with open(fpath, 'rb') as f:
+        blob = f.read()
+        with Image.ping(blob=blob) as img:
+            assert img.size == (402, 599)
 
 
 def test_ping_from_file(fx_asset):
-    with fx_asset.join('mona-lisa.jpg').open('rb') as fd:
+    with fx_asset.joinpath('mona-lisa.jpg').open('rb') as fd:
         with Image.ping(file=fd) as img:
             assert img.size == (402, 599)
 
@@ -283,7 +294,7 @@ def test_ping_from_file(fx_asset):
 def test_save_to_filename(fx_asset):
     """Saves an image to the filename."""
     savefile = os.path.join(tempfile.mkdtemp(), 'savetest.jpg')
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as orig:
+    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as orig:
         orig.save(filename=savefile)
         with raises(IOError):
             orig.save(filename=os.path.join(savefile, 'invalid.jpg'))
@@ -302,7 +313,7 @@ def test_save_to_unicode_filename(fx_asset, tmpdir):
     if not PY3:
         filename = filename.decode('utf-8')
     path = os.path.join(text_type(tmpdir), filename)  # workaround py.path bug
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as orig:
+    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as orig:
         orig.save(filename=path)
     with Image(filename=path) as img:
         assert img.width == 402
@@ -312,7 +323,7 @@ def test_save_to_file(fx_asset):
     """Saves an image to the Python file object."""
     buffer = io.BytesIO()
     with tempfile.TemporaryFile() as savefile:
-        with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as orig:
+        with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as orig:
             orig.save(file=savefile)
             orig.save(file=buffer)
             with raises(TypeError):
@@ -331,7 +342,7 @@ def test_save_to_file(fx_asset):
 def test_save_full_animated_gif_to_file(fx_asset):
     """Save all frames of an animated to a Python file object."""
     temp_filename = os.path.join(tempfile.mkdtemp(), 'savetest.gif')
-    orig_filename = str(fx_asset.join('nocomments.gif'))
+    orig_filename = str(fx_asset.joinpath('nocomments.gif'))
     with open(temp_filename, 'w+b') as fp:
         with Image(filename=orig_filename) as orig:
             orig.save(file=fp)
@@ -345,7 +356,7 @@ def test_save_full_animated_gif_to_file(fx_asset):
 def test_save_error(fx_asset):
     filename = os.path.join(tempfile.mkdtemp(), 'savetest.jpg')
     fileobj = io.BytesIO()
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as orig:
+    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as orig:
         with raises(TypeError):
             orig.save()
         with raises(TypeError):
@@ -354,7 +365,7 @@ def test_save_error(fx_asset):
 
 def test_make_blob(fx_asset):
     """Makes a blob string."""
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as img:
         with Image(blob=img.make_blob('png')) as img2:
             assert img2.size == (402, 599)
             assert img2.format == 'PNG'
@@ -397,7 +408,7 @@ def test_montage():
 
 def test_convert(fx_asset):
     """Converts the image format."""
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as img:
         with img.convert('png') as converted:
             assert converted.format == 'PNG'
             strio = io.BytesIO()
@@ -416,7 +427,7 @@ def test_iterate(fx_asset):
     """Uses iterator."""
     with Color('#000') as black:
         with Color('transparent') as transparent:
-            with Image(filename=str(fx_asset.join('croptest.png'))) as img:
+            with Image(filename=str(fx_asset.joinpath('croptest.png'))) as img:
                 for i, row in enumerate(img):
                     assert len(row) == 300
                     if i % 30:
@@ -437,14 +448,14 @@ def test_iterate(fx_asset):
 
 def test_slice_clone(fx_asset):
     """Clones using slicing."""
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as img:
         with img[:, :] as cloned:
             assert img.size == cloned.size
 
 
 def test_slice_invalid_types(fx_asset):
     """Slicing with invalid types should throw exceptions."""
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as img:
         with raises(TypeError):
             img['12']
         with raises(TypeError):
@@ -469,7 +480,7 @@ def test_slice_invalid_types(fx_asset):
             img['1', 0]
         with raises(TypeError):
             img[1, '0']
-    with Image(filename=str(fx_asset.join('croptest.png'))) as img:
+    with Image(filename=str(fx_asset.joinpath('croptest.png'))) as img:
         with raises(IndexError):
             img[300, 300]
         with raises(IndexError):
@@ -478,7 +489,7 @@ def test_slice_invalid_types(fx_asset):
 
 def test_index_pixel(fx_asset):
     """Gets a pixel."""
-    with Image(filename=str(fx_asset.join('croptest.png'))) as img:
+    with Image(filename=str(fx_asset.joinpath('croptest.png'))) as img:
         assert img[0, 0] == Color('transparent')
         assert img[99, 99] == Color('transparent')
         assert img[100, 100] == Color('black')
@@ -516,7 +527,7 @@ def test_index_row(fx_asset):
     """Gets a row."""
     with Color('transparent') as transparent:
         with Color('black') as black:
-            with Image(filename=str(fx_asset.join('croptest.png'))) as img:
+            with Image(filename=str(fx_asset.joinpath('croptest.png'))) as img:
                 for c in img[0]:
                     assert c == transparent
                 for c in img[99]:
@@ -542,7 +553,7 @@ def test_index_row(fx_asset):
 
 def test_slice_crop(fx_asset):
     """Crops using slicing."""
-    with Image(filename=str(fx_asset.join('croptest.png'))) as img:
+    with Image(filename=str(fx_asset.joinpath('croptest.png'))) as img:
         with img[100:200, 100:200] as cropped:
             assert cropped.size == (100, 100)
             with Color('#000') as black:
@@ -564,11 +575,11 @@ def test_slice_crop(fx_asset):
 
 def test_equal(fx_asset):
     """Equals (``==``) and not equals (``!=``) operators."""
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as a:
-        with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as a2:
+    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as a:
+        with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as a2:
             assert a == a2
             assert not (a != a2)
-        with Image(filename=str(fx_asset.join('sasha.jpg'))) as b:
+        with Image(filename=str(fx_asset.joinpath('sasha.jpg'))) as b:
             assert a != b
             assert not (a == b)
         with a.convert('png') as a3:
@@ -578,7 +589,7 @@ def test_equal(fx_asset):
 
 def test_object_hash(fx_asset):
     """Gets :func:`hash()` of the image."""
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as img:
         a = hash(img)
         img.format = 'png'
         b = hash(img)
@@ -591,7 +602,8 @@ def test_issue_150(fx_asset, tmpdir):
     https://github.com/emcconville/wand/issues/150
 
     """
-    with Image(filename=str(fx_asset.join('tiger_hd-1920x1080.jpg'))) as img:
+    fpath = str(fx_asset.joinpath('tiger_hd-1920x1080.jpg'))
+    with Image(filename=fpath) as img:
         img.format = 'pjpeg'
         with open(str(tmpdir.join('out.jpg')), 'wb') as f:
             img.save(file=f)

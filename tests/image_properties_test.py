@@ -15,15 +15,15 @@ from wand.version import MAGICK_VERSION_NUMBER
 
 def test_alpha_channel_get(fx_asset):
     """Checks if image has alpha channel."""
-    with Image(filename=str(fx_asset.join('watermark.png'))) as img:
+    with Image(filename=str(fx_asset.joinpath('watermark.png'))) as img:
         assert img.alpha_channel is True
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as img:
         assert img.alpha_channel is False
 
 
 def test_alpha_channel_set(fx_asset):
     """Sets alpha channel to off."""
-    with Image(filename=str(fx_asset.join('watermark.png'))) as img:
+    with Image(filename=str(fx_asset.joinpath('watermark.png'))) as img:
         if MAGICK_VERSION_NUMBER < 0x700:
             enable_option = 'on'
             disable_option = False
@@ -54,13 +54,13 @@ def test_artifacts():
 
 def test_background_color_get(fx_asset):
     """Gets the background color."""
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as img:
         assert Color('white') == img.background_color
 
 
 def test_background_color_set(fx_asset):
     """Sets the background color."""
-    with Image(filename=str(fx_asset.join('croptest.png'))) as img:
+    with Image(filename=str(fx_asset.joinpath('croptest.png'))) as img:
         with Color('red') as color:
             img.background_color = color
             assert img.background_color == color
@@ -82,11 +82,12 @@ def test_channel_depths():
 
 
 def test_channel_images(fx_asset):
-    with Image(filename=str(fx_asset.join('sasha.jpg'))) as i:
+    with Image(filename=str(fx_asset.joinpath('sasha.jpg'))) as i:
         i.format = 'png'
         channels = ('opacity', 'alpha',)
         for name in channels:
-            expected_path = str(fx_asset.join('channel_images', name + '.png'))
+            fname = name + '.png'
+            expected_path = str(fx_asset.joinpath('channel_images', fname))
             with Image(filename=expected_path) as expected:
                 expected.depth = 8
                 if MAGICK_VERSION_NUMBER >= 0x700:
@@ -100,25 +101,25 @@ def test_channel_images(fx_asset):
 
 
 def test_colors(fx_asset):
-    with Image(filename=str(fx_asset.join('trim-color-test.png'))) as img:
+    with Image(filename=str(fx_asset.joinpath('trim-color-test.png'))) as img:
         assert img.colors == 2
 
 
 def test_colorspace_get(fx_asset):
     """Gets the image colorspace"""
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as img:
         assert img.colorspace.endswith('rgb')
 
 
 def test_colorspace_set(fx_asset):
     """Sets the image colorspace"""
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as img:
         img.colorspace = 'cmyk'
         assert img.colorspace == 'cmyk'
 
 
 def test_compose(fx_asset):
-    with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('sasha.jpg'))) as img:
         assert img.compose == 'over'
         img.compose = 'blend'
         assert img.compose == 'blend'
@@ -129,7 +130,7 @@ def test_compose(fx_asset):
 
 
 def test_compression(fx_asset):
-    with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('sasha.jpg'))) as img:
         # Legacy releases/library asserted ``'group4'`` compression type.
         # IM 7 will correctly report ``'jpeg'``, but ``'group4'`` should
         # still be apart of regression acceptance.
@@ -142,13 +143,13 @@ def test_compression(fx_asset):
 
 def test_compression_quality_get(fx_asset):
     """Gets the image compression quality."""
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as img:
         assert img.compression_quality == 80
 
 
 def test_compression_quality_set(fx_asset):
     """Sets the image compression quality."""
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as img:
         img.compression_quality = 50
         assert img.compression_quality == 50
         with raises(TypeError):
@@ -156,26 +157,26 @@ def test_compression_quality_set(fx_asset):
 
 
 def test_delay_set_get(fx_asset):
-    with Image(filename=str(fx_asset.join('nocomments.gif'))) as img:
+    with Image(filename=str(fx_asset.joinpath('nocomments.gif'))) as img:
         img.delay = 10
         assert img.delay == 10
 
 
 def test_depth_get(fx_asset):
     """Gets the image depth"""
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as img:
         assert img.depth == 8
 
 
 def test_depth_set(fx_asset):
     """Sets the image depth"""
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as img:
         img.depth = 16
         assert img.depth == 16
 
 
 def test_dispose(fx_asset):
-    with Image(filename=str(fx_asset.join('nocomments.gif'))) as img:
+    with Image(filename=str(fx_asset.joinpath('nocomments.gif'))) as img:
         assert img.dispose == 'none'
         img.dispose = 'background'
         assert img.dispose == 'background'
@@ -184,7 +185,7 @@ def test_dispose(fx_asset):
 def test_font_set(fx_asset):
     with Image(width=144, height=192, background=Color('#1e50a2')) as img:
         font = Font(
-            path=str(fx_asset.join('League_Gothic.otf')),
+            path=str(fx_asset.joinpath('League_Gothic.otf')),
             color=Color('gold'),
             size=12,
             antialias=False
@@ -197,7 +198,7 @@ def test_font_set(fx_asset):
         assert img.font == font
         assert repr(img.font)
         fontStroke = Font(
-            path=str(fx_asset.join('League_Gothic.otf')),
+            path=str(fx_asset.joinpath('League_Gothic.otf')),
             stroke_color=Color('ORANGE'),
             stroke_width=1.5
         )
@@ -209,7 +210,7 @@ def test_font_set(fx_asset):
         img.stroke_color = 'gold'
         assert img.stroke_color == Color('gold')
         fontColor = Font(
-            path=str(fx_asset.join('League_Gothic.otf')),
+            path=str(fx_asset.joinpath('League_Gothic.otf')),
             color='YELLOW',
             stroke_color='PINK'
         )
@@ -222,15 +223,15 @@ def test_font_set(fx_asset):
 
 def test_format_get(fx_asset):
     """Gets the image format."""
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as img:
         assert img.format == 'JPEG'
-    with Image(filename=str(fx_asset.join('croptest.png'))) as img:
+    with Image(filename=str(fx_asset.joinpath('croptest.png'))) as img:
         assert img.format == 'PNG'
 
 
 def test_format_set(fx_asset):
     """Sets the image format."""
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as img:
         img.format = 'png'
         assert img.format == 'PNG'
         strio = io.BytesIO()
@@ -258,7 +259,7 @@ def test_gravity_set():
 
 
 def test_histogram(fx_asset):
-    with Image(filename=str(fx_asset.join('trim-color-test.png'))) as a:
+    with Image(filename=str(fx_asset.joinpath('trim-color-test.png'))) as a:
         h = a.histogram
         assert len(h) == 2
         assert frozenset(h) == frozenset([
@@ -317,7 +318,7 @@ def test_length_of_bytes():
 
 
 def test_loop(fx_asset):
-    with Image(filename=str(fx_asset.join('nocomments.gif'))) as img:
+    with Image(filename=str(fx_asset.joinpath('nocomments.gif'))) as img:
         assert img.loop == 0
         img.loop = 1
         assert img.loop == 1
@@ -343,7 +344,7 @@ def test_mean():
 
 def test_metadata(fx_asset):
     """Test metadata api"""
-    with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('beach.jpg'))) as img:
         assert len(img.metadata) > 0
         for key in img.metadata:
             assert isinstance(key, string_type)
@@ -355,9 +356,9 @@ def test_metadata(fx_asset):
 
 def test_mimetype(fx_asset):
     """Gets mimetypes of the image."""
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as img:
         assert img.mimetype in ('image/jpeg', 'image/x-jpeg')
-    with Image(filename=str(fx_asset.join('croptest.png'))) as img:
+    with Image(filename=str(fx_asset.joinpath('croptest.png'))) as img:
         assert img.mimetype in ('image/png', 'image/x-png')
 
 
@@ -369,21 +370,21 @@ def test_minima_maxima():
 
 
 def test_orientation_get(fx_asset):
-    with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('sasha.jpg'))) as img:
         assert img.orientation == 'undefined'
 
-    with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('beach.jpg'))) as img:
         assert img.orientation == 'top_left'
 
 
 def test_orientation_set(fx_asset):
-    with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('beach.jpg'))) as img:
         img.orientation = 'bottom_right'
         assert img.orientation == 'bottom_right'
 
 
 def test_page_basic(fx_asset):
-    with Image(filename=str(fx_asset.join('watermark.png'))) as img1:
+    with Image(filename=str(fx_asset.joinpath('watermark.png'))) as img1:
         assert img1.page == (640, 480, 0, 0)
         assert img1.page_width == 640
         assert img1.page_height == 480
@@ -394,7 +395,8 @@ def test_page_basic(fx_asset):
 
 
 def test_page_offset(fx_asset):
-    with Image(filename=str(fx_asset.join('watermark-offset.png'))) as img1:
+    fpath = str(fx_asset.joinpath('watermark-offset.png'))
+    with Image(filename=fpath) as img1:
         assert img1.page == (640, 480, 12, 13)
         assert img1.page_width == 640
         assert img1.page_height == 480
@@ -403,7 +405,7 @@ def test_page_offset(fx_asset):
 
 
 def test_page_setter(fx_asset):
-    with Image(filename=str(fx_asset.join('watermark.png'))) as img1:
+    with Image(filename=str(fx_asset.joinpath('watermark.png'))) as img1:
         assert img1.page == (640, 480, 0, 0)
         img1.page = (640, 480, 0, 0)
         assert img1.page == (640, 480, 0, 0)
@@ -418,7 +420,7 @@ def test_page_setter(fx_asset):
 
 
 def test_page_setter_items(fx_asset):
-    with Image(filename=str(fx_asset.join('watermark.png'))) as img1:
+    with Image(filename=str(fx_asset.joinpath('watermark.png'))) as img1:
         assert img1.page == (640, 480, 0, 0)
         img1.page_width = 6400
         assert img1.page == (6400, 480, 0, 0)
@@ -467,7 +469,7 @@ def test_primary_points(fx_asset):
 
 
 def test_profiles(fx_asset):
-    with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('beach.jpg'))) as img:
         assert len(img.profiles) == 1
         assert 'exif' in [d for d in img.profiles]
         exif_data = img.profiles['exif']
@@ -487,7 +489,7 @@ def test_profiles(fx_asset):
 
 
 def test_rendering_intent(fx_asset):
-    with Image(filename=str(fx_asset.join('trimtest.png'))) as img:
+    with Image(filename=str(fx_asset.joinpath('trimtest.png'))) as img:
         assert img.rendering_intent == 'perceptual'
         img.rendering_intent = 'relative'
         assert img.rendering_intent == 'relative'
@@ -495,20 +497,20 @@ def test_rendering_intent(fx_asset):
 
 def test_resolution_get(fx_asset):
     """Gets image resolution."""
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as img:
         assert img.resolution == (72, 72)
 
 
 def test_resolution_set_01(fx_asset):
     """Sets image resolution."""
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as img:
         img.resolution = (100, 100)
         assert img.resolution == (100, 100)
 
 
 def test_resolution_set_02(fx_asset):
     """Sets image resolution with integer as parameter."""
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as img:
         img.resolution = 100
         assert img.resolution == (100, 100)
 
@@ -541,19 +543,19 @@ def test_scene():
 
 def test_signature(fx_asset):
     """Gets the image signature."""
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
-        with fx_asset.join('mona-lisa.jpg').open('rb') as f:
+    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as img:
+        with fx_asset.joinpath('mona-lisa.jpg').open('rb') as f:
             with Image(file=f) as same:
                 assert img.signature == same.signature
         with img.convert('png') as same:
             assert img.signature == same.signature
-        with Image(filename=str(fx_asset.join('beach.jpg'))) as diff:
+        with Image(filename=str(fx_asset.joinpath('beach.jpg'))) as diff:
             assert img.signature != diff.signature
 
 
 def test_size(fx_asset):
     """Gets the image size."""
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as img:
         assert img.size == (402, 599)
         assert img.width == 402
         assert img.height == 599
@@ -585,7 +587,7 @@ def test_stroke_color_user_error():
 
 def test_type_get(fx_asset):
     """Gets the image type."""
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as img:
         assert img.type == "truecolor"
         img.alpha_channel = True
         if MAGICK_VERSION_NUMBER < 0x700:
@@ -597,13 +599,13 @@ def test_type_get(fx_asset):
 
 def test_type_set(fx_asset):
     """Sets the image type."""
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as img:
         img.type = "grayscale"
         assert img.type == "grayscale"
 
 
 def test_ticks_per_second(fx_asset):
-    with Image(filename=str(fx_asset.join('nocomments.gif'))) as img:
+    with Image(filename=str(fx_asset.joinpath('nocomments.gif'))) as img:
         assert img.ticks_per_second == 100
         img.ticks_per_second = 10
         assert img.ticks_per_second == 10
@@ -611,28 +613,28 @@ def test_ticks_per_second(fx_asset):
 
 def test_units_get(fx_asset):
     """Gets the image resolution units."""
-    with Image(filename=str(fx_asset.join('beach.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('beach.jpg'))) as img:
         assert img.units == "pixelsperinch"
-    with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('sasha.jpg'))) as img:
         assert img.units == "undefined"
 
 
 def test_units_set(fx_asset):
     """Sets the image resolution units."""
-    with Image(filename=str(fx_asset.join('watermark.png'))) as img:
+    with Image(filename=str(fx_asset.joinpath('watermark.png'))) as img:
         img.units = "pixelspercentimeter"
         assert img.units == "pixelspercentimeter"
 
 
 def test_virtual_pixel_get(fx_asset):
     """Gets image virtual pixel"""
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as img:
         assert img.virtual_pixel == "undefined"
 
 
 def test_virtual_pixel_set(fx_asset):
     """Sets image virtual pixel"""
-    with Image(filename=str(fx_asset.join('mona-lisa.jpg'))) as img:
+    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as img:
         img.virtual_pixel = "tile"
         assert img.virtual_pixel == "tile"
         with raises(ValueError):
