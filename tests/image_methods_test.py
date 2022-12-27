@@ -1519,7 +1519,7 @@ def test_noise():
 
 
 def test_normalize():
-    with Image(width=100, height=100, pseudo='gradient:') as img:
+    with Image(width=100, height=100, pseudo='rose:') as img:
         was = img.signature
         img.normalize()
         assert was != img.signature
@@ -1528,7 +1528,7 @@ def test_normalize():
 
 
 def test_normalize_channel():
-    with Image(width=100, height=100, pseudo='gradient:') as img:
+    with Image(width=100, height=100, pseudo='rose:') as img:
         was = img.signature
         img.normalize('red')
         assert was != img.signature
