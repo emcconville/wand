@@ -61,10 +61,12 @@ def test_set_get_clip_units():
             ctx.clip_units = 'not-a-clip_unit'
 
 
-def test_set_get_font(fx_asset):
+def test_set_get_font():
     with Drawing() as ctx:
-        ctx.font = str(fx_asset.joinpath('League_Gothic.otf'))
-        assert ctx.font == str(fx_asset.joinpath('League_Gothic.otf'))
+        """Setting this values doesn't actually check if the typeface file
+        exists, but the get/set values should still agree."""
+        ctx.font = 'GhostType.ttf'
+        assert ctx.font == 'GhostType.ttf'
         with raises(TypeError):
             ctx.font = 0xDEADBEEF
 
@@ -292,7 +294,7 @@ def test_draw_arc():
         assert was != img.signature
 
 
-def test_draw_circle(fx_asset):
+def test_draw_circle():
     with Image(width=50, height=50, background='white') as img:
         was = img.signature
         with Drawing() as ctx:
@@ -727,11 +729,11 @@ def test_draw_translate():
         assert was != img.signature
 
 
-def test_draw_text(fx_asset):
+def test_draw_text():
     with Image(width=100, height=100, background='white') as img:
         was = img.signature
         with Drawing() as ctx:
-            ctx.font = str(fx_asset.joinpath('League_Gothic.otf'))
+            ctx.font_family = 'Arial, Helvetica'
             ctx.font_size = 25
             ctx.fill_color = 'black'
             ctx.gravity = 'west'
@@ -740,10 +742,10 @@ def test_draw_text(fx_asset):
         assert was != img.signature
 
 
-def test_get_font_metrics_test(fx_asset):
+def test_get_font_metrics_test():
     with Image(width=144, height=192, background=Color('#fff')) as img:
         with Drawing() as draw:
-            draw.font = str(fx_asset.joinpath('League_Gothic.otf'))
+            draw.font_family = 'Arial, Helvetica'
             draw.font_size = 13
             nm1 = draw.get_font_metrics(img, 'asdf1234')
             nm2 = draw.get_font_metrics(img, 'asdf1234asdf1234')
@@ -761,7 +763,7 @@ def test_get_font_metrics_test(fx_asset):
             assert m2.text_height < m3.text_height
 
 
-def test_viewbox(fx_asset):
+def test_viewbox():
     with Drawing() as draw:
         with raises(TypeError):
             draw.viewbox(None, None, None, None)
