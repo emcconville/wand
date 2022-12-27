@@ -1,7 +1,7 @@
 import datetime
 import numbers
 import re
-from py.test import mark, raises
+from pytest import mark, raises
 
 from wand.version import (MAGICK_VERSION, MAGICK_VERSION_INFO,
                           MAGICK_VERSION_NUMBER, MAGICK_RELEASE_DATE,
