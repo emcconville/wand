@@ -139,33 +139,23 @@ def test_blue_shift():
             img.blue_shift('NaN')
 
 
-def test_blur(fx_asset):
-    with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
-        before = img[100, 100]
+def test_blur():
+    with Image(filename='rose:') as img:
+        was = img.signature
         img.blur(30, 10)
-        after = img[100, 100]
-        assert before != after
+        assert was != img.signature
     with Image(filename='rose:') as img:
         was = img.signature
         img.blur(30, 10, 'red')
         assert was != img.signature
 
 
-def test_border(fx_asset):
-    with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
-        left_top = img[0, 0]
-        left_bottom = img[0, -1]
-        right_top = img[-1, 0]
-        right_bottom = img[-1, -1]
+def test_border():
+    with Image(filename='rose:') as img:
+        was = img.signature
         with Color('red') as color:
             img.border(color, 2, 5)
-            assert (img[0, 0] == img[0, -1] == img[-1, 0] == img[-1, -1] ==
-                    img[1, 4] == img[1, -5] == img[-2, 4] == img[-2, -5] ==
-                    color)
-            assert img[2, 5] == left_top
-            assert img[2, -6] == left_bottom
-            assert img[-3, 5] == right_top
-            assert img[-3, -6] == right_bottom
+            assert was != img.signature
     with Image(filename='rose:') as img:
         was = img.signature
         img.border('pink', 2, 5)
@@ -185,7 +175,7 @@ def test_brightness_contrast():
 
 @mark.skipif(MAGICK_VERSION_NUMBER < 0x708,
              reason="Canny requires ImageMagick-7.0.8")
-def test_canny(fx_asset):
+def test_canny():
     with Image(filename='rose:') as img:
         img.transform_colorspace('gray')
         was = img.signature
@@ -260,7 +250,7 @@ def test_clamp():
         assert img.clamp(channel='red')
 
 
-def test_clut(fx_asset):
+def test_clut():
     with Image(filename='rose:') as img:
         was = img.signature
         with Image(img) as clut:
@@ -739,14 +729,14 @@ def test_distort_error():
             img.distort('perspective', 1)
 
 
-def test_edge(fx_asset):
+def test_edge():
     with Image(filename='rose:') as img:
         was = img.signature
         img.edge(1.5)
         assert was != img.signature
 
 
-def test_emboss(fx_asset):
+def test_emboss():
     with Image(filename='rose:') as img:
         was = img.signature
         img.emboss(1.5, 0.25)
@@ -763,7 +753,7 @@ def test_encipher_decipher():
         assert was == img.signature
 
 
-def test_enhance(fx_asset):
+def test_enhance():
     with Image(filename='rose:') as img:
         was = img.signature
         img.enhance()
@@ -1031,15 +1021,11 @@ def test_gamma_user_error(fx_asset):
             img.gamma(0.0, 'no channel')
 
 
-def test_gaussian_blur(fx_asset):
-    with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
-        before = img[100, 100]
+def test_gaussian_blur():
+    with Image(filename='rose:') as img:
+        was = img.signature
         img.gaussian_blur(30, 10)
-        after = img[100, 100]
-        assert before != after
-        assert 0.84 <= after.red <= 0.851
-        assert 0.74 <= after.green <= 0.75
-        assert 0.655 <= after.blue < 0.67
+        assert was != img.signature
     with Image(filename='rose:') as img:
         was = img.signature
         img.gaussian_blur(30, 10, channel='red')
@@ -1471,12 +1457,11 @@ def test_mode(fx_asset):
         assert was != img.signature
 
 
-def test_modulate(fx_asset):
-    with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
-        before = img[100, 100]
+def test_modulate():
+    with Image(filename='rose:') as img:
+        was = img.signature
         img.modulate(120, 120, 120)
-        after = img[100, 100]
-        assert before != after
+        assert was != img.signature
 
 
 def test_morphology_builtin(fx_asset):
@@ -1656,9 +1641,9 @@ def test_parse_meta_geometry():
             img.parse_meta_geometry('junk')
 
 
-def test_percent_escape(fx_asset):
-    with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
-        assert 'sasha.jpg 204x247' == img.percent_escape('%f %wx%h')
+def test_percent_escape():
+    with Image(filename='rose:') as img:
+        assert '3019 70x46' == img.percent_escape('%k %wx%h')
 
 
 def test_polaroid(fx_asset):
@@ -1685,8 +1670,8 @@ def test_polynomial():
         assert was != img.signature
 
 
-def test_posterize(fx_asset):
-    with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
+def test_posterize():
+    with Image(filename='rose:') as img:
         was = img.signature
         img.posterize(levels=16, dither='no')
         assert was != img.signature
@@ -1992,15 +1977,17 @@ def test_rotate_gif(tmpdir, fx_asset):
     tmpdir.remove()
 
 
-def test_rotate_reset_coords(fx_asset):
+def test_rotate_reset_coords():
     """Reset the coordinate frame so to the upper-left corner of
     the image is (0, 0) again.
 
     """
-    with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
+    with Image(filename='rose:') as img:
         img.rotate(45, reset_coords=True)
-        img.crop(0, 0, 170, 170)
-        assert img[85, 85] == Color('transparent')
+        img.crop(0, 0, 84, 84)
+        # There should be no page info from the crop, as everything was
+        # nulled by the rotate.
+        assert (0, 0, 0, 0) == img.page
 
 
 @mark.skipif(MAGICK_VERSION_NUMBER < 0x688,
@@ -2490,16 +2477,17 @@ def test_unique_colors():
         assert was != img.signature
 
 
-def test_unsharp_mask(fx_asset):
-    with Image(filename=str(fx_asset.join('sasha.jpg'))) as img:
-        before = img[100, 100]
-        img.unsharp_mask(1.1, 1, 0.5, 0.001)
-        after = img[100, 100]
-        assert before != after
+def test_unsharp_mask():
     with Image(filename='rose:') as img:
         was = img.signature
-        img.unsharp_mask(1.1, 1, 0.5, 0.001, channel='red')
-        assert was != img.signature
+        alpha = was
+        with img.clone() as cpy:
+            cpy.unsharp_mask(1.1, 1, 0.5, 0.001)
+            alpha = cpy.signature
+            assert alpha != was
+        with img.clone() as cpy:
+            cpy.unsharp_mask(1.1, 1, 0.5, 0.001, channel='red')
+            assert cpy.signature != alpha
 
 
 def test_vignette():
