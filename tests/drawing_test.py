@@ -729,11 +729,11 @@ def test_draw_translate():
         assert was != img.signature
 
 
-def test_draw_text():
+def test_draw_text(fx_asset):
     with Image(width=100, height=100, background='white') as img:
         was = img.signature
         with Drawing() as ctx:
-            ctx.font_family = 'Arial, Helvetica'
+            ctx.font = str(fx_asset.joinpath('League_Gothic.otf'))
             ctx.font_size = 25
             ctx.fill_color = 'black'
             ctx.gravity = 'west'
@@ -742,10 +742,10 @@ def test_draw_text():
         assert was != img.signature
 
 
-def test_get_font_metrics_test():
+def test_get_font_metrics(fx_asset):
     with Image(width=144, height=192, background=Color('#fff')) as img:
         with Drawing() as draw:
-            draw.font_family = 'Arial, Helvetica'
+            draw.font = str(fx_asset.joinpath('League_Gothic.otf'))
             draw.font_size = 13
             nm1 = draw.get_font_metrics(img, 'asdf1234')
             nm2 = draw.get_font_metrics(img, 'asdf1234asdf1234')
