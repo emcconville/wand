@@ -21,7 +21,7 @@ Unreleased.
    :meth:`Image.import_pixels() <wand.image.BaseImage.import_pixels>` methods. [:issue:`596`]
  - Added ``filter`` parameter to :meth:`Image.distort() <wand.image.BaseImage.distort>` method.
  - [TEST] Added Python 3.11 to regression tests for `github actions <https://github.com/emcconville/wand/actions>`_.
-
+ - [TEST] Replaced :mod:`py.path` fixtures with :mod:`pythlib`. [:pull:`607` & :issue:`608` by Louis Sautier]
 
 .. _changelog-0.6.10:
 

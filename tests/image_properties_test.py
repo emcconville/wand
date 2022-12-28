@@ -444,7 +444,7 @@ def test_page_setter_papersize():
         assert img.page == (0, 0, 0, 0)
 
 
-def test_primary_points(fx_asset):
+def test_primary_points():
     with Image(filename='rose:') as img:
         blue = [d/2 for d in img.blue_primary]
         img.blue_primary = blue
