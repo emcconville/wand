@@ -346,6 +346,7 @@ def test_mimetype():
     with Image(filename='rose:') as img:
         assert img.mimetype in (
             'image/x-portable-anymap',
+            'image/x-portable-pixmap',
             'image/x-portable'
         )
 
