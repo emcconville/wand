@@ -70,7 +70,7 @@ def test_blank_image():
         assert img[10, 5] == gray
 
 
-def test_raw_image(fx_asset):
+def test_raw_image():
     b = b"".join([struct.pack("BBB", i, j, 0)
                   for i in range(256) for j in range(256)])
     with raises(ValueError):
@@ -82,22 +82,16 @@ def test_raw_image(fx_asset):
         assert img[0, 0] == Color('#000000')
         assert img[255, 255] == Color('#ffff00')
         assert img[64, 128] == Color('#804000')
-    with Image(filename=str(fx_asset.joinpath('blob.rgb')),
-               depth=8, width=256, height=256, format="RGB") as img:
-        assert img.size == (256, 256)
-        assert img[0, 0] == Color('#000000')
-        assert img[255, 255] == Color('#ffff00')
-        assert img[64, 128] == Color('#804000')
 
 
-def test_clear_image(fx_asset):
+def test_clear_image():
     with Image() as img:
-        img.read(filename=str(fx_asset.joinpath('mona-lisa.jpg')))
-        assert img.size == (402, 599)
+        img.read(filename='logo:')
+        assert img.size == (640, 480)
         img.clear()
         assert img.size == (0, 0)
-        img.read(filename=str(fx_asset.joinpath('beach.jpg')))
-        assert img.size == (800, 600)
+        img.read(filename='wizard:')
+        assert img.size == (480, 640)
 
 
 def test_read_from_filename(fx_asset):
@@ -210,17 +204,17 @@ def test_new_with_format(fx_asset):
             assert img.size == (16, 16)
 
 
-def test_new_from_pseudo(fx_asset):
+def test_new_from_pseudo():
     with Image() as img:
         img.pseudo(10, 10, 'xc:none')
         assert img.size == (10, 10)
 
 
-def test_clone(fx_asset):
+def test_clone():
     """Clones the existing image."""
     funcs = (lambda img: Image(image=img),
              lambda img: img.clone())
-    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as img:
+    with Image(filename='rose:') as img:
         for func in funcs:
             with func(img) as cloned:
                 assert img.wand is not cloned.wand
@@ -406,9 +400,9 @@ def test_montage():
         assert base.iterator_length() == 1
 
 
-def test_convert(fx_asset):
+def test_convert():
     """Converts the image format."""
-    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as img:
+    with Image(filename='rose:') as img:
         with img.convert('png') as converted:
             assert converted.format == 'PNG'
             strio = io.BytesIO()
@@ -446,16 +440,16 @@ def test_iterate(fx_asset):
                 assert i == 299
 
 
-def test_slice_clone(fx_asset):
+def test_slice_clone():
     """Clones using slicing."""
-    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as img:
+    with Image(filename='rose:') as img:
         with img[:, :] as cloned:
             assert img.size == cloned.size
 
 
-def test_slice_invalid_types(fx_asset):
+def test_slice_invalid_types():
     """Slicing with invalid types should throw exceptions."""
-    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as img:
+    with Image(filename='rose:') as img:
         with raises(TypeError):
             img['12']
         with raises(TypeError):
@@ -480,25 +474,21 @@ def test_slice_invalid_types(fx_asset):
             img['1', 0]
         with raises(TypeError):
             img[1, '0']
-    with Image(filename=str(fx_asset.joinpath('croptest.png'))) as img:
+    with Image(filename='rose:') as img:
         with raises(IndexError):
             img[300, 300]
         with raises(IndexError):
             img[-301, -301]
 
 
-def test_index_pixel(fx_asset):
+def test_index_pixel():
     """Gets a pixel."""
-    with Image(filename=str(fx_asset.joinpath('croptest.png'))) as img:
-        assert img[0, 0] == Color('transparent')
-        assert img[99, 99] == Color('transparent')
-        assert img[100, 100] == Color('black')
-        assert img[150, 150] == Color('black')
-        assert img[-200, -200] == Color('black')
-        assert img[-201, -201] == Color('transparent')
+    with Image(filename='rose:') as img:
+        assert isinstance(img[0, 0], Color)
+        assert isinstance(img[50, 25], Color)
 
 
-def test_index_pixel_set(fx_asset):
+def test_index_pixel_set():
     with Image(filename='rose:') as img:
         with Color('black') as dot:
             img[0, 0] = dot
@@ -575,35 +565,31 @@ def test_slice_crop(fx_asset):
 
 def test_equal(fx_asset):
     """Equals (``==``) and not equals (``!=``) operators."""
-    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as a:
-        with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as a2:
+    with Image(width=10, height=10, pseudo='xc:orange') as a:
+        with Image(width=10, height=10, pseudo='xc:orange') as a2:
             assert a == a2
             assert not (a != a2)
-        with Image(filename=str(fx_asset.joinpath('sasha.jpg'))) as b:
+        with Image(width=10, height=10, pseudo='plasma:') as b:
             assert a != b
             assert not (a == b)
-        with a.convert('png') as a3:
-            assert a == a3
-            assert not (a != a3)
 
 
 def test_object_hash(fx_asset):
     """Gets :func:`hash()` of the image."""
-    with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as img:
+    with Image(filename='rose:') as img:
         a = hash(img)
         img.format = 'png'
         b = hash(img)
         assert a == b
 
 
-def test_issue_150(fx_asset, tmpdir):
+def test_issue_150(tmpdir):
     """Should not be terminated with segmentation fault.
 
     https://github.com/emcconville/wand/issues/150
 
     """
-    fpath = str(fx_asset.joinpath('tiger_hd-1920x1080.jpg'))
-    with Image(filename=fpath) as img:
+    with Image(filename='rose:') as img:
         img.format = 'pjpeg'
         with open(str(tmpdir.join('out.jpg')), 'wb') as f:
             img.save(file=f)
