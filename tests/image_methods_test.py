@@ -609,7 +609,7 @@ def test_crop_error(fx_asset):
             img.crop(bottom=1, height=2)
 
 
-def test_crop_gif(tmpdir, fx_asset):
+def test_crop_gif(tmp_path, fx_asset):
     fpath = str(fx_asset.joinpath('nocomments-delay-100.gif'))
     with Image(filename=fpath) as img:
         with img.clone() as d:
@@ -617,13 +617,12 @@ def test_crop_gif(tmpdir, fx_asset):
             for s in d.sequence:
                 assert s.delay == 100
             d.crop(50, 50, 200, 150)
-            d.save(filename=str(tmpdir.join('50_50_200_150.gif')))
-        with Image(filename=str(tmpdir.join('50_50_200_150.gif'))) as d:
+            d.save(filename=str(tmp_path / '50_50_200_150.gif'))
+        with Image(filename=str(tmp_path / '50_50_200_150.gif')) as d:
             assert len(d.sequence) == 46
             assert d.size == (150, 100)
             for s in d.sequence:
                 assert s.delay == 100
-    tmpdir.remove()
 
 
 def test_crop_gravity(fx_asset):
@@ -1798,7 +1797,7 @@ def test_resize_and_sample_errors(method):
     ('resize'),
     ('sample'),
 ])
-def test_resize_and_sample_gif(method, tmpdir, fx_asset):
+def test_resize_and_sample_gif(method, tmp_path, fx_asset):
     fpath = str(fx_asset.joinpath('nocomments-delay-100.gif'))
     with Image(filename=fpath) as img:
         assert len(img.sequence) == 46
@@ -1808,8 +1807,8 @@ def test_resize_and_sample_gif(method, tmpdir, fx_asset):
             for s in a.sequence:
                 assert s.delay == 100
             getattr(a, method)(175, 98)
-            a.save(filename=str(tmpdir.join('175_98.gif')))
-        with Image(filename=str(tmpdir.join('175_98.gif'))) as a:
+            a.save(filename=str(tmp_path / '175_98.gif'))
+        with Image(filename=str(tmp_path / '175_98.gif')) as a:
             assert len(a.sequence) == 46
             assert a.size == (175, 98)
             for s in a.sequence:
@@ -1819,8 +1818,8 @@ def test_resize_and_sample_gif(method, tmpdir, fx_asset):
             for s in b.sequence:
                 assert s.delay == 100
             getattr(b, method)(height=100)
-            b.save(filename=str(tmpdir.join('350_100.gif')))
-        with Image(filename=str(tmpdir.join('350_100.gif'))) as b:
+            b.save(filename=str(tmp_path / '350_100.gif'))
+        with Image(filename=str(tmp_path / '350_100.gif')) as b:
             assert len(b.sequence) == 46
             assert b.size == (350, 100)
             for s in b.sequence:
@@ -1830,13 +1829,12 @@ def test_resize_and_sample_gif(method, tmpdir, fx_asset):
             for s in c.sequence:
                 assert s.delay == 100
             getattr(c, method)(width=100)
-            c.save(filename=str(tmpdir.join('100_197.gif')))
-        with Image(filename=str(tmpdir.join('100_197.gif'))) as c:
+            c.save(filename=str(tmp_path / '100_197.gif'))
+        with Image(filename=str(tmp_path / '100_197.gif')) as c:
             assert len(c.sequence) == 46
             assert c.size == (100, 197)
             for s in c.sequence:
                 assert s.delay == 100
-    tmpdir.remove()
 
 
 def test_roll():
@@ -1901,7 +1899,7 @@ def test_rotate(fx_asset):
 
 
 @mark.slow
-def test_rotate_gif(tmpdir, fx_asset):
+def test_rotate_gif(tmp_path, fx_asset):
     fpath = str(fx_asset.joinpath('nocomments-delay-100.gif'))
     with Image(filename=fpath) as img:
         for s in img.sequence:
@@ -1911,13 +1909,12 @@ def test_rotate_gif(tmpdir, fx_asset):
             e.rotate(90)
             for s in e.sequence:
                 assert s.delay == 100
-            e.save(filename=str(tmpdir.join('rotate_90.gif')))
-        with Image(filename=str(tmpdir.join('rotate_90.gif'))) as e:
+            e.save(filename=str(tmp_path / 'rotate_90.gif'))
+        with Image(filename=str(tmp_path / 'rotate_90.gif')) as e:
             assert e.size == (197, 350)
             assert len(e.sequence) == 46
             for s in e.sequence:
                 assert s.delay == 100
-    tmpdir.remove()
 
 
 def test_rotate_reset_coords():
@@ -2286,9 +2283,9 @@ def test_transform_errors():
             img.transform(resize=unichar)
 
 
-def test_transform_gif(tmpdir, fx_asset):
-    src = str(fx_asset.joinpath('nocomments-delay-100.gif'))
-    dst = str(tmpdir.join('test_transform_gif.gif'))
+def test_transform_gif(tmp_path, fx_asset):
+    src = str(fx_asset / 'nocomments-delay-100.gif')
+    dst = str(tmp_path / 'test_transform_gif.gif')
     with Image(filename=src) as img:
         assert len(img.sequence) == 46
         assert img.size == (350, 197)
@@ -2307,7 +2304,6 @@ def test_transform_gif(tmpdir, fx_asset):
         for single in gif.sequence:
             assert single.size == (175, 98)
             assert single.delay == 100
-    tmpdir.remove()
 
 
 def test_transparent_color(fx_asset):

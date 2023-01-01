@@ -15,7 +15,6 @@ from pytest import mark, raises
 
 from wand.image import ClosedImageError, Image
 from wand.color import Color
-from wand.compat import PY3, text, text_type
 from wand.font import Font
 
 try:
@@ -112,15 +111,14 @@ def test_read_from_filename(fx_asset):
 
 @mark.skipif(not unicode_filesystem_encoding,
              reason='Unicode filesystem encoding needed')
-def test_read_from_unicode_filename(fx_asset, tmpdir):
+def test_read_from_unicode_filename(fx_asset, tmp_path):
     """https://github.com/emcconville/wand/issues/122"""
     filename = '모나리자.jpg'
-    if not PY3:
-        filename = filename.decode('utf-8')
-    path = os.path.join(text_type(tmpdir), filename)  # workaround py.path bug
-    shutil.copyfile(str(fx_asset.joinpath('mona-lisa.jpg')), path)
+    src = str(fx_asset / 'mona-lisa.jpg')
+    dst = str(tmp_path / filename)
+    shutil.copyfile(src, dst)
     with Image() as img:
-        img.read(filename=text(path))
+        img.read(filename=dst)
         assert img.width == 402
 
 
@@ -172,14 +170,13 @@ def test_new_from_filename(fx_asset):
 
 @mark.skipif(not unicode_filesystem_encoding,
              reason='Unicode filesystem encoding needed')
-def test_new_from_unicode_filename(fx_asset, tmpdir):
+def test_new_from_unicode_filename(fx_asset, tmp_path):
     """https://github.com/emcconville/wand/issues/122"""
     filename = '모나리자.jpg'
-    if not PY3:
-        filename = filename.decode('utf-8')
-    path = os.path.join(text_type(tmpdir), filename)  # workaround py.path bug
-    shutil.copyfile(str(fx_asset.joinpath('mona-lisa.jpg')), path)
-    with Image(filename=text(path)) as img:
+    src = str(fx_asset / 'mona-lisa.jpg')
+    dst = str(tmp_path / filename)
+    shutil.copyfile(src, dst)
+    with Image(filename=dst) as img:
         assert img.width == 402
 
 
@@ -302,14 +299,14 @@ def test_save_to_filename(fx_asset):
 
 @mark.skipif(not unicode_filesystem_encoding,
              reason='Unicode filesystem encoding needed')
-def test_save_to_unicode_filename(fx_asset, tmpdir):
+def test_save_to_unicode_filename(fx_asset, tmp_path):
     filename = '모나리자.jpg'
-    if not PY3:
-        filename = filename.decode('utf-8')
-    path = os.path.join(text_type(tmpdir), filename)  # workaround py.path bug
+    src = str(fx_asset / 'mona-lisa.jpg')
+    dst = str(tmp_path / filename)
+    shutil.copyfile(src, dst)
     with Image(filename=str(fx_asset.joinpath('mona-lisa.jpg'))) as orig:
-        orig.save(filename=path)
-    with Image(filename=path) as img:
+        orig.save(filename=dst)
+    with Image(filename=dst) as img:
         assert img.width == 402
 
 
@@ -583,7 +580,7 @@ def test_object_hash(fx_asset):
         assert a == b
 
 
-def test_issue_150(tmpdir):
+def test_issue_150(tmp_path):
     """Should not be terminated with segmentation fault.
 
     https://github.com/emcconville/wand/issues/150
@@ -591,7 +588,7 @@ def test_issue_150(tmpdir):
     """
     with Image(filename='rose:') as img:
         img.format = 'pjpeg'
-        with open(str(tmpdir.join('out.jpg')), 'wb') as f:
+        with open(str(tmp_path / 'out.jpg'), 'wb') as f:
             img.save(file=f)
 
 

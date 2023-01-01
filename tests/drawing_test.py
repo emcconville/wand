@@ -776,7 +776,7 @@ def test_viewbox():
         draw.viewbox(10, 10, 100, 100)
 
 
-def test_regression_issue_163(tmpdir):
+def test_regression_issue_163(tmp_path):
     """https://github.com/emcconville/wand/issues/163"""
     unicode_char = b'\xce\xa6'.decode('utf-8')
     with Drawing() as draw:
@@ -785,7 +785,7 @@ def test_regression_issue_163(tmpdir):
             draw.gravity = 'south_west'
             draw.text(0, 0, unicode_char)
             draw(image)
-            image.save(filename=str(tmpdir.join('out.jpg')))
+            image.save(filename=str(tmp_path / 'out.jpg'))
 
 
 def test_set_get_fill_opacity():
