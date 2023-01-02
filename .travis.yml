@@ -24,20 +24,24 @@ before_install:
     if [[ "$TRAVIS_CPU_ARCH" == "ppc64le" || "$TRAVIS_CPU_ARCH" == "s390x" ]]; then
       sudo apt-get update;
       sudo apt-get -y install libmagickwand-dev;
-    fi 
+    fi
+  - >
+    if [[ $TRAVIS_PYTHON_VERSION == pypy* ]]; then
+      pypy3 -m ensurepip
+    fi
 install:
 - echo $TRAVIS_PYTHON_VERSION
-- pip install -U pytest pytest-xdist pytest-forked
 - >
-    if [[ $TRAVIS_PYTHON_VERSION != pypy* ]]; then
-      pip install 'pytest-cov>=1.8.0';
+    if [[ $TRAVIS_PYTHON_VERSION == pypy* ]]; then
+      pypy3 -m pip install -U pytest pytest-xdist pytest-forked
+    else
+      pip install -U pytest pytest-xdist pytest-forked pytest-cov
     fi
-- pip install -e .[test] --upgrade
 script:
 - python -mwand.version --verbose
 - >
     if [[ $TRAVIS_PYTHON_VERSION == pypy* ]]; then
-      pytest --skip-pdf --forked --durations=20;
+      pypy3 -m pytest --skip-pdf --forked --durations=20;
     else
       pytest --skip-pdf --cov wand --forked --durations=20;
     fi
