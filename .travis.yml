@@ -1,43 +1,47 @@
-dist: bionic
+dist: jammy
 language: python
 sudo: false
 arch:
 - amd64
-- ppc64le
+- arm64
 - s390x
 git:
    depth: 1
 python:
-- 3.9
+- 3.10
 - pypy3
 # Disable version pypy3 for ppc64le
 jobs:
     exclude:
-     - arch: ppc64le
-       python: pypy3
      - arch: s390x
+       python: pypy3
+     - arch: arm64
        python: pypy3
 env:
 - secure: "EhG2uSD2m1eGxuL2HeQewJJx7MVL4WpjrxyfiUBEgsApemD1yKJPjUnLwAyd\nbPi5HJx5ySm1TTRSvj6/yP85YLYTaJHA8OabKk7p0wFW294qcrYIDGovU7NL\n3YOqZmqN+S3XOBGFCOnByxE+pcxxWW/3/I09EgeW7D6tBPh67G0="
 before_install:
   - >
-    if [[ "$TRAVIS_CPU_ARCH" == "ppc64le" || "$TRAVIS_CPU_ARCH" == "s390x" ]]; then
+    if [[ "$TRAVIS_CPU_ARCH" == "arm64" || "$TRAVIS_CPU_ARCH" == "s390x" ]]; then
       sudo apt-get update;
       sudo apt-get -y install libmagickwand-dev;
-    fi 
+    fi
+  - >
+    if [[ $TRAVIS_PYTHON_VERSION == pypy* ]]; then
+      pypy3 -m ensurepip
+    fi
 install:
 - echo $TRAVIS_PYTHON_VERSION
-- pip install -U pytest pytest-xdist pytest-forked
 - >
-    if [[ $TRAVIS_PYTHON_VERSION != pypy* ]]; then
-      pip install 'pytest-cov>=1.8.0';
+    if [[ $TRAVIS_PYTHON_VERSION == pypy* ]]; then
+      pypy3 -m pip install -U pytest pytest-xdist pytest-forked
+    else
+      pip install -U pytest pytest-xdist pytest-forked pytest-cov
     fi
-- pip install -e .[test] --upgrade
 script:
 - python -mwand.version --verbose
 - >
     if [[ $TRAVIS_PYTHON_VERSION == pypy* ]]; then
-      pytest --skip-pdf --forked --durations=20;
+      pypy3 -m pytest --skip-pdf --forked --durations=20;
     else
       pytest --skip-pdf --cov wand --forked --durations=20;
     fi

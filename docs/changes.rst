@@ -22,7 +22,9 @@ Unreleased.
  - Added ``filter`` parameter to :meth:`Image.distort() <wand.image.BaseImage.distort>` method.
  - [TEST] Added Python 3.11 to regression tests for `github actions <https://github.com/emcconville/wand/actions>`_.
  - [TEST] Replaced :mod:`py.path` fixtures with :mod:`pythlib`. [:pull:`607` & :issue:`608` by Louis Sautier]
- - [TEST] Retire Python2 support from regression testing.
+ - [TEST] Retired Python2 support from regression testing.
+ - [TEST] Upgraded `Travis CI <https://travis-ci.org/github/emcconville/wand>` build environments.
+
 
 .. _changelog-0.6.10:
 
