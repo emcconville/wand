@@ -3,7 +3,7 @@ language: python
 sudo: false
 arch:
 - amd64
-- ppc64le
+- arm64
 - s390x
 git:
    depth: 1
@@ -13,8 +13,6 @@ python:
 # Disable version pypy3 for ppc64le
 jobs:
     exclude:
-     - arch: ppc64le
-       python: pypy3
      - arch: s390x
        python: pypy3
 env:
