@@ -19,7 +19,7 @@ env:
 - secure: "EhG2uSD2m1eGxuL2HeQewJJx7MVL4WpjrxyfiUBEgsApemD1yKJPjUnLwAyd\nbPi5HJx5ySm1TTRSvj6/yP85YLYTaJHA8OabKk7p0wFW294qcrYIDGovU7NL\n3YOqZmqN+S3XOBGFCOnByxE+pcxxWW/3/I09EgeW7D6tBPh67G0="
 before_install:
   - >
-    if [[ "$TRAVIS_CPU_ARCH" == "ppc64le" || "$TRAVIS_CPU_ARCH" == "s390x" ]]; then
+    if [[ "$TRAVIS_CPU_ARCH" == "arm64" || "$TRAVIS_CPU_ARCH" == "s390x" ]]; then
       sudo apt-get update;
       sudo apt-get -y install libmagickwand-dev;
     fi
