@@ -12,7 +12,7 @@ Wand Changelog
 Version 0.6.11
 --------------
 
-Unreleased.
+Released on January 5th, 2023.
 
  - Fixed format issue when calling :meth:`Image.convert() <wand.image.Image.convert>`,
    and :meth:`Image.make_blob() <wand.image.Image.make_blob>` methods. [:issue:`594`]
