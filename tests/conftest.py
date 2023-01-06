@@ -53,9 +53,7 @@ def pytest_configure(config):
 @hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
     """Copied from
-    http://pytest.org/dev/example/simple.html
-    #making-test-result-information-available-in-fixtures
-
+    https://docs.pytest.org/en/latest/example/simple.html#making-test-result-information-available-in-fixtures
     """  # noqa
     # execute all other hooks to obtain the report object
     outcome = yield
