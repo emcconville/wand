@@ -1,7 +1,7 @@
 import os
 
 from pathlib import Path
-from pytest import fixture, hookimpl, mark
+from pytest import fixture, mark
 
 from wand.version import MAGICK_VERSION, VERSION
 
@@ -48,21 +48,6 @@ def pytest_configure(config):
     config.addinivalue_line(
         'markers', 'fft: marks test as Forward Fourier Transform dependent'
     )
-
-
-@hookimpl(tryfirst=True, hookwrapper=True)
-def pytest_runtest_makereport(item, call):
-    """Copied from
-    https://docs.pytest.org/en/latest/example/simple.html#making-test-result-information-available-in-fixtures
-    """  # noqa
-    # execute all other hooks to obtain the report object
-    outcome = yield
-    rep = outcome.get_result()
-
-    # set a report attribute for each phase of a call, which can
-    # be "setup", "call", "teardown"
-
-    setattr(item, "rep_" + rep.when, rep)
 
 
 def pytest_report_header(config):
