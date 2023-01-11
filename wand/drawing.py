@@ -11,14 +11,14 @@ import ctypes
 import numbers
 
 from . import assertions
-from .cdefs.structures import AffineMatrix, PointInfo
 from .api import library
+from .cdefs.structures import AffineMatrix, PointInfo
 from .color import Color
 from .compat import abc, binary, string_type, text, text_type, xrange
 from .exceptions import WandLibraryVersionError
-from .image import BaseImage, COMPOSITE_OPERATORS
-from .sequence import SingleImage
+from .image import COMPOSITE_OPERATORS, BaseImage
 from .resource import Resource
+from .sequence import SingleImage
 
 __all__ = ('CLIP_PATH_UNITS', 'FILL_RULE_TYPES', 'FONT_METRICS_ATTRIBUTES',
            'GRAVITY_TYPES', 'LINE_CAP_TYPES', 'LINE_JOIN_TYPES',

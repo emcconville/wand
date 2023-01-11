@@ -8,6 +8,7 @@ This module checks user input before calling MagickWands C-API methods.
 """
 
 import numbers
+
 try:
     from collections.abc import Sequence
 except ImportError:

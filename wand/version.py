@@ -47,7 +47,6 @@ except ImportError:  # pragma: no cover
     libmagick = None
 from .compat import binary, string_type, text
 
-
 __all__ = ('VERSION', 'VERSION_INFO', 'MAGICK_VERSION',
            'MAGICK_VERSION_DELEGATES', 'MAGICK_VERSION_FEATURES',
            'MAGICK_VERSION_INFO', 'MAGICK_VERSION_NUMBER',

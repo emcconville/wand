@@ -3,8 +3,9 @@
 
 .. versionadded:: 0.5.0
 """
-from ctypes import (CFUNCTYPE, POINTER, c_void_p, c_int, c_size_t, c_double,
-                    c_char_p, c_ubyte, c_bool)
+from ctypes import (CFUNCTYPE, POINTER, c_bool, c_char_p, c_double, c_int,
+                    c_size_t, c_ubyte, c_void_p)
+
 from wand.cdefs.wandtypes import c_ssize_t
 
 __all__ = ('MagickProgressMonitor', 'load')

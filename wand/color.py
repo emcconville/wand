@@ -11,7 +11,7 @@ from .api import library
 from .cdefs.structures import MagickPixelPacket, PixelInfo
 from .compat import binary, text
 from .resource import Resource
-from .version import MAGICK_VERSION_NUMBER, MAGICK_HDRI, QUANTUM_DEPTH
+from .version import MAGICK_HDRI, MAGICK_VERSION_NUMBER, QUANTUM_DEPTH
 
 __all__ = 'Color', 'scale_quantum_to_int8'
 

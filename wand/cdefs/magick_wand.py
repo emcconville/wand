@@ -3,7 +3,8 @@
 
 .. versionadded:: 0.5.0
 """
-from ctypes import POINTER, c_void_p, c_bool, c_int
+from ctypes import POINTER, c_bool, c_int, c_void_p
+
 from wand.cdefs.wandtypes import c_ssize_t
 
 __all__ = ('load',)

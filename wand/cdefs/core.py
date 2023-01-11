@@ -3,8 +3,9 @@
 
 .. versionadded:: 0.5.0
 """
-from ctypes import (POINTER, c_void_p, c_char_p, c_int, c_size_t,
-                    c_ulonglong, c_bool)
+from ctypes import (POINTER, c_bool, c_char_p, c_int, c_size_t, c_ulonglong,
+                    c_void_p)
+
 from wand.cdefs.wandtypes import c_ssize_t
 
 __all__ = ('load', 'load_with_version')

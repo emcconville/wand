@@ -22,15 +22,16 @@ You can use it from CLI also.  Execute :mod:`wand.display` module through
 
 """
 from __future__ import print_function
+
 import ctypes
 import os
 import platform
 import sys
 import tempfile
 
-from .image import Image
 from .api import library
 from .exceptions import BlobError, DelegateError
+from .image import Image
 
 __all__ = 'display',
 

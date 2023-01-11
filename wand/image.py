@@ -17,18 +17,17 @@ import weakref
 
 from . import assertions
 from .api import libc, libmagick, library
+from .cdefs.structures import (CCObjectInfo, CCObjectInfo70A, CCObjectInfo710,
+                               ChannelFeature, GeometryInfo, PixelInfo,
+                               RectangleInfo)
 from .color import Color
 from .compat import (abc, binary, binary_type, encode_filename, file_types,
                      string_type, text, to_bytes, xrange)
 from .exceptions import (MissingDelegateError, WandException,
-                         WandRuntimeError, WandLibraryVersionError)
+                         WandLibraryVersionError, WandRuntimeError)
 from .font import Font
 from .resource import DestroyedResourceError, Resource, genesis
-from .cdefs.structures import (CCObjectInfo, CCObjectInfo70A, CCObjectInfo710,
-                               ChannelFeature, GeometryInfo, PixelInfo,
-                               RectangleInfo)
-from .version import MAGICK_VERSION_NUMBER, MAGICK_HDRI
-
+from .version import MAGICK_HDRI, MAGICK_VERSION_NUMBER
 
 __all__ = ('ALPHA_CHANNEL_TYPES', 'AUTO_THRESHOLD_METHODS', 'CHANNELS',
            'COLORSPACE_TYPES', 'COMPARE_METRICS', 'COMPOSITE_OPERATORS',

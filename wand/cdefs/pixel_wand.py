@@ -3,11 +3,11 @@
 
 .. versionadded:: 0.5.0
 """
-from ctypes import (CDLL, POINTER, c_char_p, c_double,
-                    c_float, c_int, c_longdouble, c_size_t,
-                    c_ubyte, c_uint, c_ushort, c_void_p)
 import numbers
 import platform
+from ctypes import (CDLL, POINTER, c_char_p, c_double, c_float, c_int,
+                    c_longdouble, c_size_t, c_ubyte, c_uint, c_ushort,
+                    c_void_p)
 
 __all__ = ('load',)
 

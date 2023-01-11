@@ -4,7 +4,8 @@
 .. versionadded:: 0.5.0
 """
 from ctypes import POINTER, Structure, c_bool, c_double, c_int, c_size_t
-from wand.cdefs.wandtypes import c_ssize_t, c_magick_real_t, c_magick_size_t
+
+from wand.cdefs.wandtypes import c_magick_real_t, c_magick_size_t, c_ssize_t
 
 __all__ = ('AffineMatrix', 'CCMaxMetrics', 'CCObjectInfo', 'CCObjectInfo70A',
            'CCObjectInfo710', 'ChannelFeature', 'GeometryInfo', 'KernelInfo',

@@ -3,10 +3,11 @@
 
 .. versionadded:: 0.5.0
 """
-from ctypes import (POINTER, c_void_p, c_char_p, c_double, c_int, c_uint,
-                    c_size_t, c_ubyte, c_ulong)
-from wand.cdefs.wandtypes import c_ssize_t
+from ctypes import (POINTER, c_char_p, c_double, c_int, c_size_t, c_ubyte,
+                    c_uint, c_ulong, c_void_p)
+
 from wand.cdefs.structures import PointInfo
+from wand.cdefs.wandtypes import c_ssize_t
 
 __all__ = ('load',)
 

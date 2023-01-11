@@ -7,6 +7,7 @@ multiple Python versions (2.7, 3.3+) and VM implementations
 
 """
 import collections
+
 try:
     import collections.abc
 except ImportError:
