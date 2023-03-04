@@ -116,7 +116,10 @@ def library_paths():
             libmagick = ctypes.util.find_library('libMagickCore' + suffix)
             yield libwand, libmagick
         else:
+            libmagick = ctypes.util.find_library('MagickCore' + suffix)
             libwand = ctypes.util.find_library('MagickWand' + suffix)
+            if libmagick is not None:
+                yield libwand, libmagick
             yield libwand, libwand
 
 
