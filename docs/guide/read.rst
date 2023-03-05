@@ -166,14 +166,14 @@ Open a Pseudo Image
 -------------------
 
 A pseudo image can refer to any of ImageMagick's internal images that are
-accessable through coder protocols. ::
+accessible through coder protocols. ::
 
     from wand.image import Image
 
     with Image(width=100, height=100, pseudo='plasma:') as img:
         img.save(filename='100x100-plasma.png')
 
-Commun Pseudo images
+Common Pseudo images
 
 - ``'canvas:COLOR'``, or ``'xc:COLOR'``, where `COLOR` is any valid color value string.
 - ``'caption:TEXT'``, where `TEXT` is a string message.

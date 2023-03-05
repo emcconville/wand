@@ -320,11 +320,11 @@ For example::
         draw.path_start()
         # Start middle-left
         draw.path_move(to=(10, 50))
-        # Curve accross top-left to center
+        # Curve across top-left to center
         draw.path_curve(to=(40, 0),
                         controls=[(10, -40), (30,-40)],
                         relative=True)
-        # Continue curve accross bottom-right
+        # Continue curve across bottom-right
         draw.path_curve(to=(40, 0),
                         controls=(30, 40),
                         smooth=True,
@@ -481,7 +481,7 @@ with :attr:`~wand.drawing.Drawing.clip_path`, or
 :meth:`~wand.drawing.Drawing.set_stroke_pattern_url()`
 respectively. With stack management, :meth:`~wand.drawing.Drawing.pop()` is used
 to mark the end of a sub-routine, and return the graphical context to its
-pervious state before :meth:`~wand.drawing.Drawing.push()` was invoked.
+previous state before :meth:`~wand.drawing.Drawing.push()` was invoked.
 Methods :meth:`~wand.drawing.Drawing.pop_clip_path()`,
 :meth:`~wand.drawing.Drawing.pop_defs()`, and :meth:`~wand.drawing.Drawing.pop_pattern()`
 exist to match there pop counterparts.
@@ -618,7 +618,7 @@ a little more sophisticated.
 
     def draw_roi(contxt, roi_width, roi_height):
         """Let's draw a blue box so we can identify what
-        our region of intrest is."""
+        our region of interest is."""
         ctx.push()
         ctx.stroke_color = Color('BLUE')
         ctx.fill_color = Color('TRANSPARENT')

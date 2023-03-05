@@ -1450,7 +1450,7 @@ class BaseImage(Resource):
         It doesn't only mean that the image has two or more images (frames),
         but all frames are even the same size.  It's about image format,
         not content.  It's :const:`False` even if :mimetype:`image/ico`
-        consits of two or more images of the same size.
+        consists of two or more images of the same size.
 
         For example, it's :const:`False` for :mimetype:`image/jpeg`,
         :mimetype:`image/gif`, :mimetype:`image/ico`.
@@ -3123,7 +3123,7 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.3.0
         .. versionchanged:: 0.5.0
-           Added ``compose`` paramater, and ImageMagick 7 support.
+           Added ``compose`` parameter, and ImageMagick 7 support.
         """
         if isinstance(color, string_type):
             color = Color(color)
@@ -3519,7 +3519,7 @@ class BaseImage(Resource):
                     palette = [img.color_map(idx) for idx in range(img.colors)]
                     # ...
 
-        :param index: The color postion of the image palette.
+        :param index: The color position of the image palette.
         :type index: :class:`numbers.Integral`
         :param color: Optional color to _set_ at the given index.
         :type color: :class:`wand.color.Color`
@@ -5753,7 +5753,7 @@ class BaseImage(Resource):
     @manipulative
     @trap_exception
     def kmeans(self, number_colors=None, max_iterations=100, tolerance=0.01):
-        """Reduces the number of colors in an image by appling the K-means
+        """Reduces the number of colors in an image by applying the K-means
         clustering algorithm.
 
         .. note::
@@ -6305,7 +6305,7 @@ class BaseImage(Resource):
         return bool(r)
 
     def minimum_bounding_box(self, orientation=None):
-        """Find the minmum bounding box within the image. Use
+        """Find the minimum bounding box within the image. Use
         properties :attr:`fuzz` & :attr:`background_color` to influence
         bounding box thresholds.
 
@@ -6490,30 +6490,30 @@ class BaseImage(Resource):
         """
         assertions.assert_string(method=method, kernel=kernel)
         assertions.assert_integer(iterations=iterations)
-        buitin = None
+        builtin = None
         geometry = ''
         parts = kernel.split(':')
         if parts[0] in KERNEL_INFO_TYPES:
-            buitin = parts[0]
+            builtin = parts[0]
             if len(parts) == 2:
                 geometry = parts[1]
         exception_info = libmagick.AcquireExceptionInfo()
-        if buitin:
-            kernel_idx = KERNEL_INFO_TYPES.index(buitin)
+        if builtin:
+            kernel_idx = KERNEL_INFO_TYPES.index(builtin)
             geometry_info = GeometryInfo()
             flags = libmagick.ParseGeometry(binary(geometry),
                                             ctypes.byref(geometry_info))
-            if buitin in ('unity',):
+            if builtin in ('unity',):
                 if (flags & geometry_info.RhoValue) == 0:
                     geometry_info.rho = 1.0
-            elif buitin in ('square', 'diamond', 'octagon', 'disk',
+            elif builtin in ('square', 'diamond', 'octagon', 'disk',
                             'plus', 'cross'):
                 if (flags & geometry_info.SigmaValue) == 0:
                     geometry_info.sigma = 1.0
-            elif buitin in ('ring',):
+            elif builtin in ('ring',):
                 if (flags & geometry_info.XiValue) == 0:
                     geometry_info.xi = 1.0
-            elif buitin in ('rectangle',):
+            elif builtin in ('rectangle',):
                 if (flags & geometry_info.RhoValue) == 0:
                     geometry_info.rho = geometry_info.sigma
                 if geometry_info.rho < 1.0:
@@ -6524,7 +6524,7 @@ class BaseImage(Resource):
                     geometry_info.xi = (geometry_info.rho - 1.0) / 2.0
                 if (flags & geometry_info.PsiValue) == 0:
                     geometry_info.psi = (geometry_info.sigma - 1.0) / 2.0
-            elif buitin in ('chebyshev', 'manhattan', 'octagonal',
+            elif builtin in ('chebyshev', 'manhattan', 'octagonal',
                             'euclidean'):
                 if (flags & geometry_info.SigmaValue) == 0:
                     geometry_info.sigma = 100.0
@@ -6779,7 +6779,7 @@ class BaseImage(Resource):
         .. versionadded:: 0.5.4
 
         .. versionchanged:: 0.5.5
-           Added ``channel`` paramater.
+           Added ``channel`` parameter.
         """
         if isinstance(target, string_type):
             target = Color(target)
@@ -6826,7 +6826,7 @@ class BaseImage(Resource):
 
         .. note::
 
-            This will only affect ``GIF`` image formates.
+            This will only affect ``GIF`` image formats.
 
         .. versionadded:: 0.5.0
         """
@@ -6844,7 +6844,7 @@ class BaseImage(Resource):
 
         .. note::
 
-            This will only affect ``GIF`` image formates.
+            This will only affect ``GIF`` image formats.
 
         .. versionadded:: 0.5.0
         """
@@ -6981,7 +6981,7 @@ class BaseImage(Resource):
             Not all percent escaped values can be populated as I/O operations
             are managed by Python, and not the CLI utility.
 
-        :param string_format: The precent escaped string to be translated.
+        :param string_format: The prescient escaped string to be translated.
         :type string_format: :class:`basestring`
         :returns: String of expanded values.
         :rtype: :class:`basestring`
@@ -9260,7 +9260,7 @@ class Image(BaseImage):
 
     .. versionchanged:: 0.5.4
        Read constructor no longer sets "transparent" background by default.
-       Use the ``background`` paramater to specify canvas color when reading
+       Use the ``background`` parameter to specify canvas color when reading
        in image.
 
     .. versionchanged:: 0.5.7
@@ -9810,7 +9810,7 @@ class Image(BaseImage):
 
         .. _data-url: https://en.wikipedia.org/wiki/Data_URI_scheme
 
-        :returns: a data-url formated string.
+        :returns: a data-url formatted string.
         :rtype: :class:`basestring`
 
         .. versionadded:: 0.6.3
@@ -10781,12 +10781,12 @@ class ConnectedComponentObject(object):
     #: shape.
     mean_color = None
 
-    #: (:class:`bool`) Object merge flag. Only avaliable after
+    #: (:class:`bool`) Object merge flag. Only available after
     #: ImageMagick-7.0.10.
     #: ..versionadded:: 0.6.3
     merge = None
 
-    #: (:class:`list`) List of doubles used by metric. Only avaliable after
+    #: (:class:`list`) List of doubles used by metric. Only available after
     #: ImageMagick-7.0.10.
     #: ..versionadded:: 0.6.3
     metric = None

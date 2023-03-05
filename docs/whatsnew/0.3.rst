@@ -137,7 +137,7 @@ Some channel-related APIs like :attr:`wand.image.Image.channel_images`,
 :attr:`~wand.image.Image.channel_depths`, and
 :meth:`~wand.image.BaseImage.composite_channel()` are added in Wand 0.3.
 
-The following example makes the overlayed image (second,
+The following example makes the overlaid image (second,
 :file:`composite-channel-result.jpg`) from the original image (first,
 :file:`composite-channel.jpg`):
 

@@ -1632,7 +1632,7 @@ class Drawing(Resource):
         the previous style attributes. Use :class:`Drawing.pop` to return
         to restore previous style attributes.
 
-        This is useful for drawing shapes with diffrent styles
+        This is useful for drawing shapes with different styles
         without repeatedly setting the similar
         :meth:`fill_color <wand.drawing.Drawing.fill_color>` &
         :meth:`stroke_color <wand.drawing.Drawing.stroke_color>` properties.

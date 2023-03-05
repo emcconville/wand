@@ -1282,7 +1282,7 @@ Released on October 4, 2011. Still alpha version.
 - Added :meth:`Image.resize() <wand.image.BaseImage.resize>` method.
 - Added :meth:`Image.save() <wand.image.Image.save>` method.
 - Added :meth:`Image.clone() <wand.image.BaseImage.clone>` method.
-- Drawed `the pretty logo picture <_static/wand.png>`_
+- Drew `the pretty logo picture <_static/wand.png>`_
   (thanks to `Hyojin Choi <http://me2day.net/crocodile>`_).
 
 
