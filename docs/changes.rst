@@ -7,6 +7,17 @@ Wand Changelog
 ~~~~~~~~~~
 
 
+.. _changelog-0.6.12:
+
+Version 0.6.12
+--------------
+
+Unreleased.
+
+ - Fixed behavior when passing zero to :meth:`Image.chop() <wand.image.Image.chop>`. [:issue:`622`]
+ - Fixed `libmagick` yield `MagickCore` library on Linux. [:issue:`612`]
+
+
 .. _changelog-0.6.11:
 
 Version 0.6.11
