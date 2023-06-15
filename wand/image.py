@@ -3323,9 +3323,9 @@ class BaseImage(Resource):
         .. versionchanged:: 0.6.8
            Added ``gravity`` argument.
         """
-        if width is None or width == 0:
+        if width is None:
             width = self.width
-        if height is None or height == 0:
+        if height is None:
             height = self.height
         assertions.assert_unsigned_integer(width=width, height=height)
         if gravity is None:
