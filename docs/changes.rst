@@ -14,7 +14,7 @@ Version 0.6.12
 
 Unreleased.
 
- - Fixed behavior when passing zero to :meth:`Image.chop() <wand.image.Image.chop>`. [:issue:`622`]
+ - Fixed behavior when passing zero to :meth:`Image.chop() <wand.image.BaseImage.chop>`. [:issue:`622`]
  - Fixed `libmagick` yield `MagickCore` library on Linux. [:issue:`612`]
 
 
