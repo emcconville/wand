@@ -3322,6 +3322,9 @@ class BaseImage(Resource):
 
         .. versionchanged:: 0.6.8
            Added ``gravity`` argument.
+
+        .. versionchanged:: 0.6.12
+           Allow zero values for ``width`` & ``height`` arguments.
         """
         if width is None:
             width = self.width
