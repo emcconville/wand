@@ -387,7 +387,8 @@ if MAGICK_VERSION_NUMBER >= 0x700:  # pragma: no cover
         'no', 'out', 'over', 'overlay', 'pegtop_light', 'pin_light', 'plus',
         'replace', 'saturate', 'screen', 'soft_light', 'src_atop', 'src',
         'src_in', 'src_out', 'src_over', 'threshold', 'vivid_light', 'xor',
-        'stereo'
+        'stereo', 'freeze', 'interpolate', 'negate', 'reflect', 'soft_burn',
+        'soft_dodge', 'stamp', 'rmse', 'saliency_blend', 'seamless_blend'
     )
 
 #: (:class:`tuple`) The list of :attr:`Image.compression` types.
