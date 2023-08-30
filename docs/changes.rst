@@ -16,6 +16,18 @@ Unreleased.
 
  - Fixed behavior when passing zero to :meth:`Image.chop() <wand.image.BaseImage.chop>`. [:issue:`622`]
  - Fixed `libmagick` yield `MagickCore` library on Linux. [:issue:`612`]
+ - Added new :const:`COMPOSITE_OPERATORS <wand.image.COMPOSITE_OPERATORS>` operators. [:issue:`627` by druzhynin-oleksii]
+
+   - ``'freeze'``
+   - ``'interpolate'``
+   - ``'negate'``
+   - ``'reflect'``
+   - ``'rmse'``
+   - ``'saliency'``
+   - ``'seamless_blend'``
+   - ``'soft_burn'``
+   - ``'soft_dodge'``
+   - ``'stamp'``
 
 
 .. _changelog-0.6.11:

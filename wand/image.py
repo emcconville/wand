@@ -293,11 +293,13 @@ COMPLEX_OPERATORS = ('undefined', 'add', 'conjugate', 'divide', 'magnitude',
 #: - ``'dst_out'``
 #: - ``'dst_over'``
 #: - ``'exclusion'``
+#: - ``'freeze'`` - Added with ImageMagick-7.0.10
 #: - ``'hard_light'``
 #: - ``'hard_mix'``
 #: - ``'hue'``
 #: - ``'in'``
 #: - ``'intensity'`` - Only available with ImageMagick-7
+#: - ``'interpolate'`` - Added with ImageMagick-7.0.10
 #: - ``'lighten'``
 #: - ``'lighten_intensity'``
 #: - ``'linear_burn'``
@@ -311,6 +313,7 @@ COMPLEX_OPERATORS = ('undefined', 'add', 'conjugate', 'divide', 'magnitude',
 #: - ``'modulus_add'``
 #: - ``'modulus_subtract'``
 #: - ``'multiply'``
+#: - ``'negate'`` - Added with ImageMagick-7.0.10
 #: - ``'no'``
 #: - ``'out'``
 #: - ``'over'``
@@ -318,19 +321,26 @@ COMPLEX_OPERATORS = ('undefined', 'add', 'conjugate', 'divide', 'magnitude',
 #: - ``'pegtop_light'``
 #: - ``'pin_light'``
 #: - ``'plus'``
+#: - ``'reflect'`` - Added with ImageMagick-7.0.10
 #: - ``'replace'``
+#: - ``'rmse'`` - Added with ImageMagick-7.1.0
+#: - ``'saliency_blend'`` - Added with ImageMagick-7.1.1
 #: - ``'saturate'``
 #: - ``'screen'``
+#: - ``'seamless_blend'`` - Added with ImageMagick-7.1.1
+#: - ``'soft_burn'`` - Added with ImageMagick-7.0.10
+#: - ``'soft_dudge'`` - Added with ImageMagick-7.0.10
 #: - ``'soft_light'``
 #: - ``'src_atop'``
 #: - ``'src'``
 #: - ``'src_in'``
 #: - ``'src_out'``
 #: - ``'src_over'``
+#: - ``'stamp'`` - Added with ImageMagick-7.0.10
+#: - ``'stereo'``
 #: - ``'threshold'``
 #: - ``'vivid_light'``
 #: - ``'xor'``
-#: - ``'stereo'``
 #:
 #: .. versionchanged:: 0.3.0
 #:    Renamed from :const:`COMPOSITE_OPS` to :const:`COMPOSITE_OPERATORS`.
