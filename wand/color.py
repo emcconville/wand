@@ -19,12 +19,12 @@ __all__ = 'Color', 'scale_quantum_to_int8'
 class Color(Resource):
     """Color value.
 
-    Unlike any other objects in Wand, its resource management can be
-    implicit when it used outside of :keyword:`with` block. In these case,
-    its resource are allocated for every operation which requires a resource
-    and destroyed immediately. Of course it is inefficient when the
-    operations are much, so to avoid it, you should use color objects
-    inside of :keyword:`with` block explicitly e.g.::
+    Unlike other objects in Wand, its resource management can be
+    implicit when used outside of a :keyword:`with` block. In these cases,
+    its resource is allocated for every operation which requires a resource
+    and destroyed immediately. Of course it is inefficient when many
+    operations are applied, so to avoid it, you should use color objects
+    inside of an explicit :keyword:`with` block, e.g.::
 
         red_count = 0
         with Color('#f00') as red:
