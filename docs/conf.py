@@ -260,7 +260,7 @@ man_pages = [
 
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'http://docs.python.org/': None}
+intersphinx_mapping = {'python': ('https://docs.python.org/3', None)}
 
 extlinks = {
     'issue': ('https://github.com/emcconville/wand/issues/%s', '#%s'),
