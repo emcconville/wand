@@ -5,7 +5,7 @@ build:
   apt_packages:
     - imagemagick
   tools:
-    python: "3.12"
+    python: "3.11"
 
 formats:
   - epub
