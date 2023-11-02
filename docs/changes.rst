@@ -16,6 +16,7 @@ Unreleased.
 
  - Fixed behavior when passing zero to :meth:`Image.chop() <wand.image.BaseImage.chop>`. [:issue:`622`]
  - Fixed `libmagick` yield `MagickCore` library on Linux. [:issue:`612`]
+ - Fixed removing mask when passing :const:`None` to :meth:`Image.write_mask() <wand.image.BaseImage.write_mask>` method. [:issue:`636`]
  - Added new :const:`COMPOSITE_OPERATORS <wand.image.COMPOSITE_OPERATORS>` operators. [:issue:`627` by druzhynin-oleksii]
 
    - ``'freeze'``

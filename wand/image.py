@@ -9200,7 +9200,11 @@ class BaseImage(Resource):
             raise WandLibraryVersionError('Method requires ImageMagick-7.')
         else:  # pragma: no cover
             if clip_mask is None:
-                r = library.MagickSetImageMask(self.wand, WritePixelMask, None)
+                w, h = self.size
+                with Image(width=w, height=h, pseudo='xc:none') as clear:
+                    r = library.MagickSetImageMask(self.wand,
+                                                   WritePixelMask,
+                                                   clear.wand)
             elif isinstance(clip_mask, BaseImage):
                 r = library.MagickSetImageMask(self.wand, WritePixelMask,
                                                clip_mask.wand)
