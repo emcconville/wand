@@ -6521,7 +6521,7 @@ class BaseImage(Resource):
                 if (flags & geometry_info.RhoValue) == 0:
                     geometry_info.rho = 1.0
             elif builtin in ('square', 'diamond', 'octagon', 'disk',
-                            'plus', 'cross'):
+                             'plus', 'cross'):
                 if (flags & geometry_info.SigmaValue) == 0:
                     geometry_info.sigma = 1.0
             elif builtin in ('ring',):
@@ -6539,7 +6539,7 @@ class BaseImage(Resource):
                 if (flags & geometry_info.PsiValue) == 0:
                     geometry_info.psi = (geometry_info.sigma - 1.0) / 2.0
             elif builtin in ('chebyshev', 'manhattan', 'octagonal',
-                            'euclidean'):
+                             'euclidean'):
                 if (flags & geometry_info.SigmaValue) == 0:
                     geometry_info.sigma = 100.0
                 elif (flags & geometry_info.AspectValue) != 0:
