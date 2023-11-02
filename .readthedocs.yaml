@@ -1,12 +1,19 @@
 version: 2
-sphinx:
-  configuration: docs/conf.py
+
+build:
+  os: ubuntu-22.04
+  apt_packages:
+    - imagemagick
+  tools:
+    python: 3.12
 
 formats:
   - epub
   - pdf
 
 python:
-  version: 3.8
   install:
     - requirements: docs/requirements.txt
+
+sphinx:
+  configuration: docs/conf.py
