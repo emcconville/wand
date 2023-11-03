@@ -9,6 +9,16 @@ Wand Changelog
 
 .. _changelog-0.6.12:
 
+Version 0.6.13
+--------------
+
+Released on November 3rd, 2023.
+
+ - Removed broken `pyproject.toml` file from source distribution.
+
+
+.. _changelog-0.6.12:
+
 Version 0.6.12
 --------------
 
