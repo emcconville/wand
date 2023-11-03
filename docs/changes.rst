@@ -12,7 +12,7 @@ Wand Changelog
 Version 0.6.12
 --------------
 
-Unreleased.
+Released on November 3rd, 2023.
 
  - Fixed behavior when passing zero to :meth:`Image.chop() <wand.image.BaseImage.chop>`. [:issue:`622`]
  - Fixed `libmagick` yield `MagickCore` library on Linux. [:issue:`612`]
@@ -29,6 +29,8 @@ Unreleased.
    - ``'soft_burn'``
    - ``'soft_dodge'``
    - ``'stamp'``
+
+ - [DOC] Updated Sphinx version to 7.2.6
 
 
 .. _changelog-0.6.11:
