@@ -1,0 +1,50 @@
+[build-system]
+requires = [
+  "setuptools>=61.0"
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "Wand"
+authors = [
+    {name = "Hong Minhee", email = "hongminhee@member.fsf.org"},
+    {name = "E. McConville", email = "emcconville@emcconville.com"},
+]
+maintainers = [
+    {name = "E. McConville", email = "emcconville@emcconville.com"},
+]
+description = "Ctypes-based simple MagickWand API binding for Python"
+readme = "README.rst"
+requires-python = ">=3.7"
+keywords = ["ImageMagick", "ctypes"]
+license = {text = "MIT License"}
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Programming Language :: Python :: Implementation :: Stackless",
+    "Topic :: Multimedia :: Graphics"
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+test = ["pytest >= 7.2.0"]
+doc = ["Sphinx >= 7.2.6"]
+
+[project.urls]
+Homepage = "https://example.com"
+Documentation = "https://docs.wand-py.org"
+Repository = "https://github.com/emcconville/wand"
+Tracker = "https://github.com/emcconville/wand/issues"
+Changelog = "https://docs.wand-py.org/en/latest/changes.html"
+
+[tool.setuptools.dynamic]
+version = {attr = "wand.version.VERSION"}
