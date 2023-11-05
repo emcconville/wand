@@ -1,9 +1,9 @@
 import os
 import os.path
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+import sys
+from setuptools import setup, find_packages
+
+sys.path.insert(0, '.')
 
 from wand.version import VERSION
 
@@ -31,6 +31,18 @@ else:
             raise SystemExit(errno)
     cmdclass = {'test': pytest}
 
+wand_includes = [
+    "wand",
+    "wand.cdefs"
+]
+
+wand_excludes = [
+    "prof",     # CI Memory profile.
+    "temp",     # CI artifacts.
+    "sample",   # Old documents.
+    "support",  # Non-public issues.
+]
+
 test_requires = [
     'pytest >= 7.2.0',
 ]
@@ -41,7 +53,10 @@ doc_requires = [
 
 setup(
     name='Wand',
-    packages=['wand', 'wand.cdefs'],
+    packages=find_packages(
+        include=wand_includes,
+        exclude=wand_excludes,
+    ),
     version=VERSION,
     description='Ctypes-based simple MagickWand API binding for Python',
     long_description=readme(),

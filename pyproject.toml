@@ -1,6 +1,6 @@
 [build-system]
 requires = [
-  "setuptools>=61.0"
+  "setuptools>=68.0"
 ]
 build-backend = "setuptools.build_meta"
 
@@ -14,7 +14,7 @@ maintainers = [
     {name = "E. McConville", email = "emcconville@emcconville.com"},
 ]
 description = "Ctypes-based simple MagickWand API binding for Python"
-readme = "README.rst"
+readme = { file = "README.rst", content-type = "text/x-rst" }
 requires-python = ">=3.7"
 keywords = ["ImageMagick", "ctypes"]
 license = {text = "MIT License"}
@@ -31,7 +31,7 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
     "Programming Language :: Python :: Implementation :: Stackless",
-    "Topic :: Multimedia :: Graphics"
+    "Topic :: Multimedia :: Graphics",
 ]
 dynamic = ["version"]
 
@@ -46,5 +46,12 @@ Repository = "https://github.com/emcconville/wand"
 Tracker = "https://github.com/emcconville/wand/issues"
 Changelog = "https://docs.wand-py.org/en/latest/changes.html"
 
+[tools.setuptools]
+packages = ["wand", "wand.cdefs"]
+
+[tool.setuptools.packages.find]
+include = ["wand", "wand.cdefs"]
+exclude = ["prof", "temp", "sample", "support"]
+
 [tool.setuptools.dynamic]
-version = {attr = "wand.version.VERSION"}
+version = { attr = "wand.VERSION" }
