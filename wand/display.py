@@ -58,10 +58,10 @@ def display(image, server_name=':0'):
         else:
             return
     if system in ('Windows', 'Darwin'):
-        ext = '.' + image.format.lower()
+        ext = image.format.lower()
         if ext in ('miff', 'xc'):
             ext = 'png'
-        path = tempfile.mktemp(suffix=ext)
+        path = tempfile.mktemp(suffix='.' + ext)
         image.save(filename=path)
         os.system(('start ' if system == 'Windows' else 'open ') + path)
     else:
