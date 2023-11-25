@@ -1,13 +1,29 @@
 Wand Changelog
 ==============
 
+.. _changelog-0.7:
+
+0.7 series
+~~~~~~~~~~
+
+
+.. _changelog-0.7.0:
+
+Version 0.7.0
+-------------
+
+Unreleased.
+
+ - Added :meth:`Image.evaluate_images() <wand.image.BaseImage.evaluate_images>` method.
+
+
 .. _changelog-0.6:
 
 0.6 series
 ~~~~~~~~~~
 
 
-.. _changelog-0.6.12:
+.. _changelog-0.6.13:
 
 Version 0.6.13
 --------------

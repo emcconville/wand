@@ -4869,6 +4869,32 @@ class BaseImage(Resource):
                 library.MagickSetImageChannelMask(self.wand, channel_mask)
         return r
 
+    def evaluate_images(self, operator=None):
+        """Create a new image by applying arithmetic operation between all
+        images loaded in the image-stack.
+
+        For example::
+
+           with Image() as img:
+                img.read(filename='first.png')
+                img.read(filename='second.png')
+                first.evaluate_images('add')
+                first.save(filename='sum.png')
+
+        :param operator: Type of operation to calculate.
+        :type operator: :const:`EVALUATE_OPS`
+
+        .. versionadded:: 0.7.0
+        """
+        assertions.string_in_list(EVALUATE_OPS, 'wand.image.EVALUATE_OPS',
+                                  operator=operator)
+        self.iterator_reset()
+        idx_op = EVALUATE_OPS.index(operator)
+        result = library.MagickEvaluateImages(self.wand, idx_op)
+        if not result:
+            self.raise_exception()
+        return Image(image=BaseImage(result))
+
     def export_pixels(self, x=0, y=0, width=None, height=None,
                       channel_map="RGBA", storage='char'):
         """Export pixel data from a raster image to

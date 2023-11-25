@@ -780,6 +780,14 @@ def test_evaluate_user_error():
             img.evaluate(operator='set', value=1.0, channel='Not a channel')
 
 
+def test_evaluate_images():
+    with Image(filename='hald:3') as img:
+        with img.clone() as i:
+            img.image_add(i)
+        with img.evaluate_images(operator='add') as nue:
+            assert nue != img
+
+
 def test_export_pixels():
     with Image(filename='hald:2') as img:
         img.depth = 8  # Not need, but want to match import.
