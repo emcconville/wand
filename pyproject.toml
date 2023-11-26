@@ -8,7 +8,6 @@ build-backend = "setuptools.build_meta"
 name = "Wand"
 authors = [
     {name = "Hong Minhee", email = "hongminhee@member.fsf.org"},
-    {name = "E. McConville", email = "emcconville@emcconville.com"},
 ]
 maintainers = [
     {name = "E. McConville", email = "emcconville@emcconville.com"},
