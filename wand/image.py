@@ -7169,7 +7169,7 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def quantize(self, number_colors, colorspace_type=None,
+    def quantize(self, number_colors, colorspace_type='undefined',
                  treedepth=0, dither=False, measure_error=False):
         """`quantize` analyzes the colors within a sequence of images and
         chooses a fixed number of colors to represent the image. The goal of
@@ -7180,7 +7180,7 @@ class BaseImage(Resource):
         :type number_colors: :class:`numbers.Integral`
         :param colorspace_type: Available value can be found
                                 in the :const:`COLORSPACE_TYPES`. Defaults
-                                :attr:`colorspace`.
+                                value ``"undefined"``.
         :type colorspace_type: :class:`basestring`
         :param treedepth: A value between ``0`` & ``8`` where ``0`` will
                          allow ImageMagick to calculate the optimal depth
@@ -7188,9 +7188,9 @@ class BaseImage(Resource):
         :type treedepth: :class:`numbers.Integral`
         :param dither: Perform dither operation between neighboring pixel
                        values. If using ImageMagick-6, this can be a value
-                       of ``True``, or ``False``. With ImageMagick-7, use
-                       a string from :const:`DITHER_METHODS`. Default
-                       ``False``.
+                       of :const:`True`, or :const:`False`. With ImageMagick-7,
+                       use a string from :const:`DITHER_METHODS`. Default
+                       :const:`False`.
         :type dither: :class:`bool`, or :class:`basestring`
         :param measure_error: Include total quantization error of all pixels
                               in an image & quantized value.
@@ -7200,17 +7200,20 @@ class BaseImage(Resource):
 
         .. versionchanged:: 0.5.9
            Fixed ImageMagick-7 ``dither`` argument, and added keyword defaults.
+
+        .. versionchanged:: 0.7.0
+           The default value for ``colorspace_type`` argument
+           is now set to ``"undefeined"`` to match CLI behavior.
         """
         assertions.assert_integer(number_colors=number_colors)
-        if colorspace_type is None:
-            colorspace_type = self.colorspace
         assertions.string_in_list(COLORSPACE_TYPES,
                                   'wand.image.COLORSPACE_TYPES',
                                   colorspace_type=colorspace_type)
+        colorspace_type = COLORSPACE_TYPES.index(colorspace_type)
         assertions.assert_integer(treedepth=treedepth)
         if MAGICK_VERSION_NUMBER < 0x700:
             assertions.assert_bool(dither=dither)
-        else:  # pragma: no cover
+        else:
             if dither is False:
                 dither = 'no'
             elif dither is True:
@@ -7221,8 +7224,7 @@ class BaseImage(Resource):
             dither = DITHER_METHODS.index(dither)
         assertions.assert_bool(measure_error=measure_error)
         return library.MagickQuantizeImage(
-            self.wand, number_colors,
-            COLORSPACE_TYPES.index(colorspace_type),
+            self.wand, number_colors, colorspace_type,
             treedepth, dither, measure_error
         )
 

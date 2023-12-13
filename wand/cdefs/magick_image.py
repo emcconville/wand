@@ -628,6 +628,8 @@ def load(lib, IM_VERSION):
         lib.MagickHoughLineImage = None
     lib.MagickIdentifyImage.argtypes = [c_void_p]
     lib.MagickIdentifyImage.restype = c_void_p
+    lib.MagickIdentifyImageType.argtypes = [c_void_p]
+    lib.MagickIdentifyImageType.restype = c_int
     if is_im_6:
         lib.MagickImplodeImage.argtypes = [c_void_p, c_double]
     else:
