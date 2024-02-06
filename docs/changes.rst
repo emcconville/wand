@@ -17,6 +17,7 @@ Unreleased.
  - Added :meth:`Image.evaluate_images() <wand.image.BaseImage.evaluate_images>` method.
  - Fixed :meth:`Image.quantize() <wand.image.BaseImage.quantize>` behavior by switching
    default value of ``colorspace_type`` from :const:`None` to ``"undefined"``. [:issue:`644`]
+ - [TEST] Added Python 3.12 regression test. [:issue:`648` by Thijs Triemstra]
 
 
 .. _changelog-0.6:
