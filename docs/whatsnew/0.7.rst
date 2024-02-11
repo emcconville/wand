@@ -1,0 +1,44 @@
+What's new in Wand 0.7?
+=======================
+
+This guide doesn't cover all changes in 0.7. See the full list of changes
+in :ref:`changelog-0.7`.
+
+Python 2 Removal
+''''''''''''''''
+
+Long overdue, but as Python 2 users slowly migrating to Python 3, Wand no
+longer has a user base to support backwards compatibility with Python 2
+language. All supporting Python 2 code in :mod:`wand.compat` has been
+remove.
+
+
+Evaluate Images
+'''''''''''''''
+
+Wand can now generate a new :class:`Image <wand.image.Image>` by evaluating
+the source pixel-values read into an image stack.
+
+For example::
+
+    >>> from wand.color import Color
+    >>> from wand.image import Image
+    >>>
+    >>> S=dict(width=1, height=1)
+    >>> with Image() as src:
+    ...     # Read 50% & 25% gray images.
+    ...     src.read(pseudo='xc:gray50', **S)
+    ...     src.read(pseudo='xc:gray25', **S)
+    ...     # Create a new image by adding pixel values.
+    ...     # ( 50% + 25% = 75% )
+    ...     with src.evaluate_images(operator='add') as dst:
+    ...         assert dst[0, 0] == Color('gray75')
+
+
+Pyproject.toml
+''''''''''''''
+
+In an effort to modernize the codebase, Wand will start migrating from
+:file:`setup.py` to :file:`pyproject.toml`.  The :file:`setup.py` file
+will still be available for Wand 0.7.x releases.
+
