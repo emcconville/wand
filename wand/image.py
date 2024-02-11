@@ -4878,8 +4878,8 @@ class BaseImage(Resource):
            with Image() as img:
                 img.read(filename='first.png')
                 img.read(filename='second.png')
-                first.evaluate_images('add')
-                first.save(filename='sum.png')
+                with img.evaluate_images('add') as sum:
+                    sum.save(filename='sum.png')
 
         :param operator: Type of operation to calculate.
         :type operator: :const:`EVALUATE_OPS`
