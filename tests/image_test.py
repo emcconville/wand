@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # These tests cover the basic I/O & pythonic interfaces of the Image class.
 #

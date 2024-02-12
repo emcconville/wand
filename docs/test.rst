@@ -73,7 +73,7 @@ Using tox_
 ----------
 
 Wand should be compatible with various Python implementations including
-CPython 2.7, 3.3, PyPy.  tox_ is a testing software that helps Python
+CPython 3.3, PyPy.  tox_ is a testing software that helps Python
 packages to test on various Python implementations at a time.
 
 It can be installed using :program:`pip`:
@@ -89,10 +89,10 @@ on multiple Python interpreters:
 
    $ tox
    GLOB sdist-make: /Users/emcconville/Desktop/wand/setup.py
-   py26 create: /Users/emcconville/Desktop/wand/.tox/py26
-   py26 installdeps: pytest
-   py26 sdist-inst: /Users/emcconville/Desktop/wand/.tox/dist/Wand-0.2.2.zip
-   py26 runtests: commands[0]
+   py37 create: /Users/emcconville/Desktop/wand/.tox/py37
+   py37 installdeps: pytest
+   py37 sdist-inst: /Users/emcconville/Desktop/wand/.tox/dist/Wand-0.2.2.zip
+   py37 runtests: commands[0]
    ...
 
 You can use a double ``--`` to pass options to pytest:

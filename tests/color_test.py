@@ -9,7 +9,6 @@ except ImportError:
 from pytest import mark, raises
 
 from wand.color import Color
-from wand.compat import xrange
 from wand.version import QUANTUM_DEPTH, MAGICK_VERSION_INFO  # noqa
 
 
@@ -310,7 +309,7 @@ def test_hsl():
 
 
 def color_memory_leak():
-    for _ in xrange(5000):
+    for _ in range(5000):
         with Color('orange'):
             pass
     time.sleep(0.02)

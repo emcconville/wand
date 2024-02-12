@@ -23,7 +23,6 @@ The most frequently used way is just to open an image by its filename.
 :class:`~wand.image.Image`'s constructor can take the parameter named
 ``filename``::
 
-    from __future__ import print_function
     from wand.image import Image
 
     with Image(filename='pikachu.png') as img:
@@ -51,7 +50,6 @@ contained in :class:`~StringIO.StringIO`, read by :func:`urllib2.urlopen()`),
 it can be read by :class:`~wand.image.Image` constructor's ``file`` parameter.
 It takes all file-like objects which implements :meth:`~file.read()` method::
 
-    from __future__ import print_function
     from urllib2 import urlopen
     from wand.image import Image
 
@@ -73,13 +71,12 @@ so it also can be used as an input stream for a downloaded image.
 Read a blob
 -----------
 
-If you have just a binary string (:class:`str`) of the image, you can pass
+If you have just a binary string (:class:`bytes`) of the image, you can pass
 it into :class:`~wand.image.Image` constructor's ``blob`` parameter to read::
 
-    from __future__ import print_function
     from wand.image import Image
 
-    with open('pikachu.png') as f:
+    with open('pikachu.png', 'rb') as f:
         image_binary = f.read()
 
     with Image(blob=image_binary) as img:

@@ -206,8 +206,7 @@ You can install it using :program:`dnf` command:
 
 .. code-block:: console
 
-   $ dnf install python-wand   # Python 2
-   $ dnf install python3-wand  # Python 3
+   $ dnf install python3-wand
 
 __ https://admin.fedoraproject.org/pkgdb/package/python-wand/
 

@@ -8,13 +8,7 @@ This module checks user input before calling MagickWands C-API methods.
 """
 
 import numbers
-
-try:
-    from collections.abc import Sequence
-except ImportError:
-    from collections import Sequence
-
-from .compat import string_type
+from collections.abc import Sequence
 
 
 def assert_bool(**kwargs):
@@ -133,7 +127,7 @@ def assert_coordinate(**kwargs):
 
 def assert_string(**kwargs):
     for label, subject in kwargs.items():
-        if not isinstance(subject, string_type):
+        if not isinstance(subject, str):
             fmt = "{0} must be a string, not {1}"
             msg = fmt.format(label, repr(subject))
             raise TypeError(msg)

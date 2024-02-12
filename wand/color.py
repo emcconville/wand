@@ -37,7 +37,7 @@ class Color(Resource):
     :param string: a color name string e.g. ``'rgb(255, 255, 255)'``,
                    ``'#fff'``, ``'white'``. see `ImageMagick Color Names`_
                    doc also
-    :type string: :class:`basestring`
+    :type string: :class:`str`
 
     .. versionchanged:: 0.3.0
        :class:`Color` objects become hashable.
@@ -605,7 +605,7 @@ class Color(Resource):
 
     @property
     def normalized_string(self):
-        """(:class:`basestring`) The normalized string representation of
+        """(:class:`str`) The normalized string representation of
         the color.  The same color is always represented to the same
         string.
 
@@ -668,7 +668,7 @@ class Color(Resource):
 
     @property
     def string(self):
-        """(:class:`basestring`) The string representation of the color."""
+        """(:class:`str`) The string representation of the color."""
         with self:
             color_string = None
             ptr = library.PixelGetColorAsString(self.resource)

@@ -14,6 +14,8 @@ import ctypes
 import functools
 import numbers
 import weakref
+from collections import abc
+from io import RawIOBase
 
 from . import assertions
 from .api import libc, libmagick, library
@@ -21,8 +23,7 @@ from .cdefs.structures import (CCObjectInfo, CCObjectInfo70A, CCObjectInfo710,
                                ChannelFeature, GeometryInfo, PixelInfo,
                                RectangleInfo)
 from .color import Color
-from .compat import (abc, binary, binary_type, encode_filename, file_types,
-                     string_type, text, to_bytes, xrange)
+from .compat import binary, encode_filename, text, to_bytes
 from .exceptions import (MissingDelegateError, WandException,
                          WandLibraryVersionError, WandRuntimeError)
 from .font import Font
@@ -1181,8 +1182,7 @@ class BaseImage(Resource):
         return False
 
     def __getitem__(self, idx):
-        if (not isinstance(idx, string_type) and
-                isinstance(idx, abc.Iterable)):
+        if (not isinstance(idx, str) and isinstance(idx, abc.Iterable)):
             idx = tuple(idx)
             d = len(idx)
             if not (1 <= d <= 2):
@@ -1214,7 +1214,7 @@ class BaseImage(Resource):
                         raise IndexError('y cannot be less than 0')
                     with iter(self) as iterator:
                         iterator.seek(y)
-                        return iterator.next(x)
+                        return iterator.__next__(x)
                 if not (x.step is None and y.step is None):
                     raise ValueError('slicing with step is unsupported')
                 elif (x.start is None and x.stop is None and
@@ -1239,13 +1239,13 @@ class BaseImage(Resource):
                                  repr(idx))
             with iter(self) as iterator:
                 iterator.seek(idx)
-                return iterator.next()
+                return next(iterator)
         elif isinstance(idx, slice):
             return self[:, idx]
         raise TypeError('unsupported index type: ' + repr(idx))
 
     def __setitem__(self, idx, color):
-        if isinstance(color, string_type):
+        if isinstance(color, str):
             color = Color(color)
         assertions.assert_color(color=color)
         if not isinstance(idx, abc.Iterable):
@@ -1357,13 +1357,13 @@ class BaseImage(Resource):
         storage_type = 1  # CharPixel
         cs = self.colorspace
         if cs in ('gray',):
-            channel_format = binary('R')
+            channel_format = b'R'
         elif cs in ('cmyk',):
-            channel_format = binary('CMYK')
+            channel_format = b'CMYK'
         else:
-            channel_format = binary('RGB')
+            channel_format = b'RGB'
         if self.alpha_channel:
-            channel_format += binary('A')
+            channel_format += b'A'
         channel_number = len(channel_format)
         self._c_buffer = (width * height * channel_number * ctypes.c_char)()
         # FIXME: Move to pixel-data import/export methods.
@@ -1451,7 +1451,7 @@ class BaseImage(Resource):
         library.MagickSetLastIterator(self.wand)
         n = library.MagickGetIteratorIndex(self.wand)
         library.MagickResetIterator(self.wand)
-        for i in xrange(0, n + 1):
+        for i in range(0, n + 1):
             library.MagickSetIteratorIndex(self.wand, i)
             library.MagickSetImageAlphaChannel(self.wand, alpha_index)
 
@@ -1518,7 +1518,7 @@ class BaseImage(Resource):
     @background_color.setter
     @manipulative
     def background_color(self, color):
-        if isinstance(color, string_type):
+        if isinstance(color, str):
             color = Color(color)
         assertions.assert_color(color=color)
         with color:
@@ -1589,7 +1589,7 @@ class BaseImage(Resource):
 
     @border_color.setter
     def border_color(self, color):
-        if isinstance(color, string_type):
+        if isinstance(color, str):
             color = Color(color)
         assertions.assert_color(border_color=color)
         with color:
@@ -1608,7 +1608,7 @@ class BaseImage(Resource):
 
     @property
     def colorspace(self):
-        """(:class:`basestring`) The image colorspace.
+        """(:class:`str`) The image colorspace.
 
         Defines image colorspace as in :const:`COLORSPACE_TYPES` enumeration.
 
@@ -1620,7 +1620,7 @@ class BaseImage(Resource):
         colorspace_type_index = library.MagickGetImageColorspace(self.wand)
         if not colorspace_type_index:  # pragma: no cover
             self.raise_exception()
-        return COLORSPACE_TYPES[text(colorspace_type_index)]
+        return COLORSPACE_TYPES[colorspace_type_index]
 
     @colorspace.setter
     @manipulative
@@ -1637,7 +1637,7 @@ class BaseImage(Resource):
 
     @property
     def compose(self):
-        """(:class:`basestring`) The type of image compose.
+        """(:class:`str`) The type of image compose.
         It's a string from :const:`COMPOSITE_OPERATORS` list.
         It also can be set.
 
@@ -1656,7 +1656,7 @@ class BaseImage(Resource):
 
     @property
     def compression(self):
-        """(:class:`basestring`) The type of image compression.
+        """(:class:`str`) The type of image compression.
         It's a string from :const:`COMPRESSION_TYPES` list.
         It also can be set.
 
@@ -1740,7 +1740,7 @@ class BaseImage(Resource):
 
     @property
     def dispose(self):
-        """(:class:`basestring`) Controls how the image data is
+        """(:class:`str`) Controls how the image data is
         handled during animations. Values are from :const:`DISPOSE_TYPES`
         list, and can also be set.
 
@@ -1771,7 +1771,7 @@ class BaseImage(Resource):
         if not self.font_path:
             return None
         return Font(
-            path=text(self.font_path),
+            path=self.font_path,
             size=self.font_size,
             color=self.font_color,
             antialias=self.antialias,
@@ -1812,14 +1812,14 @@ class BaseImage(Resource):
     @font_color.setter
     @manipulative
     def font_color(self, color):
-        if isinstance(color, string_type):
+        if isinstance(color, str):
             color = Color(color)
         assertions.assert_color(font_color=color)
         self.options['fill'] = color.string
 
     @property
     def font_path(self):
-        """(:class:`basestring`) The path of the current font.
+        """(:class:`str`) The path of the current font.
         It also can be set.
 
         """
@@ -1855,7 +1855,7 @@ class BaseImage(Resource):
 
     @property
     def format(self):
-        """(:class:`basestring`) The image format.
+        """(:class:`str`) The image format.
 
         If you want to convert the image format, just reset this property::
 
@@ -1912,7 +1912,7 @@ class BaseImage(Resource):
 
     @property
     def gravity(self):
-        """(:class:`basestring`) The text placement gravity used when
+        """(:class:`str`) The text placement gravity used when
         annotating with text.  It's a string from :const:`GRAVITY_TYPES`
         list.  It also can be set.
 
@@ -2001,7 +2001,7 @@ class BaseImage(Resource):
 
     @property
     def interlace_scheme(self):
-        """(:class:`basestring`) The interlace used by the image.
+        """(:class:`str`) The interlace used by the image.
         See :const:`INTERLACE_TYPES`.
 
         .. versionadded:: 0.5.2
@@ -2023,7 +2023,7 @@ class BaseImage(Resource):
 
     @property
     def interpolate_method(self):
-        """(:class:`basestring`) The interpolation method of the image.
+        """(:class:`str`) The interpolation method of the image.
         See :const:`PIXEL_INTERPOLATE_METHODS`.
 
         .. versionadded:: 0.5.2
@@ -2095,7 +2095,7 @@ class BaseImage(Resource):
     @matte_color.setter
     @manipulative
     def matte_color(self, color):
-        if isinstance(color, string_type):
+        if isinstance(color, str):
             color = Color(color)
         assertions.assert_color(matte_color=color)
         with color:
@@ -2151,7 +2151,7 @@ class BaseImage(Resource):
 
     @property
     def orientation(self):
-        """(:class:`basestring`) The image orientation.  It's a string from
+        """(:class:`str`) The image orientation.  It's a string from
         :const:`ORIENTATION_TYPES` list.  It also can be set.
 
         .. versionadded:: 0.3.0
@@ -2209,7 +2209,7 @@ class BaseImage(Resource):
     @page.setter
     @manipulative
     def page(self, newpage):
-        if isinstance(newpage, string_type):
+        if isinstance(newpage, str):
             c_ptr = libmagick.GetPageGeometry(newpage.encode())
             ri = RectangleInfo()
             c_ptr = ctypes.cast(c_ptr, ctypes.c_char_p)
@@ -2340,7 +2340,7 @@ class BaseImage(Resource):
 
     @property
     def rendering_intent(self):
-        """(:class:`basestring`) PNG rendering intent. See
+        """(:class:`str`) PNG rendering intent. See
         :const:`RENDERING_INTENT_TYPES` for valid options.
 
         .. versionadded:: 0.5.4
@@ -2410,13 +2410,13 @@ class BaseImage(Resource):
         factors_len = ctypes.c_size_t(0)
         factors = library.MagickGetSamplingFactors(self.wand,
                                                    ctypes.byref(factors_len))
-        factors_tuple = tuple(factors[x] for x in xrange(factors_len.value))
+        factors_tuple = tuple(factors[x] for x in range(factors_len.value))
         factors = library.MagickRelinquishMemory(factors)
         return factors_tuple
 
     @sampling_factors.setter
     def sampling_factors(self, factors):
-        if isinstance(factors, string_type):
+        if isinstance(factors, str):
             geometry_info = GeometryInfo()
             flags = libmagick.ParseGeometry(binary(factors),
                                             ctypes.byref(geometry_info))
@@ -2532,7 +2532,7 @@ class BaseImage(Resource):
 
     @stroke_color.setter
     def stroke_color(self, color):
-        if isinstance(color, string_type):
+        if isinstance(color, str):
             color = Color(color)
         if isinstance(color, Color):
             self.options['stroke'] = color.string
@@ -2568,7 +2568,7 @@ class BaseImage(Resource):
 
     @property
     def type(self):
-        """(:class:`basestring`) The image type.
+        """(:class:`str`) The image type.
 
         Defines image type as in :const:`IMAGE_TYPES` enumeration.
 
@@ -2580,7 +2580,7 @@ class BaseImage(Resource):
         image_type_index = library.MagickGetImageType(self.wand)
         if not image_type_index:  # pragma: no cover
             self.raise_exception()
-        return IMAGE_TYPES[text(image_type_index)]
+        return IMAGE_TYPES[image_type_index]
 
     @type.setter
     @manipulative
@@ -2594,9 +2594,9 @@ class BaseImage(Resource):
 
     @property
     def units(self):
-        """(:class:`basestring`) The resolution units of this image."""
+        """(:class:`str`) The resolution units of this image."""
         r = library.MagickGetImageUnits(self.wand)
-        return UNIT_TYPES[text(r)]
+        return UNIT_TYPES[r]
 
     @units.setter
     @manipulative
@@ -2609,7 +2609,7 @@ class BaseImage(Resource):
 
     @property
     def virtual_pixel(self):
-        """(:class:`basestring`) The virtual pixel of image.
+        """(:class:`str`) The virtual pixel of image.
         This can also be set with a value from :const:`VIRTUAL_PIXEL_METHOD`
         ... versionadded:: 0.4.1
         """
@@ -2755,7 +2755,7 @@ class BaseImage(Resource):
             mask = self._channel_to_mask('RGB,Sync')
 
         :param value: Mixed user input.
-        :type value: :class:`numbers.Integral` or :class:`basestring`
+        :type value: :class:`numbers.Integral` or :class:`str`
         :returns: Bit-mask constant.
         :rtype: :class:`int`
 
@@ -2764,7 +2764,7 @@ class BaseImage(Resource):
         mask = -1
         if isinstance(value, numbers.Integral) and not isinstance(value, bool):
             mask = value
-        elif isinstance(value, string_type):
+        elif isinstance(value, str):
             if value in CHANNELS:
                 mask = CHANNELS[value]
             elif libmagick.ParseChannelOption:
@@ -2785,7 +2785,7 @@ class BaseImage(Resource):
         the CLI documentation that does respect gravity
 
         :param gravity: Value from :const:`GRAVITY_TYPES`.
-        :type gravity: :class:`basestring`
+        :type gravity: :class:`str`
         :raises: :class:`ValueError` if gravity is no known.
         :returns: :class:`numbers.Intergal` top, :class:`numbers.Intergal` left
 
@@ -2824,7 +2824,7 @@ class BaseImage(Resource):
         :type sigma: :class:`numbers.Real`
         :param channel: Apply the blur effect on a specific channel.
                         See :const:`CHANNELS`.
-        :type channel: :class:`basestring`
+        :type channel: :class:`str`
 
         .. versionadded:: 0.5.3
 
@@ -2881,7 +2881,7 @@ class BaseImage(Resource):
         :type sigma: :class:`numbers.Real`
         :param channel: Apply the sharpen effect on a specific channel.
                         See :const:`CHANNELS`.
-        :type channel: :class:`basestring`
+        :type channel: :class:`str`
 
         .. versionadded:: 0.5.3
 
@@ -2951,7 +2951,7 @@ class BaseImage(Resource):
                 img.save(filename='output.jpg')
 
         :param text: String to annotate on image.
-        :type text: :class:`basestring`
+        :type text: :class:`str`
         :param drawing_wand: Font configuration & style context.
         :type text: :class:`wand.drawing.Drawing`
         :param left: X-axis offset of the text baseline.
@@ -3023,7 +3023,7 @@ class BaseImage(Resource):
         :param method: Which threshold method to apply.
                        See :const:`AUTO_THRESHOLD_METHODS`.
                        Defaults to ``'kapur'``.
-        :type method: :class:`basestring`
+        :type method: :class:`str`
         :raises WandLibraryVersionError: if function is not available on
                                          system's library.
 
@@ -3049,7 +3049,7 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.3
         """
-        if isinstance(threshold, string_type):
+        if isinstance(threshold, str):
             threshold = Color(threshold)
         assertions.assert_color(threshold=threshold)
         with threshold:
@@ -3091,7 +3091,7 @@ class BaseImage(Resource):
         :type sigma: :class:`numbers.Real`
         :param channel: Optional color channel to apply blur. See
                         :const:`CHANNELS`.
-        :type channel: :class:`basestring`
+        :type channel: :class:`str`
 
         .. versionadded:: 0.4.5
 
@@ -3130,13 +3130,13 @@ class BaseImage(Resource):
         :type height: :class:`numbers.Integral`
         :param compose: Use composite operator when applying frame. Only used
                         if called with ImageMagick 7+.
-        :type compose: :class:`basestring`
+        :type compose: :class:`str`
 
         .. versionadded:: 0.3.0
         .. versionchanged:: 0.5.0
            Added ``compose`` parameter, and ImageMagick 7 support.
         """
-        if isinstance(color, string_type):
+        if isinstance(color, str):
             color = Color(color)
         assertions.assert_color(color=color)
         with color:
@@ -3235,7 +3235,7 @@ class BaseImage(Resource):
         """Writes a caption ``text`` into the position.
 
         :param text: text to write
-        :type text: :class:`basestring`
+        :type text: :class:`str`
         :param left: x offset in pixels
         :type left: :class:`numbers.Integral`
         :param top: y offset in pixels
@@ -3251,7 +3251,7 @@ class BaseImage(Resource):
         :param gravity: text placement gravity.
                         uses the current :attr:`gravity` setting of the image
                         by default
-        :type gravity: :class:`basestring`
+        :type gravity: :class:`str`
 
         .. versionadded:: 0.3.0
 
@@ -3327,7 +3327,7 @@ class BaseImage(Resource):
         :type y: :class:`numbers.Integral`
         :param gravity: Helper to auto-calculate offset.
                         See :const:`GRAVITY_TYPES`.
-        :type gravity: :class:`basestring`
+        :type gravity: :class:`str`
 
         .. versionadded:: 0.5.5
 
@@ -3391,7 +3391,7 @@ class BaseImage(Resource):
         over/under-flowing.
 
         :param channel: Optional color channel.
-        :type channel: :class:`basestring`
+        :type channel: :class:`str`
 
         .. versionadded:: 0.5.0
 
@@ -3436,10 +3436,10 @@ class BaseImage(Resource):
         :type image: :class:`wand.image.BaseImage`
         :param method: Pixel Interpolate method. Only available with
                        ImageMagick-7. See :const:`PIXEL_INTERPOLATE_METHODS`
-        :type method: :class:`basestring`
+        :type method: :class:`str`
         :param channel: Optional color channel to target. See
                         :const:`CHANNELS`
-        :type channel: :class:`basestring`
+        :type channel: :class:`str`
 
         .. versionadded:: 0.5.0
 
@@ -3510,7 +3510,7 @@ class BaseImage(Resource):
             </ColorCorrectionCollection>
 
         :param ccc: A XML string of the CCC contents.
-        :type ccc: :class:`basestring`
+        :type ccc: :class:`str`
 
         .. versionadded:: 0.5.7
         """
@@ -3547,7 +3547,7 @@ class BaseImage(Resource):
         if index < 0 or index >= self.colors:
             raise ValueError('index is out of palette range')
         if color:
-            if isinstance(color, string_type):
+            if isinstance(color, str):
                 color = Color(color)
             if not isinstance(color, Color):
                 raise TypeError('expecting in instance of Color, not ' +
@@ -3688,9 +3688,9 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.6.4
         """
-        if isinstance(start, string_type):
+        if isinstance(start, str):
             start = Color(start)
-        if isinstance(stop, string_type):
+        if isinstance(stop, str):
             stop = Color(stop)
         assertions.assert_color(start=start, stop=stop)
         if library.MagickColorThresholdImage is None:
@@ -3718,9 +3718,9 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.3
         """
-        if isinstance(color, string_type):
+        if isinstance(color, str):
             color = Color(color)
-        if isinstance(alpha, string_type):
+        if isinstance(alpha, str):
             alpha = Color(alpha)
         assertions.assert_color(color=color, alpha=alpha)
         with color:
@@ -3756,11 +3756,11 @@ class BaseImage(Resource):
         :param channel: Determines the colorchannel ordering of the
                         sequence. Only used for ImageMagick-6.
                         See :const:`CHANNELS`.
-        :type channel: :class:`basestring`
+        :type channel: :class:`str`
         :param colorspace: Determines the colorchannel ordering of the
                            sequence. Only used for ImageMagick-7.
                            See :const:`COLORSPACE_TYPES`.
-        :type colorspace: :class:`basestring`
+        :type colorspace: :class:`str`
 
         .. versionadded:: 0.5.9
         """
@@ -3807,13 +3807,13 @@ class BaseImage(Resource):
         :type image: :class:`wand.image.Image`
         :param metric: The metric type to use for comparing. See
                        :const:`COMPARE_METRICS`
-        :type metric: :class:`basestring`
+        :type metric: :class:`str`
         :param highlight: Set the color of the delta pixels in the resulting
                           difference image.
-        :type highlight: :class:`~wand.color.Color` or :class:`basestring`
+        :type highlight: :class:`~wand.color.Color` or :class:`str`
         :param lowlight: Set the color of the similar pixels in the resulting
                           difference image.
-        :type lowlight: :class:`~wand.color.Color` or :class:`basestring`
+        :type lowlight: :class:`~wand.color.Color` or :class:`str`
         :returns: The difference image(:class:`wand.image.Image`),
                   the computed distortion between the images
                   (:class:`numbers.Real`)
@@ -3875,9 +3875,9 @@ class BaseImage(Resource):
 
         :param operator: Define which mathematic operator to perform. See
                          :const:`COMPLEX_OPERATORS`.
-        :type operator: :class:`basestring`
+        :type operator: :class:`str`
         :param snr: Optional ``SNR`` parameter for ``'divide'`` operator.
-        :type snr: :class:`basestring`
+        :type snr: :class:`str`
         :raises WandLibraryVersionError: If ImageMagick library does not
                                          support this function.
 
@@ -3916,15 +3916,15 @@ class BaseImage(Resource):
                          is applied to the image.  available values
                          can be found in the :const:`COMPOSITE_OPERATORS`
                          list. Default is ``'over'``.
-        :type operator: :class:`basestring`
+        :type operator: :class:`str`
         :param arguments: Additional numbers given as a geometry string, or
                          comma delimited values. This is needed for
                          ``'blend'``, ``'displace'``, ``'dissolve'``, and
                          ``'modulate'`` operators.
-        :type arguments: :class:`basestring`
+        :type arguments: :class:`str`
         :param gravity: Calculate the ``top`` & ``left`` values based on
                         gravity value from :const:`GRAVITY_TYPES`.
-        :type: gravity: :class:`basestring`
+        :type: gravity: :class:`str`
 
         .. versionadded:: 0.2.0
 
@@ -3956,12 +3956,12 @@ class BaseImage(Resource):
         if arguments:
             assertions.assert_string(arguments=arguments)
             r = library.MagickSetImageArtifact(image.wand,
-                                               binary('compose:args'),
+                                               b'compose:args',
                                                binary(arguments))
             if not r:
                 self.raise_exception()
             r = library.MagickSetImageArtifact(self.wand,
-                                               binary('compose:args'),
+                                               b'compose:args',
                                                binary(arguments))
             if not r:  # pragma: no cover
                 self.raise_exception()
@@ -3988,7 +3988,7 @@ class BaseImage(Resource):
                          is applied to the image.  available values
                          can be found in the :const:`COMPOSITE_OPERATORS`
                          list
-        :type operator: :class:`basestring`
+        :type operator: :class:`str`
         :param left: the column offset of the composited source image
         :type left: :class:`numbers.Integral`
         :param top: the row offset of the composited source image
@@ -3997,10 +3997,10 @@ class BaseImage(Resource):
                          comma delimited values. This is needed for
                          ``'blend'``, ``'displace'``, ``'dissolve'``, and
                          ``'modulate'`` operators.
-        :type arguments: :class:`basestring`
+        :type arguments: :class:`str`
         :param gravity: Calculate the ``top`` & ``left`` values based on
                         gravity value from :const:`GRAVITY_TYPES`.
-        :type: gravity: :class:`basestring`
+        :type: gravity: :class:`str`
         :raises ValueError: when the given ``channel`` or
                             ``operator`` is invalid
 
@@ -4035,10 +4035,10 @@ class BaseImage(Resource):
         if arguments:
             assertions.assert_string(arguments=arguments)
             library.MagickSetImageArtifact(image.wand,
-                                           binary('compose:args'),
+                                           b'compose:args',
                                            binary(arguments))
             library.MagickSetImageArtifact(self.wand,
-                                           binary('compose:args'),
+                                           b'compose:args',
                                            binary(arguments))
         if library.MagickCompositeImageChannel:
             r = library.MagickCompositeImageChannel(self.wand, ch_const,
@@ -4111,19 +4111,19 @@ class BaseImage(Resource):
                                 an equivalent ellipse smaller than a given
                                 value. Requires ImageMagick-7.0.9-24, or
                                 greater.
-        :type angle_threshold: :class:`basestring`
+        :type angle_threshold: :class:`str`
         :param area_threshold: Optional argument to merge objects under an
                                area size.
-        :type area_threshold: :class:`basestring`
+        :type area_threshold: :class:`str`
         :param background_id: Optional argument to identify which object
                               should be the background. Requires
                               ImageMagick-7.0.9-24, or greater.
-        :type background_id: :class:`basestring`
+        :type background_id: :class:`str`
         :param circularity_threshold: Optional argument that merges any region
                                       smaller than value defined as:
                                       ``4*pi*area/perimeter^2``. Requires
                                       ImageMagick-7.0.9-24, or greater.
-        :type circularity_threshold: :class:`basestring`
+        :type circularity_threshold: :class:`str`
         :param connectivity: Either ``4``, or ``8``. A value of ``4`` will
                             evaluate each pixels top-bottom, & left-right
                             neighbors. A value of ``8`` will use the same
@@ -4134,26 +4134,26 @@ class BaseImage(Resource):
                                    a given value. A region is defined as:
                                    ``sqr(4*area/pi)``. Requires
                                    ImageMagick-7.0.9-24.
-        :type diameter_threshold: :class:`basestring`
+        :type diameter_threshold: :class:`str`
         :param eccentricity_threshold: Optional argument to merge any region
                                        with ellipse eccentricity under a given
                                        value. Requires ImageMagick-7.0.9-24,
                                        or greater.
         :param keep: Comma separated list of object IDs to isolate, the reset
                      are converted to transparent.
-        :type keep: :class:`basestring`
+        :type keep: :class:`str`
         :param keep_colors: Semicolon separated list of objects to keep by
                             their color value. Requires ImageMagick-7.0.9-24,
                             or greater.
-        :type keep_colors: :class:`basestring`
+        :type keep_colors: :class:`str`
         :param keep_top: Keeps only the top number of objects by area.
                          Requires ImageMagick-7.0.9-24, or greater.
-        :type keep_top: :class:`basestring`
+        :type keep_top: :class:`str`
         :param major_axis_threshold: Optional argument to merge any ellipse
                                      with a major axis smaller then given
                                      value. Requires ImageMagick-7.0.9-24,
                                      or greater.
-        :type major_axis_threshold: :class:`basestring`
+        :type major_axis_threshold: :class:`str`
         :param mean_color: Optional argument. Replace object color with mean
                            color of the source image.
         :type mean_color: :class:`bool`
@@ -4161,17 +4161,17 @@ class BaseImage(Resource):
                                      with a minor axis smaller then given
                                      value. Requires ImageMagick-7.0.9-24,
                                      or greater.
-        :type minor_axis_threshold: :class:`basestring`
+        :type minor_axis_threshold: :class:`str`
         :param perimeter_threshold: Optional argument to merge any region with
                                     a perimeter smaller than the given value.
                                     Requires ImageMagick-7.0.9-24, or greater.
         :param remove: Comma separated list of object IDs to ignore, and
                        convert to transparent.
-        :type remove: :class:`basestring`
+        :type remove: :class:`str`
         :param remove_colors: Semicolon separated list of objects to remove
                               by there color. Requires ImageMagick-7.0.9-24,
                               or greater.
-        :type remove_colors: :class:`basestring`
+        :type remove_colors: :class:`str`
         :returns: A list of :class:`ConnectedComponentObject`.
         :rtype: :class:`list` [:class:`ConnectedComponentObject`]
         :raises WandLibraryVersionError: If ImageMagick library
@@ -4280,8 +4280,8 @@ class BaseImage(Resource):
                                                    ctypes.byref(objects_ptr))
         objects = []
         if r and objects_ptr.value:
-            for i in xrange(self.colors):
-                temp = CCObjectInfoStructure()
+            for i in range(self.colors):
+                temp = CCObjectInfo()
                 src_addr = objects_ptr.value + (i * ccoi_mem_size)
                 ctypes.memmove(ctypes.addressof(temp), src_addr, ccoi_mem_size)
                 objects.append(ConnectedComponentObject(temp))
@@ -4391,7 +4391,7 @@ class BaseImage(Resource):
 
         :param background: Define which color value to evaluate as the
                            background.
-        :type background: :class:`basestring` or :class:`~wand.color.Color`
+        :type background: :class:`str` or :class:`~wand.color.Color`
         :returns: list of points
         :rtype: :class:`list` [ :class:`tuple` ( :class:`float`,
                 :class:`float` ) ]
@@ -4549,7 +4549,7 @@ class BaseImage(Resource):
             library.MagickSetLastIterator(self.wand)
             n = library.MagickGetIteratorIndex(self.wand)
             library.MagickResetIterator(self.wand)
-            for i in xrange(0, n + 1):
+            for i in range(0, n + 1):
                 library.MagickSetIteratorIndex(self.wand, i)
                 r = library.MagickCropImage(self.wand,
                                             width, height,
@@ -4585,7 +4585,7 @@ class BaseImage(Resource):
             ImageMagick library was compiled without cipher support.
 
         :param passphrase: the secret passphrase to decrypt with.
-        :type passphrase: :class:`basestring`
+        :type passphrase: :class:`str`
 
         .. versionadded:: 0.6.3
         """
@@ -4674,7 +4674,7 @@ class BaseImage(Resource):
         :see: Additional examples of :ref:`distort`.
 
         :param method: Distortion method name from :const:`DISTORTION_METHODS`
-        :type method: :class:`basestring`
+        :type method: :class:`str`
         :param arguments: List of distorting float arguments
                           unique to distortion method
         :type arguments: :class:`collections.abc.Sequence`
@@ -4684,7 +4684,7 @@ class BaseImage(Resource):
         :param filter: Optional resampling filter used when calculating
                        pixel-value. Defaults to ``'mitchell'``, or
                        ``'lanczos'`` based on image type & operation.
-        :type filter: :class:`basestring`
+        :type filter: :class:`str`
 
         .. versionadded:: 0.4.1
         .. versionchanged:: 0.6.11
@@ -4776,7 +4776,7 @@ class BaseImage(Resource):
             ImageMagick library was compiled without cipher support.
 
         :param passphrase: the secret passphrase to encrypt with.
-        :type passphrase: :class:`basestring`
+        :type passphrase: :class:`str`
 
         .. versionadded:: 0.6.3
         .. versionchanged:: 0.6.8
@@ -4802,7 +4802,7 @@ class BaseImage(Resource):
         """Equalizes the image histogram
 
         :param channel: Optional channel. See :const:`CHANNELS`.
-        :type channel: :class:`basestring`
+        :type channel: :class:`str`
 
         .. versionadded:: 0.3.10
 
@@ -4943,10 +4943,10 @@ class BaseImage(Resource):
         :type height: :class:`numbers.Integral`
         :param channel_map: a string listing the channel data
                             format for each pixel.
-        :type channel_map: :class:`basestring`
+        :type channel_map: :class:`str`
         :param storage: what data type each value should
                         be calculated as.
-        :type storage: :class:`basestring`
+        :type storage: :class:`str`
         :returns: list of values.
         :rtype: :class:`collections.abc.Sequence`
 
@@ -5015,7 +5015,7 @@ class BaseImage(Resource):
         :type y: :class:`numbers.Integral`
         :param gravity: position of the item extent when not using ``x`` &
                         ``y``. See :const:`GRAVITY_TYPES`.
-        :type gravity: :class:`basestring`
+        :type gravity: :class:`str`
 
         .. versionadded:: 0.4.5
 
@@ -5204,7 +5204,7 @@ class BaseImage(Resource):
         :type outer_bevel: :class:`numbers.Real`
         :param compose: Optional composite operator. Default ``'over'``, and
                         only available with ImageMagick-7.
-        :type compose: :class:`basestring`
+        :type compose: :class:`str`
 
         .. versionadded:: 0.4.1
 
@@ -5213,7 +5213,7 @@ class BaseImage(Resource):
         """
         if matte is None:
             matte = Color('gray')
-        if isinstance(matte, string_type):
+        if isinstance(matte, str):
             matte = Color(matte)
         assertions.assert_color(matte=matte)
         assertions.assert_integer(width=width, height=height)
@@ -5258,11 +5258,11 @@ class BaseImage(Resource):
         :see: Example of :ref:`function`.
 
         :param function: a string listed in :const:`FUNCTION_TYPES`
-        :type function: :class:`basestring`
+        :type function: :class:`str`
         :param arguments: a sequence of doubles to apply against ``function``
         :type arguments: :class:`collections.abc.Sequence`
         :param channel: optional :const:`CHANNELS`, defaults all
-        :type channel: :class:`basestring`
+        :type channel: :class:`str`
         :raises ValueError: when a ``function``, or ``channel`` is not
                             defined in there respected constant
         :raises TypeError: if ``arguments`` is not a sequence
@@ -5314,7 +5314,7 @@ class BaseImage(Resource):
         :see: Example of :ref:`fx`.
 
         :param expression: The entire FX expression to apply
-        :type expression: :class:`basestring`
+        :type expression: :class:`str`
         :param channel: Optional channel to target.
         :type channel: :const:`CHANNELS`
         :returns: A new instance of an image with expression applied
@@ -5365,7 +5365,7 @@ class BaseImage(Resource):
         :param adjustment_value: value to adjust gamma level. Default `1.0`
         :type adjustment_value: :class:`numbers.Real`
         :param channel: optional channel to apply gamma correction
-        :type channel: :class:`basestring`
+        :type channel: :class:`str`
         :raises TypeError: if ``gamma_point`` is not a :class:`numbers.Real`
         :raises ValueError: if ``channel`` is not in :const:`CHANNELS`
 
@@ -5408,7 +5408,7 @@ class BaseImage(Resource):
         :type sigma: :class:`numbers.Real`
         :param channel: Optional color channel to target. See
                         :const:`CHANNELS`
-        :type channel: :class:`basestring`
+        :type channel: :class:`str`
 
         .. versionadded:: 0.3.3
 
@@ -5444,7 +5444,7 @@ class BaseImage(Resource):
         :type image: :class:`wand.image.BaseImage`
         :param metric: Compare disortion metric to use. See
                        :const:`COMPARE_METRICS`.
-        :type metric: :class:`basestring`
+        :type metric: :class:`str`
         :returns: Computed value of the distortion metric used.
         :rtype: :class:`numbers.Real`
 
@@ -5479,7 +5479,7 @@ class BaseImage(Resource):
         :type image: :class:`wand.image.BaseImage`
         :param channel: Optional color channel to target. See
                         :const:`CHANNELS`
-        :type channel: :class:`basestring`
+        :type channel: :class:`str`
 
         .. versionadded:: 0.5.0
 
@@ -5552,7 +5552,7 @@ class BaseImage(Resource):
         :param method: Which interpolate method to apply to effected pixels.
                        See :const:`PIXEL_INTERPOLATE_METHODS` for a list of
                        options. Only available with ImageMagick-7.
-        :type method: :class:`basestring`
+        :type method: :class:`str`
 
         .. versionadded:: 0.5.2
         """
@@ -5617,10 +5617,10 @@ class BaseImage(Resource):
         :type height: :class:`numbers.Integral`
         :param channel_map: a string listing the channel data
                             format for each pixel.
-        :type channel_map: :class:`basestring`
+        :type channel_map: :class:`str`
         :param storage: what data type each value should
                         be calculated as.
-        :type storage: :class:`basestring`
+        :type storage: :class:`str`
 
         .. versionadded:: 0.5.0
 
@@ -5832,7 +5832,7 @@ class BaseImage(Resource):
 
         :param channel: Select which color channel to evaluate. See
                         :const:`CHANNELS`. Default ``'default_channels'``.
-        :type channel: :class:`basestring`
+        :type channel: :class:`str`
         :returns: Tuple of :attr:`kurtosis` & :attr:`skewness`
                   values.
         :rtype: :class:`tuple`
@@ -5905,7 +5905,7 @@ class BaseImage(Resource):
         ``left`` & ``top``, or ``gravity``, to position the text.
 
         :param text: text to write.
-        :type text: :class:`basestring`
+        :type text: :class:`str`
         :param left: x offset in pixels.
         :type left: :class:`numbers.Integral`
         :param top: y offset in pixels.
@@ -5913,7 +5913,7 @@ class BaseImage(Resource):
         :param font: font to use.  default is :attr:`font` of the image.
         :type font: :class:`wand.font.Font`
         :param gravity: text placement gravity.
-        :type gravity: :class:`basestring`
+        :type gravity: :class:`str`
 
         .. versionadded:: 0.6.8
         """
@@ -6012,7 +6012,7 @@ class BaseImage(Resource):
         :param white_color: linearly map given color as "white" point.
         :type white_color: :class:`Color`
         :param channel: target a specific color-channel to levelize.
-        :type channel: :class:`basestring`
+        :type channel: :class:`str`
         :raises WandLibraryVersionError: If system's version of ImageMagick
                                          does not support this method.
 
@@ -6021,9 +6021,9 @@ class BaseImage(Resource):
         if library.MagickLevelImageColors is None:
             msg = 'Method requires ImageMagick version 7.0.8-54 or greater.'
             raise WandLibraryVersionError(msg)
-        if isinstance(black_color, string_type):
+        if isinstance(black_color, str):
             black_color = Color(black_color)
-        if isinstance(white_color, string_type):
+        if isinstance(white_color, str):
             white_color = Color(white_color)
         assertions.assert_color(black_color=black_color,
                                 white_color=white_color)
@@ -6109,7 +6109,7 @@ class BaseImage(Resource):
         :param white_color: tint map given color as "white" point.
         :type white_color: :class:`Color`
         :param channel: target a specific color-channel to levelize.
-        :type channel: :class:`basestring`
+        :type channel: :class:`str`
         :raises WandLibraryVersionError: If system's version of ImageMagick
                                          does not support this method.
 
@@ -6118,9 +6118,9 @@ class BaseImage(Resource):
         if library.MagickLevelImageColors is None:
             msg = 'Method requires ImageMagick version 7.0.8-54 or greater.'
             raise WandLibraryVersionError(msg)
-        if isinstance(black_color, string_type):
+        if isinstance(black_color, str):
             black_color = Color(black_color)
-        if isinstance(white_color, string_type):
+        if isinstance(white_color, str):
             white_color = Color(white_color)
         assertions.assert_color(black_color=black_color,
                                 white_color=white_color)
@@ -6254,7 +6254,7 @@ class BaseImage(Resource):
 
         :param channel: Select which color channel to evaluate. See
                         :const:`CHANNELS`. Default ``'default_channels'``.
-        :type channel: :class:`basestring`
+        :type channel: :class:`str`
         :returns: Tuple of :attr:`mean` & :attr:`standard_deviation`
                   values. The ``mean`` value will be between 0.0 &
                   :attr:`quantum_range`
@@ -6328,7 +6328,7 @@ class BaseImage(Resource):
         for more details.)
 
         :param method: the method of selecting the size of the initial canvas.
-        :type method: :class:`basestring`
+        :type method: :class:`str`
 
         .. versionadded:: 0.4.3
 
@@ -6377,7 +6377,7 @@ class BaseImage(Resource):
 
         :param orientation: sets the image orientation. Values can be
                             ``'landscape'``, or ``'portrait'``.
-        :type orientation: :class:`basestring`
+        :type orientation: :class:`str`
         :returns: a directory of MBR properties & corner points.
         :rtype: :class:`dict` { "points": :class:`list` [ :class:`tuple` (
                 :class:`float`, :class:`float` ) ], "area": :class:`float`,
@@ -6509,11 +6509,11 @@ class BaseImage(Resource):
         :param method: effect function to apply. See
                        :const:`MORPHOLOGY_METHODS` for a list of
                        methods.
-        :type method: :class:`basestring`
+        :type method: :class:`str`
         :param kernel: shape to evaluate surrounding pixels. See
                        :const:`KERNEL_INFO_TYPES` for a list of
                        built-in shapes.
-        :type kernel: :class:`basestring`
+        :type kernel: :class:`str`
         :param iterations: Number of times a morphology method should be
                            applied to the image. Default ``1``. Use ``-1`` for
                            unlimited iterations until the image is unchanged
@@ -6521,7 +6521,7 @@ class BaseImage(Resource):
         :type iterations: :class:`numbers.Integral`
         :param channel: Optional color channel to target. See
                         :const:`CHANNELS`
-        :type channel: `basestring`
+        :type channel: `str`
 
         .. versionadded:: 0.5.0
 
@@ -6669,7 +6669,7 @@ class BaseImage(Resource):
         :param channel: the channel type.  available values can be found
                         in the :const:`CHANNELS` mapping.  If ``None``,
                         negate all channels.
-        :type channel: :class:`basestring`
+        :type channel: :class:`str`
 
         .. versionadded:: 0.3.8
 
@@ -6698,13 +6698,13 @@ class BaseImage(Resource):
         :see: Example of :ref:`noise`.
 
         :param noise_type: type of noise to apply. See :const:`NOISE_TYPES`.
-        :type noise_type: :class:`basestring`
+        :type noise_type: :class:`str`
         :param attenuate: rate of distribution. Only available in
                           ImageMagick-7. Default is ``1.0``.
         :type attenuate: :class:`numbers.Real`
         :param channel: Optionally target a color channel to apply noise to.
                         See :const:`CHANNELS`.
-        :type channel: :class:`basestring`
+        :type channel: :class:`str`
 
         .. versionadded:: 0.5.3
 
@@ -6744,7 +6744,7 @@ class BaseImage(Resource):
         :param channel: the channel type.  available values can be found
                         in the :const:`CHANNELS` mapping.  If ``None``,
                         normalize all channels.
-        :type channel: :class:`basestring`
+        :type channel: :class:`str`
 
         """
         if channel is None:
@@ -6814,16 +6814,16 @@ class BaseImage(Resource):
         :type invert: :class:`bool`
         :param channel: Optional color channel to target. See
                         :const:`CHANNELS`
-        :type channel: :class:`basestring`
+        :type channel: :class:`str`
 
         .. versionadded:: 0.5.4
 
         .. versionchanged:: 0.5.5
            Added ``channel`` parameter.
         """
-        if isinstance(target, string_type):
+        if isinstance(target, str):
             target = Color(target)
-        if isinstance(fill, string_type):
+        if isinstance(fill, str):
             fill = Color(fill)
         assertions.assert_color(target=target, fill=fill)
         assertions.assert_real(fuzz=fuzz)
@@ -6945,10 +6945,10 @@ class BaseImage(Resource):
 
         :param threshold_map: Name of threshold dither to use, followed by
                               optional arguments.
-        :type threshold_map: :class:`basestring`
+        :type threshold_map: :class:`str`
         :param channel: Optional argument to apply dither to specific color
                         channel. See :const:`CHANNELS`.
-        :type channel: :class:`basestring`
+        :type channel: :class:`str`
 
         .. versionadded:: 0.5.7
         """
@@ -6981,7 +6981,7 @@ class BaseImage(Resource):
         https://imagemagick.org/script/command-line-processing.php#geometry
 
         :param geometry: user string following ImageMagick's geometry format.
-        :type geometry: :class:`basestring`
+        :type geometry: :class:`str`
         :returns: Calculated width, height, offset-x, & offset-y.
         :rtype: :class:`tuple`
         :raises ValueError: If given geometry can not be parsed.
@@ -7021,10 +7021,10 @@ class BaseImage(Resource):
             Not all percent escaped values can be populated as I/O operations
             are managed by Python, and not the CLI utility.
 
-        :param string_format: The prescient escaped string to be translated.
-        :type string_format: :class:`basestring`
+        :param string_format: The precent escaped string to be translated.
+        :type string_format: :class:`str`
         :returns: String of expanded values.
-        :rtype: :class:`basestring`
+        :rtype: :class:`str`
 
         .. versionadded:: 0.5.6
         """
@@ -7047,11 +7047,11 @@ class BaseImage(Resource):
         :param angle: applies a shadow effect along this angle.
         :type angle: :class:`numbers.Real`
         :param caption: Writes a message at the bottom of the photo's border.
-        :type caption: :class:`basestring`
+        :type caption: :class:`str`
         :param font: Specify font style.
         :type font: :class:`wand.font.Font`
         :param method: Interpolation method. ImageMagick-7 only.
-        :type method: :class:`basestring`
+        :type method: :class:`str`
 
         .. versionadded:: 0.5.4
         """
@@ -7157,7 +7157,7 @@ class BaseImage(Resource):
         :type levels: :class:`numbers.Integral`
         :param dither: Dither method to apply.
                        See :const:`DITHER_METHODS`.
-        :type dither: `basestring`
+        :type dither: `str`
 
         .. versionadded:: 0.5.0
         """
@@ -7181,7 +7181,7 @@ class BaseImage(Resource):
         :param colorspace_type: Available value can be found
                                 in the :const:`COLORSPACE_TYPES`. Defaults
                                 value ``"undefined"``.
-        :type colorspace_type: :class:`basestring`
+        :type colorspace_type: :class:`str`
         :param treedepth: A value between ``0`` & ``8`` where ``0`` will
                          allow ImageMagick to calculate the optimal depth
                          with ``Log4(number_colors)``. Default value is ``0``.
@@ -7191,7 +7191,7 @@ class BaseImage(Resource):
                        of :const:`True`, or :const:`False`. With ImageMagick-7,
                        use a string from :const:`DITHER_METHODS`. Default
                        :const:`False`.
-        :type dither: :class:`bool`, or :class:`basestring`
+        :type dither: :class:`bool`, or :class:`str`
         :param measure_error: Include total quantization error of all pixels
                               in an image & quantized value.
         :type measure_error: :class:`bool`
@@ -7247,7 +7247,7 @@ class BaseImage(Resource):
         :type high: :class:`numbers.Real`
         :param channel: Optional argument to apply dither to specific color
                         channel. See :const:`CHANNELS`.
-        :type channel: :class:`basestring`
+        :type channel: :class:`str`
 
         .. versionadded:: 0.5.7
         """
@@ -7286,7 +7286,7 @@ class BaseImage(Resource):
 
         :param channel: Select which color channel to evaluate. See
                         :const:`CHANNELS`. Default ``'default_channels'``.
-        :type channel: :class:`basestring`
+        :type channel: :class:`str`
         :returns: Tuple of :attr:`minima` & :attr:`maxima`
                   values. Each value will be between 0.0 &
                   :attr:`quantum_range`.
@@ -7426,7 +7426,7 @@ class BaseImage(Resource):
         :type y: :class:`numbers.Integral`
         :param region: Helper attribute to set ``x`` & ``y`` offset. See
                        :const:`GRAVITY_TYPES`.
-        :type region: :class:`basestring`
+        :type region: :class:`str`
         :returns: New instance of Wand.
         :rtype: :class:`Image`
 
@@ -7463,7 +7463,7 @@ class BaseImage(Resource):
         :type affinity: :class:`BaseImage`
         :param method: dither method. See :const:`DITHER_METHODS`.
                        Default is ``'no'`` dither.
-        :type method: :class:`basestring`
+        :type method: :class:`str`
 
         .. versionadded:: 0.5.3
         """
@@ -7508,7 +7508,7 @@ class BaseImage(Resource):
         :param filter: a filter type to use for resizing. choose one in
                        :const:`FILTER_TYPES`. default is ``'undefined'``
                        which means IM will try to guess best one to use.
-        :type filter: :class:`basestring`, :class:`numbers.Integral`
+        :type filter: :class:`str`, :class:`numbers.Integral`
         :param blur: the blur factor where > 1 is blurry, < 1 is sharp.
                      default is 1
         :type blur: :class:`numbers.Real`
@@ -7526,10 +7526,10 @@ class BaseImage(Resource):
         elif y_res < 1:
             raise ValueError('y_res must be a Real number, not ' +
                              repr(y_res))
-        elif not isinstance(filter, (string_type, numbers.Integral)):
+        elif not isinstance(filter, (str, numbers.Integral)):
             raise TypeError('filter must be one string defined in wand.image.'
                             'FILTER_TYPES or an integer, not ' + repr(filter))
-        if isinstance(filter, string_type):
+        if isinstance(filter, str):
             try:
                 filter = FILTER_TYPES.index(filter)
             except IndexError:
@@ -7545,7 +7545,7 @@ class BaseImage(Resource):
             library.MagickSetLastIterator(self.wand)
             n = library.MagickGetIteratorIndex(self.wand)
             library.MagickResetIterator(self.wand)
-            for i in xrange(n + 1):
+            for i in range(n + 1):
                 library.MagickSetIteratorIndex(self.wand, i)
                 r = library.MagickResampleImage(self.wand, x_res, y_res,
                                                 filter, blur)
@@ -7585,7 +7585,7 @@ class BaseImage(Resource):
         :param filter: a filter type to use for resizing. choose one in
                        :const:`FILTER_TYPES`. default is ``'undefined'``
                        which means IM will try to guess best one to use
-        :type filter: :class:`basestring`, :class:`numbers.Integral`
+        :type filter: :class:`str`, :class:`numbers.Integral`
         :param blur: the blur factor where > 1 is blurry, < 1 is sharp.
                      default is 1
         :type blur: :class:`numbers.Real`
@@ -7607,10 +7607,10 @@ class BaseImage(Resource):
             height = self.height
         assertions.assert_counting_number(width=width, height=height)
         assertions.assert_real(blur=blur)
-        if not isinstance(filter, (string_type, numbers.Integral)):
+        if not isinstance(filter, (str, numbers.Integral)):
             raise TypeError('filter must be one string defined in wand.image.'
                             'FILTER_TYPES or an integer, not ' + repr(filter))
-        if isinstance(filter, string_type):
+        if isinstance(filter, str):
             try:
                 filter = FILTER_TYPES.index(filter)
             except IndexError:
@@ -7626,7 +7626,7 @@ class BaseImage(Resource):
             library.MagickSetLastIterator(self.wand)
             n = library.MagickGetIteratorIndex(self.wand)
             library.MagickResetIterator(self.wand)
-            for i in xrange(n + 1):
+            for i in range(n + 1):
                 library.MagickSetIteratorIndex(self.wand, i)
                 r = library.MagickResizeImage(self.wand, width, height,
                                               filter, blur)
@@ -7682,7 +7682,7 @@ class BaseImage(Resource):
         """
         if background is None:
             background = Color('transparent')
-        elif isinstance(background, string_type):
+        elif isinstance(background, str):
             background = Color(background)
         assertions.assert_color(background=background)
         assertions.assert_real(degree=degree)
@@ -7693,7 +7693,7 @@ class BaseImage(Resource):
                 library.MagickSetLastIterator(self.wand)
                 n = library.MagickGetIteratorIndex(self.wand)
                 library.MagickResetIterator(self.wand)
-                for i in xrange(0, n + 1):
+                for i in range(0, n + 1):
                     library.MagickSetIteratorIndex(self.wand, i)
                     result = library.MagickRotateImage(self.wand,
                                                        background.resource,
@@ -7721,7 +7721,7 @@ class BaseImage(Resource):
         :type angle: :class:`numbers.Real`
         :param channel: Optional channel to apply the effect against. See
                         :const:`CHANNELS` for a list of possible values.
-        :type channel: :class:`basestring`
+        :type channel: :class:`str`
         :raises WandLibraryVersionError: If system's version of ImageMagick
                                          does not support this method.
 
@@ -7774,7 +7774,7 @@ class BaseImage(Resource):
             library.MagickSetLastIterator(self.wand)
             n = library.MagickGetIteratorIndex(self.wand)
             library.MagickResetIterator(self.wand)
-            for i in xrange(n + 1):
+            for i in range(n + 1):
                 library.MagickSetIteratorIndex(self.wand, i)
                 r = library.MagickSampleImage(self.wand, width, height)
             library.MagickSetSize(self.wand, width, height)
@@ -7830,7 +7830,7 @@ class BaseImage(Resource):
         :type threshold: :class:`numbers.Real`
         :param channel: Optional color channel to target. See
                         :const:`CHANNELS`
-        :type channel: :class:`basestring`
+        :type channel: :class:`str`
 
         .. versionadded:: 0.5.3
 
@@ -7944,7 +7944,7 @@ class BaseImage(Resource):
         :type sigma: :class:`numbers.Real`
         :param channel: Optional color channel to target. See
                         :const:`CHANNELS`.
-        :type channel: :class:`basestring`
+        :type channel: :class:`str`
 
         .. versionadded:: 0.5.0
 
@@ -7997,7 +7997,7 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.4
         """
-        if isinstance(background, string_type):
+        if isinstance(background, str):
             background = Color(background)
         assertions.assert_color(background=background)
         assertions.assert_real(x=x, y=y)
@@ -8030,7 +8030,7 @@ class BaseImage(Resource):
         :type midpoint: :class:`numbers.Real`
         :param channel: Optional color channel to target. See
                         :const:`CHANNELS`.
-        :type channel: :class:`basestring`
+        :type channel: :class:`str`
 
         .. versionadded:: 0.5.4
 
@@ -8103,7 +8103,7 @@ class BaseImage(Resource):
         :param metric: specify which comparison algorithm to use. See
                        :const:`COMPARE_METRICS` for a list of values.
                        Only used by ImageMagick-7.
-        :type metric: :class:`basestring`
+        :type metric: :class:`str`
         :returns: List of location & similarity value. Location being a
                   dictionary of ``width``, ``height``, ``left``, & ``top``.
                   The similarity value is the compare distance, so a value of
@@ -8200,7 +8200,7 @@ class BaseImage(Resource):
         :type threshold: :class:`numbers.Real`
         :param channel: Optional color channel to target. See
                         :const:`CHANNELS`
-        :type channel: :class:`basestring`
+        :type channel: :class:`str`
 
         .. versionadded:: 0.5.3
 
@@ -8269,7 +8269,7 @@ class BaseImage(Resource):
                 img.sparse_color('voronoi', colors, channel_mask=mask)
 
         :param method: Interpolate method. See :const:`SPARSE_COLOR_METHODS`
-        :type method: :class:`basestring`
+        :type method: :class:`str`
         :param colors: A dictionary of :class:`~wand.color.Color` keys mapped
                        to an (x, y) coordinate tuple.
         :type colors: :class:`abc.Mapping`
@@ -8289,7 +8289,7 @@ class BaseImage(Resource):
         method_idx = SPARSE_COLOR_METHODS[method]
         arguments = list()
         for color, point in colors.items():
-            if isinstance(color, string_type):
+            if isinstance(color, str):
                 color = Color(color)
             x, y = point
             arguments.append(x)
@@ -8401,14 +8401,14 @@ class BaseImage(Resource):
 
         :param stat: The type of statistic to calculate. See
                      :const:`STATISTIC_TYPES`.
-        :type stat: :class:`basestring`
+        :type stat: :class:`str`
         :param width: The size of neighboring pixels on the X-axis.
         :type width: :class:`numbers.Integral`
         :param height: The size of neighboring pixels on the Y-axis.
         :type height: :class:`numbers.Integral`
         :param channel: Optional color channel to target. See
                         :const:`CHANNELS`
-        :type channel: :class:`basestring`
+        :type channel: :class:`str`
 
         .. versionadded:: 0.5.3
 
@@ -8499,7 +8499,7 @@ class BaseImage(Resource):
         :param method: Controls interpolation of the effected pixels. Only
                        available for ImageMagick-7. See
                        :const:`PIXEL_INTERPOLATE_METHODS`.
-        :type method: :class:`basestring`
+        :type method: :class:`str`
 
         .. versionadded:: 0.5.7
         """
@@ -8554,7 +8554,7 @@ class BaseImage(Resource):
         :param channel: the channel type.  available values can be found
                         in the :const:`CHANNELS` mapping.  If ``None``,
                         threshold all channels.
-        :type channel: :class:`basestring`
+        :type channel: :class:`str`
 
         .. versionadded:: 0.3.10
 
@@ -8608,9 +8608,9 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.3
         """
-        if isinstance(color, string_type):
+        if isinstance(color, str):
             color = Color(color)
-        if isinstance(alpha, string_type):
+        if isinstance(alpha, str):
             alpha = Color(alpha)
         assertions.assert_color(color=color, alpha=alpha)
         with color:
@@ -8698,9 +8698,9 @@ class BaseImage(Resource):
 
         :param crop: A geometry string defining a subregion of the image
                      to crop to
-        :type crop: :class:`basestring`
+        :type crop: :class:`str`
         :param resize: A geometry string defining the final size of the image
-        :type resize: :class:`basestring`
+        :type resize: :class:`str`
 
         .. seealso::
 
@@ -8777,7 +8777,7 @@ class BaseImage(Resource):
             new_wand = library.NewMagickWand()
             src_wand = library.MagickCoalesceImages(self.wand)
             length = library.MagickGetNumberImages(self.wand)
-            for i in xrange(length):
+            for i in range(length):
                 library.MagickSetIteratorIndex(src_wand, i)
                 tmp_wand = library.MagickTransformImage(src_wand,
                                                         crop,
@@ -8801,7 +8801,7 @@ class BaseImage(Resource):
 
         :param colorspace_type: colorspace_type. available value can be found
                                 in the :const:`COLORSPACE_TYPES`
-        :type colorspace_type: :class:`basestring`
+        :type colorspace_type: :class:`str`
 
         .. versionadded:: 0.4.2
 
@@ -8845,8 +8845,9 @@ class BaseImage(Resource):
             Parameter ``fuzz`` type switched from Integral to Real.
 
         """
-        assertions.assert_real(alpha=alpha, fuzz=fuzz)
-        if isinstance(color, string_type):
+        assertions.assert_real(alpha=alpha)
+        assertions.assert_integer(fuzz=fuzz)
+        if isinstance(color, str):
             color = Color(color)
         assertions.assert_color(color=color)
         with color:
@@ -8956,7 +8957,7 @@ class BaseImage(Resource):
         if use_border:
             if color is None:
                 color = self[0, 0]
-            elif isinstance(color, string_type):
+            elif isinstance(color, str):
                 color = Color(color)
             assertions.assert_color(color=color)
             with color:
@@ -8971,7 +8972,7 @@ class BaseImage(Resource):
                                            binary('trim:percent-background'),
                                            binary(str_pb))
         if not use_border:
-            if isinstance(background_color, string_type):
+            if isinstance(background_color, str):
                 background_color = Color(background_color)
             assertions.assert_color(background_color=background_color)
             bc_key = 'trim:background-color'
@@ -9030,7 +9031,7 @@ class BaseImage(Resource):
         :type threshold: :class:`numbers.Real`
         :param channel: Optional color channel to target. See
                         :const:`CHANNELS`
-        :type channel: :class:`basestring`
+        :type channel: :class:`str`
 
         .. versionadded:: 0.3.4
 
@@ -9120,7 +9121,7 @@ class BaseImage(Resource):
         :type wave_length: :class:`numbers.Real`
         :param method: pixel interpolation method. Only available with
                        ImageMagick-7. See :const:`PIXEL_INTERPOLATE_METHODS`
-        :type method: :class:`basestring`
+        :type method: :class:`str`
 
         .. versionadded:: 0.5.2
         """
@@ -9200,7 +9201,7 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.2
         """
-        if isinstance(threshold, string_type):
+        if isinstance(threshold, str):
             threshold = Color(threshold)
         assertions.assert_color(threshold=threshold)
         with threshold:
@@ -9250,11 +9251,11 @@ class Image(BaseImage):
     :type file: file object
     :param filename: opens an image of the ``filename`` string. Additional
                      :ref:`read_mods` are supported.
-    :type filename: :class:`basestring`
+    :type filename: :class:`str`
     :param format: forces filename to  buffer. ``format`` to help
                    ImageMagick detect the file format. Used only in
                    ``blob`` or ``file`` cases
-    :type format: :class:`basestring`
+    :type format: :class:`str`
     :param width: the width of new blank image or an image loaded from raw
                   data.
     :type width: :class:`numbers.Integral`
@@ -9273,10 +9274,10 @@ class Image(BaseImage):
     :param colorspace: sets the stack's default colorspace value before
                        reading any images.
                        See :const:`COLORSPACE_TYPES`.
-    :type colorspace: :class:`basestring`
+    :type colorspace: :class:`str`,
     :param units: paired with ``resolution`` for defining an image's pixel
                   density. See :const:`UNIT_TYPES`.
-    :type units: :class:`basestring`
+    :type units: :class:`str`
 
     .. versionadded:: 0.1.5
        The ``file`` parameter.
@@ -9388,13 +9389,13 @@ class Image(BaseImage):
         with self.allocate():
             if image is None:
                 wand = library.NewMagickWand()
-                super(Image, self).__init__(wand)
+                super().__init__(wand)
             if image is not None:
                 if not isinstance(image, BaseImage):
                     raise TypeError('image must be a wand.image.Image '
                                     'instance, not ' + repr(image))
                 wand = library.CloneMagickWand(image.wand)
-                super(Image, self).__init__(wand)
+                super().__init__(wand)
             elif any(a is not None for a in open_args):
                 self._preamble_read(
                     background=background, colorspace=colorspace, depth=depth,
@@ -9411,7 +9412,7 @@ class Image(BaseImage):
                 # clear the wand format, otherwise any subsequent call to
                 # MagickGetImageBlob will silently change the image to this
                 # format again.
-                library.MagickSetFormat(self.wand, binary(""))
+                library.MagickSetFormat(self.wand, b'')
             elif width is not None and height is not None:
                 if pseudo is None:
                     self.blank(width, height, background)
@@ -9431,7 +9432,7 @@ class Image(BaseImage):
         self.raise_exception()
 
     def __repr__(self):
-        return super(Image, self).__repr__(
+        return super().__repr__(
             extra_format=' {self.format!r} ({self.width}x{self.height})'
         )
 
@@ -9443,29 +9444,29 @@ class Image(BaseImage):
         properties are unique to the image decoder.
 
         :param background: Defines the default background color.
-        :type background: :class:`Color`, :class:`basestring`
+        :type background: :class:`Color`, :class:`str`
         :param colorspace: Defines what colorspace the decoder should operate
                            in. See :const:`COLORSPACE_TYPES`.
-        :type colorspace: :class:`basestring`
+        :type colorspace: :class:`str`
         :param depth: Bits per color sample.
         :type depth: :class:`numbers.Integral`
         :param extract: Only decode a sub-region of the image.
-        :type extract: :class:`basestring`
+        :type extract: :class:`str`
         :param format: Defines the decoder image format.
-        :type format: :class:`basestring`
+        :type format: :class:`str`
         :param height: Defines how high a blank canvas should be. Only used if
                        ``width`` is also defined.
         :type height: :class:`numbers.Integral`
         :param interlace: Defines the interlacing scheme for raw data streams.
                           See :const:`INTERLACE_TYPES`.
-        :type interlace: :class:`basestring`
+        :type interlace: :class:`str`
         :param resolution: Defines the pixel density of a scalable formats.
                            PDF & SVG as examples.
         :type resolution: :class:`collections.abc.Sequence`,
                           :class:`numbers.Integral`
         :param sampling_factors: Defines how a YUV might be upsampled.
         :type sampling_factors: :class:`collections.abc.Sequence`,
-                                :class:`basestring`
+                                :class:`str`
         :param units: Unused.
         :type units: :class:`numbers.Integral`
         :param width: Defines how wide a blank canvas should be. Only used if
@@ -9475,7 +9476,7 @@ class Image(BaseImage):
         .. versionadded:: 0.6.3
         """
         if background:
-            if isinstance(background, string_type):
+            if isinstance(background, str):
                 background = Color(background)
             assertions.assert_color(background=background)
             with background:
@@ -9561,9 +9562,9 @@ class Image(BaseImage):
         :param array: Numpy array of pixel values.
         :type array: :class:`numpy.array`
         :param channel_map: Color channel layout.
-        :type channel_map: :class:`basestring`
+        :type channel_map: :class:`str`
         :param storage: Datatype per pixel part.
-        :type storage: :class:`basestring`
+        :type storage: :class:`str`
         :returns: New instance of an image.
         :rtype: :class:`~wand.image.Image`
 
@@ -9632,14 +9633,14 @@ class Image(BaseImage):
         :param file: reads an image from the ``file`` object
         :type file: file object
         :param filename: reads an image from the ``filename`` string
-        :type filename: :class:`basestring`
+        :type filename: :class:`str`
         :param resolution: set a resolution value (DPI),
                            useful for vector formats (like PDF)
         :type resolution: :class:`collections.abc.Sequence`,
                           :class:`numbers.Integral`
         :param format: suggest image file format when reading from a ``blob``,
                        or ``file`` property.
-        :type format: :class:`basestring`
+        :type format: :class:`str`
 
         .. versionadded:: 0.5.6
 
@@ -9648,7 +9649,7 @@ class Image(BaseImage):
         instance = cls()
         instance._preamble_read(**kwargs)
         if file is not None:
-            if (isinstance(file, file_types) and
+            if (isinstance(file, RawIOBase) and
                     hasattr(libc, 'fdopen') and hasattr(file, 'mode')):
                 fd = libc.fdopen(file.fileno(), file.mode)
                 r = library.MagickPingImageFile(instance.wand, fd)
@@ -9663,7 +9664,7 @@ class Image(BaseImage):
             if not isinstance(blob, abc.Iterable):
                 raise TypeError('blob must be iterable, not ' +
                                 repr(blob))
-            if not isinstance(blob, binary_type):
+            if not isinstance(blob, bytes):
                 blob = b''.join(blob)
             r = library.MagickPingImageBlob(instance.wand, blob, len(blob))
         elif filename is not None:
@@ -9718,7 +9719,7 @@ class Image(BaseImage):
 
     @property
     def mimetype(self):
-        """(:class:`basestring`) The MIME type of the image
+        """(:class:`str`) The MIME type of the image
         e.g. ``'image/jpeg'``, ``'image/png'``.
 
         .. versionadded:: 0.1.7
@@ -9750,7 +9751,7 @@ class Image(BaseImage):
         assertions.assert_counting_number(width=width, height=height)
         if background is None:
             background = Color('transparent')
-        elif isinstance(background, string_type):
+        elif isinstance(background, str):
             background = Color(background)
         assertions.assert_color(background=background)
         with background:
@@ -9796,13 +9797,13 @@ class Image(BaseImage):
 
         :param method: Can be ``'compareany'``,
                        ``'compareclear'``, or ``'compareoverlay'``
-        :type method: :class:`basestring`
+        :type method: :class:`str`
         :returns: new image stack.
         :rtype: :class:`Image`
 
         .. versionadded:: 0.5.0
         """
-        if not isinstance(method, string_type):
+        if not isinstance(method, str):
             raise TypeError('method must be a string from IMAGE_LAYER_METHOD, '
                             'not ' + repr(method))
         if method not in ('compareany', 'compareclear', 'compareoverlay'):
@@ -9831,7 +9832,7 @@ class Image(BaseImage):
                 converted.save(filename='converted.png')
 
         :param format: image format to convert to
-        :type format: :class:`basestring`
+        :type format: :class:`str`
         :returns: a converted image
         :rtype: :class:`Image`
         :raises ValueError: when the given ``format`` is unsupported
@@ -9857,14 +9858,14 @@ class Image(BaseImage):
         .. _data-url: https://en.wikipedia.org/wiki/Data_URI_scheme
 
         :returns: a data-url formatted string.
-        :rtype: :class:`basestring`
+        :rtype: :class:`str`
 
         .. versionadded:: 0.6.3
         """
         from base64 import b64encode
         mime_type = self.mimetype
         base_bytes = b64encode(self.make_blob())
-        return "data:{0};base64,{1}".format(mime_type, text(base_bytes))
+        return "data:{0};base64,{1}".format(mime_type, base_bytes.decode())
 
     @trap_exception
     def image_add(self, image):
@@ -9945,7 +9946,7 @@ class Image(BaseImage):
 
         :param format: the image format to write e.g. ``'png'``, ``'jpeg'``.
                        it is omittable
-        :type format: :class:`basestring`
+        :type format: :class:`str`
         :returns: a blob (bytes) string
         :rtype: :class:`bytes`
         :raises ValueError: when ``format`` is invalid
@@ -10000,19 +10001,19 @@ class Image(BaseImage):
         :type font: :class:`~wand.font.Font`
         :param tile: The number of thunbnails per rows & column on a page.
                      Example: ``"6x4"``.
-        :type tile: :class:`basestring`
+        :type tile: :class:`str`
         :param thumbnail: Preferred image size. Montage will attempt to
                           generate a thumbnail to match the geometry. This
                           can also define the border size on each thumbnail.
                           Example: ``"120x120x+4+3>"``.
-        :type thumbnail: :class:`basestring`
+        :type thumbnail: :class:`str`
         :param mode: Which effect to render. Options include ``"frame"``,
                      ``"unframe"``, and ``"concatenate"``. Default ``"frame"``.
-        :type mode: :class:`basestring`
+        :type mode: :class:`str`
         :param frame: Define ornamental boarder around each thrumbnail.
                       The color of the frame is defined by the image's matte
                       color. Example: ``"15x15+3+3"``.
-        :type frame: :class:`basestring`
+        :type frame: :class:`str`
 
         .. versionadded:: 0.6.8
         """
@@ -10064,7 +10065,7 @@ class Image(BaseImage):
         :param height: Total rows of the new image.
         :type height: :class:`numbers.Integral`
         :param pseudo: The protocol & arguments for the pseudo image.
-        :type pseudo: :class:`basestring`
+        :type pseudo: :class:`str`
 
         .. versionadded:: 0.5.0
         """
@@ -10089,23 +10090,23 @@ class Image(BaseImage):
         :type file: file object
         :param filename: reads an image from the ``filename`` string.
                          Additional :ref:`read_mods` are supported.
-        :type filename: :class:`basestring`
+        :type filename: :class:`str`
         :param background: set default background color.
-        :type background: :class:`Color`, :class:`basestring`
+        :type background: :class:`Color`, :class:`str`
         :param colorspace: set default colorspace.
                            See :const:`COLORSPACE_TYPES`.
-        :type colorspace: :class:`basestring`
+        :type colorspace: :class:`str`
         :param depth: sets bits per color sample. Usually ``8``, or ``16``.
         :type depth: :class:`numbers.Integral`
         :param format: sets which image decoder to read with. Helpful when
                        reading ``blob`` data with ambiguous headers.
-        :type format: :class:`basestring`
+        :type format: :class:`str`
         :param height: used with ``width`` to define the canvas size. Useful
                        for reading image streams.
         :type height: :class:`numbers.Integral`
         :param interlace: Defines the interlacing scheme for raw data streams.
                           See :const:`INTERLACE_TYPES`.
-        :type interlace: :class:`basestring`
+        :type interlace: :class:`str`
         :param resolution: set a resolution value (DPI),
                            useful for vectorial formats (like PDF)
         :type resolution: :class:`collections.abc.Sequence`,
@@ -10113,10 +10114,10 @@ class Image(BaseImage):
         :param sampling_factors: set up/down stampling factors for YUV data
                                  stream. Usually ``"4:2:2"``
         :type sampling_factors: :class:`collections.abc.Sequence`,
-                                :class:`basestring`
+                                :class:`str`
         :param units: used with ``resolution``, can either be
                      ``'pixelperinch'``, or ``'pixelpercentimeter'``.
-        :type units: :class:`basestring`
+        :type units: :class:`str`
         :param width: used with ``height`` to define the canvas size. Useful
                       for reading image streams.
         :type width: :class:`numbers.Integral`
@@ -10140,7 +10141,7 @@ class Image(BaseImage):
             width=width
         )
         if file is not None:
-            if (isinstance(file, file_types) and
+            if (isinstance(file, RawIOBase) and
                     hasattr(libc, 'fdopen') and hasattr(file, 'mode')):
                 fd = libc.fdopen(file.fileno(), file.mode)
                 r = library.MagickReadImageFile(self.wand, fd)
@@ -10155,7 +10156,7 @@ class Image(BaseImage):
             if not isinstance(blob, abc.Iterable):
                 raise TypeError('blob must be iterable, not ' +
                                 repr(blob))
-            if not isinstance(blob, binary_type):
+            if not isinstance(blob, bytes):
                 blob = b''.join(blob)
             r = library.MagickReadImageBlob(self.wand, blob, len(blob))
         elif filename is not None:
@@ -10190,7 +10191,7 @@ class Image(BaseImage):
         :param file: a file object to write to
         :type file: file object
         :param filename: a filename string to write to
-        :type filename: :class:`basestring`
+        :type filename: :class:`str`
         :param adjoin: write all images to a single multi-image file. Only
                        available if file format supports frames, layers, & etc.
         :type adjoin: :class:`bool`
@@ -10209,11 +10210,11 @@ class Image(BaseImage):
         elif file is not None and filename is not None:
             raise TypeError('expected only one argument; but two passed')
         elif file is not None:
-            if isinstance(file, string_type):
+            if isinstance(file, str):
                 raise TypeError('file must be a writable file object, '
                                 'but {0!r} is a string; did you want '
                                 '.save(filename={0!r})?'.format(file))
-            elif isinstance(file, file_types) and hasattr(libc, 'fdopen'):
+            elif isinstance(file, RawIOBase) and hasattr(libc, 'fdopen'):
                 fd = libc.fdopen(file.fileno(), file.mode)
                 if library.MagickGetNumberImages(self.wand) > 1:
                     r = library.MagickWriteImagesFile(self.wand, fd)
@@ -10229,7 +10230,7 @@ class Image(BaseImage):
                                     repr(file))
                 file.write(self.make_blob())
         else:
-            if not isinstance(filename, string_type):
+            if not isinstance(filename, str):
                 if not hasattr(filename, '__fspath__'):
                     raise TypeError('filename must be a string, not ' +
                                     repr(filename))
@@ -10314,12 +10315,10 @@ class Iterator(Resource, abc.Iterator):
                                                  ctypes.byref(width))
         if x is None:
             r_pixels = [None] * width.value
-            for x in xrange(width.value):
+            for x in range(width.value):
                 r_pixels[x] = Color.from_pixelwand(pixels[x])
             return r_pixels
         return Color.from_pixelwand(pixels[x]) if pixels else None
-
-    next = __next__  # Python 2 compatibility
 
     def clone(self):
         """Clones the same iterator.
@@ -10328,7 +10327,7 @@ class Iterator(Resource, abc.Iterator):
         return type(self)(iterator=self)
 
 
-class ImageProperty(object):
+class ImageProperty:
     """The mixin class to maintain a weak reference to the parent
     :class:`Image` object.
 
@@ -10420,12 +10419,12 @@ class Metadata(ImageProperty, abc.MutableMapping):
         if not isinstance(image, Image):
             raise TypeError('expected a wand.image.Image instance, '
                             'not ' + repr(image))
-        super(Metadata, self).__init__(image)
+        super().__init__(image)
 
     def __getitem__(self, k):
         """
         :param k: Metadata header name string.
-        :type k: :class:`basestring`
+        :type k: :class:`str`
         :returns: a header value string
         :rtype: :class:`str`
         """
@@ -10443,9 +10442,9 @@ class Metadata(ImageProperty, abc.MutableMapping):
     def __setitem__(self, k, v):
         """
         :param k: Metadata header name string.
-        :type k: :class:`basestring`
+        :type k: :class:`str`
         :param v: Value to assign.
-        :type v: :class:`basestring`
+        :type v: :class:`str`
 
         .. versionadded: 0.5.0
         """
@@ -10459,7 +10458,7 @@ class Metadata(ImageProperty, abc.MutableMapping):
     def __delitem__(self, k):
         """
         :param k: Metadata header name string.
-        :type k: :class:`basestring`
+        :type k: :class:`str`
 
         .. versionadded: 0.5.0
         """
@@ -10473,7 +10472,7 @@ class Metadata(ImageProperty, abc.MutableMapping):
         image = self.image
         num = ctypes.c_size_t()
         props_p = library.MagickGetImageProperties(image.wand, b'', num)
-        props = [text(ctypes.string_at(props_p[i])) for i in xrange(num.value)]
+        props = [text(ctypes.string_at(props_p[i])) for i in range(num.value)]
         props_p = library.MagickRelinquishMemory(props_p)
         return iter(props)
 
@@ -10512,12 +10511,12 @@ class ArtifactTree(ImageProperty, abc.MutableMapping):
         if not isinstance(image, Image):
             raise TypeError('expected a wand.image.Image instance, '
                             'not ' + repr(image))
-        super(ArtifactTree, self).__init__(image)
+        super().__init__(image)
 
     def __getitem__(self, k):
         """
         :param k: Metadata header name string.
-        :type k: :class:`basestring`
+        :type k: :class:`str`
         :returns: a header value string
         :rtype: :class:`str`
 
@@ -10542,9 +10541,9 @@ class ArtifactTree(ImageProperty, abc.MutableMapping):
     def __setitem__(self, k, v):
         """
         :param k: Metadata header name string.
-        :type k: :class:`basestring`
+        :type k: :class:`str`
         :param v: Value to assign.
-        :type v: :class:`basestring`
+        :type v: :class:`str`
 
         .. versionadded: 0.5.0
         """
@@ -10558,7 +10557,7 @@ class ArtifactTree(ImageProperty, abc.MutableMapping):
     def __delitem__(self, k):
         """
         :param k: Metadata header name string.
-        :type k: :class:`basestring`
+        :type k: :class:`str`
 
         .. versionadded: 0.5.0
         """
@@ -10572,7 +10571,7 @@ class ArtifactTree(ImageProperty, abc.MutableMapping):
         image = self.image
         num = ctypes.c_size_t(0)
         art_p = library.MagickGetImageArtifacts(image.wand, b'', num)
-        props = [text(ctypes.string_at(art_p[i])) for i in xrange(num.value)]
+        props = [text(ctypes.string_at(art_p[i])) for i in range(num.value)]
         art_p = library.MagickRelinquishMemory(art_p)
         return iter(props)
 
@@ -10614,7 +10613,7 @@ class ProfileDict(ImageProperty, abc.MutableMapping):
         if not isinstance(image, Image):
             raise TypeError('expected a wand.image.Image instance, '
                             'not ' + repr(image))
-        super(ProfileDict, self).__init__(image)
+        super().__init__(image)
 
     def __delitem__(self, k):
         assertions.assert_string(key=k)
@@ -10630,14 +10629,14 @@ class ProfileDict(ImageProperty, abc.MutableMapping):
         profile_p = library.MagickGetImageProfile(self.image.wand,
                                                   binary(k), num)
         if num.value > 0:
-            return_profile = ctypes.string_at(profile_p, num.value)
+            return_profile = bytes(profile_p[0:num.value])
             profile_p = library.MagickRelinquishMemory(profile_p)
         return return_profile
 
     def __iter__(self):
         num = ctypes.c_size_t(0)
         prop = library.MagickGetImageProfiles(self.image.wand, b'', num)
-        profiles = [text(ctypes.string_at(prop[i])) for i in xrange(num.value)]
+        profiles = [text(ctypes.string_at(prop[i])) for i in range(num.value)]
         prop = library.MagickRelinquishMemory(prop)
         return iter(profiles)
 
@@ -10649,7 +10648,7 @@ class ProfileDict(ImageProperty, abc.MutableMapping):
 
     def __setitem__(self, k, v):
         assertions.assert_string(key=k)
-        if not isinstance(v, binary_type):
+        if not isinstance(v, bytes):
             raise TypeError('value must be a binary string, not ' + repr(v))
         r = library.MagickSetImageProfile(self.image.wand,
                                           binary(k), v, len(v))
@@ -10767,20 +10766,20 @@ class HistogramDict(abc.Mapping):
     def __getitem__(self, color):
         if self.counts is None:
             self._build_counts()
-        if isinstance(color, string_type):
+        if isinstance(color, str):
             color = Color(color)
         assertions.assert_color(color=color)
         return self.counts[color]
 
     def _build_counts(self):
         self.counts = {}
-        for i in xrange(self.size.value):
+        for i in range(self.size.value):
             color_count = library.PixelGetColorCount(self.pixels[i])
             color = Color.from_pixelwand(self.pixels[i])
             self.counts[color] = color_count
 
 
-class ConnectedComponentObject(object):
+class ConnectedComponentObject:
     """Generic Python wrapper to translate
     :c:type:`CCObjectInfo` structure into a class describing objects found
     within an image. This class is generated by

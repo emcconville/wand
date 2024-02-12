@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # These test cover the Image attributes that directly map to C-API functions.
 #
@@ -7,7 +6,6 @@ import numbers
 from pytest import raises
 
 from wand.color import Color
-from wand.compat import string_type
 from wand.font import Font
 from wand.image import Image
 from wand.version import MAGICK_VERSION_NUMBER
@@ -334,7 +332,7 @@ def test_metadata(fx_asset):
     with Image(filename=str(fx_asset.joinpath('beach.jpg'))) as img:
         assert len(img.metadata) > 0
         for key in img.metadata:
-            assert isinstance(key, string_type)
+            assert isinstance(key, str)
         assert 'exif:ApertureValue' in img.metadata
         assert 'exif:UnknownValue' not in img.metadata
         assert img.metadata['exif:ApertureValue'] == '192/32'
