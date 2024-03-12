@@ -6160,7 +6160,7 @@ class BaseImage(Resource):
                                                 linear_range * white_point)
 
     @manipulative
-    def liquid_rescale(self, width, height, delta_x=0, rigidity=0):
+    def liquid_rescale(self, width, height, delta_x=1, rigidity=0):
         """Rescales the image with `seam carving`_, also known as
         image retargeting, content-aware resizing, or liquid rescaling.
 
@@ -6172,7 +6172,7 @@ class BaseImage(Resource):
                         0 means straight seams.  default is 0
         :type delta_x: :class:`numbers.Real`
         :param rigidity: introduce a bias for non-straight seams.
-                         default is 0
+                         default is 1
         :type rigidity: :class:`numbers.Real`
         :raises wand.exceptions.MissingDelegateError:
            when ImageMagick isn't configured ``--with-lqr`` option.
@@ -6191,6 +6191,9 @@ class BaseImage(Resource):
 
         .. _Seam carving: http://en.wikipedia.org/wiki/Seam_carving
 
+
+        .. versionchanged:: 0.7.0
+           Updated default value of ``delta_x`` to ``1`` to match CLI.
         """
         assertions.assert_integer(width=width, height=height)
         assertions.assert_real(delta_x=delta_x, rigidity=rigidity)
