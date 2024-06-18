@@ -42,3 +42,7 @@ In an effort to modernize the codebase, Wand will start migrating from
 :file:`setup.py` to :file:`pyproject.toml`.  The :file:`setup.py` file
 will still be available for Wand 0.7.x releases.
 
+
+    For "What's New in Wand 0.6", see `previous announcements`_.
+
+    .. _previous announcements: 0.6.html
