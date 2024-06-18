@@ -6441,6 +6441,7 @@ class BaseImage(Resource):
         """
         if height is None:
             height = width
+        assertions.assert_unsigned_integer(width=width, height=height)
         self.statistic('mode', width, height)
 
     @manipulative
@@ -10059,6 +10060,35 @@ class Image(BaseImage):
             self.wand = new_wand
             self.reset_sequence()
         return ok
+
+    def morph(self, number_frames=5):
+        """Creates a new image by linearly interpolating pixels from the image
+        stack.
+
+        .. code::
+
+            from wand.image import Image
+
+            with Image() as img:
+                img.read(filename='start.png')
+                img.read(filename='end.png')
+                with img.morph(32) as morph:
+                    morph.save(filename='animation.gif')
+
+
+        :param number_frames: The number of in-between images to generate.
+        :type number_frames: :class:`numbers.Integral`
+        :returns: New :class:`Image` instance.
+        :rtype: :class:`Image`
+
+        .. versionadded:: 0.7.0
+        """
+        assertions.assert_counting_number(number_frames=number_frames)
+        self.iterator_reset()
+        r = library.MagickMorphImages(self.wand, number_frames)
+        if r is None:
+            self.raise_exception()
+        return self.__class__(BaseImage(r))
 
     def pseudo(self, width, height, pseudo='xc:'):
         """Creates a new image from ImageMagick's internal protocol coders.

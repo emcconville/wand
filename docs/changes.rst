@@ -15,6 +15,7 @@ Version 0.7.0
 Unreleased.
 
  - Added :meth:`Image.evaluate_images() <wand.image.BaseImage.evaluate_images>` method.
+ - Added :meth:`Image.morph() <wand.image.Image.morph>` method.
  - Fixed :meth:`Image.quantize() <wand.image.BaseImage.quantize>` behavior by switching
    default value of ``colorspace_type`` from :const:`None` to ``"undefined"``. [:issue:`644`]
  - Fixed :meth:`Image.liquid_rescale() <wand.image.BaseImage.liquid_rescale>` behavior

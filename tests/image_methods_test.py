@@ -1433,6 +1433,13 @@ def test_modulate():
         assert was != img.signature
 
 
+def test_morph():
+    with Image(filename='rose:') as img:
+        img.read(filename='rose:')
+        with img.morph(4) as morph:
+            assert morph.iterator_length() != img.iterator_length()
+
+
 def test_morphology_builtin():
     known = []
     args = (('erode', 'ring'),
