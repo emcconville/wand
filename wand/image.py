@@ -3092,6 +3092,47 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
+    def bilateral_blur(self, width=1.0, height=None, intensity=None,
+                       spatial=None):
+        """Noise-reducing Gaussian distrbution filter. Preserves edges by
+        replacing pixel intensity with weighted averages of neighbouring
+        pixels. Parameters ``width`` & ``height`` define the area-size around
+        each pixel to include in the neighbouring sample.
+
+        .. warning::
+            This method is only available with ImageMagick version 7.1.1 or
+            greater.
+
+        :param width: The neighbouring pixel area width.
+        :type width: :class:`numbers.Real`
+        :param height: The neighbouring pixel area height. Default the given
+                      ``width`` value.
+        :type height: :class:`numbers.Real`
+        :param intensity: Influence the distance between colors values.
+                          Default 75% of the neighbouring pixel area.
+        :type intensity: :class:`numbers.Real`
+        :param spatial: Influence the coordinate distance weights.
+                        Default 25% of the neighbouring pixel area.
+        :type spatial: :class:`numbers.Real`
+
+        .. versionadded:: 0.7.0
+        """
+        if MAGICK_VERSION_NUMBER < 0x711:
+            msg = 'Method requires ImageMagick version 7.1.1 or greater.'
+            raise WandLibraryVersionError(msg)
+        if height is None:
+            height = width
+        if intensity is None:
+            intensity = (((width**2) + (height**2))**0.5)*0.75
+        if spatial is None:
+            spatial = (((width**2) + (height**2))**0.5)*0.25
+        assertions.assert_real(width=width, height=height,
+                               intensity=intensity, spatial=spatial)
+        return library.MagickBilateralBlurImage(self.wand, width, height,
+                                                intensity, spatial)
+
+    @manipulative
+    @trap_exception
     def black_threshold(self, threshold):
         """Forces all pixels above a given color as black. Leaves pixels
         above threshold unaltered.

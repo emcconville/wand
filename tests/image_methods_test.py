@@ -131,6 +131,15 @@ def test_auto_threshold():
         assert was != img.signature
 
 
+@mark.skipif(MAGICK_VERSION_NUMBER < 0x711,
+             reason="BilateralBlur requires ImageMagick-7.1.1")
+def test_bilateral_blur():
+    with Image(filename='wizard:') as img:
+        was = img.signature
+        img.bilateral_blur(width=8)
+        assert was != img.signature
+
+
 def test_black_threshold():
     with Image(filename='rose:') as img:
         was = img.signature

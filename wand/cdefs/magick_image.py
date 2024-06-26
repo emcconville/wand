@@ -133,6 +133,12 @@ def load(lib, IM_VERSION):
             lib.MagickAutoThresholdImage = None
     else:
         lib.MagickAutoThresholdImage = None
+    if IM_VERSION >= 0x711:
+        lib.MagickBilateralBlurImage.argtypes = [c_void_p, c_double, c_double,
+                                                 c_double, c_double]
+        lib.MagickBilateralBlurImage.restype = c_bool
+    else:
+        lib.MagickBilateralBlurImage = None
     lib.MagickBlackThresholdImage.argtypes = [c_void_p, c_void_p]
     lib.MagickBlackThresholdImage.restype = c_bool
     lib.MagickBlueShiftImage.argtypes = [c_void_p, c_double]
