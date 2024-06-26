@@ -14,6 +14,7 @@ Version 0.7.0
 
 Unreleased.
 
+ - Added :meth:`Image.affine() <wand.image.BaseImage.affine>` method.
  - Added :meth:`Image.evaluate_images() <wand.image.BaseImage.evaluate_images>` method.
  - Added :meth:`Image.morph() <wand.image.Image.morph>` method.
  - Fixed :meth:`Image.quantize() <wand.image.BaseImage.quantize>` behavior by switching

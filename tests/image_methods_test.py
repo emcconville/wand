@@ -57,6 +57,17 @@ def test_adaptive_threshold():
         assert was != img.signature
 
 
+def test_affine():
+    with Image(filename='rose:') as img:
+        was_page = img.page
+        was_sign = img.signature
+        img.affine(sx=0.9, rx=1.1,
+                   ry=0.1, sy=1.9,
+                   tx=150, ty=-50)
+        assert was_sign != img.signature
+        assert was_page != img.page
+
+
 def test_annotate(fx_asset):
     from wand.drawing import Drawing
     with Image(filename='rose:') as img:

@@ -19,9 +19,9 @@ from io import RawIOBase
 
 from . import assertions
 from .api import libc, libmagick, library
-from .cdefs.structures import (CCObjectInfo, CCObjectInfo70A, CCObjectInfo710,
-                               ChannelFeature, GeometryInfo, PixelInfo,
-                               RectangleInfo)
+from .cdefs.structures import (AffineMatrix, CCObjectInfo, CCObjectInfo70A,
+                               CCObjectInfo710, ChannelFeature, GeometryInfo,
+                               PixelInfo, RectangleInfo)
 from .color import Color
 from .compat import binary, encode_filename, text, to_bytes
 from .exceptions import (MissingDelegateError, WandException,
@@ -2928,6 +2928,58 @@ class BaseImage(Resource):
             offset = int(offset)
         return library.MagickAdaptiveThresholdImage(self.wand, width,
                                                     height, offset)
+
+    @manipulative
+    @trap_exception
+    def affine(self, sx=1, rx=0, ry=0, sy=1, tx=0, ty=0):
+        """Transforms an image by applying an affine matrix.
+
+        .. sourcecode:: text
+
+                                              | sx  rx  0 |
+            | x', y', 1 |  =  | x, y, 1 |  *  | ry  sy  0 |
+                                              | tx  ty  1 |
+
+        Where ``sx`` & ``sy`` control the scale / shearing,
+        ``rx`` & ``ry`` control the rotational values,
+        and the ``tx`` & ``ty`` control the translations.
+
+        Set the :attr:`virtual_pixel` attribute before invoking :meth:`affine`
+        method.
+
+        .. code::
+
+            from wand.image import Image
+
+            with Image(filename='wizard:') as img:
+                img.virtual_pixel = 'mirror'
+                img.affine(sx=0.9, ry=1.1)
+                img.save(filename='output.png')
+
+        :param sx: Horizontal scale/shear. Default value `1.0`
+        :type sx: :class:`numbers.Real`
+        :param rx: Horizontal rotation. Default value `0.0`
+        :type rx: :class:`numbers.Real`
+        :param ry: Vertical rotation. Default value `0.0`
+        :type ry: :class:`numbers.Real`
+        :param sy: Vertical scale/shear. Default value `1.0`
+        :type sy: :class:`numbers.Real`
+        :param tx: Horizontal translation. Default value `0.0`
+        :type tx: :class:`numbers.Real`
+        :param ty: Vertical translation. Default value `0.0`
+        :type ty: :class:`numbers.Real`
+
+        .. versionadded:: 0.7.0
+        """
+        assertions.assert_real(sx=sx, rx=rx, ry=ry,
+                               sy=sy, tx=tx, ty=ty)
+        dw = library.NewDrawingWand()
+        amx = AffineMatrix(sx=sx, rx=rx, ry=ry,
+                           sy=sy, tx=tx, ty=ty)
+        library.DrawAffine(dw, ctypes.byref(amx))
+        ok = library.MagickAffineTransformImage(self.wand, dw)
+        dw = library.DestroyDrawingWand(dw)
+        return ok
 
     @manipulative
     @trap_exception
