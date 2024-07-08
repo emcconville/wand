@@ -898,6 +898,13 @@ def test_flip():
             assert flipped[-1, -1] == img[-1, 0]
 
 
+def test_floodfill():
+    with Image(filename='wizard:') as img:
+        was = img.signature
+        img.floodfill(fill='green', fuzz=0.2)
+        assert was != img.signature
+
+
 def test_flop():
     with Image(filename='rose:') as img:
         with img.clone() as flopped:

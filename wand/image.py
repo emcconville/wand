@@ -3095,24 +3095,24 @@ class BaseImage(Resource):
     def bilateral_blur(self, width=1.0, height=None, intensity=None,
                        spatial=None):
         """Noise-reducing Gaussian distrbution filter. Preserves edges by
-        replacing pixel intensity with weighted averages of neighbouring
+        replacing pixel intensity with weighted averages of neighboring
         pixels. Parameters ``width`` & ``height`` define the area-size around
-        each pixel to include in the neighbouring sample.
+        each pixel to include in the neighboring sample.
 
         .. warning::
             This method is only available with ImageMagick version 7.1.1 or
             greater.
 
-        :param width: The neighbouring pixel area width.
+        :param width: The neighboring pixel area width.
         :type width: :class:`numbers.Real`
-        :param height: The neighbouring pixel area height. Default the given
+        :param height: The neighboring pixel area height. Default the given
                       ``width`` value.
         :type height: :class:`numbers.Real`
         :param intensity: Influence the distance between colors values.
-                          Default 75% of the neighbouring pixel area.
+                          Default 75% of the neighboring pixel area.
         :type intensity: :class:`numbers.Real`
         :param spatial: Influence the coordinate distance weights.
-                        Default 25% of the neighbouring pixel area.
+                        Default 25% of the neighboring pixel area.
         :type spatial: :class:`numbers.Real`
 
         .. versionadded:: 0.7.0
@@ -5245,6 +5245,95 @@ class BaseImage(Resource):
 
         """
         return library.MagickFlopImage(self.wand)
+
+    @manipulative
+    @trap_exception
+    def floodfill(self, fill='none', fuzz=0.1, bordercolor=None,
+                  x=0, y=0, invert=False, channel='default_channels'):
+        """Changes pixel value to ``fill`` color at (``x``, ``y``) coordinate,
+        and repeats for all neighboring pixels until border is reached. Use
+        ``fuzz`` and/or ``bordercolor`` to defined tolarance & border values.
+
+        :param fill: New target color value.
+        :type fill: :class:`wand.color.Color` or :class:`str`
+        :param fuzz: Fill threashold. Values between `0.0` and `1.0`. Default
+                     `0.1` (10%).
+        :type fuzz: :class:`numbers.Real`
+        :param bordercolor: Optional color to use as a border. Default
+                            :const:`None`.
+        :type bordercolor: :class:`wand.color.Color` or :class:`str`
+        :param x: Starting point X coordinate. Default ``0``.
+        :type x: :class:`number.Integral`
+        :param y: Starting point Y coordinate. Default ``0``.
+        :type y: :class:`number.Integral`
+        :param invert: Only paint none-matching pixels. Default ``False``.
+        :type invert: :class:`bool`
+        :param channel: Optional channel mask. Default ``'default_channels'``.
+        :type channel: :const:`CHANNELS`
+
+        .. versionadded:: 0.7.0
+        """
+        assertions.assert_real(fuzz=fuzz)
+        assertions.assert_integer(x=x, y=y)
+        assertions.assert_bool(invert=invert)
+        ch_mask = self._channel_to_mask(channel)
+        fuzz = fuzz * self.quantum_range
+        ok = False
+        if not isinstance(fill, Color):
+            fill = Color(fill)
+        if bordercolor is not None and not isinstance(bordercolor, Color):
+            bordercolor = Color(bordercolor)
+        if MAGICK_VERSION_NUMBER < 0x700:
+            with fill:
+                if bordercolor is None:
+                    ok = library.MagickFloodfillPaintImage(
+                        self.wand,
+                        ch_mask,
+                        fill.resource,
+                        fuzz,
+                        None,
+                        x,
+                        y,
+                        invert
+                    )
+                else:
+                    with bordercolor:
+                        ok = library.MagickFloodfillPaintImage(
+                            self.wand,
+                            ch_mask,
+                            fill.resource,
+                            fuzz,
+                            bordercolor.resource,
+                            x,
+                            y,
+                            invert
+                        )
+        else:
+            mask = library.MagickSetImageChannelMask(self.wand, ch_mask)
+            with fill:
+                if bordercolor is None:
+                    ok = library.MagickFloodfillPaintImage(
+                        self.wand,
+                        fill.resource,
+                        fuzz,
+                        None,
+                        x,
+                        y,
+                        invert
+                    )
+                else:
+                    with bordercolor:
+                        ok = library.MagickFloodfillPaintImage(
+                            self.wand,
+                            fill.resource,
+                            fuzz,
+                            bordercolor.resource,
+                            x,
+                            y,
+                            invert
+                        )
+            library.MagickSetImageChannelMask(self.wand, mask)
+        return ok
 
     @trap_exception
     def forward_fourier_transform(self, magnitude=True):

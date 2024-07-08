@@ -367,10 +367,16 @@ def load(lib, IM_VERSION):
         lib.MagickFilterImageChannel.restype = c_bool
     lib.MagickFlipImage.argtypes = [c_void_p]
     lib.MagickFlipImage.restype = c_bool
-    lib.MagickFloodfillPaintImage.argtypes = [
-        c_void_p, c_int, c_void_p, c_double, c_void_p, c_ssize_t, c_ssize_t,
-        c_bool
-    ]
+    if is_im_6:
+        lib.MagickFloodfillPaintImage.argtypes = [
+            c_void_p, c_int, c_void_p, c_double, c_void_p,
+            c_ssize_t, c_ssize_t, c_bool
+        ]
+    else:
+        lib.MagickFloodfillPaintImage.argtypes = [
+            c_void_p, c_void_p, c_double, c_void_p,
+            c_ssize_t, c_ssize_t, c_bool
+        ]
     lib.MagickFloodfillPaintImage.restype = c_bool
     lib.MagickFlopImage.argtypes = [c_void_p]
     lib.MagickFlopImage.restype = c_bool
