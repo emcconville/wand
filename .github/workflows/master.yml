@@ -59,6 +59,8 @@ jobs:
         pip install --upgrade pytest pytest-xdist pytest-forked pytest-cov coveralls
     - name: Run PyTest
       run: pytest --skip-pdf --skip-fft --cov wand --forked --durations=20
+      env:
+        MAGICK_HOME: /opt/homebrew
     - name: Generate coverage report
       run: coveralls --service=github
       env:
