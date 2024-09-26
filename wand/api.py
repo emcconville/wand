@@ -46,22 +46,17 @@ def library_paths():
     magick_home = os.environ.get('MAGICK_HOME')
     magick_suffix = os.environ.get('WAND_MAGICK_LIBRARY_SUFFIX')
 
-    if system == 'Windows':
-        # ImageMagick installers normally install coder and filter DLLs in
-        # subfolders, we need to add those folders to PATH, otherwise loading
-        # the DLL later will fail.
+    if system == 'Windows' and magick_home is None:
         try:
+            # Try to read ImageMagick location from registry.
+            # This is necessary if the user did not add the ImageMagick directory
+            # to PATH.
             with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE,
                                 r"SOFTWARE\ImageMagick\Current") as reg_key:
                 libPath = winreg.QueryValueEx(reg_key, "LibPath")
-                coderPath = winreg.QueryValueEx(reg_key, "CoderModulesPath")
-                filterPath = winreg.QueryValueEx(reg_key, "FilterModulesPath")
                 magick_home = libPath[0]
-                os.environ['PATH'] += str((';' + libPath[0] + ";" +
-                                          coderPath[0] + ";" + filterPath[0]))
+                os.environ['PATH'] += ';' + str(magick_home)
         except OSError:
-            # otherwise use MAGICK_HOME, and we assume the coder and
-            # filter DLLs are in the same directory
             pass
 
     def magick_path(path):
