@@ -9,7 +9,7 @@ except ImportError:
 from pytest import mark, raises
 
 from wand.color import Color
-from wand.version import QUANTUM_DEPTH, MAGICK_VERSION_INFO  # noqa
+from wand.version import MAGICK_VERSION_INFO, QUANTUM_DEPTH  # noqa
 
 
 def test_user_error():

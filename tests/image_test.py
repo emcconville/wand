@@ -12,9 +12,9 @@ import tempfile
 
 from pytest import mark, raises
 
-from wand.image import ClosedImageError, Image
 from wand.color import Color
 from wand.font import Font
+from wand.image import ClosedImageError, Image
 
 try:
     filesystem_encoding = sys.getfilesystemencoding()

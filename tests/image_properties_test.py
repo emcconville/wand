@@ -3,6 +3,7 @@
 #
 import io
 import numbers
+
 from pytest import raises
 
 from wand.color import Color

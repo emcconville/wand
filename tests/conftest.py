@@ -1,6 +1,6 @@
 import os
-
 from pathlib import Path
+
 from pytest import fixture, mark
 
 from wand.version import MAGICK_VERSION, VERSION

@@ -1,6 +1,6 @@
-from wand.exceptions import (BaseFatalError, BaseError, BaseWarning,
-                             BlobFatalError, BlobError, BlobWarning,
-                             WandFatalError, WandError, WandWarning)
+from wand.exceptions import (BaseError, BaseFatalError, BaseWarning, BlobError,
+                             BlobFatalError, BlobWarning, WandError,
+                             WandFatalError, WandWarning)
 
 
 def test_base_wand_error():

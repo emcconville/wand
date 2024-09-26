@@ -7,10 +7,9 @@ import warnings
 from pytest import mark, raises
 
 from wand.color import Color
-from wand.exceptions import (MissingDelegateError, OptionError,
-                             WandRuntimeError)
-from wand.image import Image
+from wand.exceptions import MissingDelegateError, OptionError, WandRuntimeError
 from wand.font import Font
+from wand.image import Image
 from wand.version import MAGICK_VERSION_NUMBER
 
 

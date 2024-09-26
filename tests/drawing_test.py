@@ -2,10 +2,10 @@ import itertools
 
 from pytest import mark, raises
 
-from wand.image import Image
-from wand.color import Color
 from wand.api import library
+from wand.color import Color
 from wand.drawing import Drawing
+from wand.image import Image
 from wand.version import MAGICK_VERSION_NUMBER
 
 
