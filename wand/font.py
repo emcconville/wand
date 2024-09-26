@@ -36,7 +36,6 @@ name is a very complicated problem to achieve.
 """
 from . import assertions
 from .color import Color
-from .compat import text
 
 __all__ = ('Font',)
 

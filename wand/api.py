@@ -49,8 +49,8 @@ def library_paths():
     if system == 'Windows' and magick_home is None:
         try:
             # Try to read ImageMagick location from registry.
-            # This is necessary if the user did not add the ImageMagick directory
-            # to PATH.
+            # This is necessary if the user did not add the ImageMagick
+            #  directory to PATH.
             with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE,
                                 r"SOFTWARE\ImageMagick\Current") as reg_key:
                 libPath = winreg.QueryValueEx(reg_key, "LibPath")

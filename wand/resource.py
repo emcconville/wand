@@ -12,7 +12,6 @@ import warnings
 from collections import abc
 
 from .api import library
-from .compat import text
 from .exceptions import TYPE_MAP, WandException
 from .version import MAGICK_VERSION_NUMBER
 
@@ -22,24 +21,12 @@ __all__ = ('genesis', 'limits', 'shutdown', 'terminus',
 
 def genesis():
     """Instantiates the MagickWand API.
-
-    .. warning::
-
-       Don't call this function directly. Use :func:`increment_refcount()` and
-       :func:`decrement_refcount()` functions instead.
-
     """
     library.MagickWandGenesis()
 
 
 def terminus():
     """Cleans up the MagickWand API.
-
-    .. warning::
-
-       Don't call this function directly. Use :func:`increment_refcount()` and
-       :func:`decrement_refcount()` functions instead.
-
     """
     if library.IsMagickWandInstantiated is None:  # pragma no cover
         library.MagickWandTerminus()
