@@ -23,6 +23,7 @@ Unreleased.
    default value of ``colorspace_type`` from :const:`None` to ``"undefined"``. [:issue:`644`]
  - Fixed :meth:`Image.liquid_rescale() <wand.image.BaseImage.liquid_rescale>` behavior
    by switching default value of ``delta_x`` from ``0`` to ``1``. [:issue:`653`]
+ - Fixed :meth:`Image.sparse_color() <wand.image.BaseImage.sparse_color>`'s ``colors`` argument structure to allow multiple (x, y) points with the same color value.
  - [TEST] Added Python 3.12 regression test. [:issue:`648` by Thijs Triemstra]
 
 

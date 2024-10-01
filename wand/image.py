@@ -8410,22 +8410,22 @@ class BaseImage(Resource):
 
     @manipulative
     @trap_exception
-    def sparse_color(self, method, colors, channel_mask=0x7):
+    def sparse_color(self, method='barycentric', colors=None,
+                     channel_mask=0x7):
         """Interpolates color values between points on an image.
 
-        The ``colors`` argument should be a dict mapping
-        :class:`~wand.color.Color` keys to coordinate tuples.
+        The ``colors`` argument should be a list of tuples containing the
+        point's x, y coordinate & :class:`~wand.color.Color` value.
 
         For example::
 
-            from wand.color import Color
             from wand.image import Image
 
-            colors = {
-                Color('RED'): (10, 50),
-                Color('YELLOW'): (174, 32),
-                Color('ORANGE'): (74, 123)
-            }
+            colors = [
+                (10, 50, 'RED'),
+                (174, 32, 'YELLOW'),
+                (74, 123, 'ORANGE')
+            ]
             with Image(filename='input.png') as img:
                 img.sparse_color('bilinear', colors)
 
@@ -8444,51 +8444,69 @@ class BaseImage(Resource):
             from wand.image import Image, CHANNELS
 
             with Image(filename='input.png') as img:
-                colors = {
-                    img[50, 50]: (50, 50),
-                    img[100, 50]: (100, 50),
-                    img[50, 75]: (50, 75),
-                    img[100, 100]: (100, 100)
-                }
+                colors = [
+                    (50, 50, img[50, 50]),
+                    (100, 50, img[100, 50]),
+                    (50, 75, img[50, 75]),
+                    (100, 100, img[100, 100])
+                ]
                 # Only apply Voronoi to Red & Alpha channels
                 mask = CHANNELS['red'] | CHANNELS['alpha']
                 img.sparse_color('voronoi', colors, channel_mask=mask)
 
         :param method: Interpolate method. See :const:`SPARSE_COLOR_METHODS`
         :type method: :class:`str`
-        :param colors: A dictionary of :class:`~wand.color.Color` keys mapped
-                       to an (x, y) coordinate tuple.
-        :type colors: :class:`abc.Mapping`
-                      { :class:`~wand.color.Color`: (int, int) }
+        :param colors: A list of (x, y, color) tuples.
+        :type colors: :class:`abc.Iterable`
+                      [ int, int, :class:`~wand.color.Color` ]
         :param channel_mask: Isolate specific color channels to apply
                              interpolation. Default to RGB channels.
         :type channel_mask: :class:`numbers.Integral`
 
         .. versionadded:: 0.5.3
+
+        .. versionchanged:: 0.7.0
+           The ``colors`` argument switch from a :class:`dict` to
+           :class:`list` to allow two, or more, points of the same
+           :class:`~wand.color.Color`.
         """
+        def __part2arg__(x, y, color):
+            assertions.assert_real(x=x)
+            assertions.assert_real(y=y)
+            arg = [x, y]
+            if isinstance(color, str):
+                color = Color(color)
+            with color as c:
+                if channel_mask & CHANNELS['red']:
+                    arg.append(c.red)
+                if channel_mask & CHANNELS['green']:
+                    arg.append(c.green)
+                if channel_mask & CHANNELS['blue']:
+                    arg.append(c.blue)
+                if channel_mask & CHANNELS['alpha']:
+                    arg.append(c.alpha)
+            return arg
         assertions.string_in_list(SPARSE_COLOR_METHODS,
                                   'wand.image.SPARSE_COLOR_METHODS',
                                   method=method)
-        if not isinstance(colors, abc.Mapping):
-            raise TypeError('Colors must be a dict, not' + repr(colors))
         assertions.assert_unsigned_integer(channel_mask=channel_mask)
         method_idx = SPARSE_COLOR_METHODS[method]
         arguments = list()
-        for color, point in colors.items():
-            if isinstance(color, str):
-                color = Color(color)
-            x, y = point
-            arguments.append(x)
-            arguments.append(y)
-            with color as c:
-                if channel_mask & CHANNELS['red']:
-                    arguments.append(c.red)
-                if channel_mask & CHANNELS['green']:
-                    arguments.append(c.green)
-                if channel_mask & CHANNELS['blue']:
-                    arguments.append(c.blue)
-                if channel_mask & CHANNELS['alpha']:
-                    arguments.append(c.alpha)
+        if isinstance(colors, abc.Mapping):
+            for color, point in colors.items():
+                x, y = point
+                arguments.extend(__part2arg__(x, y, color))
+        elif isinstance(colors, abc.Iterable):
+            for part in colors:
+                if len(part) != 3:
+                    raise ValueError('Expecting color part as (X, Y, color), '
+                                     'not ' + repr(part))
+                x, y, color = part
+                arguments.extend(__part2arg__(x, y, color))
+        else:
+            raise TypeError(
+                'Colors must be a list or dict, not' + repr(colors)
+            )
         argc = len(arguments)
         args = (ctypes.c_double * argc)(*arguments)
         if MAGICK_VERSION_NUMBER < 0x700:
