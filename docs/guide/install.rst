@@ -38,7 +38,14 @@ easily installed using APT:
 
 .. sourcecode:: console
 
-   $ sudo apt-get install libmagickwand-dev
+   $ sudo apt-get install imagemagick
+
+If you're using in a Docker image, it may be beneficial to avoid installing
+extra recommended packages:
+
+.. sourcecode:: console
+
+   $ sudo apt-get install --no-recommends imagemagick
 
 
 .. _install-imagemagick-redhat:
@@ -52,7 +59,14 @@ it can be installed using Yum:
 .. sourcecode:: console
 
    $ yum update
-   $ yum install ImageMagick-devel
+   $ yum install ImageMagick
+
+If you're using in a Docker image, it may be beneficial to avoid installing
+extra non-essential packages:
+
+.. sourcecode:: console
+
+   $ yum install --setopt=install_weak_deps=False ImageMagick
 
 
 .. _install-imagemagick-mac:
@@ -247,4 +261,3 @@ You may need to create a couple symbolic links for the ImageMagick libraries.
 
     # ln -s /usr/lib/libMagickCore-7.Q16HDRI.so.9 /usr/lib/libMagickCore-7.Q16HDRI.so
     # ln -s /usr/lib/libMagickWand-7.Q16HDRI.so.9 /usr/lib/libMagickWand-7.Q16HDRI.so
-
