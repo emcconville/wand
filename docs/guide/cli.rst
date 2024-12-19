@@ -330,6 +330,8 @@ This table list ImageMagick's options, and maps them to Wand's
 +------------------------+--------------------------------------------------+
 | :cli:`compression`     | :attr:`wand.image.BaseImage.compression`         |
 +------------------------+--------------------------------------------------+
+| :cli:`define`          | :attr:`wand.image.BaseImage.options`             |
++------------------------+--------------------------------------------------+
 | :cli:`delay`           | :attr:`wand.image.BaseImage.ticks_per_second`    |
 +------------------------+--------------------------------------------------+
 | :cli:`delay`           | :attr:`wand.sequence.SingleImage.delay`          |
