@@ -28,7 +28,7 @@ import sys
 import tempfile
 
 from .api import library
-from .exceptions import BlobError, DelegateError
+from .exceptions import BlobError, CoderError, DelegateError
 from .image import Image
 
 __all__ = 'display',
@@ -51,7 +51,7 @@ def display(image, server_name=':0'):
     if system == 'Windows':
         try:
             image.save(filename='win:.')
-        except DelegateError:
+        except (CoderError, DelegateError):
             pass
         else:
             return
