@@ -75,6 +75,13 @@ Homebrew
 
          $ brew install imagemagick --with-liblqr
 
+   If you are running on a Mac with Apple Silicon, you will need to export
+   :envvar:`MAGICK_HOME` before using Wand. 
+
+   .. sourcecode:: console
+
+         $ export MAGICK_HOME=/opt/homebrew
+
 MacPorts
    .. sourcecode:: console
 
