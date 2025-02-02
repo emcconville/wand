@@ -51,7 +51,7 @@ def display(image, server_name=':0'):
     if system == 'Windows':
         try:
             image.save(filename='win:.')
-        except (CoderError, DelegateError):
+        except (BlobError, CoderError, DelegateError):
             pass
         else:
             return
