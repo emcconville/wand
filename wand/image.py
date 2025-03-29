@@ -4374,7 +4374,7 @@ class BaseImage(Resource):
         objects = []
         if r and objects_ptr.value:
             for i in range(self.colors):
-                temp = CCObjectInfo()
+                temp = CCObjectInfoStructure()
                 src_addr = objects_ptr.value + (i * ccoi_mem_size)
                 ctypes.memmove(ctypes.addressof(temp), src_addr, ccoi_mem_size)
                 objects.append(ConnectedComponentObject(temp))
