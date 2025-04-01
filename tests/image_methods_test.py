@@ -250,9 +250,9 @@ def test_chop_gravity():
     with Image(filename='rose:') as img:
         img.chop(width=10, height=10, gravity='south_east')
         assert (60, 36, 0, 0) == img.page
-    with raises(ValueError):
-        with Image(filename='rose:') as img:
-            img.chop(x=10, gravity='north')
+    with Image(filename='rose:') as img:
+        img.chop(width=10, height=10, x=10, y=10, gravity='north')
+        assert (60, 36, 0, 0) == img.page
 
 
 @mark.skipif(MAGICK_VERSION_NUMBER < 0x709,
@@ -660,14 +660,6 @@ def test_crop_gravity(fx_asset):
             assert southeast[mid_width, mid_height] == Color('transparent')
 
 
-def test_crop_gravity_error():
-    with Image(filename='rose:') as img:
-        with raises(TypeError):
-            img.crop(gravity='center')
-        with raises(ValueError):
-            img.crop(width=1, height=1, gravity='nowhere')
-
-
 def test_crop_issue367():
     with Image(filename='rose:') as img:
         expected = img.size
@@ -677,6 +669,12 @@ def test_crop_issue367():
             with Image(img) as actual:
                 actual.crop(width=200, height=200, gravity=gravity)
                 assert actual.size == expected
+
+
+def test_crop_issue669():
+    with Image(filename='rose:') as img:
+        img.crop(width=50, height=25, left=10, gravity='south')
+        assert 50, 25 == img.size
 
 
 def test_cycle_color_map(fx_asset):
@@ -874,9 +872,9 @@ def test_extent_gravity():
         assert (10, 10, 0, 0) == img.page
         img.extent(width=100, height=100, gravity='center')
         assert (100, 100, 0, 0) == img.page
-    with raises(ValueError):
-        with Image(filename='rose:') as img:
-            img.extent(x=10, gravity='north')
+    with Image(filename='rose:') as img:
+        img.extent(x=10, gravity='north')
+        assert 70, 46 == img.size
 
 
 def test_features():
@@ -1730,10 +1728,10 @@ def test_region():
         with src.region(width=10, height=10, gravity='south_east') as dst:
             assert (70, 46, 60, 36) == dst.page
             assert (10, 10) == dst.size
-    with raises(ValueError):
-        with Image(filename='rose:') as img:
-            with img.region(x=10, gravity='center') as _:
-                pass
+    with Image(filename='rose:') as img:
+        with img.region(x=10, gravity='center') as dst:
+            assert (70, 46, 10, 0) == dst.page
+            assert (60, 46) == dst.size
 
 
 def test_remap():
@@ -2155,9 +2153,9 @@ def test_splice():
         was = img.signature
         img.splice(width=10, height=10, gravity='center')
         assert img.signature != was
-    with raises(ValueError):
-        with Image(filename='rose:') as img:
-            img.splice(width=10, height=10, x=10, gravity='center')
+    with Image(filename='rose:') as img:
+        img.splice(width=10, height=10, x=10, gravity='center')
+        assert (80, 56) == img.size
 
 
 def test_spread():

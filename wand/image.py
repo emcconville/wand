@@ -3429,22 +3429,25 @@ class BaseImage(Resource):
 
         .. versionchanged:: 0.6.12
            Allow zero values for ``width`` & ``height`` arguments.
+
+        .. versionchanged:: 0.7.0
+           Allow ``x`` & ``y`` offset to apply relative to ``gravity``.
         """
+        ow, oh = self.size
         if width is None:
-            width = self.width
+            width = ow
         if height is None:
-            height = self.height
+            height = oh
         assertions.assert_unsigned_integer(width=width, height=height)
-        if gravity is None:
-            if x is None:
-                x = 0
-            if y is None:
-                y = 0
-        else:
-            if x is not None or y is not None:
-                raise ValueError('x & y can not be used with gravity.')
-            y, x = self._gravity_to_offset(gravity, width, height)
+        if x is None:
+            x = 0
+        if y is None:
+            y = 0
         assertions.assert_integer(x=x, y=y)
+        if gravity is not None:
+            gy, gx = self._gravity_to_offset(gravity, width, height)
+            x += gx
+            y += gy
         return library.MagickChopImage(self.wand, width, height, x, y)
 
     @manipulative
@@ -4026,26 +4029,27 @@ class BaseImage(Resource):
 
         .. versionchanged:: 0.5.3
            Optional ``gravity`` argument was added.
+
+        .. versionchanged:: 0.7.0
+           Allow ``x`` & ``y`` offset to apply relative to ``gravity``.
         """
-        if top is None and left is None:
-            if gravity is None:
-                gravity = self.gravity
-            top, left = self._gravity_to_offset(gravity,
-                                                image.width,
-                                                image.height)
-        elif gravity is not None:
-            raise TypeError('Can not use gravity if top & left are given')
-        elif top is None:
+        if top is None:
             top = 0
-        elif left is None:
+        if left is None:
             left = 0
         assertions.assert_integer(left=left, top=top)
-        try:
-            op = COMPOSITE_OPERATORS.index(operator)
-        except IndexError:
-            raise ValueError(repr(operator) + ' is an invalid composite '
-                             'operator type; see wand.image.COMPOSITE_'
-                             'OPERATORS dictionary')
+        if gravity is None and self.gravity != 'forget':
+            gravity = self.gravity
+        if gravity is not None:
+            gtop, gleft = self._gravity_to_offset(gravity,
+                                                  image.width,
+                                                  image.height)
+            top += gtop
+            left += gleft
+        assertions.string_in_list(COMPOSITE_OPERATORS,
+                                  'wand.image.COMPOSITE_OPERATORS',
+                                  operator=operator)
+        op = COMPOSITE_OPERATORS.index(operator)
         if arguments:
             assertions.assert_string(arguments=arguments)
             r = library.MagickSetImageArtifact(image.wand,
@@ -4104,27 +4108,27 @@ class BaseImage(Resource):
 
         .. versionchanged:: 0.5.3
            Optional ``gravity`` argument was added.
+
+        .. versionchanged:: 0.7.0
+           Allow ``x`` & ``y`` offset to apply relative to ``gravity``.
         """
         assertions.assert_string(operator=operator)
         ch_const = self._channel_to_mask(channel)
-        if gravity:
-            if left is None and top is None:
-                top, left = self._gravity_to_offset(gravity,
-                                                    image.width,
-                                                    image.height)
-            else:
-                raise TypeError('Can not use gravity if top & left are given')
         if top is None:
             top = 0
         if left is None:
             left = 0
         assertions.assert_integer(left=left, top=top)
-        try:
-            op = COMPOSITE_OPERATORS.index(operator)
-        except IndexError:
-            raise IndexError(repr(operator) + ' is an invalid composite '
-                             'operator type; see wand.image.COMPOSITE_'
-                             'OPERATORS dictionary')
+        if gravity is not None:
+            gtop, gleft = self._gravity_to_offset(gravity,
+                                                  image.width,
+                                                  image.height)
+            top += gtop
+            left += gleft
+        assertions.string_in_list(COMPOSITE_OPERATORS,
+                                  'wand.image.COMPOSITE_OPERATORS',
+                                  operator=operator)
+        op = COMPOSITE_OPERATORS.index(operator)
         if arguments:
             assertions.assert_string(arguments=arguments)
             library.MagickSetImageArtifact(image.wand,
@@ -4135,12 +4139,12 @@ class BaseImage(Resource):
                                            binary(arguments))
         if library.MagickCompositeImageChannel:
             r = library.MagickCompositeImageChannel(self.wand, ch_const,
-                                                    image.wand, op, int(left),
-                                                    int(top))
+                                                    image.wand, op, left,
+                                                    top)
         else:  # pragma: no cover
             ch_mask = library.MagickSetImageChannelMask(self.wand, ch_const)
             r = library.MagickCompositeImage(self.wand, image.wand, op, True,
-                                             int(left), int(top))
+                                             left, top)
             library.MagickSetImageChannelMask(self.wand, ch_mask)
         return r
 
@@ -4583,18 +4587,20 @@ class BaseImage(Resource):
            If you want to crop the image but not in-place, use slicing
            operator.
 
-        .. versionchanged:: 0.4.1
-           Added ``gravity`` option. Using ``gravity`` along with
-           ``width`` & ``height`` to auto-adjust ``left`` & ``top``
-           attributes.
+        .. versionadded:: 0.1.7
 
         .. versionchanged:: 0.1.8
            Made to raise :exc:`~exceptions.ValueError` instead of
            :exc:`~exceptions.IndexError` for invalid ``width``/``height``
            arguments.
 
-        .. versionadded:: 0.1.7
+        .. versionchanged:: 0.4.1
+           Added ``gravity`` option. Using ``gravity`` along with
+           ``width`` & ``height`` to auto-adjust ``left`` & ``top``
+           attributes.
 
+        .. versionchanged:: 0.7.0
+           Allow ``x`` & ``y`` offset to apply relative to ``gravity``.
         """
         if not (right is None or width is None):
             raise TypeError('parameters right and width are exclusive each '
@@ -4613,27 +4619,24 @@ class BaseImage(Resource):
             return m + n if n < 0 else n
 
         # Define left & top if gravity is given.
-        if gravity:
-            if width is None or height is None:
-                raise TypeError(
-                    'both width and height must be defined with gravity'
-                )
-            top, left = self._gravity_to_offset(gravity, width, height)
-        else:
-            left = abs_(left, self.width, 0)
-            top = abs_(top, self.height, 0)
-
+        ow, oh = self.size
+        left = abs_(left, ow, 0)
+        top = abs_(top, oh, 0)
         if width is None:
-            right = abs_(right, self.width)
+            right = abs_(right, ow)
             width = right - left
         if height is None:
-            bottom = abs_(bottom, self.height)
+            bottom = abs_(bottom, oh)
             height = bottom - top
+        if gravity is not None:
+            gtop, gleft = self._gravity_to_offset(gravity, width, height)
+            top += gtop
+            left += gleft
         assertions.assert_counting_number(width=width, height=height)
         if (
             left == top == 0 and
-            width == self.width and
-            height == self.height
+            width == ow and
+            height == oh
         ):
             return True
         if self.animation:
@@ -5114,22 +5117,25 @@ class BaseImage(Resource):
 
         .. versionchanged:: 0.6.8
            Added ``gravity`` argument.
+
+        .. versionchanged:: 0.7.0
+           Allow ``x`` & ``y`` offset to apply relative to ``gravity``.
         """
+        ow, oh = self.size
         if width is None or width == 0:
-            width = self.width
+            width = ow
         if height is None or height == 0:
-            height = self.height
+            height = oh
         assertions.assert_unsigned_integer(width=width, height=height)
-        if gravity is None:
-            if x is None:
-                x = 0
-            if y is None:
-                y = 0
-        else:
-            if x is not None or y is not None:
-                raise ValueError('x & y can not be used with gravity.')
-            y, x = self._gravity_to_offset(gravity, width, height)
+        if x is None:
+            x = 0
+        if y is None:
+            y = 0
         assertions.assert_integer(x=x, y=y)
+        if gravity is not None:
+            gy, gx = self._gravity_to_offset(gravity, width, height)
+            x += gx
+            y += gy
         return library.MagickExtentImage(self.wand, width, height, x, y)
 
     def features(self, distance):
@@ -7617,6 +7623,9 @@ class BaseImage(Resource):
         :rtype: :class:`Image`
 
         .. versionadded:: 0.6.8
+
+        .. versionchanged:: 0.7.0
+           Allow ``x`` & ``y`` offset to apply relative to ``gravity``.
         """
         ow, oh, ox, oy = self.page
         if width is None:
@@ -7624,15 +7633,15 @@ class BaseImage(Resource):
         if height is None:
             height = oh
         assertions.assert_unsigned_integer(width=width, height=height)
-        if gravity is not None:
-            if x is not None or y is not None:
-                raise ValueError('x & y can not be used with gravity.')
-            y, x = self._gravity_to_offset(gravity, width, height)
         if x is None:
             x = ox
         if y is None:
             y = oy
         assertions.assert_integer(x=x, y=y)
+        if gravity is not None:
+            gy, gx = self._gravity_to_offset(gravity, width, height)
+            y += gy
+            x += gx
         new_wand = library.MagickGetImageRegion(self.wand, width, height, x, y)
         if not new_wand:
             self.raise_exception()
@@ -8544,6 +8553,9 @@ class BaseImage(Resource):
         :type y: :class:`numbers.Integral`
 
         .. versionadded:: 0.5.3
+
+        .. versionchanged:: 0.7.0
+           Allow ``x`` & ``y`` offset to apply relative to ``gravity``.
         """
         ow, oh = self.size
         if width is None:
@@ -8551,16 +8563,15 @@ class BaseImage(Resource):
         if height is None:
             height = oh
         assertions.assert_unsigned_integer(width=width, height=height)
-        if gravity is None:
-            if x is None:
-                x = 0
-            if y is None:
-                y = 0
-        else:
-            if x is not None or y is not None:
-                raise ValueError('x & y can not be used with gravity.')
-            y, x = self._gravity_to_offset(gravity, width, height)
+        if x is None:
+            x = 0
+        if y is None:
+            y = 0
         assertions.assert_integer(x=x, y=y)
+        if gravity is not None:
+            gy, gx = self._gravity_to_offset(gravity, width, height)
+            x += gx
+            y += gy
         return library.MagickSpliceImage(self.wand, width, height, x, y)
 
     @manipulative

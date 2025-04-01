@@ -24,6 +24,16 @@ Unreleased.
  - Fixed :meth:`Image.liquid_rescale() <wand.image.BaseImage.liquid_rescale>` behavior
    by switching default value of ``delta_x`` from ``0`` to ``1``. [:issue:`653`]
  - Fixed :meth:`Image.sparse_color() <wand.image.BaseImage.sparse_color>`'s ``colors`` argument structure to allow multiple (x, y) points with the same color value.
+ - Fixed offset coordinates when used with ``gravity`` parameters. [:issue:`669`]
+
+   - :meth:`Image.chop() <wand.image.BaseImage.chop>`
+   - :meth:`Image.composite() <wand.image.BaseImage.composite>`
+   - :meth:`Image.composite_channel() <wand.image.BaseImage.composite_channel>`
+   - :meth:`Image.crop() <wand.image.BaseImage.crop>`
+   - :meth:`Image.extent() <wand.image.BaseImage.extent>`
+   - :meth:`Image.region() <wand.image.BaseImage.region>`
+   - :meth:`Image.splice() <wand.image.BaseImage.splice>`
+
  - [TEST] Added Python 3.12 regression test. [:issue:`648` by Thijs Triemstra]
 
 
