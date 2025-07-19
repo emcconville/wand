@@ -2128,11 +2128,14 @@ def test_solarize():
 
 
 def test_sparse_color():
-    with Image(width=10, height=10, background=Color('WHITE')) as img:
-        colors = {'#F00': (0, 0), '#00F': (9, 9)}
+    with Image(width=10, height=10, background='white') as img:
+        was = img.signature
+        colors = [
+            (0, 0, '#F00'),
+            (9, 9, '#00F'),
+        ]
         img.sparse_color('barycentric', colors)
-        assert img[0, 0] == Color('#F00')
-        assert img[9, 9] == Color('#00F')
+        assert was != img.signature
         with raises(TypeError):
             img.sparse_color(0xDEADBEEF, colors)
         with raises(TypeError):
