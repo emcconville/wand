@@ -34,6 +34,12 @@ Unreleased.
    - :meth:`Image.region() <wand.image.BaseImage.region>`
    - :meth:`Image.splice() <wand.image.BaseImage.splice>`
 
+ - Fixed File I/O handling. [:issue:`675`]
+
+   - :meth:`Image.ping() <wand.image.Image.ping>`
+   - :meth:`Image.read() <wand.image.Image.read>`
+   - :meth:`Image.save() <wand.image.Image.save>`
+
  - [TEST] Added Python 3.12 regression test. [:issue:`648` by Thijs Triemstra]
 
 

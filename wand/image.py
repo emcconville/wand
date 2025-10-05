@@ -15,7 +15,7 @@ import functools
 import numbers
 import weakref
 from collections import abc
-from io import RawIOBase
+from io import IOBase
 
 from . import assertions
 from .api import libc, libmagick, library
@@ -9864,9 +9864,12 @@ class Image(BaseImage):
         instance = cls()
         instance._preamble_read(**kwargs)
         if file is not None:
-            if (isinstance(file, RawIOBase) and
-                    hasattr(libc, 'fdopen') and hasattr(file, 'mode')):
-                fd = libc.fdopen(file.fileno(), file.mode)
+            is_fd = (isinstance(file, IOBase),
+                     hasattr(libc, 'fdopen'),
+                     callable(getattr(file, 'fileno', None)),
+                     hasattr(file, 'mode'))
+            if all(is_fd):
+                fd = libc.fdopen(file.fileno(), binary(file.mode))
                 r = library.MagickPingImageFile(instance.wand, fd)
             elif not callable(getattr(file, 'read', None)):
                 raise TypeError('file must be a readable file object'
@@ -10385,9 +10388,12 @@ class Image(BaseImage):
             width=width
         )
         if file is not None:
-            if (isinstance(file, RawIOBase) and
-                    hasattr(libc, 'fdopen') and hasattr(file, 'mode')):
-                fd = libc.fdopen(file.fileno(), file.mode)
+            is_fd = (isinstance(file, IOBase),
+                     hasattr(libc, 'fdopen'),
+                     callable(getattr(file, 'fileno', None)),
+                     hasattr(file, 'mode'))
+            if all(is_fd):
+                fd = libc.fdopen(file.fileno(), binary(file.mode))
                 r = library.MagickReadImageFile(self.wand, fd)
             elif not callable(getattr(file, 'read', None)):
                 raise TypeError('file must be a readable file object'
@@ -10454,12 +10460,16 @@ class Image(BaseImage):
         elif file is not None and filename is not None:
             raise TypeError('expected only one argument; but two passed')
         elif file is not None:
+            is_fd = (isinstance(file, IOBase),
+                     hasattr(libc, 'fdopen'),
+                     callable(getattr(file, 'fileno', None)),
+                     hasattr(file, 'mode'))
             if isinstance(file, str):
                 raise TypeError('file must be a writable file object, '
                                 'but {0!r} is a string; did you want '
                                 '.save(filename={0!r})?'.format(file))
-            elif isinstance(file, RawIOBase) and hasattr(libc, 'fdopen'):
-                fd = libc.fdopen(file.fileno(), file.mode)
+            elif all(is_fd):
+                fd = libc.fdopen(file.fileno(), binary(file.mode))
                 if library.MagickGetNumberImages(self.wand) > 1:
                     r = library.MagickWriteImagesFile(self.wand, fd)
                 else:
@@ -10467,11 +10477,11 @@ class Image(BaseImage):
                 libc.fflush(fd)
                 if not r:
                     self.raise_exception()
+            elif not callable(getattr(file, 'write', None)):
+                raise TypeError('file must be a writable file object, '
+                                'but it does not have write() method: ' +
+                                repr(file))
             else:
-                if not callable(getattr(file, 'write', None)):
-                    raise TypeError('file must be a writable file object, '
-                                    'but it does not have write() method: ' +
-                                    repr(file))
                 file.write(self.make_blob())
         else:
             if not isinstance(filename, str):
