@@ -607,17 +607,17 @@ a little more sophisticated.
 
 .. code::
 
-    from wand.color import Color
     from wand.drawing import Drawing
     from wand.image import Image
     import re
 
-    def draw_roi(contxt, roi_width, roi_height):
+
+    def draw_roi(ctx, roi_width, roi_height):
         """Let's draw a blue box so we can identify what
         our region of interest is."""
         ctx.push()
-        ctx.stroke_color = Color('BLUE')
-        ctx.fill_color = Color('TRANSPARENT')
+        ctx.stroke_color = 'BLUE'
+        ctx.fill_color = 'TRANSPARENT'
         ctx.rectangle(left=75, top=255, width=roi_width, height=roi_height)
         ctx.pop()
 
@@ -642,7 +642,7 @@ a little more sophisticated.
         # If this message can't be wrapped, just scale it.
         loop_continues = True
         message_width, message_height = eval_metrics(wrapped_text)
-        if message_width > roi_width and not ' ' in text:
+        if message_width > roi_width and ' ' not in text:
             ctx.font_size *= roi_width / message_width  # Scale pointsize
             loop_continues = False
 
@@ -655,24 +655,26 @@ a little more sophisticated.
             text_lines = []
             while len(wrapped_text) > 0:
                 # If the rest fits, we're done.
-                if substring_font_metrics_width(wrapped_text, \
-                        len(wrapped_text)) <= roi_width:
+                value_mid = substring_font_metrics_width(wrapped_text,
+                                                         len(wrapped_text))
+                if value_mid <= roi_width:
                     text_lines.append(wrapped_text)
                     wrapped_text = '\n'.join(text_lines)
                     message_width, message_height = eval_metrics(wrapped_text)
                     if message_height > roi_height:
-                        ctx.font_size *= 0.9 # Reduce pointsize
-                        wrapped_text = text  # Restore original text
+                        ctx.font_size *= 0.9  # Reduce pointsize
+                        wrapped_text = text   # Restore original text
                     else:
                         loop_continues = False
-                    break;
-                
+                    break
+
                 # Find where to break this string so that it fits inside the width.
                 index_low = 0
                 index_high = len(wrapped_text) - 1
                 while index_low <= index_high:
                     index_mid = (index_low + index_high) // 2
-                    value_mid = substring_font_metrics_width(wrapped_text, index_mid)
+                    value_mid = substring_font_metrics_width(wrapped_text,
+                                                             index_mid)
                     if value_mid == roi_width:
                         break
                     elif value_mid < roi_width:
@@ -683,15 +685,21 @@ a little more sophisticated.
                         index_mid = index_low
 
                 # Find the last occurrence of whitespace.
-                whitespace_matches = list(re.finditer(r'\s+', wrapped_text[0:index_mid]))
-                index_mid = whitespace_matches[-1].start() if whitespace_matches else -1
+                whitespace_matches = list(
+                    re.finditer(r'\s+', wrapped_text[0:index_mid])
+                )
+                if whitespace_matches:
+                    index_mid = whitespace_matches[-1].start()
+                else:
+                    index_mid = -1
                 if index_mid <= 0:
-                    ctx.font_size *= 0.9 # Reduce pointsize
-                    wrapped_text = text  # Restore original text
+                    ctx.font_size *= 0.9  # Reduce pointsize
+                    wrapped_text = text   # Restore original text
                     break
                 else:
+
                     # Break the line here.
-                    text_lines.append(wrapped_text[0:index_mid]);
+                    text_lines.append(wrapped_text[0:index_mid])
 
                     # Prepare to break the rest.
                     wrapped_text = wrapped_text[index_mid:].lstrip()
@@ -701,8 +709,8 @@ a little more sophisticated.
                     message_so_far = '\n'.join(text_lines + [wrapped_text])
                     message_width, message_height = eval_metrics(message_so_far)
                     if message_height > roi_height:
-                        ctx.font_size *= 0.9 # Reduce pointsize
-                        wrapped_text = text  # Restore original text
+                        ctx.font_size *= 0.9  # Reduce pointsize
+                        wrapped_text = text   # Restore original text
                         break
 
         if iteration_attempts < 1:
@@ -710,7 +718,8 @@ a little more sophisticated.
         return wrapped_text
 
 
-    message = """This is some really long sentence with the word "Mississippi" in it."""
+    message = ("""This is some really long sentence with"""
+               """ the word "Mississippi" in it.""")
 
     ROI_SIDE = 175
 
@@ -718,7 +727,7 @@ a little more sophisticated.
         with Drawing() as ctx:
             draw_roi(ctx, ROI_SIDE, ROI_SIDE)
             # Set the font style
-            ctx.fill_color = Color('RED')
+            ctx.fill_color = 'RED'
             ctx.font_family = 'Times New Roman'
             ctx.font_size = 32
             mutable_message = word_wrap(img,
