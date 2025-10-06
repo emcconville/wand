@@ -602,64 +602,124 @@ form of word-wrapping, and users of the ``wand`` library would be responsible
 for implementing this behavior unique to their business requirements.
 
 ImageMagick's ``caption:`` coder does offer a word-wrapping solution with
-:meth:`Image.caption() <wand.image.BaseImage.caption>` method, but Python's :mod:`textwrap` is
+:meth:`Image.caption() <wand.image.BaseImage.caption>` method, but this version is
 a little more sophisticated.
 
 .. code::
 
-    from textwrap import wrap
-    from wand.color import Color
     from wand.drawing import Drawing
     from wand.image import Image
+    import re
 
 
-    def draw_roi(contxt, roi_width, roi_height):
+    def draw_roi(ctx, roi_width, roi_height):
         """Let's draw a blue box so we can identify what
         our region of interest is."""
         ctx.push()
-        ctx.stroke_color = Color('BLUE')
-        ctx.fill_color = Color('TRANSPARENT')
+        ctx.stroke_color = 'BLUE'
+        ctx.fill_color = 'TRANSPARENT'
         ctx.rectangle(left=75, top=255, width=roi_width, height=roi_height)
         ctx.pop()
 
 
     def word_wrap(image, ctx, text, roi_width, roi_height):
-        """Break long text to multiple lines, and reduce point size
+        """Break long text to multiple lines, and/or reduce point size
         until all text fits within a bounding box."""
-        mutable_message = text
-        iteration_attempts = 100
+
+        def substring_font_metrics_width(text, length):
+            """ Get width of rendered substring. """
+            metrics = ctx.get_font_metrics(image, text[0:length], True)
+            return metrics.text_width
 
         def eval_metrics(txt):
             """Quick helper function to calculate width/height of text."""
             metrics = ctx.get_font_metrics(image, txt, True)
             return (metrics.text_width, metrics.text_height)
 
-        while ctx.font_size > 0 and iteration_attempts:
+        # Start with the original text.
+        wrapped_text = text
+
+        # If this message can't be wrapped, just scale it.
+        loop_continues = True
+        message_width, message_height = eval_metrics(wrapped_text)
+        if message_width > roi_width and ' ' not in text:
+            ctx.font_size *= roi_width / message_width  # Scale pointsize
+            loop_continues = False
+
+        # Loop until a successful word-wrap is calculated.
+        iteration_attempts = 100
+        while loop_continues and ctx.font_size > 0 and iteration_attempts:
             iteration_attempts -= 1
-            width, height = eval_metrics(mutable_message)
-            if height > roi_height:
-                ctx.font_size -= 0.75  # Reduce pointsize
-                mutable_message = text  # Restore original text
-            elif width > roi_width:
-                columns = len(mutable_message)
-                while columns > 0:
-                    columns -= 1
-                    mutable_message = '\n'.join(wrap(mutable_message, columns))
-                    wrapped_width, _ = eval_metrics(mutable_message)
-                    if wrapped_width <= roi_width:
+
+            # Prepare to break this string into lines.
+            text_lines = []
+            while len(wrapped_text) > 0:
+                # If the rest fits, we're done.
+                value_mid = substring_font_metrics_width(wrapped_text,
+                                                         len(wrapped_text))
+                if value_mid <= roi_width:
+                    text_lines.append(wrapped_text)
+                    wrapped_text = '\n'.join(text_lines)
+                    message_width, message_height = eval_metrics(wrapped_text)
+                    if message_height > roi_height:
+                        ctx.font_size *= 0.9  # Reduce pointsize
+                        wrapped_text = text   # Restore original text
+                    else:
+                        loop_continues = False
+                    break
+
+                # Find where to break this string so that it fits inside the width.
+                index_low = 0
+                index_high = len(wrapped_text) - 1
+                while index_low <= index_high:
+                    index_mid = (index_low + index_high) // 2
+                    value_mid = substring_font_metrics_width(wrapped_text,
+                                                             index_mid)
+                    if value_mid == roi_width:
                         break
-                if columns < 1:
-                    ctx.font_size -= 0.75  # Reduce pointsize
-                    mutable_message = text  # Restore original text
-            else:
-                break
+                    elif value_mid < roi_width:
+                        index_low = index_mid + 1
+                        index_mid = index_low
+                    else:
+                        index_high = index_mid - 1
+                        index_mid = index_low
+
+                # Find the last occurrence of whitespace.
+                whitespace_matches = list(
+                    re.finditer(r'\s+', wrapped_text[0:index_mid])
+                )
+                if whitespace_matches:
+                    index_mid = whitespace_matches[-1].start()
+                else:
+                    index_mid = -1
+                if index_mid <= 0:
+                    ctx.font_size *= 0.9  # Reduce pointsize
+                    wrapped_text = text   # Restore original text
+                    break
+                else:
+
+                    # Break the line here.
+                    text_lines.append(wrapped_text[0:index_mid])
+
+                    # Prepare to break the rest.
+                    wrapped_text = wrapped_text[index_mid:].lstrip()
+
+                    # If the incompletely wrapped text is already too high,
+                    # reduce the font size and try again.
+                    message_so_far = '\n'.join(text_lines + [wrapped_text])
+                    message_width, message_height = eval_metrics(message_so_far)
+                    if message_height > roi_height:
+                        ctx.font_size *= 0.9  # Reduce pointsize
+                        wrapped_text = text   # Restore original text
+                        break
+
         if iteration_attempts < 1:
             raise RuntimeError("Unable to calculate word_wrap for " + text)
-        return mutable_message
+        return wrapped_text
 
 
-    message = """This is some really long sentence with the
-     word "Mississippi" in it."""
+    message = ("""This is some really long sentence with"""
+               """ the word "Mississippi" in it.""")
 
     ROI_SIDE = 175
 
@@ -667,7 +727,7 @@ a little more sophisticated.
         with Drawing() as ctx:
             draw_roi(ctx, ROI_SIDE, ROI_SIDE)
             # Set the font style
-            ctx.fill_color = Color('RED')
+            ctx.fill_color = 'RED'
             ctx.font_family = 'Times New Roman'
             ctx.font_size = 32
             mutable_message = word_wrap(img,
