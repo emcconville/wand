@@ -34,31 +34,28 @@ def terminus():
         library.MagickWandTerminus()
 
 
-allocation_map = {}
+_allocation_map = {}
 
 
 def allocate_ref(addr, deallocator):
-    global allocation_map
-    if len(allocation_map) == 0:
+    if len(_allocation_map) == 0:
         genesis()
     if addr:
-        allocation_map[addr] = deallocator
+        _allocation_map[addr] = deallocator
 
 
 def deallocate_ref(addr):
-    global allocation_map
-    if addr in list(allocation_map):
-        deallocator = allocation_map.pop(addr)
+    if addr in list(_allocation_map):
+        deallocator = _allocation_map.pop(addr)
         if callable(deallocator):
             deallocator(addr)
 
 
 @atexit.register
 def shutdown():
-    global allocation_map
-    for addr in list(allocation_map):
+    for addr in list(_allocation_map):
         try:
-            deallocator = allocation_map.pop(addr)
+            deallocator = _allocation_map.pop(addr)
             if callable(deallocator):
                 deallocator(addr)
         except KeyError:
