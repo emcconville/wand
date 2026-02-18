@@ -161,6 +161,11 @@ def load(lib, IM_VERSION):
             c_void_p, c_int, c_double, c_double
         ]
         lib.MagickBrightnessContrastImageChannel.restype = c_bool
+    if is_im_7:
+        lib.MagickChannelFxImage.argtypes = [c_void_p, c_char_p]
+        lib.MagickChannelFxImage.restype = c_void_p
+    else:
+        lib.MagickChannelFxImage = None
     if IM_VERSION >= 0x708:
         try:
             lib.MagickCannyEdgeImage.argtypes = [c_void_p, c_double, c_double,

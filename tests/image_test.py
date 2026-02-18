@@ -15,6 +15,7 @@ from pytest import mark, raises
 from wand.color import Color
 from wand.font import Font
 from wand.image import ClosedImageError, Image
+from wand.version import MAGICK_VERSION_NUMBER
 
 try:
     filesystem_encoding = sys.getfilesystemencoding()
@@ -643,3 +644,11 @@ def test_data_url():
         img.format = 'PNG'
         data = img.data_url()
         assert data.startswith('data:image/png;base64,')
+
+
+@mark.skipif(MAGICK_VERSION_NUMBER < 0x700,
+             reason='ChannelFxImage is only available in ImageMagick 7')
+def test_channel_fx():
+    with Image(filename='rose:') as img:
+        with img.channel_fx('red <=> green') as fx_img:
+            assert fx_img.signature != img.signature

@@ -9979,6 +9979,46 @@ class Image(BaseImage):
                 self.raise_exception()
         return self
 
+    def channel_fx(self, expression):
+        """Generate a new image by applying the Channel-FX expression. Useful
+        for exchanging, copying, or extracting image channels.
+
+        For example::
+
+            # Swap the red and green channels of an image.
+            with Image(filename='input.png') as img:
+                with img.channel_fx('red <=> green') as swapped:
+                    swapped.save(filename='swapped_output.png')
+
+        .. seealso::
+
+            `Channel FX`__ for more details.
+
+            __ https://imagemagick.org/script/command-line-options.php\
+               #channel-fx
+
+        .. warning::
+
+            This class method is only available with ImageMagick 7.x.x, or
+            greater.
+
+        :param expression: The Channel-FX expression to apply.
+        :type expression: :class:`str`
+        :returns: A new image with Channel-FX expression applied.
+        :rtype: :class:`Image`
+
+        .. versionadded:: 0.7.0
+        """
+        if library.MagickChannelFxImage is None:  # pragma: no cover
+            raise AttributeError('MagickChannelFxImage method '
+                                 'not available on system.')
+        assertions.assert_string(expression=expression)
+        c_exp = binary(expression)
+        new_wand = library.MagickChannelFxImage(self.wand, c_exp)
+        if not new_wand:
+            self.raise_exception()
+        return Image(image=BaseImage(new_wand))
+
     def clear(self):
         """Clears resources associated with the image, leaving the image blank,
         and ready to be used with new image.
