@@ -54,6 +54,7 @@ jobs:
     - name: Install dependencies
       run: |
         export HOMEBREW_NO_AUTO_UPDATE=1
+        brew install ghostscript
         brew install imagemagick
         python -m pip install --upgrade pip
         pip install --upgrade pytest pytest-cov coveralls
