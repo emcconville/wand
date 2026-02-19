@@ -1,6 +1,6 @@
 [build-system]
 requires = [
-  "setuptools>=68.0"
+  "setuptools>=77.0"
 ]
 build-backend = "setuptools.build_meta"
 
@@ -15,26 +15,27 @@ maintainers = [
 ]
 description = "Ctypes-based simple MagickWand API binding for Python"
 readme = { file = "README.rst", content-type = "text/x-rst" }
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 keywords = ["ImageMagick", "ctypes"]
-license = {text = "MIT License"}
+license = "MIT"
+license-files = ["LICENSE"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
     "Programming Language :: Python :: Implementation :: Stackless",
     "Topic :: Multimedia :: Graphics",
 ]
-dynamic = ["version"]
+version = "0.7.0"
 
 [project.optional-dependencies]
 test = ["pytest >= 7.2.0"]
@@ -47,12 +48,17 @@ Repository = "https://github.com/emcconville/wand"
 Tracker = "https://github.com/emcconville/wand/issues"
 Changelog = "https://docs.wand-py.org/en/latest/changes.html"
 
-[tools.setuptools]
-packages = ["wand", "wand.cdefs"]
-
 [tool.setuptools.packages.find]
 include = ["wand", "wand.cdefs"]
-exclude = ["prof", "temp", "sample", "support"]
+exclude = [
+    "prof",
+    "reports",
+    "sample",
+    "support",
+    "temp"
+]
 
-[tool.setuptools.dynamic]
-version = { attr = "wand.VERSION" }
+[tool.pytest.ini_options]
+minversion = "7.2.0"
+testpaths = ["tests"]
+addopts = "--skip-pdf --skip-fft"

@@ -11,24 +11,6 @@ def readme():
         return f.read()
 
 
-try:
-    from setuptools.command.test import test
-except ImportError:
-    cmdclass = {}
-else:
-    class pytest(test):
-
-        def finalize_options(self):
-            test.finalize_options(self)
-            self.test_args = []
-            self.test_suite = True
-
-        def run_tests(self):
-            from pytest import main
-            errno = main(self.test_args)
-            raise SystemExit(errno)
-    cmdclass = {'test': pytest}
-
 wand_includes = [
     "wand",
     "wand.cdefs"
@@ -36,6 +18,7 @@ wand_includes = [
 
 wand_excludes = [
     "prof",     # CI Memory profile.
+    "reports",  # CI coverage reports.
     "temp",     # CI artifacts.
     "sample",   # Old documents.
     "support",  # Non-public issues.
@@ -59,7 +42,8 @@ setup(
     description='Ctypes-based simple MagickWand API binding for Python',
     long_description=readme(),
     long_description_content_type='text/x-rst',
-    license='MIT License',
+    license='MIT',
+    license_files = ['LICENSE'],
     author='Hong Minhee',
     author_email='hongminhee' '@' 'member.fsf.org',
     maintainer='E. McConville',
@@ -70,26 +54,20 @@ setup(
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: 3.12',
+        "Programming Language :: Python :: 3.13",
+        "Programming Language :: Python :: 3.14",
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
         'Programming Language :: Python :: Implementation :: Stackless',
         'Topic :: Multimedia :: Graphics'
     ],
     keywords='ImageMagick ctypes',
-    cmdclass=cmdclass,
     project_urls={
         'Documentation': 'https://docs.wand-py.org',
         'Source': 'https://github.com/emcconville/wand',
