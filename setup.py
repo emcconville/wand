@@ -49,7 +49,6 @@ setup(
     maintainer='E. McConville',
     maintainer_email='emcconville' '@' 'emcconville.com',
     url='http://wand-py.org/',
-    tests_require=test_requires,
     extras_require={'doc': doc_requires, 'test': test_requires},
     classifiers=[
         'Development Status :: 5 - Production/Stable',
