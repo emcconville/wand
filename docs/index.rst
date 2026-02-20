@@ -61,16 +61,16 @@ are lacking something we need:
 Requirements
 ------------
 
-- Python 3.3 or higher
+- Python 3.8 or higher
 
-  - CPython 3.3 or higher
-  - PyPy 1.5 or higher
+  - CPython 3.8 or higher
+  - PyPy 3.10 or higher
 
 - MagickWand library
 
-  - ``libmagickwand-dev`` for APT on Debian/Ubuntu
+  - ``imagemagick-7.q16`` for APT on Debian/Ubuntu
   - ``imagemagick`` for MacPorts/Homebrew on Mac
-  - ``ImageMagick-devel`` for Yum on CentOS
+  - ``ImageMagick-libs`` for Yum on CentOS
 
 
 User's guide

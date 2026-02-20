@@ -38,7 +38,7 @@ easily installed using APT:
 
 .. sourcecode:: console
 
-   $ sudo apt-get install libmagickwand-dev
+   $ sudo apt install imagemagick
 
 
 .. _install-imagemagick-redhat:
@@ -52,7 +52,7 @@ it can be installed using Yum:
 .. sourcecode:: console
 
    $ yum update
-   $ yum install ImageMagick-devel
+   $ yum install ImageMagick-libs
 
 
 .. _install-imagemagick-mac:
@@ -67,13 +67,20 @@ Homebrew
 
       $ brew install imagemagick
 
-   .. If :ref:`seam carving <seam-carving>` (:meth:`Image.liquid_rescale()
-      <wand.image.BaseImage.liquid_rescale>`) is needed you have install
-      liblqr_ as well:
+   If :ref:`seam carving <seam-carving>` (:meth:`Image.liquid_rescale()
+   <wand.image.BaseImage.liquid_rescale>`) is needed you have install
+   liblqr_ as well:
 
-      .. sourcecode:: console
+   .. sourcecode:: console
 
-         $ brew install imagemagick --with-liblqr
+      $ brew install imagemagick --with-liblqr
+
+   If you need to render PDF files, or use FreeType font features, you
+   will need to install Ghostscript:
+
+   .. sourcecode:: console
+
+      $ brew install ghostscript
 
    If you are running on a Mac with Apple Silicon, you will need to export
    :envvar:`MAGICK_HOME` before using Wand. 
