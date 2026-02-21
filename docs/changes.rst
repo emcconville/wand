@@ -41,6 +41,7 @@ Unreleased.
    - :meth:`Image.read() <wand.image.Image.read>`
    - :meth:`Image.save() <wand.image.Image.save>`
 
+ - [DOC] Updated Python versions to reflect current regression testing.
  - [TEST] Added Python 3.12 regression test. [:issue:`648` by Thijs Triemstra]
 
 

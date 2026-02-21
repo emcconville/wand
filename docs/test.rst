@@ -73,8 +73,8 @@ Using tox_
 ----------
 
 Wand should be compatible with various Python implementations including
-CPython 3.3, PyPy.  tox_ is a testing software that helps Python
-packages to test on various Python implementations at a time.
+CPython & PyPy.  tox_ is a testing software that helps Python packages to test
+on various Python implementations at a time.
 
 It can be installed using :program:`pip`:
 
@@ -88,11 +88,9 @@ on multiple Python interpreters:
 .. sourcecode:: console
 
    $ tox
-   GLOB sdist-make: /Users/emcconville/Desktop/wand/setup.py
-   py37 create: /Users/emcconville/Desktop/wand/.tox/py37
-   py37 installdeps: pytest
-   py37 sdist-inst: /Users/emcconville/Desktop/wand/.tox/dist/Wand-0.2.2.zip
-   py37 runtests: commands[0]
+   pypy3: install_deps> python -I -m pip install pytest pytest-forked
+   pypy3: install_package> python -I -m pip install [...] Wand-X.X.X.tar.gz
+   pypy3: commands[0]> pytest --forked
    ...
 
 You can use a double ``--`` to pass options to pytest:
@@ -107,17 +105,17 @@ You can use a double ``--`` to pass options to pytest:
 Continuous Integration
 ----------------------
 
-.. image:: https://secure.travis-ci.org/emcconville/wand.svg?branch=master
+.. image:: https://github.com/emcconville/wand/workflows/Wand%20CI/badge.svg
    :alt: Build Status
-   :target: https://travis-ci.org/emcconville/wand
+   :target: https://github.com/emcconville/wand/actions?query=workflow%3A%22Wand+CI%22
 
-`Travis CI`_ automatically builds and tests every commit and pull request.
+`GitHub Actions`_ automatically builds and tests every commit and pull request.
 The above banner image shows the current status of Wand build.
 You can see the detail of the current status from the following URL:
 
-https://travis-ci.org/emcconville/wand
+https://github.com/emcconville/wand/actions
 
-.. _Travis CI: http://travis-ci.org/
+.. _GitHub Actions: https://docs.github.com/en/actions
 
 
 Code Coverage
