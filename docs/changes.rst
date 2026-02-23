@@ -12,7 +12,7 @@ Wand Changelog
 Version 0.7.0
 -------------
 
-Unreleased.
+Released on February 23rd, 2026.
 
  - Added :meth:`Image.affine() <wand.image.BaseImage.affine>` method.
  - Added :meth:`Image.bilateral_blur() <wand.image.BaseImage.bilateral_blur>` method.
