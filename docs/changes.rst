@@ -43,6 +43,7 @@ Unreleased.
 
  - [DOC] Updated Python versions to reflect current regression testing.
  - [TEST] Added Python 3.12 regression test. [:issue:`648` by Thijs Triemstra]
+ - [TEST] Added pyproject.toml regression test.
 
 
 .. _changelog-0.6:

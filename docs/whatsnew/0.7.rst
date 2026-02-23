@@ -13,6 +13,37 @@ language. All supporting Python 2 code in :mod:`wand.compat` has been
 remove.
 
 
+Channel FX
+''''''''''
+Wand now supports Channel FX operations to create, copying, and/or extract data
+from color channels.  For example, extracting a `meta` channel as a new image::
+
+    >>> from wand.image import Image
+    >>>
+    >>> with Image(filename='tagged_image.psd') as img:
+    ...     with img.channel_fx('meta') as meta:
+    ...         meta.save(filename='meta_channel.png')
+
+Each channel can be accessed by named (e.g. `red`, `green`, `blue`, etc)
+or by index (e.g. `0`, `1`, `2`, etc). The following operations are supported:
+
++---------+----------------------------------------------------------------+----------------------+
+| FX      | Action                                                         | Example              |
++=========+================================================================+======================+
+| ``<=>`` | Exchange two channels.                                         | ``red <=> green``    |
++---------+----------------------------------------------------------------+----------------------+
+| ``=>``  | Copy one channel to another.                                   | ``red => green``     |
++---------+----------------------------------------------------------------+----------------------+
+| ``=``   | Assign a constant value to a channel.                          | ``red = 50%``        |
++---------+----------------------------------------------------------------+----------------------+
+| ``,``   | Write a new image with channels in a specified order.          | ``red, green, blue`` |
++---------+----------------------------------------------------------------+----------------------+
+| ``;``   | Add a new output image for the next set of channel operations. | ``red; green``       |
++---------+----------------------------------------------------------------+----------------------+
+| ``|``   | move to the next input image for the source of channel data.   | ``| grey => alpha``  |
++---------+----------------------------------------------------------------+----------------------+
+
+
 Evaluate Images
 '''''''''''''''
 
@@ -42,6 +73,8 @@ In an effort to modernize the codebase, Wand will start migrating from
 :file:`setup.py` to :file:`pyproject.toml`.  The :file:`setup.py` file
 will still be available for Wand 0.7.x releases.
 
+
+.. note::
 
     For "What's New in Wand 0.6", see `previous announcements`_.
 
