@@ -6,7 +6,7 @@ Wand_
 =====
 
 Wand is a ``ctypes``-based simple ImageMagick_ binding for Python,
-supporting 2.7, 3.3+, and PyPy. All functionalities of MagickWand API are
+supporting 3.8+ and PyPy. All functionalities of MagickWand API are
 implemented in Wand.
 
 You can install the package from PyPI_ by using ``pip``:
@@ -26,7 +26,7 @@ revision of the source code from the `GitHub repository`__:
 
 .. _Wand: http://wand-py.org/
 .. _ImageMagick: https://www.imagemagick.org/
-.. _PyPI: https://pypi.python.org/pypi/Wand
+.. _PyPI: https://pypi.org/project/Wand/
 __ https://github.com/emcconville/wand
 
 
@@ -54,24 +54,17 @@ GitHub
    https://github.com/emcconville/wand
 
 Package Index (Cheeseshop)
-   https://pypi.python.org/pypi/Wand
+   https://pypi.org/project/Wand/
 
-   .. image:: https://badge.fury.io/py/Wand.svg?
+   .. image:: https://badge.fury.io/py/Wand.svg
       :alt: Latest PyPI version
-      :target: https://pypi.python.org/pypi/Wand
+      :target: https://pypi.org/project/Wand/
 
 Discord
    https://discord.gg/wtDWDE9fXK
 
 Stack Overflow tag (Q&A)
    http://stackoverflow.com/questions/tagged/wand
-
-Continuous Integration (Travis CI)
-   https://app.travis-ci.com/emcconville/wand
-
-   .. image:: https://app.travis-ci.com/emcconville/wand.svg?branch=master
-      :alt: Build Status
-      :target: https://app.travis-ci.com/emcconville/wand
 
 Continuous Integration (GitHub Actions)
    https://github.com/emcconville/wand/actions
