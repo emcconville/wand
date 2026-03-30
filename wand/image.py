@@ -9951,6 +9951,7 @@ class Image(BaseImage):
             'image/jxl',
             'image/webp',
             'image/x-gif',
+            'image/x-jxl',
         )
         maybe_animation = mimetype in possible_mimetypes
         frame_count = library.MagickGetNumberImages(self.wand)
