@@ -9932,7 +9932,7 @@ class Image(BaseImage):
     @property
     def animation(self):
         """(:class:`bool`) Returns ``True`` if the image mimetype matches a
-        knwon animation format, and the image has more than one frame.
+        known animation format, and contains more than one frame.
 
         .. versionadded:: 0.3.0
 
