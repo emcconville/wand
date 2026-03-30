@@ -9931,9 +9931,29 @@ class Image(BaseImage):
 
     @property
     def animation(self):
-        is_gif = self.mimetype in ('image/gif', 'image/x-gif')
-        frames = library.MagickGetNumberImages(self.wand)
-        return is_gif and frames > 1
+        """(:class:`bool`) Returns ``True`` if the image mimetype matches a
+        knwon animation format, and the image has more than one frame.
+
+        .. versionadded:: 0.3.0
+
+        .. versionchanged:: 0.7.1
+           Included additional popular animation formats.
+        """
+        mimetype = self.mimetype
+        if mimetype is None:
+            return False
+        if mimetype.startswith('video/'):
+            return True
+        possible_mimetypes = (
+            'image/apng',
+            'image/avif',
+            'image/gif',
+            'image/webp',
+            'image/x-gif',
+        )
+        maybe_animation = mimetype in possible_mimetypes
+        frame_count = library.MagickGetNumberImages(self.wand)
+        return maybe_animation and frame_count > 1
 
     @property
     def mimetype(self):

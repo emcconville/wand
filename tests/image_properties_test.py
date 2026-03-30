@@ -39,6 +39,22 @@ def test_alpha_channel_set():
             img.alpha_channel = 'watermark'
 
 
+def test_animation():
+    # GIF image with 2 frames.
+    with Image() as img:
+        img.read(filename='rose:')
+        img.read(filename='rose:')
+        img.format = 'GIF'
+        assert img.animation is True
+    # Non animated image.
+    with Image(filename='rose:') as img:
+        assert img.animation is False
+    # Video format with only one frame.
+    with Image(filename='rose:') as img:
+        img.format = 'MKV'
+        assert img.animation is True
+
+
 def test_artifacts():
     with Image(filename='rose:') as img:
         img.artifacts['key'] = 'value'
