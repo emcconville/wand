@@ -56,7 +56,7 @@ __all__ = ('VERSION', 'VERSION_INFO', 'MAGICK_VERSION',
 #:
 #: .. versionchanged:: 0.1.9
 #:    Becomes :class:`tuple`.  (It was string before.)
-VERSION_INFO = (0, 7, 0)
+VERSION_INFO = (0, 7, 1)
 
 #: (:class:`str`) The version string e.g. ``'0.1.2'``.
 #:

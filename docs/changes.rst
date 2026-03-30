@@ -7,6 +7,16 @@ Wand Changelog
 ~~~~~~~~~~
 
 
+.. _changelog-0.7.1:
+
+Version 0.7.1
+-------------
+
+Unreleased.
+
+ - Updated accepted animation formats for :attr:`Image.animation <wand.image.Image.animation>` property. [:issue:`682`]
+
+
 .. _changelog-0.7.0:
 
 Version 0.7.0
