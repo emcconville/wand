@@ -9948,6 +9948,7 @@ class Image(BaseImage):
             'image/apng',
             'image/avif',
             'image/gif',
+            'image/jxl',
             'image/webp',
             'image/x-gif',
         )
