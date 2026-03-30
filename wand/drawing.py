@@ -928,7 +928,7 @@ class Drawing(Resource):
         library.DrawAlpha(self.resource, x, y, op)
 
     def arc(self, start, end, degree):
-        """Draws a arc using the current :attr:`stroke_color`,
+        """Draws an arc using the current :attr:`stroke_color`,
         :attr:`stroke_width`, and :attr:`fill_color`.
 
         :param start: (:class:`~numbers.Real`, :class:`numbers.Real`)
