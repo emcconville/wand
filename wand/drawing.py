@@ -211,7 +211,7 @@ class Drawing(Resource):
 
         .. versionadded:: 0.4.0
 
-        .. versionchanged: 0.4.1
+        .. versionchanged:: 0.4.1
            Safely release allocated memory with
            :c:func:`MagickRelinquishMemory` instead of :c:func:`libc.free`.
 
@@ -322,7 +322,7 @@ class Drawing(Resource):
     def font(self):
         """(:class:`str`) The current font name.  It also can be set.
 
-        .. versionchanged: 0.4.1
+        .. versionchanged:: 0.4.1
            Safely release allocated memory with
            :c:func:`MagickRelinquishMemory` instead of :c:func:`libc.free`.
 
@@ -345,7 +345,7 @@ class Drawing(Resource):
 
         .. versionadded:: 0.4.0
 
-        .. versionchanged: 0.4.1
+        .. versionchanged:: 0.4.1
            Safely release allocated memory with
            :c:func:`MagickRelinquishMemory` instead of :c:func:`libc.free`.
 
@@ -530,7 +530,7 @@ class Drawing(Resource):
 
         .. versionadded:: 0.4.0
 
-        .. versionchanged: 0.4.1
+        .. versionchanged:: 0.4.1
            Safely release allocated memory with
            :c:func:`MagickRelinquishMemory` instead of :c:func:`libc.free`.
 
@@ -735,7 +735,7 @@ class Drawing(Resource):
         """(:class:`str`) The internally used text encoding setting.
         Although it also can be set, but it's not encouraged.
 
-        .. versionchanged: 0.4.1
+        .. versionchanged:: 0.4.1
            Safely release allocated memory with
            :c:func:`MagickRelinquishMemory` instead of :c:func:`libc.free`.
 
@@ -836,7 +836,7 @@ class Drawing(Resource):
 
         .. versionadded:: 0.4.0
 
-        .. versionchanged: 0.4.1
+        .. versionchanged:: 0.4.1
            Safely release allocated memory with
            :c:func:`MagickRelinquishMemory` instead of :c:func:`libc.free`.
 
@@ -883,7 +883,7 @@ class Drawing(Resource):
 
         """
         if not isinstance(matrix, abc.Sequence) or len(matrix) != 6:
-            raise ValueError('matrix must be a list of size Real numbers')
+            raise ValueError('matrix must be a sequence of 6 Real numbers')
         for idx, val in enumerate(matrix):
             if not isinstance(val, numbers.Real):
                 raise TypeError('expecting numbers.Real in position #' +

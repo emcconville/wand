@@ -2782,12 +2782,13 @@ class BaseImage(Resource):
 
         Some methods in MagickWand's C-API do not respect gravity, but
         instead, expect a x/y offset. This is confusing to folks coming from
-        the CLI documentation that does respect gravity
+        the CLI documentation that does respect gravity.
 
         :param gravity: Value from :const:`GRAVITY_TYPES`.
         :type gravity: :class:`str`
         :raises: :class:`ValueError` if gravity is no known.
-        :returns: :class:`numbers.Intergal` top, :class:`numbers.Intergal` left
+        :returns: :class:`numbers.Integral` top, :class:`numbers.Integral`
+                  left.
 
         .. versionadded:: 0.5.3
         """
@@ -2829,7 +2830,7 @@ class BaseImage(Resource):
         .. versionadded:: 0.5.3
 
         .. versionchanged:: 0.5.5
-           Added optional ``channel`` argument
+           Added optional ``channel`` argument.
         """
         assertions.assert_real(radius=radius, sigma=sigma)
         if channel is None:
@@ -2956,17 +2957,17 @@ class BaseImage(Resource):
                 img.affine(sx=0.9, ry=1.1)
                 img.save(filename='output.png')
 
-        :param sx: Horizontal scale/shear. Default value `1.0`
+        :param sx: Horizontal scale/shear. Default value `1.0`.
         :type sx: :class:`numbers.Real`
-        :param rx: Horizontal rotation. Default value `0.0`
+        :param rx: Horizontal rotation. Default value `0.0`.
         :type rx: :class:`numbers.Real`
-        :param ry: Vertical rotation. Default value `0.0`
+        :param ry: Vertical rotation. Default value `0.0`.
         :type ry: :class:`numbers.Real`
-        :param sy: Vertical scale/shear. Default value `1.0`
+        :param sy: Vertical scale/shear. Default value `1.0`.
         :type sy: :class:`numbers.Real`
-        :param tx: Horizontal translation. Default value `0.0`
+        :param tx: Horizontal translation. Default value `0.0`.
         :type tx: :class:`numbers.Real`
-        :param ty: Vertical translation. Default value `0.0`
+        :param ty: Vertical translation. Default value `0.0`.
         :type ty: :class:`numbers.Real`
 
         .. versionadded:: 0.7.0
@@ -4195,7 +4196,9 @@ class BaseImage(Resource):
         .. tip::
 
             Set :attr:`fuzz` property to increase pixel matching by reducing
-            tolerance of color-value comparisons::
+            tolerance of color-value comparisons.
+
+            .. code::
 
                 from wand.image import Image
                 from wand.version import QUANTUM_RANGE
@@ -7772,17 +7775,17 @@ class BaseImage(Resource):
         """Resizes the image.
 
         :param width: the width in the scaled image. default is the original
-                      width
+                      width.
         :type width: :class:`numbers.Integral`
         :param height: the height in the scaled image. default is the original
                        height
         :type height: :class:`numbers.Integral`
         :param filter: a filter type to use for resizing. choose one in
                        :const:`FILTER_TYPES`. default is ``'undefined'``
-                       which means IM will try to guess best one to use
+                       which means IM will try to guess best one to use.
         :type filter: :class:`str`, :class:`numbers.Integral`
         :param blur: the blur factor where > 1 is blurry, < 1 is sharp.
-                     default is 1
+                     default is 1.
         :type blur: :class:`numbers.Real`
 
         .. versionchanged:: 0.2.1
