@@ -602,6 +602,10 @@ if MAGICK_VERSION_NUMBER >= 0x700:  # pragma: no cover
 #: - ``'cosine'``
 #: - ``'spline'``
 #: - ``'sentinel'``
+#: - ``'lanczosradius'``
+#: - ``'cubicspline'``
+#: - ``'magickernelsharp2013'``
+#: - ``'magickernelsharp2021'``
 #:
 #: .. seealso::
 #:
@@ -615,7 +619,9 @@ FILTER_TYPES = ('undefined', 'point', 'box', 'triangle', 'hermite', 'hanning',
                 'catrom', 'mitchell', 'jinc', 'sinc', 'sincfast', 'kaiser',
                 'welsh', 'parzen', 'bohman', 'bartlett', 'lagrange', 'lanczos',
                 'lanczossharp', 'lanczos2', 'lanczos2sharp', 'robidoux',
-                'robidouxsharp', 'cosine', 'spline', 'sentinel')
+                'robidouxsharp', 'cosine', 'spline', 'lanczosradius',
+                'cubicspline', 'magickernelsharp2013', 'magickernelsharp2021',
+                'sentinel')
 
 
 #: (:class:`tuple`) The list of :attr:`Image.function <BaseImage.function>`

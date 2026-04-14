@@ -15,6 +15,12 @@ Version 0.7.1
 Unreleased.
 
  - Updated accepted animation formats for :attr:`Image.animation <wand.image.Image.animation>` property. [:issue:`682`]
+ - Added new :const:`FILTER_TYPES <wand.image.FILTER_TYPES>` operators. [:issue:`684`]
+
+   - ``'lanczosradius'``
+   - ``'cubicspline'``
+   - ``'magickernelsharp2013'``
+   - ``'magickernelsharp2021'``
 
 
 .. _changelog-0.7.0:
