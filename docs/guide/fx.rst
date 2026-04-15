@@ -241,7 +241,7 @@ Polaroid
 
 .. versionadded:: 0.5.4
 
-Wraps am image in a white board, and a slight shadow to create the special
+Wraps an image in a white board, and a slight shadow to create the special
 effect of a Polaroid print.
 
 .. code-block:: python
@@ -406,7 +406,7 @@ Tint
 .. versionadded:: 0.5.3
 
 Tint colorizes midtones of an image by blending the given ``color``.
-The ``alpha`` parameter controls how the blend is effected between color
+The ``alpha`` parameter controls how the blend is affected between color
 channels. However, this can be tricky to use, so when in doubt, use a
 ``alpha="gray(50)"`` argument.
 

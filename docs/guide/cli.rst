@@ -322,7 +322,7 @@ This table maps ImageMagick's CLI operators to Wand's
 CLI Options to Wand Properties
 ------------------------------
 
-This table list ImageMagick's options, and maps them to Wand's
+This table lists ImageMagick's options, and maps them to Wand's
 :class:`~wand.image.Image` properties.
 
 +------------------------+--------------------------------------------------+

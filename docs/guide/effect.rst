@@ -269,7 +269,7 @@ to reduce noise in an image, but also preserves edges.
 
 .. code-block:: python
 
-    from image.wand import Image
+    from wand.image import Image
 
     with Image(filename="hummingbird.jpg") as img:
         img.kuwahara(radius=2, sigma=1.5)
@@ -290,9 +290,9 @@ Shade
 
 .. versionadded:: 0.5.0
 
-Creates a 3D effect by simulating light from source where ``aziumth`` controls
+Creates a 3D effect by simulating light from source where ``azimuth`` controls
 the X/Y angle, and ``elevation`` controls the Z angle. You can also determine
-of the resulting image should be transformed to grayscale by passing ``gray``
+whether the resulting image should be transformed to grayscale by passing ``gray``
 boolean.
 
 .. code-block:: python

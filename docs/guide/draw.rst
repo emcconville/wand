@@ -42,7 +42,7 @@ An example::
         draw.stroke_color = Color('black')
         draw.stroke_width = 2
         draw.fill_color = Color('white')
-        draw.arc(( 25, 25),  # Stating point
+        draw.arc(( 25, 25),  # Starting point
                  ( 75, 75),  # Ending point
                  (135,-45))  # From bottom left around to top right
         with Image(width=100,
@@ -543,7 +543,7 @@ Both horizontal & vertical can be set independently with
     draw.rectangle(left=10, top=10, width=30, height=30, xradius=5, yradius=3)
     draw(image)
 
-Note that the stoke and the fill are determined by the following properties:
+Note that the stroke and the fill are determined by the following properties:
 
 - :attr:`~wand.drawing.Drawing.stroke_color`
 - :attr:`~wand.drawing.Drawing.stroke_dash_array`

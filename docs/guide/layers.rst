@@ -99,7 +99,7 @@ Frame 6 size : (26, 27) page: (100, 100, 52, 52)
 
 .. image:: ../_images/layers-optmized-layers.png
 
-Notice each frame after the first has a reduce size & page x/y offset.
+Notice each frame after the first has a reduced size & page x/y offset.
 Contacting each frame shows only the minimum bounding region covering the pixel
 changes across each previous frame. *Note: the lime-green background is only
 there for a visual cue one the website, and has not special meaning outside of
