@@ -4,7 +4,7 @@ Colorspace
 Image types
 -----------
 
-Every :class:`~wand.image.Image` object has  :attr:`~wand.image.BaseImage.type`
+Every :class:`~wand.image.Image` object has :attr:`~wand.image.BaseImage.type`
 property which identifies its colorspace.  The value can be one of
 :const:`~wand.image.IMAGE_TYPES` enumeration, and set of its available
 values depends on its :attr:`~wand.image.Image.format` as well.  For example,

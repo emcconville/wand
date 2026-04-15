@@ -310,7 +310,7 @@ Smooth applies both `Open`_ & `Close`_ methods. This will remove small objects
 Edge In
 '''''''
 
-Edge In method performs a `Erode`_, but only keeps the targeted pixel next
+Edge In method performs an `Erode`_, but only keeps the targeted pixel next
 to a shape. This means the edge is drawn just inside the white of a object.
 
 .. code-block:: python

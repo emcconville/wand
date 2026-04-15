@@ -94,7 +94,7 @@ MacPorts
 
       $ sudo port install imagemagick
 
-   If your Python in not installed using MacPorts, you have to export
+   If your Python is not installed using MacPorts, you have to export
    :envvar:`MAGICK_HOME` path as well.  Because Python that is not installed
    using MacPorts doesn't look up :file:`/opt/local`, the default path prefix
    of MacPorts packages.
@@ -146,7 +146,7 @@ libraries for C and C++` to make Wand able to link to it.
 Lastly you have to set :envvar:`MAGICK_HOME` environment variable to the path
 of ImageMagick (e.g. :file:`C:\\Program Files\\ImageMagick-6.9.3-Q16`).
 You can set it in :menuselection:`Computer --> Properties -->
-Advanced system settings --> Advanced --> Enviro&nment Variables...`.
+Advanced system settings --> Advanced --> Environment Variables...`.
 
 
 .. _explicit-link:

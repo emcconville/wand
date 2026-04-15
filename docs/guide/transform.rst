@@ -152,7 +152,7 @@ The type of statistic operation can be any of the following.
  - ``'root_mean_square'``
  - ``'standard_deviation'``
 
-The size neighboring pixels to evaluate can be defined by passing ``width``,
+The size of neighboring pixels to evaluate can be defined by passing ``width``,
 and ``height`` kwargs.
 
 .. code::
