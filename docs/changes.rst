@@ -22,6 +22,8 @@ Unreleased.
    - ``'magickernelsharp2013'``
    - ``'magickernelsharp2021'``
 
+ - [DOC] Fixed typos in documentation [:pull:`685` by Shawn Presser]
+
 
 .. _changelog-0.7.0:
 
