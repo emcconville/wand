@@ -36,7 +36,7 @@ Virtual Pixels
 ''''''''''''''
 
 When performing distortion on raster images, the resulting image often includes
-pixels that are outside original bounding raster. These regions are referred to
+pixels that are outside the original bounding raster. These regions are referred to
 as vertical pixels, and can be controlled by setting
 :attr:`Image.virtual_pixel <wand.image.BaseImage.virtual_pixel>` to any value
 defined in :const:`~wand.image.VIRTUAL_PIXEL_METHOD`.
@@ -425,7 +425,7 @@ preserve aspect ratios.
     Radius\ :sub:`max`, Radius\ :sub:`min`, Center\ :sub:`x`, Center\ :sub:`y`, Angle\ :sub:`start`, Angle\ :sub:`end`
 
 All the arguments are optional, and an argument of ``0`` will use the distance
-of the center to the closet edge as the default radius.
+of the center to the closest edge as the default radius.
 
 For example::
 

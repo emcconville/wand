@@ -115,7 +115,7 @@ To understand the fundamental changes, please review
 
 .. _Porting to ImageMagick Version 7: https://www.imagemagick.org/script/porting.php
 
-Notes on Porting 6 t0 7
+Notes on Porting 6 to 7
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 A few key changes worth reviewing.
@@ -124,10 +124,10 @@ A few key changes worth reviewing.
 HDRI by Default
 '''''''''''''''
 Vanilla installs of ImageMagick-7 include HDRI enabled by default. Users may
-experiences increase depth of color, but with reduced performances during
+experience increased depth of color, but with reduced performance during
 certain color manipulation routines. Max color-values should never be
 hard-coded, but rely on :attr:`Image.quantum_range <wand.image.BaseImage.quantum_range>` to ensure
-consistent results. It is also possible to experiences color-value underflow /
+consistent results. It is also possible to experience color-value underflow /
 overflow during arithmetic operations when upgrading.
 
 An example of an underflow between versions::

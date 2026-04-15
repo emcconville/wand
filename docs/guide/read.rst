@@ -41,7 +41,7 @@ The most frequently used way is just to open an image by its filename.
 
 .. _read-input-stream:
 
-Read a input stream
+Read an input stream
 -------------------
 
 If an image to open cannot be located by a filename but can be read through

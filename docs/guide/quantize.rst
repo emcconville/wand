@@ -86,7 +86,7 @@ Quantize
 
 .. versionadded:: 0.4.2
 
-Analyzes the colors in an image, and replace pixel values from a fixed number
+Analyzes the colors in an image, and replaces pixel values from a fixed number
 of color.
 
 .. code-block:: python

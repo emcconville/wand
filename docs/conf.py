@@ -220,7 +220,8 @@ htmlhelp_basename = 'Wanddoc'
 # (source start file, target name, title, author,
 #  documentclass [howto/manual]).
 latex_documents = [
-    ('index', 'Wand.tex', 'Wand Documentation', 'Hong Minhee \\and E. McConville', 'manual'),
+    ('index', 'Wand.tex', 'Wand Documentation',
+     'Hong Minhee \\and E. McConville', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -263,9 +264,11 @@ intersphinx_mapping = {'python': ('https://docs.python.org/3', None)}
 extlinks = {
     'issue': ('https://github.com/emcconville/wand/issues/%s', '#%s'),
     'pull': ('https://github.com/emcconville/wand/pull/%s', '!%s'),
-    'branch': ('https://github.com/emcconville/wand/compare/master...%s', '%s'),
+    'branch': ('https://github.com/emcconville/wand/compare/master...%s',
+               '%s'),
     'commit': ('https://github.com/emcconville/wand/commit/%s', '%s'),
-    'cli': ('https://imagemagick.org/script/command-line-options.php#%s', '-%s'),
+    'cli': ('https://imagemagick.org/script/command-line-options.php#%s',
+            '-%s'),
 }
 
 # fall back if theme is not there
