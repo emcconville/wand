@@ -60,7 +60,7 @@ method with the keyword argument ``filename``::
 
 .. note::
 
-    The image format does not effect the file being saved, to save with a given colorspace use::
+    The image format does not affect the file being saved, to save with a given colorspace use::
 
         from wand.image import Image
 
@@ -97,7 +97,7 @@ Want just a binary string of the image? Use
 
     from wand.image import Image
 
-    with image(filename='pikachu.png') as img:
+    with Image(filename='pikachu.png') as img:
         img.format = 'jpeg'
         jpeg_bin = img.make_blob()
 
