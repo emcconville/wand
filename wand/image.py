@@ -2067,7 +2067,7 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.4
         """
-        size_ptr = ctypes.c_size_t(0)
+        size_ptr = ctypes.c_ulonglong(0)
         library.MagickGetImageLength(self.wand, ctypes.byref(size_ptr))
         return size_ptr.value
 
