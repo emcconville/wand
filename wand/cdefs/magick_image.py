@@ -6,7 +6,7 @@
 from ctypes import (CFUNCTYPE, POINTER, c_bool, c_char_p, c_double, c_int,
                     c_size_t, c_ubyte, c_void_p)
 
-from wand.cdefs.wandtypes import c_ssize_t
+from wand.cdefs.wandtypes import c_ssize_t, c_magick_size_t
 
 __all__ = ('MagickProgressMonitor', 'load')
 
@@ -545,7 +545,7 @@ def load(lib, IM_VERSION):
             c_void_p, POINTER(c_double), POINTER(c_double)
         ]
         lib.MagickGetImageKurtosis.restype = c_bool
-    lib.MagickGetImageLength.argtypes = [c_void_p, POINTER(c_size_t)]
+    lib.MagickGetImageLength.argtypes = [c_void_p, POINTER(c_magick_size_t)]
     lib.MagickGetImageLength.restype = c_bool
     if is_im_7:
         lib.MagickGetImageMask.argtypes = [c_void_p, c_int]

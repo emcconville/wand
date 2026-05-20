@@ -22,6 +22,7 @@ from .api import libc, libmagick, library
 from .cdefs.structures import (AffineMatrix, CCObjectInfo, CCObjectInfo70A,
                                CCObjectInfo710, ChannelFeature, GeometryInfo,
                                PixelInfo, RectangleInfo)
+from .cdefs.wandtypes import c_magick_size_t
 from .color import Color
 from .compat import binary, encode_filename, text, to_bytes
 from .exceptions import (MissingDelegateError, WandException,
@@ -2067,7 +2068,7 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.4
         """
-        size_ptr = ctypes.c_ulonglong(0)
+        size_ptr = c_magick_size_t(0)
         library.MagickGetImageLength(self.wand, ctypes.byref(size_ptr))
         return size_ptr.value
 

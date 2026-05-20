@@ -4,9 +4,9 @@
 .. versionadded:: 0.5.0
 """
 from ctypes import (POINTER, c_bool, c_char_p, c_double, c_int, c_size_t,
-                    c_ubyte, c_uint, c_ulong, c_ulonglong, c_void_p)
+                    c_ubyte, c_uint, c_ulong, c_void_p)
 
-from wand.cdefs.wandtypes import c_ssize_t
+from wand.cdefs.wandtypes import c_ssize_t, c_magick_size_t
 
 __all__ = ('load',)
 
@@ -91,9 +91,9 @@ def load(lib, IM_VERSION):
     lib.MagickGetPointsize.restype = c_double
     lib.MagickGetQuantumRange.argtypes = [POINTER(c_size_t)]
     lib.MagickGetResource.argtypes = [c_int]
-    lib.MagickGetResource.restype = c_ulonglong
+    lib.MagickGetResource.restype = c_magick_size_t
     lib.MagickGetResourceLimit.argtypes = [c_int]
-    lib.MagickGetResourceLimit.restype = c_ulonglong
+    lib.MagickGetResourceLimit.restype = c_magick_size_t
     lib.MagickGetSamplingFactors.argtypes = [c_void_p, POINTER(c_size_t)]
     lib.MagickGetSamplingFactors.restype = POINTER(c_double)
     lib.MagickGetSize.argtypes = [c_void_p, POINTER(c_uint), POINTER(c_uint)]
@@ -172,7 +172,7 @@ def load(lib, IM_VERSION):
     lib.MagickSetPointsize.restype = c_bool
     lib.MagickSetResolution.argtypes = [c_void_p, c_double, c_double]
     lib.MagickSetResolution.restype = c_bool
-    lib.MagickSetResourceLimit.argtypes = [c_int, c_ulonglong]
+    lib.MagickSetResourceLimit.argtypes = [c_int, c_magick_size_t]
     lib.MagickSetResourceLimit.restype = c_bool
     lib.MagickSetSamplingFactors.argtypes = [
         c_void_p, c_size_t, POINTER(c_double)

@@ -12,6 +12,7 @@ import warnings
 from collections import abc
 
 from .api import library
+from .cdefs.wandtypes import c_magick_size_t
 from .exceptions import TYPE_MAP, WandException
 from .version import MAGICK_VERSION_NUMBER
 
@@ -356,8 +357,8 @@ class ResourceLimits(abc.MutableMapping):
         .. versionadded:: 0.5.1
         """
         genesis()
-        ull = ctypes.c_ulonglong(limit)
-        library.MagickSetResourceLimit(self._to_idx(resource), ull)
+        magick_size = c_magick_size_t(limit)
+        library.MagickSetResourceLimit(self._to_idx(resource), magick_size)
 
 
 #: (:class:`ResourceLimits`) Helper to get & set Magick Resource Limits.

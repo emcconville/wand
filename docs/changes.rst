@@ -22,6 +22,9 @@ Unreleased.
    - ``'magickernelsharp2013'``
    - ``'magickernelsharp2021'``
 
+ - Fixed :meth:`Image.length_of_bytes() <wand.image.BaseImage.length_of_bytes>` method
+   by refactoring & applying :const:`c_magick_size_t <wand.cdefs.wandtypes.c_magick_size_t>`
+   type. [:issue:`686`]
  - [DOC] Fixed typos in documentation [:pull:`685` by Shawn Presser]
 
 

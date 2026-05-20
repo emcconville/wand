@@ -5,6 +5,7 @@
 """
 import ctypes
 import os
+import platform
 import sys
 
 __all__ = ('c_magick_real_t', 'c_magick_size_t', 'c_ssize_t')
@@ -34,11 +35,10 @@ else:
 del env_real
 
 
-# FIXME: Might need to rewrite to check against c_void_p size;
-# like `c_ssize_t` above, and not against window platform.
-if ctypes.sizeof(ctypes.c_size_t) == 8:
-    c_magick_size_t = ctypes.c_size_t
-elif ctypes.sizeof(ctypes.c_ulonglong) == 8:
-    c_magick_size_t = ctypes.c_ulonglong
+if platform.system() != 'Windows':
+    if ctypes.sizeof(ctypes.c_ulonglong) == 8:
+        c_magick_size_t = ctypes.c_ulonglong
+    else:
+        c_magick_size_t = ctypes.c_size_t
 else:
     c_magick_size_t = ctypes.c_uint64
