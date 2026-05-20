@@ -12,7 +12,7 @@ Wand Changelog
 Version 0.7.1
 -------------
 
-Unreleased.
+Released on May 20th, 2026.
 
  - Updated accepted animation formats for :attr:`Image.animation <wand.image.Image.animation>` property. [:issue:`682`]
  - Added new :const:`FILTER_TYPES <wand.image.FILTER_TYPES>` operators. [:issue:`684`]
