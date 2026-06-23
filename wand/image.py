@@ -13,6 +13,7 @@ error happened)::
 import ctypes
 import functools
 import numbers
+import os
 import weakref
 from collections import abc
 from io import IOBase
@@ -9879,6 +9880,12 @@ class Image(BaseImage):
                      callable(getattr(file, 'fileno', None)),
                      hasattr(file, 'mode'))
             if all(is_fd):
+                try:
+                    # Resync the fd offset before reading
+                    os.lseek(file.fileno(), file.tell(), os.SEEK_SET)
+                except (OSError, ValueError):
+                    # Do nothing if stream isn't seekable
+                    pass
                 fd = libc.fdopen(file.fileno(), binary(file.mode))
                 r = library.MagickPingImageFile(instance.wand, fd)
             elif not callable(getattr(file, 'read', None)):
@@ -10465,6 +10472,12 @@ class Image(BaseImage):
                      callable(getattr(file, 'fileno', None)),
                      hasattr(file, 'mode'))
             if all(is_fd):
+                try:
+                    # Resync the fd offset before reading
+                    os.lseek(file.fileno(), file.tell(), os.SEEK_SET)
+                except (OSError, ValueError):
+                    # Do nothing if stream isn't seekable
+                    pass
                 fd = libc.fdopen(file.fileno(), binary(file.mode))
                 r = library.MagickReadImageFile(self.wand, fd)
             elif not callable(getattr(file, 'read', None)):

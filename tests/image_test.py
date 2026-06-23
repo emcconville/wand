@@ -122,6 +122,15 @@ def test_read_from_unicode_filename(fx_asset, tmp_path):
         assert img.width == 402
 
 
+def test_read_from_file_after_buffered_peek(fx_asset):
+    fpath = fx_asset.joinpath('mona-lisa.jpg')
+    with open(fpath, 'rb') as f:
+        f.read(16)
+        f.seek(0)
+        with Image(file=f) as img:
+            assert img.width == 402
+
+
 def test_read_with_colorspace(fx_asset):
     fpath = str(fx_asset.joinpath('cmyk.jpg'))
     with Image(filename=fpath,
@@ -278,6 +287,14 @@ def test_ping_from_blob(fx_asset):
 
 def test_ping_from_file(fx_asset):
     with fx_asset.joinpath('mona-lisa.jpg').open('rb') as fd:
+        with Image.ping(file=fd) as img:
+            assert img.size == (402, 599)
+
+
+def test_ping_from_file_after_buffered_peek(fx_asset):
+    with fx_asset.joinpath('mona-lisa.jpg').open('rb') as fd:
+        fd.read(16)
+        fd.seek(0)
         with Image.ping(file=fd) as img:
             assert img.size == (402, 599)
 
