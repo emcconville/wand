@@ -14,7 +14,7 @@ __all__ = ('load',)
 
 def load(lib, IM_VERSION):
     """Define Drawing Wand methods. The ImageMagick version is given as a
-    second argument for comparison. This will quick to determine which methods
+    second argument for comparison. This will quickly determine which methods
     are available from the library, and can be implemented as::
 
         if IM_VERSION < 0x700:

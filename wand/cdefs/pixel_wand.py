@@ -14,7 +14,7 @@ __all__ = ('load',)
 
 def load(lib, IM_VERSION, IM_QUANTUM_DEPTH, IM_HDRI):
     """Define Pixel Wand methods. The ImageMagick version is given as
-    a second argument for comparison. This will quick to determine which
+    a second argument for comparison. This will quickly determine which
     methods are available from the library, and can be implemented as::
 
         if IM_VERSION < 0x700:
