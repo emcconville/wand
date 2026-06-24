@@ -6,7 +6,7 @@
 from ctypes import (POINTER, c_bool, c_char_p, c_double, c_int, c_size_t,
                     c_ubyte, c_uint, c_ulong, c_void_p)
 
-from wand.cdefs.wandtypes import c_ssize_t, c_magick_size_t
+from wand.cdefs.wandtypes import c_magick_size_t, c_ssize_t
 
 __all__ = ('load',)
 
