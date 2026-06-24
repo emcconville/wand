@@ -9,8 +9,10 @@ except ImportError:
 CFG_ROOT = Path(__file__).parent.parent
 CFG_PATH = CFG_ROOT / "pyproject.toml"
 
+
 def test_pyproject_exists():
     assert CFG_PATH.exists()
+
 
 @mark.skipif(tomllib is None, reason="tomllib not available")
 def test_pyproject_valid():
