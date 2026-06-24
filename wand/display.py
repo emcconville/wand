@@ -16,7 +16,7 @@ You can use it from CLI also.  Execute :mod:`wand.display` module through
 
 .. sourcecode:: console
 
-   $ python -m wand.display wandtests/assets/mona-lisa.jpg
+   $ python -m wand.display tests/assets/mona-lisa.jpg
 
 .. versionadded:: 0.1.9
 

@@ -332,7 +332,7 @@ COMPLEX_OPERATORS = ('undefined', 'add', 'conjugate', 'divide', 'magnitude',
 #: - ``'screen'``
 #: - ``'seamless_blend'`` - Added with ImageMagick-7.1.1
 #: - ``'soft_burn'`` - Added with ImageMagick-7.0.10
-#: - ``'soft_dudge'`` - Added with ImageMagick-7.0.10
+#: - ``'soft_dodge'`` - Added with ImageMagick-7.0.10
 #: - ``'soft_light'``
 #: - ``'src_atop'``
 #: - ``'src'``
@@ -3103,7 +3103,7 @@ class BaseImage(Resource):
     @trap_exception
     def bilateral_blur(self, width=1.0, height=None, intensity=None,
                        spatial=None):
-        """Noise-reducing Gaussian distrbution filter. Preserves edges by
+        """Noise-reducing Gaussian distribution filter. Preserves edges by
         replacing pixel intensity with weighted averages of neighboring
         pixels. Parameters ``width`` & ``height`` define the area-size around
         each pixel to include in the neighboring sample.
@@ -3201,7 +3201,7 @@ class BaseImage(Resource):
            Added optional ``channel`` argument.
 
         .. versionchanged:: 0.5.7
-           Positional arguments ``radius`` & ``sigman`` have been converted to
+           Positional arguments ``radius`` & ``sigma`` have been converted to
            key-word arguments.
         """
         assertions.assert_real(radius=radius, sigma=sigma)
@@ -5269,11 +5269,11 @@ class BaseImage(Resource):
                   x=0, y=0, invert=False, channel='default_channels'):
         """Changes pixel value to ``fill`` color at (``x``, ``y``) coordinate,
         and repeats for all neighboring pixels until border is reached. Use
-        ``fuzz`` and/or ``bordercolor`` to defined tolarance & border values.
+        ``fuzz`` and/or ``bordercolor`` to defined tolerance & border values.
 
         :param fill: New target color value.
         :type fill: :class:`wand.color.Color` or :class:`str`
-        :param fuzz: Fill threashold. Values between `0.0` and `1.0`. Default
+        :param fuzz: Fill threshold. Values between `0.0` and `1.0`. Default
                      `0.1` (10%).
         :type fuzz: :class:`numbers.Real`
         :param bordercolor: Optional color to use as a border. Default
@@ -5641,7 +5641,7 @@ class BaseImage(Resource):
 
         :param image: Image to reference.
         :type image: :class:`wand.image.BaseImage`
-        :param metric: Compare disortion metric to use. See
+        :param metric: Compare distortion metric to use. See
                        :const:`COMPARE_METRICS`.
         :type metric: :class:`str`
         :returns: Computed value of the distortion metric used.
@@ -6004,7 +6004,7 @@ class BaseImage(Resource):
         :param max_iterations: maximum number of iterations needed until
                                convergence. Default ``100``.
         :type max_iterations: :class:`numbers.Integral`
-        :param tolerance: maximum tolerance between distrotion iterations.
+        :param tolerance: maximum tolerance between distortion iterations.
                           Default ``0.01``
         :type tolerance: :class:`numbers.Real`
 
@@ -6100,7 +6100,7 @@ class BaseImage(Resource):
     def label(self, text, left=None, top=None, font=None, gravity=None,
               background_color='transparent'):
         """Writes a label ``text`` into the position on top of the existing
-        canvas. This method doesn't autofit text like :meth:`caption`. Use
+        canvas. This method doesn't auto-fit text like :meth:`caption`. Use
         ``left`` & ``top``, or ``gravity``, to position the text.
 
         :param text: text to write.
@@ -7224,7 +7224,7 @@ class BaseImage(Resource):
             Not all percent escaped values can be populated as I/O operations
             are managed by Python, and not the CLI utility.
 
-        :param string_format: The precent escaped string to be translated.
+        :param string_format: The percent escaped string to be translated.
         :type string_format: :class:`str`
         :returns: String of expanded values.
         :rtype: :class:`str`
@@ -7406,7 +7406,7 @@ class BaseImage(Resource):
 
         .. versionchanged:: 0.7.0
            The default value for ``colorspace_type`` argument
-           is now set to ``"undefeined"`` to match CLI behavior.
+           is now set to ``"undefined"`` to match CLI behavior.
         """
         assertions.assert_integer(number_colors=number_colors)
         assertions.string_in_list(COLORSPACE_TYPES,
@@ -7435,7 +7435,7 @@ class BaseImage(Resource):
     @trap_exception
     def random_threshold(self, low=0.0, high=1.0, channel=None):
         """Performs a random dither to force a pixel into a binary black &
-        white state. Each color channel operarates independently from each
+        white state. Each color channel operates independently from each
         other.
 
         :param low: bottom threshold. Any pixel value below the given value
@@ -7519,14 +7519,14 @@ class BaseImage(Resource):
     @trap_exception
     def range_threshold(self, low_black=0.0, low_white=None, high_white=None,
                         high_black=None):
-        """Applies soft & hard thresholding.
+        """Applies soft & hard threshold.
 
-        For a soft thresholding, parameters should be monotonically increasing:
+        For a soft threshold, parameters should be monotonically increasing:
 
             with Image(filename='text.png') as img:
                 img.range_threshold(0.2, 0.4, 0.6, 0.8)
 
-        For a hard thresholding, parameters should be the same:
+        For a hard threshold, parameters should be the same:
 
             with Image(filename='text.png') as img:
                 img.range_threshold(0.4, 0.4, 0.6, 0.6)
@@ -7854,7 +7854,7 @@ class BaseImage(Resource):
         :type x: :class:`numbers.Integral`
         :param y: Number of rows to roll over. Negative value will roll
                   pixels from bottom-to-top, and positive value will roll
-                  pixels from top-to-bottm. Default value: ``0``.
+                  pixels from top-to-bottom. Default value: ``0``.
         :type y: :class:`numbers.Integral`
 
         .. versionadded:: 0.6.8
@@ -8869,10 +8869,10 @@ class BaseImage(Resource):
           Only one % symbol is needed.
 
         **width**
-          Width given, height automagically selected to preserve aspect ratio.
+          Width given, height automatically selected to preserve aspect ratio.
 
         ``x``\\ \\ **height**
-          Height given, width automagically selected to preserve aspect ratio.
+          Height given, width automatically selected to preserve aspect ratio.
 
         **width**\\ ``x``\\ **height**
           Maximum values of width and height given; aspect ratio preserved.
@@ -9697,7 +9697,7 @@ class Image(BaseImage):
         :type units: :class:`numbers.Integral`
         :param width: Defines how wide a blank canvas should be. Only used if
                       ``height`` is also defined.
-        :type width: :class:`numbers.Intragal`
+        :type width: :class:`numbers.Integral`
 
         .. versionadded:: 0.6.3
         """
@@ -10296,7 +10296,7 @@ class Image(BaseImage):
                      Thumbnail labeling will only be rendered if ``'label'``
                      value in :attr:`options` dict is defined.
         :type font: :class:`~wand.font.Font`
-        :param tile: The number of thunbnails per rows & column on a page.
+        :param tile: The number of thumbnails per rows & column on a page.
                      Example: ``"6x4"``.
         :type tile: :class:`str`
         :param thumbnail: Preferred image size. Montage will attempt to
@@ -10307,7 +10307,7 @@ class Image(BaseImage):
         :param mode: Which effect to render. Options include ``"frame"``,
                      ``"unframe"``, and ``"concatenate"``. Default ``"frame"``.
         :type mode: :class:`str`
-        :param frame: Define ornamental boarder around each thrumbnail.
+        :param frame: Define ornamental boarder around each thumbnail.
                       The color of the frame is defined by the image's matte
                       color. Example: ``"15x15+3+3"``.
         :type frame: :class:`str`
@@ -10437,7 +10437,7 @@ class Image(BaseImage):
                            useful for vectorial formats (like PDF)
         :type resolution: :class:`collections.abc.Sequence`,
                           :class:`numbers.Integral`
-        :param sampling_factors: set up/down stampling factors for YUV data
+        :param sampling_factors: set up/down sampling factors for YUV data
                                  stream. Usually ``"4:2:2"``
         :type sampling_factors: :class:`collections.abc.Sequence`,
                                 :class:`str`
@@ -10825,7 +10825,7 @@ class Metadata(ImageProperty, abc.MutableMapping):
 
 class ArtifactTree(ImageProperty, abc.MutableMapping):
     """Splay tree to map image artifacts. Values defined here
-    are intended to be used elseware, and will not be written
+    are intended to be used elsewhere, and will not be written
     to the encoded image.
 
     For example::

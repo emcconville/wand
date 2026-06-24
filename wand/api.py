@@ -169,11 +169,11 @@ except (OSError, IOError):
         else:
             msg += '#install-imagemagick-on-mac'
     elif hasattr(platform, 'linux_distribution'):
-        distname, _, __ = platform.linux_distribution()
-        distname = (distname or '').lower()
-        if distname in ('debian', 'ubuntu'):
+        distro_name, _, __ = platform.linux_distribution()
+        distro_name = (distro_name or '').lower()
+        if distro_name in ('debian', 'ubuntu'):
             msg = 'apt-get install libmagickwand-dev'
-        elif distname in ('fedora', 'centos', 'redhat'):
+        elif distro_name in ('fedora', 'centos', 'redhat'):
             msg = 'yum install ImageMagick-devel'
     raise ImportError('MagickWand shared library not found.\n'
                       'You probably had not installed ImageMagick library.\n'

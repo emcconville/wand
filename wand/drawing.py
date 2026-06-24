@@ -484,7 +484,7 @@ class Drawing(Resource):
     def stroke_antialias(self):
         """(:class:`bool`) Controls whether stroked outlines are antialiased.
         Stroked outlines are antialiased by default. When antialiasing is
-        disabled stroked pixels are thresholded to determine if the stroke
+        disabled stroked pixels are threshold to determine if the stroke
         color or underlying canvas color should be used.
 
         It also can be set.
@@ -1365,7 +1365,7 @@ class Drawing(Resource):
         two radii (rx, ry) in ``radius`` and an ``rotation`` parameters,
         which indicates how the ellipse as a whole is
         rotated relative to the current coordinate system. The center of the
-        ellipse is calculated automagically to satisfy the constraints imposed
+        ellipse is calculated automatically to satisfy the constraints imposed
         by the other parameters. ``large_arc`` and ``clockwise`` contribute to
         the automatic calculations and help determine how the arc is drawn.
         If ``large_arc`` is True then draw the larger of the available arcs.
