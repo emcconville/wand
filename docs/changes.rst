@@ -12,7 +12,9 @@ Wand Changelog
 Version 0.7.2
 -------------
 
-Unreleased.
+Released on June 25th, 2026.
+
+ - Fixed de-synced offsets during file read operations. [:issue:`688` & :pull:`689` by Max Gilmour]
 
 
 .. _changelog-0.7.1:
