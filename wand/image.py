@@ -1581,7 +1581,7 @@ class BaseImage(Resource):
 
     @property
     def border_color(self):
-        """(:class:`wand.color.Color`) The image border color. Used for
+        """(:class:`~wand.color.Color`) The image border color. Used for
         special effects like :meth:`polaroid()`.
 
         .. versionadded:: 0.5.4
@@ -2086,7 +2086,7 @@ class BaseImage(Resource):
 
     @property
     def matte_color(self):
-        """(:class:`wand.color.Color`) The color value of the matte channel.
+        """(:class:`~wand.color.Color`) The color value of the matte channel.
         This can also be set.
 
         .. versionadded:: 0.4.1
@@ -3225,7 +3225,7 @@ class BaseImage(Resource):
         """Surrounds the image with a border.
 
         :param bordercolor: the border color pixel wand
-        :type image: :class:`~wand.color.Color`
+        :type image: :class:`~wand.color.Color` or :class:`str`
         :param width: the border width
         :type width: :class:`numbers.Integral`
         :param height: the border height
@@ -3641,9 +3641,9 @@ class BaseImage(Resource):
         :param index: The color position of the image palette.
         :type index: :class:`numbers.Integral`
         :param color: Optional color to _set_ at the given index.
-        :type color: :class:`wand.color.Color`
+        :type color: :class:`~wand.color.Color` or :class:`str`
         :returns: Color at index.
-        :rtype: :class:`wand.color.Color`
+        :rtype: :class:`~wand.color.Color`
 
         .. versionadded:: 0.5.3
         """
@@ -3787,9 +3787,9 @@ class BaseImage(Resource):
             This method is only works with ImageMagick-7.0.10, or later.
 
         :param start: Color to begin color range.
-        :type start: :class:`wand.color.Color`
+        :type start: :class:`~wand.color.Color` or :class:`str`
         :param stop: Color to end color range.
-        :type stop: :class:`wand.color.Color`
+        :type stop: :class:`~wand.color.Color` or :class:`str`
 
         .. versionadded:: 0.6.4
         """
@@ -3817,9 +3817,9 @@ class BaseImage(Resource):
         :see: Example of :ref:`colorize`.
 
         :param color: Color to paint image with.
-        :type color: :class:`wand.color.Color`
+        :type color: :class:`~wand.color.Color` or :class:`str`
         :param alpha: Defines how to blend color.
-        :type alpha: :class:`wand.color.Color`
+        :type alpha: :class:`~wand.color.Color` or :class:`str`
 
         .. versionadded:: 0.5.3
         """
@@ -4499,7 +4499,7 @@ class BaseImage(Resource):
 
         :param background: Define which color value to evaluate as the
                            background.
-        :type background: :class:`str` or :class:`~wand.color.Color`
+        :type background: :class:`~wand.color.Color` or :class:`str`
         :returns: list of points
         :rtype: :class:`list` [ :class:`tuple` ( :class:`float`,
                 :class:`float` ) ]
@@ -5272,13 +5272,13 @@ class BaseImage(Resource):
         ``fuzz`` and/or ``bordercolor`` to defined tolerance & border values.
 
         :param fill: New target color value.
-        :type fill: :class:`wand.color.Color` or :class:`str`
+        :type fill: :class:`~wand.color.Color` or :class:`str`
         :param fuzz: Fill threshold. Values between `0.0` and `1.0`. Default
                      `0.1` (10%).
         :type fuzz: :class:`numbers.Real`
         :param bordercolor: Optional color to use as a border. Default
                             :const:`None`.
-        :type bordercolor: :class:`wand.color.Color` or :class:`str`
+        :type bordercolor: :class:`~wand.color.Color` or :class:`str`
         :param x: Starting point X coordinate. Default ``0``.
         :type x: :class:`number.Integral`
         :param y: Starting point Y coordinate. Default ``0``.
@@ -5392,7 +5392,7 @@ class BaseImage(Resource):
         Inner & outer bevel can simulate a 3D effect.
 
         :param matte: color of the frame
-        :type matte: :class:`wand.color.Color`
+        :type matte: :class:`~wand.color.Color` or :class:`str`
         :param width: total size of frame on x-axis
         :type width: :class:`numbers.Integral`
         :param height: total size of frame on y-axis
@@ -6113,6 +6113,8 @@ class BaseImage(Resource):
         :type font: :class:`wand.font.Font`
         :param gravity: text placement gravity.
         :type gravity: :class:`str`
+        :param background_color: the text's canvas color.
+        :type background_color: :class:`~wand.color.Color` or :class:`str`
 
         .. versionadded:: 0.6.8
         """
@@ -7006,9 +7008,9 @@ class BaseImage(Resource):
         the ``target`` color.
 
         :param target: The color to match.
-        :type target: :class:`wand.color.Color`
+        :type target: :class:`~wand.color.Color` or :class:`str`
         :param fill: The color to paint with.
-        :type fill: :class:`wand.color.Color`
+        :type fill: :class:`~wand.color.Color` or :class:`str`
         :param fuzz: Normalized real number between `0.0` and
                      :attr:`quantum_range`. Default is `0.0`.
         :type fuzz: class:`numbers.Real`
@@ -7874,7 +7876,7 @@ class BaseImage(Resource):
         :type degree: :class:`numbers.Real`
         :param background: an optional background color.
                            default is transparent
-        :type background: :class:`wand.color.Color`
+        :type background: :class:`~wand.color.Color` or :class:`str`
         :param reset_coords: optional flag. If set, after the rotation, the
             coordinate frame will be relocated to the upper-left corner of
             the new image. By default is `True`.
@@ -8195,7 +8197,7 @@ class BaseImage(Resource):
 
         :param background: Color to fill the void created by shearing the
                            image.
-        :type background: :class:`wand.color.Color`
+        :type background: :class:`~wand.color.Color` or :class:`str`
         :param x: Slide the image along the X-axis.
         :type x: :class:`numbers.Real`
         :param y: Slide the image along the Y-axis.
@@ -8828,9 +8830,9 @@ class BaseImage(Resource):
         :see: Example of :ref:`tint`.
 
         :param color: Color to calculate midtone.
-        :type color: :class:`~wand.color.Color`
+        :type color: :class:`~wand.color.Color` or :class:`str`
         :param alpha: Determine how to blend.
-        :type alpha: :class:`~wand.color.Color`
+        :type alpha: :class:`~wand.color.Color` or :class:`str`
 
         .. versionadded:: 0.5.3
         """
@@ -9049,7 +9051,7 @@ class BaseImage(Resource):
 
         :param color: The color that should be made transparent on the image,
                       color object
-        :type color: :class:`wand.color.Color`
+        :type color: :class:`~wand.color.Color` or :class:`str`
         :param alpha: the level of transparency: 1.0 is fully opaque
                       and 0.0 is fully transparent.
         :type alpha: :class:`numbers.Real`
@@ -9146,7 +9148,7 @@ class BaseImage(Resource):
 
         :param color: the border color to remove.
                       if it's omitted top left pixel is used by default
-        :type color: :class:`~wand.color.Color`
+        :type color: :class:`~wand.color.Color` or :class:`str`
         :param fuzz: Defines how much tolerance is acceptable to consider
                      two colors as the same. Value can be between ``0.0``,
                      and :attr:`quantum_range`.
@@ -9492,7 +9494,7 @@ class Image(BaseImage):
     :type depth: :class:`numbers.Integral`
     :param background: an optional background color.
                        default is transparent
-    :type background: :class:`wand.color.Color`
+    :type background: :class:`~wand.color.Color` or :class:`str`
     :param resolution: set a resolution value (dpi),
                        useful for vectorial formats (like pdf)
     :type resolution: :class:`collections.abc.Sequence`,
@@ -9998,7 +10000,7 @@ class Image(BaseImage):
         :type height: :class:`numbers.Integral`
         :param background: an optional background color.
                            default is transparent
-        :type background: :class:`wand.color.Color`
+        :type background: :class:`~wand.color.Color` or :class:`str`
         :returns: blank image
         :rtype: :class:`Image`
 
@@ -10597,7 +10599,7 @@ class Iterator(Resource, abc.Iterator):
                 print(col)
 
     Every row is a :class:`collections.abc.Sequence` which consists of
-    one or more :class:`wand.color.Color` values.
+    one or more :class:`~wand.color.Color` values.
 
     :param image: the image to get an iterator
     :type image: :class:`Image`
