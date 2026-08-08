@@ -126,9 +126,15 @@ def load_library():
 
     """
     tried_paths = []
+    found_files = []
     for libwand_path, libmagick_path in library_paths():
         if libwand_path is None or libmagick_path is None:
             continue
+        if os.path.isfile(libwand_path) is True:
+            found_files.append(libwand_path)
+        if libwand_path != libmagick_path:
+            if os.path.isfile(libmagick_path) is True:
+                found_files.append(libmagick_path)
         try:
             tried_paths.append(libwand_path)
             libwand = ctypes.CDLL(str(libwand_path))
@@ -140,7 +146,7 @@ def load_library():
         except (IOError, OSError):
             continue
         return libwand, libmagick
-    raise IOError('cannot find library; tried paths: ' + repr(tried_paths))
+    raise IOError('cannot find compatible library; tried paths: ' + repr(tried_paths) + ' and failed to load files: ' + repr(found_files))
 
 
 try:
