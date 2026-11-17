@@ -1,5 +1,3 @@
-import itertools
-
 from pytest import mark, raises
 
 from wand.api import library
@@ -616,10 +614,12 @@ def test_draw_move_user_error():
             draw.path_move()
 
 
-@mark.parametrize('kwargs', itertools.product(
-    [('right', 40), ('width', 30)],
-    [('bottom', 40), ('height', 30)]
-))
+@mark.parametrize('kwargs', [
+    (('right', 40), ('bottom', 40)),
+    (('right', 40), ('height', 30)),
+    (('width', 30), ('bottom', 40)),
+    (('width', 30), ('height', 30))
+])
 def test_draw_rectangle(kwargs):
     white = Color('WHITE')
     black = Color('BLACK')
@@ -635,12 +635,11 @@ def test_draw_rectangle(kwargs):
         assert was != img.signature
 
 
-@mark.parametrize('kwargs', itertools.product(
-    [('xradius', 10), ('yradius', 10)],
-    [('xradius', 20)],
-    [('yradius', 20)],
-    [('radius', 10)]
-))
+@mark.parametrize('kwargs', [
+    (('xradius', 10), ('xradius', 20)),
+    (('yradius', 20),),
+    (('radius', 10),)
+])
 def test_draw_rectangle_with_radius(kwargs):
     with Image(width=50, height=50, background='white') as img:
         was = img.signature

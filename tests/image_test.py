@@ -86,11 +86,11 @@ def test_raw_image():
 def test_clear_image():
     with Image() as img:
         img.read(filename='logo:')
-        assert img.size == (640, 480)
+        assert img.iterator_length() == 1
         img.clear()
-        assert img.size == (0, 0)
+        assert img.iterator_length() == 0
         img.read(filename='wizard:')
-        assert img.size == (480, 640)
+        assert img.iterator_length() == 1
 
 
 def test_read_from_filename(fx_asset):

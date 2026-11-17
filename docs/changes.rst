@@ -7,6 +7,17 @@ Wand Changelog
 ~~~~~~~~~~
 
 
+.. _changelog-0.7.3:
+
+Version 0.7.3
+-------------
+
+Unreleased.
+
+ - [TEST] Removed deprecated :meth:`itertools.product` calls in unit tests.
+ - [TEST] Rewrote assertion methods for :meth:`Image.clear() <wand.image.Image.clear>` unit test. [:issue:`691`]
+
+
 .. _changelog-0.7.2:
 
 Version 0.7.2
