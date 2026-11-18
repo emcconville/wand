@@ -32,15 +32,15 @@ jobs:
         sudo apt-get update -y
         sudo apt-get install -y imagemagick
         python -m pip install --upgrade pip
-        pip install --upgrade pytest pytest-cov coveralls
+        pip install --upgrade pytest pytest-cov
     - name: Run PyTest
       run: pytest --skip-pdf --cov wand
     - name: Generate coverage report
-      run: coveralls --service=github-actions
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        COVERALLS_FLAG_NAME: ${{ matrix.test-name }}
-        COVERALLS_PARALLEL: true
+      uses: coverallsapp/github-action@v2
+      with:
+        flag-name: py-${{ matrix.python-version }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        parallel: true
   build_macos:
     name: Build MacOS
     runs-on: macos-latest
@@ -63,27 +63,19 @@ jobs:
         brew install ghostscript
         brew install imagemagick
         python -m pip install --upgrade pip
-        pip install --upgrade pytest pytest-cov coveralls
+        pip install --upgrade pytest pytest-cov
     - name: Run PyTest
       run: pytest --skip-pdf --skip-fft --cov wand
       env:
         MAGICK_HOME: /opt/homebrew
-    - name: Generate coverage report
-      run: coveralls --service=github-actions
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        COVERALLS_FLAG_NAME: ${{ matrix.test-name }}
-        COVERALLS_PARALLEL: true
   coveralls:
     name: Indicate completion to coveralls.io
-    needs: [build_linux, build_macos]
+    needs: [build_linux]
     runs-on: ubuntu-latest
-    container: python:3-slim
     steps:
-    - name: Finished
-      run: |
-        python -m pip install --upgrade pip
-        pip install --upgrade coveralls[yaml]
-        coveralls --finish
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Coveralls Finished
+      uses: coverallsapp/github-action@v2
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        parallel-finished: true
+        carryforward: "py-3.12,py-3.13,py-3.14,py-3.15"
