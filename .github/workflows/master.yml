@@ -35,6 +35,12 @@ jobs:
         pip install --upgrade pytest pytest-cov coveralls
     - name: Run PyTest
       run: pytest --skip-pdf --cov wand
+    - name: Generate coverage report
+      run: coveralls --service=github-actions
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        COVERALLS_FLAG_NAME: ${{ matrix.test-name }}
+        COVERALLS_PARALLEL: true
   build_macos:
     name: Build MacOS
     runs-on: macos-latest
@@ -63,7 +69,7 @@ jobs:
       env:
         MAGICK_HOME: /opt/homebrew
     - name: Generate coverage report
-      run: coveralls --service=github
+      run: coveralls --service=github-actions
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         COVERALLS_FLAG_NAME: ${{ matrix.test-name }}
@@ -76,7 +82,8 @@ jobs:
     steps:
     - name: Finished
       run: |
-        pip3 install --upgrade coveralls
-        coveralls --service=github --finish
+        python -m pip install --upgrade pip
+        pip install --upgrade coveralls[yaml]
+        coveralls --service=github-actions finish
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
