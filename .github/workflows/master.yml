@@ -40,6 +40,7 @@ jobs:
       with:
         flag-name: py-${{ matrix.python-version }}
         github-token: ${{ secrets.GITHUB_TOKEN }}
+        build-number: ${{ github.run_number }}
         parallel: true
   build_macos:
     name: Build MacOS
@@ -77,5 +78,6 @@ jobs:
       uses: coverallsapp/github-action@v2
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
+        build-number: ${{ github.run_number }}
         parallel-finished: true
         carryforward: "py-3.12,py-3.13,py-3.14,py-3.15"
