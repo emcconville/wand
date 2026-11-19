@@ -34,13 +34,14 @@ jobs:
         python -m pip install --upgrade pip
         pip install --upgrade pytest pytest-cov
     - name: Run PyTest
-      run: pytest --skip-pdf --cov wand
+      run: python -m pytest --skip-pdf --cov wand --cov-report lcov --cov-append
     - name: Generate coverage report
       uses: coverallsapp/github-action@v2
       with:
         flag-name: py-${{ matrix.python-version }}
         github-token: ${{ secrets.GITHUB_TOKEN }}
         build-number: ${{ github.run_number }}
+        files: ./coverage.lcov
         parallel: true
   build_macos:
     name: Build MacOS
@@ -48,7 +49,7 @@ jobs:
     strategy:
       max-parallel: 2
       matrix:
-        python-version: ["3.12", "3.13", "3.14"]
+        python-version: ["3.13", "3.14"]
     steps:
     - uses: actions/checkout@v7
       with:
