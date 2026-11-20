@@ -2391,7 +2391,7 @@ class BaseImage(Resource):
         else:
             raise TypeError('resolution must be a (x, y) pair or a float '
                             'of the same x/y')
-        if self.size == (0, 0):
+        if self.iterator_length == 0:
             r = library.MagickSetResolution(self.wand, x, y)
         else:
             r = library.MagickSetImageResolution(self.wand, x, y)
