@@ -1612,7 +1612,10 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.3
         """
-        return library.MagickGetImageColors(self.wand)
+        c = library.MagickGetImageColors(self.wand)
+        if not c:
+            self.raise_exception()
+        return c
 
     @property
     def colorspace(self):
@@ -1652,6 +1655,8 @@ class BaseImage(Resource):
         .. versionadded:: 0.5.1
         """
         compose_index = library.MagickGetImageCompose(self.wand)
+        if not compose_index:
+            self.raise_exception()
         return COMPOSITE_OPERATORS[compose_index]
 
     @compose.setter
@@ -1674,6 +1679,8 @@ class BaseImage(Resource):
            and `images` in the internal image stack.
         """
         compression_index = library.MagickGetImageCompression(self.wand)
+        if not compression_index:
+            self.raise_exception()
         return COMPRESSION_TYPES[compression_index]
 
     @compression.setter
@@ -1699,7 +1706,10 @@ class BaseImage(Resource):
            Setting :attr:`compression_quality` now sets both `image_info`
            and `images` in the internal image stack.
         """
-        return library.MagickGetImageCompressionQuality(self.wand)
+        cq = library.MagickGetImageCompressionQuality(self.wand)
+        if not cq:
+            self.raise_exception()
+        return cq
 
     @compression_quality.setter
     @manipulative
@@ -1723,7 +1733,10 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.9
         """
-        return library.MagickGetImageDelay(self.wand)
+        d = library.MagickGetImageDelay(self.wand)
+        if not d:
+            self.raise_exception()
+        return d
 
     @delay.setter
     def delay(self, value):
@@ -1737,7 +1750,10 @@ class BaseImage(Resource):
         .. versionadded:: 0.2.1
 
         """
-        return library.MagickGetImageDepth(self.wand)
+        d = library.MagickGetImageDepth(self.wand)
+        if not d:
+            self.raise_exception()
+        return d
 
     @depth.setter
     @manipulative
@@ -1763,7 +1779,10 @@ class BaseImage(Resource):
         dispose_idx = library.MagickGetImageDispose(self.wand)
         try:
             return DISPOSE_TYPES[dispose_idx]
-        except IndexError:  # pragma: no cover
+        except IndexError:
+            # Possible a "no images" exception is on the stack. Attempt to
+            # raise exception and/or return `undefined`.
+            self.raise_exception()
             return DISPOSE_TYPES[0]
 
     @dispose.setter
@@ -1889,6 +1908,8 @@ class BaseImage(Resource):
         if fmt_p:
             fmt_str = text(ctypes.string_at(fmt_p))
             fmt_p = library.MagickRelinquishMemory(fmt_p)
+        else:
+            library.MagickClearException(self.wand)
         return fmt_str
 
     @format.setter
@@ -1911,7 +1932,10 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.3
         """
-        return library.MagickGetImageFuzz(self.wand)
+        f = library.MagickGetImageFuzz(self.wand)
+        if not f:
+            self.raise_exception()
+        return f
 
     @fuzz.setter
     def fuzz(self, value):
@@ -1978,7 +2002,10 @@ class BaseImage(Resource):
     @property
     def height(self):
         """(:class:`numbers.Integral`) The height of this image."""
-        return library.MagickGetImageHeight(self.wand)
+        h = library.MagickGetImageHeight(self.wand)
+        if h == 0:
+            library.MagickClearException(self.wand)
+        return h
 
     @height.setter
     @manipulative
@@ -2019,6 +2046,8 @@ class BaseImage(Resource):
            Previously was pointing to the :c:struct:`MagickWand`.
         """
         scheme_idx = library.MagickGetImageInterlaceScheme(self.wand)
+        if not scheme_idx:
+            self.raise_exception()
         return INTERLACE_TYPES[scheme_idx]
 
     @interlace_scheme.setter
@@ -2037,6 +2066,8 @@ class BaseImage(Resource):
         .. versionadded:: 0.5.2
         """
         method_idx = library.MagickGetImageInterpolateMethod(self.wand)
+        if not method_idx:
+            self.raise_exception()
         return PIXEL_INTERPOLATE_METHODS[method_idx]
 
     @interpolate_method.setter
@@ -2070,14 +2101,19 @@ class BaseImage(Resource):
         .. versionadded:: 0.5.4
         """
         size_ptr = c_magick_size_t(0)
-        library.MagickGetImageLength(self.wand, ctypes.byref(size_ptr))
+        r = library.MagickGetImageLength(self.wand, ctypes.byref(size_ptr))
+        if not r:
+            self.raise_exception()
         return size_ptr.value
 
     @property
     def loop(self):
         """(:class:`numbers.Integral`) Number of frame iterations.
         A value of ``0`` will loop forever."""
-        return library.MagickGetImageIterations(self.wand)
+        itr = library.MagickGetImageIterations(self.wand)
+        if not itr:
+            self.raise_exception()
+        return itr
 
     @loop.setter
     def loop(self, iterations):
@@ -2097,7 +2133,7 @@ class BaseImage(Resource):
             color = Color.from_pixelwand(pixel)
             pixel = library.DestroyPixelWand(pixel)
             return color
-        else:  # pragma: no cover
+        else:
             self.raise_exception()
 
     @matte_color.setter
@@ -2168,7 +2204,9 @@ class BaseImage(Resource):
         orientation_index = library.MagickGetImageOrientation(self.wand)
         try:
             return ORIENTATION_TYPES[orientation_index]
-        except IndexError:  # pragma: no cover
+        except IndexError:
+            # Possible error on stack. Attempt to raise and/or return default.
+            self.raise_exception()
             return ORIENTATION_TYPES[0]
 
     @orientation.setter
@@ -2354,6 +2392,8 @@ class BaseImage(Resource):
         .. versionadded:: 0.5.4
         """
         ri_index = library.MagickGetImageRenderingIntent(self.wand)
+        if not ri_index:
+            self.raise_exception()
         return RENDERING_INTENT_TYPES[ri_index]
 
     @rendering_intent.setter
@@ -2391,11 +2431,11 @@ class BaseImage(Resource):
         else:
             raise TypeError('resolution must be a (x, y) pair or a float '
                             'of the same x/y')
-        if self.iterator_length == 0:
-            r = library.MagickSetResolution(self.wand, x, y)
-        else:
+        if library.MagickGetNumberImages(self.wand):
             r = library.MagickSetImageResolution(self.wand, x, y)
-        if not r:  # pragma: no cover
+        else:
+            r = library.MagickSetResolution(self.wand, x, y)
+        if not r:
             self.raise_exception()
 
     @property
@@ -2446,7 +2486,10 @@ class BaseImage(Resource):
 
         .. versionadded:: 0.5.4
         """
-        return library.MagickGetImageScene(self.wand)
+        s = library.MagickGetImageScene(self.wand)
+        if not s:
+            self.raise_exception()
+        return s
 
     @scene.setter
     def scene(self, value):
@@ -2488,6 +2531,8 @@ class BaseImage(Resource):
         if sig_p:
             sig_str = text(ctypes.string_at(sig_p))
             sig_p = library.MagickRelinquishMemory(sig_p)
+        else:
+            library.MagickClearException(self.wand)
         return sig_str
 
     @property
@@ -2565,7 +2610,10 @@ class BaseImage(Resource):
         """(:class:`numbers.Integral`) Internal clock for animated images.
         .. versionadded:: 0.5.4
         """
-        return library.MagickGetImageTicksPerSecond(self.wand)
+        tps = library.MagickGetImageTicksPerSecond(self.wand)
+        if not tps:
+            self.raise_exception()
+        return tps
 
     @ticks_per_second.setter
     def ticks_per_second(self, value):
@@ -2604,6 +2652,8 @@ class BaseImage(Resource):
     def units(self):
         """(:class:`str`) The resolution units of this image."""
         r = library.MagickGetImageUnits(self.wand)
+        if not r:
+            self.raise_exception()
         return UNIT_TYPES[r]
 
     @units.setter
@@ -2622,6 +2672,8 @@ class BaseImage(Resource):
         ... versionadded:: 0.4.1
         """
         method_index = library.MagickGetImageVirtualPixelMethod(self.wand)
+        if not method_index:
+            self.raise_exception()
         return VIRTUAL_PIXEL_METHOD[method_index]
 
     @virtual_pixel.setter
@@ -2659,7 +2711,10 @@ class BaseImage(Resource):
     @property
     def width(self):
         """(:class:`numbers.Integral`) The width of this image."""
-        return library.MagickGetImageWidth(self.wand)
+        w = library.MagickGetImageWidth(self.wand)
+        if w == 0:
+            library.MagickClearException(self.wand)
+        return w
 
     @width.setter
     @manipulative
@@ -5228,6 +5283,8 @@ class BaseImage(Resource):
                 response['green'] = build_channel(feature_ptr, 'green')
                 response['blue'] = build_channel(feature_ptr, 'blue')
             feature_ptr = library.MagickRelinquishMemory(feature_ptr)
+        else:
+            self.raise_exception()
         return response
 
     def fft(self, magnitude=True):
@@ -6042,18 +6099,21 @@ class BaseImage(Resource):
         k = ctypes.c_double(0.0)
         s = ctypes.c_double(0.0)
         if MAGICK_VERSION_NUMBER < 0x700:
-            library.MagickGetImageChannelKurtosis(self.wand, ch_channel,
-                                                  ctypes.byref(k),
-                                                  ctypes.byref(s))
-        else:  # pragma: no cover
+            r = library.MagickGetImageChannelKurtosis(self.wand,
+                                                      ch_channel,
+                                                      ctypes.byref(k),
+                                                      ctypes.byref(s))
+        else:
             # Set active channel, and capture mask to restore.
             channel_mask = library.MagickSetImageChannelMask(self.wand,
                                                              ch_channel)
-            library.MagickGetImageKurtosis(self.wand,
-                                           ctypes.byref(k),
-                                           ctypes.byref(s))
+            r = library.MagickGetImageKurtosis(self.wand,
+                                               ctypes.byref(k),
+                                               ctypes.byref(s))
             # Restore original state of channels
             library.MagickSetImageChannelMask(self.wand, channel_mask)
+        if not r:
+            self.raise_exception()
         return k.value, s.value
 
     @manipulative
@@ -6470,18 +6530,21 @@ class BaseImage(Resource):
         m = ctypes.c_double(0.0)
         s = ctypes.c_double(0.0)
         if MAGICK_VERSION_NUMBER < 0x700:
-            library.MagickGetImageChannelMean(self.wand, ch_channel,
-                                              ctypes.byref(m),
-                                              ctypes.byref(s))
+            r = library.MagickGetImageChannelMean(self.wand,
+                                                  ch_channel,
+                                                  ctypes.byref(m),
+                                                  ctypes.byref(s))
         else:  # pragma: no cover
             # Set active channel, and capture mask to restore.
             channel_mask = library.MagickSetImageChannelMask(self.wand,
                                                              ch_channel)
-            library.MagickGetImageMean(self.wand,
-                                       ctypes.byref(m),
-                                       ctypes.byref(s))
+            r = library.MagickGetImageMean(self.wand,
+                                           ctypes.byref(m),
+                                           ctypes.byref(s))
             # Restore original state of channels
             library.MagickSetImageChannelMask(self.wand, channel_mask)
+        if not r:
+            self.raise_exception()
         return m.value, s.value
 
     @manipulative
@@ -7503,18 +7566,20 @@ class BaseImage(Resource):
         min_color = ctypes.c_double(0.0)
         max_color = ctypes.c_double(0.0)
         if MAGICK_VERSION_NUMBER < 0x700:
-            library.MagickGetImageChannelRange(self.wand, ch_channel,
-                                               ctypes.byref(min_color),
-                                               ctypes.byref(max_color))
+            r = library.MagickGetImageChannelRange(self.wand, ch_channel,
+                                                   ctypes.byref(min_color),
+                                                   ctypes.byref(max_color))
         else:  # pragma: no cover
             # Set active channel, and capture mask to restore.
             channel_mask = library.MagickSetImageChannelMask(self.wand,
                                                              ch_channel)
-            library.MagickGetImageRange(self.wand,
-                                        ctypes.byref(min_color),
-                                        ctypes.byref(max_color))
+            r = library.MagickGetImageRange(self.wand,
+                                            ctypes.byref(min_color),
+                                            ctypes.byref(max_color))
             # Restore original state of channels
             library.MagickSetImageChannelMask(self.wand, channel_mask)
+        if not r:
+            self.raise_exception()
         return min_color.value, max_color.value
 
     @manipulative

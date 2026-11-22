@@ -14,8 +14,10 @@ Version 0.7.3
 
 Unreleased.
 
+ - Improve raising of :class:`~wand.exceptions.WandError` exception when
+   attempting to read an image-property with no loaded images. [:issue:`691`]
  - [TEST] Removed deprecated :meth:`itertools.product` calls in unit tests.
- - [TEST] Rewrote assertion methods for :meth:`Image.clear() <wand.image.Image.clear>` unit test. [:issue:`691`]
+ - [TEST] Rewrote assertion methods for :meth:`Image.clear() <wand.image.Image.clear>` unit test.
 
 
 .. _changelog-0.7.2:
