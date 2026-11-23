@@ -1084,7 +1084,9 @@ def load(lib, IM_VERSION):
     lib.MagickSetImageTicksPerSecond.restype = c_bool
     lib.MagickSetImageType.argtypes = [c_void_p, c_int]
     lib.MagickSetImageUnits.argtypes = [c_void_p, c_int]
+    lib.MagickSetImageUnits.restype = c_bool
     lib.MagickSetImageVirtualPixelMethod.argtypes = [c_void_p, c_int]
+    lib.MagickSetImageVirtualPixelMethod.restype = c_int
     if is_im_6:
         lib.MagickSetImageWhitePoint.argtypes = [
             c_void_p, c_double, c_double

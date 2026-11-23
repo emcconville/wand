@@ -1664,8 +1664,12 @@ class BaseImage(Resource):
         assertions.string_in_list(COMPOSITE_OPERATORS,
                                   'wand.image.COMPOSITE_OPERATORS',
                                   compose=operator)
-        library.MagickSetImageCompose(self.wand,
-                                      COMPOSITE_OPERATORS.index(operator))
+        r = library.MagickSetImageCompose(
+            self.wand,
+            COMPOSITE_OPERATORS.index(operator)
+        )
+        if not r:
+            self.raise_exception()
 
     @property
     def compression(self):
@@ -1790,7 +1794,10 @@ class BaseImage(Resource):
         assertions.string_in_list(DISPOSE_TYPES,
                                   'wand.image.DISPOSE_TYPES',
                                   dispose=value)
-        library.MagickSetImageDispose(self.wand, DISPOSE_TYPES.index(value))
+        r = library.MagickSetImageDispose(self.wand,
+                                          DISPOSE_TYPES.index(value))
+        if not r:
+            self.raise_exception()
 
     @property
     def font(self):
@@ -1940,7 +1947,9 @@ class BaseImage(Resource):
     @fuzz.setter
     def fuzz(self, value):
         assertions.assert_real(fuzz=value)
-        library.MagickSetImageFuzz(self.wand, value)
+        r = library.MagickSetImageFuzz(self.wand, value)
+        if not r:
+            self.raise_exception()
 
     @property
     def gravity(self):
@@ -2011,7 +2020,9 @@ class BaseImage(Resource):
     @manipulative
     def height(self, height):
         assertions.assert_unsigned_integer(height=height)
-        library.MagickSetSize(self.wand, self.width, height)
+        r = library.MagickSetSize(self.wand, self.width, height)
+        if not r:
+            self.raise_exception()
 
     @property
     def histogram(self):
@@ -2056,7 +2067,9 @@ class BaseImage(Resource):
                                   'wand.image.INTERLACE_TYPES',
                                   interlace_scheme=scheme)
         scheme_idx = INTERLACE_TYPES.index(scheme)
-        library.MagickSetImageInterlaceScheme(self.wand, scheme_idx)
+        r = library.MagickSetImageInterlaceScheme(self.wand, scheme_idx)
+        if not r:
+            self.raise_exception()
 
     @property
     def interpolate_method(self):
@@ -2076,7 +2089,9 @@ class BaseImage(Resource):
                                   'wand.image.PIXEL_INTERPOLATE_METHODS',
                                   interpolate_method=method)
         method_idx = PIXEL_INTERPOLATE_METHODS.index(method)
-        library.MagickSetImageInterpolateMethod(self.wand, method_idx)
+        r = library.MagickSetImageInterpolateMethod(self.wand, method_idx)
+        if not r:
+            self.raise_exception()
 
     @property
     def kurtosis(self):
@@ -2118,7 +2133,9 @@ class BaseImage(Resource):
     @loop.setter
     def loop(self, iterations):
         assertions.assert_unsigned_integer(loop=iterations)
-        library.MagickSetImageIterations(self.wand, iterations)
+        r = library.MagickSetImageIterations(self.wand, iterations)
+        if not r:
+            self.raise_exception()
 
     @property
     def matte_color(self):
@@ -2402,7 +2419,9 @@ class BaseImage(Resource):
                                   'wand.image.RENDERING_INTENT_TYPES',
                                   rendering_intent=value)
         ri_index = RENDERING_INTENT_TYPES.index(value)
-        library.MagickSetImageRenderingIntent(self.wand, ri_index)
+        r = library.MagickSetImageRenderingIntent(self.wand, ri_index)
+        if not r:
+            self.raise_exception()
 
     @property
     def resolution(self):
@@ -2477,7 +2496,11 @@ class BaseImage(Resource):
                             'numbers, not ' + repr(factors))
         factors_len = len(factors)
         factors_ptr = (ctypes.c_double * factors_len)(*factors)
-        library.MagickSetSamplingFactors(self.wand, factors_len, factors_ptr)
+        r = library.MagickSetSamplingFactors(self.wand,
+                                             factors_len,
+                                             factors_ptr)
+        if not r:
+            self.raise_exception()
 
     @property
     def scene(self):
@@ -2494,7 +2517,9 @@ class BaseImage(Resource):
     @scene.setter
     def scene(self, value):
         assertions.assert_unsigned_integer(scene=value)
-        library.MagickSetImageScene(self.wand, value)
+        r = library.MagickSetImageScene(self.wand, value)
+        if not r:
+            self.raise_exception()
 
     @property
     def seed(self):
@@ -2720,7 +2745,9 @@ class BaseImage(Resource):
     @manipulative
     def width(self, width):
         assertions.assert_unsigned_integer(width=width)
-        library.MagickSetSize(self.wand, width, self.height)
+        r = library.MagickSetSize(self.wand, width, self.height)
+        if not r:
+            self.raise_exception()
 
     @property
     def white_point(self):
