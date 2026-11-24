@@ -12,12 +12,12 @@ Wand Changelog
 Version 0.7.3
 -------------
 
-Unreleased.
+Released on November 24th, 2026.
 
- - Improve raising of :class:`~wand.exceptions.WandError` exception when
-   attempting to read an image-property with no loaded images. [:issue:`691`]
- - [TEST] Removed deprecated :meth:`itertools.product` calls in unit tests.
- - [TEST] Rewrote assertion methods for :meth:`Image.clear() <wand.image.Image.clear>` unit test.
+ - Ensure a :class:`~wand.exceptions.WandError` exception is raised when
+   attempting to get or set an image property without any images loaded. [:issue:`691`]
+ - [TEST] Removed :meth:`itertools.product` calls in unit tests.
+ - [TEST] Rewrote assertions for :meth:`Image.clear() <wand.image.Image.clear>` unit test.
 
 
 .. _changelog-0.7.2:
